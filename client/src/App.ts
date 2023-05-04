@@ -184,6 +184,7 @@ export default defineComponent({
 		News,
 		PatchNotes: defineAsyncComponent(() => import("./components/PatchNotes.vue")),
 		PickSummary: defineAsyncComponent(() => import("./components/PickSummary.vue")),
+		QuickDraft: defineAsyncComponent(() => import("./components/QuickDraft.vue")),
 		RotisserieDraft: defineAsyncComponent(() => import("./components/RotisserieDraft.vue")),
 		ScaleSlider,
 		SetRestrictionComponent: defineAsyncComponent(() => import("./components/SetRestriction.vue")),
@@ -196,6 +197,10 @@ export default defineComponent({
 		WinstonDraft: defineAsyncComponent(() => import("./components/WinstonDraft.vue")),
 	},
 	data: () => {
+		const path = window.location.pathname.substring(1).split("/");
+
+		console.log(path);
+
 		let userID: UserID = guid();
 		let storedUserID = getCookie("userID");
 		if (storedUserID !== "") {
@@ -205,23 +210,40 @@ export default defineComponent({
 		}
 
 		let urlParamSession = getUrlVars()["session"];
-		const sessionID: SessionID = urlParamSession
+		let sessionID: string | undefined = urlParamSession
 			? decodeURIComponent(urlParamSession)
 			: getCookie("sessionID", shortguid());
+
+		if (path.length > 0) {
+			if (path[0] === "quickdraft") {
+				sessionID = undefined;
+			}
+		}
 
 		const userName = initialSettings.userName;
 
 		const storedSessionSettings = localStorage.getItem(localStorageSessionSettingsKey) ?? "{}";
 
+		const query: any = {
+			userID: userID,
+			userName: userName,
+			sessionSettings: storedSessionSettings,
+		};
+		if (sessionID) query.sessionID = sessionID;
+
 		// Socket Setup
 		const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io({
-			query: {
-				userID: userID,
-				sessionID: sessionID,
-				userName: userName,
-				sessionSettings: storedSessionSettings,
-			},
+			query,
 		});
+
+		if (path.length > 0) {
+			if (path[0] === "quickdraft") {
+				if (path.length > 1)
+					socket.emit("register", path[1], (r) => {
+						if (r.code !== 0 && r.error) Alert.fire(r.error);
+					});
+			}
+		}
 
 		return {
 			// Make these enums available in the template
@@ -244,7 +266,7 @@ export default defineComponent({
 
 			// Session status
 			sessionID: sessionID,
-			sessionOwner: userID as UserID,
+			sessionOwner: userID as UserID | undefined,
 			sessionOwnerUsername: userName as string,
 			sessionUsers: [] as SessionUser[],
 			disconnectedUsers: {} as { [uid: UserID]: DisconnectedUser },
@@ -995,7 +1017,8 @@ export default defineComponent({
 			const startDraftSetup = (name = "draft", msg = "Draft Started!") => {
 				// Save user ID in case of disconnect
 				setCookie("userID", this.userID);
-				setCookie("sessionID", this.sessionID);
+				if (this.sessionID) setCookie("sessionID", this.sessionID);
+				this.updateURLQuery();
 
 				this.drafting = true;
 				this.stopReadyCheck();
@@ -3087,7 +3110,7 @@ export default defineComponent({
 			copyToClipboard(
 				`${window.location.protocol}//${window.location.hostname}${
 					window.location.port ? ":" + window.location.port : ""
-				}/?session=${encodeURIComponent(this.sessionID)}`
+				}/?session=${encodeURIComponent(this.sessionID ?? "")}`
 			);
 			fireToast("success", "Session link copied to clipboard!");
 		},
@@ -3223,12 +3246,16 @@ export default defineComponent({
 				history.replaceState(
 					{ sessionID: this.sessionID },
 					`Draftmancer Session ${this.sessionID}`,
-					`?session=${encodeURIComponent(this.sessionID)}`
+					`/?session=${encodeURIComponent(this.sessionID)}`
 				);
 			}
 		},
 	},
 	computed: {
+		managed(): boolean {
+			// FIXME: This should be a session property.
+			return this.sessionOwner === undefined || this.sessionOwner === null;
+		},
 		deckDisplay(): typeof CardPool | null {
 			return this.$refs.deckDisplay as typeof CardPool | null;
 		},
@@ -3481,7 +3508,7 @@ export default defineComponent({
 					}
 				}
 				this.socket.io.opts.query!.sessionID = this.sessionID;
-				this.socket.emit("setSession", this.sessionID, sessionSettings);
+				if (this.sessionID) this.socket.emit("setSession", this.sessionID, sessionSettings);
 			}
 			this.updateURLQuery();
 			if (this.sessionID) setCookie("sessionID", this.sessionID);

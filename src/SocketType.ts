@@ -41,13 +41,13 @@ export interface ServerToClientEvents {
 	) => void;
 	updateUser: (data: { userID: UserID; updatedProperties: any }) => void; // FIXME
 
-	userDisconnected: (data: { owner: UserID; disconnectedUsers: { [uid: string]: any } }) => void; // FIXME
+	userDisconnected: (data: { owner?: UserID; disconnectedUsers: { [uid: string]: any } }) => void; // FIXME
 	sessionOptions: (sessionOptions: { [key: keyof typeof SessionsSettingsProps]: any }) => void; // FIXME: Specify allowed options and their types
 	setRestriction: (setRestriction: Array<SetCode>) => void;
 	ignoreCollections: (ignoreCollections: boolean) => void;
 	setPickTimer: (pickTimer: number) => void;
 	setMaxPlayers: (maxPlayers: number) => void;
-	sessionOwner: (owner: UserID, userName: string | null) => void;
+	sessionOwner: (owner: UserID | undefined, userName: string | null) => void;
 	isPublic: (isPublic: boolean) => void;
 	description: (description: string) => void;
 
@@ -234,6 +234,8 @@ export interface ClientToServerEvents {
 	updateBracket: (results: Array<[number, number]>) => void;
 	updateDeckLands: (lands: DeckBasicLands) => void;
 	moveCard: (uniqueID: UniqueCardID, destStr: string) => void;
+	register: (setCode: SetCode, ack: (result: SocketAck) => void) => void;
+	unregister: (ack: (result: SocketAck) => void) => void;
 
 	// Owner Only
 	setOwnerIsPlayer: (val: boolean) => void;

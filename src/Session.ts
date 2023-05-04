@@ -59,7 +59,8 @@ import { SolomonDraftState } from "./SolomonDraft.js";
 
 export class Session implements IIndexable {
 	id: SessionID;
-	owner: UserID;
+	owner?: UserID;
+	managed: boolean = false;
 	userOrder: Array<string> = [];
 	users: Set<UserID> = new Set();
 
@@ -112,9 +113,10 @@ export class Session implements IIndexable {
 	draftPaused: boolean = false;
 	countdown: number = 75;
 
-	constructor(id: SessionID, owner: UserID, options: Options = {}) {
+	constructor(id: SessionID, owner: UserID | undefined, options: Options = {}) {
 		this.id = id;
 		this.owner = owner;
+		if (!owner) this.managed = true;
 
 		// Validate and set session settings
 		for (const p in options)
@@ -780,7 +782,7 @@ export class Session implements IIndexable {
 				Connections[user].socket.emit(
 					"sessionOwner",
 					this.owner,
-					this.owner in Connections ? Connections[this.owner].userName : null
+					this.owner && this.owner in Connections ? Connections[this.owner].userName : null
 				);
 				Connections[user].socket.emit("sessionUsers", userInfo);
 			}
@@ -1711,7 +1713,7 @@ export class Session implements IIndexable {
 			Connections[uid].socket.emit("startDraft", virtualPlayerData);
 		}
 
-		if (!this.ownerIsPlayer && this.owner in Connections) {
+		if (!this.ownerIsPlayer && this.owner && this.owner in Connections) {
 			Connections[this.owner].socket.emit("startDraft", virtualPlayerData);
 			// Update draft log for live display if owner is not playing
 			if (this.shouldSendLiveUpdates())
@@ -1834,7 +1836,7 @@ export class Session implements IIndexable {
 		cardsToRemove.sort((a, b) => b - a); // Remove last index first to avoid shifting indices
 
 		// Update draft log for live display if owner in not playing (Do this before removing the cards, damnit!)
-		if (this.shouldSendLiveUpdates()) {
+		if (this.owner && this.shouldSendLiveUpdates()) {
 			Connections[this.owner].socket.emit("draftLogLive", {
 				userID: userID,
 				pick: pickData,
@@ -1992,7 +1994,7 @@ export class Session implements IIndexable {
 		};
 		this.draftLog?.users[userID].picks.push(pickData);
 
-		if (this.shouldSendLiveUpdates())
+		if (this.owner && this.shouldSendLiveUpdates())
 			Connections[this.owner]?.socket.emit("draftLogLive", { userID: userID, pick: pickData });
 
 		const cardsToRemove = pickedIndices.concat(burnedIndices);
@@ -2101,7 +2103,7 @@ export class Session implements IIndexable {
 			++index;
 		}
 
-		if (!this.ownerIsPlayer) {
+		if (this.owner && !this.ownerIsPlayer) {
 			Connections[this.owner]?.socket.emit("draftState", {
 				boosterNumber: s.boosterNumber,
 			});
@@ -2317,7 +2319,7 @@ export class Session implements IIndexable {
 				this.draftLog.delayed = true;
 			// Fallthrough
 			case "owner":
-				Connections[this.owner].socket.emit("draftLog", this.draftLog);
+				if (this.owner) Connections[this.owner].socket.emit("draftLog", this.draftLog);
 				if (this.personalLogs)
 					this.forNonOwners((uid) => Connections[uid]?.socket.emit("draftLog", this.getStrippedLog(uid)!));
 				else {
@@ -2362,7 +2364,7 @@ export class Session implements IIndexable {
 		this.sendLogs();
 
 		// If owner is not playing, let them know everything went ok.
-		if (!this.ownerIsPlayer && this.owner in Connections) {
+		if (this.owner && !this.ownerIsPlayer && this.owner in Connections) {
 			const msg = new Message("Sealed pools successfly distributed!");
 			msg.showConfirmButton = false;
 			Connections[this.owner].socket.emit("message", msg);
@@ -2436,7 +2438,7 @@ export class Session implements IIndexable {
 		this.sendLogs();
 
 		// If owner is not playing, let them know everything went ok.
-		if (!this.ownerIsPlayer && this.owner in Connections) {
+		if (this.owner && !this.ownerIsPlayer && this.owner in Connections) {
 			const msg = new Message("Sealed pools successfly distributed!");
 			msg.showConfirmButton = false;
 			Connections[this.owner].socket.emit("message", msg);
@@ -2565,7 +2567,7 @@ export class Session implements IIndexable {
 		}
 
 		// If owner is not playing, let them know everything went ok.
-		if (!this.ownerIsPlayer && this.owner in Connections) {
+		if (!this.ownerIsPlayer && this.owner && this.owner in Connections) {
 			const msg = new Message("Jumpstart boosters successfully distributed!");
 			msg.showConfirmButton = false;
 			Connections[this.owner].socket.emit("message", msg);
@@ -2826,16 +2828,6 @@ export class Session implements IIndexable {
 		);
 	}
 
-	emitError(title: string = "Error", text: string | null = "Unspecified Error", showConfirmButton = true, timer = 0) {
-		Connections[this.owner]?.socket.emit("message", {
-			icon: "error",
-			title: title,
-			text: text,
-			showConfirmButton: showConfirmButton,
-			timer: timer,
-		} as Message);
-	}
-
 	generateBracket(players: BracketPlayer[]) {
 		if (this.teamDraft) {
 			this.bracket = new TeamBracket(players);
@@ -2896,7 +2888,7 @@ export class Session implements IIndexable {
 			decklist: { hashes: this.draftLog.users[userID].decklist?.hashes },
 		};
 
-		if (this.shouldSendLiveUpdates()) Connections[this.owner]?.socket.emit("draftLogLive", shareData);
+		if (this.owner && this.shouldSendLiveUpdates()) Connections[this.owner]?.socket.emit("draftLogLive", shareData);
 
 		if (!this.drafting) {
 			// Note: The session setting draftLogRecipients may have changed since the game ended.
@@ -2905,22 +2897,23 @@ export class Session implements IIndexable {
 				case "delayed":
 					if (this.draftLog.delayed) {
 						// Complete log has not been shared yet, send only hashes to non-owners.
-						Connections[this.owner]?.socket.emit("shareDecklist", shareData);
+						if (this.owner) Connections[this.owner]?.socket.emit("shareDecklist", shareData);
 						this.forNonOwners((uid) => Connections[uid]?.socket.emit("shareDecklist", hashesOnly));
 						break;
 					}
 				// Else, fall through to "everyone"
 				case "everyone":
 					// Also send the update to the organiser separately if they're not playing
-					if (!this.ownerIsPlayer) Connections[this.owner]?.socket.emit("shareDecklist", shareData);
+					if (this.owner && !this.ownerIsPlayer)
+						Connections[this.owner]?.socket.emit("shareDecklist", shareData);
 					this.forUsers((uid) => Connections[uid]?.socket.emit("shareDecklist", shareData));
 					break;
 				case "owner":
-					Connections[this.owner]?.socket.emit("shareDecklist", shareData);
+					if (this.owner) Connections[this.owner]?.socket.emit("shareDecklist", shareData);
 					this.forNonOwners((uid) => Connections[uid]?.socket.emit("shareDecklist", hashesOnly));
 					break;
 				case "none":
-					Connections[this.owner]?.socket.emit("shareDecklist", hashesOnly);
+					if (this.owner) Connections[this.owner]?.socket.emit("shareDecklist", hashesOnly);
 					this.forNonOwners((uid) => Connections[uid]?.socket.emit("shareDecklist", hashesOnly));
 					break;
 			}
@@ -2932,13 +2925,14 @@ export class Session implements IIndexable {
 		return (
 			!this.ownerIsPlayer &&
 			["owner", "delayed", "everyone"].includes(this.draftLogRecipients) &&
+			this.owner &&
 			this.owner in Connections
 		);
 	}
 
 	// Execute fn for each user. Owner included even if they're not playing.
 	forUsers(fn: (uid: UserID) => void) {
-		if (!this.ownerIsPlayer && this.owner in Connections) fn(this.owner);
+		if (!this.ownerIsPlayer && this.owner && this.owner in Connections) fn(this.owner);
 		for (const user of this.users) fn(user);
 	}
 	forNonOwners(fn: (uid: UserID) => void) {

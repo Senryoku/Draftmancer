@@ -30,16 +30,22 @@ body {
 }
 
 .link,
-a,
-a:visited {
+a:not(.reset-style),
+a:visited:not(.reset-style) {
 	color: #518ae6;
 	text-decoration: none;
 	cursor: pointer;
 }
 
 .link:hover,
-a:hover {
+a:not(.reset-style):hover {
 	color: #72a7ff;
+}
+
+a.reset-style,
+a.reset-style:visited {
+	color: #ddd;
+	text-decoration: none;
 }
 
 pre {
