@@ -16,15 +16,16 @@ import {
 import { Cards, getUnique, BoosterCardsBySet, CardsBySet, MTGACardIDs, getCard } from "./Cards.js";
 import { IBot, fallbackToSimpleBots, isBot, MTGDraftBotParameters, MTGDraftBotsSetSpecializedModels } from "./Bot.js";
 import { computeHashes } from "./DeckHashes.js";
-import { BasicLandSlot, BasicLandSlots, SpecialLandSlots } from "./LandSlot.js";
+import { BasicLandSlots, SpecialLandSlots } from "./LandSlot.js";
 import {
 	BoosterFactory,
 	SetSpecificFactories,
-	PaperBoosterFactories,
 	DefaultBoosterTargets,
 	IBoosterFactory,
-	getSetFoilRate,
 	PaperBoosterSizes,
+	getBoosterFactory,
+	getPaperBoosterFactory,
+	isPaperBoosterFactoryAvailable,
 } from "./BoosterFactory.js";
 import JumpstartBoosters from "./data/JumpstartBoosters.json" assert { type: "json" };
 import JumpstartHHBoosters from "./data/JumpstartHHBoosters.json" assert { type: "json" };
@@ -514,7 +515,7 @@ export class Session implements IIndexable {
 		// Standard draft boosters
 		const targets = options?.targets ?? this.getBoosterContent();
 
-		const BoosterFactoryOptions = {
+		const boosterFactoryOptions = {
 			foil: this.foil,
 			colorBalance: this.colorBalance,
 			mythicPromotion: this.mythicPromotion,
@@ -524,24 +525,11 @@ export class Session implements IIndexable {
 
 		let defaultFactory: IBoosterFactory | null = null;
 
-		const getBoosterFactory = function (
-			set: string | null,
-			cardPool: SlotedCardPool,
-			landSlot: BasicLandSlot | null,
-			options: Options
-		) {
-			const localOptions = Object.assign({ foilRate: getSetFoilRate(set) }, options);
-			// Check for a special booster factory
-			if (set && set in SetSpecificFactories)
-				return new SetSpecificFactories[set](cardPool, landSlot, localOptions);
-			return new BoosterFactory(cardPool, landSlot, localOptions);
-		};
-
 		const customBoosters = options?.customBoosters ?? this.customBoosters; // Use override value if provided via options
 		const boosterSpecificRules = options.useCustomBoosters && customBoosters.some((v: string) => v !== "");
 		const acceptPaperBoosterFactories =
 			!this.useBoosterContent &&
-			BoosterFactoryOptions.mythicPromotion &&
+			this.mythicPromotion &&
 			!this.maxDuplicates &&
 			this.unrestrictedCardPool();
 		// Prefer collation from taw/magic-sealed-data for these sets when possible
@@ -555,40 +543,12 @@ export class Session implements IIndexable {
 				isPaperBoosterFactoryAvailable(set)
 			);
 		};
-		const isPaperBoosterFactoryAvailable = (set: string) => {
-			const excludedSets = ["mh2"]; // Workaround for sets failing our tests (we already have a working implementation anyway, and I don't want to debug it honestly.)
-			if (["mb1_convention_2019", "mb1_convention_2021"].includes(set)) return true;
-			return (
-				(set in PaperBoosterFactories || `${set}-arena` in PaperBoosterFactories) && !excludedSets.includes(set)
-			);
-		};
-		const getPaperBoosterFactory = (set: string) => {
-			if (set === "mb1_convention_2019") return PaperBoosterFactories["cmb1"](BoosterFactoryOptions);
-			if (set === "mb1_convention_2021") return PaperBoosterFactories["cmb2"](BoosterFactoryOptions);
-
-			// FIXME: Collation data has arena/paper variants, but isn't perfect right now, for example:
-			//   - Paper IKO has promo versions of the cards that are not available on Arena (as separate cards at least, and with proper collector number), preventing to always rely on the paper collation by default.
-			//   - Arena ZNR doesn't have the MDFC requirement properly implemented, preventing to systematically switch to arena collation when available.
-			// Hacking this in for now by forcing arena collation for affected sets.
-			if (["iko", "klr", "akr"].includes(set))
-				return PaperBoosterFactories[`${set}-arena`](BoosterFactoryOptions);
-
-			return PaperBoosterFactories[set](BoosterFactoryOptions);
-
-			// Proper-ish implementation:
-			/*
-			// Is Arena Collation available?              Is it the preferred choice, or our only one?                           MTGA collations don't have foil sheets.
-			if(`${set}-arena` in PaperBoosterFactories && (this.preferredCollation === 'MTGA' || !(set in PaperBoosterFactories) && !this.foil))
-				return PaperBoosterFactories[`${set}-arena`](BoosterFactoryOptions);
-			return PaperBoosterFactories[set](BoosterFactoryOptions);
-			*/
-		};
 
 		// If the default rule will be used, initialize it
 		if (!options?.useCustomBoosters || customBoosters.some((v: string) => v === "")) {
 			// Use PaperBoosterFactory if possible (avoid computing cardPoolByRarity in this case)
 			if (this.setRestriction.length === 1 && usePaperBoosterFactory(this.setRestriction[0])) {
-				defaultFactory = getPaperBoosterFactory(this.setRestriction[0]);
+				defaultFactory = getPaperBoosterFactory(this.setRestriction[0], boosterFactoryOptions);
 			} else {
 				const localCollection = this.cardPoolByRarity();
 				let defaultLandSlot = null;
@@ -598,7 +558,7 @@ export class Session implements IIndexable {
 					this.setRestriction.length === 1 ? this.setRestriction[0] : null,
 					localCollection,
 					defaultLandSlot,
-					BoosterFactoryOptions
+					boosterFactoryOptions
 				);
 				// Make sure we have enough cards
 				for (const slot of ["common", "uncommon", "rare"]) {
@@ -628,6 +588,7 @@ export class Session implements IIndexable {
 			}
 			return boosters;
 		}
+
 		// Booster specific rules
 		const boosterFactories = [];
 		const usedSets: { [set: string]: IBoosterFactory } = {};
@@ -670,7 +631,7 @@ export class Session implements IIndexable {
 			if (!usedSets[boosterSet]) {
 				// Use the corresponding PaperBoosterFactories if possible (is available and of the excepted size when addLandSlot is needed)
 				if ((!addLandSlot || PaperBoosterSizes[boosterSet] === 15) && usePaperBoosterFactory(boosterSet)) {
-					usedSets[boosterSet] = getPaperBoosterFactory(boosterSet);
+					usedSets[boosterSet] = getPaperBoosterFactory(boosterSet, boosterFactoryOptions);
 				} else {
 					// As booster distribution and sets can be randomized, we have to make sure that every booster are of the same size: We'll use basic land slot if we have to.
 					const landSlot =
@@ -685,13 +646,10 @@ export class Session implements IIndexable {
 						boosterSet,
 						this.setByRarity(boosterSet),
 						landSlot,
-						BoosterFactoryOptions
+						boosterFactoryOptions
 					);
 					// Check if we have enough card, considering maxDuplicate is a limiting factor
-					const multiplier = customBoosters.reduce(
-						(a: number, v: string) => (v == boosterSet ? a + 1 : a),
-						0
-					);
+					const multiplier = customBoosters.reduce((a, v) => (v == boosterSet ? a + 1 : a), 0);
 					for (const slot of ["common", "uncommon", "rare"]) {
 						if (
 							countCards((usedSets[boosterSet] as BoosterFactory).cardPool[slot]) <
