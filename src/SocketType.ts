@@ -216,7 +216,7 @@ export interface ClientToServerEvents {
 	chatMessage: (message: { author: string; text: string; timestamp: number }) => void;
 	setReady: (readyState: ReadyState) => void;
 	pickCard: (
-		data: { pickedCards: Array<number>; burnedCards: Array<number> },
+		data: { pickedCards: Array<number>; burnedCards: Array<number>; special?: { useCogworkLibrarian?: boolean } },
 		ack: (result: SocketAck) => void
 	) => void;
 	gridDraftPick: (choice: number, ack: (result: SocketAck) => void) => void;

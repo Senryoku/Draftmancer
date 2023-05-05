@@ -29,6 +29,7 @@ import { HousmanDraftSyncData } from "@/HousmanDraft";
 import { minesweeperApplyDiff } from "../../src/MinesweeperDraftTypes";
 import Constants, { CubeDescription } from "../../src/Constants";
 import { CardColor } from "../../src/CardTypes";
+import { CogworkLibrarianOracleID } from "../../src/Conspiracy";
 
 import io, { Socket } from "socket.io-client";
 import { toRaw, defineComponent, defineAsyncComponent } from "vue";
@@ -354,6 +355,7 @@ export default defineComponent({
 			pickInFlight: false,
 			selectedCards: [] as UniqueCard[],
 			burningCards: [] as UniqueCard[],
+			useCogworkLibrarian: false, // If true, next pick will exchange a Cogwork Librarian from the player's card pool for a additional pick.
 			// Brewing (deck and sideboard should not be modified directly, have to
 			// stay in sync with their CardPool display)
 			deck: [] as UniqueCard[],
@@ -1371,8 +1373,9 @@ export default defineComponent({
 		},
 		selectCard(e: Event | null, c: UniqueCard) {
 			if (!this.selectedCards.includes(c)) {
-				if (this.selectedCards.length === this.cardsToPick) this.selectedCards.shift();
 				this.selectedCards.push(c);
+				while (this.selectedCards.length > 0 && this.selectedCards.length > this.cardsToPick)
+					this.selectedCards.shift();
 				this.restoreCard(null, c);
 			}
 		},
@@ -1491,6 +1494,8 @@ export default defineComponent({
 				const toSideboard = options?.toSideboard;
 				const cUIDs = this.selectedCards.map((c) => c.uniqueID);
 
+				const onSuccess: (() => void)[] = [];
+
 				const ack = (answer: SocketAck) => {
 					this.pickInFlight = false;
 					if (answer.code !== 0) {
@@ -1499,6 +1504,7 @@ export default defineComponent({
 						if (toSideboard) for (let cuid of cUIDs) this.socket.emit("moveCard", cuid, "side");
 						this.selectedCards = [];
 						this.burningCards = [];
+						for (const callback of onSuccess) callback();
 					}
 				};
 
@@ -1510,11 +1516,27 @@ export default defineComponent({
 					);
 					this.draftingState = DraftState.RochesterWaiting;
 				} else {
+					let special;
+					if (this.hasCogworkLibrarian && this.useCogworkLibrarian) {
+						special = { useCogworkLibrarian: true };
+						onSuccess.push(() => {
+							let index = this.deck.findIndex((c) => c.oracle_id === CogworkLibrarianOracleID);
+							if (index >= 0) this.deck.splice(index, 1);
+							else {
+								index = this.sideboard.findIndex((c) => c.oracle_id === CogworkLibrarianOracleID);
+								if (index >= 0) this.sideboard.splice(index, 1);
+								else fireToast("error", "Could not find your Cogwork Librarian...");
+							}
+							this.useCogworkLibrarian = false;
+						});
+					}
+
 					this.socket.emit(
 						"pickCard",
 						{
 							pickedCards: this.selectedCards.map((c) => this.booster.findIndex((c2) => c === c2)),
 							burnedCards: this.burningCards.map((c) => this.booster.findIndex((c2) => c === c2)),
+							special,
 						},
 						ack
 					);
@@ -3258,6 +3280,7 @@ export default defineComponent({
 			// than duplicating the logic here, but currently this is the only special case and I'm chosing the easier solution.
 			if (this.draftingState === DraftState.Picking && this.doubleMastersMode && this.pickNumber !== 0)
 				picksThisRound = 1;
+			if (this.hasCogworkLibrarian && this.useCogworkLibrarian) picksThisRound += 1;
 			return Math.min(picksThisRound, this.booster.length);
 		},
 		cardsToBurnThisRound(): number {
@@ -3335,6 +3358,12 @@ export default defineComponent({
 			return !isEmpty(this.collection);
 		},
 
+		hasCogworkLibrarian(): boolean {
+			return (
+				this.deck.some((c) => c.oracle_id === CogworkLibrarianOracleID) ||
+				this.sideboard.some((c) => c.oracle_id === CogworkLibrarianOracleID)
+			);
+		},
 		colorsInDeck(): ReturnType<typeof this.colorsInCardPool> {
 			return this.colorsInCardPool(this.deck);
 		},
@@ -3536,6 +3565,13 @@ export default defineComponent({
 			handler() {
 				this.updateAutoLands();
 			},
+		},
+		useCogworkLibrarian() {
+			// Deselect cards if needed.
+			if (!this.useCogworkLibrarian) {
+				while (this.selectedCards.length > 0 && this.selectedCards.length > this.cardsToPick)
+					this.selectedCards.shift();
+			}
 		},
 		autoLand() {
 			this.updateAutoLands();
