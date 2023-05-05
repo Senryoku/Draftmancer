@@ -94,6 +94,6 @@ export class HousmanDraftState extends IDraftState implements TurnBased {
 
 export type HousmanDraftSyncData = ReturnType<HousmanDraftState["syncData"]>;
 
-export function isHousmanDraftState(s: IDraftState): s is HousmanDraftState {
+export function isHousmanDraftState(s: unknown): s is HousmanDraftState {
 	return s instanceof HousmanDraftState;
 }

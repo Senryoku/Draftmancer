@@ -52,3 +52,7 @@ export class WinstonDraftState extends IDraftState implements TurnBased {
 }
 
 export type WinstonDraftSyncData = ReturnType<WinstonDraftState["syncData"]>;
+
+export function isWinstonDraftState(s: unknown): s is WinstonDraftState {
+	return s instanceof WinstonDraftState;
+}

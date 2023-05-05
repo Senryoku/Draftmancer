@@ -40,13 +40,13 @@ import { DraftLog, DraftPick, GridDraftPick } from "./DraftLog.js";
 import { generateJHHBooster, JHHBooster, JHHBoosterPattern } from "./JumpstartHistoricHorizons.js";
 import { IDraftState } from "./IDraftState.js";
 import { MinesweeperCellState } from "./MinesweeperDraftTypes.js";
-import { MinesweeperDraftState } from "./MinesweeperDraft.js";
+import { MinesweeperDraftState, isMinesweeperDraftState } from "./MinesweeperDraft.js";
 import { assert } from "console";
-import { TeamSealedState } from "./TeamSealed.js";
+import { TeamSealedState, isTeamSealedState } from "./TeamSealed.js";
 import { GridDraftState, isGridDraftState } from "./GridDraft.js";
 import { DraftState, isDraftState } from "./DraftState.js";
-import { RochesterDraftState } from "./RochesterDraft.js";
-import { WinstonDraftState } from "./WinstonDraft.js";
+import { RochesterDraftState, isRochesterDraftState } from "./RochesterDraft.js";
+import { WinstonDraftState, isWinstonDraftState } from "./WinstonDraft.js";
 import { ServerToClientEvents } from "./SocketType";
 import Constants, { BasicLandNames } from "./Constants.js";
 import { SessionsSettingsProps } from "./Session/SessionProps.js";
@@ -56,7 +56,7 @@ import { isRotisserieDraftState, RotisserieDraftStartOptions, RotisserieDraftSta
 import { parseLine } from "./parseCardList.js";
 import { WinchesterDraftState, isWinchesterDraftState } from "./WinchesterDraft.js";
 import { HousmanDraftState, isHousmanDraftState } from "./HousmanDraft.js";
-import { SolomonDraftState } from "./SolomonDraft.js";
+import { SolomonDraftState, isSolomonDraftState } from "./SolomonDraft.js";
 
 export class Session implements IIndexable {
 	id: SessionID;
@@ -528,10 +528,7 @@ export class Session implements IIndexable {
 		const customBoosters = options?.customBoosters ?? this.customBoosters; // Use override value if provided via options
 		const boosterSpecificRules = options.useCustomBoosters && customBoosters.some((v: string) => v !== "");
 		const acceptPaperBoosterFactories =
-			!this.useBoosterContent &&
-			this.mythicPromotion &&
-			!this.maxDuplicates &&
-			this.unrestrictedCardPool();
+			!this.useBoosterContent && this.mythicPromotion && !this.maxDuplicates && this.unrestrictedCardPool();
 		// Prefer collation from taw/magic-sealed-data for these sets when possible
 		const setsWithPreferredPaperFactory = [
 			"dbl", // Our implementation uses cards from mid and vow, not dbl (which might be desirable... but it's less accurate)
@@ -776,6 +773,7 @@ export class Session implements IIndexable {
 	}
 
 	endWinstonDraft() {
+		if (!this.drafting || !isWinstonDraftState(this.draftState)) return;
 		logSession("WinstonDraft", this);
 		this.finalizeLogs();
 		this.sendLogs();
@@ -784,7 +782,8 @@ export class Session implements IIndexable {
 	}
 
 	winstonNextRound() {
-		const s = this.draftState as WinstonDraftState;
+		const s = this.draftState;
+		if (!this.drafting || !isWinstonDraftState(s)) return;
 		++s.round;
 		s.currentPile = 0;
 		while (s.currentPile < 3 && !s.piles[s.currentPile].length) ++s.currentPile;
@@ -800,8 +799,7 @@ export class Session implements IIndexable {
 
 	winstonSkipPile(): SocketAck {
 		const s = this.draftState;
-		if (!this.drafting || !s || !(s instanceof WinstonDraftState))
-			return new SocketError("This session is not drafting.");
+		if (!this.drafting || !isWinstonDraftState(s)) return new SocketError("This session is not drafting.");
 		// If the card pool is empty, make sure there is another pile to pick
 		if (
 			!s.cardPool.length &&
@@ -834,8 +832,8 @@ export class Session implements IIndexable {
 	}
 
 	winstonTakePile() {
-		const s = this.draftState as WinstonDraftState;
-		if (!this.drafting || !s) return false;
+		const s = this.draftState;
+		if (!this.drafting || !isWinstonDraftState(s)) return false;
 		this.draftLog?.users[s.currentPlayer()].picks.push({
 			pickedPile: s.currentPile,
 			piles: [...s.piles],
@@ -883,6 +881,7 @@ export class Session implements IIndexable {
 	}
 
 	endWinchesterDraft() {
+		if (!this.drafting || !isWinchesterDraftState(this.draftState)) return;
 		logSession("WinchesterDraft", this);
 		this.finalizeLogs();
 		this.sendLogs();
@@ -892,7 +891,7 @@ export class Session implements IIndexable {
 
 	winchesterDraftPick(pickedColumn: number): SocketAck {
 		const s = this.draftState;
-		if (!this.drafting || !s || !isWinchesterDraftState(s)) return new SocketError("Not drafting.");
+		if (!this.drafting || !isWinchesterDraftState(s)) return new SocketError("Not drafting.");
 		if (pickedColumn < 0 || pickedColumn >= s.piles.length || s.piles[pickedColumn].length === 0)
 			return new SocketError("Invalid column.");
 
@@ -984,6 +983,7 @@ export class Session implements IIndexable {
 	}
 
 	endHousmanDraft() {
+		if (!this.drafting || !isHousmanDraftState(this.draftState)) return;
 		logSession("HousmanDraft", this);
 		this.sendLogs();
 		this.forUsers((uid) => Connections[uid].socket.emit("housmanDraftEnd"));
@@ -992,7 +992,7 @@ export class Session implements IIndexable {
 
 	housmanDraftPick(handIndex: number, revealedCardsIndex: number): SocketAck {
 		const s = this.draftState;
-		if (!this.drafting || !s || !isHousmanDraftState(s)) return new SocketError("Not drafting.");
+		if (!this.drafting || !isHousmanDraftState(s)) return new SocketError("Not drafting.");
 		if (
 			handIndex < 0 ||
 			handIndex >= s.handSize ||
@@ -1084,6 +1084,7 @@ export class Session implements IIndexable {
 	}
 
 	endGridDraft() {
+		if (!this.drafting || !isGridDraftState(this.draftState)) return;
 		logSession("GridDraft", this);
 		this.finalizeLogs();
 		this.sendLogs();
@@ -1093,7 +1094,7 @@ export class Session implements IIndexable {
 
 	gridDraftNextRound() {
 		const s = this.draftState;
-		if (!this.drafting || !s || !isGridDraftState(s)) return;
+		if (!this.drafting || !isGridDraftState(s)) return;
 
 		++s.round;
 		// Refill Booster after the first pick at 3 players
@@ -1125,7 +1126,7 @@ export class Session implements IIndexable {
 
 	gridDraftPick(choice: number): SocketAck {
 		const s = this.draftState;
-		if (!this.drafting || !s || !isGridDraftState(s)) return new SocketError("Not drafting");
+		if (!this.drafting || !isGridDraftState(s)) return new SocketError("Not drafting");
 
 		const log: GridDraftPick = { pick: [], booster: s.boosters[0].map((c) => (c ? c.id : null)) };
 
@@ -1189,7 +1190,7 @@ export class Session implements IIndexable {
 
 	endRochesterDraft(): void {
 		const s = this.draftState;
-		if (!this.drafting || !s || !(s instanceof RochesterDraftState)) return;
+		if (!this.drafting || !isRochesterDraftState(s)) return;
 		logSession("RochesterDraft", this);
 		for (const uid of this.users) Connections[uid].socket.emit("rochesterDraftEnd");
 		this.finalizeLogs();
@@ -1199,7 +1200,7 @@ export class Session implements IIndexable {
 
 	rochesterDraftNextRound(): void {
 		const s = this.draftState;
-		if (!this.drafting || !s || !(s instanceof RochesterDraftState)) return;
+		if (!this.drafting || !isRochesterDraftState(s)) return;
 		// Empty booster, open the next one
 		if (s.boosters[0].length === 0) {
 			s.boosters.shift();
@@ -1218,8 +1219,8 @@ export class Session implements IIndexable {
 	}
 
 	rochesterDraftPick(idx: number) {
-		const s = this.draftState as RochesterDraftState;
-		if (!this.drafting || !s) return false;
+		const s = this.draftState;
+		if (!this.drafting || !isRochesterDraftState(s)) return false;
 
 		Connections[s.currentPlayer()].pickedCards.main.push(s.boosters[0][idx]);
 
@@ -1308,7 +1309,7 @@ export class Session implements IIndexable {
 
 	endRotisserieDraft(): SocketAck {
 		const s = this.draftState;
-		if (!this.drafting || !s || !isRotisserieDraftState(s))
+		if (!this.drafting || !isRotisserieDraftState(s))
 			return new SocketError("No active Rotisserie Draft in this session.");
 
 		logSession("RotisserieDraft", this);
@@ -1321,7 +1322,7 @@ export class Session implements IIndexable {
 
 	rotisserieDraftPick(uniqueID: UniqueCardID): SocketAck {
 		const s = this.draftState;
-		if (!this.drafting || !s || !isRotisserieDraftState(s))
+		if (!this.drafting || !isRotisserieDraftState(s))
 			return new SocketError("No Rotisserie Draft in progress in this session.");
 
 		const card = s.pick(uniqueID);
@@ -1412,8 +1413,8 @@ export class Session implements IIndexable {
 	}
 
 	minesweeperDraftPick(userID: UserID, row: number, col: number): SocketAck {
-		const s = this.draftState as MinesweeperDraftState;
-		if (!this.drafting || !s)
+		const s = this.draftState;
+		if (!this.drafting || !isMinesweeperDraftState(s))
 			return new SocketError("Not Playing", "There's no Minesweeper Draft running on this session.");
 		const cell = s.grid().get(row, col);
 		if (!cell)
@@ -1458,8 +1459,8 @@ export class Session implements IIndexable {
 	}
 
 	endMinesweeperDraft(options: { immediate?: boolean } = {}): void {
-		const s = this.draftState as MinesweeperDraftState;
-		if (!this.drafting || !s) return;
+		const s = this.draftState;
+		if (!this.drafting || !isMinesweeperDraftState(s)) return;
 		logSession("MinesweeperDraft", this);
 		for (const uid of this.users) Connections[uid].socket.emit("minesweeperDraftEnd", options);
 		this.finalizeLogs();
@@ -1526,7 +1527,7 @@ export class Session implements IIndexable {
 
 	solomonDraftOrganize(piles: [UniqueCardID[], UniqueCardID[]]): SocketAck {
 		const s = this.draftState;
-		if (!this.drafting || !s || !(s instanceof SolomonDraftState))
+		if (!this.drafting || !isSolomonDraftState(s))
 			return new SocketError("Not Playing", "There's no Solomon Draft running on this session.");
 
 		const r = s.reorganize(piles);
@@ -1539,7 +1540,7 @@ export class Session implements IIndexable {
 
 	solomonDraftConfirmPiles(): SocketAck {
 		const s = this.draftState;
-		if (!this.drafting || !s || !(s instanceof SolomonDraftState))
+		if (!this.drafting || !isSolomonDraftState(s))
 			return new SocketError("Not Playing", "There's no Solomon Draft running on this session.");
 
 		const r = s.confirmPiles();
@@ -1553,7 +1554,7 @@ export class Session implements IIndexable {
 
 	solomonDraftPick(pileIdx: 0 | 1): SocketAck {
 		const s = this.draftState;
-		if (!this.drafting || !s || !(s instanceof SolomonDraftState))
+		if (!this.drafting || !isSolomonDraftState(s))
 			return new SocketError("Not Playing", "There's no Solomon Draft running on this session.");
 
 		const r = s.pick(pileIdx);
@@ -1574,7 +1575,7 @@ export class Session implements IIndexable {
 
 	endSolomonDraft(immediate?: boolean): SocketAck {
 		const s = this.draftState;
-		if (!this.drafting || !s || !(s instanceof SolomonDraftState))
+		if (!this.drafting || !isSolomonDraftState(s))
 			return new SocketError("Not Playing", "There's no Solomon Draft running on this session.");
 
 		logSession("SolomonDraft", this);
@@ -1674,8 +1675,8 @@ export class Session implements IIndexable {
 
 	// Pass a booster to the next player at the table
 	passBooster(booster: Array<UniqueCard>, userID: UserID) {
-		const s = this.draftState as DraftState;
-		if (!s) return;
+		const s = this.draftState;
+		if (!isDraftState(s)) return;
 
 		// Booster is empty or the remaining cards have to be burned
 		if (booster.length <= Math.max(0, this.discardRemainingCardsAt)) {
@@ -1713,10 +1714,8 @@ export class Session implements IIndexable {
 	}
 
 	async pickCard(userID: UserID, pickedCards: Array<number>, burnedCards: Array<number>) {
-		if (!this.drafting || this.draftState?.type !== "draft")
-			return new SocketError("This session is not drafting.");
-
-		const s = this.draftState as DraftState;
+		const s = this.draftState;
+		if (!this.drafting || !isDraftState(s)) return new SocketError("This session is not drafting.");
 
 		const reportError = (err: string) => {
 			console.error(err);
@@ -1813,7 +1812,7 @@ export class Session implements IIndexable {
 	// Restart a pick chain if necessary
 	startBotPickChain(userID: UserID) {
 		const s = this.draftState;
-		if (!s || !isDraftState(s)) return;
+		if (!isDraftState(s)) return;
 		if (!s.players[userID]) {
 			console.error(`Session.startBotPickChain Error: Invalid userID '${userID}'. Valid players:`, s.players);
 			console.error(`Session owner: ${this.owner}, users: `, this.users);
@@ -1836,7 +1835,7 @@ export class Session implements IIndexable {
 	// doBotPick will recursively call itself until there's no booster available. Chain can be restarted by neighbouring calls (see passBooster).
 	async doBotPick(userID: UserID): Promise<void> {
 		const s = this.draftState;
-		if (!s || !isDraftState(s)) return;
+		if (!isDraftState(s)) return;
 
 		assert(s.players[userID].botPickInFlight, "Error: Call to doBotPick with botPickInFlight not set to true.");
 		assert(s.players[userID].boosters.length > 0, "Error: Call to doBotPick with no boosters.");
@@ -1999,8 +1998,8 @@ export class Session implements IIndexable {
 	}
 
 	distributeBoosters() {
-		if (this.draftState?.type !== "draft") return;
-		const s = this.draftState as DraftState;
+		const s = this.draftState;
+		if (!isDraftState(s)) return;
 
 		const totalVirtualPlayers = this.getVirtualPlayersCount();
 
@@ -2059,8 +2058,8 @@ export class Session implements IIndexable {
 	}
 
 	checkDraftRoundEnd() {
-		if (!(this.draftState instanceof DraftState)) return false;
-		const s = this.draftState as DraftState;
+		const s = this.draftState;
+		if (!isDraftState(s)) return false;
 		if ([...Object.values(s.players)].every((p) => p.boosters.length === 0)) {
 			++s.boosterNumber;
 			this.distributeBoosters();
@@ -2080,7 +2079,7 @@ export class Session implements IIndexable {
 			})
 		);
 
-		if (this.draftState instanceof DraftState) {
+		if (isDraftState(this.draftState)) {
 			if (!this.draftPaused) this.resumeCountdowns();
 			// Restart bot pick chains
 			for (const uid in this.draftState.players)
@@ -2091,8 +2090,8 @@ export class Session implements IIndexable {
 	}
 
 	endDraft() {
-		if (!this.drafting) return;
-		const s = this.draftState as DraftState;
+		const s = this.draftState;
+		if (!isDraftState(s)) return;
 
 		// Allow other callbacks (like distributeBoosters) to finish before proceeding (actually an issue in tests).
 		process.nextTick(() => {
@@ -2158,13 +2157,13 @@ export class Session implements IIndexable {
 
 		this.draftPaused = true;
 
-		if (this.draftState instanceof DraftState) this.stopCountdowns();
+		this.stopCountdowns();
 		this.forUsers((u) => Connections[u]?.socket.emit("pauseDraft"));
 	}
 
 	resumeDraft() {
 		if (!this.drafting || !this.draftPaused) return;
-		if (this.draftState instanceof DraftState) this.resumeCountdowns();
+		this.resumeCountdowns();
 		this.draftPaused = false;
 		this.forUsers((u) => Connections[u]?.socket.emit("resumeDraft"));
 	}
@@ -2396,7 +2395,7 @@ export class Session implements IIndexable {
 	}
 
 	endTeamSealed() {
-		if (!this.drafting || this.draftState?.type !== "teamSealed") return;
+		if (!this.drafting || !isTeamSealedState(this.draftState)) return;
 		logSession("TeamSealed", this);
 		this.cleanDraftState();
 
@@ -2408,8 +2407,8 @@ export class Session implements IIndexable {
 	}
 
 	teamSealedPick(userID: UserID, cardUniqueID: UniqueCardID): SocketAck {
-		const state = this.draftState as TeamSealedState;
-		if (!state) return new SocketError("Not playing", "No Team Sealed active in this session.");
+		const state = this.draftState;
+		if (!isTeamSealedState(state)) return new SocketError("Not playing", "No Team Sealed active in this session.");
 		for (const teamPool of state.teamPools) {
 			if (teamPool.team.includes(userID)) {
 				const card = teamPool.cards.find((c) => c.uniqueID === cardUniqueID);
@@ -2523,7 +2522,7 @@ export class Session implements IIndexable {
 	reconnectUser(userID: UserID) {
 		if (!this.draftState) return;
 
-		if (!(this.draftState instanceof DraftState)) {
+		if (!isDraftState(this.draftState)) {
 			Connections[userID].pickedCards = this.disconnectedUsers[userID].pickedCards;
 			this.addUser(userID);
 
@@ -2599,7 +2598,7 @@ export class Session implements IIndexable {
 	}
 
 	async replaceDisconnectedPlayers() {
-		if (!this.drafting || !(this.draftState instanceof DraftState)) return;
+		if (!this.drafting || !isDraftState(this.draftState)) return;
 
 		console.warn(`Session ${this.id}: Replacing disconnected players with bots!`);
 
@@ -2618,7 +2617,7 @@ export class Session implements IIndexable {
 	}
 
 	startCountdowns() {
-		if (!(this.draftState instanceof DraftState)) return;
+		if (!this.drafting || !isDraftState(this.draftState)) return;
 		const s = this.draftState as DraftState;
 		for (const userID in s.players)
 			if (!s.players[userID].isBot && !this.isDisconnected(userID) && s.players[userID].boosters.length > 0)
@@ -2626,20 +2625,20 @@ export class Session implements IIndexable {
 	}
 
 	resumeCountdowns() {
-		if (!(this.draftState instanceof DraftState)) return;
-		const s = this.draftState as DraftState;
+		const s = this.draftState;
+		if (!this.drafting || !isDraftState(s)) return;
 		for (const userID in s.players)
 			if (!s.players[userID].isBot && !this.isDisconnected(userID) && s.players[userID].boosters.length > 0)
 				this.resumeCountdown(userID);
 	}
 
 	stopCountdowns() {
-		if (!(this.draftState instanceof DraftState)) return;
-		for (const userID in (this.draftState as DraftState).players) this.stopCountdown(userID);
+		if (!this.drafting || !isDraftState(this.draftState)) return;
+		for (const userID in this.draftState.players) this.stopCountdown(userID);
 	}
 
 	startCountdown(userID: UserID) {
-		if (!(this.draftState instanceof DraftState)) return;
+		if (!isDraftState(this.draftState)) return;
 		if (this.maxTimer === 0) {
 			Connections[userID]?.socket.emit("disableTimer");
 			return;
@@ -2657,7 +2656,7 @@ export class Session implements IIndexable {
 	}
 
 	resumeCountdown(userID: UserID) {
-		if (!(this.draftState instanceof DraftState)) return;
+		if (!isDraftState(this.draftState)) return;
 		const countdownInterval = ((this.draftState as DraftState).players[userID].countdownInterval = setInterval(
 			() => {
 				const s = this.draftState as DraftState;
@@ -2680,8 +2679,8 @@ export class Session implements IIndexable {
 	}
 
 	stopCountdown(userID: UserID) {
-		if (!(this.draftState instanceof DraftState)) return;
-		const s = this.draftState as DraftState;
+		const s = this.draftState;
+		if (!isDraftState(s)) return;
 		if (s?.players?.[userID]?.countdownInterval) {
 			clearInterval(s.players[userID].countdownInterval as NodeJS.Timeout);
 			s.players[userID].countdownInterval = null;
@@ -2689,7 +2688,7 @@ export class Session implements IIndexable {
 	}
 
 	syncCountdown(userID: UserID) {
-		if (!(this.draftState instanceof DraftState)) return;
+		if (!isDraftState(this.draftState)) return;
 		Connections[userID]?.socket.emit("timer", {
 			countdown: this.draftState.players[userID]?.timer,
 		});

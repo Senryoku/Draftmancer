@@ -181,6 +181,6 @@ export class SolomonDraftState extends IDraftState implements TurnBased {
 
 export type SolomonDraftSyncData = ReturnType<SolomonDraftState["syncData"]>;
 
-export function isSolomonDraftState(s: IDraftState): s is SolomonDraftState {
+export function isSolomonDraftState(s: unknown): s is SolomonDraftState {
 	return s instanceof SolomonDraftState;
 }

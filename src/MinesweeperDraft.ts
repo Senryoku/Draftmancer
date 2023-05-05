@@ -205,3 +205,7 @@ export class MinesweeperDraftState extends IDraftState implements TurnBased {
 		};
 	}
 }
+
+export function isMinesweeperDraftState(state: unknown): state is MinesweeperDraftState {
+	return state instanceof MinesweeperDraftState;
+}
