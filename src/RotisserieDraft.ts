@@ -65,7 +65,7 @@ export class RotisserieDraftState extends IDraftState implements TurnBased {
 	}
 }
 
-export function isRotisserieDraftState(obj: any): obj is RotisserieDraftState {
+export function isRotisserieDraftState(obj: unknown): obj is RotisserieDraftState {
 	return obj instanceof RotisserieDraftState;
 }
 

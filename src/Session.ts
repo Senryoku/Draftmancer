@@ -16,15 +16,16 @@ import {
 import { Cards, getUnique, BoosterCardsBySet, CardsBySet, MTGACardIDs, getCard } from "./Cards.js";
 import { IBot, fallbackToSimpleBots, isBot, MTGDraftBotParameters, MTGDraftBotsSetSpecializedModels } from "./Bot.js";
 import { computeHashes } from "./DeckHashes.js";
-import { BasicLandSlot, BasicLandSlots, SpecialLandSlots } from "./LandSlot.js";
+import { BasicLandSlots, SpecialLandSlots } from "./LandSlot.js";
 import {
 	BoosterFactory,
 	SetSpecificFactories,
-	PaperBoosterFactories,
 	DefaultBoosterTargets,
 	IBoosterFactory,
-	getSetFoilRate,
 	PaperBoosterSizes,
+	getBoosterFactory,
+	getPaperBoosterFactory,
+	isPaperBoosterFactoryAvailable,
 } from "./BoosterFactory.js";
 import JumpstartBoosters from "./data/JumpstartBoosters.json" assert { type: "json" };
 import JumpstartHHBoosters from "./data/JumpstartHHBoosters.json" assert { type: "json" };
@@ -39,13 +40,13 @@ import { DraftLog, DraftPick, GridDraftPick } from "./DraftLog.js";
 import { generateJHHBooster, JHHBooster, JHHBoosterPattern } from "./JumpstartHistoricHorizons.js";
 import { IDraftState } from "./IDraftState.js";
 import { MinesweeperCellState } from "./MinesweeperDraftTypes.js";
-import { MinesweeperDraftState } from "./MinesweeperDraft.js";
+import { MinesweeperDraftState, isMinesweeperDraftState } from "./MinesweeperDraft.js";
 import { assert } from "console";
-import { TeamSealedState } from "./TeamSealed.js";
+import { TeamSealedState, isTeamSealedState } from "./TeamSealed.js";
 import { GridDraftState, isGridDraftState } from "./GridDraft.js";
 import { DraftState, isDraftState } from "./DraftState.js";
-import { RochesterDraftState } from "./RochesterDraft.js";
-import { WinstonDraftState } from "./WinstonDraft.js";
+import { RochesterDraftState, isRochesterDraftState } from "./RochesterDraft.js";
+import { WinstonDraftState, isWinstonDraftState } from "./WinstonDraft.js";
 import { ServerToClientEvents } from "./SocketType";
 import Constants, { BasicLandNames } from "./Constants.js";
 import { SessionsSettingsProps } from "./Session/SessionProps.js";
@@ -55,7 +56,7 @@ import { isRotisserieDraftState, RotisserieDraftStartOptions, RotisserieDraftSta
 import { parseLine } from "./parseCardList.js";
 import { WinchesterDraftState, isWinchesterDraftState } from "./WinchesterDraft.js";
 import { HousmanDraftState, isHousmanDraftState } from "./HousmanDraft.js";
-import { SolomonDraftState } from "./SolomonDraft.js";
+import { SolomonDraftState, isSolomonDraftState } from "./SolomonDraft.js";
 
 export class Session implements IIndexable {
 	id: SessionID;
@@ -398,7 +399,6 @@ export class Session implements IIndexable {
 	// Compute user collections intersection (taking into account each user preferences)
 	collection(inBoosterOnly = true): CardPool {
 		const user_list = [...this.users];
-		let intersection = [];
 		const collection: CardPool = new Map();
 
 		const useCollection = [];
@@ -415,7 +415,7 @@ export class Session implements IIndexable {
 		else arrays.push([...Connections[user_list[0]].collection.keys()]);
 		for (let i = 1; i < user_list.length; ++i)
 			if (useCollection[i]) arrays.push([...Connections[user_list[i]].collection.keys()]);
-		intersection = arrayIntersect(arrays);
+		let intersection = arrayIntersect(arrays);
 
 		// Compute the minimum count of each remaining card
 		for (const c of intersection) {
@@ -511,242 +511,187 @@ export class Session implements IIndexable {
 				options
 			);
 			return generateBoosterFromCustomCardList(this.customCardList, boosterQuantity, cclOptions);
-		} else {
-			// Standard draft boosters
-			const targets = options?.targets ?? this.getBoosterContent();
+		}
+		// Standard draft boosters
+		const targets = options?.targets ?? this.getBoosterContent();
 
-			const BoosterFactoryOptions = {
-				foil: this.foil,
-				colorBalance: this.colorBalance,
-				mythicPromotion: this.mythicPromotion,
-				maxDuplicates: this.maxDuplicates,
-				session: this,
-			};
+		const boosterFactoryOptions = {
+			foil: this.foil,
+			colorBalance: this.colorBalance,
+			mythicPromotion: this.mythicPromotion,
+			maxDuplicates: this.maxDuplicates,
+			session: this,
+		};
 
-			let defaultFactory: IBoosterFactory | null = null;
+		let defaultFactory: IBoosterFactory | null = null;
 
-			const getBoosterFactory = function (
-				set: string | null,
-				cardPool: SlotedCardPool,
-				landSlot: BasicLandSlot | null,
-				options: Options
-			) {
-				const localOptions = Object.assign({ foilRate: getSetFoilRate(set) }, options);
-				// Check for a special booster factory
-				if (set && set in SetSpecificFactories)
-					return new SetSpecificFactories[set](cardPool, landSlot, localOptions);
-				return new BoosterFactory(cardPool, landSlot, localOptions);
-			};
+		const customBoosters = options?.customBoosters ?? this.customBoosters; // Use override value if provided via options
+		const boosterSpecificRules = options.useCustomBoosters && customBoosters.some((v: string) => v !== "");
+		const acceptPaperBoosterFactories =
+			!this.useBoosterContent && this.mythicPromotion && !this.maxDuplicates && this.unrestrictedCardPool();
+		// Prefer collation from taw/magic-sealed-data for these sets when possible
+		const setsWithPreferredPaperFactory = [
+			"dbl", // Our implementation uses cards from mid and vow, not dbl (which might be desirable... but it's less accurate)
+		];
+		const usePaperBoosterFactory = (set: string) => {
+			return (
+				acceptPaperBoosterFactories &&
+				!(set in SetSpecificFactories && !setsWithPreferredPaperFactory.includes(set)) && // Prefer our implementation if available, barring some exceptions.
+				isPaperBoosterFactoryAvailable(set)
+			);
+		};
 
-			const customBoosters = options?.customBoosters ?? this.customBoosters; // Use override value if provided via options
-			const boosterSpecificRules = options.useCustomBoosters && customBoosters.some((v: string) => v !== "");
-			const acceptPaperBoosterFactories =
-				!this.useBoosterContent &&
-				BoosterFactoryOptions.mythicPromotion &&
-				!this.maxDuplicates &&
-				this.unrestrictedCardPool();
-			// Prefer collation from taw/magic-sealed-data for these sets when possible
-			const setsWithPreferredPaperFactory = [
-				"dbl", // Our implementation uses cards from mid and vow, not dbl (which might be desirable... but it's less accurate)
-			];
-			const usePaperBoosterFactory = (set: string) => {
-				return (
-					acceptPaperBoosterFactories &&
-					!(set in SetSpecificFactories && !setsWithPreferredPaperFactory.includes(set)) && // Prefer our implementation if available, barring some exceptions.
-					isPaperBoosterFactoryAvailable(set)
-				);
-			};
-			const isPaperBoosterFactoryAvailable = (set: string) => {
-				const excludedSets = ["mh2"]; // Workaround for sets failing our tests (we already have a working implementation anyway, and I don't want to debug it honestly.)
-				if (["mb1_convention_2019", "mb1_convention_2021"].includes(set)) return true;
-				return (
-					(set in PaperBoosterFactories || `${set}-arena` in PaperBoosterFactories) &&
-					!excludedSets.includes(set)
-				);
-			};
-			const getPaperBoosterFactory = (set: string) => {
-				if (set === "mb1_convention_2019") return PaperBoosterFactories["cmb1"](BoosterFactoryOptions);
-				if (set === "mb1_convention_2021") return PaperBoosterFactories["cmb2"](BoosterFactoryOptions);
-
-				// FIXME: Collation data has arena/paper variants, but isn't perfect right now, for example:
-				//   - Paper IKO has promo versions of the cards that are not available on Arena (as separate cards at least, and with proper collector number), preventing to always rely on the paper collation by default.
-				//   - Arena ZNR doesn't have the MDFC requirement properly implemented, preventing to systematically switch to arena collation when available.
-				// Hacking this in for now by forcing arena collation for affected sets.
-				if (["iko", "klr", "akr"].includes(set))
-					return PaperBoosterFactories[`${set}-arena`](BoosterFactoryOptions);
-				else return PaperBoosterFactories[set](BoosterFactoryOptions);
-
-				// Proper-ish implementation:
-				/*
-				// Is Arena Collation available?              Is it the preferred choice, or our only one?                           MTGA collations don't have foil sheets.
-				if(`${set}-arena` in PaperBoosterFactories && (this.preferredCollation === 'MTGA' || !(set in PaperBoosterFactories) && !this.foil))
-					return PaperBoosterFactories[`${set}-arena`](BoosterFactoryOptions);
-				return PaperBoosterFactories[set](BoosterFactoryOptions);
-				*/
-			};
-
-			// If the default rule will be used, initialize it
-			if (!options?.useCustomBoosters || customBoosters.some((v: string) => v === "")) {
-				// Use PaperBoosterFactory if possible (avoid computing cardPoolByRarity in this case)
-				if (this.setRestriction.length === 1 && usePaperBoosterFactory(this.setRestriction[0])) {
-					defaultFactory = getPaperBoosterFactory(this.setRestriction[0]);
-				} else {
-					const localCollection = this.cardPoolByRarity();
-					let defaultLandSlot = null;
-					if (this.setRestriction.length === 1 && this.setRestriction[0] in SpecialLandSlots)
-						defaultLandSlot = SpecialLandSlots[this.setRestriction[0]];
-					defaultFactory = getBoosterFactory(
-						this.setRestriction.length === 1 ? this.setRestriction[0] : null,
-						localCollection,
-						defaultLandSlot,
-						BoosterFactoryOptions
-					);
-					// Make sure we have enough cards
-					for (const slot of ["common", "uncommon", "rare"]) {
-						const card_count = countCards((defaultFactory as BoosterFactory).cardPool[slot]);
-						const card_target = targets[slot] * boosterQuantity;
-						if (card_count < card_target) {
-							const msg = `Not enough cards (${card_count}/${card_target} ${slot}s) in collection.`;
-							console.warn(msg);
-							return new MessageError(
-								"Error generating boosters",
-								`Not enough cards (${card_count}/${card_target} ${slot}s) in collection.`
-							);
-						}
-					}
-				}
-			}
-
-			const boosters: UniqueCard[][] = [];
-
-			// Simple case, generate all boosters using the default rule
-			if (!boosterSpecificRules) {
-				if (!defaultFactory) return new MessageError("Internal Error", "No default booster factory.");
-				for (let i = 0; i < boosterQuantity; ++i) {
-					const booster = defaultFactory.generateBooster(targets);
-					if (isMessageError(booster)) return booster;
-					boosters.push(booster);
-				}
-				return boosters;
+		// If the default rule will be used, initialize it
+		if (!options?.useCustomBoosters || customBoosters.some((v: string) => v === "")) {
+			// Use PaperBoosterFactory if possible (avoid computing cardPoolByRarity in this case)
+			if (this.setRestriction.length === 1 && usePaperBoosterFactory(this.setRestriction[0])) {
+				defaultFactory = getPaperBoosterFactory(this.setRestriction[0], boosterFactoryOptions);
 			} else {
-				// Booster specific rules
-				const boosterFactories = [];
-				const usedSets: { [set: string]: IBoosterFactory } = {};
-				const defaultBasics = BasicLandSlots["znr"]; // Arbitrary set of default basic lands if a specific set doesn't have them.
-
-				// Exceptions for inclusion of basic land slot: Commander Legends as the booster size will be wrong anyway, and TSR/STX/MH2/DBL/BRO that already have 15 cards.
-				const irregularSets = ["cmr", "tsr", "stx", "mh2", "dbl", "bro"];
-				// If randomized, we'll have to make sure all boosters are of the same size: Adding a land slot to the default rule.
-				const addLandSlot =
-					this.distributionMode !== "regular" || customBoosters.some((v: string) => v === "random");
-				if (
-					addLandSlot &&
-					defaultFactory &&
-					!(defaultFactory as BoosterFactory).landSlot &&
-					!(this.setRestriction.length === 1 && irregularSets.includes(this.setRestriction[0]))
-				)
-					(defaultFactory as BoosterFactory).landSlot =
-						this.setRestriction.length === 0 || !BasicLandSlots[this.setRestriction[0]]
-							? defaultBasics
-							: BasicLandSlots[this.setRestriction[0]];
-
-				let randomSetsPool: string[] = []; // 'Bag' to pick a random set from, avoiding duplicates until necessary
-
-				for (let i = 0; i < boosterQuantity; ++i) {
-					let boosterSet = customBoosters[Math.floor(i / playerCount) % customBoosters.length];
-					// No specific rules
-					if (boosterSet === "") {
-						boosterFactories.push(defaultFactory);
-					} else {
-						// "Random Set from Card Pool" in Chaos Draft
-						if (boosterSet === "random") {
-							// Refill the bag with all possible sets
-							if (randomSetsPool.length === 0)
-								randomSetsPool = [
-									...(this.setRestriction.length === 0 ? Constants.PrimarySets : this.setRestriction),
-								];
-							boosterSet = pickRandom(randomSetsPool);
-						}
-						// Compile necessary data for this set (Multiple boosters of the same set will share it)
-						if (!usedSets[boosterSet]) {
-							// Use the corresponding PaperBoosterFactories if possible (is available and of the excepted size when addLandSlot is needed)
-							if (
-								(!addLandSlot || PaperBoosterSizes[boosterSet] === 15) &&
-								usePaperBoosterFactory(boosterSet)
-							) {
-								usedSets[boosterSet] = getPaperBoosterFactory(boosterSet);
-							} else {
-								// As booster distribution and sets can be randomized, we have to make sure that every booster are of the same size: We'll use basic land slot if we have to.
-								const landSlot =
-									boosterSet in SpecialLandSlots
-										? SpecialLandSlots[boosterSet]
-										: addLandSlot && !irregularSets.includes(boosterSet)
-										? BasicLandSlots[boosterSet]
-											? BasicLandSlots[boosterSet]
-											: defaultBasics
-										: null;
-								usedSets[boosterSet] = getBoosterFactory(
-									boosterSet,
-									this.setByRarity(boosterSet),
-									landSlot,
-									BoosterFactoryOptions
-								);
-								// Check if we have enough card, considering maxDuplicate is a limiting factor
-								const multiplier = customBoosters.reduce(
-									(a: number, v: string) => (v == boosterSet ? a + 1 : a),
-									0
-								);
-								for (const slot of ["common", "uncommon", "rare"]) {
-									if (
-										countCards((usedSets[boosterSet] as BoosterFactory).cardPool[slot]) <
-										multiplier * playerCount * targets[slot]
-									) {
-										const msg = `Not enough (${slot}) cards in card pool for individual booster restriction '${boosterSet}'. Please check the Max. Duplicates setting.`;
-										console.warn(msg);
-										return new MessageError("Error generating boosters", msg);
-									}
-								}
-							}
-						}
-						boosterFactories.push(usedSets[boosterSet]);
-					}
-				}
-
-				// Implements distribution mode 'shufflePlayerBoosters'
-				if (this.distributionMode === "shufflePlayerBoosters") {
-					const chunkSize = Math.floor(boosterFactories.length / playerCount);
-					for (let i = 0; i < boosterFactories.length; i += chunkSize) {
-						shuffleArray(boosterFactories, i, i + chunkSize);
-					}
-				}
-
-				// Generate Boosters
-				for (let b = 0; b < boosterQuantity; ++b) {
-					const rule = boosterFactories[b];
-					if (!rule) return new MessageError("Internal Error");
-					const booster = rule?.generateBooster(targets);
-					if (isMessageError(booster)) return booster;
-					boosters.push(booster);
-				}
-
-				if (this.distributionMode === "shuffleBoosterPool") shuffleArray(boosters);
-
-				// Boosters within a round much be of the same length.
-				// For example CMR packs have a default length of 20 cards and may cause problems if boosters are shuffled.
-				if (this.distributionMode !== "regular" || customBoosters.some((v: string) => v === "random")) {
-					if (boosters.some((b) => b.length !== boosters[0].length)) {
-						const msg = `Inconsistent booster sizes`;
-						console.error(msg);
-						console.error(
-							boosters.map((b) => `Length: ${b.length}, First Card: (${b[0].set}) ${b[0].name}`)
+				const localCollection = this.cardPoolByRarity();
+				let defaultLandSlot = null;
+				if (this.setRestriction.length === 1 && this.setRestriction[0] in SpecialLandSlots)
+					defaultLandSlot = SpecialLandSlots[this.setRestriction[0]];
+				defaultFactory = getBoosterFactory(
+					this.setRestriction.length === 1 ? this.setRestriction[0] : null,
+					localCollection,
+					defaultLandSlot,
+					boosterFactoryOptions
+				);
+				// Make sure we have enough cards
+				for (const slot of ["common", "uncommon", "rare"]) {
+					const card_count = countCards((defaultFactory as BoosterFactory).cardPool[slot]);
+					const card_target = targets[slot] * boosterQuantity;
+					if (card_count < card_target) {
+						const msg = `Not enough cards (${card_count}/${card_target} ${slot}s) in collection.`;
+						console.warn(msg);
+						return new MessageError(
+							"Error generating boosters",
+							`Not enough cards (${card_count}/${card_target} ${slot}s) in collection.`
 						);
-						return new MessageError("Error generating boosters", msg);
 					}
 				}
-				return boosters;
 			}
 		}
-		return new MessageError("Internal Error");
+
+		const boosters: UniqueCard[][] = [];
+
+		// Simple case, generate all boosters using the default rule
+		if (!boosterSpecificRules) {
+			if (!defaultFactory) return new MessageError("Internal Error", "No default booster factory.");
+			for (let i = 0; i < boosterQuantity; ++i) {
+				const booster = defaultFactory.generateBooster(targets);
+				if (isMessageError(booster)) return booster;
+				boosters.push(booster);
+			}
+			return boosters;
+		}
+
+		// Booster specific rules
+		const boosterFactories = [];
+		const usedSets: { [set: string]: IBoosterFactory } = {};
+		const defaultBasics = BasicLandSlots["znr"]; // Arbitrary set of default basic lands if a specific set doesn't have them.
+
+		// Exceptions for inclusion of basic land slot: Commander Legends as the booster size will be wrong anyway, and TSR/STX/MH2/DBL/BRO that already have 15 cards.
+		const irregularSets = ["cmr", "tsr", "stx", "mh2", "dbl", "bro"];
+		// If randomized, we'll have to make sure all boosters are of the same size: Adding a land slot to the default rule.
+		const addLandSlot = this.distributionMode !== "regular" || customBoosters.some((v: string) => v === "random");
+		if (
+			addLandSlot &&
+			defaultFactory &&
+			!(defaultFactory as BoosterFactory).landSlot &&
+			!(this.setRestriction.length === 1 && irregularSets.includes(this.setRestriction[0]))
+		)
+			(defaultFactory as BoosterFactory).landSlot =
+				this.setRestriction.length === 0 || !BasicLandSlots[this.setRestriction[0]]
+					? defaultBasics
+					: BasicLandSlots[this.setRestriction[0]];
+
+		let randomSetsPool: string[] = []; // 'Bag' to pick a random set from, avoiding duplicates until necessary
+
+		for (let i = 0; i < boosterQuantity; ++i) {
+			let boosterSet = customBoosters[Math.floor(i / playerCount) % customBoosters.length];
+			// No specific rules
+			if (boosterSet === "") {
+				boosterFactories.push(defaultFactory);
+				continue;
+			}
+			// "Random Set from Card Pool" in Chaos Draft
+			if (boosterSet === "random") {
+				// Refill the bag with all possible sets
+				if (randomSetsPool.length === 0)
+					randomSetsPool = [
+						...(this.setRestriction.length === 0 ? Constants.PrimarySets : this.setRestriction),
+					];
+				boosterSet = pickRandom(randomSetsPool);
+			}
+			// Compile necessary data for this set (Multiple boosters of the same set will share it)
+			if (!usedSets[boosterSet]) {
+				// Use the corresponding PaperBoosterFactories if possible (is available and of the excepted size when addLandSlot is needed)
+				if ((!addLandSlot || PaperBoosterSizes[boosterSet] === 15) && usePaperBoosterFactory(boosterSet)) {
+					usedSets[boosterSet] = getPaperBoosterFactory(boosterSet, boosterFactoryOptions);
+				} else {
+					// As booster distribution and sets can be randomized, we have to make sure that every booster are of the same size: We'll use basic land slot if we have to.
+					const landSlot =
+						boosterSet in SpecialLandSlots
+							? SpecialLandSlots[boosterSet]
+							: addLandSlot && !irregularSets.includes(boosterSet)
+							? BasicLandSlots[boosterSet]
+								? BasicLandSlots[boosterSet]
+								: defaultBasics
+							: null;
+					usedSets[boosterSet] = getBoosterFactory(
+						boosterSet,
+						this.setByRarity(boosterSet),
+						landSlot,
+						boosterFactoryOptions
+					);
+					// Check if we have enough card, considering maxDuplicate is a limiting factor
+					const multiplier = customBoosters.reduce((a, v) => (v == boosterSet ? a + 1 : a), 0);
+					for (const slot of ["common", "uncommon", "rare"]) {
+						if (
+							countCards((usedSets[boosterSet] as BoosterFactory).cardPool[slot]) <
+							multiplier * playerCount * targets[slot]
+						) {
+							const msg = `Not enough (${slot}) cards in card pool for individual booster restriction '${boosterSet}'. Please check the Max. Duplicates setting.`;
+							console.warn(msg);
+							return new MessageError("Error generating boosters", msg);
+						}
+					}
+				}
+			}
+			boosterFactories.push(usedSets[boosterSet]);
+		}
+
+		// Implements distribution mode 'shufflePlayerBoosters'
+		if (this.distributionMode === "shufflePlayerBoosters") {
+			const chunkSize = Math.floor(boosterFactories.length / playerCount);
+			for (let i = 0; i < boosterFactories.length; i += chunkSize) {
+				shuffleArray(boosterFactories, i, i + chunkSize);
+			}
+		}
+
+		// Generate Boosters
+		for (let b = 0; b < boosterQuantity; ++b) {
+			const rule = boosterFactories[b];
+			if (!rule) return new MessageError("Internal Error");
+			const booster = rule?.generateBooster(targets);
+			if (isMessageError(booster)) return booster;
+			boosters.push(booster);
+		}
+
+		if (this.distributionMode === "shuffleBoosterPool") shuffleArray(boosters);
+
+		// Boosters within a round much be of the same length.
+		// For example CMR packs have a default length of 20 cards and may cause problems if boosters are shuffled.
+		if (this.distributionMode !== "regular" || customBoosters.some((v: string) => v === "random")) {
+			if (boosters.some((b) => b.length !== boosters[0].length)) {
+				const msg = `Inconsistent booster sizes`;
+				console.error(msg);
+				console.error(boosters.map((b) => `Length: ${b.length}, First Card: (${b[0].set}) ${b[0].name}`));
+				return new MessageError("Error generating boosters", msg);
+			}
+		}
+		return boosters;
 	}
 
 	// @return array of cards with the 5 original basic lands removed (does not remove Wastes, Basic Snow Lands, etc)
@@ -828,6 +773,7 @@ export class Session implements IIndexable {
 	}
 
 	endWinstonDraft() {
+		if (!this.drafting || !isWinstonDraftState(this.draftState)) return;
 		logSession("WinstonDraft", this);
 		this.finalizeLogs();
 		this.sendLogs();
@@ -836,7 +782,8 @@ export class Session implements IIndexable {
 	}
 
 	winstonNextRound() {
-		const s = this.draftState as WinstonDraftState;
+		const s = this.draftState;
+		if (!this.drafting || !isWinstonDraftState(s)) return;
 		++s.round;
 		s.currentPile = 0;
 		while (s.currentPile < 3 && !s.piles[s.currentPile].length) ++s.currentPile;
@@ -852,8 +799,7 @@ export class Session implements IIndexable {
 
 	winstonSkipPile(): SocketAck {
 		const s = this.draftState;
-		if (!this.drafting || !s || !(s instanceof WinstonDraftState))
-			return new SocketError("This session is not drafting.");
+		if (!this.drafting || !isWinstonDraftState(s)) return new SocketError("This session is not drafting.");
 		// If the card pool is empty, make sure there is another pile to pick
 		if (
 			!s.cardPool.length &&
@@ -886,8 +832,8 @@ export class Session implements IIndexable {
 	}
 
 	winstonTakePile() {
-		const s = this.draftState as WinstonDraftState;
-		if (!this.drafting || !s || !(s instanceof WinstonDraftState)) return false;
+		const s = this.draftState;
+		if (!this.drafting || !isWinstonDraftState(s)) return false;
 		this.draftLog?.users[s.currentPlayer()].picks.push({
 			pickedPile: s.currentPile,
 			piles: [...s.piles],
@@ -935,6 +881,7 @@ export class Session implements IIndexable {
 	}
 
 	endWinchesterDraft() {
+		if (!this.drafting || !isWinchesterDraftState(this.draftState)) return;
 		logSession("WinchesterDraft", this);
 		this.finalizeLogs();
 		this.sendLogs();
@@ -944,7 +891,7 @@ export class Session implements IIndexable {
 
 	winchesterDraftPick(pickedColumn: number): SocketAck {
 		const s = this.draftState;
-		if (!this.drafting || !s || !isWinchesterDraftState(s)) return new SocketError("Not drafting.");
+		if (!this.drafting || !isWinchesterDraftState(s)) return new SocketError("Not drafting.");
 		if (pickedColumn < 0 || pickedColumn >= s.piles.length || s.piles[pickedColumn].length === 0)
 			return new SocketError("Invalid column.");
 
@@ -1036,6 +983,7 @@ export class Session implements IIndexable {
 	}
 
 	endHousmanDraft() {
+		if (!this.drafting || !isHousmanDraftState(this.draftState)) return;
 		logSession("HousmanDraft", this);
 		this.sendLogs();
 		this.forUsers((uid) => Connections[uid].socket.emit("housmanDraftEnd"));
@@ -1044,7 +992,7 @@ export class Session implements IIndexable {
 
 	housmanDraftPick(handIndex: number, revealedCardsIndex: number): SocketAck {
 		const s = this.draftState;
-		if (!this.drafting || !s || !isHousmanDraftState(s)) return new SocketError("Not drafting.");
+		if (!this.drafting || !isHousmanDraftState(s)) return new SocketError("Not drafting.");
 		if (
 			handIndex < 0 ||
 			handIndex >= s.handSize ||
@@ -1136,6 +1084,7 @@ export class Session implements IIndexable {
 	}
 
 	endGridDraft() {
+		if (!this.drafting || !isGridDraftState(this.draftState)) return;
 		logSession("GridDraft", this);
 		this.finalizeLogs();
 		this.sendLogs();
@@ -1145,7 +1094,7 @@ export class Session implements IIndexable {
 
 	gridDraftNextRound() {
 		const s = this.draftState;
-		if (!this.drafting || !s || !isGridDraftState(s)) return;
+		if (!this.drafting || !isGridDraftState(s)) return;
 
 		++s.round;
 		// Refill Booster after the first pick at 3 players
@@ -1177,7 +1126,7 @@ export class Session implements IIndexable {
 
 	gridDraftPick(choice: number): SocketAck {
 		const s = this.draftState;
-		if (!this.drafting || !s || !isGridDraftState(s)) return new SocketError("Not drafting");
+		if (!this.drafting || !isGridDraftState(s)) return new SocketError("Not drafting");
 
 		const log: GridDraftPick = { pick: [], booster: s.boosters[0].map((c) => (c ? c.id : null)) };
 
@@ -1241,7 +1190,7 @@ export class Session implements IIndexable {
 
 	endRochesterDraft(): void {
 		const s = this.draftState;
-		if (!this.drafting || !s || !(s instanceof RochesterDraftState)) return;
+		if (!this.drafting || !isRochesterDraftState(s)) return;
 		logSession("RochesterDraft", this);
 		for (const uid of this.users) Connections[uid].socket.emit("rochesterDraftEnd");
 		this.finalizeLogs();
@@ -1251,7 +1200,7 @@ export class Session implements IIndexable {
 
 	rochesterDraftNextRound(): void {
 		const s = this.draftState;
-		if (!this.drafting || !s || !(s instanceof RochesterDraftState)) return;
+		if (!this.drafting || !isRochesterDraftState(s)) return;
 		// Empty booster, open the next one
 		if (s.boosters[0].length === 0) {
 			s.boosters.shift();
@@ -1270,8 +1219,8 @@ export class Session implements IIndexable {
 	}
 
 	rochesterDraftPick(idx: number) {
-		const s = this.draftState as RochesterDraftState;
-		if (!this.drafting || !s || !(s instanceof RochesterDraftState)) return false;
+		const s = this.draftState;
+		if (!this.drafting || !isRochesterDraftState(s)) return false;
 
 		Connections[s.currentPlayer()].pickedCards.main.push(s.boosters[0][idx]);
 
@@ -1360,7 +1309,7 @@ export class Session implements IIndexable {
 
 	endRotisserieDraft(): SocketAck {
 		const s = this.draftState;
-		if (!this.drafting || !s || !isRotisserieDraftState(s))
+		if (!this.drafting || !isRotisserieDraftState(s))
 			return new SocketError("No active Rotisserie Draft in this session.");
 
 		logSession("RotisserieDraft", this);
@@ -1373,7 +1322,7 @@ export class Session implements IIndexable {
 
 	rotisserieDraftPick(uniqueID: UniqueCardID): SocketAck {
 		const s = this.draftState;
-		if (!this.drafting || !s || !isRotisserieDraftState(s))
+		if (!this.drafting || !isRotisserieDraftState(s))
 			return new SocketError("No Rotisserie Draft in progress in this session.");
 
 		const card = s.pick(uniqueID);
@@ -1464,8 +1413,8 @@ export class Session implements IIndexable {
 	}
 
 	minesweeperDraftPick(userID: UserID, row: number, col: number): SocketAck {
-		const s = this.draftState as MinesweeperDraftState;
-		if (!this.drafting || !s || !(s instanceof MinesweeperDraftState))
+		const s = this.draftState;
+		if (!this.drafting || !isMinesweeperDraftState(s))
 			return new SocketError("Not Playing", "There's no Minesweeper Draft running on this session.");
 		const cell = s.grid().get(row, col);
 		if (!cell)
@@ -1510,8 +1459,8 @@ export class Session implements IIndexable {
 	}
 
 	endMinesweeperDraft(options: { immediate?: boolean } = {}): void {
-		const s = this.draftState as MinesweeperDraftState;
-		if (!this.drafting || !s || !(s instanceof MinesweeperDraftState)) return;
+		const s = this.draftState;
+		if (!this.drafting || !isMinesweeperDraftState(s)) return;
 		logSession("MinesweeperDraft", this);
 		for (const uid of this.users) Connections[uid].socket.emit("minesweeperDraftEnd", options);
 		this.finalizeLogs();
@@ -1578,7 +1527,7 @@ export class Session implements IIndexable {
 
 	solomonDraftOrganize(piles: [UniqueCardID[], UniqueCardID[]]): SocketAck {
 		const s = this.draftState;
-		if (!this.drafting || !s || !(s instanceof SolomonDraftState))
+		if (!this.drafting || !isSolomonDraftState(s))
 			return new SocketError("Not Playing", "There's no Solomon Draft running on this session.");
 
 		const r = s.reorganize(piles);
@@ -1591,7 +1540,7 @@ export class Session implements IIndexable {
 
 	solomonDraftConfirmPiles(): SocketAck {
 		const s = this.draftState;
-		if (!this.drafting || !s || !(s instanceof SolomonDraftState))
+		if (!this.drafting || !isSolomonDraftState(s))
 			return new SocketError("Not Playing", "There's no Solomon Draft running on this session.");
 
 		const r = s.confirmPiles();
@@ -1605,7 +1554,7 @@ export class Session implements IIndexable {
 
 	solomonDraftPick(pileIdx: 0 | 1): SocketAck {
 		const s = this.draftState;
-		if (!this.drafting || !s || !(s instanceof SolomonDraftState))
+		if (!this.drafting || !isSolomonDraftState(s))
 			return new SocketError("Not Playing", "There's no Solomon Draft running on this session.");
 
 		const r = s.pick(pileIdx);
@@ -1626,7 +1575,7 @@ export class Session implements IIndexable {
 
 	endSolomonDraft(immediate?: boolean): SocketAck {
 		const s = this.draftState;
-		if (!this.drafting || !s || !(s instanceof SolomonDraftState))
+		if (!this.drafting || !isSolomonDraftState(s))
 			return new SocketError("Not Playing", "There's no Solomon Draft running on this session.");
 
 		logSession("SolomonDraft", this);
@@ -1726,8 +1675,8 @@ export class Session implements IIndexable {
 
 	// Pass a booster to the next player at the table
 	passBooster(booster: Array<UniqueCard>, userID: UserID) {
-		const s = this.draftState as DraftState;
-		if (!s) return;
+		const s = this.draftState;
+		if (!isDraftState(s)) return;
 
 		// Booster is empty or the remaining cards have to be burned
 		if (booster.length <= Math.max(0, this.discardRemainingCardsAt)) {
@@ -1765,10 +1714,8 @@ export class Session implements IIndexable {
 	}
 
 	async pickCard(userID: UserID, pickedCards: Array<number>, burnedCards: Array<number>) {
-		if (!this.drafting || this.draftState?.type !== "draft")
-			return new SocketError("This session is not drafting.");
-
-		const s = this.draftState as DraftState;
+		const s = this.draftState;
+		if (!this.drafting || !isDraftState(s)) return new SocketError("This session is not drafting.");
 
 		const reportError = (err: string) => {
 			console.error(err);
@@ -1865,7 +1812,7 @@ export class Session implements IIndexable {
 	// Restart a pick chain if necessary
 	startBotPickChain(userID: UserID) {
 		const s = this.draftState;
-		if (!s || !isDraftState(s)) return;
+		if (!isDraftState(s)) return;
 		if (!s.players[userID]) {
 			console.error(`Session.startBotPickChain Error: Invalid userID '${userID}'. Valid players:`, s.players);
 			console.error(`Session owner: ${this.owner}, users: `, this.users);
@@ -1888,7 +1835,7 @@ export class Session implements IIndexable {
 	// doBotPick will recursively call itself until there's no booster available. Chain can be restarted by neighbouring calls (see passBooster).
 	async doBotPick(userID: UserID): Promise<void> {
 		const s = this.draftState;
-		if (!s || !isDraftState(s)) return;
+		if (!isDraftState(s)) return;
 
 		assert(s.players[userID].botPickInFlight, "Error: Call to doBotPick with botPickInFlight not set to true.");
 		assert(s.players[userID].boosters.length > 0, "Error: Call to doBotPick with no boosters.");
@@ -2051,8 +1998,8 @@ export class Session implements IIndexable {
 	}
 
 	distributeBoosters() {
-		if (this.draftState?.type !== "draft") return;
-		const s = this.draftState as DraftState;
+		const s = this.draftState;
+		if (!isDraftState(s)) return;
 
 		const totalVirtualPlayers = this.getVirtualPlayersCount();
 
@@ -2111,8 +2058,8 @@ export class Session implements IIndexable {
 	}
 
 	checkDraftRoundEnd() {
-		if (!(this.draftState instanceof DraftState)) return false;
-		const s = this.draftState as DraftState;
+		const s = this.draftState;
+		if (!isDraftState(s)) return false;
 		if ([...Object.values(s.players)].every((p) => p.boosters.length === 0)) {
 			++s.boosterNumber;
 			this.distributeBoosters();
@@ -2132,7 +2079,7 @@ export class Session implements IIndexable {
 			})
 		);
 
-		if (this.draftState instanceof DraftState) {
+		if (isDraftState(this.draftState)) {
 			if (!this.draftPaused) this.resumeCountdowns();
 			// Restart bot pick chains
 			for (const uid in this.draftState.players)
@@ -2143,8 +2090,8 @@ export class Session implements IIndexable {
 	}
 
 	endDraft() {
-		if (!this.drafting) return;
-		const s = this.draftState as DraftState;
+		const s = this.draftState;
+		if (!isDraftState(s)) return;
 
 		// Allow other callbacks (like distributeBoosters) to finish before proceeding (actually an issue in tests).
 		process.nextTick(() => {
@@ -2210,13 +2157,13 @@ export class Session implements IIndexable {
 
 		this.draftPaused = true;
 
-		if (this.draftState instanceof DraftState) this.stopCountdowns();
+		this.stopCountdowns();
 		this.forUsers((u) => Connections[u]?.socket.emit("pauseDraft"));
 	}
 
 	resumeDraft() {
 		if (!this.drafting || !this.draftPaused) return;
-		if (this.draftState instanceof DraftState) this.resumeCountdowns();
+		this.resumeCountdowns();
 		this.draftPaused = false;
 		this.forUsers((u) => Connections[u]?.socket.emit("resumeDraft"));
 	}
@@ -2448,7 +2395,7 @@ export class Session implements IIndexable {
 	}
 
 	endTeamSealed() {
-		if (!this.drafting || this.draftState?.type !== "teamSealed") return;
+		if (!this.drafting || !isTeamSealedState(this.draftState)) return;
 		logSession("TeamSealed", this);
 		this.cleanDraftState();
 
@@ -2460,8 +2407,8 @@ export class Session implements IIndexable {
 	}
 
 	teamSealedPick(userID: UserID, cardUniqueID: UniqueCardID): SocketAck {
-		const state = this.draftState as TeamSealedState;
-		if (!state) return new SocketError("Not playing", "No Team Sealed active in this session.");
+		const state = this.draftState;
+		if (!isTeamSealedState(state)) return new SocketError("Not playing", "No Team Sealed active in this session.");
 		for (const teamPool of state.teamPools) {
 			if (teamPool.team.includes(userID)) {
 				const card = teamPool.cards.find((c) => c.uniqueID === cardUniqueID);
@@ -2575,7 +2522,7 @@ export class Session implements IIndexable {
 	reconnectUser(userID: UserID) {
 		if (!this.draftState) return;
 
-		if (!(this.draftState instanceof DraftState)) {
+		if (!isDraftState(this.draftState)) {
 			Connections[userID].pickedCards = this.disconnectedUsers[userID].pickedCards;
 			this.addUser(userID);
 
@@ -2651,7 +2598,7 @@ export class Session implements IIndexable {
 	}
 
 	async replaceDisconnectedPlayers() {
-		if (!this.drafting || !(this.draftState instanceof DraftState)) return;
+		if (!this.drafting || !isDraftState(this.draftState)) return;
 
 		console.warn(`Session ${this.id}: Replacing disconnected players with bots!`);
 
@@ -2670,7 +2617,7 @@ export class Session implements IIndexable {
 	}
 
 	startCountdowns() {
-		if (!(this.draftState instanceof DraftState)) return;
+		if (!this.drafting || !isDraftState(this.draftState)) return;
 		const s = this.draftState as DraftState;
 		for (const userID in s.players)
 			if (!s.players[userID].isBot && !this.isDisconnected(userID) && s.players[userID].boosters.length > 0)
@@ -2678,20 +2625,20 @@ export class Session implements IIndexable {
 	}
 
 	resumeCountdowns() {
-		if (!(this.draftState instanceof DraftState)) return;
-		const s = this.draftState as DraftState;
+		const s = this.draftState;
+		if (!this.drafting || !isDraftState(s)) return;
 		for (const userID in s.players)
 			if (!s.players[userID].isBot && !this.isDisconnected(userID) && s.players[userID].boosters.length > 0)
 				this.resumeCountdown(userID);
 	}
 
 	stopCountdowns() {
-		if (!(this.draftState instanceof DraftState)) return;
-		for (const userID in (this.draftState as DraftState).players) this.stopCountdown(userID);
+		if (!this.drafting || !isDraftState(this.draftState)) return;
+		for (const userID in this.draftState.players) this.stopCountdown(userID);
 	}
 
 	startCountdown(userID: UserID) {
-		if (!(this.draftState instanceof DraftState)) return;
+		if (!isDraftState(this.draftState)) return;
 		if (this.maxTimer === 0) {
 			Connections[userID]?.socket.emit("disableTimer");
 			return;
@@ -2709,7 +2656,7 @@ export class Session implements IIndexable {
 	}
 
 	resumeCountdown(userID: UserID) {
-		if (!(this.draftState instanceof DraftState)) return;
+		if (!isDraftState(this.draftState)) return;
 		const countdownInterval = ((this.draftState as DraftState).players[userID].countdownInterval = setInterval(
 			() => {
 				const s = this.draftState as DraftState;
@@ -2732,8 +2679,8 @@ export class Session implements IIndexable {
 	}
 
 	stopCountdown(userID: UserID) {
-		if (!(this.draftState instanceof DraftState)) return;
-		const s = this.draftState as DraftState;
+		const s = this.draftState;
+		if (!isDraftState(s)) return;
 		if (s?.players?.[userID]?.countdownInterval) {
 			clearInterval(s.players[userID].countdownInterval as NodeJS.Timeout);
 			s.players[userID].countdownInterval = null;
@@ -2741,7 +2688,7 @@ export class Session implements IIndexable {
 	}
 
 	syncCountdown(userID: UserID) {
-		if (!(this.draftState instanceof DraftState)) return;
+		if (!isDraftState(this.draftState)) return;
 		Connections[userID]?.socket.emit("timer", {
 			countdown: this.draftState.players[userID]?.timer,
 		});
@@ -2816,32 +2763,8 @@ export class Session implements IIndexable {
 		);
 	}
 
-	broadcastPreparationCancelation() {
-		this.forNonOwners((uid) =>
-			Connections[uid]?.socket.emit("message", {
-				icon: "warning",
-				toast: true,
-				title: "Game canceled",
-			} as Message)
-		);
-	}
-
-	emitError(title: string = "Error", text: string | null = "Unspecified Error", showConfirmButton = true, timer = 0) {
-		Connections[this.owner]?.socket.emit("message", {
-			icon: "error",
-			title: title,
-			text: text,
-			showConfirmButton: showConfirmButton,
-			timer: timer,
-		} as Message);
-	}
-
 	generateBracket(players: BracketPlayer[]) {
-		if (this.teamDraft) {
-			this.bracket = new TeamBracket(players);
-		} else {
-			this.bracket = new Bracket(players);
-		}
+		this.bracket = this.teamDraft ? new TeamBracket(players) : new Bracket(players);
 		this.forUsers((u) => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
 	}
 

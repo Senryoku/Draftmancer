@@ -54,6 +54,6 @@ export class GridDraftState extends IDraftState implements TurnBased {
 	}
 }
 
-export function isGridDraftState(obj: IDraftState): obj is GridDraftState {
+export function isGridDraftState(obj: unknown): obj is GridDraftState {
 	return obj instanceof GridDraftState;
 }

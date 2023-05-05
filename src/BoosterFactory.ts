@@ -1498,6 +1498,18 @@ export const SetSpecificFactories: {
 	mom: MOMBoosterFactory,
 };
 
+export const getBoosterFactory = function (
+	set: string | null,
+	cardPool: SlotedCardPool,
+	landSlot: BasicLandSlot | null,
+	options: Options
+) {
+	const localOptions = Object.assign({ foilRate: getSetFoilRate(set) }, options);
+	// Check for a special booster factory
+	if (set && set in SetSpecificFactories) return new SetSpecificFactories[set](cardPool, landSlot, localOptions);
+	return new BoosterFactory(cardPool, landSlot, localOptions);
+};
+
 /*
  * Another collation method using data from https://github.com/taw/magic-sealed-data
  */
@@ -1555,13 +1567,10 @@ for (const [cid, card] of Cards) {
 
 export class PaperBoosterFactory implements IBoosterFactory {
 	set: SetInfo;
-	options: Options;
 	possibleContent: BoosterInfo[];
-	landSlot: null = null;
 
-	constructor(set: SetInfo, options: Options, possibleContent: BoosterInfo[]) {
+	constructor(set: SetInfo, possibleContent: BoosterInfo[]) {
 		this.set = set;
-		this.options = options;
 		this.possibleContent = possibleContent;
 	}
 
@@ -1619,6 +1628,33 @@ export class PaperBoosterFactory implements IBoosterFactory {
 		return booster.map((c) => getUnique(c.id, { foil: c.foil })).reverse();
 	}
 }
+
+export const isPaperBoosterFactoryAvailable = (set: string) => {
+	const excludedSets = ["mh2"]; // Workaround for sets failing our tests (we already have a working implementation anyway, and I don't want to debug it honestly.)
+	if (["mb1_convention_2019", "mb1_convention_2021"].includes(set)) return true;
+	return (set in PaperBoosterFactories || `${set}-arena` in PaperBoosterFactories) && !excludedSets.includes(set);
+};
+
+export const getPaperBoosterFactory = (set: string, boosterFactoryOptions: Options) => {
+	if (set === "mb1_convention_2019") return PaperBoosterFactories["cmb1"](boosterFactoryOptions);
+	if (set === "mb1_convention_2021") return PaperBoosterFactories["cmb2"](boosterFactoryOptions);
+
+	// FIXME: Collation data has arena/paper variants, but isn't perfect right now, for example:
+	//   - Paper IKO has promo versions of the cards that are not available on Arena (as separate cards at least, and with proper collector number), preventing to always rely on the paper collation by default.
+	//   - Arena ZNR doesn't have the MDFC requirement properly implemented, preventing to systematically switch to arena collation when available.
+	// Hacking this in for now by forcing arena collation for affected sets.
+	if (["iko", "klr", "akr"].includes(set)) return PaperBoosterFactories[`${set}-arena`](boosterFactoryOptions);
+
+	return PaperBoosterFactories[set](boosterFactoryOptions);
+
+	// Proper-ish implementation:
+	/*
+	// Is Arena Collation available?              Is it the preferred choice, or our only one?                           MTGA collations don't have foil sheets.
+	if(`${set}-arena` in PaperBoosterFactories && (this.preferredCollation === 'MTGA' || !(set in PaperBoosterFactories) && !this.foil))
+		return PaperBoosterFactories[`${set}-arena`](BoosterFactoryOptions);
+	return PaperBoosterFactories[set](BoosterFactoryOptions);
+	*/
+};
 
 export const PaperBoosterFactories: {
 	[set: string]: (options?: Options) => PaperBoosterFactory;
@@ -1679,10 +1715,7 @@ for (const s of PaperBoosterData) {
 			const nonFoil = set.boosters.filter((e) => !Object.keys(e.sheets).some((s) => s.includes("foil")));
 			if (nonFoil.length > 0) possibleContent = nonFoil;
 		}
-		return new PaperBoosterFactory(set, options, possibleContent);
+		return new PaperBoosterFactory(set, possibleContent);
 	};
-	PaperBoosterSizes[set.code] = Object.keys(set.boosters[0].sheets).reduce(
-		(acc: number, curr: string): number => acc + set.boosters[0].sheets[curr],
-		0
-	);
+	PaperBoosterSizes[set.code] = Object.values(set.boosters[0].sheets).reduce((acc, curr) => acc + curr, 0);
 }

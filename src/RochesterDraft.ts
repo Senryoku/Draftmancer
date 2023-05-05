@@ -40,3 +40,7 @@ export class RochesterDraftState extends IDraftState implements TurnBased {
 }
 
 export type RochesterDraftSyncData = ReturnType<RochesterDraftState["syncData"]>;
+
+export function isRochesterDraftState(s: unknown): s is RochesterDraftState {
+	return s instanceof RochesterDraftState;
+}
