@@ -344,4 +344,90 @@ describe.only("Conspiracy Draft Matters Cards", () => {
 				}
 			});
 	});
+
+	describe("Note passing player", () => {
+		before(loadCubeAndStart("NotePassingPlayer"));
+		after(stopDraft);
+
+		it("Each player picks a Cogwork Tracker, it should trigger a message.", (done) => {
+			for (const s of states) expect(s.booster).to.have.length(2);
+			let eventReceived = 0;
+			let messageReceived = 0;
+			const checkDone = () => {
+				if (messageReceived === clients.length && eventReceived === clients.length) {
+					for (const c of clients) c.off("draftState");
+					done();
+				}
+			};
+			for (let i = 0; i < clients.length; ++i) {
+				clients[i].once("message", (msg) => {
+					++messageReceived;
+					expect(msg.title, "First pick should not have a passing player").to.not.contain(`Passing Player`);
+					checkDone();
+				});
+				clients[i].on("draftState", (state) => {
+					const s = state as {
+						booster: UniqueCard[];
+						boosterCount: number;
+						boosterNumber: number;
+						pickNumber: number;
+					};
+					if (s.pickNumber > 0 && s.boosterCount > 0) {
+						++eventReceived;
+						states[i] = s;
+						expect(states[i].booster).to.have.length(1);
+						checkDone();
+					}
+				});
+				clients[i].emit(
+					"pickCard",
+					{
+						pickedCards: [0],
+						burnedCards: [],
+					},
+					ackNoError
+				);
+			}
+		});
+
+		it("Each player picks a Cogwork Tracker, it should trigger a message specifying the passing player.", (done) => {
+			for (const s of states) expect(s.booster).to.have.length(1);
+			let eventReceived = 0;
+			let messageReceived = 0;
+			const checkDone = () => {
+				if (messageReceived === clients.length && eventReceived === clients.length) {
+					for (const c of clients) c.off("draftState");
+					done();
+				}
+			};
+			for (let i = 0; i < clients.length; ++i) {
+				clients[i].once("message", (msg) => {
+					++messageReceived;
+					expect(msg.title, "should have a passing player").to.contain(`Passing Player: Client${i}`);
+					checkDone();
+				});
+				clients[i].on("draftState", (state) => {
+					const s = state as {
+						booster: UniqueCard[];
+						boosterCount: number;
+						boosterNumber: number;
+						pickNumber: number;
+					};
+					if (s.boosterNumber > 0 && s.boosterCount > 0) {
+						++eventReceived;
+						states[i] = s;
+						checkDone();
+					}
+				});
+				clients[i].emit(
+					"pickCard",
+					{
+						pickedCards: [0],
+						burnedCards: [],
+					},
+					ackNoError
+				);
+			}
+		});
+	});
 });

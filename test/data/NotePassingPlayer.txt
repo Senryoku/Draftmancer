@@ -1,0 +1,14 @@
+[Settings]
+{
+	"withReplacement": true,
+	"layouts": {
+		"normal": {
+			"weight": 1,
+			"slots": {
+				"Cogwork Tracker": 2
+			}
+		}
+	}
+}
+[Cogwork Tracker]
+Cogwork Tracker

@@ -1883,10 +1883,13 @@ export class Session implements IIndexable {
 							break;
 						case OnPickDraftEffect.NotePassingPlayer:
 							if (!card.state) card.state = {};
-							const pid = s.previousPlayer(userID);
-							card.state.passingPlayer = s.players[pid].isBot
-								? s.players[pid].botInstance.name
-								: Connections[pid]?.userName ?? pid;
+							// There's no "passing player" for the first pick.
+							if (s.players[userID].pickNumber > 0) {
+								const pid = s.previousPlayer(userID);
+								card.state.passingPlayer = s.players[pid].isBot
+									? s.players[pid].botInstance.name
+									: Connections[pid]?.userName ?? pid;
+							}
 							break;
 						case OnPickDraftEffect.NoteDraftedCards:
 							if (!card.state) card.state = {};
