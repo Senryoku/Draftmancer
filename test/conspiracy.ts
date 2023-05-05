@@ -4,10 +4,10 @@ import chai from "chai";
 const expect = chai.expect;
 import { Sessions } from "../src/Session.js";
 import { makeClients, waitForClientDisconnects, enableLogs, disableLogs, ackNoError } from "./src/common.js";
-import { UniqueCard, UniqueCardID, UsableDraftEffect } from "../src/CardTypes.js";
+import { OptionalOnPickDraftEffect, UniqueCard, UniqueCardID, UsableDraftEffect } from "../src/CardTypes.js";
 import { CogworkLibrarianOracleID } from "../src/Conspiracy.js";
 
-describe.only("Conspiracy Draft Matters Cards", () => {
+describe("Conspiracy Draft Matters Cards", () => {
 	let clients: ReturnType<typeof makeClients> = [];
 	let ownerIdx = 0;
 	let nonOwnerIdx = 1;
@@ -17,7 +17,6 @@ describe.only("Conspiracy Draft Matters Cards", () => {
 		boosterNumber: number;
 		pickNumber: number;
 	}[] = [];
-	let cogworkLibrarians: UniqueCardID[] = [0, 0];
 
 	beforeEach(function (done) {
 		disableLogs();
@@ -59,9 +58,6 @@ describe.only("Conspiracy Draft Matters Cards", () => {
 			let eventReceived = 0;
 			states.length = clients.length;
 			for (let i = 0; i < clients.length; ++i) {
-				clients[i].on("draftState", (state) => {
-					states[i] = state as any;
-				});
 				clients[i].once("draftState", (state) => {
 					++eventReceived;
 					states[i] = state as any;
@@ -78,6 +74,7 @@ describe.only("Conspiracy Draft Matters Cards", () => {
 	};
 
 	describe("Cogwork Librarian", () => {
+		let cogworkLibrarians: UniqueCardID[] = [0, 0];
 		before(loadCubeAndStart("CogworkLibrarian"));
 		after(stopDraft);
 
@@ -107,19 +104,24 @@ describe.only("Conspiracy Draft Matters Cards", () => {
 			let messageReceived = 0;
 			const checkDone = () => {
 				if (messageReceived === clients.length && eventReceived === clients.length) {
-					for (const c of clients) c.off("message");
+					for (const c of clients) c.off("draftState");
 					done();
 				}
 			};
 			for (let i = 0; i < clients.length; ++i) {
-				clients[i].on("message", (msg) => {
+				clients[i].once("message", (msg) => {
 					++messageReceived;
 					checkDone();
 				});
-				clients[i].once("draftState", (state) => {
-					++eventReceived;
-					states[i] = state as any;
-					checkDone();
+				clients[i].on("draftState", (state: any) => {
+					if (state.pickNumber > 0 && state.boosterCount > 0) {
+						++eventReceived;
+						states[i] = state;
+						expect(
+							states[i].booster.filter((c) => c.oracle_id === CogworkLibrarianOracleID)
+						).to.have.length(0);
+						checkDone();
+					}
 				});
 				const idx = states[i].booster.findIndex((c) => c.oracle_id === CogworkLibrarianOracleID);
 				cogworkLibrarians[i] = states[i].booster[idx].uniqueID;
@@ -156,10 +158,15 @@ describe.only("Conspiracy Draft Matters Cards", () => {
 		it("Each player picks two cards using their Cogwork Librarian", (done) => {
 			let eventReceived = 0;
 			for (let i = 0; i < clients.length; ++i) {
-				clients[i].once("draftState", (state) => {
-					++eventReceived;
-					states[i] = state as any;
-					if (eventReceived === clients.length) done();
+				clients[i].on("draftState", (state: any) => {
+					if (state.pickNumber > 1 && state.boosterCount > 0) {
+						++eventReceived;
+						states[i] = state;
+						if (eventReceived === clients.length) {
+							for (const c of clients) c.off("draftState");
+							done();
+						}
+					}
 				});
 				clients[i].emit(
 					"pickCard",
@@ -182,6 +189,112 @@ describe.only("Conspiracy Draft Matters Cards", () => {
 			}
 
 			done();
+		});
+	});
+
+	describe("Lore Seeker", () => {
+		let loreSeekers: UniqueCardID[] = [0, 0];
+		before(loadCubeAndStart("LoreSeeker"));
+		after(stopDraft);
+
+		it("Each player picks a Lore Seeker, using its abilty", (done) => {
+			for (const s of states) expect(s.booster.filter((c) => c.name === "Lore Seeker")).to.have.length(1);
+			let eventReceived = 0;
+			let messageReceived = 0;
+			const checkDone = () => {
+				if (messageReceived === clients.length && eventReceived === clients.length) {
+					for (const c of clients) c.off("draftState");
+					done();
+				}
+			};
+			for (let i = 0; i < clients.length; ++i) {
+				clients[i].once("message", (msg) => {
+					++messageReceived;
+					checkDone();
+				});
+				clients[i].on("draftState", (state) => {
+					const s = state as {
+						booster: UniqueCard[];
+						boosterCount: number;
+						boosterNumber: number;
+						pickNumber: number;
+					};
+					if (s.pickNumber > 0 && s.boosterCount > 0) {
+						++eventReceived;
+						states[i] = s;
+						// This should be a new pack
+						expect(states[i].booster).to.have.length(10);
+						expect(
+							states[i].booster.filter((c) => c.name === "Lore Seeker"),
+							"New booster should have a Lore Seeker"
+						).to.have.length(1);
+						expect(loreSeekers, "should be a new lore seeker").not.to.include(
+							states[i].booster.filter((c) => c.name === "Lore Seeker")[0].uniqueID
+						);
+						checkDone();
+					}
+				});
+				const idx = states[i].booster.findIndex((c) => c.name === "Lore Seeker");
+				loreSeekers[i] = states[i].booster[idx].uniqueID;
+				clients[i].emit(
+					"pickCard",
+					{
+						pickedCards: [idx],
+						burnedCards: [],
+						optionalOnPickDraftEffect: {
+							effect: OptionalOnPickDraftEffect.LoreSeeker,
+							cardID: loreSeekers[i],
+						},
+					},
+					ackNoError
+				);
+			}
+		});
+
+		it("Each player picks a Lore Seeker, not using its abilty", (done) => {
+			for (const s of states) expect(s.booster.filter((c) => c.name === "Lore Seeker")).to.have.length(1);
+			let eventReceived = 0;
+			let messageReceived = 0;
+			const checkDone = () => {
+				if (messageReceived === clients.length && eventReceived === clients.length) {
+					for (const c of clients) c.off("draftState");
+					done();
+				}
+			};
+			for (let i = 0; i < clients.length; ++i) {
+				clients[i].once("message", (msg) => {
+					++messageReceived;
+					checkDone();
+				});
+				clients[i].on("draftState", (state) => {
+					const s = state as {
+						booster: UniqueCard[];
+						boosterCount: number;
+						boosterNumber: number;
+						pickNumber: number;
+					};
+					if (s.pickNumber > 1 && s.boosterCount > 0) {
+						++eventReceived;
+						states[i] = s;
+						expect(states[i].booster).to.have.length(9);
+						expect(
+							states[i].booster.filter((c) => c.name === "Lore Seeker"),
+							"Already opened should not have a Lore Seeker"
+						).to.have.length(0);
+						checkDone();
+					}
+				});
+				const idx = states[i].booster.findIndex((c) => c.name === "Lore Seeker");
+				loreSeekers[i] = states[i].booster[idx].uniqueID;
+				clients[i].emit(
+					"pickCard",
+					{
+						pickedCards: [idx],
+						burnedCards: [],
+					},
+					ackNoError
+				);
+			}
 		});
 	});
 });
