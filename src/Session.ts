@@ -1744,6 +1744,12 @@ export class Session implements IIndexable {
 		// Conspiracy draft matter cards
 		const applyDraftEffects: (() => void)[] = []; // Delay effects after we're sure the pick is valid.
 		if (draftEffect) {
+			const findCard = (cardID: UniqueCardID) => {
+				let cardOrNull = Connections[userID].pickedCards.main.find((c) => c.uniqueID === cardID);
+				if (!cardOrNull) cardOrNull = Connections[userID].pickedCards.side.find((c) => c.uniqueID === cardID);
+				return cardOrNull;
+			};
+
 			// Draft Cogwork Librarian face up.
 			// As you draft a card, you may draft an additional card from that booster pack. If you do, put Cogwork Librarian into that booster pack.
 			switch (draftEffect.effect) {
@@ -1780,15 +1786,8 @@ export class Session implements IIndexable {
 					break;
 				}
 				case UsableDraftEffect.RemoveDraftCard: {
-					let recipientOrNull = Connections[userID].pickedCards.main.find(
-						(c) => c.uniqueID === draftEffect.cardID
-					);
-					if (!recipientOrNull)
-						recipientOrNull = Connections[userID].pickedCards.side.find(
-							(c) => c.uniqueID === draftEffect.cardID
-						);
-					if (!recipientOrNull) return reportError("Invalid UniqueCardID.");
-					const recipient = recipientOrNull;
+					const recipient = findCard(draftEffect.cardID);
+					if (!recipient) return reportError("Invalid UniqueCardID.");
 
 					burnThisRound += pickedCards.length;
 					picksThisRound -= pickedCards.length;
@@ -1803,6 +1802,49 @@ export class Session implements IIndexable {
 					});
 					pickedCards = [];
 					break;
+				}
+				case UsableDraftEffect.NoteCardName: {
+					const card = findCard(draftEffect.cardID);
+					if (!card) return reportError("Invalid UniqueCardID.");
+					if (!card.state?.faceUp) return reportError("Already used this effect.");
+					const cardName = booster[pickedCards[0]].name;
+
+					applyDraftEffects.push(() => {
+						if (!card.state) card.state = {};
+						card.state.faceUp = false;
+						card.state.cardName = cardName;
+						updatedCardStates.push({ cardID: card.uniqueID, state: card.state });
+					});
+				}
+				case UsableDraftEffect.NoteCreatureName: {
+					const card = findCard(draftEffect.cardID);
+					if (!card) return reportError("Invalid UniqueCardID.");
+					if (!card.state?.faceUp) return reportError("Already used this effect.");
+					if (!booster[pickedCards[0]].type.includes("Creature"))
+						return reportError("Pick should be a creature.");
+					const creatureName = booster[pickedCards[0]].name;
+
+					applyDraftEffects.push(() => {
+						if (!card.state) card.state = {};
+						card.state.faceUp = false;
+						card.state.creatureName = creatureName;
+						updatedCardStates.push({ cardID: card.uniqueID, state: card.state });
+					});
+				}
+				case UsableDraftEffect.NoteCreatureTypes: {
+					const card = findCard(draftEffect.cardID);
+					if (!card) return reportError("Invalid UniqueCardID.");
+					if (!card.state?.faceUp) return reportError("Already used this effect.");
+					if (!booster[pickedCards[0]].type.includes("Creature"))
+						return reportError("Pick should be a creature.");
+					const creatureTypes = booster[pickedCards[0]].subtypes;
+
+					applyDraftEffects.push(() => {
+						if (!card.state) card.state = {};
+						card.state.faceUp = false;
+						card.state.creatureTypes = creatureTypes;
+						updatedCardStates.push({ cardID: card.uniqueID, state: card.state });
+					});
 				}
 				default:
 					return reportError(`Unimplemented draft effect: ${draftEffect.effect}.`);

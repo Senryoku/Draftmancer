@@ -29,6 +29,9 @@ export enum UsableDraftEffect {
 	RemoveDraftCard = "RemoveDraftCard",
 	CogworkLibrarian = "CogworkLibrarian",
 	AgentOfAcquisitions = "AgentOfAcquisitions",
+	NoteCardName = "NotedCardName",
+	NoteCreatureName = "NoteCreatureName",
+	NoteCreatureTypes = "NoteCreatureTypes",
 }
 
 export type DraftEffect =
@@ -97,6 +100,9 @@ export type UniqueCardState = {
 	faceUp?: boolean;
 	cardsDraftedThisRound?: number;
 	passingPlayer?: string;
+	cardName?: string;
+	creatureName?: string;
+	creatureTypes?: string[];
 	removedCards?: UniqueCard[];
 };
 

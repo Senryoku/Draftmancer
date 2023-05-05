@@ -3464,12 +3464,23 @@ export default defineComponent({
 			const r = [];
 			for (const arr of [this.deck, this.sideboard])
 				for (const card of arr.filter((c) => c.draft_effects !== undefined))
-					for (const effect of card.draft_effects!.filter((e) => isSomeEnum(UsableDraftEffect)(e)))
+					for (const effect of card.draft_effects!.filter((e) => isSomeEnum(UsableDraftEffect)(e))) {
+						// These effects are only usable once.
+						if (
+							!card.state?.faceUp &&
+							[
+								UsableDraftEffect.NoteCardName,
+								UsableDraftEffect.NoteCreatureName,
+								UsableDraftEffect.NoteCreatureTypes,
+							].includes(effect as UsableDraftEffect)
+						)
+							continue;
 						r.push({
 							name: card.name,
 							effect: effect as UsableDraftEffect,
 							cardID: card.uniqueID,
 						});
+					}
 			return r;
 		},
 		colorsInDeck(): ReturnType<typeof this.colorsInCardPool> {
