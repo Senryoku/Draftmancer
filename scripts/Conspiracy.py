@@ -60,13 +60,19 @@ for c in d["data"]:
     if c['oracle_id'] not in draft_effects:
         draft_effects[c['oracle_id']] = []
     draft_effects[c['oracle_id']].append("NoteCreatureName")
+    
+r = requests.get('https://api.scryfall.com/cards/search?q=o:"Reveal ~ as you draft it and note the player who passed it to you"')
+d = json.loads(r.content)
+for c in d["data"]:
+    if c['oracle_id'] not in draft_effects:
+        draft_effects[c['oracle_id']] = []
+    draft_effects[c['oracle_id']].append("NotePassingPlayer")
 
 # Unique effects
 draft_effects["ec0d964e-ca2c-4252-8551-cf1916576653"].append("CogworkLibrarian")
 draft_effects["19047c4b-0106-455d-ab71-68cabfae7404"].append("AgentOfAcquisitions")
 draft_effects["80ea63fd-691a-45ba-a4bf-862e5ec2922d"].append("AetherSearcher")
 draft_effects["adfd33cb-086c-48f4-b443-ba971ff43684"].append("CogworkSpy")
-draft_effects["c60ba5e9-dbfa-441b-a96f-9cc7fdfd2d76"].append("CogworkTracker")
 draft_effects["19a3c505-b180-47cc-bef3-9e807a8a4a3d"].append("LoreSeeker")
 draft_effects["6ca0078f-d6b5-4643-b801-e7a98706f21c"].append("ArchdemonOfPaliano")
 draft_effects["bb6bda0d-ddb8-47fa-be07-bbcd73a52830"].append("CanalDredger")
