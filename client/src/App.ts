@@ -1114,6 +1114,14 @@ export default defineComponent({
 				}
 			});
 
+			this.socket.on("updateCardState", (updates) => {
+				for (const update of updates) {
+					let card = this.deck.find((c) => c.uniqueID === update.cardID);
+					if (!card) this.sideboard.find((c) => c.uniqueID === update.cardID);
+					if (card) card.state = update.state;
+				}
+			});
+
 			this.socket.on("botRecommandations", (data) => {
 				if (data.pickNumber === this.pickNumber) this.botScores = data.scores;
 			});
@@ -1512,8 +1520,6 @@ export default defineComponent({
 				const onSuccess: (() => void)[] = [];
 
 				onSuccess.push(() => {
-					if (toSideboard) this.addToSideboard(selectedCards, options);
-					else this.addToDeck(selectedCards, options);
 					this.selectedCards = [];
 					this.burningCards = [];
 				});
@@ -1521,7 +1527,9 @@ export default defineComponent({
 				const ack = (answer: SocketAck) => {
 					this.pickInFlight = false;
 					if (answer.code !== 0) {
-						// Restore booster state
+						// Restore cardPool and booster state
+						this.deck = this.deck.filter((c) => !selectedCards.includes(c));
+						this.sideboard = this.sideboard.filter((c) => !selectedCards.includes(c));
 						this.booster.push(...selectedCards);
 						this.booster.push(...burningCards);
 						Alert.fire(answer.error as SweetAlertOptions<any, any>);
@@ -1532,6 +1540,8 @@ export default defineComponent({
 						for (const callback of onSuccess) callback();
 					}
 				};
+
+				let dontAddSelectedCardstoCardPool = false;
 
 				if (this.rochesterDraftState) {
 					this.socket.emit(
@@ -1554,16 +1564,7 @@ export default defineComponent({
 						};
 						switch (draftEffect!.effect) {
 							case UsableDraftEffect.RemoveDraftCard:
-								// Don't add the cards to the card pool
-								onSuccess.pop();
-								// Update card with the RemoveDraftCard effect
-								let origin = this.deck.find((c) => c.uniqueID === draftEffect!.cardID);
-								if (!origin) origin = this.sideboard.find((c) => c.uniqueID === draftEffect!.cardID);
-								if (origin) {
-									if (!origin.state) origin.state = {};
-									if (!origin.state.removedCards) origin.state.removedCards = [];
-									origin.state.removedCards.push(...selectedCards);
-								}
+								dontAddSelectedCardstoCardPool = true;
 								break;
 							case UsableDraftEffect.CogworkLibrarian: {
 								onSuccess.push(() => {
@@ -1617,6 +1618,9 @@ export default defineComponent({
 				}
 				// Removes picked & burned cards for animation
 				this.booster = this.booster.filter((c) => !selectedCards.includes(c) && !burningCards.includes(c));
+				if (!dontAddSelectedCardstoCardPool)
+					if (toSideboard) this.addToSideboard(selectedCards, options);
+					else this.addToDeck(selectedCards, options);
 			});
 			this.pickInFlight = true;
 		},

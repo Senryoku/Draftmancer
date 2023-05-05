@@ -16,6 +16,7 @@ import {
 	UniqueCard,
 	UniqueCardID,
 	OptionalOnPickDraftEffect,
+	UniqueCardState,
 } from "./CardTypes";
 import { RochesterDraftSyncData } from "./RochesterDraft";
 import { MinesweeperSyncData, MinesweeperSyncDataDiff } from "./MinesweeperDraftTypes";
@@ -81,6 +82,7 @@ export interface ServerToClientEvents {
 	resumeOnReconnection: (msg: Message) => void;
 
 	setCardSelection: (boosters: UniqueCard[][]) => void;
+	updateCardState: (updates: { cardID: UniqueCardID; state: UniqueCardState }[]) => void;
 
 	timer: (data: { countdown: number }) => void;
 	disableTimer: () => void;

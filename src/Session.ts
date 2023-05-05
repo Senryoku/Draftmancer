@@ -15,6 +15,7 @@ import {
 	OnPickDraftEffect,
 	UsableDraftEffect,
 	OptionalOnPickDraftEffect,
+	UniqueCardState,
 } from "./CardTypes.js";
 import { Cards, getUnique, BoosterCardsBySet, CardsBySet, MTGACardIDs, getCard } from "./Cards.js";
 import { IBot, fallbackToSimpleBots, isBot, MTGDraftBotParameters, MTGDraftBotsSetSpecializedModels } from "./Bot.js";
@@ -1739,6 +1740,7 @@ export class Session implements IIndexable {
 		);
 		let burnThisRound = this.burnedCardsPerRound;
 
+		const updatedCardStates: { cardID: UniqueCardID; state: UniqueCardState }[] = [];
 		// Conspiracy draft matter cards
 		const applyDraftEffects: (() => void)[] = []; // Delay effects after we're sure the pick is valid.
 		if (draftEffect) {
@@ -1797,6 +1799,7 @@ export class Session implements IIndexable {
 						if (!recipient.state?.removedCards) recipient.state.removedCards = [];
 						// Associate the removed cards with the effect origin
 						recipient.state.removedCards.push(...removedCards);
+						updatedCardStates.push({ cardID: recipient.uniqueID, state: recipient.state });
 					});
 					pickedCards = [];
 					break;
@@ -1902,6 +1905,7 @@ export class Session implements IIndexable {
 						case OnPickDraftEffect.FaceUp:
 							if (!card.state) card.state = {};
 							card.state.faceUp = true;
+							updatedCardStates.push({ cardID: card.uniqueID, state: card.state });
 						// Intended fallthrough
 						case OnPickDraftEffect.Reveal:
 							notify = true;
@@ -1914,11 +1918,13 @@ export class Session implements IIndexable {
 								card.state.passingPlayer = s.players[pid].isBot
 									? s.players[pid].botInstance.name
 									: Connections[pid]?.userName ?? pid;
+								updatedCardStates.push({ cardID: card.uniqueID, state: card.state });
 							}
 							break;
 						case OnPickDraftEffect.NoteDraftedCards:
 							if (!card.state) card.state = {};
 							card.state.cardsDraftedThisRound = s.players[userID].pickNumber + 1;
+							updatedCardStates.push({ cardID: card.uniqueID, state: card.state });
 							break;
 						default:
 							if (isSomeEnum(OnPickDraftEffect)(effect))
@@ -1947,6 +1953,7 @@ export class Session implements IIndexable {
 		this.passBooster(booster, userID);
 
 		this.sendDraftState(userID);
+		if (updatedCardStates.length > 0) Connections[userID]?.socket?.emit("updateCardState", updatedCardStates);
 		if (s.players[userID].boosters.length > 0) {
 			this.startCountdown(userID);
 			this.requestBotRecommendation(userID);

@@ -31,7 +31,12 @@ export enum UsableDraftEffect {
 	AgentOfAcquisitions = "AgentOfAcquisitions",
 }
 
-export type DraftEffect = OnPickDraftEffect | OptionalOnPickDraftEffect | UsableDraftEffect;
+export type DraftEffect =
+	| OnPickDraftEffect
+	| OptionalOnPickDraftEffect
+	| UsableDraftEffect
+	| "AnimusOfPredation"
+	| "CogworkGrinder";
 
 export type CardFace = {
 	name: string;
@@ -88,15 +93,17 @@ export function toUnique(card: Card): UniqueCard {
 	return { ...card, uniqueID: getNextCardID() };
 }
 
+export type UniqueCardState = {
+	faceUp?: boolean;
+	cardsDraftedThisRound?: number;
+	passingPlayer?: string;
+	removedCards?: UniqueCard[];
+};
+
 export class UniqueCard extends Card {
 	uniqueID: UniqueCardID = 0;
 	foil?: boolean = false;
-	state?: {
-		faceUp?: boolean;
-		cardsDraftedThisRound?: number;
-		passingPlayer?: string;
-		removedCards?: UniqueCard[];
-	};
+	state?: UniqueCardState;
 }
 
 // JSON can't use numbers as keys, we have to use a string and not ArenaID here.
