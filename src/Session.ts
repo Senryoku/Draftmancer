@@ -1760,7 +1760,7 @@ export class Session implements IIndexable {
 		if (!this.drafting || !s || !isDraftState(s)) return new SocketError("This session is not drafting.");
 
 		const reportError = (err: string) => {
-			console.error(err);
+			//console.error(err);
 			return new SocketError(err);
 		};
 
