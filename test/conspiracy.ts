@@ -7,7 +7,7 @@ import { makeClients, waitForClientDisconnects, enableLogs, disableLogs, ackNoEr
 import { OptionalOnPickDraftEffect, UniqueCard, UniqueCardID, UsableDraftEffect } from "../src/CardTypes.js";
 import { CogworkLibrarianOracleID } from "../src/Conspiracy.js";
 
-describe("Conspiracy Draft Matters Cards", () => {
+describe.only("Conspiracy Draft Matters Cards", () => {
 	let clients: ReturnType<typeof makeClients> = [];
 	let ownerIdx = 0;
 	let nonOwnerIdx = 1;
@@ -296,5 +296,52 @@ describe("Conspiracy Draft Matters Cards", () => {
 				);
 			}
 		});
+	});
+
+	describe("Note how many cards you've drafted this draft round", () => {
+		before(loadCubeAndStart("NoteDraftedCards"));
+		after(stopDraft);
+
+		for (let pick = 0; pick < 3; ++pick)
+			it("Each player picks a card, it should trigger a message.", (done) => {
+				for (const s of states) expect(s.booster).to.have.length(4 - pick);
+				let eventReceived = 0;
+				let messageReceived = 0;
+				const checkDone = () => {
+					if (messageReceived === clients.length && eventReceived === clients.length) {
+						for (const c of clients) c.off("draftState");
+						done();
+					}
+				};
+				for (let i = 0; i < clients.length; ++i) {
+					clients[i].once("message", (msg) => {
+						++messageReceived;
+						expect(msg.title).to.contain(`X=${pick + 1}`);
+						checkDone();
+					});
+					clients[i].on("draftState", (state) => {
+						const s = state as {
+							booster: UniqueCard[];
+							boosterCount: number;
+							boosterNumber: number;
+							pickNumber: number;
+						};
+						if (s.pickNumber > pick && s.boosterCount > 0) {
+							++eventReceived;
+							states[i] = s;
+							expect(states[i].booster).to.have.length(4 - 1 - pick);
+							checkDone();
+						}
+					});
+					clients[i].emit(
+						"pickCard",
+						{
+							pickedCards: [0],
+							burnedCards: [],
+						},
+						ackNoError
+					);
+				}
+			});
 	});
 });
