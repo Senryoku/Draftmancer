@@ -1,0 +1,18 @@
+[Settings]
+{
+	"name": "Remove Cards",
+	"withReplacement": true,
+	"layouts": {
+		"normal": {
+			"weight": 1,
+			"slots": {
+				"Animus of Predation": 5,
+				"Cogwork Grinder": 5
+			}
+		}
+	}
+}
+[Animus of Predation]
+Animus of Predation
+[Cogwork Grinder]
+Cogwork Grinder

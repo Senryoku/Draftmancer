@@ -1737,6 +1737,7 @@ export class Session implements IIndexable {
 			this.doubleMastersMode && s.players[userID].pickNumber > 0 ? 1 : this.pickedCardsPerRound,
 			booster.length
 		);
+		let burnThisRound = this.burnedCardsPerRound;
 
 		// Conspiracy draft matter cards
 		const applyDraftEffects: (() => void)[] = []; // Delay effects after we're sure the pick is valid.
@@ -1774,6 +1775,30 @@ export class Session implements IIndexable {
 						});
 					}
 					picksThisRound += 1; // Allow an additional pick.
+					break;
+				}
+				case UsableDraftEffect.RemoveDraftCard: {
+					let recipientOrNull = Connections[userID].pickedCards.main.find(
+						(c) => c.uniqueID === draftEffect.cardID
+					);
+					if (!recipientOrNull)
+						recipientOrNull = Connections[userID].pickedCards.side.find(
+							(c) => c.uniqueID === draftEffect.cardID
+						);
+					if (!recipientOrNull) return reportError("Invalid UniqueCardID.");
+					const recipient = recipientOrNull;
+
+					burnThisRound += pickedCards.length;
+					picksThisRound -= pickedCards.length;
+					burnedCards = burnedCards.concat(pickedCards);
+					const removedCards = pickedCards.map((index) => booster[index]);
+					applyDraftEffects.push(() => {
+						if (!recipient.state) recipient.state = {};
+						if (!recipient.state?.removedCards) recipient.state.removedCards = [];
+						// Associate the removed cards with the effect origin
+						recipient.state.removedCards.push(...removedCards);
+					});
+					pickedCards = [];
 					break;
 				}
 				default:
@@ -1817,12 +1842,12 @@ export class Session implements IIndexable {
 
 		if (
 			burnedCards &&
-			(burnedCards.length > this.burnedCardsPerRound ||
-				burnedCards.length !== Math.min(this.burnedCardsPerRound, booster.length - pickedCards.length) ||
+			(burnedCards.length > burnThisRound ||
+				burnedCards.length !== Math.min(burnThisRound, booster.length - pickedCards.length) ||
 				burnedCards.some((idx) => idx >= booster.length))
 		)
 			return reportError(
-				`Invalid burned cards (expected length: ${this.burnedCardsPerRound}, burnedCards: ${burnedCards.length}, booster: ${booster.length}).`
+				`Invalid burned cards (expected length: ${burnThisRound}, burnedCards: ${burnedCards.length}, booster: ${booster.length}).`
 			);
 
 		if (process.env.NODE_ENV !== "production")

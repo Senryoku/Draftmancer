@@ -944,21 +944,22 @@
 										</span>
 									</span>
 									<span v-if="availableOptionalDraftEffects.length > 0">
-										<label for="pick-effect">Pick Effect:</label>
-										<select id="pick-effect" v-model="selectedDraftPickEffect">
+										<label for="optional-pick-effect">Pick Effect:</label>
+										<select id="optional-pick-effect" v-model="selectedOptionalDraftPickEffect">
 											<option v-for="v in availableOptionalDraftEffects" :value="v">
-												{{ v.effect }}
+												{{ v.name }} ({{ v.effect }})
 											</option>
 											<option :value="undefined">Do not use</option>
 										</select>
 									</span>
-									<span v-if="hasCogworkLibrarian">
-										<input
-											type="checkbox"
-											v-model="useCogworkLibrarian"
-											id="use-cogwork-librarian"
-										/>
-										<label for="use-cogwork-librarian">Use Cogwork Librarian</label>
+									<span v-if="availableDraftEffects.length > 0">
+										<label for="pick-effect">Pick Effect:</label>
+										<select id="pick-effect" v-model="selectedUsableDraftEffect">
+											<option v-for="v in availableDraftEffects" :value="v">
+												{{ v.name }} ({{ v.effect }})
+											</option>
+											<option :value="undefined">None</option>
+										</select>
 									</span>
 								</template>
 								<template v-else>

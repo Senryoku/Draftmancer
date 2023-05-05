@@ -7,7 +7,7 @@ import { makeClients, waitForClientDisconnects, enableLogs, disableLogs, ackNoEr
 import { OptionalOnPickDraftEffect, UniqueCard, UniqueCardID, UsableDraftEffect } from "../src/CardTypes.js";
 import { CogworkLibrarianOracleID } from "../src/Conspiracy.js";
 
-describe.only("Conspiracy Draft Matters Cards", () => {
+describe("Conspiracy Draft Matters Cards", () => {
 	let clients: ReturnType<typeof makeClients> = [];
 	let ownerIdx = 0;
 	let nonOwnerIdx = 1;

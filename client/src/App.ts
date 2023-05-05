@@ -9,7 +9,16 @@ import {
 	UserData,
 	UsersData,
 } from "../../src/Session/SessionTypes";
-import type { ArenaID, Card, CardID, DeckList, PlainCollection, UniqueCard, UniqueCardID } from "@/CardTypes";
+import {
+	ArenaID,
+	Card,
+	CardID,
+	DeckList,
+	OnPickDraftEffect,
+	PlainCollection,
+	UniqueCard,
+	UniqueCardID,
+} from "@/CardTypes";
 import type { DraftLog } from "@/DraftLog";
 import type { BotScores } from "@/Bot";
 import type { WinstonDraftSyncData } from "@/WinstonDraft";
@@ -29,7 +38,6 @@ import { HousmanDraftSyncData } from "@/HousmanDraft";
 import { minesweeperApplyDiff } from "../../src/MinesweeperDraftTypes";
 import Constants, { CubeDescription } from "../../src/Constants";
 import { CardColor, OptionalOnPickDraftEffect, UsableDraftEffect } from "../../src/CardTypes";
-import { CogworkLibrarianOracleID } from "../../src/Conspiracy";
 
 import io, { Socket } from "socket.io-client";
 import { toRaw, defineComponent, defineAsyncComponent } from "vue";
@@ -356,10 +364,12 @@ export default defineComponent({
 			pickInFlight: false,
 			selectedCards: [] as UniqueCard[],
 			burningCards: [] as UniqueCard[],
-			useCogworkLibrarian: false, // If true, next pick will exchange a Cogwork Librarian from the player's card pool for a additional pick.
-			selectedDraftPickEffect: undefined as
+			selectedUsableDraftEffect: undefined as
 				| undefined
-				| { effect: OptionalOnPickDraftEffect; cardID: UniqueCardID },
+				| { name: string; effect: UsableDraftEffect; cardID: UniqueCardID },
+			selectedOptionalDraftPickEffect: undefined as
+				| undefined
+				| { name: string; effect: OptionalOnPickDraftEffect; cardID: UniqueCardID },
 			// Brewing (deck and sideboard should not be modified directly, have to
 			// stay in sync with their CardPool display)
 			deck: [] as UniqueCard[],
@@ -1472,7 +1482,7 @@ export default defineComponent({
 		pickCard(options: { toSideboard?: boolean; event?: MouseEvent } | undefined = undefined) {
 			if (
 				this.pickInFlight || // We already send a pick request and are waiting for an anwser
-				(this.draftingState != DraftState.Picking && this.draftingState != DraftState.RochesterPicking)
+				(this.draftingState !== DraftState.Picking && this.draftingState !== DraftState.RochesterPicking)
 			)
 				return;
 
@@ -1495,19 +1505,30 @@ export default defineComponent({
 			// Give Vue one frame to react to state changes before triggering the
 			// transitions.
 			this.$nextTick(() => {
+				const selectedCards = this.selectedCards;
+				const burningCards = this.burningCards;
 				const toSideboard = options?.toSideboard;
-				const cUIDs = this.selectedCards.map((c) => c.uniqueID);
 
 				const onSuccess: (() => void)[] = [];
+
+				onSuccess.push(() => {
+					if (toSideboard) this.addToSideboard(selectedCards, options);
+					else this.addToDeck(selectedCards, options);
+					this.selectedCards = [];
+					this.burningCards = [];
+				});
 
 				const ack = (answer: SocketAck) => {
 					this.pickInFlight = false;
 					if (answer.code !== 0) {
+						// Restore booster state
+						this.booster.push(...selectedCards);
+						this.booster.push(...burningCards);
 						Alert.fire(answer.error as SweetAlertOptions<any, any>);
 					} else {
-						if (toSideboard) for (let cuid of cUIDs) this.socket.emit("moveCard", cuid, "side");
-						this.selectedCards = [];
-						this.burningCards = [];
+						if (toSideboard)
+							for (let cuid of selectedCards.map((c) => c.uniqueID))
+								this.socket.emit("moveCard", cuid, "side");
 						for (const callback of onSuccess) callback();
 					}
 				};
@@ -1515,59 +1536,87 @@ export default defineComponent({
 				if (this.rochesterDraftState) {
 					this.socket.emit(
 						"rochesterDraftPick",
-						this.selectedCards.map((c) => this.rochesterDraftState!.booster.findIndex((c2) => c === c2)),
+						selectedCards.map((c) => this.rochesterDraftState!.booster.findIndex((c2) => c === c2)),
 						ack
 					);
 					this.draftingState = DraftState.RochesterWaiting;
 				} else {
-					let draftEffect;
-					if (this.hasCogworkLibrarian && this.useCogworkLibrarian) {
+					let draftEffect:
+						| {
+								effect: UsableDraftEffect;
+								cardID: UniqueCardID;
+						  }
+						| undefined;
+					if (this.selectedUsableDraftEffect) {
 						draftEffect = {
-							effect: UsableDraftEffect.CogworkLibrarian,
-							cardID: this.deck.find((c) => c.oracle_id === CogworkLibrarianOracleID)?.uniqueID ?? 0,
+							effect: this.selectedUsableDraftEffect.effect,
+							cardID: this.selectedUsableDraftEffect.cardID,
 						};
-						onSuccess.push(() => {
-							let index = this.deck.findIndex((c) => c.oracle_id === CogworkLibrarianOracleID);
-							if (index >= 0) {
-								this.deckDisplay?.remCard(this.deck[index]);
-								this.deck.splice(index, 1);
-							} else {
-								index = this.sideboard.findIndex((c) => c.oracle_id === CogworkLibrarianOracleID);
-								if (index >= 0) {
-									this.sideboardDisplay?.remCard(this.sideboard[index]);
-									this.sideboard.splice(index, 1);
-								} else fireToast("error", "Could not find your Cogwork Librarian...");
+						switch (draftEffect!.effect) {
+							case UsableDraftEffect.RemoveDraftCard:
+								// Don't add the cards to the card pool
+								onSuccess.pop();
+								// Update card with the RemoveDraftCard effect
+								let origin = this.deck.find((c) => c.uniqueID === draftEffect!.cardID);
+								if (!origin) origin = this.sideboard.find((c) => c.uniqueID === draftEffect!.cardID);
+								if (origin) {
+									if (!origin.state) origin.state = {};
+									if (!origin.state.removedCards) origin.state.removedCards = [];
+									origin.state.removedCards.push(...selectedCards);
+								}
+								break;
+							case UsableDraftEffect.CogworkLibrarian: {
+								onSuccess.push(() => {
+									// Remove used Cogwork Libarian from player's card pool
+									let index = this.deck.findIndex((c) => c.uniqueID === draftEffect!.cardID);
+									if (index >= 0) {
+										this.deckDisplay?.remCard(this.deck[index]);
+										this.deck.splice(index, 1);
+									} else {
+										index = this.sideboard.findIndex((c) => c.uniqueID === draftEffect!.cardID);
+										if (index >= 0) {
+											this.sideboardDisplay?.remCard(this.sideboard[index]);
+											this.sideboard.splice(index, 1);
+										} else fireToast("error", "Could not find your Cogwork Librarian...");
+									}
+								});
+								break;
 							}
-
-							this.useCogworkLibrarian = false;
+						}
+						onSuccess.push(() => {
+							this.selectedUsableDraftEffect = undefined;
 						});
 					}
-					let optionalOnPickDraftEffect;
-					if (this.selectedDraftPickEffect) {
-						optionalOnPickDraftEffect = this.selectedDraftPickEffect;
+					let optionalOnPickDraftEffect:
+						| {
+								effect: OptionalOnPickDraftEffect;
+								cardID: UniqueCardID;
+						  }
+						| undefined;
+					if (this.selectedOptionalDraftPickEffect) {
+						optionalOnPickDraftEffect = {
+							effect: this.selectedOptionalDraftPickEffect.effect,
+							cardID: this.selectedOptionalDraftPickEffect.cardID,
+						};
 						onSuccess.push(() => {
-							this.selectedDraftPickEffect = undefined;
+							this.selectedOptionalDraftPickEffect = undefined;
 						});
 					}
 
 					this.socket.emit(
 						"pickCard",
 						{
-							pickedCards: this.selectedCards.map((c) => this.booster.findIndex((c2) => c === c2)),
-							burnedCards: this.burningCards.map((c) => this.booster.findIndex((c2) => c === c2)),
+							pickedCards: selectedCards.map((c) => this.booster.findIndex((c2) => c === c2)),
+							burnedCards: burningCards.map((c) => this.booster.findIndex((c2) => c === c2)),
 							draftEffect,
 							optionalOnPickDraftEffect,
 						},
 						ack
 					);
 					this.draftingState = DraftState.Waiting;
-					// Removes picked & burned cards for animation
-					this.booster = this.booster.filter(
-						(c) => !this.selectedCards.includes(c) && !this.burningCards.includes(c)
-					);
 				}
-				if (options?.toSideboard) this.addToSideboard(this.selectedCards, options);
-				else this.addToDeck(this.selectedCards, options);
+				// Removes picked & burned cards for animation
+				this.booster = this.booster.filter((c) => !selectedCards.includes(c) && !burningCards.includes(c));
 			});
 			this.pickInFlight = true;
 		},
@@ -3300,8 +3349,18 @@ export default defineComponent({
 			// than duplicating the logic here, but currently this is the only special case and I'm chosing the easier solution.
 			if (this.draftingState === DraftState.Picking && this.doubleMastersMode && this.pickNumber !== 0)
 				picksThisRound = 1;
-			if (this.hasCogworkLibrarian && this.useCogworkLibrarian) picksThisRound += 1;
-			return Math.min(picksThisRound, this.booster.length);
+			if (
+				this.selectedUsableDraftEffect &&
+				this.selectedUsableDraftEffect.effect === UsableDraftEffect.CogworkLibrarian
+			)
+				picksThisRound += 1;
+
+			const finalValue = Math.min(picksThisRound, this.booster.length);
+
+			// Automatically deselect cards if needed
+			while (this.selectedCards.length > 0 && this.selectedCards.length > finalValue) this.selectedCards.shift();
+
+			return finalValue;
 		},
 		cardsToBurnThisRound(): number {
 			if (this.rochesterDraftState || !this.booster) return 0;
@@ -3378,13 +3437,8 @@ export default defineComponent({
 			return !isEmpty(this.collection);
 		},
 
-		hasCogworkLibrarian(): boolean {
-			return (
-				this.deck.some((c) => c.oracle_id === CogworkLibrarianOracleID) ||
-				this.sideboard.some((c) => c.oracle_id === CogworkLibrarianOracleID)
-			);
-		},
 		availableOptionalDraftEffects(): {
+			name: string;
 			effect: OptionalOnPickDraftEffect;
 			cardID: UniqueCardID;
 		}[] {
@@ -3392,12 +3446,14 @@ export default defineComponent({
 			for (const card of this.selectedCards.filter((c) => c.draft_effects !== undefined))
 				for (const effect of card.draft_effects!.filter((e) => isSomeEnum(OptionalOnPickDraftEffect)(e)))
 					r.push({
+						name: card.name,
 						effect: effect as OptionalOnPickDraftEffect,
 						cardID: card.uniqueID,
 					});
 			return r;
 		},
 		availableDraftEffects(): {
+			name: string;
 			effect: UsableDraftEffect;
 			cardID: UniqueCardID;
 		}[] {
@@ -3406,6 +3462,7 @@ export default defineComponent({
 				for (const card of arr.filter((c) => c.draft_effects !== undefined))
 					for (const effect of card.draft_effects!.filter((e) => isSomeEnum(UsableDraftEffect)(e)))
 						r.push({
+							name: card.name,
 							effect: effect as UsableDraftEffect,
 							cardID: card.uniqueID,
 						});
@@ -3613,17 +3670,13 @@ export default defineComponent({
 				this.updateAutoLands();
 			},
 		},
-		useCogworkLibrarian() {
-			// Deselect cards if needed.
-			if (!this.useCogworkLibrarian) {
-				while (this.selectedCards.length > 0 && this.selectedCards.length > this.cardsToPick)
-					this.selectedCards.shift();
-			}
+		availableUsableDraftEffects() {
+			this.selectedUsableDraftEffect = undefined;
 		},
 		availableOptionalDraftEffects() {
 			if (this.availableOptionalDraftEffects.length > 0)
-				this.selectedDraftPickEffect = this.availableOptionalDraftEffects[0];
-			else this.selectedDraftPickEffect = undefined;
+				this.selectedOptionalDraftPickEffect = this.availableOptionalDraftEffects[0];
+			else this.selectedOptionalDraftPickEffect = undefined;
 		},
 		autoLand() {
 			this.updateAutoLands();
