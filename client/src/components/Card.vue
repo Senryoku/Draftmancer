@@ -70,6 +70,9 @@ export default defineComponent({
 					this.card.state.passingPlayer
 				)
 					return this.card.state.passingPlayer;
+				if (this.card.state.cardName) return this.card.state.cardName;
+				if (this.card.state.creatureName) return this.card.state.creatureName;
+				if (this.card.state.creatureTypes) return this.card.state.creatureTypes.join(", ");
 			}
 			return undefined;
 		},
