@@ -2722,9 +2722,10 @@ export class Session implements IIndexable {
 
 			s.players[userID].timer -= 1;
 			this.syncCountdown(userID);
-			// TODO: Force server side pick if client did not respond after 5 more seconds
+			// If the client did not respond after 5 more seconds, force a disconnection.
 			if (s.players[userID].timer <= -5) {
-				// TODO
+				s.players[userID].timer = 1;
+				Connections[userID]?.socket?.disconnect();
 				this.stopCountdown(userID);
 			}
 		}, 1000));
