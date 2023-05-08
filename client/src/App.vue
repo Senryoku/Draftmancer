@@ -2694,7 +2694,7 @@
 		</footer>
 		<div
 			class="disconnected-icon"
-			v-if="socket && socket.disconnected /* FIXME: This is not properly reactive. */"
+			v-if="!socketConnected"
 			v-tooltip="
 				'You are disconnected from the server, some functionnalities won\'t be available until the connection is re-established.'
 			"

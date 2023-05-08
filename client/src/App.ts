@@ -251,6 +251,7 @@ export default defineComponent({
 				vaultProgress: 0,
 			},
 			socket: socket,
+			socketConnected: true,
 
 			// Session status
 			sessionID: sessionID,
@@ -395,6 +396,7 @@ export default defineComponent({
 		initializeSocket() {
 			this.socket.on("disconnect", () => {
 				console.log("Disconnected from server.");
+				this.socketConnected = false;
 				// Avoid closing an already opened modal
 				if (!Swal.isVisible())
 					Alert.fire({
@@ -406,6 +408,7 @@ export default defineComponent({
 
 			this.socket.io.on("reconnect", (attemptNumber) => {
 				console.log(`Reconnected to server (attempt ${attemptNumber}).`);
+				this.socketConnected = true;
 				// Re-sync collection on reconnect.
 				if (this.hasCollection) this.socket.emit("setCollection", this.collection);
 
