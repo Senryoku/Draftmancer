@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import { SessionID, UserID } from "../IDTypes";
+import { UserID } from "../IDTypes";
 import { SetCode } from "../Types";
 
 import { Connections } from "../Connection.js";
@@ -9,11 +9,21 @@ import { Socket } from "socket.io";
 import { ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData } from "../SocketType";
 import { ReadyState } from "../Session/SessionTypes.js";
 
-export type QueueID = SetCode;
+import { QueueID, QueueDescription, AvailableQueues } from "./QueueDescription.js";
 
-const PlayerQueues: Map<QueueID, UserID[]> = new Map<QueueID, UserID[]>();
+const PlayerQueues: Map<QueueID, { description: QueueDescription; users: UserID[] }> = new Map<
+	QueueID,
+	{ description: QueueDescription; users: UserID[] }
+>();
 
-function readyCheck(setCode: QueueID, users: UserID[]) {
+for (const queue of AvailableQueues) {
+	PlayerQueues.set(queue.id, {
+		description: queue,
+		users: [],
+	});
+}
+
+function readyCheck(queueID: QueueID, users: UserID[]) {
 	console.log(`Starting Draft Queue ready check: ${users}...`);
 	const playersStatus: Record<UserID, { status: ReadyState; onDisconnect: () => void }> = {};
 
@@ -34,16 +44,16 @@ function readyCheck(setCode: QueueID, users: UserID[]) {
 		console.log(playersStatus);
 		clearTimeout(cancelTimeout);
 		for (const uid of users) {
-			Connections[uid]?.socket?.emit("draftQueueReadyCheckUpdate", setCode, getTableStatus());
+			Connections[uid]?.socket?.emit("draftQueueReadyCheckUpdate", queueID, getTableStatus());
 			Connections[uid]?.socket?.off("disconnect", playersStatus[uid].onDisconnect);
 			Connections[uid]?.socket?.removeAllListeners("draftQueueSetReadyState");
 			if (
 				playersStatus[uid].status === ReadyState.Ready ||
 				(!timeout && playersStatus[uid].status === ReadyState.Unknown)
 			) {
-				Connections[uid]?.socket?.emit("draftQueueReadyCheckCancel", setCode, true);
-				registerPlayer(uid, setCode);
-			} else Connections[uid]?.socket?.emit("draftQueueReadyCheckCancel", setCode, false);
+				Connections[uid]?.socket?.emit("draftQueueReadyCheckCancel", queueID, true);
+				registerPlayer(uid, queueID);
+			} else Connections[uid]?.socket?.emit("draftQueueReadyCheckCancel", queueID, false);
 		}
 	};
 
@@ -67,33 +77,32 @@ function readyCheck(setCode: QueueID, users: UserID[]) {
 				cancel();
 			} else {
 				for (const uid of users)
-					Connections[uid]?.socket?.emit("draftQueueReadyCheckUpdate", setCode, getTableStatus());
+					Connections[uid]?.socket?.emit("draftQueueReadyCheckUpdate", queueID, getTableStatus());
 				if (Object.values(playersStatus).every((p) => p.status === ReadyState.Ready)) {
 					clearTimeout(cancelTimeout);
-					launchSession(setCode, users);
+					launchSession(queueID, users);
 				}
 			}
 		});
-		Connections[uid].socket.emit("draftQueueReadyCheck", setCode, timeout, Object.values(playersStatus));
+		Connections[uid].socket.emit("draftQueueReadyCheck", queueID, timeout, Object.values(playersStatus));
 	}
 }
 
-function launchSession(setCode: QueueID, users: UserID[]) {
-	let sessionID = `DraftQueue-${setCode.toUpperCase()}-${uuidv4()}`;
+function launchSession(queueID: QueueID, users: UserID[]) {
+	let sessionID = `DraftQueue-${queueID.toUpperCase()}-${uuidv4()}`;
 	// FIXME: this is a hack
-	while (sessionID in Sessions) sessionID = `DraftQueue-${setCode.toUpperCase()}-${uuidv4()}`;
+	while (sessionID in Sessions) sessionID = `DraftQueue-${queueID.toUpperCase()}-${uuidv4()}`;
 	console.log("Starting managed session ${sessionID}...");
 
 	const session = new Session(sessionID, undefined);
 
-	////////////////////////////////////////////////////
-	// FIXME: TEMP TEST
-	{
-		session.boostersPerPlayer = 1;
+	const queue = PlayerQueues.get(queueID);
+	if (!queue) {
+		console.error("DraftQueue.launchSession: Queue not found.");
+		return;
 	}
-	////////////////////////////////////////////////////
 
-	session.setRestriction = [setCode];
+	session.setRestriction = [queue.description.setCode];
 	for (const uid of users) {
 		session.addUser(uid);
 		Connections[uid].socket.emit("setSession", sessionID);
@@ -106,7 +115,7 @@ function launchSession(setCode: QueueID, users: UserID[]) {
 
 function searchPlayer(userID: UserID): QueueID | undefined {
 	for (const [key, value] of PlayerQueues) {
-		const val = value.find((uid) => uid === userID);
+		const val = value.users.find((uid) => uid === userID);
 		if (val) return key;
 	}
 	return undefined;
@@ -120,7 +129,7 @@ function onDisconnect(this: Socket<ClientToServerEvents, ServerToClientEvents, I
 	}
 }
 
-export function registerPlayer(userID: UserID, settings: QueueID): SocketAck {
+export function registerPlayer(userID: UserID, queueID: QueueID): SocketAck {
 	const conn = Connections[userID];
 	if (!conn) return new SocketError("Internal Error.");
 	if (conn.sessionID) return new SocketError("Already in a session.");
@@ -128,34 +137,33 @@ export function registerPlayer(userID: UserID, settings: QueueID): SocketAck {
 
 	unregisterPlayer(userID);
 
-	if (!PlayerQueues.has(settings)) PlayerQueues.set(settings, []);
-	PlayerQueues.get(settings)!.push(userID);
+	const queue = PlayerQueues.get(queueID);
+	if (!queue) return new SocketError(`Invalid queue '${queueID}'.`);
 
-	console.log(`PlayerQueue.get(${JSON.stringify(settings)})`, PlayerQueues.get(settings));
+	queue.users.push(userID);
 
-	// TODO: Test
 	conn.socket.once("disconnect", onDisconnect);
 
-	// FIXME: Should be 8!
-	if (PlayerQueues.get(settings)?.length === 2) {
-		const users = PlayerQueues.get(settings)!.slice(0, 2);
-		for (const uid of users) unregisterPlayer(uid, settings);
-		readyCheck(settings, users);
+	if (queue.users.length === queue.description.playerCount) {
+		const users = queue.users.slice(0, queue.description.playerCount);
+		for (const uid of users) unregisterPlayer(uid, queueID);
+		readyCheck(queueID, users);
 	}
 
 	return new SocketAck();
 }
 
-export function unregisterPlayer(userID: UserID, settings?: QueueID): SocketAck {
-	if (!settings) {
-		settings = searchPlayer(userID);
-		if (!settings) return new SocketError(`Player not found.`);
+export function unregisterPlayer(userID: UserID, queueID?: QueueID): SocketAck {
+	if (!queueID) {
+		queueID = searchPlayer(userID);
+		if (!queueID) return new SocketError(`Player not found.`);
 	}
 
-	if (!PlayerQueues.has(settings)) return new SocketError(`Invalid set '${settings}'.`);
-	const idx = PlayerQueues.get(settings)!.indexOf(userID);
+	const queue = PlayerQueues.get(queueID);
+	if (!queue) return new SocketError(`Invalid queue '${queueID}'.`);
+	const idx = queue.users.indexOf(userID);
 	if (idx < 0) return new SocketError(`Player not found.`);
-	PlayerQueues.get(settings)!.splice(idx, 1);
+	queue.users.splice(idx, 1);
 	Connections[userID].socket.off("disconnect", onDisconnect);
 	return new SocketAck();
 }
@@ -169,9 +177,13 @@ export function getQueueStatus() {
 	for (const [k, v] of PlayerQueues.entries()) {
 		queues[k] = {
 			set: k,
-			inQueue: v.length,
+			inQueue: v.users.length,
 			playing: managedSessions
-				.filter((sid) => Sessions[sid].setRestriction[0] === k)
+				.filter(
+					(sid) =>
+						Sessions[sid].setRestriction.length === 1 &&
+						Sessions[sid].setRestriction[0] === v.description.setCode
+				)
 				.map((sid) => Sessions[sid].users.size)
 				.reduce((a, b) => a + b, 0),
 		};

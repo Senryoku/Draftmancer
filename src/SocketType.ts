@@ -18,7 +18,7 @@ import { RotisserieDraftStartOptions, RotisserieDraftSyncData } from "./Rotisser
 import { WinchesterDraftSyncData } from "./WinchesterDraft";
 import { HousmanDraftSyncData } from "./HousmanDraft";
 import { SolomonDraftSyncData } from "./SolomonDraft";
-import { QueueID } from "./draftQueue/DraftQueue";
+import { QueueID } from "./draftQueue/QueueDescription";
 
 export type LoaderOptions = { title: string };
 
