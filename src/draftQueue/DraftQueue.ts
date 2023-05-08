@@ -7,16 +7,83 @@ import { Session, Sessions } from "../Session.js";
 import { SocketAck, SocketError } from "../Message.js";
 import { Socket } from "socket.io";
 import { ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData } from "../SocketType";
+import { ReadyState } from "../Session/SessionTypes.js";
 
-type QueueID = SetCode;
+export type QueueID = SetCode;
 
 let ManagedSessions: SessionID[] = []; // Only used for statistics, I should probably get rid of it.
 const PlayerQueues: Map<QueueID, UserID[]> = new Map<QueueID, UserID[]>();
+
+function readyCheck(setCode: QueueID, users: UserID[]) {
+	console.log(`Starting Draft Queue ready check: ${users}...`);
+	const playersStatus: Record<UserID, { status: ReadyState; onDisconnect: () => void }> = {};
+
+	const timeout = Date.now() + 35 * 1000;
+	const cancelTimeout = setTimeout(() => {
+		cancel(true);
+	}, timeout - Date.now());
+
+	const getTableStatus = () =>
+		Object.values(playersStatus).map((p) => {
+			return {
+				status: p.status,
+			};
+		});
+
+	const cancel = (timeout: boolean = false) => {
+		console.log("Canceling queue ready check.");
+		console.log(playersStatus);
+		clearTimeout(cancelTimeout);
+		for (const uid of users) {
+			Connections[uid]?.socket?.emit("draftQueueReadyCheckUpdate", setCode, getTableStatus());
+			Connections[uid]?.socket?.off("disconnect", playersStatus[uid].onDisconnect);
+			Connections[uid]?.socket?.removeAllListeners("draftQueueSetReadyState");
+			if (
+				playersStatus[uid].status === ReadyState.Ready ||
+				(!timeout && playersStatus[uid].status === ReadyState.Unknown)
+			) {
+				Connections[uid]?.socket?.emit("draftQueueReadyCheckCancel", setCode, true);
+				registerPlayer(uid, setCode);
+			} else Connections[uid]?.socket?.emit("draftQueueReadyCheckCancel", setCode, false);
+		}
+	};
+
+	for (const uid of users)
+		playersStatus[uid] = {
+			status: ReadyState.Unknown,
+			onDisconnect: () => {
+				playersStatus[uid].status = ReadyState.NotReady;
+				cancel();
+			},
+		};
+
+	for (const uid of users) {
+		Connections[uid]?.socket?.once("disconnect", playersStatus[uid].onDisconnect);
+		Connections[uid]?.socket?.once("draftQueueSetReadyState", (status: ReadyState) => {
+			console.log("draftQueueSetReadyState", uid, status);
+			playersStatus[uid].status = status;
+			console.log(playersStatus);
+
+			if (status !== ReadyState.Ready) {
+				cancel();
+			} else {
+				for (const uid of users)
+					Connections[uid]?.socket?.emit("draftQueueReadyCheckUpdate", setCode, getTableStatus());
+				if (Object.values(playersStatus).every((p) => p.status === ReadyState.Ready)) {
+					clearTimeout(cancelTimeout);
+					launchSession(setCode, users);
+				}
+			}
+		});
+		Connections[uid].socket.emit("draftQueueReadyCheck", setCode, timeout, Object.values(playersStatus));
+	}
+}
 
 function launchSession(setCode: QueueID, users: UserID[]) {
 	let sessionID = `DraftQueue-${setCode.toUpperCase()}-${uuidv4()}`;
 	// FIXME: this is a hack
 	while (sessionID in Sessions) sessionID = `DraftQueue-${setCode.toUpperCase()}-${uuidv4()}`;
+	console.log("Starting managed session ${sessionID}...");
 
 	const session = new Session(sessionID, undefined);
 
@@ -41,9 +108,9 @@ function launchSession(setCode: QueueID, users: UserID[]) {
 }
 
 function searchPlayer(userID: UserID): QueueID | undefined {
-	for (const entry of PlayerQueues) {
-		const val = entry[1].find((uid) => uid === userID);
-		if (val) return entry[0];
+	for (const [key, value] of PlayerQueues) {
+		const val = value.find((uid) => uid === userID);
+		if (val) return key;
 	}
 	return undefined;
 }
@@ -74,10 +141,9 @@ export function registerPlayer(userID: UserID, settings: QueueID): SocketAck {
 
 	// FIXME: Should be 8!
 	if (PlayerQueues.get(settings)?.length === 2) {
-		console.log("Starting managed session...");
-		const users = PlayerQueues.get(settings)!;
-		PlayerQueues.set(settings, []);
-		launchSession(settings, users);
+		const users = PlayerQueues.get(settings)!.slice(0, 2);
+		for (const uid of users) unregisterPlayer(uid, settings);
+		readyCheck(settings, users);
 	}
 
 	return new SocketAck();

@@ -1578,7 +1578,7 @@
 			</div>
 
 			<div class="welcome" v-if="draftingState === DraftState.None">
-				<template v-if="!sessionID">
+				<template v-if="page === 'draftqueue'">
 					<DraftQueue :socket="socket"></DraftQueue>
 				</template>
 				<template v-else>
@@ -1596,8 +1596,9 @@
 								background: #444;
 								padding-left: 75px;
 								height: 50px;
-								line-height: 50px;
 								margin: 2em 5em;
+								display: flex;
+								align-items: center;
 							"
 						>
 							<div
@@ -1620,7 +1621,7 @@
 								New!
 							</div>
 							<div>
-								Don't have a play group and just want to playtest the latest set? Try
+								Don't have a play group and just want to train drafting the latest set? Try our new
 								<strong>Draft Queue</strong>!
 							</div>
 						</div>

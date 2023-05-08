@@ -6,6 +6,8 @@ import Emitter from "pico-emitter";
 import { installFontAwesome } from "./install-fontawesome";
 
 const emitter = new Emitter();
+export const useEmitter = () => ({ emitter });
+
 declare module "vue" {
 	interface ComponentCustomProperties {
 		emitter: Emitter;

@@ -1316,38 +1316,6 @@ io.on("connection", async function (socket) {
 		console.error(err);
 	});
 
-	socket.on("setSession", function (this: typeof socket, sessionID: SessionID, sessionSettings: Options) {
-		try {
-			const userID = this.data.userID;
-			if (!userID) {
-				console.error("setSession Error: Missing userID on socket.");
-				return;
-			}
-			if (sessionID === Connections[userID].sessionID) return;
-
-			const filteredSettings: Options = {};
-			if (sessionSettings)
-				for (const prop of Object.keys(SessionsSettingsProps))
-					if (prop in sessionSettings) filteredSettings[prop] = sessionSettings[prop];
-			joinSession(sessionID, userID, filteredSettings);
-		} catch (e) {
-			console.error("Error in socket event setSession: ", e);
-		}
-	});
-
-	socket.on("register", function (this: typeof socket, setCode: SetCode, ack: (result: SocketAck) => void) {
-		const userID = this.data.userID;
-		if (!userID) return ack?.(new SocketError("Internal Error."));
-		const r = registerPlayer(userID, setCode);
-		ack(r);
-	});
-	socket.on("unregister", function (this: typeof socket, ack: (result: SocketAck) => void) {
-		const userID = this.data.userID;
-		if (!userID) return ack?.(new SocketError("Internal Error."));
-		const r = unregisterPlayer(userID);
-		ack(r);
-	});
-
 	if (process.env.NODE_ENV === undefined) {
 		socket.use((event, next) => {
 			console.log(event);
@@ -1381,6 +1349,25 @@ io.on("connection", async function (socket) {
 
 	console.log("typeof query.sessionID:", typeof query.sessionID);
 	if (query.sessionID) {
+		socket.on("setSession", function (this: typeof socket, sessionID: SessionID, sessionSettings: Options) {
+			try {
+				const userID = this.data.userID;
+				if (!userID) {
+					console.error("setSession Error: Missing userID on socket.");
+					return;
+				}
+				if (sessionID === Connections[userID].sessionID) return;
+
+				const filteredSettings: Options = {};
+				if (sessionSettings)
+					for (const prop of Object.keys(SessionsSettingsProps))
+						if (prop in sessionSettings) filteredSettings[prop] = sessionSettings[prop];
+				joinSession(sessionID, userID, filteredSettings);
+			} catch (e) {
+				console.error("Error in socket event setSession: ", e);
+			}
+		});
+
 		// Owner Only
 		socket.on("readyCheck", prepareSocketCallback(readyCheck, true));
 		socket.on("startDraft", prepareSocketCallback(startDraft, true));
@@ -1458,6 +1445,24 @@ io.on("connection", async function (socket) {
 			console.error("query.sessionSettings: ", query.sessionSettings);
 		}
 		joinSession(query.sessionID as string, userID, filteredSettings);
+	} else {
+		// Not in a session, allow registering to draft queues.
+		socket.on(
+			"draftQueueRegister",
+			function (this: typeof socket, setCode: unknown, ack: (result: SocketAck) => void) {
+				const userID = this.data.userID;
+				if (!userID) return ack?.(new SocketError("Internal Error."));
+				if (!isString(setCode)) return ack?.(new SocketError("Invalid setCode parameter."));
+				const r = registerPlayer(userID, setCode);
+				ack(r);
+			}
+		);
+		socket.on("draftQueueUnregister", function (this: typeof socket, ack: (result: SocketAck) => void) {
+			const userID = this.data.userID;
+			if (!userID) return ack?.(new SocketError("Internal Error."));
+			const r = unregisterPlayer(userID);
+			ack(r);
+		});
 	}
 
 	socket.emit("publicSessions", getPublicSessions());

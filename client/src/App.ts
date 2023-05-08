@@ -198,8 +198,8 @@ export default defineComponent({
 	},
 	data: () => {
 		const path = window.location.pathname.substring(1).split("/");
-
-		console.log(path);
+		const validPages = ["", "draftqueue"];
+		const page = validPages.includes(path[0]) ? path[0] : "";
 
 		let userID: UserID = guid();
 		let storedUserID = getCookie("userID");
@@ -214,11 +214,7 @@ export default defineComponent({
 			? decodeURIComponent(urlParamSession)
 			: getCookie("sessionID", shortguid());
 
-		if (path.length > 0) {
-			if (path[0] === "draftqueue") {
-				sessionID = undefined;
-			}
-		}
+		if (page === "draftqueue") sessionID = undefined;
 
 		const userName = initialSettings.userName;
 
@@ -236,15 +232,6 @@ export default defineComponent({
 			query,
 		});
 
-		if (path.length > 0) {
-			if (path[0] === "draftqueue") {
-				if (path.length > 1)
-					socket.emit("register", path[1], (r) => {
-						if (r.code !== 0 && r.error) Alert.fire(r.error);
-					});
-			}
-		}
-
 		return {
 			// Make these enums available in the template
 			DraftState,
@@ -253,6 +240,7 @@ export default defineComponent({
 
 			sortableUpdate,
 
+			page: page,
 			// User Data
 			userID: userID,
 			userName: userName,
@@ -3082,7 +3070,11 @@ export default defineComponent({
 				this.notificationPermission = "denied";
 				return;
 			}
-			if (this.enableNotifications && Notification.permission !== "granted") {
+			if (this.enableNotifications) this.requestNotificationPermission();
+		},
+		requestNotificationPermission() {
+			console.log("requestNotificationPermission", Notification.permission);
+			if (Notification.permission !== "granted") {
 				Notification.requestPermission().then((permission) => {
 					this.notificationPermission = permission;
 					if (permission !== "granted") this.enableNotifications = false;
@@ -3444,6 +3436,9 @@ export default defineComponent({
 	},
 	async mounted() {
 		try {
+			this.emitter.on("notification", this.pushNotification);
+			this.emitter.on("requestNotificationPermission", this.requestNotificationPermission);
+
 			this.initializeSocket();
 			this.updateURLQuery();
 
@@ -3493,6 +3488,7 @@ export default defineComponent({
 		}
 	},
 	unmounted() {
+		this.emitter.off("notification", this.pushNotification);
 		window.removeEventListener("beforeunload", this.beforeunload);
 	},
 	watch: {

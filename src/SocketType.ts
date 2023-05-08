@@ -18,6 +18,7 @@ import { RotisserieDraftStartOptions, RotisserieDraftSyncData } from "./Rotisser
 import { WinchesterDraftSyncData } from "./WinchesterDraft";
 import { HousmanDraftSyncData } from "./HousmanDraft";
 import { SolomonDraftSyncData } from "./SolomonDraft";
+import { QueueID } from "./draftQueue/DraftQueue";
 
 export type LoaderOptions = { title: string };
 
@@ -50,6 +51,11 @@ export interface ServerToClientEvents {
 	sessionOwner: (owner: UserID | undefined, userName: string | null) => void;
 	isPublic: (isPublic: boolean) => void;
 	description: (description: string) => void;
+
+	// Draft Queue
+	draftQueueReadyCheck: (queue: QueueID, timeout: number, players: { status: ReadyState }[]) => void;
+	draftQueueReadyCheckUpdate: (queue: QueueID, players: { status: ReadyState }[]) => void;
+	draftQueueReadyCheckCancel: (queue: QueueID, backInQueue: boolean) => void;
 
 	draftLog: (draftLog: DraftLog) => void;
 	draftLogLive: (data: {
@@ -234,8 +240,11 @@ export interface ClientToServerEvents {
 	updateBracket: (results: Array<[number, number]>) => void;
 	updateDeckLands: (lands: DeckBasicLands) => void;
 	moveCard: (uniqueID: UniqueCardID, destStr: string) => void;
-	register: (setCode: SetCode, ack: (result: SocketAck) => void) => void;
-	unregister: (ack: (result: SocketAck) => void) => void;
+
+	// Draft Queue
+	draftQueueSetReadyState: (status: ReadyState) => void;
+	draftQueueRegister: (setCode: SetCode, ack: (result: SocketAck) => void) => void;
+	draftQueueUnregister: (ack: (result: SocketAck) => void) => void;
 
 	// Owner Only
 	setOwnerIsPlayer: (val: boolean) => void;
