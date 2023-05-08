@@ -1668,114 +1668,128 @@
 						</div>
 						<div class="container" style="grid-area: Support">
 							<div class="section-title">
-								<h2>Sponsor</h2>
+								<h2>
+									<font-awesome-icon
+										icon="fa-solid fa-mug-hot"
+										aria-hidden="true"
+									></font-awesome-icon>
+									Buy me a Coffee
+								</h2>
 							</div>
-							<div class="welcome-section welcome-alt" style="display: flex; gap: 0.5em">
-								<iframe
-									src="https://github.com/sponsors/Senryoku/button"
-									title="Sponsor Senryoku"
-									height="35"
-									width="116"
-									style="border: 0; margin: 0.25em"
-								></iframe>
+							<div class="welcome-section welcome-alt">
 								<div>
-									Support Draftmancer on
+									Hello there!<br />
+									I hope you're enjoying using Draftmancer!<br />
+									If you find it useful, please consider supporting it by becoming a
 									<a href="https://github.com/sponsors/Senryoku" target="_blank">
 										<font-awesome-icon icon="fa-brands fa-github"></font-awesome-icon> GitHub
 										Sponsor
 									</a>
-									to make sure it stays online and updated.
+									or donating through
+									<a
+										href="https://www.paypal.com/donate/?hosted_button_id=6L2CUS6DH82DL"
+										target="_blank"
+									>
+										<font-awesome-icon icon="fa-brands fa-paypal"></font-awesome-icon> PayPal </a
+									>.<br />
+									Your support will help keep the project online, updated, and will motivate me to add
+									new features.<br />
+									Thank you! — Sen
 								</div>
 							</div>
 						</div>
 						<div class="container" style="grid-area: Tools">
 							<div class="section-title">
 								<h2>Tools</h2>
-							</div>
-							<div class="welcome-section welcome-alt">
-								<ul style="display: flex; flex-wrap: wrap; justify-content: space-around">
-									<li>
-										<span @click="displayedModal = 'importdeck'" class="link">
-											<font-awesome-icon icon="fa-solid fa-file-export"></font-awesome-icon> Card
-											List Importer
-										</span>
-									</li>
-									<li
-										v-tooltip="
-											'Download the intersection of the collections of players in the session in text format.'
-										"
-									>
-										<a :href="encodeURI(`/getCollectionPlainText/${sessionID}`)" target="_blank"
-											><font-awesome-icon icon="fa-solid fa-file-download"></font-awesome-icon>
-											Download Session Collection</a
+								<div class="welcome-section welcome-alt">
+									<ul style="display: flex; flex-wrap: wrap; justify-content: space-around">
+										<li>
+											<span @click="displayedModal = 'importdeck'" class="link">
+												<font-awesome-icon icon="fa-solid fa-file-export"></font-awesome-icon>
+												Card List Importer
+											</span>
+										</li>
+										<li
+											v-tooltip="
+												'Download the intersection of the collections of players in the session in text format.'
+											"
 										>
-									</li>
-								</ul>
-							</div>
-						</div>
-						<div class="container" style="grid-area: PublicSessions">
-							<div class="section-title">
-								<h2>Public Sessions</h2>
-							</div>
-							<div class="welcome-section">
-								<div v-if="userID === sessionOwner" style="display: flex">
-									<button @click="isPublic = !isPublic">
-										Set session as {{ isPublic ? "Private" : "Public" }}
-									</button>
-									<delayed-input
-										style="flex-grow: 1"
-										v-model="description"
-										type="text"
-										placeholder="Enter a description for your session"
-										:maxlength="70"
-									/>
-								</div>
-
-								<p v-if="publicSessions.length === 0" style="text-align: center">No public sessions</p>
-								<table v-else class="public-sessions">
-									<thead>
-										<tr>
-											<th>ID</th>
-											<th>Set(s)</th>
-											<th>Players</th>
-											<th>Description</th>
-											<th>Join</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr v-for="s in publicSessions" :key="s.id">
-											<td :title="s.id" class="id">{{ s.id }}</td>
-											<td
-												v-tooltip="
-													s.cube
-														? 'Cube'
-														: s.sets.map((code) => setsInfos[code].fullName).join(', ')
-												"
-											>
-												<template v-if="s.cube">
-													<img src="./assets/img/cube.png" class="set-icon" />
-												</template>
-												<template v-else-if="s.sets.length === 1">
-													<img :src="setsInfos[s.sets[0]].icon" class="set-icon" />
-												</template>
-												<template v-else-if="s.sets.length === 0">All</template>
-												<template v-else>[{{ s.sets.length }}]</template>
-											</td>
-											<td>{{ s.players }} / {{ s.maxPlayers }}</td>
-											<td class="desc">{{ s.description }}</td>
-											<td>
-												<button v-if="s.id !== sessionID" @click="sessionID = s.id">
-													Join
-												</button>
-												<font-awesome-icon
-													icon="fa-solid fa-check green"
-													v-tooltip="`You are in this session!`"
-													v-else
+											<a :href="encodeURI(`/getCollectionPlainText/${sessionID}`)" target="_blank"
+												><font-awesome-icon
+													icon="fa-solid fa-file-download"
 												></font-awesome-icon>
-											</td>
-										</tr>
-									</tbody>
-								</table>
+												Download Session Collection</a
+											>
+										</li>
+									</ul>
+								</div>
+							</div>
+							<div class="container" style="grid-area: PublicSessions">
+								<div class="section-title">
+									<h2>Public Sessions</h2>
+								</div>
+								<div class="welcome-section">
+									<div v-if="userID === sessionOwner" style="display: flex">
+										<button @click="isPublic = !isPublic">
+											Set session as {{ isPublic ? "Private" : "Public" }}
+										</button>
+										<delayed-input
+											style="flex-grow: 1"
+											v-model="description"
+											type="text"
+											placeholder="Enter a description for your session"
+											:maxlength="70"
+										/>
+									</div>
+
+									<p v-if="publicSessions.length === 0" style="text-align: center">
+										No public sessions
+									</p>
+									<table v-else class="public-sessions">
+										<thead>
+											<tr>
+												<th>ID</th>
+												<th>Set(s)</th>
+												<th>Players</th>
+												<th>Description</th>
+												<th>Join</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr v-for="s in publicSessions" :key="s.id">
+												<td :title="s.id" class="id">{{ s.id }}</td>
+												<td
+													v-tooltip="
+														s.cube
+															? 'Cube'
+															: s.sets.map((code) => setsInfos[code].fullName).join(', ')
+													"
+												>
+													<template v-if="s.cube">
+														<img src="./assets/img/cube.png" class="set-icon" />
+													</template>
+													<template v-else-if="s.sets.length === 1">
+														<img :src="setsInfos[s.sets[0]].icon" class="set-icon" />
+													</template>
+													<template v-else-if="s.sets.length === 0">All</template>
+													<template v-else>[{{ s.sets.length }}]</template>
+												</td>
+												<td>{{ s.players }} / {{ s.maxPlayers }}</td>
+												<td class="desc">{{ s.description }}</td>
+												<td>
+													<button v-if="s.id !== sessionID" @click="sessionID = s.id">
+														Join
+													</button>
+													<font-awesome-icon
+														icon="fa-solid fa-check green"
+														v-tooltip="`You are in this session!`"
+														v-else
+													></font-awesome-icon>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
 							</div>
 						</div>
 					</div>

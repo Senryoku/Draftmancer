@@ -42,6 +42,6 @@ export class WinchesterDraftState extends IDraftState implements TurnBased {
 
 export type WinchesterDraftSyncData = ReturnType<WinchesterDraftState["syncData"]>;
 
-export function isWinchesterDraftState(s: IDraftState): s is WinchesterDraftState {
+export function isWinchesterDraftState(s: unknown): s is WinchesterDraftState {
 	return s instanceof WinchesterDraftState;
 }

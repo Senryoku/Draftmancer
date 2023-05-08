@@ -22,3 +22,7 @@ export class TeamSealedState extends IDraftState {
 }
 
 export type TeamSealedSyncData = ReturnType<TeamSealedState["syncData"]>;
+
+export function isTeamSealedState(s: unknown): s is TeamSealedState {
+	return s instanceof TeamSealedState;
+}

@@ -1910,8 +1910,8 @@
         "isPrimary": false,
         "icon": "img/sets/ha6.svg",
         "commonCount": 10,
-        "mythicCount": 4,
-        "rareCount": 6
+        "mythicCount": 3,
+        "rareCount": 7
     },
     "hbg": {
         "code": "hbg",
@@ -2436,10 +2436,12 @@
     "mat": {
         "code": "mat",
         "fullName": "March of the Machine: The Aftermath",
-        "cardCount": 6,
+        "cardCount": 230,
         "isPrimary": true,
         "icon": "img/sets/mat.svg",
-        "rareCount": 6
+        "mythicCount": 48,
+        "rareCount": 123,
+        "uncommonCount": 59
     },
     "mb1": {
         "code": "mb1",
@@ -4125,11 +4127,12 @@
     "pmom": {
         "code": "pmom",
         "fullName": "March of the Machine Promos",
-        "cardCount": 134,
+        "cardCount": 154,
         "isPrimary": false,
         "icon": "img/sets/pmom.svg",
         "mythicCount": 30,
-        "rareCount": 104
+        "rareCount": 104,
+        "uncommonCount": 20
     },
     "pmor": {
         "code": "pmor",
@@ -4341,10 +4344,10 @@
         "isPrimary": false,
         "icon": "img/sets/prm.svg",
         "commonCount": 392,
-        "mythicCount": 373,
-        "rareCount": 1787,
+        "mythicCount": 449,
+        "rareCount": 1687,
         "specialCount": 1,
-        "uncommonCount": 501
+        "uncommonCount": 525
     },
     "prna": {
         "code": "prna",
@@ -5030,12 +5033,12 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 913,
+        "cardCount": 914,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
-        "commonCount": 45,
-        "mythicCount": 156,
-        "rareCount": 692,
+        "commonCount": 42,
+        "mythicCount": 161,
+        "rareCount": 691,
         "uncommonCount": 20
     },
     "slp": {
@@ -5279,9 +5282,9 @@
         "cardCount": 197,
         "isPrimary": false,
         "icon": "img/sets/td0.svg",
-        "commonCount": 101,
+        "commonCount": 99,
         "rareCount": 26,
-        "uncommonCount": 70
+        "uncommonCount": 72
     },
     "td2": {
         "code": "td2",
