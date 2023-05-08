@@ -184,7 +184,7 @@ export default defineComponent({
 		News,
 		PatchNotes: defineAsyncComponent(() => import("./components/PatchNotes.vue")),
 		PickSummary: defineAsyncComponent(() => import("./components/PickSummary.vue")),
-		QuickDraft: defineAsyncComponent(() => import("./components/QuickDraft.vue")),
+		DraftQueue: defineAsyncComponent(() => import("./components/DraftQueue.vue")),
 		RotisserieDraft: defineAsyncComponent(() => import("./components/RotisserieDraft.vue")),
 		ScaleSlider,
 		SetRestrictionComponent: defineAsyncComponent(() => import("./components/SetRestriction.vue")),
@@ -215,7 +215,7 @@ export default defineComponent({
 			: getCookie("sessionID", shortguid());
 
 		if (path.length > 0) {
-			if (path[0] === "quickdraft") {
+			if (path[0] === "draftqueue") {
 				sessionID = undefined;
 			}
 		}
@@ -237,7 +237,7 @@ export default defineComponent({
 		});
 
 		if (path.length > 0) {
-			if (path[0] === "quickdraft") {
+			if (path[0] === "draftqueue") {
 				if (path.length > 1)
 					socket.emit("register", path[1], (r) => {
 						if (r.code !== 0 && r.error) Alert.fire(r.error);

@@ -1609,7 +1609,7 @@ function removeUserFromSession(userID: UserID) {
 app.use(express.static("./client/dist/"));
 app.use("/bracket", express.static("./client/dist/bracket.html"));
 
-app.use("/quickdraft", express.static("./client/dist/index.html"));
+app.use("/draftqueue", express.static("./client/dist/index.html"));
 
 ///////////////////////////////////////////////////////////////////////////////
 // Endpoints
@@ -1823,7 +1823,7 @@ app.get("/getSessions/:key", requireAPIKey, (req, res) => {
 	return returnCircularJSON(res, localSess);
 });
 
-app.get("/api/getQuickDraftStatus", (req, res) => {
+app.get("/api/getDraftQueueStatus", (req, res) => {
 	return res.json(getQueueStatus());
 });
 

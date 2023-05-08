@@ -1,8 +1,8 @@
 <template>
-	<div class="quick-draft">
+	<div class="draft-queue">
 		<div class="upper-control">
 			<a href="/"><font-awesome-icon icon="fa-solid fa-arrow-left"></font-awesome-icon> Back</a>
-			<h1>Draftmancer / Quick Draft</h1>
+			<h1>Draftmancer / Draft Queue</h1>
 			<div v-if="queueStatus">Playing: {{ queueStatus.playing }}</div>
 			<div v-else><LoadingComponent /></div>
 		</div>
@@ -82,7 +82,7 @@ const availableQueues = computed(() => Queues.filter((q) => !inQueue.value || q.
 
 function requestQueueStatus() {
 	clearTimeout(queueStatusRequest);
-	axios.get("/api/getQuickDraftStatus").then((res) => {
+	axios.get("/api/getDraftQueueStatus").then((res) => {
 		if (res.status === 200) queueStatus.value = res.data;
 		queueStatusRequest = setTimeout(() => {
 			requestQueueStatus();
@@ -91,7 +91,7 @@ function requestQueueStatus() {
 }
 
 function onStartDraft() {
-	console.log("QuickDraft startDraft");
+	console.log("DraftQueue startDraft");
 	inQueue.value = false;
 	clearTimeout(queueStatusRequest);
 }
@@ -126,7 +126,7 @@ function unregister() {
 </script>
 
 <style scoped>
-.quick-draft {
+.draft-queue {
 	position: relative;
 	margin-top: 0.5em;
 }

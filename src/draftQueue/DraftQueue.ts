@@ -14,9 +14,9 @@ let ManagedSessions: SessionID[] = []; // Only used for statistics, I should pro
 const PlayerQueues: Map<QueueID, UserID[]> = new Map<QueueID, UserID[]>();
 
 function launchSession(setCode: QueueID, users: UserID[]) {
-	let sessionID = `QuickDraft-${setCode.toUpperCase()}-${uuidv4()}`;
+	let sessionID = `DraftQueue-${setCode.toUpperCase()}-${uuidv4()}`;
 	// FIXME: this is a hack
-	while (sessionID in Sessions) sessionID = `QuickDraft-${setCode.toUpperCase()}-${uuidv4()}`;
+	while (sessionID in Sessions) sessionID = `DraftQueue-${setCode.toUpperCase()}-${uuidv4()}`;
 
 	const session = new Session(sessionID, undefined);
 

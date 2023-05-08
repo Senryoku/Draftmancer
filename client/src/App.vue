@@ -1579,7 +1579,7 @@
 
 			<div class="welcome" v-if="draftingState === DraftState.None">
 				<template v-if="!sessionID">
-					<QuickDraft :socket="socket"></QuickDraft>
+					<DraftQueue :socket="socket"></DraftQueue>
 				</template>
 				<template v-else>
 					<h1>Welcome to Draftmancer.com!</h1>
@@ -1587,7 +1587,7 @@
 						Draft with other players and export your resulting deck to Magic: The Gathering Arena to play
 						with them, in pod!
 					</p>
-					<a href="/quickdraft" class="reset-style">
+					<a href="/draftqueue" class="reset-style">
 						<div
 							style="
 								position: relative;
@@ -1621,7 +1621,7 @@
 							</div>
 							<div>
 								Don't have a play group and just want to playtest the latest set? Try
-								<strong>Quick Draft</strong>!
+								<strong>Draft Queue</strong>!
 							</div>
 						</div>
 					</a>
