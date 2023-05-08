@@ -60,7 +60,7 @@ import { SolomonDraftState } from "./SolomonDraft.js";
 export class Session implements IIndexable {
 	id: SessionID;
 	owner?: UserID;
-	managed: boolean = false;
+	readonly managed: boolean = false;
 	userOrder: Array<string> = [];
 	users: Set<UserID> = new Set();
 
