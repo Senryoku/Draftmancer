@@ -2681,7 +2681,7 @@ export class Session implements IIndexable {
 
 	resumeCountdowns() {
 		if (!(this.draftState instanceof DraftState)) return;
-		const s = this.draftState as DraftState;
+		const s = this.draftState;
 		for (const userID in s.players)
 			if (!s.players[userID].isBot && !this.isDisconnected(userID) && s.players[userID].boosters.length > 0)
 				this.resumeCountdown(userID);
@@ -2689,7 +2689,7 @@ export class Session implements IIndexable {
 
 	stopCountdowns() {
 		if (!(this.draftState instanceof DraftState)) return;
-		for (const userID in (this.draftState as DraftState).players) this.stopCountdown(userID);
+		for (const userID in this.draftState.players) this.stopCountdown(userID);
 	}
 
 	startCountdown(userID: UserID) {
@@ -2699,9 +2699,9 @@ export class Session implements IIndexable {
 			return;
 		}
 
-		const s = this.draftState as DraftState;
 		this.stopCountdown(userID);
 
+		const s = this.draftState;
 		const dec = Math.floor((0.9 * this.maxTimer) / s.numPicks);
 		s.players[userID].timer = this.maxTimer - s.players[userID].pickNumber * dec;
 
@@ -2712,30 +2712,28 @@ export class Session implements IIndexable {
 
 	resumeCountdown(userID: UserID) {
 		if (!(this.draftState instanceof DraftState)) return;
-		const countdownInterval = ((this.draftState as DraftState).players[userID].countdownInterval = setInterval(
-			() => {
-				const s = this.draftState as DraftState;
-				if (!s?.players?.[userID]) {
-					clearInterval(countdownInterval);
-					return;
-				}
+		const countdownInterval = (this.draftState.players[userID].countdownInterval = setInterval(() => {
+			const s = this.draftState;
+			if (!(s instanceof DraftState)) return;
+			if (!s?.players?.[userID]) {
+				clearInterval(countdownInterval);
+				return;
+			}
 
-				s.players[userID].timer -= 1;
-				this.syncCountdown(userID);
-				// TODO: Force server side pick if client did not respond after 5 more seconds
-				if (s.players[userID].timer <= -5) {
-					// TODO
-					this.stopCountdown(userID);
-				}
-			},
-			1000
-		));
-		(this.draftState as DraftState).players[userID].countdownInterval = countdownInterval;
+			s.players[userID].timer -= 1;
+			this.syncCountdown(userID);
+			// TODO: Force server side pick if client did not respond after 5 more seconds
+			if (s.players[userID].timer <= -5) {
+				// TODO
+				this.stopCountdown(userID);
+			}
+		}, 1000));
+		this.draftState.players[userID].countdownInterval = countdownInterval;
 	}
 
 	stopCountdown(userID: UserID) {
-		if (!(this.draftState instanceof DraftState)) return;
-		const s = this.draftState as DraftState;
+		const s = this.draftState;
+		if (!(s instanceof DraftState)) return;
 		if (s?.players?.[userID]?.countdownInterval) {
 			clearInterval(s.players[userID].countdownInterval as NodeJS.Timeout);
 			s.players[userID].countdownInterval = null;
