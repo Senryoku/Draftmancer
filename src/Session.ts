@@ -143,7 +143,7 @@ export class Session implements IIndexable {
 	}
 
 	broadcastDisconnectedUsers() {
-		const disconnectedUsersData: { [uid: string]: any } = {}; // FIXME
+		const disconnectedUsersData: { [uid: string]: { userName: string } } = {};
 		for (const uid in this.disconnectedUsers)
 			disconnectedUsersData[uid] = { userName: this.disconnectedUsers[uid].userName };
 		this.forUsers((u) =>
@@ -164,7 +164,21 @@ export class Session implements IIndexable {
 		if (this.owner == userID) this.owner = this.users.values().next().value;
 
 		if (this.drafting) {
-			if (this.draftState instanceof DraftState) this.stopCountdowns();
+			if (this.draftState instanceof DraftState && !this.managed) this.stopCountdowns();
+			if (this.managed) {
+				// If user is still disconnected in 10sec, replace them by a bot.
+				setTimeout(() => {
+					if (
+						!this.managed ||
+						!(this.draftState instanceof DraftState) ||
+						!this.isDisconnected(userID) ||
+						this.disconnectedUsers[userID].replaced
+					)
+						return;
+					this.disconnectedUsers[userID].replaced = true;
+					this.startBotPickChain(userID);
+				}, 10000);
+			}
 			this.disconnectedUsers[userID] = this.getDisconnectedUserData(userID);
 			this.broadcastDisconnectedUsers();
 		} else {
@@ -1745,9 +1759,12 @@ export class Session implements IIndexable {
 			s.players[nextUserID].boosters.push(booster);
 
 			// Synchronize concerned users
-			if (s.players[nextUserID].isBot || this.isDisconnected(nextUserID)) {
+			if (
+				s.players[nextUserID].isBot ||
+				(this.isDisconnected(nextUserID) && this.disconnectedUsers[nextUserID].replaced)
+			) {
 				this.startBotPickChain(nextUserID);
-			} else {
+			} else if (!this.isDisconnected(nextUserID)) {
 				this.sendDraftState(nextUserID);
 				// This user was waiting for a booster
 				if (s.players[nextUserID].boosters.length === 1) {
@@ -2657,8 +2674,10 @@ export class Session implements IIndexable {
 
 		console.warn(`Session ${this.id}: Replacing disconnected players with bots!`);
 
-		for (const uid in this.disconnectedUsers) this.startBotPickChain(uid);
-
+		for (const uid in this.disconnectedUsers) {
+			this.disconnectedUsers[uid].replaced = true;
+			this.startBotPickChain(uid);
+		}
 		const virtualPlayers = this.getSortedVirtualPlayerData();
 		this.forUsers((uid) =>
 			Connections[uid]?.socket.emit("sessionOptions", {
@@ -2675,7 +2694,11 @@ export class Session implements IIndexable {
 		if (!(this.draftState instanceof DraftState)) return;
 		const s = this.draftState as DraftState;
 		for (const userID in s.players)
-			if (!s.players[userID].isBot && !this.isDisconnected(userID) && s.players[userID].boosters.length > 0)
+			if (
+				!s.players[userID].isBot &&
+				!(this.isDisconnected(userID) && this.disconnectedUsers[userID].replaced) &&
+				s.players[userID].boosters.length > 0
+			)
 				this.startCountdown(userID);
 	}
 
@@ -2683,7 +2706,11 @@ export class Session implements IIndexable {
 		if (!(this.draftState instanceof DraftState)) return;
 		const s = this.draftState;
 		for (const userID in s.players)
-			if (!s.players[userID].isBot && !this.isDisconnected(userID) && s.players[userID].boosters.length > 0)
+			if (
+				!s.players[userID].isBot &&
+				!(this.isDisconnected(userID) && this.disconnectedUsers[userID].replaced) &&
+				s.players[userID].boosters.length > 0
+			)
 				this.resumeCountdown(userID);
 	}
 
@@ -2777,6 +2804,7 @@ export class Session implements IIndexable {
 					? this.disconnectedUsers[userID].userName
 					: Connections[userID].userName,
 				isBot: false,
+				isReplaced: this.isDisconnected(userID) && this.disconnectedUsers[userID].replaced === true,
 				isDisconnected: this.isDisconnected(userID),
 				boosterCount: undefined,
 			};
@@ -2796,6 +2824,7 @@ export class Session implements IIndexable {
 						? this.disconnectedUsers[userID].userName
 						: Connections[userID].userName,
 					isBot: this.draftState.players[userID].isBot,
+					isReplaced: this.isDisconnected(userID) && this.disconnectedUsers[userID].replaced === true,
 					isDisconnected: this.isDisconnected(userID),
 					boosterCount: this.draftState.players[userID].boosters.length,
 				};

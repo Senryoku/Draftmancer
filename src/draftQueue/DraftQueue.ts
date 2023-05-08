@@ -89,7 +89,6 @@ function launchSession(setCode: QueueID, users: UserID[]) {
 	////////////////////////////////////////////////////
 	// FIXME: TEMP TEST
 	{
-		session.maxTimer = 1;
 		session.boostersPerPlayer = 1;
 	}
 	////////////////////////////////////////////////////

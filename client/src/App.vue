@@ -786,7 +786,10 @@
 										></font-awesome-icon>
 									</template>
 								</template>
-								<font-awesome-icon v-if="user.isBot" icon="fa-solid fa-robot"></font-awesome-icon>
+								<font-awesome-icon
+									v-if="user.isBot || user.isReplaced"
+									icon="fa-solid fa-robot"
+								></font-awesome-icon>
 								<template v-if="user.boosterCount !== undefined">
 									<div
 										v-tooltip="`${user.userName} has ${user.boosterCount} boosters.`"

@@ -3287,8 +3287,8 @@ export default defineComponent({
 			return Math.max(0, Math.min(this.burnedCardsPerRound, this.booster.length - this.cardsToPick));
 		},
 		waitingForDisconnectedUsers(): boolean {
-			//                    Disconnected players do not matter for Team Sealed or Rotisserie Draft.
-			if (!this.drafting || this.teamSealedState || this.rotisserieDraftState) return false;
+			//                    Disconnected players do not matter for managed sessions, Team Sealed or Rotisserie Draft.
+			if (!this.drafting || this.managed || this.teamSealedState || this.rotisserieDraftState) return false;
 			return Object.keys(this.disconnectedUsers).length > 0;
 		},
 		disconnectedUserNames(): string {
@@ -3305,6 +3305,7 @@ export default defineComponent({
 						userName: this.sessionUsers[i].userName,
 						userID: this.sessionUsers[i].userID,
 						isBot: false,
+						isReplaced: false,
 						isDisconnected: this.sessionUsers[i].userID in this.disconnectedUsers,
 					});
 				}
