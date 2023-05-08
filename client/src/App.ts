@@ -254,8 +254,9 @@ export default defineComponent({
 			socketConnected: true,
 
 			// Session status
+			managed: false, // Is the session managed by the server? (i.e. the session doesn't have an owner)
 			sessionID: sessionID,
-			sessionOwner: userID as UserID | undefined,
+			sessionOwner: (sessionID ? userID : undefined) as UserID | undefined,
 			sessionOwnerUsername: userName as string,
 			sessionUsers: [] as SessionUser[],
 			disconnectedUsers: {} as { [uid: UserID]: DisconnectedUser },
@@ -3247,10 +3248,6 @@ export default defineComponent({
 		},
 	},
 	computed: {
-		managed(): boolean {
-			// FIXME: This should be a session property.
-			return this.sessionOwner === undefined || this.sessionOwner === null;
-		},
 		deckDisplay(): typeof CardPool | null {
 			return this.$refs.deckDisplay as typeof CardPool | null;
 		},

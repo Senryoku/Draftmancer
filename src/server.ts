@@ -1530,7 +1530,7 @@ function joinSession(sessionID: SessionID, userID: UserID, defaultSessionSetting
 				);
 			}
 		} else if (sess.managed) {
-			refuse("This session is closed.");
+			refuse(`This session (${sessionID}) is closed.`);
 		} else if (sess.getHumanPlayerCount() >= sess.maxPlayers) {
 			// Session exists and is full
 			refuse(

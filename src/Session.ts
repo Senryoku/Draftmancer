@@ -166,6 +166,7 @@ export class Session implements IIndexable {
 		if (this.drafting) {
 			if (this.draftState instanceof DraftState && !this.managed) this.stopCountdowns();
 			if (this.managed) {
+				this.stopCountdown(userID);
 				// If user is still disconnected in 10sec, replace them by a bot.
 				setTimeout(() => {
 					if (
@@ -355,6 +356,7 @@ export class Session implements IIndexable {
 
 	syncSessionOptions(userID: UserID) {
 		const options: Options = {
+			managed: this.managed,
 			sessionOwner: this.owner,
 			bracket: this.bracket,
 		};
@@ -2739,6 +2741,7 @@ export class Session implements IIndexable {
 
 	resumeCountdown(userID: UserID) {
 		if (!(this.draftState instanceof DraftState)) return;
+		this.stopCountdown(userID);
 		const countdownInterval = (this.draftState.players[userID].countdownInterval = setInterval(() => {
 			const s = this.draftState;
 			if (!(s instanceof DraftState)) return;
@@ -2749,14 +2752,13 @@ export class Session implements IIndexable {
 
 			s.players[userID].timer -= 1;
 			this.syncCountdown(userID);
-			// If the client did not respond after 5 more seconds, force a disconnection.
-			if (s.players[userID].timer <= -5) {
+			// If the client did not respond after 10 more seconds, force a disconnection.
+			if (s.players[userID].timer <= -10) {
 				s.players[userID].timer = 1;
 				Connections[userID]?.socket?.disconnect();
 				this.stopCountdown(userID);
 			}
 		}, 1000));
-		this.draftState.players[userID].countdownInterval = countdownInterval;
 	}
 
 	stopCountdown(userID: UserID) {
