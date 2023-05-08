@@ -11,7 +11,6 @@ import { ReadyState } from "../Session/SessionTypes.js";
 
 export type QueueID = SetCode;
 
-let ManagedSessions: SessionID[] = []; // Only used for statistics, I should probably get rid of it.
 const PlayerQueues: Map<QueueID, UserID[]> = new Map<QueueID, UserID[]>();
 
 function readyCheck(setCode: QueueID, users: UserID[]) {
@@ -102,7 +101,6 @@ function launchSession(setCode: QueueID, users: UserID[]) {
 	}
 
 	Sessions[sessionID] = session;
-	ManagedSessions.push(sessionID);
 
 	session.startDraft();
 }
@@ -166,20 +164,22 @@ export function unregisterPlayer(userID: UserID, settings?: QueueID): SocketAck 
 export function getQueueStatus() {
 	const queues: Record<SetCode, { set: string; inQueue: number; playing: number }> = {};
 
-	ManagedSessions = ManagedSessions.filter((sid) => sid in Sessions);
+	// NOTE: Might be worth optimizing/caching at some point.
+	const managedSessions = Object.keys(Sessions).filter((sid) => Sessions[sid].managed);
 
 	for (const [k, v] of PlayerQueues.entries()) {
 		queues[k] = {
 			set: k,
 			inQueue: v.length,
-			playing: ManagedSessions.filter((sid) => Sessions[sid].setRestriction[0] === k)
+			playing: managedSessions
+				.filter((sid) => Sessions[sid].setRestriction[0] === k)
 				.map((sid) => Sessions[sid].users.size)
 				.reduce((a, b) => a + b, 0),
 		};
 	}
 
 	return {
-		playing: ManagedSessions.map((sid) => Sessions[sid].users.size).reduce((a, b) => a + b, 0),
+		playing: managedSessions.map((sid) => Sessions[sid].users.size).reduce((a, b) => a + b, 0),
 		queues,
 	};
 }
