@@ -105,7 +105,7 @@ enum PassingOrder {
 	Repeat,
 }
 
-const Sounds: { [name: string]: HTMLAudioElement } = {
+export const Sounds: { [name: string]: HTMLAudioElement } = {
 	start: new Audio("sound/drop_003.ogg"),
 	next: new Audio("sound/next.mp3"),
 	countdown: new Audio("sound/click_001.ogg"),

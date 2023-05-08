@@ -44,6 +44,11 @@
 						:key="readyCheck.timeout"
 						:style="`--timer:${readyCheck.animDuration}ms;`"
 					></div>
+					<div style="text-align: center">
+						{{ Math.floor(readyCheck.timeLeft / 1000 / 60) }}:{{
+							Math.floor(readyCheck.timeLeft / 1000) < 10 ? "0" : ""
+						}}{{ Math.floor(readyCheck.timeLeft / 1000) }}
+					</div>
 					<div class="ready-check-players">
 						<div
 							v-for="(p, idx) in readyCheck.players"
@@ -67,7 +72,12 @@
 						<div v-if="readyCheck.anwser === ReadyState.Unknown">
 							<button class="confirm" @click="setReadyState(ReadyState.Ready)">I am Ready!</button>
 						</div>
-						<div v-else>Waiting for others players...</div>
+						<div v-else>
+							Waiting for others players...
+							{{ readyCheck.players.filter((p) => p.status === ReadyState.Ready).length }}/{{
+								readyCheck.players.length
+							}}
+						</div>
 					</div>
 				</div>
 			</div>
@@ -88,6 +98,7 @@ import { QueueID } from "@/draftQueue/DraftQueue";
 import { ReadyState } from "../../../src/Session/SessionTypes";
 import LoadingComponent from "./LoadingComponent.vue";
 import { SweetAlertIcon } from "sweetalert2";
+import { Sounds } from "../App.vue";
 
 const Queues = [
 	{ code: "mom", name: "March of the Machine", image: require("../assets/img/mom_sma_insta_1080x1920_en.jpg") },
@@ -115,6 +126,7 @@ const queueStatus = ref(
 let queueStatusRequest = setTimeout(() => {
 	requestQueueStatus();
 }, 0);
+let readyCheckCountdownInterval: NodeJS.Timeout;
 
 const readyCheck = ref(
 	null as null | {
@@ -122,6 +134,7 @@ const readyCheck = ref(
 		anwser: ReadyState;
 		timeout: number;
 		animDuration: number;
+		timeLeft: number;
 		players: { status: ReadyState }[];
 	}
 );
@@ -147,11 +160,26 @@ function onStartDraft() {
 	inQueue.value = false;
 	readyCheck.value = null;
 	clearTimeout(queueStatusRequest);
-	history.pushState({}, "", "/draftqueue");
 }
 
 function onReadyCheck(queue: QueueID, timeout: number, players: { status: ReadyState }[]) {
-	readyCheck.value = { queue, anwser: ReadyState.Unknown, timeout, animDuration: timeout - Date.now(), players };
+	readyCheck.value = {
+		queue,
+		anwser: ReadyState.Unknown,
+		timeout,
+		animDuration: timeout - Date.now(),
+		timeLeft: timeout - Date.now(),
+		players,
+	};
+	clearInterval(readyCheckCountdownInterval);
+	readyCheckCountdownInterval = setInterval(() => {
+		if (readyCheck.value === null) {
+			clearInterval(readyCheckCountdownInterval);
+			return;
+		}
+		readyCheck.value.timeLeft = timeout - Date.now();
+	}, 100);
+	Sounds["readyCheck"].play();
 	notify("info", "Your draft is about to start!", "Are you ready?");
 }
 
@@ -195,6 +223,7 @@ onMounted(() => {
 	props.socket.on("draftQueueReadyCheck", onReadyCheck);
 	props.socket.on("draftQueueReadyCheckUpdate", onReadyCheckUpdate);
 	props.socket.once("startDraft", onStartDraft);
+	history.pushState({}, "", "/draftqueue");
 });
 
 onUnmounted(() => {
@@ -353,10 +382,11 @@ function unregister() {
 	border-radius: 0 0 0.5em 0.5em;
 	display: flex;
 	flex-direction: column;
-	align-items: center;
+	align-items: stretch;
 	justify-content: center;
 	gap: 1em;
-	min-width: 50vw;
+	min-width: min(50vw, 500px);
+	max-width: max(90vw, 500px);
 }
 
 .ready-check-timer {
@@ -365,30 +395,59 @@ function unregister() {
 	left: 0;
 	width: 100%;
 	height: 4px;
-	background-color: #3e2ca3;
-	will-change: transform;
+	background-color: #518ae6;
+	will-change: width;
 
+	transform-origin: left;
 	animation: timer var(--timer) linear forwards;
 }
 
 @keyframes timer {
 	from {
-		transform: scaleX(1);
+		width: 100%;
 	}
 
 	to {
-		transform: scaleX(0);
+		width: 0;
+	}
+}
+
+.ready-check-timer:after {
+	content: "";
+	position: absolute;
+	top: -2px;
+	right: 0;
+	width: 4px;
+	height: 8px;
+	border-radius: 2px;
+	background-color: #518ae6;
+	box-shadow: 0 0 2px #518ae6;
+	animation: timer-pulse 1s infinite;
+}
+
+@keyframes timer-pulse {
+	0% {
+		box-shadow: 0 0 0 0 rgba(81, 138, 230, 0.8);
+	}
+
+	70% {
+		box-shadow: 0 0 0 6px rgba(81, 138, 230, 0);
+	}
+
+	100% {
+		box-shadow: 0 0 0 0 rgba(81, 138, 230, 0);
 	}
 }
 
 .ready-check-question {
 	text-align: center;
+	height: 2em;
 }
 
 .ready-check-players {
 	display: flex;
 	flex-direction: column;
-	justify-items: stretch;
+	align-items: stretch;
 	gap: 0.5em;
 }
 
@@ -396,9 +455,30 @@ function unregister() {
 	padding: 0.5em;
 	background-color: #444;
 	transition: all 0.25s ease;
+	border-radius: 2px;
 }
 
 .player-ready {
-	box-shadow: 0px 0px 10px 5px #008029, inset 0px 0px 5px 5px #008029;
+	background-image: linear-gradient(to left, #008029 0%, rgba(122, 196, 146, 0) 50%);
+	box-shadow: 0 0 8px 4px #008029, inset 0 0 2px 2px #008029;
+	animation: player-ready-pulse 0.5s ease-out forwards;
+}
+
+@keyframes player-ready-pulse {
+	0% {
+		box-shadow: 0 0 0 0 #008029;
+	}
+
+	15% {
+		box-shadow: 0 0 16px 6px #01ac37;
+	}
+
+	30% {
+		box-shadow: 0 0 4px 2px #01ac37, inset 0 0 4px 2px #008029;
+	}
+
+	100% {
+		box-shadow: 0 0 8px 4px #008029, inset 0 0 2px 2px #008029;
+	}
 }
 </style>
