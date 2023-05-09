@@ -427,7 +427,7 @@ CustomCard {
 	collector_number?: string;
 	rarity?: string;
 	subtypes?: Array&lt;string&gt; = [];
-	rating?: number = 0;
+	rating?: number = 0; <comment>// A rating of the strength of the card in a vacuum, between 0 and 5. This may help bots navigate drafts when they don't know any cards :^)</comment>
 	layout?: string;
 	back?: CardFace;
 	related_cards?: Array&lt;CardID | CardFace&gt;; <comment>// You can use this field to display some related cards when right clicking on the card. CardID can be the name of another custom card, or a Scryfall ID.</comment>
