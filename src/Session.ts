@@ -60,7 +60,8 @@ import { SolomonDraftState, isSolomonDraftState } from "./SolomonDraft.js";
 
 export class Session implements IIndexable {
 	id: SessionID;
-	owner: UserID;
+	owner?: UserID;
+	readonly managed: boolean = false;
 	userOrder: Array<string> = [];
 	users: Set<UserID> = new Set();
 
@@ -113,9 +114,10 @@ export class Session implements IIndexable {
 	draftPaused: boolean = false;
 	countdown: number = 75;
 
-	constructor(id: SessionID, owner: UserID, options: Options = {}) {
+	constructor(id: SessionID, owner: UserID | undefined, options: Options = {}) {
 		this.id = id;
 		this.owner = owner;
+		if (!owner) this.managed = true;
 
 		// Validate and set session settings
 		for (const p in options)
@@ -142,7 +144,7 @@ export class Session implements IIndexable {
 	}
 
 	broadcastDisconnectedUsers() {
-		const disconnectedUsersData: { [uid: string]: any } = {}; // FIXME
+		const disconnectedUsersData: { [uid: string]: { userName: string } } = {};
 		for (const uid in this.disconnectedUsers)
 			disconnectedUsersData[uid] = { userName: this.disconnectedUsers[uid].userName };
 		this.forUsers((u) =>
@@ -163,7 +165,22 @@ export class Session implements IIndexable {
 		if (this.owner == userID) this.owner = this.users.values().next().value;
 
 		if (this.drafting) {
-			if (this.draftState instanceof DraftState) this.stopCountdowns();
+			if (this.draftState instanceof DraftState && !this.managed) this.stopCountdowns();
+			if (this.managed) {
+				this.stopCountdown(userID);
+				// If user is still disconnected in 10sec, replace them by a bot.
+				setTimeout(() => {
+					if (
+						!this.managed ||
+						!(this.draftState instanceof DraftState) ||
+						!this.isDisconnected(userID) ||
+						this.disconnectedUsers[userID].replaced
+					)
+						return;
+					this.disconnectedUsers[userID].replaced = true;
+					this.startBotPickChain(userID);
+				}, 10000);
+			}
 			this.disconnectedUsers[userID] = this.getDisconnectedUserData(userID);
 			this.broadcastDisconnectedUsers();
 		} else {
@@ -340,6 +357,7 @@ export class Session implements IIndexable {
 
 	syncSessionOptions(userID: UserID) {
 		const options: Options = {
+			managed: this.managed,
 			sessionOwner: this.owner,
 			bracket: this.bracket,
 		};
@@ -725,7 +743,7 @@ export class Session implements IIndexable {
 				Connections[user].socket.emit(
 					"sessionOwner",
 					this.owner,
-					this.owner in Connections ? Connections[this.owner].userName : null
+					this.owner && this.owner in Connections ? Connections[this.owner].userName : null
 				);
 				Connections[user].socket.emit("sessionUsers", userInfo);
 			}
@@ -1660,7 +1678,7 @@ export class Session implements IIndexable {
 			Connections[uid].socket.emit("startDraft", virtualPlayerData);
 		}
 
-		if (!this.ownerIsPlayer && this.owner in Connections) {
+		if (!this.ownerIsPlayer && this.owner && this.owner in Connections) {
 			Connections[this.owner].socket.emit("startDraft", virtualPlayerData);
 			// Update draft log for live display if owner is not playing
 			if (this.shouldSendLiveUpdates())
@@ -1692,9 +1710,12 @@ export class Session implements IIndexable {
 			s.players[nextUserID].boosters.push(booster);
 
 			// Synchronize concerned users
-			if (s.players[nextUserID].isBot || this.isDisconnected(nextUserID)) {
+			if (
+				s.players[nextUserID].isBot ||
+				(this.isDisconnected(nextUserID) && this.disconnectedUsers[nextUserID].replaced)
+			) {
 				this.startBotPickChain(nextUserID);
-			} else {
+			} else if (!this.isDisconnected(nextUserID)) {
 				this.sendDraftState(nextUserID);
 				// This user was waiting for a booster
 				if (s.players[nextUserID].boosters.length === 1) {
@@ -1781,7 +1802,7 @@ export class Session implements IIndexable {
 		cardsToRemove.sort((a, b) => b - a); // Remove last index first to avoid shifting indices
 
 		// Update draft log for live display if owner in not playing (Do this before removing the cards, damnit!)
-		if (this.shouldSendLiveUpdates()) {
+		if (this.owner && this.shouldSendLiveUpdates()) {
 			Connections[this.owner].socket.emit("draftLogLive", {
 				userID: userID,
 				pick: pickData,
@@ -1939,7 +1960,7 @@ export class Session implements IIndexable {
 		};
 		this.draftLog?.users[userID].picks.push(pickData);
 
-		if (this.shouldSendLiveUpdates())
+		if (this.owner && this.shouldSendLiveUpdates())
 			Connections[this.owner]?.socket.emit("draftLogLive", { userID: userID, pick: pickData });
 
 		const cardsToRemove = pickedIndices.concat(burnedIndices);
@@ -2048,7 +2069,7 @@ export class Session implements IIndexable {
 			++index;
 		}
 
-		if (!this.ownerIsPlayer) {
+		if (this.owner && !this.ownerIsPlayer) {
 			Connections[this.owner]?.socket.emit("draftState", {
 				boosterNumber: s.boosterNumber,
 			});
@@ -2264,7 +2285,7 @@ export class Session implements IIndexable {
 				this.draftLog.delayed = true;
 			// Fallthrough
 			case "owner":
-				Connections[this.owner].socket.emit("draftLog", this.draftLog);
+				if (this.owner) Connections[this.owner].socket.emit("draftLog", this.draftLog);
 				if (this.personalLogs)
 					this.forNonOwners((uid) => Connections[uid]?.socket.emit("draftLog", this.getStrippedLog(uid)!));
 				else {
@@ -2309,7 +2330,7 @@ export class Session implements IIndexable {
 		this.sendLogs();
 
 		// If owner is not playing, let them know everything went ok.
-		if (!this.ownerIsPlayer && this.owner in Connections) {
+		if (this.owner && !this.ownerIsPlayer && this.owner in Connections) {
 			const msg = new Message("Sealed pools successfly distributed!");
 			msg.showConfirmButton = false;
 			Connections[this.owner].socket.emit("message", msg);
@@ -2383,7 +2404,7 @@ export class Session implements IIndexable {
 		this.sendLogs();
 
 		// If owner is not playing, let them know everything went ok.
-		if (!this.ownerIsPlayer && this.owner in Connections) {
+		if (this.owner && !this.ownerIsPlayer && this.owner in Connections) {
 			const msg = new Message("Sealed pools successfly distributed!");
 			msg.showConfirmButton = false;
 			Connections[this.owner].socket.emit("message", msg);
@@ -2512,7 +2533,7 @@ export class Session implements IIndexable {
 		}
 
 		// If owner is not playing, let them know everything went ok.
-		if (!this.ownerIsPlayer && this.owner in Connections) {
+		if (!this.ownerIsPlayer && this.owner && this.owner in Connections) {
 			const msg = new Message("Jumpstart boosters successfully distributed!");
 			msg.showConfirmButton = false;
 			Connections[this.owner].socket.emit("message", msg);
@@ -2602,8 +2623,10 @@ export class Session implements IIndexable {
 
 		console.warn(`Session ${this.id}: Replacing disconnected players with bots!`);
 
-		for (const uid in this.disconnectedUsers) this.startBotPickChain(uid);
-
+		for (const uid in this.disconnectedUsers) {
+			this.disconnectedUsers[uid].replaced = true;
+			this.startBotPickChain(uid);
+		}
 		const virtualPlayers = this.getSortedVirtualPlayerData();
 		this.forUsers((uid) =>
 			Connections[uid]?.socket.emit("sessionOptions", {
@@ -2620,7 +2643,11 @@ export class Session implements IIndexable {
 		if (!this.drafting || !isDraftState(this.draftState)) return;
 		const s = this.draftState as DraftState;
 		for (const userID in s.players)
-			if (!s.players[userID].isBot && !this.isDisconnected(userID) && s.players[userID].boosters.length > 0)
+			if (
+				!s.players[userID].isBot &&
+				!(this.isDisconnected(userID) && this.disconnectedUsers[userID].replaced) &&
+				s.players[userID].boosters.length > 0
+			)
 				this.startCountdown(userID);
 	}
 
@@ -2628,7 +2655,11 @@ export class Session implements IIndexable {
 		const s = this.draftState;
 		if (!this.drafting || !isDraftState(s)) return;
 		for (const userID in s.players)
-			if (!s.players[userID].isBot && !this.isDisconnected(userID) && s.players[userID].boosters.length > 0)
+			if (
+				!s.players[userID].isBot &&
+				!(this.isDisconnected(userID) && this.disconnectedUsers[userID].replaced) &&
+				s.players[userID].boosters.length > 0
+			)
 				this.resumeCountdown(userID);
 	}
 
@@ -2644,9 +2675,9 @@ export class Session implements IIndexable {
 			return;
 		}
 
-		const s = this.draftState as DraftState;
 		this.stopCountdown(userID);
 
+		const s = this.draftState;
 		const dec = Math.floor((0.9 * this.maxTimer) / s.numPicks);
 		s.players[userID].timer = this.maxTimer - s.players[userID].pickNumber * dec;
 
@@ -2657,6 +2688,7 @@ export class Session implements IIndexable {
 
 	resumeCountdown(userID: UserID) {
 		if (!isDraftState(this.draftState)) return;
+		this.stopCountdown(userID);
 		const countdownInterval = ((this.draftState as DraftState).players[userID].countdownInterval = setInterval(
 			() => {
 				const s = this.draftState as DraftState;
@@ -2667,15 +2699,15 @@ export class Session implements IIndexable {
 
 				s.players[userID].timer -= 1;
 				this.syncCountdown(userID);
-				// TODO: Force server side pick if client did not respond after 5 more seconds
-				if (s.players[userID].timer <= -5) {
-					// TODO
+				// If the client did not respond after 10 more seconds, force a disconnection.
+				if (s.players[userID].timer <= -10) {
+					s.players[userID].timer = 1;
+					Connections[userID]?.socket?.disconnect();
 					this.stopCountdown(userID);
 				}
 			},
 			1000
 		));
-		(this.draftState as DraftState).players[userID].countdownInterval = countdownInterval;
 	}
 
 	stopCountdown(userID: UserID) {
@@ -2723,6 +2755,7 @@ export class Session implements IIndexable {
 					? this.disconnectedUsers[userID].userName
 					: Connections[userID].userName,
 				isBot: false,
+				isReplaced: this.isDisconnected(userID) && this.disconnectedUsers[userID].replaced === true,
 				isDisconnected: this.isDisconnected(userID),
 				boosterCount: undefined,
 			};
@@ -2742,6 +2775,7 @@ export class Session implements IIndexable {
 						? this.disconnectedUsers[userID].userName
 						: Connections[userID].userName,
 					isBot: this.draftState.players[userID].isBot,
+					isReplaced: this.isDisconnected(userID) && this.disconnectedUsers[userID].replaced === true,
 					isDisconnected: this.isDisconnected(userID),
 					boosterCount: this.draftState.players[userID].boosters.length,
 				};
@@ -2819,7 +2853,7 @@ export class Session implements IIndexable {
 			decklist: { hashes: this.draftLog.users[userID].decklist?.hashes },
 		};
 
-		if (this.shouldSendLiveUpdates()) Connections[this.owner]?.socket.emit("draftLogLive", shareData);
+		if (this.owner && this.shouldSendLiveUpdates()) Connections[this.owner]?.socket.emit("draftLogLive", shareData);
 
 		if (!this.drafting) {
 			// Note: The session setting draftLogRecipients may have changed since the game ended.
@@ -2828,22 +2862,23 @@ export class Session implements IIndexable {
 				case "delayed":
 					if (this.draftLog.delayed) {
 						// Complete log has not been shared yet, send only hashes to non-owners.
-						Connections[this.owner]?.socket.emit("shareDecklist", shareData);
+						if (this.owner) Connections[this.owner]?.socket.emit("shareDecklist", shareData);
 						this.forNonOwners((uid) => Connections[uid]?.socket.emit("shareDecklist", hashesOnly));
 						break;
 					}
 				// Else, fall through to "everyone"
 				case "everyone":
 					// Also send the update to the organiser separately if they're not playing
-					if (!this.ownerIsPlayer) Connections[this.owner]?.socket.emit("shareDecklist", shareData);
+					if (this.owner && !this.ownerIsPlayer)
+						Connections[this.owner]?.socket.emit("shareDecklist", shareData);
 					this.forUsers((uid) => Connections[uid]?.socket.emit("shareDecklist", shareData));
 					break;
 				case "owner":
-					Connections[this.owner]?.socket.emit("shareDecklist", shareData);
+					if (this.owner) Connections[this.owner]?.socket.emit("shareDecklist", shareData);
 					this.forNonOwners((uid) => Connections[uid]?.socket.emit("shareDecklist", hashesOnly));
 					break;
 				case "none":
-					Connections[this.owner]?.socket.emit("shareDecklist", hashesOnly);
+					if (this.owner) Connections[this.owner]?.socket.emit("shareDecklist", hashesOnly);
 					this.forNonOwners((uid) => Connections[uid]?.socket.emit("shareDecklist", hashesOnly));
 					break;
 			}
@@ -2855,13 +2890,14 @@ export class Session implements IIndexable {
 		return (
 			!this.ownerIsPlayer &&
 			["owner", "delayed", "everyone"].includes(this.draftLogRecipients) &&
+			this.owner &&
 			this.owner in Connections
 		);
 	}
 
 	// Execute fn for each user. Owner included even if they're not playing.
 	forUsers(fn: (uid: UserID) => void) {
-		if (!this.ownerIsPlayer && this.owner in Connections) fn(this.owner);
+		if (!this.ownerIsPlayer && this.owner && this.owner in Connections) fn(this.owner);
 		for (const user of this.users) fn(user);
 	}
 	forNonOwners(fn: (uid: UserID) => void) {

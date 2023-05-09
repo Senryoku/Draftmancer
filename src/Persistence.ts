@@ -514,6 +514,7 @@ export function logSession(type: string, session: Session) {
 		).length,
 	};
 	for (const prop of [
+		"managed",
 		"boostersPerPlayer",
 		"teamDraft",
 		"cardsPerBooster",

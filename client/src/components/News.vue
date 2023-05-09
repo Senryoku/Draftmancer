@@ -1,6 +1,11 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
+			<em>May 09, 2023</em>
+			<p>New feature: <a href="/draftqueue">Draft Queues</a>!</p>
+			<p>Quickly and conveniently practice drafting againt actual humans!</p>
+		</div>
+		<div class="news">
 			<em>May 04, 2023</em>
 			<ul>
 				<li>

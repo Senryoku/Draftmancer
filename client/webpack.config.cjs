@@ -65,7 +65,6 @@ module.exports = {
 			inject: "body",
 			chunks: ["index"],
 			title: "Draftmancer - Multiplayer MTG Limited Simulator",
-			canonical: "",
 			hash: true,
 		}),
 		new HtmlWebpackPlugin({
@@ -74,7 +73,6 @@ module.exports = {
 			inject: "body",
 			chunks: ["readOnlyBracket"],
 			title: "Draftmancer - Bracket",
-			canonical: "bracket",
 			hash: true,
 		}),
 		new VueLoaderPlugin(),

@@ -253,6 +253,20 @@ export async function dragAndDrop(
 export let browsers: Browser[] = [];
 export let pages: Page[] = [];
 
+export function setBrowsersAndPages(_browsers: Browser[], _pages: Page[]) {
+	browsers = _browsers;
+	pages = _pages;
+}
+
+export async function browsersCleanup() {
+	disableLogs();
+	await Promise.all(pages.map((p) => p.close()));
+	pages = [];
+	await Promise.all(browsers.map((b) => b.close()));
+	browsers = [];
+	enableLogs(false);
+}
+
 export function setupBrowsers(playerCount: number) {
 	before("Owner joins", async function () {
 		if (browsers.length > 0 || pages.length > 0) throw new Error("Already setup");
@@ -261,12 +275,7 @@ export function setupBrowsers(playerCount: number) {
 		enableLogs(false);
 	});
 	after("Close browsers", async function () {
-		disableLogs();
-		await Promise.all(pages.map((p) => p.close()));
-		pages = [];
-		await Promise.all(browsers.map((b) => b.close()));
-		browsers = [];
-		enableLogs(false);
+		await browsersCleanup();
 	});
 }
 

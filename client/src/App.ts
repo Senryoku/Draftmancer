@@ -48,7 +48,7 @@ import {
 	escapeHTML,
 	sortableUpdate,
 } from "./helper";
-import { getCookie, setCookie } from "./cookies";
+import { eraseCookie, getCookie, setCookie } from "./cookies";
 import { ButtonColor, Alert, fireToast } from "./alerts";
 import parseCSV from "./parseCSV";
 
@@ -105,7 +105,7 @@ enum PassingOrder {
 	Repeat,
 }
 
-const Sounds: { [name: string]: HTMLAudioElement } = {
+export const Sounds: { [name: string]: HTMLAudioElement } = {
 	start: new Audio("sound/drop_003.ogg"),
 	next: new Audio("sound/next.mp3"),
 	countdown: new Audio("sound/click_001.ogg"),
@@ -184,6 +184,7 @@ export default defineComponent({
 		News,
 		PatchNotes: defineAsyncComponent(() => import("./components/PatchNotes.vue")),
 		PickSummary: defineAsyncComponent(() => import("./components/PickSummary.vue")),
+		DraftQueue: defineAsyncComponent(() => import("./components/DraftQueue.vue")),
 		RotisserieDraft: defineAsyncComponent(() => import("./components/RotisserieDraft.vue")),
 		ScaleSlider,
 		SetRestrictionComponent: defineAsyncComponent(() => import("./components/SetRestriction.vue")),
@@ -196,6 +197,10 @@ export default defineComponent({
 		WinstonDraft: defineAsyncComponent(() => import("./components/WinstonDraft.vue")),
 	},
 	data: () => {
+		const path = window.location.pathname.substring(1).split("/");
+		const validPages = ["", "draftqueue"];
+		const page = validPages.includes(path[0]) ? path[0] : "";
+
 		let userID: UserID = guid();
 		let storedUserID = getCookie("userID");
 		if (storedUserID !== "") {
@@ -205,22 +210,26 @@ export default defineComponent({
 		}
 
 		let urlParamSession = getUrlVars()["session"];
-		const sessionID: SessionID = urlParamSession
+		let sessionID: string | undefined = urlParamSession
 			? decodeURIComponent(urlParamSession)
 			: getCookie("sessionID", shortguid());
+
+		if (page === "draftqueue") sessionID = undefined;
 
 		const userName = initialSettings.userName;
 
 		const storedSessionSettings = localStorage.getItem(localStorageSessionSettingsKey) ?? "{}";
 
+		const query: any = {
+			userID: userID,
+			userName: userName,
+			sessionSettings: storedSessionSettings,
+		};
+		if (sessionID) query.sessionID = sessionID;
+
 		// Socket Setup
 		const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io({
-			query: {
-				userID: userID,
-				sessionID: sessionID,
-				userName: userName,
-				sessionSettings: storedSessionSettings,
-			},
+			query,
 		});
 
 		return {
@@ -231,6 +240,7 @@ export default defineComponent({
 
 			sortableUpdate,
 
+			page: page,
 			// User Data
 			userID: userID,
 			userName: userName,
@@ -241,10 +251,12 @@ export default defineComponent({
 				vaultProgress: 0,
 			},
 			socket: socket,
+			socketConnected: true,
 
 			// Session status
+			managed: false, // Is the session managed by the server? (i.e. the session doesn't have an owner)
 			sessionID: sessionID,
-			sessionOwner: userID as UserID,
+			sessionOwner: (sessionID ? userID : undefined) as UserID | undefined,
 			sessionOwnerUsername: userName as string,
 			sessionUsers: [] as SessionUser[],
 			disconnectedUsers: {} as { [uid: UserID]: DisconnectedUser },
@@ -385,6 +397,7 @@ export default defineComponent({
 		initializeSocket() {
 			this.socket.on("disconnect", () => {
 				console.log("Disconnected from server.");
+				this.socketConnected = false;
 				// Avoid closing an already opened modal
 				if (!Swal.isVisible())
 					Alert.fire({
@@ -396,6 +409,7 @@ export default defineComponent({
 
 			this.socket.io.on("reconnect", (attemptNumber) => {
 				console.log(`Reconnected to server (attempt ${attemptNumber}).`);
+				this.socketConnected = true;
 				// Re-sync collection on reconnect.
 				if (this.hasCollection) this.socket.emit("setCollection", this.collection);
 
@@ -995,7 +1009,8 @@ export default defineComponent({
 			const startDraftSetup = (name = "draft", msg = "Draft Started!") => {
 				// Save user ID in case of disconnect
 				setCookie("userID", this.userID);
-				setCookie("sessionID", this.sessionID);
+				if (this.sessionID) setCookie("sessionID", this.sessionID);
+				this.updateURLQuery();
 
 				this.drafting = true;
 				this.stopReadyCheck();
@@ -1112,6 +1127,8 @@ export default defineComponent({
 						this.draftLogLiveComponentRef?.registerPlayerSelectEvents();
 					});
 				} else this.draftingState = DraftState.Brewing;
+				// Clear sessionID for managed sessions
+				if (this.managed) eraseCookie("sessionID");
 			});
 
 			this.socket.on("pauseDraft", () => {
@@ -3059,7 +3076,11 @@ export default defineComponent({
 				this.notificationPermission = "denied";
 				return;
 			}
-			if (this.enableNotifications && Notification.permission !== "granted") {
+			if (this.enableNotifications) this.requestNotificationPermission();
+		},
+		requestNotificationPermission() {
+			console.log("requestNotificationPermission", Notification.permission);
+			if (Notification.permission !== "granted") {
 				Notification.requestPermission().then((permission) => {
 					this.notificationPermission = permission;
 					if (permission !== "granted") this.enableNotifications = false;
@@ -3087,7 +3108,7 @@ export default defineComponent({
 			copyToClipboard(
 				`${window.location.protocol}//${window.location.hostname}${
 					window.location.port ? ":" + window.location.port : ""
-				}/?session=${encodeURIComponent(this.sessionID)}`
+				}/?session=${encodeURIComponent(this.sessionID ?? "")}`
 			);
 			fireToast("success", "Session link copied to clipboard!");
 		},
@@ -3223,7 +3244,7 @@ export default defineComponent({
 				history.replaceState(
 					{ sessionID: this.sessionID },
 					`Draftmancer Session ${this.sessionID}`,
-					`?session=${encodeURIComponent(this.sessionID)}`
+					`/?session=${encodeURIComponent(this.sessionID)}`
 				);
 			}
 		},
@@ -3265,8 +3286,8 @@ export default defineComponent({
 			return Math.max(0, Math.min(this.burnedCardsPerRound, this.booster.length - this.cardsToPick));
 		},
 		waitingForDisconnectedUsers(): boolean {
-			//                    Disconnected players do not matter for Team Sealed or Rotisserie Draft.
-			if (!this.drafting || this.teamSealedState || this.rotisserieDraftState) return false;
+			//                    Disconnected players do not matter for managed sessions, Team Sealed or Rotisserie Draft.
+			if (!this.drafting || this.managed || this.teamSealedState || this.rotisserieDraftState) return false;
 			return Object.keys(this.disconnectedUsers).length > 0;
 		},
 		disconnectedUserNames(): string {
@@ -3283,6 +3304,7 @@ export default defineComponent({
 						userName: this.sessionUsers[i].userName,
 						userID: this.sessionUsers[i].userID,
 						isBot: false,
+						isReplaced: false,
 						isDisconnected: this.sessionUsers[i].userID in this.disconnectedUsers,
 					});
 				}
@@ -3417,6 +3439,9 @@ export default defineComponent({
 	},
 	async mounted() {
 		try {
+			this.emitter.on("notification", this.pushNotification);
+			this.emitter.on("requestNotificationPermission", this.requestNotificationPermission);
+
 			this.initializeSocket();
 			this.updateURLQuery();
 
@@ -3466,6 +3491,7 @@ export default defineComponent({
 		}
 	},
 	unmounted() {
+		this.emitter.off("notification", this.pushNotification);
 		window.removeEventListener("beforeunload", this.beforeunload);
 	},
 	watch: {
@@ -3481,7 +3507,7 @@ export default defineComponent({
 					}
 				}
 				this.socket.io.opts.query!.sessionID = this.sessionID;
-				this.socket.emit("setSession", this.sessionID, sessionSettings);
+				if (this.sessionID) this.socket.emit("setSession", this.sessionID, sessionSettings);
 			}
 			this.updateURLQuery();
 			if (this.sessionID) setCookie("sessionID", this.sessionID);
