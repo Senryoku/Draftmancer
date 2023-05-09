@@ -48,7 +48,7 @@ import {
 	escapeHTML,
 	sortableUpdate,
 } from "./helper";
-import { getCookie, setCookie } from "./cookies";
+import { eraseCookie, getCookie, setCookie } from "./cookies";
 import { ButtonColor, Alert, fireToast } from "./alerts";
 import parseCSV from "./parseCSV";
 
@@ -1127,6 +1127,8 @@ export default defineComponent({
 						this.draftLogLiveComponentRef?.registerPlayerSelectEvents();
 					});
 				} else this.draftingState = DraftState.Brewing;
+				// Clear sessionID for managed sessions
+				if (this.managed) eraseCookie("sessionID");
 			});
 
 			this.socket.on("pauseDraft", () => {
