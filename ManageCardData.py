@@ -870,6 +870,7 @@ setinfos["mb1_convention_2021"].update({"code": "mb1_convention_2021",
                                      "isPrimary": True,
                                      })
 PrimarySets.append("mb1_convention_2021")
+PrimarySets.append("mat") # Support mat as a draftable set (mom + mat cards)
 
 # Create fake primary sets for each version of the Shadows over Innistrad Remastered bonus sheet, so users can choose rather than rely on the auto rotation.
 with open("src/data/shadow_of_the_past.json", "r") as bonusSheetsFile:
@@ -894,6 +895,6 @@ constants = {}
 with open("src/data/constants.json", 'r', encoding="utf8") as constantsFile:
     constants = json.loads(constantsFile.read())
 constants['PrimarySets'] = [
-    s for s in PrimarySets if s in setinfos and s not in subsets and s not in ["ren", "rin", "a22", "y22", "j22", "mat", "cmm", "sis", "ltr", "ltc"]]  # Exclude some codes that are actually part of larger sets (tsb, fmb1, h1r... see subsets), or aren't out yet
+    s for s in PrimarySets if s in setinfos and s not in subsets and s not in ["ren", "rin", "a22", "y22", "j22", "mat", "cmm", "sis", "ltr", "ltc", "who"]]  # Exclude some codes that are actually part of larger sets (tsb, fmb1, h1r... see subsets), or aren't out yet
 with open("src/data/constants.json", 'w', encoding="utf8") as constantsFile:
     json.dump(constants, constantsFile, ensure_ascii=False, indent=4)
