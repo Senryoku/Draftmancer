@@ -1347,7 +1347,6 @@ io.on("connection", async function (socket) {
 	socket.on("updateDeckLands", prepareSocketCallback(updateDeckLands));
 	socket.on("moveCard", prepareSocketCallback(moveCard));
 
-	console.log("typeof query.sessionID:", typeof query.sessionID);
 	if (query.sessionID) {
 		socket.on("setSession", function (this: typeof socket, sessionID: SessionID, sessionSettings: Options) {
 			try {
