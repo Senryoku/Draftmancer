@@ -2,8 +2,16 @@
 	<div class="welcome-section">
 		<div class="news">
 			<em>May 09, 2023</em>
-			<p>New feature: <a href="/draftqueue">Draft Queues</a>!</p>
-			<p>Quickly and conveniently practice drafting againt actual humans!</p>
+			<ul>
+				<li>
+					New feature: <a href="/draftqueue">Draft Queues</a>!<br />
+					Quickly and conveniently practice drafting againt actual humans!
+				</li>
+				<li>
+					<img src="img/sets/mat.svg" class="set-icon" style="--invertedness: 100%" alt="" /> March of the
+					Machine: The Aftermath draft, mimicking Arena's with one MAT card in a MOM booster.
+				</li>
+			</ul>
 		</div>
 		<div class="news">
 			<em>May 04, 2023</em>
