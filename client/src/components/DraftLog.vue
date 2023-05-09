@@ -372,7 +372,13 @@ export default defineComponent({
 				} else {
 					if (this.displayOptions.category === "Deck") this.displayOptions.category = "Cards";
 				}
-				this.displayOptions.pack = this.displayOptions.pick = 0;
+				this.$nextTick(() => {
+					this.displayOptions.pack = Math.min(this.displayOptions.pack, this.picksPerPack.length - 1);
+					this.displayOptions.pick = Math.min(
+						this.displayOptions.pick,
+						this.picksPerPack[this.displayOptions.pack].length - 1
+					);
+				});
 			}
 		},
 	},
