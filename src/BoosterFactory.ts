@@ -1466,6 +1466,46 @@ class MOMBoosterFactory extends BoosterFactory {
 	}
 }
 
+// March of the Machine: Aftermath Arena Draft
+// One MAT card in each pack (instead of one common?)
+class MATBoosterFactory extends MOMBoosterFactory {
+	matPool: SlotedCardPool;
+
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
+		const [matPool, momCardPool] = filterCardPool(cardPool, (cid: CardID) => getCard(cid).set === "mat");
+		super(momCardPool, landSlot, options);
+		this.matPool = matPool;
+	}
+
+	generateBooster(targets: Targets) {
+		if (isEmpty(this.matPool)) {
+			return super.generateBooster(targets);
+		} else {
+			const updatedTargets = Object.assign({}, targets);
+			const matCards: UniqueCard[] = [];
+			for (let i = 0; i < targets.bonus; ++i) {
+				updatedTargets.common = Math.max(0, updatedTargets.common - 1);
+				const matCounts = countBySlot(this.matPool);
+				if (matCounts.uncommon === 0 && matCounts.rare === 0 && matCounts.mythic === 0)
+					return new MessageError("Not enough Aftermath cards.");
+				// Rates from Multiverse Legends in MOM
+				const matRarityRoll = random.real(0, 1);
+				const matRarity =
+					this.options?.mythicPromotion && matCounts.mythic > 0 && matRarityRoll <= 1.0 / 15.0
+						? "mythic"
+						: matCounts.rare > 0 && matRarityRoll <= 5.0 / 15.0
+						? "rare"
+						: "uncommon";
+				matCards.push(pickCard(this.matPool[matRarity]));
+			}
+			const booster = super.generateBooster(targets);
+			if (isMessageError(booster)) return booster;
+			booster.unshift(...matCards);
+			return booster;
+		}
+	}
+}
+
 // Set specific rules.
 // Neither DOM, WAR or ZNR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
 export const SetSpecificFactories: {
@@ -1496,6 +1536,7 @@ export const SetSpecificFactories: {
 	sir2: SIRBoosterFactoryBonusSheet2,
 	sir3: SIRBoosterFactoryBonusSheet3,
 	mom: MOMBoosterFactory,
+	mat: MATBoosterFactory,
 };
 
 export const getBoosterFactory = function (
