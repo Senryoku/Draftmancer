@@ -1301,6 +1301,13 @@
 				</transition>
 			</div>
 
+			<div v-if="managed && draftingState === DraftState.Brewing" style="padding: 0.5em 1em 0 1em">
+				<a href="/draftqueue">
+					<font-awesome-icon icon="fa-solid fa-arrow-left"></font-awesome-icon>
+					Back to Draft Queue
+				</a>
+			</div>
+
 			<!-- Brewing controls (Deck & Sideboard) -->
 			<div
 				class="deck-and-sideboard-container"
