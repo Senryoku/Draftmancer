@@ -113,6 +113,7 @@ for (const [cid, card] of Cards.entries()) {
 		}
 	}
 }
+BoosterCardsBySet["mat"] = BoosterCardsBySet["mom"].concat(BoosterCardsBySet["mat"]); // Shortcut to get a draftable MAT set, like in Arena
 BoosterCardsBySet["dbl"] = BoosterCardsBySet["mid"].concat(BoosterCardsBySet["vow"]); // Innistrad: Double Feature (All cards from Midnight Hunt and Crimson Vow)
 BoosterCardsBySet["ydmu"] = BoosterCardsBySet["dmu"]; // Dominaria United Alchemy
 // Shadows over Innistrad with specific Bonus Sheet
