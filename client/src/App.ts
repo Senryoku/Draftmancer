@@ -3079,7 +3079,6 @@ export default defineComponent({
 			if (this.enableNotifications) this.requestNotificationPermission();
 		},
 		requestNotificationPermission() {
-			console.log("requestNotificationPermission", Notification.permission);
 			if (Notification.permission !== "granted") {
 				Notification.requestPermission().then((permission) => {
 					this.notificationPermission = permission;

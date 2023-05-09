@@ -25,7 +25,6 @@ for (const queue of AvailableQueues) {
 }
 
 function readyCheck(queueID: QueueID, users: UserID[]) {
-	console.log(`Starting Draft Queue ready check: ${users}...`);
 	const playersStatus: Record<UserID, { status: ReadyState; onDisconnect: () => void }> = {};
 
 	const timeout = Date.now() + 35 * 1000;
@@ -41,8 +40,6 @@ function readyCheck(queueID: QueueID, users: UserID[]) {
 		});
 
 	const cancel = (timeout: boolean = false) => {
-		console.log("Canceling queue ready check.");
-		console.log(playersStatus);
 		clearTimeout(cancelTimeout);
 		for (const uid of users) {
 			Connections[uid]?.socket?.emit("draftQueueReadyCheckUpdate", queueID, getTableStatus());
@@ -70,9 +67,7 @@ function readyCheck(queueID: QueueID, users: UserID[]) {
 	for (const uid of users) {
 		Connections[uid]?.socket?.once("disconnect", playersStatus[uid].onDisconnect);
 		Connections[uid]?.socket?.once("draftQueueSetReadyState", (status: ReadyState) => {
-			console.log("draftQueueSetReadyState", uid, status);
 			playersStatus[uid].status = status;
-			console.log(playersStatus);
 
 			if (status !== ReadyState.Ready) {
 				cancel();
@@ -91,9 +86,7 @@ function readyCheck(queueID: QueueID, users: UserID[]) {
 
 function launchSession(queueID: QueueID, users: UserID[]) {
 	let sessionID = `DraftQueue-${queueID.toUpperCase()}-${uuidv4()}`;
-	// FIXME: this is a hack
 	while (sessionID in Sessions) sessionID = `DraftQueue-${queueID.toUpperCase()}-${uuidv4()}`;
-	console.log("Starting managed session ${sessionID}...");
 
 	const session = new Session(sessionID, undefined);
 
@@ -134,7 +127,6 @@ export function registerPlayer(userID: UserID, queueID: QueueID): SocketAck {
 	const conn = Connections[userID];
 	if (!conn) return new SocketError("Internal Error.");
 	if (conn.sessionID) return new SocketError("Already in a session.");
-	console.log("Registering player...");
 
 	unregisterPlayer(userID);
 
