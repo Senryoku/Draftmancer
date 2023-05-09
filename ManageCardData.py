@@ -191,7 +191,7 @@ PrimarySets = [s['code'] for s in SetsInfos if s['set_type']
                in ['core', 'expansion', 'masters', 'draft_innovation']]
 PrimarySets.extend(['unf', 'ugl', 'unh', 'ust', 'und'])  # Add Un-Sets as primary.
 PrimarySets.extend(['hbg', 'planeshifted_snc', 'ydmu'])
-
+PrimarySets.append("mat") # Support mat as a draftable set (mom + mat cards)
 
 def append_set_cards(allcards, results):
     print(f"Processing {len(results['data'])} cards...")
@@ -833,7 +833,6 @@ for mtgset, group in groups:
     setinfos[mtgset] = {"code": mtgset,
                         "fullName": setdata['name'],
                         "cardCount": len(cardList),
-
                         "isPrimary": mtgset in PrimarySets
                         }
     if 'block' in setdata:
@@ -870,7 +869,6 @@ setinfos["mb1_convention_2021"].update({"code": "mb1_convention_2021",
                                      "isPrimary": True,
                                      })
 PrimarySets.append("mb1_convention_2021")
-PrimarySets.append("mat") # Support mat as a draftable set (mom + mat cards)
 
 # Create fake primary sets for each version of the Shadows over Innistrad Remastered bonus sheet, so users can choose rather than rely on the auto rotation.
 with open("src/data/shadow_of_the_past.json", "r") as bonusSheetsFile:
@@ -895,6 +893,6 @@ constants = {}
 with open("src/data/constants.json", 'r', encoding="utf8") as constantsFile:
     constants = json.loads(constantsFile.read())
 constants['PrimarySets'] = [
-    s for s in PrimarySets if s in setinfos and s not in subsets and s not in ["ren", "rin", "a22", "y22", "j22", "mat", "cmm", "sis", "ltr", "ltc", "who"]]  # Exclude some codes that are actually part of larger sets (tsb, fmb1, h1r... see subsets), or aren't out yet
+    s for s in PrimarySets if s in setinfos and s not in subsets and s not in ["ren", "rin", "a22", "y22", "j22", "cmm", "sis", "ltr", "ltc", "who"]]  # Exclude some codes that are actually part of larger sets (tsb, fmb1, h1r... see subsets), or aren't out yet
 with open("src/data/constants.json", 'w', encoding="utf8") as constantsFile:
     json.dump(constants, constantsFile, ensure_ascii=False, indent=4)
