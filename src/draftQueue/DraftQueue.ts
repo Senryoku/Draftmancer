@@ -27,7 +27,7 @@ for (const queue of AvailableQueues) {
 function readyCheck(queueID: QueueID, users: UserID[]) {
 	const playersStatus: Record<UserID, { status: ReadyState; onDisconnect: () => void }> = {};
 
-	const timeout = Date.now() + 35 * 1000;
+	const timeout = Date.now() + 45 * 1000;
 	const cancelTimeout = setTimeout(() => {
 		cancel(true);
 	}, timeout - Date.now());
