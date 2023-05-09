@@ -52,6 +52,7 @@ describe("Front End - 8 Players Draft", function () {
 							return r === PickResult.Done;
 						})()
 					);
+				else promises.push(true);
 			}
 			await Promise.all(promises);
 			for (let i = 0; i < pages.length; i++) done[i] = await promises[i];
