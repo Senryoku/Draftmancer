@@ -86,7 +86,15 @@
 				</div>
 			</div>
 		</div>
-		<p>Want more options? Try the <a href="/">full application</a>!</p>
+		<p>
+			These draft queues are a convenient way to practice with the latest sets: There is no obligation to play the
+			games afterwards. However, if you do want to challenge other players in your pod, a chat is available during
+			and right after the draft!
+		</p>
+		<p>
+			Want to organize your own customized drafts? Check out the
+			<a href="/">full application</a>!
+		</p>
 	</div>
 </template>
 

@@ -1631,7 +1631,8 @@
 								New!
 							</div>
 							<div>
-								Don't have a play group and just want to train drafting the latest set? Try our new
+								Don't have a play group and just want to practice drafting the latest sets with other
+								players? Try the new
 								<strong>Draft Queue</strong>!
 							</div>
 						</div>
