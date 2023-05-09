@@ -10,7 +10,8 @@ COPY . .
 
 # --production=false to force NPM to install all devDependencies as some are needed for building. We could also re-organize them.
 RUN npm ci --production=false
-RUN npm run build 
+RUN npm run build-server 
+RUN npm run build-client
 
 FROM node:18-alpine
 
