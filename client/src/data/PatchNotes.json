@@ -1,5 +1,9 @@
 [
 	{
+		"date": "09/05/2023",
+		"notes": ["New feature: Draft Queues."]
+	},
+	{
 		"date": "04/05/2023",
 		"notes": [
 			"March of the Machine: The Aftermath cards support.",
