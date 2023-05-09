@@ -298,7 +298,7 @@ function unregister() {
 	will-change: box-shadow, background-size;
 	transition: all 0.5s ease;
 	background-color: black;
-	background-size: 100% auto;
+	background-size: auto 100%;
 	background-position: 50% 50%;
 	background-repeat: no-repeat;
 	box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.8), inset 0 0 50px rgba(0, 0, 0, 1);
@@ -306,7 +306,7 @@ function unregister() {
 
 .set-card:hover {
 	box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.8), inset 0 0 50px rgba(0, 0, 0, 1);
-	background-size: 110% auto;
+	background-size: auto 110%;
 	color: white;
 }
 
@@ -317,10 +317,13 @@ function unregister() {
 	padding-left: 0.5rem;
 	padding-right: 0.5rem;
 	transition: all 0.5s ease;
-	bottom: -7em;
+	bottom: -10em;
 	padding-top: 1em;
 	background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0.7) 25%);
 	text-align: center;
+}
+.set-name h2 {
+	margin: 0.5em;
 }
 
 .set-card:hover .set-name {
@@ -385,6 +388,7 @@ function unregister() {
 	gap: 1em;
 	min-width: min(50vw, 500px);
 	max-width: max(90vw, 500px);
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
 }
 
 .ready-check-timer {
@@ -414,10 +418,10 @@ function unregister() {
 	content: "";
 	position: absolute;
 	top: -2px;
-	right: 0;
+	right: -2px;
 	width: 4px;
 	height: 8px;
-	border-radius: 2px;
+	border-radius: 2px/4px;
 	background-color: #518ae6;
 	box-shadow: 0 0 2px #518ae6;
 	animation: timer-pulse 1s infinite;
@@ -443,9 +447,8 @@ function unregister() {
 }
 
 .ready-check-players {
-	display: flex;
-	flex-direction: column;
-	align-items: stretch;
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
 	gap: 0.5em;
 }
 
