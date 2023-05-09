@@ -9,7 +9,8 @@ import { Socket } from "socket.io";
 import { ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData } from "../SocketType";
 import { ReadyState } from "../Session/SessionTypes.js";
 
-import { QueueID, QueueDescription, AvailableQueues } from "./QueueDescription.js";
+import { QueueID, QueueDescription } from "./QueueDescription.js";
+import AvailableQueues from "./AvailableQueues.js";
 
 const PlayerQueues: Map<QueueID, { description: QueueDescription; users: UserID[] }> = new Map<
 	QueueID,

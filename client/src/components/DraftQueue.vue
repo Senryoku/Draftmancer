@@ -13,13 +13,13 @@
 				<TransitionGroup name="sets">
 					<div
 						v-for="set in availableQueues"
-						:key="set.code"
+						:key="set.id"
 						:class="{ clickable: !inQueue }"
-						@click="if (!inQueue) register(set.code);"
+						@click="if (!inQueue) register(set.id);"
 						class="set-card"
 						:style="{ backgroundImage: `url(${set.image})` }"
 					>
-						<template v-if="inQueue === set.code">
+						<template v-if="inQueue === set.id">
 							<LoadingComponent size="3x" />
 							<button class="stop" @click="unregister()">Cancel</button>
 						</template>
@@ -28,10 +28,12 @@
 							<h2>{{ set.name }}</h2>
 						</div>
 
-						<template v-if="queueStatus && set.code in queueStatus.queues">
-							<div class="queue-waiting-count">{{ queueStatus.queues[set.code]!.inQueue }} / 8</div>
+						<template v-if="queueStatus && set.id in queueStatus.queues">
+							<div class="queue-waiting-count">
+								{{ queueStatus.queues[set.id]!.inQueue }} / {{ set.playerCount }}
+							</div>
 							<div class="queue-player-count">
-								{{ queueStatus.queues[set.code]!.playing }}
+								{{ queueStatus.queues[set.id]!.playing }}
 							</div>
 						</template>
 					</div>
@@ -70,7 +72,9 @@
 					</div>
 					<div class="ready-check-question">
 						<div v-if="readyCheck.anwser === ReadyState.Unknown">
-							<button class="confirm" @click="setReadyState(ReadyState.Ready)">I am Ready!</button>
+							<button class="confirm ready-button" @click="setReadyState(ReadyState.Ready)">
+								I am Ready!
+							</button>
 						</div>
 						<div v-else>
 							Waiting for others players...
@@ -94,21 +98,15 @@ import { ClientToServerEvents, ServerToClientEvents } from "@/SocketType";
 import { SetCode } from "@/Types";
 import { Alert, fireToast } from "../alerts";
 import { useEmitter } from "../appCommon";
-import { QueueID } from "@/draftQueue/DraftQueue";
+import { QueueDescription, QueueID } from "@/draftQueue/QueueDescription";
+import AvailableQueues from "../../../src/draftQueue/AvailableQueues";
 import { ReadyState } from "../../../src/Session/SessionTypes";
 import LoadingComponent from "./LoadingComponent.vue";
 import { SweetAlertIcon } from "sweetalert2";
 import { Sounds } from "../App.vue";
 
-const Queues = [
-	{ code: "mom", name: "March of the Machine", image: require("../assets/img/mom_sma_insta_1080x1920_en.jpg") },
-	{
-		code: "sir",
-		name: "Shadows over Innistrad Remastered",
-		image: require("../assets/img/sir_quickdraft.jpg"),
-	},
-	{ code: "one", name: "Phyrexia: All Will Be One", image: require("../assets/img/one_sma_insta_1080x1920_en.jpg") },
-];
+const Queues: (QueueDescription & { image: string })[] = [];
+for (const q of AvailableQueues) Queues.push({ ...q, image: require(`../assets/img/queues/${q.id}.jpg`) });
 
 const { emitter } = useEmitter();
 
@@ -116,12 +114,12 @@ const props = defineProps<{
 	socket: Socket<ServerToClientEvents, ClientToServerEvents>;
 }>();
 
-const availableQueues = computed(() => Queues.filter((q) => !inQueue.value || q.code === inQueue.value));
-const inQueue = ref(false as false | SetCode);
+const availableQueues = computed(() => Queues.filter((q) => !inQueue.value || q.id === inQueue.value));
+const inQueue = ref(false as false | QueueID);
 const queueStatus = ref(
 	undefined as
 		| undefined
-		| { playing: number; queues: Record<SetCode, { set: string; inQueue: number; playing: number }> }
+		| { playing: number; queues: Record<QueueID, { set: string; inQueue: number; playing: number }> }
 );
 let queueStatusRequest = setTimeout(() => {
 	requestQueueStatus();

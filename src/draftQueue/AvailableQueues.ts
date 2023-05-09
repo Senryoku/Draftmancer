@@ -1,14 +1,4 @@
-import { SetCode } from "../Types";
-
-export type QueueID = string;
-
-export type QueueDescription = {
-	id: QueueID;
-	name: string;
-	playerCount: number;
-	description?: string;
-	setCode: SetCode;
-};
+import { QueueDescription } from "./QueueDescription";
 
 export const AvailableQueues: readonly QueueDescription[] = [
 	{ id: "mom", name: "March of the Machine", playerCount: 8, setCode: "mom" },
@@ -20,3 +10,5 @@ export const AvailableQueues: readonly QueueDescription[] = [
 	},
 	{ id: "one", name: "Phyrexia: All Will Be One", playerCount: 8, setCode: "one" },
 ];
+
+export default AvailableQueues;
