@@ -70,8 +70,8 @@ export default defineComponent({
 	computed: {
 		displayBotScore() {
 			if (!this.botscore) return null;
-			if (this.botscore < 0) return null; // FIXME: The negative weights returned by the mtgdraftbot API won't make much sense to the user, hidding them for now.
-			return (10 * this.botscore).toFixed(1);
+			if (this.botscore < 0) return null;
+			return this.botscore.toFixed(1);
 		},
 	},
 });
