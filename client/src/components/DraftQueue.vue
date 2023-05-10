@@ -490,4 +490,26 @@ function unregister() {
 		box-shadow: 0 0 8px 4px #008029, inset 0 0 2px 2px #008029;
 	}
 }
+
+@media screen and (max-width: 650px) {
+	.upper-control {
+		flex-direction: column;
+	}
+	.sets {
+		flex-wrap: wrap;
+	}
+
+	.sets-enter-active,
+	.sets-leave-active {
+		max-width: initial;
+		max-height: 400px;
+		background-size: cover;
+	}
+
+	.sets-enter-from,
+	.sets-leave-to {
+		max-width: initial;
+		max-height: 0;
+	}
+}
 </style>

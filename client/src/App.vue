@@ -1597,16 +1597,16 @@
 						Draft with other players and export your resulting deck to Magic: The Gathering Arena to play
 						with them, in pod!
 					</p>
-					<a href="/draftqueue" class="reset-style">
+					<a href="/draftqueue" class="reset-style" style="display: block; margin: auto; width: fit-content">
 						<div
 							style="
 								position: relative;
-								padding: 1em;
+								padding: 0.5em;
+								padding-left: 70px;
 								border-radius: 1em;
 								background: #444;
-								padding-left: 75px;
-								height: 50px;
-								margin: 2em 5em;
+								min-height: 50px;
+								margin: 2em 1em 2em 2em;
 								display: flex;
 								align-items: center;
 							"
@@ -1615,7 +1615,7 @@
 								style="
 									position: absolute;
 									top: 50%;
-									left: 0;
+									left: 10px;
 									transform: translateY(-50%) translateX(-50%) rotate(-20deg);
 									width: 100px;
 									height: 100px;
