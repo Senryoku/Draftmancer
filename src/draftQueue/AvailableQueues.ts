@@ -8,4 +8,9 @@ export const AvailableQueues: readonly QueueDescription[] = [
 	{ id: "dmu", name: "Dominaria United", playerCount: 8, setCode: "dmu" },
 ];
 
+if (process.env.NODE_ENV !== "production") {
+	AvailableQueues[AvailableQueues.length - 1].name = "Test Queue";
+	AvailableQueues[AvailableQueues.length - 1].playerCount = 2;
+}
+
 export default AvailableQueues;
