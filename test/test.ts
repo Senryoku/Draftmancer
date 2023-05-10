@@ -1877,6 +1877,7 @@ describe("Single Draft (Two Players)", function () {
 				(global as any).FORCE_MTGDRAFTBOTS = true;
 				done();
 			});
+			clients[ownerIdx].emit("setRestriction", ["one"]);
 			clients[ownerIdx].emit("setBots", 2);
 		});
 		startDraft();
