@@ -413,11 +413,7 @@ export default defineComponent({
 				// Re-sync collection on reconnect.
 				if (this.hasCollection) this.socket.emit("setCollection", this.collection);
 
-				Alert.fire({
-					icon: "warning",
-					title: "Reconnected!",
-					timer: 1500,
-				});
+				fireToast("success", "Reconnected!");
 			});
 
 			this.socket.on("alreadyConnected", (newID) => {
