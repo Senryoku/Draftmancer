@@ -146,7 +146,6 @@ const readyCheck = ref(
 );
 
 function requestQueueStatus() {
-	console.log("requestQueueStatus");
 	clearTimeout(queueStatusRequest);
 	axios.get("/api/getDraftQueueStatus").then((res) => {
 		if (res.status === 200) queueStatus.value = res.data;
@@ -162,7 +161,6 @@ function notify(type: SweetAlertIcon, title: string, text: string) {
 }
 
 function onStartDraft() {
-	console.log("DraftQueue startDraft");
 	inQueue.value = false;
 	readyCheck.value = null;
 	clearTimeout(queueStatusRequest);
@@ -224,15 +222,21 @@ function setReadyState(status: ReadyState) {
 	}
 }
 
+function onReconnect() {
+	if (inQueue.value) register(inQueue.value);
+}
+
 onMounted(() => {
 	props.socket.on("draftQueueReadyCheckCancel", onReadyCheckCancel);
 	props.socket.on("draftQueueReadyCheck", onReadyCheck);
 	props.socket.on("draftQueueReadyCheckUpdate", onReadyCheckUpdate);
 	props.socket.once("startDraft", onStartDraft);
+	props.socket.io.on("reconnect", onReconnect);
 	history.pushState({}, "", "/draftqueue");
 });
 
 onUnmounted(() => {
+	props.socket.io.off("reconnect", onReconnect);
 	props.socket.off("startDraft", onStartDraft);
 	props.socket.off("draftQueueReadyCheckUpdate", onReadyCheckUpdate);
 	props.socket.off("draftQueueReadyCheck", onReadyCheck);
@@ -255,7 +259,8 @@ function register(setCode: SetCode) {
 function unregister() {
 	props.socket.emit("draftQueueUnregister", (r) => {
 		if (r.code !== 0 && r.error) Alert.fire(r.error);
-		else inQueue.value = false;
+		// Mark as unregistered anyway, if this returns an error, it's most likely because we were out of sync.
+		inQueue.value = false;
 	});
 	requestQueueStatus();
 }
