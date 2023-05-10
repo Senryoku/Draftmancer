@@ -1210,7 +1210,8 @@ export default defineComponent({
 			});
 
 			this.socket.on("timer", (data) => {
-				if (data.countdown == 0) this.forcePick();
+				if (data.countdown < 0) data.countdown = 0;
+				if (data.countdown <= 0) this.forcePick();
 				if (data.countdown < 10) {
 					let chrono = document.getElementById("chrono");
 					if (chrono) {
