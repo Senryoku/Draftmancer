@@ -243,7 +243,11 @@ export class Bot implements IBot {
 			);
 			if (response.status == 200 && response.data.success) {
 				let chosenOption = 0;
-				for (let i = 1; i < response.data.scores.length; ++i) {
+				for (let i = 0; i < response.data.scores.length; ++i) {
+					// Non-recognized cards will return a score of 0; Use the card rating as fallback if available (mostly useful for custom cards).
+					if (response.data.scores[i] === 0 && booster[i].rating)
+						response.data.scores[i] = 1.5 + (7.0 / 5.0) * booster[i].rating; // Remap 0-5 to 1.5-8.5, totally arbitrary and only there to avoid bots completely ignoring custom cards.
+
 					if (response.data.scores[i] > response.data.scores[chosenOption]) chosenOption = i;
 				}
 				this.lastScores = {
