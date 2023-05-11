@@ -2692,25 +2692,22 @@ export class Session implements IIndexable {
 	resumeCountdown(userID: UserID) {
 		if (!isDraftState(this.draftState)) return;
 		this.stopCountdown(userID);
-		const countdownInterval = ((this.draftState as DraftState).players[userID].countdownInterval = setInterval(
-			() => {
-				const s = this.draftState as DraftState;
-				if (!s?.players?.[userID]) {
-					clearInterval(countdownInterval);
-					return;
-				}
+		const countdownInterval = (this.draftState.players[userID].countdownInterval = setInterval(() => {
+			const s = this.draftState;
+			if (!isDraftState(s) || !s.players?.[userID]) {
+				clearInterval(countdownInterval);
+				return;
+			}
 
-				s.players[userID].timer -= 1;
-				this.syncCountdown(userID);
-				// If the client did not respond after 10 more seconds, force a disconnection.
-				if (s.players[userID].timer <= -10) {
-					s.players[userID].timer = 1;
-					Connections[userID]?.socket?.disconnect();
-					this.stopCountdown(userID);
-				}
-			},
-			1000
-		));
+			s.players[userID].timer -= 1;
+			this.syncCountdown(userID);
+			// If the client did not respond after 10 more seconds, force a disconnection.
+			if (s.players[userID].timer <= -10) {
+				s.players[userID].timer = 1;
+				Connections[userID]?.socket?.disconnect();
+				this.stopCountdown(userID);
+			}
+		}, 1000));
 	}
 
 	stopCountdown(userID: UserID) {
