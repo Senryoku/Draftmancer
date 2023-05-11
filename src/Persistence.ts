@@ -435,7 +435,8 @@ function saveLog(type: string, session: Session) {
 			};
 			for (const uid in localLog.users) {
 				const u = localLog.users[uid];
-				if (!u.isBot && u.picks.length > 0) {
+				// Skip bots, and players replaced by bots
+				if (!u.isBot && u.picks.length > 0 && !session.disconnectedUsers[uid]?.replaced) {
 					const player: MTGDraftbotsLogEntry[] = [];
 					let packNum = 0;
 					let pickNum = 0;
