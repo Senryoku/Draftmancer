@@ -382,7 +382,7 @@
 					</div>
 					<div class="inline" v-tooltip="'Pick Timer (sec.). Zero means no timer.'">
 						<label for="timer">
-							<font-awesome-icon icon="fa-solid fa-clock"></font-awesome-icon>
+							<font-awesome-icon icon="fa-solid fa-stopwatch" size="lg"></font-awesome-icon>
 						</label>
 						<input
 							type="number"
@@ -926,11 +926,8 @@
 										:key="`${maxTimer}_${boosterNumber}_${pickNumber}`"
 										:style="`--timer-max: ${maxTimer}; --timer-current: ${pickTimer - 1}`"
 									>
-										<div class="timer-icon-bg">
-											<div class="timer-icon-center"></div>
-											<div class="timer-icon-fixed"></div>
-											<div class="timer-icon-moving"></div>
-										</div>
+										<font-awesome-icon icon="fa-solid fa-stopwatch" size="lg"></font-awesome-icon>
+										<div class="timer-icon-moving"></div>
 									</div>
 									<span>{{ pickTimer }}</span>
 								</span>

@@ -1131,7 +1131,7 @@ ul.player-list {
 	display: inline-flex;
 	align-items: center;
 	justify-content: space-between;
-	min-width: 2.4em;
+	min-width: 2.6em;
 	will-change: transform;
 }
 
@@ -1626,52 +1626,22 @@ See: https://stackoverflow.com/questions/52937708/why-does-applying-a-css-filter
 }
 
 .timer-icon {
-	width: 16px;
-	height: 16px;
-
 	--timer-max: 75;
 	--timer-current: 75;
-}
-
-.timer-icon-bg {
 	position: relative;
-	width: 100%;
-	height: 100%;
-	border-radius: 50%;
-	background-color: #ddd;
-}
-
-.timer-icon-center {
-	position: absolute;
-	bottom: calc(50% - 5%);
-	left: calc(50% - 5%);
-	width: 10%;
-	height: 10%;
-	background-color: #222;
-	border-radius: 50%;
-}
-
-.timer-icon-fixed {
-	position: absolute;
-	bottom: 50%;
-	left: calc(50% - 5%);
-	width: 10%;
-	height: 30%;
-	background-color: #222;
-	border-radius: 9999px;
 }
 
 .timer-icon-moving {
 	position: absolute;
-	bottom: 50%;
-	left: calc(50% - 5%);
-	width: 10%;
-	height: 40%;
+	bottom: 6.6px;
+	left: calc(50% - 1px);
+	width: 2px;
+	height: 7px;
 	background-color: #222;
-	border-radius: 9999px;
+	border-radius: 10px;
 
 	will-change: transform;
-	transform-origin: bottom;
+	transform-origin: 50% calc(100% - 1px);
 	transition: transform 1s linear;
 	transform: rotate(calc(-360deg * min(var(--timer-max), var(--timer-current)) / var(--timer-max)));
 }
