@@ -921,8 +921,18 @@
 							<div class="controls" style="flex-grow: 2">
 								<span>Pack #{{ boosterNumber + 1 }}, Pick #{{ pickNumber + 1 }}</span>
 								<span v-show="pickTimer >= 0" :class="{ redbg: pickTimer <= 10 }" id="chrono">
-									<font-awesome-icon icon="fa-solid fa-clock"></font-awesome-icon
-									><span>{{ pickTimer }}</span>
+									<div
+										class="timer-icon"
+										:key="`${maxTimer}_${boosterNumber}_${pickNumber}`"
+										:style="`--timer-max: ${maxTimer}; --timer-current: ${pickTimer - 1}`"
+									>
+										<div class="timer-icon-bg">
+											<div class="timer-icon-center"></div>
+											<div class="timer-icon-fixed"></div>
+											<div class="timer-icon-moving"></div>
+										</div>
+									</div>
+									<span>{{ pickTimer }}</span>
 								</span>
 								<template v-if="draftingState == DraftState.Picking">
 									<input

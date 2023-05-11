@@ -518,6 +518,7 @@ export default defineComponent({
 			});
 			this.socket.on("setPickTimer", (timer) => {
 				this.maxTimer = timer;
+				this.pickTimer = timer;
 			});
 
 			this.socket.on("message", (data) => {
@@ -1218,7 +1219,7 @@ export default defineComponent({
 						}, 500);
 					}
 				}
-				if (data.countdown > 0 && data.countdown <= 5) this.playSound("countdown");
+				if (data.countdown <= 5) this.playSound("countdown");
 				this.pickTimer = data.countdown;
 			});
 
