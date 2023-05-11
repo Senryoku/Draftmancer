@@ -97,6 +97,7 @@ function launchSession(queueID: QueueID, users: UserID[]) {
 	}
 
 	session.setRestriction = [queue.description.setCode];
+	session.maxTimer = 70;
 	for (const uid of users) {
 		session.addUser(uid);
 		Connections[uid].socket.emit("setSession", sessionID);
