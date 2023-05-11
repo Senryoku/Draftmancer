@@ -1208,7 +1208,7 @@ export default defineComponent({
 
 			this.socket.on("timer", (data) => {
 				if (data.countdown < 0) data.countdown = 0;
-				if (data.countdown <= 0) this.forcePick();
+				if (data.countdown <= 0) this.$nextTick(this.forcePick);
 				if (data.countdown < 10) {
 					let chrono = document.getElementById("chrono");
 					if (chrono) {
@@ -1545,7 +1545,7 @@ export default defineComponent({
 			this.pickInFlight = true;
 		},
 		forcePick() {
-			if (this.draftingState != DraftState.Picking) return;
+			if (this.draftingState !== DraftState.Picking) return;
 
 			// Uses botScores to automatically select picks if available
 			if (this.botScores) {
