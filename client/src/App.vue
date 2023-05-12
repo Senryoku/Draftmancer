@@ -1355,6 +1355,7 @@
 								ref="deckDisplay"
 								group="deck"
 								@dragover="allowBoosterCardDrop($event)"
+								@dragleave="onDragLeave($event)"
 								@drop="dropBoosterCard($event)"
 								:cardConditionalClasses="cardConditionalClasses"
 							>
@@ -1527,6 +1528,7 @@
 							<div
 								class="card-container"
 								@dragover="allowBoosterCardDrop($event)"
+								@dragleave="onDragLeave($event)"
 								@drop="dropBoosterCard($event, { toSideboard: true })"
 							>
 								<Sortable
@@ -1537,6 +1539,7 @@
 									:options="{
 										group: 'deck',
 										animation: '200',
+										ghostClass: 'ghost',
 									}"
 									@add="onCollapsedSideDragAdd"
 									@remove="onCollapsedSideDragRemove"
@@ -1574,6 +1577,7 @@
 							ref="sideboardDisplay"
 							group="deck"
 							@dragover="allowBoosterCardDrop($event)"
+							@dragleave="onDragLeave($event)"
 							@drop="dropBoosterCard($event, { toSideboard: true })"
 							:cardConditionalClasses="cardConditionalClasses"
 						>

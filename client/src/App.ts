@@ -1420,21 +1420,27 @@ export default defineComponent({
 			// but only Firefox allows to check for dataTransfer in this event (and
 			// it's against the standard)
 
-			if (e.dataTransfer?.types.includes("isboostercard")) {
-				e.preventDefault();
-				e.dataTransfer.dropEffect = "move";
-				return;
-			}
-
-			// Allow dropping picks during Rotisserie draft if it is our turn to pick.
 			if (
-				e.dataTransfer?.types.includes("isrotisseriedraft") &&
-				this.draftingState === DraftState.RotisserieDraft &&
-				this.rotisserieDraftState?.currentPlayer === this.userID
+				e.dataTransfer?.types.includes("isboostercard") ||
+				// Allow dropping picks during Rotisserie draft if it is our turn to pick.
+				(e.dataTransfer?.types.includes("isrotisseriedraft") &&
+					this.draftingState === DraftState.RotisserieDraft &&
+					this.rotisserieDraftState?.currentPlayer === this.userID)
 			) {
 				e.preventDefault();
 				e.dataTransfer.dropEffect = "move";
+				// Mark the closest column as drop-active for feedback using a css effect
+				if (e.target instanceof HTMLElement) {
+					const column = e.target.closest(".card-column");
+					column?.setAttribute("drop-active", "true");
+				}
 				return;
+			}
+		},
+		onDragLeave(e: DragEvent) {
+			if (e.target instanceof HTMLElement) {
+				const column = e.target.closest(".card-column");
+				column?.removeAttribute("drop-active");
 			}
 		},
 		dragBoosterCard(e: DragEvent, card: UniqueCard) {

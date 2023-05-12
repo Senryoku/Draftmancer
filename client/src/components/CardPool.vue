@@ -626,7 +626,6 @@ export default defineComponent({
 	margin: 0 0.375em;
 	flex: 1 1 10%;
 	min-width: 0; /* Overrides drag-column value */
-	transition: width 0.25s ease;
 }
 
 .section {

@@ -1294,6 +1294,20 @@ ul.player-list {
 	min-width: 200px;
 	background-color: rgba(0, 0, 0, 0.1);
 	border-radius: 6px;
+
+	transition: box-shadow 0.1s ease-in-out, background-color 0.1s ease-in-out;
+}
+
+.drag-column[drop-active="true"] {
+	/*box-shadow: -7px 0 5px -5px white, 7px 0 5px -5px white;*/
+	box-shadow: 0 0 4px 3px white;
+	background-color: rgba(255, 255, 255, 0.1);
+}
+/* :has isn't supported on Firefox yet, causing the whole rule to be ignored. This is duplicated on purpose. */
+.drag-column:has(.ghost),
+.drag-column[drop-active="true"] {
+	box-shadow: 0 0 4px 3px white;
+	background-color: rgba(255, 255, 255, 0.1);
 }
 
 /**** Draft Spectator ****/
