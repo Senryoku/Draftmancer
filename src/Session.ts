@@ -2691,6 +2691,11 @@ export class Session implements IIndexable {
 
 	resumeCountdown(userID: UserID) {
 		if (!isDraftState(this.draftState)) return;
+		if (this.maxTimer === 0) {
+			Connections[userID]?.socket.emit("disableTimer");
+			return;
+		}
+
 		this.stopCountdown(userID);
 		const countdownInterval = (this.draftState.players[userID].countdownInterval = setInterval(() => {
 			const s = this.draftState;
