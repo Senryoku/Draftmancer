@@ -433,7 +433,7 @@ export class Session implements IIndexable {
 		else arrays.push([...Connections[user_list[0]].collection.keys()]);
 		for (let i = 1; i < user_list.length; ++i)
 			if (useCollection[i]) arrays.push([...Connections[user_list[i]].collection.keys()]);
-		let intersection = arrayIntersect(arrays);
+		const intersection = arrayIntersect(arrays);
 
 		// Compute the minimum count of each remaining card
 		for (const c of intersection) {
@@ -967,7 +967,7 @@ export class Session implements IIndexable {
 		const cardPool = boosters.flat();
 
 		while (cardPool.length < wantedCards) {
-			let boosterOrError = this.generateBoosters(1);
+			const boosterOrError = this.generateBoosters(1);
 			if (isMessageError(boosterOrError)) return new SocketAck(boosterOrError);
 			if (boosterOrError.length === 0 || boosterOrError[0].length === 0)
 				return new SocketError("Internal Error: Couldn't generate enough boosters.");
@@ -2547,7 +2547,7 @@ export class Session implements IIndexable {
 			Connections[userID].pickedCards = this.disconnectedUsers[userID].pickedCards;
 			this.addUser(userID);
 
-			let msgData: { name?: keyof ServerToClientEvents; state: IDraftState } = { state: this.draftState };
+			const msgData: { name?: keyof ServerToClientEvents; state: IDraftState } = { state: this.draftState };
 			const EventNames: Record<string, keyof ServerToClientEvents> = {
 				winston: "rejoinWinstonDraft",
 				winchester: "rejoinWinchesterDraft",

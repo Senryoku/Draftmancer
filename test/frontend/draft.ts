@@ -195,8 +195,8 @@ describe("Front End - Multi", function () {
 	it("Each player picks a card", async function () {
 		let done = false;
 		while (!done) {
-			let ownerPromise = pickCard(pages[0]);
-			let otherPromise = pickCard(pages[1]);
+			const ownerPromise = pickCard(pages[0]);
+			const otherPromise = pickCard(pages[1]);
 			done = (await ownerPromise) === PickResult.Done && (await otherPromise) === PickResult.Done;
 		}
 	});
@@ -247,7 +247,7 @@ describe("Front End - Multi, with Spectator", function () {
 		await waitAndClickSelector(pages[0], "#is-owner-player");
 		await pages[0].keyboard.press("Escape");
 
-		let input = await pages[0].waitForSelector("#bots");
+		const input = await pages[0].waitForSelector("#bots");
 		expect(input, "Could not find bots input").to.exist;
 		await input!.click({ clickCount: 3 }); // Focus and select all text
 		await pages[0].keyboard.type("1");

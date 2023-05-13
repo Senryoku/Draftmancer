@@ -2,7 +2,7 @@ import ManaSymbolsList from "../../data/symbology.json" assert { type: "json" };
 
 const ManaRegex = /{([^}]+)}/g;
 
-type Symbol = {
+type ManaSymbol = {
 	object: string;
 	symbol: string;
 	svg_uri: string;
@@ -17,12 +17,12 @@ type Symbol = {
 	gatherer_alternates: string[] | null;
 };
 
-const ManaSymbols: { [key: string]: Symbol } = {};
-for (let symbol of ManaSymbolsList.data) ManaSymbols[symbol.symbol] = symbol;
+const ManaSymbols: { [key: string]: ManaSymbol } = {};
+for (const symbol of ManaSymbolsList.data) ManaSymbols[symbol.symbol] = symbol;
 
 function genManaSymbol(str: string) {
 	if ("{" + str + "}" in ManaSymbols) {
-		let el = new Image();
+		const el = new Image();
 		el.src = ManaSymbols["{" + str + "}"].svg_uri;
 		el.className = "mana-symbol";
 		return el;

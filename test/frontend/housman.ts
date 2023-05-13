@@ -18,9 +18,9 @@ async function pickHousman(page: Page) {
 	const drafting = await page.$$("#draft-in-progress");
 	if (drafting.length === 0) return true;
 
-	let next = await page.$$("xpath///span[contains(., 'Your turn')] | //span[contains(., 'Waiting for')]");
+	const next = await page.$$("xpath///span[contains(., 'Your turn')] | //span[contains(., 'Waiting for')]");
 	if (next.length === 0) return false;
-	let text = await next[0].evaluate((el) => (el as HTMLElement).innerText);
+	const text = await next[0].evaluate((el) => (el as HTMLElement).innerText);
 	if (text.includes("Waiting for")) return false;
 
 	const revealedChoices = await page.$$(".housman-revealed-cards .card");

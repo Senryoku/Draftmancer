@@ -72,7 +72,7 @@ export class MinesweeperGrid {
 			{ coords: [row, col], state: MinesweeperCellState.Picked },
 		];
 		this.get(row, col)?.pick();
-		for (let [r, c] of [
+		for (const [r, c] of [
 			[row - 1, col],
 			[row + 1, col],
 			[row, col - 1],

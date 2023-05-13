@@ -51,7 +51,7 @@ describe("Rochester", function () {
 
 	it(`Pick until done.`, async function () {
 		this.timeout(100000);
-		let done = [false, false];
+		const done = [false, false];
 		while (done.some((d) => !d))
 			for (let i = 0; i < pages.length; i++)
 				if (!done[i]) done[i] = (await pickRochester(pages[i])) === PickResult.Done;

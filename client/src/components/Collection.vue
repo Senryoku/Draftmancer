@@ -114,11 +114,11 @@ import MissingCard from "./MissingCard.vue";
 
 type CardWithCount = Card & { count: number };
 class StatsByRarity {
-	all: number = 0;
-	common: number = 0;
-	uncommon: number = 0;
-	rare: number = 0;
-	mythic: number = 0;
+	all = 0;
+	common = 0;
+	uncommon = 0;
+	rare = 0;
+	mythic = 0;
 	[rarity: string]: number;
 }
 

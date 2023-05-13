@@ -17,10 +17,10 @@ import { random } from "../src/utils.js";
 
 describe("Winchester Draft", function () {
 	let clients: ReturnType<typeof makeClients> = [];
-	let sessionID = "sessionID";
+	const sessionID = "sessionID";
 	let ownerIdx: number;
 	let nonOwnerIdx: number;
-	let states: Record<string, WinchesterDraftSyncData> = {};
+	const states: Record<string, WinchesterDraftSyncData> = {};
 
 	const getCurrentPlayer = () => {
 		const currentPlayerID = states[(clients[ownerIdx] as any).query.userID].currentPlayer;
@@ -58,7 +58,7 @@ describe("Winchester Draft", function () {
 
 	after(function (done) {
 		disableLogs();
-		for (let c of clients) {
+		for (const c of clients) {
 			c.disconnect();
 		}
 		waitForClientDisconnects(done);
@@ -262,9 +262,9 @@ describe("Winchester Draft", function () {
 
 describe("Winchester Draft - 4 Players", function () {
 	let clients: ReturnType<typeof makeClients> = [];
-	let sessionID = "sessionID";
+	const sessionID = "sessionID";
 	let ownerIdx: number;
-	let states: Record<string, WinchesterDraftSyncData> = {};
+	const states: Record<string, WinchesterDraftSyncData> = {};
 
 	const getCurrentPlayer = () => {
 		const currentPlayerID = states[(clients[ownerIdx] as any).query.userID].currentPlayer;
@@ -312,7 +312,7 @@ describe("Winchester Draft - 4 Players", function () {
 
 	after(function (done) {
 		disableLogs();
-		for (let c of clients) {
+		for (const c of clients) {
 			c.disconnect();
 		}
 		waitForClientDisconnects(done);

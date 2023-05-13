@@ -102,7 +102,7 @@ import { sortableUpdate } from "../helper";
 const props = withDefaults(
 	defineProps<{
 		users: UserData[];
-		teamSealed: Boolean;
+		teamSealed: boolean;
 	}>(),
 	{ teamSealed: () => false }
 );

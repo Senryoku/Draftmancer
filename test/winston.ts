@@ -17,7 +17,7 @@ import { SocketAck } from "../src/Message.js";
 
 describe("Winston Draft", function () {
 	let clients: ReturnType<typeof makeClients> = [];
-	let sessionID = "sessionID";
+	const sessionID = "sessionID";
 	let ownerIdx: number;
 	let nonOwnerIdx: number;
 
@@ -57,7 +57,7 @@ describe("Winston Draft", function () {
 
 	after(function (done) {
 		disableLogs();
-		for (let c of clients) {
+		for (const c of clients) {
 			c.disconnect();
 		}
 		waitForClientDisconnects(done);
@@ -75,7 +75,7 @@ describe("Winston Draft", function () {
 		let connectedClients = 0;
 		let receivedState = 0;
 		let index = 0;
-		for (let c of clients) {
+		for (const c of clients) {
 			c.once("startWinstonDraft", function () {
 				connectedClients += 1;
 				if (connectedClients == clients.length && receivedState == clients.length) done();
@@ -131,7 +131,7 @@ describe("Winston Draft", function () {
 		let connectedClients = 0;
 		let receivedState = 0;
 		let index = 0;
-		for (let c of clients) {
+		for (const c of clients) {
 			c.once("startWinstonDraft", function () {
 				connectedClients += 1;
 				if (connectedClients == clients.length && receivedState == clients.length) done();

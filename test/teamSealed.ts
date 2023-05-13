@@ -10,7 +10,7 @@ import { UserID } from "../src/IDTypes.js";
 
 describe("Team Sealed", function () {
 	let clients: ReturnType<typeof makeClients> = [];
-	let sessionID = "sessionID";
+	const sessionID = "sessionID";
 	let ownerIdx = 0;
 
 	beforeEach(function (done) {
@@ -38,7 +38,7 @@ describe("Team Sealed", function () {
 
 	after(function (done) {
 		disableLogs();
-		for (let c of clients) {
+		for (const c of clients) {
 			c.disconnect();
 		}
 		waitForClientDisconnects(done);
@@ -149,7 +149,7 @@ describe("Team Sealed", function () {
 
 	describe("With cube", () => {
 		it("Load cube.", (done) => {
-			let nonOwnerIdx = (ownerIdx + 1) % clients.length;
+			const nonOwnerIdx = (ownerIdx + 1) % clients.length;
 			clients[nonOwnerIdx].once("sessionOptions", (options) => {
 				expect(options.useCustomCardList).to.be.true;
 				done();

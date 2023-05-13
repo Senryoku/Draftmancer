@@ -27,10 +27,10 @@ for (const settings of [
 ])
 	describe(`Housman Draft: ${JSON.stringify(settings)}`, function () {
 		let clients: ReturnType<typeof makeClients> = [];
-		let sessionID = "sessionID";
+		const sessionID = "sessionID";
 		let ownerIdx: number;
 		let nonOwnerIdx: number;
-		let states: Record<string, HousmanDraftSyncData> = {};
+		const states: Record<string, HousmanDraftSyncData> = {};
 
 		const getCurrentPlayer = () => {
 			const currentPlayerID = states[(clients[ownerIdx] as any).query.userID].currentPlayer;
@@ -61,7 +61,7 @@ for (const settings of [
 
 		after(function (done) {
 			disableLogs();
-			for (let c of clients) {
+			for (const c of clients) {
 				c.disconnect();
 			}
 			waitForClientDisconnects(done);

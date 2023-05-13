@@ -507,7 +507,7 @@ function startRotisserieDraft(
 	ack: (s: SocketAck) => void
 ) {
 	const sess = Sessions[sessionID];
-	let ret = sess.startRotisserieDraft(options);
+	const ret = sess.startRotisserieDraft(options);
 	if (!isMessageError(ret)) startPublicSession(sess);
 	ack(ret);
 }

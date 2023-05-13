@@ -37,7 +37,7 @@ describe("Statistical color balancing tests", function () {
 			rare: new Map<CardID, number>(),
 			mythic: new Map<CardID, number>(),
 		};
-		for (let [cid, card] of Cards) {
+		for (const [cid, card] of Cards) {
 			if (card.in_booster && card.set === "znr") {
 				cardPoolByRarity[card.rarity as keyof typeof cardPoolByRarity].set(cid, trials);
 			}
@@ -46,7 +46,7 @@ describe("Statistical color balancing tests", function () {
 		let kitesails = 0;
 		let brutes = 0;
 		for (let i = 0; i < trials; i++) {
-			let booster = factory.generateBooster({ common: 10, uncommon: 3, rare: 1 });
+			const booster = factory.generateBooster({ common: 10, uncommon: 3, rare: 1 });
 			if (isMessageError(booster)) {
 				expect(false, "Error generating booster").to.be.true;
 				return;
@@ -90,7 +90,7 @@ describe("Statistical color balancing tests", function () {
 		const logTable = [];
 		let maxRelativeDifference = 0;
 		for (let i = 0; i < 10; ++i) {
-			let id0 = getRandomKey(trackedCards);
+			const id0 = getRandomKey(trackedCards);
 			let id1 = getRandomKey(trackedCards);
 			while (id1 === id0) id1 = getRandomKey(trackedCards);
 			const relativeDifference =
@@ -108,7 +108,7 @@ describe("Statistical color balancing tests", function () {
 		expect(maxRelativeDifference).to.be.at.most(0.2);
 	}
 
-	for (let s of Object.keys(SetSpecificFactories)) {
+	for (const s of Object.keys(SetSpecificFactories)) {
 		it(`Every common of a set (${s}) should have similar (<=20% relative difference) apparition rate while color balancing`, function (done) {
 			this.timeout(1000);
 			const trials = 500;
@@ -170,7 +170,7 @@ describe("Statistical color balancing tests", function () {
 		done();
 	});
 
-	for (let rarity of ["uncommon", "rare"]) {
+	for (const rarity of ["uncommon", "rare"]) {
 		it(`Modal Double Faced ${rarity}s of Zendikar Rising should have an apparition rate similar to Single Faced ${rarity}s' (<= 20% relative difference)`, function (done) {
 			this.timeout(20000);
 			const trials = 10000;
@@ -186,7 +186,7 @@ describe("Statistical color balancing tests", function () {
 			const logTable = [];
 			let maxRelativeDifference = 0;
 			const MDFCs = Object.keys(trackedCards).filter((cid) => getCard(cid).name.includes("//"));
-			for (let id0 of MDFCs) {
+			for (const id0 of MDFCs) {
 				let id1 = getRandomKey(trackedCards);
 				while (MDFCs.includes(id1) || id1 === id0) id1 = getRandomKey(trackedCards);
 				const relativeDifference =
@@ -215,13 +215,13 @@ describe("Statistical color balancing tests", function () {
 		const trackedCards = Object.fromEntries(SessionInst.cardPool());
 		runTrials(SessionInst, trials, trackedCards);
 
-		for (let rarity of ["common", "uncommon", "rare", "mythic"]) {
+		for (const rarity of ["common", "uncommon", "rare", "mythic"]) {
 			const logTable = [];
 			let maxRelativeDifference = 0;
 			let candidates = Object.keys(trackedCards).filter((cid) => getCard(cid).rarity === rarity);
 			const Lessons = candidates.filter((cid) => getCard(cid).subtypes.includes("Lesson"));
 			candidates = candidates.filter((cid) => !getCard(cid).subtypes.includes("Lesson"));
-			for (let id0 of Lessons) {
+			for (const id0 of Lessons) {
 				let id1 = getRandom(candidates);
 				while (Lessons.includes(id1) || id1 === id0) id1 = getRandom(candidates);
 				const relativeDifference =
@@ -278,7 +278,7 @@ describe("Statistical color balancing tests", function () {
 
 		function checkUniformity(done: Mocha.Done, func: (results: { [cid: CardID]: number }) => void) {
 			const results: { [cid: CardID]: number } = rares.reduce((o, key) => ({ ...o, [key]: 0 }), {});
-			for (let r of rares) results[r] = 0;
+			for (const r of rares) results[r] = 0;
 			func(results);
 			//console.table(results);
 			const countMean = mean(Object.values(results));
@@ -342,7 +342,7 @@ describe("Statistical color balancing tests", function () {
 
 		function countMaxDupes<T>(data: T[], res: number[]) {
 			let maxDuplicates = 0;
-			let maxDuplicatesValues = [];
+			const maxDuplicatesValues = [];
 			for (let i = 0; i < data.length - 1; ++i)
 				if (data[i] === data[i + 1]) ++maxDuplicates;
 				else {
@@ -374,7 +374,7 @@ describe("Statistical color balancing tests", function () {
 				totalMaxDupes += countMaxDupes(cards, maxResults);
 
 				if (distinctResults) {
-					let control: number[] = [];
+					const control: number[] = [];
 					for (let i = 0; i < cards.length; i++) control.push(random.integer(0, distinctResults - 1));
 					control.sort((a, b) => a - b);
 					controlTotalDupes += countTotalDupes(control, controlResults);
@@ -414,7 +414,7 @@ describe("Statistical color balancing tests", function () {
 		}
 
 		describe("Without mythic.", function () {
-			for (let set of ["znr", "eld", "thb", "iko", "m21", "neo"]) {
+			for (const set of ["znr", "eld", "thb", "iko", "m21", "neo"]) {
 				const SessionInst = new Session("UniqueID", "ownerID");
 				SessionInst.colorBalance = true;
 				SessionInst.setRestriction = [set];
@@ -443,7 +443,7 @@ describe("Statistical color balancing tests", function () {
 		});
 
 		describe("Accounting for mythics.", function () {
-			for (let set of ["znr", "eld", "thb", "iko", "m21", "neo"]) {
+			for (const set of ["znr", "eld", "thb", "iko", "m21", "neo"]) {
 				let Expected: number[];
 				let Observed: number[];
 				const SessionInst = new Session("UniqueID", "ownerID");
@@ -456,7 +456,7 @@ describe("Statistical color balancing tests", function () {
 						const distribution = randomjs.integer(0, rares.length - 1);
 						const mythicDistribution = randomjs.integer(0, 7);
 						Expected = countDuplicates(() => {
-							let cards = [];
+							const cards = [];
 							for (let j = 0; j < 3 * 8; ++j)
 								if (mythicDistribution(engine) > 0) cards.push(distribution(engine));
 							return cards;

@@ -13,7 +13,7 @@ import { PickSummary } from "../src/PickSummary.js";
 
 describe("Draft Logs", function () {
 	let clients: ReturnType<typeof makeClients> = [];
-	let sessionID = "sessionID";
+	const sessionID = "sessionID";
 	let ownerIdx = 0;
 
 	beforeEach(function (done) {
@@ -66,7 +66,7 @@ describe("Draft Logs", function () {
 
 	after(function (done) {
 		disableLogs();
-		for (let c of clients) {
+		for (const c of clients) {
 			c.disconnect();
 		}
 		waitForClientDisconnects(done);
@@ -192,7 +192,7 @@ describe("Draft Logs", function () {
 		it("When session owner launches draft, everyone should receive a startDraft event", function (done) {
 			let connectedClients = 0;
 			let receivedBoosters = 0;
-			for (let c in clients) {
+			for (const c in clients) {
 				clients[c].once("startDraft", () => {
 					connectedClients += 1;
 					if (connectedClients == clients.length && receivedBoosters == clients.length) done();
@@ -240,7 +240,7 @@ describe("Draft Logs", function () {
 	const startRochesterDraft = () => {
 		it("When session owner launch Rochester draft, everyone should receive a startRochesterDraft event", function (done) {
 			let connectedClients = 0;
-			for (let c of clients) {
+			for (const c of clients) {
 				c.once("startRochesterDraft", function (state) {
 					connectedClients += 1;
 					if (connectedClients == clients.length) {
@@ -280,7 +280,7 @@ describe("Draft Logs", function () {
 			});
 		}
 		// Pick the first card
-		let currPlayer = clients.findIndex((c) => (c as any).query.userID == rochesterDraftState!.currentPlayer);
+		const currPlayer = clients.findIndex((c) => (c as any).query.userID == rochesterDraftState!.currentPlayer);
 		clients[currPlayer].emit("rochesterDraftPick", [0], ackNoError);
 	};
 	test("Rochester Draft", startRochesterDraft, endRochesterDraft);

@@ -30,7 +30,7 @@ export async function exportToMTGO(
 			const basicsIdentifiers = ["W", "U", "B", "R", "G"].map((c) => {
 				return { name: Constants.BasicLandNames["en"][c as CardColor], set: options.preferredBasics };
 			});
-			let basicsRequest = await axios
+			const basicsRequest = await axios
 				.post(
 					`https://api.scryfall.com/cards/collection`,
 					{
@@ -44,7 +44,7 @@ export async function exportToMTGO(
 
 			if (basicsRequest?.status === 200) {
 				let idx = 0;
-				for (let c of ["W", "U", "B", "R", "G"]) basics[c as CardColor] = basicsRequest.data.data[idx++];
+				for (const c of ["W", "U", "B", "R", "G"]) basics[c as CardColor] = basicsRequest.data.data[idx++];
 			}
 		}
 	} catch (e) {
@@ -98,10 +98,10 @@ export async function exportToMTGO(
 	// We'll avoid awaiting for each addMatchingCard call and allow firing multiple requests simultaneously.
 	const addMatchingCardPromises = [];
 
-	for (let card of deck) addMatchingCardPromises.push(addMatchingCard(card, false));
+	for (const card of deck) addMatchingCardPromises.push(addMatchingCard(card, false));
 
 	if (options?.lands)
-		for (let c in options.lands)
+		for (const c in options.lands)
 			if (options.lands[c as CardColor] > 0)
 				addCard(
 					basics[c as CardColor].mtgo_id,
@@ -111,9 +111,9 @@ export async function exportToMTGO(
 				);
 
 	if (sideboard && sideboard.length > 0) {
-		for (let card of sideboard) addMatchingCardPromises.push(addMatchingCard(card, true));
+		for (const card of sideboard) addMatchingCardPromises.push(addMatchingCard(card, true));
 		if (options?.sideboardBasics && options?.sideboardBasics > 0)
-			for (let c of ["W", "U", "B", "R", "G"])
+			for (const c of ["W", "U", "B", "R", "G"])
 				addCard(basics[c as CardColor].mtgo_id, basics[c as CardColor].name, options.sideboardBasics, false);
 	}
 

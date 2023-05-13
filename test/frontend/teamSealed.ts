@@ -4,8 +4,10 @@ const expect = chai.expect;
 import { launchMode, pages, setupBrowsers, waitAndClickXpath } from "./src/common.js";
 
 async function pickCard(page: Page, random = false) {
-	let next = await page.waitForXPath("//div[contains(., 'Team Sealed stopped!')] | //span[contains(., 'Card Pool')]");
-	let text = await page.evaluate((next) => (next as HTMLElement).innerText, next);
+	const next = await page.waitForXPath(
+		"//div[contains(., 'Team Sealed stopped!')] | //span[contains(., 'Card Pool')]"
+	);
+	const text = await page.evaluate((next) => (next as HTMLElement).innerText, next);
 	if (text === "Team Sealed stopped!") return true;
 
 	const cards = await page.$$(".team-sealed-container .card:not(.card-picked)");
@@ -85,7 +87,7 @@ describe("Front End - Team Sealed", function () {
 	it("Owner stops the event", async function () {
 		await waitAndClickXpath(pages[0], "//button[contains(., 'Stop')]");
 		await waitAndClickXpath(pages[0], "//button[contains(., 'Stop the game!')]");
-		let promises = [];
+		const promises = [];
 		for (let i = 0; i < pages.length; i++) {
 			promises.push(
 				pages[i].waitForXPath("//div[contains(., 'Team Sealed stopped!')]", {

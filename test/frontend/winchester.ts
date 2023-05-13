@@ -6,10 +6,10 @@ import { Page } from "puppeteer";
 import { getRandom } from "../../src/utils.js";
 
 async function pickWinchester(page: Page) {
-	let next = await page.waitForXPath(
+	const next = await page.waitForXPath(
 		"//span[contains(., 'Your turn to pick a pile of cards!')] | //span[contains(., 'Waiting for')]"
 	);
-	let text = await page.evaluate((next) => (next as HTMLElement).innerText, next);
+	const text = await page.evaluate((next) => (next as HTMLElement).innerText, next);
 	if (text.includes("Waiting for")) return false;
 
 	const choices = await page.$$(".winchester-pick");

@@ -4,8 +4,8 @@ const expect = chai.expect;
 import { waitAndClickSelector, waitAndClickXpath, setupBrowsers, pages, launchMode } from "./src/common.js";
 
 async function pickCard(page: Page) {
-	let next = await page.waitForXPath("//div[contains(., 'Done drafting!')] | //div[contains(., 'Pick a card')]");
-	let text = await page.evaluate((next) => (next as HTMLElement).innerText, next);
+	const next = await page.waitForXPath("//div[contains(., 'Done drafting!')] | //div[contains(., 'Pick a card')]");
+	const text = await page.evaluate((next) => (next as HTMLElement).innerText, next);
 	if (text === "Done drafting!") return true;
 
 	const cards = await page.$$(".rotisserie-draft-container .card:not(.card-picked)");
@@ -35,12 +35,12 @@ describe("Rotisserie Draft - Singleton", function () {
 
 	it("Each player picks a card", async function () {
 		this.timeout(100000);
-		let done = [];
+		const done = [];
 		for (let i = 0; i < pages.length; i++) {
 			done.push(false);
 		}
 		while (done.some((d) => !d)) {
-			let promises = [];
+			const promises = [];
 			for (let i = 0; i < pages.length; i++) {
 				if (done[i]) promises.push(true);
 				else promises.push(pickCard(pages[i]));
@@ -73,12 +73,12 @@ describe("Rotisserie Draft - Standard", function () {
 
 	it("Each player picks a card", async function () {
 		this.timeout(100000);
-		let done = [];
+		const done = [];
 		for (let i = 0; i < pages.length; i++) {
 			done.push(false);
 		}
 		while (done.some((d) => !d)) {
-			let promises = [];
+			const promises = [];
 			for (let i = 0; i < pages.length; i++) {
 				if (done[i]) promises.push(true);
 				else promises.push(pickCard(pages[i]));

@@ -10,7 +10,7 @@ import { SocketAck } from "../src/Message.js";
 
 describe("Minesweeper Draft", function () {
 	let clients: ReturnType<typeof makeClients> = [];
-	let sessionID = "sessionID";
+	const sessionID = "sessionID";
 	let ownerIdx: number = 0;
 
 	beforeEach(function (done) {
@@ -53,7 +53,7 @@ describe("Minesweeper Draft", function () {
 
 	after(function (done) {
 		disableLogs();
-		for (let c of clients) {
+		for (const c of clients) {
 			c.disconnect();
 		}
 		waitForClientDisconnects(done);
@@ -71,7 +71,7 @@ describe("Minesweeper Draft", function () {
 
 	const selectCube = () => {
 		it("Emit Settings.", function (done) {
-			let nonOwnerIdx = (ownerIdx + 1) % clients.length;
+			const nonOwnerIdx = (ownerIdx + 1) % clients.length;
 			clients[nonOwnerIdx].once("sessionOptions", function (options) {
 				if (options.useCustomCardList) done();
 			});
@@ -85,7 +85,7 @@ describe("Minesweeper Draft", function () {
 	const startDraft = (gridCount = 4, gridWidth = 10, gridHeight = 9, picksPerGrid = -1, revealBorders = true) => {
 		it(`Start Minesweeper draft (Parameters: gridCount = ${gridCount}, gridWidth = ${gridWidth}, gridHeight = ${gridHeight}, picksPerGrid = ${picksPerGrid}, revealBorders: ${revealBorders})`, function (done) {
 			let connectedClients = 0;
-			for (let c of clients) {
+			for (const c of clients) {
 				c.once("startMinesweeperDraft", function (state) {
 					connectedClients += 1;
 					if (connectedClients == clients.length) {
@@ -111,7 +111,7 @@ describe("Minesweeper Draft", function () {
 	};
 
 	const validateState = (state: MinesweeperSyncData) => {
-		let choices = [];
+		const choices = [];
 		for (let i = 0; i < state.grid.length; ++i) {
 			for (let j = 0; j < state.grid[0].length; ++j) {
 				switch (state.grid[i][j].state) {
@@ -165,7 +165,7 @@ describe("Minesweeper Draft", function () {
 					if (newStateReceived === clients.length) {
 						newStateReceived = 0;
 						minesweeper = state;
-						let choices = validateState(minesweeper);
+						const choices = validateState(minesweeper);
 						expect(choices.length).to.be.above(0);
 						const choice = choices[Math.floor(Math.random() * choices.length)];
 						pick(choice[0], choice[1]);
@@ -178,7 +178,7 @@ describe("Minesweeper Draft", function () {
 						expect(minesweeper).to.exist;
 						if (!minesweeper) return;
 						minesweeperApplyDiff(minesweeper, diff);
-						let choices = validateState(minesweeper);
+						const choices = validateState(minesweeper);
 						expect(choices.length).to.be.above(0);
 						const choice = choices[Math.floor(Math.random() * choices.length)];
 						pick(choice[0], choice[1]);
@@ -192,7 +192,7 @@ describe("Minesweeper Draft", function () {
 				});
 			}
 			// Pick the first card
-			let currPlayer = clients.findIndex((c) => (c as any).query.userID == minesweeper!.currentPlayer);
+			const currPlayer = clients.findIndex((c) => (c as any).query.userID == minesweeper!.currentPlayer);
 
 			for (let i = 0; i < minesweeper!.grid.length; ++i)
 				for (let j = 0; j < minesweeper!.grid[0].length; ++j)
@@ -263,7 +263,7 @@ describe("Minesweeper Draft", function () {
 		startDraft();
 
 		it("Non-owner disconnects, owner receives updated user infos.", function (done) {
-			let nonOwnerIdx = (ownerIdx + 1) % clients.length;
+			const nonOwnerIdx = (ownerIdx + 1) % clients.length;
 			clients[ownerIdx].once("userDisconnected", function () {
 				waitForSocket(clients[nonOwnerIdx], done);
 			});
@@ -271,7 +271,7 @@ describe("Minesweeper Draft", function () {
 		});
 
 		it("Non-owner reconnects, draft restarts.", function (done) {
-			let nonOwnerIdx = (ownerIdx + 1) % clients.length;
+			const nonOwnerIdx = (ownerIdx + 1) % clients.length;
 			clients[nonOwnerIdx].once("rejoinMinesweeperDraft", function (state) {
 				expect(state).to.exist;
 				done();
@@ -285,7 +285,7 @@ describe("Minesweeper Draft", function () {
 	describe("Parameters matrix", function () {
 		selectCube();
 
-		for (let [gridCount, gridWidth, gridHeight, picksPerGrid] of [
+		for (const [gridCount, gridWidth, gridHeight, picksPerGrid] of [
 			[2, 10, 9, -1],
 			[2, 10, 10, -1],
 			[2, 9, 9, -1],

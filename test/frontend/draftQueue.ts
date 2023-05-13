@@ -90,10 +90,10 @@ describe("Draft Queue", function () {
 		});
 
 		it("...and continues until the draft is done.", async function () {
-			let done = [];
+			const done = [];
 			for (let i = 0; i < pages.length; i++) done.push(false);
 			while (done.some((d) => !d)) {
-				let promises = [];
+				const promises = [];
 				for (let i = 0; i < pages.length; i++) {
 					if (!done[i])
 						promises.push(
@@ -134,10 +134,10 @@ describe("Draft Queue", function () {
 		});
 
 		it("...and drafts until done.", async function () {
-			let done = [];
+			const done = [];
 			for (let i = 0; i < pages.length; i++) done.push(false);
 			while (done.some((d) => !d)) {
-				let promises = [];
+				const promises = [];
 				for (let i = 0; i < pages.length; i++) {
 					if (!done[i])
 						promises.push(

@@ -592,7 +592,7 @@ class STXBoosterFactory extends BoosterFactory {
 			mysticalArchives.push(pickCard(this.mysticalArchiveByRarity[archiveRarity], []));
 		}
 
-		let booster = super.generateBooster(updatedTargets);
+		const booster = super.generateBooster(updatedTargets);
 		if (isMessageError(booster)) return booster;
 		booster.push(pickedLesson);
 

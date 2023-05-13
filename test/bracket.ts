@@ -6,7 +6,7 @@ import { makeClients, waitForClientDisconnects, enableLogs, disableLogs, ackNoEr
 
 describe("Brackets", function () {
 	let clients: ReturnType<typeof makeClients> = [];
-	let sessionID = "SessionID";
+	const sessionID = "SessionID";
 	let ownerIdx: number = 0;
 
 	beforeEach(function (done) {
@@ -20,7 +20,7 @@ describe("Brackets", function () {
 	});
 
 	before(function (done) {
-		let queries = [];
+		const queries = [];
 		for (let i = 0; i < 8; ++i)
 			queries.push({
 				sessionID: sessionID,
@@ -34,7 +34,7 @@ describe("Brackets", function () {
 
 	after(function (done) {
 		disableLogs();
-		for (let c of clients) {
+		for (const c of clients) {
 			c.disconnect();
 		}
 

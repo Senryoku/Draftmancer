@@ -20,7 +20,7 @@ import { UserID } from "../src/IDTypes.js";
 
 describe("Rotisserie Draft", function () {
 	let clients: ReturnType<typeof makeClients> = [];
-	let sessionID = "sessionID";
+	const sessionID = "sessionID";
 	let ownerIdx: number = 0;
 
 	beforeEach(function (done) {
@@ -47,7 +47,7 @@ describe("Rotisserie Draft", function () {
 
 	after(function (done) {
 		disableLogs();
-		for (let c of clients) {
+		for (const c of clients) {
 			c.disconnect();
 		}
 		waitForClientDisconnects(done);
@@ -62,7 +62,7 @@ describe("Rotisserie Draft", function () {
 	});
 
 	let RotisserieDraftState: RotisserieDraftSyncData | null = null;
-	let PlayerCards: { [uid: UserID]: RotisserieDraftCard[] } = {};
+	const PlayerCards: { [uid: UserID]: RotisserieDraftCard[] } = {};
 
 	const setRestriction = (sets: SetCode[]) => {
 		it(`Set restriction: '${sets}'.`, (done) => {
@@ -73,7 +73,7 @@ describe("Rotisserie Draft", function () {
 
 	const loadCube = () => {
 		it("Load cube.", (done) => {
-			let nonOwnerIdx = (ownerIdx + 1) % clients.length;
+			const nonOwnerIdx = (ownerIdx + 1) % clients.length;
 			clients[nonOwnerIdx].once("sessionOptions", (options) => {
 				expect(options.useCustomCardList).to.be.true;
 				done();
@@ -101,7 +101,7 @@ describe("Rotisserie Draft", function () {
 	const startDraft = (options: RotisserieDraftStartOptions) => {
 		it("When session owner launch Rotisserie draft, everyone should receive a startRotisserieDraft event", (done) => {
 			let connectedClients = 0;
-			for (let c of clients) {
+			for (const c of clients) {
 				PlayerCards[(c as any).query.userID] = [];
 				c.once("startRotisserieDraft", (state) => {
 					connectedClients += 1;
@@ -185,7 +185,7 @@ describe("Rotisserie Draft", function () {
 		startDraft({ singleton: { cardsPerPlayer: 45, exactCardCount: false } });
 
 		it("Non-owner disconnects, owner receives updated user infos.", (done) => {
-			let nonOwnerIdx = (ownerIdx + 1) % clients.length;
+			const nonOwnerIdx = (ownerIdx + 1) % clients.length;
 			clients[ownerIdx].once("userDisconnected", () => {
 				waitForSocket(clients[nonOwnerIdx], done);
 			});
@@ -193,7 +193,7 @@ describe("Rotisserie Draft", function () {
 		});
 
 		it("Non-owner reconnects, draft restarts.", (done) => {
-			let nonOwnerIdx = (ownerIdx + 1) % clients.length;
+			const nonOwnerIdx = (ownerIdx + 1) % clients.length;
 			clients[nonOwnerIdx].once("rejoinRotisserieDraft", () => {
 				done();
 			});

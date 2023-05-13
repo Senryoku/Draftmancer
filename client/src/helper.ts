@@ -7,7 +7,7 @@ export function clone(obj: Object) {
 }
 
 export function isEmpty(obj: Object) {
-	for (var key in obj) {
+	for (const key in obj) {
 		if (Object.prototype.hasOwnProperty.call(obj, key)) return false;
 	}
 	return true;
@@ -67,7 +67,7 @@ export function exportToMagicProTools(draftLog: DraftLog, userID: UserID) {
 	str += `Event #: ${draftLog.sessionID}_${draftLog.time}\n`;
 	str += `Time: ${new Date(draftLog.time).toUTCString()}\n`;
 	str += `Players:\n`;
-	for (let c in draftLog.users) {
+	for (const c in draftLog.users) {
 		if (c == userID) str += `--> ${draftLog.users[c].userName}\n`;
 		else str += `    ${draftLog.users[c].userName}\n`;
 	}
@@ -77,7 +77,7 @@ export function exportToMagicProTools(draftLog: DraftLog, userID: UserID) {
 	let boosterNumber = 0;
 	let pickNumber = 1;
 	let lastLength = 0;
-	for (let p of draftLog.users[userID].picks) {
+	for (const p of draftLog.users[userID].picks) {
 		const dp = p as DraftPick;
 		if (dp.booster.length > lastLength) {
 			boosterNumber += 1;
@@ -88,7 +88,7 @@ export function exportToMagicProTools(draftLog: DraftLog, userID: UserID) {
 		}
 		lastLength = dp.booster.length;
 		str += `Pack ${boosterNumber} pick ${pickNumber}:\n`;
-		for (let [idx, cid] of dp.booster.entries())
+		for (const [idx, cid] of dp.booster.entries())
 			if (dp.pick.includes(idx)) str += `--> ${draftLog.carddata[cid].name}\n`;
 			else str += `    ${draftLog.carddata[cid].name}\n`;
 		str += "\n";
@@ -99,7 +99,7 @@ export function exportToMagicProTools(draftLog: DraftLog, userID: UserID) {
 }
 
 export function download(filename: string, text: string) {
-	var element = document.createElement("a");
+	const element = document.createElement("a");
 	element.setAttribute("href", "data:text/plain;charset=utf-8," + encodeURIComponent(text));
 	element.setAttribute("download", filename);
 

@@ -4,7 +4,7 @@ import randomjs from "random-js";
 export const random = new randomjs.Random(randomjs.nodeCrypto);
 
 export function isEmpty(obj: Object) {
-	for (let _ in obj) return false;
+	for (const _ in obj) return false;
 	return true;
 }
 
@@ -34,7 +34,7 @@ export function getNDisctinctRandom<Type>(arr: Type[], n: number): Type[] {
 
 export function getRandomMapKey<K, V>(map: Map<K, V>): K {
 	let idx = random.integer(0, map.size - 1);
-	for (let k of map.keys()) {
+	for (const k of map.keys()) {
 		if (idx-- === 0) return k;
 	}
 	return map.keys().next().value;
@@ -91,7 +91,7 @@ export function arrayIntersect<T>(args: Array<Array<T>>) {
 		e = a === c ? 0 : a || c;
 		f = args[e].length;
 		for (let j = 0; j < f; j++) {
-			let k = args[e][j];
+			const k = args[e][j];
 			if (h[k] === a - 1) {
 				if (a === i) {
 					g.push(k);

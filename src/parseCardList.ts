@@ -141,7 +141,7 @@ function parseSettings(
 	txtcardlist: string,
 	customCardList: CustomCardList
 ): SocketError | { advance: number; settings: CCLSettings } {
-	let lineIdx = startIdx;
+	const lineIdx = startIdx;
 	if (lines.length <= lineIdx)
 		return ackError({
 			title: `[Settings]`,
@@ -254,7 +254,7 @@ function parseSettings(
 			}
 			settings.predeterminedLayouts = [];
 			for (const list of parsedSettings.predeterminedLayouts) {
-				let layouts = [];
+				const layouts = [];
 				for (const name of list) {
 					if (!(name in customCardList.layouts))
 						return ackError({
@@ -268,7 +268,7 @@ function parseSettings(
 		} else if (isArrayOf(isRecord(isString, isInteger))(parsedSettings.predeterminedLayouts)) {
 			settings.predeterminedLayouts = [];
 			for (const list of parsedSettings.predeterminedLayouts) {
-				let layouts = [];
+				const layouts = [];
 				for (const [name, weight] of Object.entries(list)) layouts.push({ name: name, weight: weight });
 				settings.predeterminedLayouts.push(layouts);
 			}
@@ -316,7 +316,7 @@ function parseSettings(
 }
 
 function parseCustomCards(lines: string[], startIdx: number, txtcardlist: string) {
-	let lineIdx = startIdx;
+	const lineIdx = startIdx;
 	if (lines.length <= lineIdx)
 		return ackError({
 			title: `[CustomCards]`,

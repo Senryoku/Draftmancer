@@ -202,14 +202,14 @@ export default defineComponent({
 		const page = validPages.includes(path[0]) ? path[0] : "";
 
 		let userID: UserID = guid();
-		let storedUserID = getCookie("userID");
+		const storedUserID = getCookie("userID");
 		if (storedUserID !== "") {
 			userID = storedUserID;
 			// Server will handle the reconnect attempt if draft is still ongoing
 			console.log("storedUserID: " + storedUserID);
 		}
 
-		let urlParamSession = getUrlVars()["session"];
+		const urlParamSession = getUrlVars()["session"];
 		let sessionID: string | undefined = urlParamSession
 			? decodeURIComponent(urlParamSession)
 			: getCookie("sessionID", shortguid());
@@ -431,11 +431,11 @@ export default defineComponent({
 				// TODO: Cleanup this?
 				const bubbleEl = document.querySelector("#chat-bubble-" + message.author);
 				if (bubbleEl) {
-					const bubble = bubbleEl as HTMLElement;
+					const bubble = bubbleEl as HTMLElement & { timeoutHandler: number };
 					bubble.innerText = message.text;
 					bubble.style.opacity = "1";
-					if ((bubble as any).timeoutHandler) clearTimeout((bubble as any).timeoutHandler);
-					(bubble as any).timeoutHandler = window.setTimeout(() => (bubble.style.opacity = "0"), 5000);
+					if (bubble.timeoutHandler) clearTimeout(bubble.timeoutHandler);
+					bubble.timeoutHandler = window.setTimeout(() => (bubble.style.opacity = "0"), 5000);
 				}
 			});
 
@@ -482,21 +482,21 @@ export default defineComponent({
 			});
 
 			this.socket.on("updateUser", (data) => {
-				let user = this.userByID[data.userID];
+				const user = this.userByID[data.userID];
 				if (!user) {
 					if (data.userID === this.sessionOwner && data.updatedProperties.userName)
 						this.sessionOwnerUsername = data.updatedProperties.userName;
 					return;
 				}
 
-				for (let prop in data.updatedProperties) {
+				for (const prop in data.updatedProperties) {
 					(user as IIndexable)[prop] = data.updatedProperties[prop];
 				}
 			});
 
 			this.socket.on("sessionOptions", (sessionOptions) => {
 				// FIXME: Use accurate key type once we have it.
-				for (let prop in sessionOptions)
+				for (const prop in sessionOptions)
 					(this as IIndexable)[prop as keyof typeof SessionsSettingsProps] = sessionOptions[prop];
 			});
 
@@ -556,12 +556,13 @@ export default defineComponent({
 
 				this.initReadyCheck();
 
-				const ownerUsername =
-					this.sessionOwner! in this.userByID
-						? this.userByID[this.sessionOwner!].userName
-						: this.sessionOwnerUsername
-						? this.sessionOwnerUsername
-						: "Session owner";
+				const ownerUsername = !this.sessionOwner
+					? "Session owner"
+					: this.sessionOwner in this.userByID
+					? this.userByID[this.sessionOwner].userName
+					: this.sessionOwnerUsername
+					? this.sessionOwnerUsername
+					: "Session owner";
 
 				this.pushNotification("Are you ready?", {
 					body: `${ownerUsername} has initiated a ready check`,
@@ -636,8 +637,8 @@ export default defineComponent({
 				this.setWinstonDraftState(data.state);
 				this.clearState();
 				this.$nextTick(() => {
-					for (let c of data.pickedCards.main) this.addToDeck(c);
-					for (let c of data.pickedCards.side) this.addToSideboard(c);
+					for (const c of data.pickedCards.main) this.addToDeck(c);
+					for (const c of data.pickedCards.side) this.addToSideboard(c);
 
 					if (this.userID === data.state.currentPlayer) this.draftingState = DraftState.WinstonPicking;
 					else this.draftingState = DraftState.WinstonWaiting;
@@ -677,8 +678,8 @@ export default defineComponent({
 				this.drafting = true;
 				this.winchesterDraftState = data.state;
 				this.$nextTick(() => {
-					for (let c of data.pickedCards.main) this.addToDeck(c);
-					for (let c of data.pickedCards.side) this.addToSideboard(c);
+					for (const c of data.pickedCards.main) this.addToDeck(c);
+					for (const c of data.pickedCards.side) this.addToSideboard(c);
 
 					this.draftingState =
 						data.state.currentPlayer === this.userID
@@ -706,8 +707,8 @@ export default defineComponent({
 				this.draftingState = DraftState.HousmanDraft;
 				this.housmanDraftState = data.state;
 				this.$nextTick(() => {
-					for (let c of data.pickedCards.main) this.addToDeck(c);
-					for (let c of data.pickedCards.side) this.addToSideboard(c);
+					for (const c of data.pickedCards.main) this.addToDeck(c);
+					for (const c of data.pickedCards.side) this.addToSideboard(c);
 
 					Alert.fire({
 						position: "center",
@@ -730,8 +731,8 @@ export default defineComponent({
 				this.draftingState = DraftState.SolomonDraft;
 				this.solomonDraftState = data.state;
 				this.$nextTick(() => {
-					for (let c of data.pickedCards.main) this.addToDeck(c);
-					for (let c of data.pickedCards.side) this.addToSideboard(c);
+					for (const c of data.pickedCards.main) this.addToDeck(c);
+					for (const c of data.pickedCards.side) this.addToSideboard(c);
 
 					Alert.fire({
 						position: "center",
@@ -785,8 +786,8 @@ export default defineComponent({
 				this.setGridDraftState(data.state);
 				this.clearState();
 				this.$nextTick(() => {
-					for (let c of data.pickedCards.main) this.addToDeck(c);
-					for (let c of data.pickedCards.side) this.addToSideboard(c);
+					for (const c of data.pickedCards.main) this.addToDeck(c);
+					for (const c of data.pickedCards.side) this.addToSideboard(c);
 
 					if (this.userID === data.state.currentPlayer) this.draftingState = DraftState.GridPicking;
 					else this.draftingState = DraftState.GridWaiting;
@@ -831,8 +832,8 @@ export default defineComponent({
 				this.setRochesterDraftState(data.state);
 				this.clearState();
 				this.$nextTick(() => {
-					for (let c of data.pickedCards.main) this.addToDeck(c);
-					for (let c of data.pickedCards.side) this.addToSideboard(c);
+					for (const c of data.pickedCards.main) this.addToDeck(c);
+					for (const c of data.pickedCards.side) this.addToSideboard(c);
 
 					if (this.userID === data.state.currentPlayer) this.draftingState = DraftState.RochesterPicking;
 					else this.draftingState = DraftState.RochesterWaiting;
@@ -880,8 +881,8 @@ export default defineComponent({
 				this.drafting = true;
 				this.draftingState = DraftState.RotisserieDraft;
 				this.$nextTick(() => {
-					for (let c of data.pickedCards.main) this.addToDeck(c);
-					for (let c of data.pickedCards.side) this.addToSideboard(c);
+					for (const c of data.pickedCards.main) this.addToDeck(c);
+					for (const c of data.pickedCards.side) this.addToSideboard(c);
 
 					this.rotisserieDraftState = data.state;
 
@@ -928,8 +929,8 @@ export default defineComponent({
 				this.setMinesweeperDraftState(data.state);
 				this.clearState();
 				this.$nextTick(() => {
-					for (let c of data.pickedCards.main) this.addToDeck(c);
-					for (let c of data.pickedCards.side) this.addToSideboard(c);
+					for (const c of data.pickedCards.main) this.addToDeck(c);
+					for (const c of data.pickedCards.side) this.addToSideboard(c);
 
 					if (this.userID === data.state.currentPlayer) this.draftingState = DraftState.MinesweeperPicking;
 					else this.draftingState = DraftState.MinesweeperWaiting;
@@ -962,8 +963,8 @@ export default defineComponent({
 				this.deckDisplay?.sync();
 				this.sideboardDisplay?.sync();
 				this.$nextTick(() => {
-					for (let c of data.pickedCards.main) this.addToDeck(c);
-					for (let c of data.pickedCards.side) this.addToSideboard(c);
+					for (const c of data.pickedCards.main) this.addToDeck(c);
+					for (const c of data.pickedCards.side) this.addToSideboard(c);
 				});
 			});
 
@@ -1044,12 +1045,12 @@ export default defineComponent({
 				this.clearState();
 				// Let vue react to changes to card pools
 				this.$nextTick(() => {
-					for (let c of data.pickedCards.main) this.addToDeck(c);
-					for (let c of data.pickedCards.side) this.addToSideboard(c);
+					for (const c of data.pickedCards.main) this.addToDeck(c);
+					for (const c of data.pickedCards.side) this.addToSideboard(c);
 
 					this.booster = [];
 					if (data.booster) {
-						for (let c of data.booster) this.booster.push(c);
+						for (const c of data.booster) this.booster.push(c);
 						this.draftingState = DraftState.Picking;
 					} else {
 						this.draftingState = DraftState.Waiting;
@@ -1098,7 +1099,7 @@ export default defineComponent({
 						this.selectedCards = [];
 						this.burningCards = [];
 						this.booster = [];
-						for (let c of fullState.booster!) this.booster.push(c);
+						for (const c of fullState.booster!) this.booster.push(c);
 						this.playSound("next");
 					}
 					this.boosterNumber = fullState.boosterNumber;
@@ -1210,11 +1211,11 @@ export default defineComponent({
 				if (data.countdown < 0) data.countdown = 0;
 				if (data.countdown <= 0) this.$nextTick(this.forcePick);
 				if (data.countdown < 10) {
-					let chrono = document.getElementById("chrono");
+					const chrono = document.getElementById("chrono");
 					if (chrono) {
 						chrono.classList.add("pulsing");
 						setTimeout(() => {
-							let chrono = document.getElementById("chrono");
+							const chrono = document.getElementById("chrono");
 							if (chrono) chrono.classList.remove("pulsing");
 						}, 500);
 					}
@@ -1322,7 +1323,7 @@ export default defineComponent({
 			if (this.userID != this.sessionOwner) return false;
 			const proposedBots = this.maxPlayers <= 1 ? 7 : Math.max(0, this.maxPlayers - 1);
 			if (!this.teamDraft && this.sessionUsers.length + this.bots < 2) {
-				let ret = await Alert.fire({
+				const ret = await Alert.fire({
 					icon: "info",
 					title: "Not enough players",
 					text: `At least 2 players (including bots) are needed to start a draft.`,
@@ -1361,7 +1362,6 @@ export default defineComponent({
 		},
 		stopDraft() {
 			if (this.userID != this.sessionOwner) return;
-			const self = this;
 			Alert.fire({
 				title: "Are you sure?",
 				text: "Do you really want to stop the game for all players?",
@@ -1371,9 +1371,7 @@ export default defineComponent({
 				cancelButtonColor: ButtonColor.Safe,
 				confirmButtonText: "Stop the game!",
 			}).then((result) => {
-				if (result.value) {
-					self.socket.emit("stopDraft");
-				}
+				if (result.value) this.socket.emit("stopDraft");
 			});
 		},
 		pauseDraft() {
@@ -1517,7 +1515,7 @@ export default defineComponent({
 					if (answer.code !== 0) {
 						Alert.fire(answer.error as SweetAlertOptions<any, any>);
 					} else {
-						if (toSideboard) for (let cuid of cUIDs) this.socket.emit("moveCard", cuid, "side");
+						if (toSideboard) for (const cuid of cUIDs) this.socket.emit("moveCard", cuid, "side");
 						this.selectedCards = [];
 						this.burningCards = [];
 					}
@@ -1555,7 +1553,7 @@ export default defineComponent({
 
 			// Uses botScores to automatically select picks if available
 			if (this.botScores) {
-				let orderedPicks = [];
+				const orderedPicks = [];
 				for (let i = 0; i < this.botScores.scores.length; ++i) orderedPicks.push(i);
 				orderedPicks.sort((lhs, rhs) => {
 					return this.botScores!.scores[rhs] - this.botScores!.scores[lhs];
@@ -1649,7 +1647,7 @@ export default defineComponent({
 			if (boosterCount) {
 				if (typeof boosterCount !== "number") boosterCount = parseInt(boosterCount);
 				this.socket.emit("startWinstonDraft", boosterCount, true, (answer: SocketAck) => {
-					if (answer.code !== 0) Alert.fire(answer.error!);
+					if (answer.code !== 0 && answer.error) Alert.fire(answer.error);
 				});
 			}
 		},
@@ -1657,7 +1655,7 @@ export default defineComponent({
 			if (!this.winstonDraftState) return;
 			const cards = this.winstonDraftState.piles[this.winstonDraftState.currentPile] as UniqueCard[];
 			this.socket.emit("winstonDraftTakePile", (answer) => {
-				if (answer.code === 0) for (let c of cards) this.addToDeck(c);
+				if (answer.code === 0) for (const c of cards) this.addToDeck(c);
 				else console.error(answer);
 			});
 		},
@@ -1700,7 +1698,7 @@ export default defineComponent({
 			if (boosterPerPlayer) {
 				if (typeof boosterPerPlayer !== "number") boosterPerPlayer = parseInt(boosterPerPlayer);
 				this.socket.emit("startWinchesterDraft", boosterPerPlayer, true, (answer: SocketAck) => {
-					if (answer.code !== 0) Alert.fire(answer.error!);
+					if (answer.code !== 0 && answer.error) Alert.fire(answer.error);
 				});
 			}
 		},
@@ -1708,7 +1706,7 @@ export default defineComponent({
 			if (!this.winchesterDraftState) return;
 			const cards = this.winchesterDraftState.piles[index];
 			this.socket.emit("winchesterDraftPick", index, (answer) => {
-				if (answer.code === 0) for (let c of cards) this.addToDeck(c);
+				if (answer.code === 0) for (const c of cards) this.addToDeck(c);
 				else console.error(answer);
 			});
 		},
@@ -1717,7 +1715,7 @@ export default defineComponent({
 			this.gridDraftState = state;
 			const booster = [];
 			let idx = 0;
-			for (let card of this.gridDraftState.booster) {
+			for (const card of this.gridDraftState.booster) {
 				if (card) {
 					if (prevBooster && prevBooster[idx] && prevBooster[idx]!.id === card.id)
 						booster.push(prevBooster[idx]);
@@ -1745,30 +1743,29 @@ export default defineComponent({
 					roundCount,
 					removeBasicLands,
 					(answer: SocketAck) => {
-						if (answer.code !== 0) Alert.fire(answer.error!);
+						if (answer.code !== 0 && answer.error) Alert.fire(answer.error);
 					}
 				);
 			};
 
-			const self = this;
 			const el = document.createElement("div");
 			el.id = "housman-dialog";
 			this.$el.appendChild(el);
-			let instance = createCommonApp(HousmanDialog, {
-				unmounted() {
-					self.$el.removeChild(el);
+			const instance = createCommonApp(HousmanDialog, {
+				unmounted: () => {
+					this.$el.removeChild(el);
 				},
 				onCancel() {
 					instance.unmount();
 				},
-				onStart(
+				onStart: (
 					handSize: number,
 					revealedCardsCount: number,
 					exchangeCount: number,
 					roundCount: number,
 					removeBasicLands: boolean
-				) {
-					self.deckWarning(start, handSize, revealedCardsCount, exchangeCount, roundCount, removeBasicLands);
+				) => {
+					this.deckWarning(start, handSize, revealedCardsCount, exchangeCount, roundCount, removeBasicLands);
 					instance.unmount();
 				},
 			});
@@ -1785,23 +1782,22 @@ export default defineComponent({
 
 			const start = (cardCount: number, roundCount: number, removeBasicLands: boolean) => {
 				this.socket.emit("startSolomonDraft", cardCount, roundCount, removeBasicLands, (answer: SocketAck) => {
-					if (answer.code !== 0) Alert.fire(answer.error!);
+					if (answer.code !== 0 && answer.error) Alert.fire(answer.error);
 				});
 			};
 
-			const self = this;
 			const el = document.createElement("div");
 			el.id = "solomon-dialog";
 			this.$el.appendChild(el);
-			let instance = createCommonApp(SolomonDialog, {
-				unmounted() {
-					self.$el.removeChild(el);
+			const instance = createCommonApp(SolomonDialog, {
+				unmounted: () => {
+					this.$el.removeChild(el);
 				},
 				onCancel() {
 					instance.unmount();
 				},
-				onStart(cardCount: number, roundCount: number, removeBasicLands: boolean) {
-					self.deckWarning(start, cardCount, roundCount, removeBasicLands);
+				onStart: (cardCount: number, roundCount: number, removeBasicLands: boolean) => {
+					this.deckWarning(start, cardCount, roundCount, removeBasicLands);
 					instance.unmount();
 				},
 			});
@@ -1856,7 +1852,7 @@ export default defineComponent({
 
 			for (let i = 0; i < 3; ++i) {
 				//                     Column           Row
-				let idx = choice < 3 ? 3 * i + choice : 3 * (choice - 3) + i;
+				const idx = choice < 3 ? 3 * i + choice : 3 * (choice - 3) + i;
 				if (this.gridDraftState.booster[idx]) {
 					cards.push(this.gridDraftState.booster[idx]!);
 				}
@@ -1867,7 +1863,7 @@ export default defineComponent({
 			} else {
 				this.socket.emit("gridDraftPick", choice, (answer: SocketAck) => {
 					if (answer.code === 0) {
-						for (let c of cards) this.addToDeck(c);
+						for (const c of cards) this.addToDeck(c);
 					} else if (answer.error) Alert.fire(answer.error);
 				});
 			}
@@ -1887,7 +1883,7 @@ export default defineComponent({
 				return;
 			}
 			this.socket.emit("startRochesterDraft", (answer: SocketAck) => {
-				if (answer.code !== 0) Alert.fire(answer.error!);
+				if (answer.code !== 0 && answer.error) Alert.fire(answer.error);
 			});
 		},
 		startRotisserieDraft() {
@@ -1900,22 +1896,21 @@ export default defineComponent({
 				});
 				return;
 			}
-			const self = this;
 			const el = document.createElement("div");
 			el.id = "rotisserie-draft-dialog";
 			this.$el.appendChild(el);
-			let instance = createCommonApp(RotisserieDraftDialog, {
+			const instance = createCommonApp(RotisserieDraftDialog, {
 				defaultBoostersPerPlayer: this.boostersPerPlayer,
-				unmounted() {
-					self.$el.removeChild(el);
+				unmounted: () => {
+					this.$el.removeChild(el);
 				},
 				onCancel() {
 					instance.unmount();
 				},
-				onStart(options: RotisserieDraftStartOptions) {
-					self.deckWarning((options) => {
-						self.socket.emit("startRotisserieDraft", options, (r) => {
-							if (r.code !== 0) Alert.fire(r.error!);
+				onStart: (options: RotisserieDraftStartOptions) => {
+					this.deckWarning((options) => {
+						this.socket.emit("startRotisserieDraft", options, (r) => {
+							if (r.code !== 0 && r.error) Alert.fire(r.error);
 						});
 					}, options);
 					instance.unmount();
@@ -2283,7 +2278,7 @@ export default defineComponent({
 			if (!file) return;
 			const reader = new FileReader();
 			reader.onload = async (e) => {
-				let contents = e.target?.result;
+				const contents = e.target?.result;
 				if (!contents || typeof contents !== "string") {
 					fireToast("error", `Empty file.`);
 					return;
@@ -2291,11 +2286,11 @@ export default defineComponent({
 
 				// Propose to use MTGA user name
 				// FIXME: The username doesn't seem to appear in the log anymore as of 29/08/2021
-				let nameFromLogs = localStorage.getItem("nameFromLogs");
+				const nameFromLogs = localStorage.getItem("nameFromLogs");
 				if (!nameFromLogs) {
-					let m = contents.match(/DisplayName:(.+)#(\d+)/);
+					const m = contents.match(/DisplayName:(.+)#(\d+)/);
 					if (m) {
-						let name = `${m[1]}#${m[2]}`;
+						const name = `${m[1]}#${m[2]}`;
 						if (name != this.userName) {
 							const swalResult = await Alert.fire({
 								icon: "question",
@@ -2331,7 +2326,7 @@ export default defineComponent({
 					return;
 				}
 
-				let playerIds = new Set(Array.from(contents.matchAll(/"playerId":"([^"]+)"/g)).map((e) => e[1]));
+				const playerIds = new Set(Array.from(contents.matchAll(/"playerId":"([^"]+)"/g)).map((e) => e[1]));
 
 				const parseCollection = function (contents: string, startIdx?: number) {
 					const rpcName = "PlayerInventory.GetPlayerCardsV3";
@@ -2386,7 +2381,7 @@ export default defineComponent({
 					});
 					if (swalResult.value) {
 						const collections: ReturnType<typeof parseCollection>[] = [];
-						for (let pid of playerIds) {
+						for (const pid of playerIds) {
 							const startIdx = contents.lastIndexOf(`"payload":{"playerId":"${pid}"`);
 							const coll = parseCollection(contents, startIdx);
 							if (coll) collections.push(coll);
@@ -2397,9 +2392,9 @@ export default defineComponent({
 							cardids = Object.keys(collections[i]!).filter((id) => cardids.includes(id));
 						// Find min amount of each card
 						result = {};
-						for (let id of cardids) result[id] = collections[0]![id as keyof (typeof collections)[0]];
+						for (const id of cardids) result[id] = collections[0]![id as keyof (typeof collections)[0]];
 						for (let i = 1; i < collections.length; ++i)
-							for (let id of cardids)
+							for (const id of cardids)
 								result[id] = Math.min(
 									result[id],
 									collections[i]![id as keyof ReturnType<typeof parseCollection>]
@@ -2426,7 +2421,7 @@ export default defineComponent({
 		},
 		// Returns a Blob to be consumed by a FileReader
 		uploadFile(e: Event, callback: (file: File, options?: Options) => void, options?: Options) {
-			let file = (e.target as HTMLInputElement)?.files?.[0];
+			const file = (e.target as HTMLInputElement)?.files?.[0];
 			if (!file) {
 				fireToast("error", "An error occured while uploading the file.");
 				return false;
@@ -2449,13 +2444,13 @@ export default defineComponent({
 
 			if (event.dataTransfer)
 				if (event.dataTransfer.items) {
-					for (let item of event.dataTransfer.items)
+					for (const item of event.dataTransfer.items)
 						if (item.kind === "file") {
 							const file = item.getAsFile();
 							if (file) this.parseCustomCardList(file);
 						}
 				} else {
-					for (let file of event.dataTransfer.files) this.parseCustomCardList(file);
+					for (const file of event.dataTransfer.files) this.parseCustomCardList(file);
 				}
 		},
 		async parseCustomCardList(file: File) {
@@ -2465,7 +2460,7 @@ export default defineComponent({
 				title: "Parsing card list...",
 				showConfirmButton: false,
 			});
-			let contents = await file.text();
+			const contents = await file.text();
 
 			this.socket.emit("parseCustomCardList", contents, (answer) => {
 				if (answer?.error) {
@@ -2529,7 +2524,7 @@ export default defineComponent({
 				}
 			});
 		},
-		selectCube(cube: CubeDescription, matchVersions: boolean = false) {
+		selectCube(cube: CubeDescription, matchVersions = false) {
 			const ack = (r: SocketAck) => {
 				if (r?.error) {
 					Alert.fire(r.error);
@@ -2569,17 +2564,17 @@ export default defineComponent({
 				body: (document.querySelector("#decklist-text") as HTMLInputElement)?.value,
 			});
 			if (response.status === 200) {
-				let data = await response.json();
+				const data = await response.json();
 				if (data && !data.error) {
 					this.clearState();
-					for (let c of data.deck) this.addToDeck(c);
-					for (let c of data.sideboard) this.addToSideboard(c);
+					for (const c of data.deck) this.addToDeck(c);
+					for (const c of data.sideboard) this.addToSideboard(c);
 					this.draftingState = DraftState.Brewing;
 				}
 				fireToast("success", "Successfully imported deck!");
 				this.displayedModal = null;
 			} else if (response.status === 400) {
-				let data = await response.json();
+				const data = await response.json();
 				if (data.error) {
 					fireToast("error", `Error importing deck: ${data.error.message}`);
 				} else {
@@ -2621,7 +2616,7 @@ export default defineComponent({
 		},
 		setSessionOwner(newOwnerID: UserID) {
 			if (this.userID != this.sessionOwner) return;
-			let user = this.sessionUsers.find((u) => u.userID === newOwnerID);
+			const user = this.sessionUsers.find((u) => u.userID === newOwnerID);
 			if (!user) return;
 			Alert.fire({
 				title: "Are you sure?",
@@ -2639,7 +2634,7 @@ export default defineComponent({
 		},
 		removePlayer(userID: UserID) {
 			if (this.userID != this.sessionOwner) return;
-			let user = this.sessionUsers.find((u) => u.userID === userID);
+			const user = this.sessionUsers.find((u) => u.userID === userID);
 			if (!user) return;
 			Alert.fire({
 				title: "Are you sure?",
@@ -2659,7 +2654,7 @@ export default defineComponent({
 			if (this.userID != this.sessionOwner) return;
 
 			const negMod = (m: number, n: number) => ((m % n) + n) % n;
-			let other = negMod(idx + dir, this.userOrder.length);
+			const other = negMod(idx + dir, this.userOrder.length);
 			[this.userOrder[idx], this.userOrder[other]] = [this.userOrder[other], this.userOrder[idx]];
 
 			this.socket.emit("setSeating", this.userOrder);
@@ -2672,22 +2667,21 @@ export default defineComponent({
 		async sealedDialog(teamSealed = false) {
 			if (this.userID != this.sessionOwner) return;
 
-			const self = this;
 			const el = document.createElement("div");
 			el.id = "sealed-dialog";
 			this.$el.appendChild(el);
-			let instance = createCommonApp(SealedDialog, {
+			const instance = createCommonApp(SealedDialog, {
 				users: this.sessionUsers,
 				teamSealed: teamSealed,
-				unmounted() {
-					self.$el.removeChild(el);
+				unmounted: () => {
+					this.$el.removeChild(el);
 				},
 				onCancel() {
 					instance.unmount();
 				},
-				onDistribute(boostersPerPlayer: number, customBoosters: SetCode[], teams: UserID[][]) {
-					self.deckWarning(
-						teamSealed ? self.startTeamSealed : self.distributeSealed,
+				onDistribute: (boostersPerPlayer: number, customBoosters: SetCode[], teams: UserID[][]) => {
+					this.deckWarning(
+						teamSealed ? this.startTeamSealed : this.distributeSealed,
 						boostersPerPlayer,
 						customBoosters,
 						teams
@@ -2697,7 +2691,7 @@ export default defineComponent({
 			});
 			instance.mount("#sealed-dialog");
 		},
-		deckWarning<T extends any[]>(call: (...args: T) => void, ...options: T) {
+		deckWarning<T extends unknown[]>(call: (...args: T) => void, ...options: T) {
 			if (this.deck.length > 0) {
 				Alert.fire({
 					title: "Are you sure?",
@@ -2752,8 +2746,8 @@ export default defineComponent({
 		},
 		async displayPackChoice(boosters: JHHBooster[], currentPack: number, packCount: number) {
 			let boostersDisplay = "";
-			for (let b of boosters) {
-				let colors = b.colors
+			for (const b of boosters) {
+				const colors = b.colors
 					.map(
 						(c) => `<img src="img/mana/${c}.svg" class="mana-icon" style="vertical-align: text-top;"></img>`
 					)
@@ -2770,11 +2764,11 @@ export default defineComponent({
 				allowOutsideClick: false,
 				width: "50vw",
 				didOpen: (el) => {
-					let packButtons = el.querySelectorAll(".pack-button");
+					const packButtons = el.querySelectorAll(".pack-button");
 					for (let i = 0; i < packButtons.length; ++i) {
 						packButtons[i].addEventListener("click", () => {
 							choice = i;
-							for (let c of boosters[i].cards) this.addToDeck(c);
+							for (const c of boosters[i].cards) this.addToDeck(c);
 							Alert.clickConfirm();
 						});
 					}
@@ -2788,7 +2782,7 @@ export default defineComponent({
 		) {
 			this.clearState();
 			this.draftingState = DraftState.Brewing;
-			let choice = await this.displayPackChoice(choices[0], 0, choices.length);
+			const choice = await this.displayPackChoice(choices[0], 0, choices.length);
 			await this.displayPackChoice(choices[1][choice], 1, choices.length);
 			ack?.(
 				this.userID,
@@ -2813,7 +2807,7 @@ export default defineComponent({
 		initReadyCheck() {
 			this.pendingReadyCheck = true;
 
-			for (let u of this.sessionUsers) u.readyState = ReadyState.Unknown;
+			for (const u of this.sessionUsers) u.readyState = ReadyState.Unknown;
 
 			this.playSound("readyCheck");
 			this.pushTitleNotification("❔");
@@ -2821,7 +2815,7 @@ export default defineComponent({
 		stopReadyCheck() {
 			this.pendingReadyCheck = false;
 
-			for (let u of this.sessionUsers) u.readyState = ReadyState.DontCare;
+			for (const u of this.sessionUsers) u.readyState = ReadyState.DontCare;
 		},
 		shareSavedDraftLog(storedDraftLog: DraftLog) {
 			if (this.userID != this.sessionOwner) {
@@ -2853,14 +2847,14 @@ export default defineComponent({
 			const playerInfos = this.sessionUsers.map((u) => {
 				return { userID: u.userID, userName: u.userName };
 			});
-			let players = [];
+			const players = [];
 			for (let i = 0; i < pairingOrder.length; ++i) players[i] = playerInfos[pairingOrder[i]];
 			return players;
 		},
 		// Bracket (Server communication)
 		generateBracket() {
 			if (this.userID != this.sessionOwner) return;
-			let players = this.prepareBracketPlayers(this.teamDraft ? [0, 3, 2, 5, 4, 1] : [0, 4, 2, 6, 1, 5, 3, 7]);
+			const players = this.prepareBracketPlayers(this.teamDraft ? [0, 3, 2, 5, 4, 1] : [0, 4, 2, 6, 1, 5, 3, 7]);
 			this.socket.emit("generateBracket", players, (answer) => {
 				if (answer.code === 0) this.displayedModal = "bracket";
 				else if (answer.error) Alert.fire(answer.error);
@@ -2868,7 +2862,7 @@ export default defineComponent({
 		},
 		generateSwissBracket() {
 			if (this.userID != this.sessionOwner) return;
-			let players =
+			const players =
 				this.sessionUsers.length == 6
 					? this.prepareBracketPlayers([0, 3, 1, 4, 2, 5])
 					: this.prepareBracketPlayers([0, 4, 2, 6, 1, 5, 3, 7]);
@@ -2879,7 +2873,7 @@ export default defineComponent({
 		},
 		generateDoubleBracket() {
 			if (this.userID != this.sessionOwner || this.teamDraft) return;
-			let players = this.prepareBracketPlayers([0, 4, 2, 6, 1, 5, 3, 7]);
+			const players = this.prepareBracketPlayers([0, 4, 2, 6, 1, 5, 3, 7]);
 			this.socket.emit("generateDoubleBracket", players, (answer) => {
 				if (answer.code === 0) this.displayedModal = "bracket";
 				else if (answer.error) Alert.fire(answer.error);
@@ -2897,7 +2891,7 @@ export default defineComponent({
 		},
 		// Deck/Sideboard management
 		addToDeck(card: UniqueCard | UniqueCard[], options: { event?: MouseEvent } | undefined = undefined) {
-			if (Array.isArray(card)) for (let c of card) this.addToDeck(c, options);
+			if (Array.isArray(card)) for (const c of card) this.addToDeck(c, options);
 			else {
 				// Handle column sync.
 				this.deck.push(card);
@@ -2905,7 +2899,7 @@ export default defineComponent({
 			}
 		},
 		addToSideboard(card: UniqueCard | UniqueCard[], options: { event?: MouseEvent } | undefined = undefined) {
-			if (Array.isArray(card)) for (let c of card) this.addToSideboard(c, options);
+			if (Array.isArray(card)) for (const c of card) this.addToSideboard(c, options);
 			else {
 				// Handle column sync.
 				this.sideboard.push(card);
@@ -2914,7 +2908,7 @@ export default defineComponent({
 		},
 		deckToSideboard(e: Event, c: UniqueCard) {
 			// From deck to sideboard
-			let idx = this.deck.indexOf(c);
+			const idx = this.deck.indexOf(c);
 			if (idx >= 0) {
 				this.deck.splice(idx, 1);
 				this.deckDisplay?.remCard(c);
@@ -2927,7 +2921,7 @@ export default defineComponent({
 		},
 		sideboardToDeck(e: Event, c: UniqueCard) {
 			// From sideboard to deck
-			let idx = this.sideboard.indexOf(c);
+			const idx = this.sideboard.indexOf(c);
 			if (idx >= 0) {
 				this.sideboard.splice(idx, 1);
 				this.sideboardDisplay?.remCard(c);
@@ -3005,24 +2999,24 @@ export default defineComponent({
 
 				const colorCount = this.colorsInDeck;
 				let totalColor = 0;
-				for (let c in colorCount) totalColor += colorCount[c as CardColor];
+				for (const c in colorCount) totalColor += colorCount[c as CardColor];
 				if (totalColor <= 0) return;
 
-				for (let c in this.lands)
+				for (const c in this.lands)
 					this.lands[c as CardColor] = Math.round(landToAdd * (colorCount[c as CardColor] / totalColor));
-				let addedLands = this.totalLands;
+				const addedLands = this.totalLands;
 
 				if (this.deck.length + addedLands > targetDeckSize) {
 					let max: CardColor = CardColor.W;
 					for (let i = 0; i < this.deck.length + addedLands - targetDeckSize; ++i) {
-						for (let c in this.lands)
+						for (const c in this.lands)
 							if (this.lands[c as CardColor] > this.lands[max]) max = c as CardColor;
 						this.lands[max] = Math.max(0, this.lands[max] - 1);
 					}
 				} else if (this.deck.length + addedLands < targetDeckSize) {
 					let min: CardColor = CardColor.W;
 					for (let i = 0; i < targetDeckSize - (this.deck.length + addedLands); ++i) {
-						for (let c in this.lands)
+						for (const c in this.lands)
 							if (
 								this.colorsInDeck[min] == 0 ||
 								(this.colorsInDeck[c as CardColor] > 0 && this.lands[c as CardColor] < this.lands[min])
@@ -3040,9 +3034,9 @@ export default defineComponent({
 			this.sideboardDisplay?.filterBasics();
 		},
 		colorsInCardPool(pool: Card[]) {
-			let r = { W: 0, U: 0, B: 0, R: 0, G: 0 };
-			for (let card of pool) {
-				for (let color of card.colors) {
+			const r = { W: 0, U: 0, B: 0, R: 0, G: 0 };
+			for (const card of pool) {
+				for (const color of card.colors) {
 					r[color] += 1;
 				}
 			}
@@ -3125,7 +3119,7 @@ export default defineComponent({
 		updateStoredSessionSettings(data: { [key: string]: any }) {
 			const previousStr = localStorage.getItem(localStorageSessionSettingsKey) ?? "{}";
 			const previous = JSON.parse(previousStr);
-			for (let key in data) previous[key] = data[key];
+			for (const key in data) previous[key] = data[key];
 			localStorage.setItem(localStorageSessionSettingsKey, JSON.stringify(previous));
 		},
 		storeDraftLogs() {
@@ -3142,7 +3136,7 @@ export default defineComponent({
 			this.storeDraftLogsTimeout = setTimeout(this.doStoreDraftLogs, 5000);
 		},
 		doStoreDraftLogs() {
-			let worker = new Worker(new URL("./logstore.worker.ts", import.meta.url));
+			const worker = new Worker(new URL("./logstore.worker.ts", import.meta.url));
 			worker.onmessage = (e) => {
 				localStorage.setItem("draftLogs", e.data);
 				this.storeDraftLogsTimeout = null;
@@ -3164,13 +3158,13 @@ export default defineComponent({
 			if (!this.hasCollection || !cards) return null;
 			const r = { common: 0, uncommon: 0, rare: 0, mythic: 0 };
 			const counts: { [aid: ArenaID]: { rarity: string; count: number } } = {};
-			for (let card of cards) {
+			for (const card of cards) {
 				if (!("arena_id" in card)) return null;
 				if (card.type.includes("Basic")) continue;
 				if (!(card.arena_id! in counts)) counts[card.arena_id!] = { rarity: card.rarity, count: 0 };
 				++counts[card.arena_id!].count;
 			}
-			for (let cid in counts)
+			for (const cid in counts)
 				r[counts[cid]!.rarity as keyof typeof r] += Math.max(
 					0,
 					Math.min(4, counts[cid].count) - (cid in this.collection ? this.collection[cid] : 0)
@@ -3196,8 +3190,8 @@ export default defineComponent({
 			return needed < this.collectionInfos.wildcards[card.rarity as keyof typeof this.collectionInfos.wildcards];
 		},
 		storeSettings() {
-			let settings: { [key: string]: any } = {};
-			for (let key in defaultSettings) settings[key] = this[key as keyof typeof defaultSettings];
+			const settings: { [key: string]: any } = {};
+			for (const key in defaultSettings) settings[key] = this[key as keyof typeof defaultSettings];
 			localStorage.setItem(localStorageSettingsKey, JSON.stringify(settings));
 		},
 
@@ -3399,7 +3393,7 @@ export default defineComponent({
 		},
 		deckSummary(): { [id: CardID]: number } {
 			const r: { [id: CardID]: number } = {};
-			for (let c of this.deck) {
+			for (const c of this.deck) {
 				if (!(c.id in r)) r[c.id] = 0;
 				++r[c.id];
 			}
@@ -3424,8 +3418,8 @@ export default defineComponent({
 		},
 
 		userByID(): { [uid: UserID]: SessionUser } {
-			let r: { [uid: UserID]: SessionUser } = {};
-			for (let u of this.sessionUsers) r[u.userID] = u;
+			const r: { [uid: UserID]: SessionUser } = {};
+			for (const u of this.sessionUsers) r[u.userID] = u;
 			return r;
 		},
 
@@ -3455,7 +3449,7 @@ export default defineComponent({
 			const localStorageCollection = localStorage.getItem("Collection");
 			if (localStorageCollection) {
 				try {
-					let json = JSON.parse(localStorageCollection);
+					const json = JSON.parse(localStorageCollection);
 					this.setCollection(json);
 					console.log("Loaded collection from local storage");
 				} catch (e) {
@@ -3473,7 +3467,7 @@ export default defineComponent({
 
 			const storedLogs = localStorage.getItem("draftLogs");
 			if (storedLogs) {
-				let worker = new Worker(new URL("./logstore.worker.ts", import.meta.url));
+				const worker = new Worker(new URL("./logstore.worker.ts", import.meta.url));
 				worker.onmessage = (e) => {
 					this.draftLogs = e.data;
 					console.log(`Loaded ${this.draftLogs.length} saved draft logs.`);
@@ -3484,7 +3478,7 @@ export default defineComponent({
 			// If we're waiting on a storeDraftLogsTimeout, ask the user to wait and trigger the compressiong/storing immediatly
 			window.addEventListener("beforeunload", this.beforeunload);
 
-			for (let key in Sounds) Sounds[key].volume = 0.4;
+			for (const key in Sounds) Sounds[key].volume = 0.4;
 			Sounds["countdown"].volume = 0.11;
 			this.$nextTick(() => {
 				this.applyFixedDeckSize();
