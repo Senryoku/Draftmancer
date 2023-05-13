@@ -10,7 +10,7 @@ import { ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketDa
 import { ReadyState } from "../Session/SessionTypes.js";
 
 import { QueueID, QueueDescription } from "./QueueDescription.js";
-import AvailableQueues from "./AvailableQueues.js";
+import { AvailableQueues } from "./AvailableQueues.js";
 
 const PlayerQueues: Map<QueueID, { description: QueueDescription; users: UserID[] }> = new Map<
 	QueueID,
@@ -148,17 +148,18 @@ export function registerPlayer(userID: UserID, queueID: QueueID): SocketAck {
 }
 
 export function unregisterPlayer(userID: UserID, queueID?: QueueID): SocketAck {
-	if (!queueID) {
-		queueID = searchPlayer(userID);
-		if (!queueID) return new SocketError(`Player not found.`);
+	let qid = queueID;
+	if (!qid) {
+		qid = searchPlayer(userID);
+		if (!qid) return new SocketError(`Player not found.`);
 	}
 
-	const queue = PlayerQueues.get(queueID);
-	if (!queue) return new SocketError(`Invalid queue '${queueID}'.`);
+	const queue = PlayerQueues.get(qid);
+	if (!queue) return new SocketError(`Invalid queue '${qid}'.`);
 	const idx = queue.users.indexOf(userID);
 	if (idx < 0) return new SocketError(`Player not found.`);
 	queue.users.splice(idx, 1);
-	Connections[userID].socket.off("disconnect", onDisconnect);
+	Connections[userID]?.socket?.off("disconnect", onDisconnect);
 	return new SocketAck();
 }
 
