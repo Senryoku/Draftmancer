@@ -19,7 +19,8 @@ import {
 	ValidCubes,
 } from "./src/common.js";
 import Constants from "../src/Constants.js";
-import { DistributionMode, ReadyState } from "../src/Session/SessionTypes";
+import type { DistributionMode } from "../src/Session/SessionTypes";
+import { ReadyState } from "../src/Session/SessionTypes.js";
 
 const checkColorBalance = function (booster: Card[]) {
 	for (const color of "WUBRG")
