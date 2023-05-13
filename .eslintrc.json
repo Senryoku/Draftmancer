@@ -21,6 +21,7 @@
 				"no-empty-function": "off",
 				"@typescript-eslint/no-empty-function": "off",
 				"@typescript-eslint/no-inferrable-types": ["off", { "ignoreRestArgs": true }],
+				"@typescript-eslint/no-non-null-assertion": "off",
 				"import/extensions": [
 					"error",
 					"ignorePackages",
@@ -56,7 +57,15 @@
 			"plugins": ["@typescript-eslint", "prettier"],
 			"rules": {
 				"prettier/prettier": "error",
-				"vue/no-multiple-template-root": "off"
+				"@typescript-eslint/no-non-null-assertion": "off",
+				"vue/no-multiple-template-root": "off",
+				"vue/multi-word-component-names": "off",
+				"vue/no-mutating-props": [
+					"error",
+					{
+						"shallowOnly": true
+					}
+				]
 			}
 		},
 		{

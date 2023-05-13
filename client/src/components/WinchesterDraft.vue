@@ -56,7 +56,7 @@ import { WinchesterDraftSyncData } from "@/WinchesterDraft";
 import { Language } from "../../../src/Types";
 import Card from "./Card.vue";
 
-const props = defineProps<{
+defineProps<{
 	userID: UserID;
 	language: Language;
 	sessionUsers: { [uid: UserID]: UserData };

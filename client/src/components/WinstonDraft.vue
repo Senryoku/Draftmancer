@@ -41,8 +41,7 @@
 								<transition
 									name="flip-card"
 									mode="out-in"
-									:duration-enter="0.25"
-									:duration-leave="0.25 + 0.1 * cardIndex"
+									:duration="{ enter: 0.25, leave: 0.25 + 0.1 * cardIndex }"
 								>
 									<template
 										v-if="

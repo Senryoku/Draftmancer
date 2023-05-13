@@ -55,6 +55,7 @@
 						<div
 							v-for="(p, idx) in readyCheck.players"
 							:class="{ 'player-ready': p.status === ReadyState.Ready }"
+							:key="idx"
 						>
 							<font-awesome-icon
 								v-if="p.status === ReadyState.Ready"

@@ -1,5 +1,5 @@
 import type { ClientToServerEvents, LoaderOptions, ServerToClientEvents } from "@/SocketType";
-import type { SessionID, UserID } from "@/IDTypes";
+import type { UserID } from "@/IDTypes";
 import type { SetCode, IIndexable, Language } from "@/Types";
 import {
 	DisconnectedUser,
@@ -2005,21 +2005,19 @@ export default defineComponent({
 				cancelButtonColor: ButtonColor.Critical,
 				confirmButtonText: "Start Minesweeper Draft",
 				width: "40vw",
-				preConfirm() {
-					return new Promise(function (resolve) {
-						resolve({
-							gridCount: (document.getElementById("input-gridCount") as HTMLInputElement).valueAsNumber,
-							gridWidth: (document.getElementById("input-gridWidth") as HTMLInputElement).valueAsNumber,
-							gridHeight: (document.getElementById("input-gridHeight") as HTMLInputElement).valueAsNumber,
-							picksPerPlayerPerGrid: (
-								document.getElementById("input-picksPerPlayerPerGrid") as HTMLInputElement
-							).valueAsNumber,
-							revealBorders: (document.getElementById("input-revealBorders") as HTMLInputElement).checked,
-						});
-					});
+				preConfirm: () => {
+					return {
+						gridCount: (document.getElementById("input-gridCount") as HTMLInputElement).valueAsNumber,
+						gridWidth: (document.getElementById("input-gridWidth") as HTMLInputElement).valueAsNumber,
+						gridHeight: (document.getElementById("input-gridHeight") as HTMLInputElement).valueAsNumber,
+						picksPerPlayerPerGrid: (
+							document.getElementById("input-picksPerPlayerPerGrid") as HTMLInputElement
+						).valueAsNumber,
+						revealBorders: (document.getElementById("input-revealBorders") as HTMLInputElement).checked,
+					};
 				},
-			}).then((r: any) => {
-				if (r.isConfirmed) {
+			}).then((r) => {
+				if (r.isConfirmed && r.value) {
 					localStorage.setItem("draftmancer-minesweeper", JSON.stringify(r.value));
 					this.socket.emit(
 						"startMinesweeperDraft",
@@ -2082,18 +2080,15 @@ export default defineComponent({
 				cancelButtonColor: ButtonColor.Critical,
 				confirmButtonText: "Start Glimpse Draft",
 				preConfirm() {
-					return new Promise(function (resolve) {
-						resolve({
-							boostersPerPlayer: (document.getElementById("input-boostersPerPlayer") as HTMLInputElement)
-								.valueAsNumber,
-							burnedCardsPerRound: (
-								document.getElementById("input-burnedCardsPerRound") as HTMLInputElement
-							).valueAsNumber,
-						});
-					});
+					return {
+						boostersPerPlayer: (document.getElementById("input-boostersPerPlayer") as HTMLInputElement)
+							.valueAsNumber,
+						burnedCardsPerRound: (document.getElementById("input-burnedCardsPerRound") as HTMLInputElement)
+							.valueAsNumber,
+					};
 				},
-			}).then((r: any) => {
-				if (r.isConfirmed) {
+			}).then((r) => {
+				if (r.isConfirmed && r.value) {
 					const prev = [this.boostersPerPlayer, this.burnedCardsPerRound];
 					this.boostersPerPlayer = r.value.boostersPerPlayer;
 					this.burnedCardsPerRound = r.value.burnedCardsPerRound;
@@ -3116,7 +3111,7 @@ export default defineComponent({
 			copyToClipboard(data);
 			fireToast("success", message);
 		},
-		updateStoredSessionSettings(data: { [key: string]: any }) {
+		updateStoredSessionSettings(data: { [key: string]: unknown }) {
 			const previousStr = localStorage.getItem(localStorageSessionSettingsKey) ?? "{}";
 			const previous = JSON.parse(previousStr);
 			for (const key in data) previous[key] = data[key];
@@ -3190,7 +3185,7 @@ export default defineComponent({
 			return needed < this.collectionInfos.wildcards[card.rarity as keyof typeof this.collectionInfos.wildcards];
 		},
 		storeSettings() {
-			const settings: { [key: string]: any } = {};
+			const settings: { [key: string]: unknown } = {};
 			for (const key in defaultSettings) settings[key] = this[key as keyof typeof defaultSettings];
 			localStorage.setItem(localStorageSettingsKey, JSON.stringify(settings));
 		},

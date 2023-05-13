@@ -1,7 +1,7 @@
 import axios from "axios";
 import vueCardCache, { isReady, ScryfallCard } from "./vueCardCache";
 import Constants from "../../src/Constants";
-import { Alert, fireToast, loadingToast, SwalCustomClasses } from "./alerts";
+import { Alert, fireToast, loadingToast } from "./alerts";
 import { download, escapeHTML } from "./helper";
 import { Card, CardColor } from "@/CardTypes.js";
 

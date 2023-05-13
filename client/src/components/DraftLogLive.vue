@@ -207,12 +207,11 @@ export default defineComponent({
 		},
 		registerPlayerSelectEvents() {
 			this.clearPlayerSelectEvents();
-			const self = this;
 			const playerEls = document.querySelectorAll("ul.player-list li") as NodeListOf<HTMLElement>;
 			for (let el of playerEls) {
 				const callback = () => {
 					const id = el.dataset.userid;
-					self.setPlayer(id!);
+					this.setPlayer(id!);
 				};
 				this.eventListeners.push({ element: el, callback: callback });
 				el.classList.add("clickable");

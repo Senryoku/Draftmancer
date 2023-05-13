@@ -2,11 +2,11 @@ import { DraftLog, DraftPick } from "@/DraftLog";
 import { UserID } from "@/IDTypes";
 import { SortableEvent } from "sortablejs";
 
-export function clone(obj: Object) {
+export function clone(obj: object) {
 	return JSON.parse(JSON.stringify(obj));
 }
 
-export function isEmpty(obj: Object) {
+export function isEmpty(obj: object) {
 	for (const key in obj) {
 		if (Object.prototype.hasOwnProperty.call(obj, key)) return false;
 	}

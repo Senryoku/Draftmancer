@@ -24,6 +24,7 @@
 			<slot name="beforeList"></slot>
 			<div
 				v-for="option in options"
+				:key="option"
 				@pointerup.exact.stop="pointerup(option)"
 				@pointerup.ctrl.exact.stop="ctrlpointerup(option)"
 				@pointerdown="pointerdown($event, option)"

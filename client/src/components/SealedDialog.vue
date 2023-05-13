@@ -137,8 +137,8 @@ const teamAdd = (evt: SortableEvent, team: UserID[]) => {
 	evt.item.remove();
 	team.splice(evt.newIndex!, 0, evt.item.dataset.userid!);
 };
-const teamRemove = (evt: any, team: UserID[]) => {
-	team.splice(evt.oldIndex, 1);
+const teamRemove = (evt: SortableEvent, team: UserID[]) => {
+	team.splice(evt.oldIndex!, 1);
 };
 const cancel = () => emit("cancel");
 const distribute = () =>
