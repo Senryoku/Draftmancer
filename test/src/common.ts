@@ -8,6 +8,7 @@ import "../../src/server.js"; // Launch Server
 import { Connections } from "../../src/Connection.js";
 import { ClientToServerEvents, ServerToClientEvents } from "../../src/SocketType.js";
 import { SocketAck } from "../../src/Message.js";
+import type { UserID } from "../../src/IDTypes";
 
 export const ValidCubes: { [name: string]: string } = {
 	CustomSlotsTestFile: fs.readFileSync(`./test/data/CustomSheets.txt`, "utf8"),
@@ -51,6 +52,8 @@ const ioOptions = {
 
 let UniqueUserID = 0;
 
+export const getUID = (c: Socket) => (c as any).query.userID as UserID; // FIXME: This is how we store userID for now (see makeClients), but this should change.
+
 export function connectClient(query: any) {
 	if (!query.userID) query.userID = `UserID${++UniqueUserID}`;
 
@@ -72,9 +75,9 @@ let outputbuffer: string[];
 const baseConsogleLog = console.log;
 const baseConsogleDebug = console.debug;
 const baseConsogleWarn = console.warn;
-export const logReplacer = function () {
+export const logReplacer = function (...rest: unknown[]) {
 	let line = "";
-	for (let i = 0; i < arguments.length; i++) line += JSON.stringify(arguments[i]);
+	for (let i = 0; i < arguments.length; i++) line += JSON.stringify(rest[i]);
 	outputbuffer.push(line);
 };
 export function disableLogs() {

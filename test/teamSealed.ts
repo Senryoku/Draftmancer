@@ -4,7 +4,7 @@ import chai from "chai";
 const expect = chai.expect;
 import { Sessions } from "../src/Session.js";
 import { Connections } from "../src/Connection.js";
-import { makeClients, enableLogs, disableLogs, waitForClientDisconnects, ackNoError } from "./src/common.js";
+import { makeClients, enableLogs, disableLogs, waitForClientDisconnects, ackNoError, getUID } from "./src/common.js";
 import { TeamSealedSyncData } from "../src/TeamSealed.js";
 import { UserID } from "../src/IDTypes.js";
 
@@ -46,7 +46,7 @@ describe("Team Sealed", function () {
 
 	it(`6 clients with different userID should be connected.`, function (done) {
 		expect(Object.keys(Connections).length).to.equal(6);
-		ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);
+		ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
 		expect(ownerIdx).to.not.be.null;
 		expect(ownerIdx).to.not.be.undefined;
 		done();
@@ -61,10 +61,10 @@ describe("Team Sealed", function () {
 			for (const c of clients) {
 				c.once("startTeamSealed", (data) => {
 					expect(data.state).to.exist;
-					expect(data.state.team).to.contain((c as any).query.userID);
+					expect(data.state.team).to.contain(getUID(c));
 					expect(data.state.cards).to.exist;
 					expect(data.state.cards.length).to.be.greaterThanOrEqual(14 * 12);
-					teamSealedStates[(c as any).query.userID as string] = data.state;
+					teamSealedStates[getUID(c)] = data.state;
 					eventsReceived++;
 					if (eventsReceived === clients.length) done();
 				});
@@ -73,10 +73,7 @@ describe("Team Sealed", function () {
 				"startTeamSealed",
 				boosterCount,
 				customBoosters ?? Array(boosterCount).fill(""),
-				[
-					clients.map((c: any) => c.query.userID as string).splice(0, 3),
-					clients.map((c: any) => c.query.userID as string).splice(3, 6),
-				],
+				[clients.map((c) => getUID(c)).splice(0, 3), clients.map((c) => getUID(c)).splice(3, 6)],
 				ackNoError
 			);
 		});
@@ -84,14 +81,14 @@ describe("Team Sealed", function () {
 
 	const pickTeamSealed = (idx = 0) => {
 		it(`Player #${idx} picks a card, each player in their team receives an update.`, function (done) {
-			const p = (clients[idx] as any).query.userID as string;
+			const p = getUID(clients[idx]);
 			const s = teamSealedStates[p]!;
 			const cid = s.cards.find((c) => !c.owner)!.uniqueID;
 			expect(cid).to.exist;
 			let eventsReceived = 0;
 			for (const uid of s.team) {
 				clients
-					.find((c: any) => c.query.userID === uid)!
+					.find((c) => getUID(c) === uid)!
 					.once("teamSealedUpdateCard", (cardUniqueID, newOwner) => {
 						expect(cardUniqueID).to.equal(cid);
 						expect(newOwner).to.equal(p);
@@ -108,7 +105,7 @@ describe("Team Sealed", function () {
 
 	const unavailablePickTeamSealed = (idx = 0) => {
 		it(`Player #${idx} tries to pick a already picked card, receives an error.`, function (done) {
-			const p = (clients[0] as any).query.userID;
+			const p = getUID(clients[0]);
 			const s = teamSealedStates[p]!;
 			const cid = s.cards.find((c) => c.owner && c.owner !== p)!.uniqueID;
 			expect(cid).to.exist;

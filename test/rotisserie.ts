@@ -12,6 +12,7 @@ import {
 	waitForClientDisconnects,
 	ackNoError,
 	ValidCubes,
+	getUID,
 } from "./src/common.js";
 import { RotisserieDraftCard, RotisserieDraftStartOptions, RotisserieDraftSyncData } from "../src/RotisserieDraft.js";
 import { getRandom } from "../src/utils.js";
@@ -55,7 +56,7 @@ describe("Rotisserie Draft", function () {
 
 	it(`6 clients with different userID should be connected.`, function (done) {
 		expect(Object.keys(Connections).length).to.equal(clients.length);
-		ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);
+		ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
 		expect(ownerIdx).to.not.be.null;
 		expect(ownerIdx).to.not.be.undefined;
 		done();

@@ -11,6 +11,7 @@ import {
 	waitForSocket,
 	waitForClientDisconnects,
 	ackNoError,
+	getUID,
 } from "./src/common.js";
 import { RochesterDraftSyncData } from "../src/RochesterDraft.js";
 import { SocketAck } from "../src/Message.js";
@@ -78,7 +79,7 @@ describe("Rochester Draft", function () {
 
 	it(`6 clients with different userID should be connected.`, function (done) {
 		expect(Object.keys(Connections).length).to.equal(6);
-		ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);
+		ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
 		expect(ownerIdx).to.not.be.null;
 		expect(ownerIdx).to.not.be.undefined;
 		done();
@@ -128,7 +129,7 @@ describe("Rochester Draft", function () {
 				});
 			}
 			// Pick the first card
-			const currPlayer = clients.findIndex((c) => (c as any).query.userID == rochesterDraftState!.currentPlayer);
+			const currPlayer = clients.findIndex((c) => getUID(c) === rochesterDraftState!.currentPlayer);
 			clients[currPlayer].emit("rochesterDraftPick", [0], ackNoError);
 		});
 	};

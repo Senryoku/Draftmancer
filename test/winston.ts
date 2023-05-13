@@ -11,6 +11,7 @@ import {
 	waitForSocket,
 	waitForClientDisconnects,
 	ackNoError,
+	getUID,
 } from "./src/common.js";
 import { WinstonDraftState } from "../src/WinstonDraft.js";
 import { SocketAck } from "../src/Message.js";
@@ -23,7 +24,7 @@ describe("Winston Draft", function () {
 
 	const getCurrentPlayer = () => {
 		const currentPlayerID = (Sessions[sessionID].draftState as WinstonDraftState)?.currentPlayer();
-		const currentPlayerIdx = clients.findIndex((c) => (c as any).query.userID == currentPlayerID);
+		const currentPlayerIdx = clients.findIndex((c) => getUID(c) === currentPlayerID);
 		return clients[currentPlayerIdx];
 	};
 
@@ -70,7 +71,7 @@ describe("Winston Draft", function () {
 
 	let states: any[] = [];
 	it("When session owner launch Winston draft, everyone should receive a startWinstonDraft event", function (done) {
-		ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);
+		ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
 		nonOwnerIdx = 1 - ownerIdx;
 		let connectedClients = 0;
 		let receivedState = 0;
@@ -112,7 +113,7 @@ describe("Winston Draft", function () {
 		let draftEnded = 0;
 		for (let c = 0; c < clients.length; ++c) {
 			clients[c].on("winstonDraftNextRound", function (userID) {
-				if (userID === (clients[c] as any).query.userID)
+				if (userID === getUID(clients[c]))
 					clients[c].emit("winstonDraftTakePile", (r: SocketAck) => {
 						expect(r.code).to.equal(0);
 					});
@@ -208,7 +209,7 @@ describe("Winston Draft", function () {
 		let draftEnded = 0;
 		for (let c = 0; c < clients.length; ++c) {
 			clients[c].on("winstonDraftNextRound", function (userID) {
-				if (userID === (clients[c] as any).query.userID) clients[c].emit("winstonDraftTakePile", ackNoError);
+				if (userID === getUID(clients[c])) clients[c].emit("winstonDraftTakePile", ackNoError);
 			});
 			clients[c].once("winstonDraftEnd", function () {
 				draftEnded += 1;

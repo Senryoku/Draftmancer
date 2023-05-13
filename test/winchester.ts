@@ -11,6 +11,7 @@ import {
 	waitForSocket,
 	waitForClientDisconnects,
 	ackNoError,
+	getUID,
 } from "./src/common.js";
 import { WinchesterDraftSyncData } from "../src/WinchesterDraft.js";
 import { random } from "../src/utils.js";
@@ -23,8 +24,8 @@ describe("Winchester Draft", function () {
 	const states: Record<string, WinchesterDraftSyncData> = {};
 
 	const getCurrentPlayer = () => {
-		const currentPlayerID = states[(clients[ownerIdx] as any).query.userID].currentPlayer;
-		const currentPlayerIdx = clients.findIndex((c) => (c as any).query.userID === currentPlayerID);
+		const currentPlayerID = states[getUID(clients[ownerIdx])].currentPlayer;
+		const currentPlayerIdx = clients.findIndex((c) => getUID(c) === currentPlayerID);
 		return clients[currentPlayerIdx];
 	};
 
@@ -70,13 +71,13 @@ describe("Winchester Draft", function () {
 	});
 
 	it("When session owner launch Winchester draft, everyone should receive a startWinchesterDraft event", function (done) {
-		ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);
+		ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
 		nonOwnerIdx = 1 - ownerIdx;
 		let receivedStates = 0;
 		for (const c of clients) {
 			c.once("startWinchesterDraft", function (state) {
 				receivedStates += 1;
-				states[(c as any).query.userID] = state;
+				states[getUID(c)] = state;
 				expect(state.round).to.equal(0);
 				expect(state.piles[0]).to.have.lengthOf(1);
 				expect(state.piles[1]).to.have.lengthOf(1);
@@ -104,7 +105,7 @@ describe("Winchester Draft", function () {
 				expect(state.piles[1]).to.have.lengthOf(2);
 				expect(state.piles[2]).to.have.lengthOf(2);
 				expect(state.piles[3]).to.have.lengthOf(2);
-				states[(clients[c] as any).query.userID] = state;
+				states[getUID(clients[c])] = state;
 				if (nextRound === clients.length) done();
 			});
 		}
@@ -121,7 +122,7 @@ describe("Winchester Draft", function () {
 				expect(state.piles[1]).to.have.lengthOf(1);
 				expect(state.piles[2]).to.have.lengthOf(3);
 				expect(state.piles[3]).to.have.lengthOf(3);
-				states[(clients[c] as any).query.userID] = state;
+				states[getUID(clients[c])] = state;
 				if (nextRound === clients.length) done();
 			});
 		}
@@ -138,7 +139,7 @@ describe("Winchester Draft", function () {
 				expect(state.piles[1]).to.have.lengthOf(2);
 				expect(state.piles[2]).to.have.lengthOf(1);
 				expect(state.piles[3]).to.have.lengthOf(4);
-				states[(clients[c] as any).query.userID] = state;
+				states[getUID(clients[c])] = state;
 				if (nextRound === clients.length) done();
 			});
 		}
@@ -155,7 +156,7 @@ describe("Winchester Draft", function () {
 				expect(state.piles[1]).to.have.lengthOf(3);
 				expect(state.piles[2]).to.have.lengthOf(2);
 				expect(state.piles[3]).to.have.lengthOf(1);
-				states[(clients[c] as any).query.userID] = state;
+				states[getUID(clients[c])] = state;
 				if (nextRound === clients.length) done();
 			});
 		}
@@ -181,11 +182,11 @@ describe("Winchester Draft", function () {
 		for (let c = 0; c < clients.length; ++c) {
 			clients[c].once("winchesterDraftSync", function (state) {
 				++nextRound;
-				states[(clients[c] as any).query.userID] = state;
+				states[getUID(clients[c])] = state;
 				if (nextRound == clients.length) done();
 			});
 		}
-		randomPick(getCurrentPlayer(), states[(getCurrentPlayer() as any).query.userID]);
+		randomPick(getCurrentPlayer(), states[getUID(getCurrentPlayer())]);
 	});
 
 	it("Owner disconnects, owner receives updated user infos.", function (done) {
@@ -197,7 +198,7 @@ describe("Winchester Draft", function () {
 
 	it("Owner reconnects, draft restarts.", function (done) {
 		clients[ownerIdx].once("rejoinWinchesterDraft", function () {
-			ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);
+			ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
 			nonOwnerIdx = 1 - ownerIdx;
 			done();
 		});
@@ -212,7 +213,7 @@ describe("Winchester Draft", function () {
 				if (nextRound == clients.length) done();
 			});
 		}
-		randomPick(getCurrentPlayer(), states[(getCurrentPlayer() as any).query.userID]);
+		randomPick(getCurrentPlayer(), states[getUID(getCurrentPlayer())]);
 	});
 
 	it("Both players disconnects.", function (done) {
@@ -225,7 +226,7 @@ describe("Winchester Draft", function () {
 		clients[ownerIdx].once("rejoinWinchesterDraft", function (data) {
 			expect(data.pickedCards).to.exist;
 			expect(data.state).to.exist;
-			states[(clients[ownerIdx] as any).query.userID] = data.state;
+			states[getUID(clients[ownerIdx])] = data.state;
 			done();
 		});
 		clients[ownerIdx].connect();
@@ -235,7 +236,7 @@ describe("Winchester Draft", function () {
 		clients[nonOwnerIdx].once("rejoinWinchesterDraft", function (data) {
 			expect(data.pickedCards).to.exist;
 			expect(data.state).to.exist;
-			states[(clients[nonOwnerIdx] as any).query.userID] = data.state;
+			states[getUID(clients[nonOwnerIdx])] = data.state;
 			done();
 		});
 		clients[nonOwnerIdx].connect();
@@ -246,8 +247,8 @@ describe("Winchester Draft", function () {
 		let draftEnded = 0;
 		for (let c = 0; c < clients.length; ++c) {
 			clients[c].on("winchesterDraftSync", function (state) {
-				states[(clients[c] as any).query.userID] = state;
-				if (state.piles.some((p) => p.length > 0) && state.currentPlayer === (clients[c] as any).query.userID)
+				states[getUID(clients[c])] = state;
+				if (state.piles.some((p) => p.length > 0) && state.currentPlayer === getUID(clients[c]))
 					randomPick(clients[c], state);
 			});
 			clients[c].once("winchesterDraftEnd", function () {
@@ -256,7 +257,7 @@ describe("Winchester Draft", function () {
 				if (draftEnded == clients.length) done();
 			});
 		}
-		randomPick(getCurrentPlayer(), states[(getCurrentPlayer() as any).query.userID]);
+		randomPick(getCurrentPlayer(), states[getUID(getCurrentPlayer())]);
 	});
 });
 
@@ -267,8 +268,8 @@ describe("Winchester Draft - 4 Players", function () {
 	const states: Record<string, WinchesterDraftSyncData> = {};
 
 	const getCurrentPlayer = () => {
-		const currentPlayerID = states[(clients[ownerIdx] as any).query.userID].currentPlayer;
-		const currentPlayerIdx = clients.findIndex((c) => (c as any).query.userID === currentPlayerID);
+		const currentPlayerID = states[getUID(clients[ownerIdx])].currentPlayer;
+		const currentPlayerIdx = clients.findIndex((c) => getUID(c) === currentPlayerID);
 		return clients[currentPlayerIdx];
 	};
 
@@ -324,12 +325,12 @@ describe("Winchester Draft - 4 Players", function () {
 	});
 
 	it("When session owner launch Winchester draft, everyone should receive a startWinchesterDraft event", function (done) {
-		ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);
+		ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
 		let receivedStates = 0;
 		for (const c of clients) {
 			c.once("startWinchesterDraft", function (state) {
 				receivedStates += 1;
-				states[(c as any).query.userID] = state;
+				states[getUID(c)] = state;
 				expect(state.round).to.equal(0);
 				expect(state.piles[0]).to.have.lengthOf(1);
 				expect(state.piles[1]).to.have.lengthOf(1);
@@ -357,7 +358,7 @@ describe("Winchester Draft - 4 Players", function () {
 				expect(state.piles[1]).to.have.lengthOf(2);
 				expect(state.piles[2]).to.have.lengthOf(2);
 				expect(state.piles[3]).to.have.lengthOf(2);
-				states[(clients[c] as any).query.userID] = state;
+				states[getUID(clients[c])] = state;
 				if (nextRound === clients.length) done();
 			});
 		}
@@ -374,7 +375,7 @@ describe("Winchester Draft - 4 Players", function () {
 				expect(state.piles[1]).to.have.lengthOf(1);
 				expect(state.piles[2]).to.have.lengthOf(3);
 				expect(state.piles[3]).to.have.lengthOf(3);
-				states[(clients[c] as any).query.userID] = state;
+				states[getUID(clients[c])] = state;
 				if (nextRound === clients.length) done();
 			});
 		}
@@ -391,7 +392,7 @@ describe("Winchester Draft - 4 Players", function () {
 				expect(state.piles[1]).to.have.lengthOf(2);
 				expect(state.piles[2]).to.have.lengthOf(1);
 				expect(state.piles[3]).to.have.lengthOf(4);
-				states[(clients[c] as any).query.userID] = state;
+				states[getUID(clients[c])] = state;
 				if (nextRound === clients.length) done();
 			});
 		}
@@ -408,7 +409,7 @@ describe("Winchester Draft - 4 Players", function () {
 				expect(state.piles[1]).to.have.lengthOf(3);
 				expect(state.piles[2]).to.have.lengthOf(2);
 				expect(state.piles[3]).to.have.lengthOf(1);
-				states[(clients[c] as any).query.userID] = state;
+				states[getUID(clients[c])] = state;
 				if (nextRound === clients.length) done();
 			});
 		}
@@ -434,11 +435,11 @@ describe("Winchester Draft - 4 Players", function () {
 		for (let c = 0; c < clients.length; ++c) {
 			clients[c].once("winchesterDraftSync", function (state) {
 				++nextRound;
-				states[(clients[c] as any).query.userID] = state;
+				states[getUID(clients[c])] = state;
 				if (nextRound == clients.length) done();
 			});
 		}
-		randomPick(getCurrentPlayer(), states[(getCurrentPlayer() as any).query.userID]);
+		randomPick(getCurrentPlayer(), states[getUID(getCurrentPlayer())]);
 	});
 
 	it("Owner disconnects, owner receives updated user infos.", function (done) {
@@ -450,7 +451,7 @@ describe("Winchester Draft - 4 Players", function () {
 
 	it("Owner reconnects, draft restarts.", function (done) {
 		clients[ownerIdx].once("rejoinWinchesterDraft", function () {
-			ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);
+			ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
 			done();
 		});
 		clients[ownerIdx].connect();
@@ -464,7 +465,7 @@ describe("Winchester Draft - 4 Players", function () {
 				if (nextRound == clients.length) done();
 			});
 		}
-		randomPick(getCurrentPlayer(), states[(getCurrentPlayer() as any).query.userID]);
+		randomPick(getCurrentPlayer(), states[getUID(getCurrentPlayer())]);
 	});
 
 	it("All players disconnects.", function (done) {
@@ -476,7 +477,7 @@ describe("Winchester Draft - 4 Players", function () {
 		clients[ownerIdx].once("rejoinWinchesterDraft", function (data) {
 			expect(data.pickedCards).to.exist;
 			expect(data.state).to.exist;
-			states[(clients[ownerIdx] as any).query.userID] = data.state;
+			states[getUID(clients[ownerIdx])] = data.state;
 			done();
 		});
 		clients[ownerIdx].connect();
@@ -489,7 +490,7 @@ describe("Winchester Draft - 4 Players", function () {
 				clients[c].once("rejoinWinchesterDraft", function (data) {
 					expect(data.pickedCards).to.exist;
 					expect(data.state).to.exist;
-					states[(clients[c] as any).query.userID] = data.state;
+					states[getUID(clients[c])] = data.state;
 					++reconnected;
 					if (reconnected === clients.length - 1) done();
 				});
@@ -501,8 +502,8 @@ describe("Winchester Draft - 4 Players", function () {
 		let draftEnded = 0;
 		for (let c = 0; c < clients.length; ++c) {
 			clients[c].on("winchesterDraftSync", function (state) {
-				states[(clients[c] as any).query.userID] = state;
-				if (state.piles.some((p) => p.length > 0) && state.currentPlayer === (clients[c] as any).query.userID)
+				states[getUID(clients[c])] = state;
+				if (state.piles.some((p) => p.length > 0) && state.currentPlayer === getUID(clients[c]))
 					randomPick(clients[c], state);
 			});
 			clients[c].once("winchesterDraftEnd", function () {
@@ -511,6 +512,6 @@ describe("Winchester Draft - 4 Players", function () {
 				if (draftEnded == clients.length) done();
 			});
 		}
-		randomPick(getCurrentPlayer(), states[(getCurrentPlayer() as any).query.userID]);
+		randomPick(getCurrentPlayer(), states[getUID(getCurrentPlayer())]);
 	});
 });

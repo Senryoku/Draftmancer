@@ -2,7 +2,7 @@ import { before, after, beforeEach, afterEach, describe, it } from "mocha";
 import chai from "chai";
 const expect = chai.expect;
 import { Sessions } from "../src/Session.js";
-import { makeClients, waitForClientDisconnects, enableLogs, disableLogs, ackNoError } from "./src/common.js";
+import { makeClients, waitForClientDisconnects, enableLogs, disableLogs, ackNoError, getUID } from "./src/common.js";
 import { CardColor, UniqueCard } from "../src/CardTypes.js";
 import { SetCode } from "../src/Types.js";
 
@@ -263,7 +263,7 @@ describe("Set Specific Booster Rules", function () {
 
 	const testSet = function (set: SetCode, validationFunc: (booster: UniqueCard[]) => void, desc: string) {
 		it(`${set} boosters should have ${desc} (Single set restriction).`, async () => {
-			const ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);
+			const ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
 			clients[ownerIdx].emit("ignoreCollections", true);
 			clients[ownerIdx].emit("setRestriction", [set]);
 			clients[ownerIdx].emit("setCustomBoosters", ["", "", ""]);
@@ -273,7 +273,7 @@ describe("Set Specific Booster Rules", function () {
 		});
 
 		it(`${set} boosters should have ${desc} (Custom boosters).`, async () => {
-			const ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);
+			const ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
 			clients[ownerIdx].emit("ignoreCollections", true);
 			clients[ownerIdx].emit("setRestriction", []);
 			clients[ownerIdx].emit("setCustomBoosters", [set, set, set]);
@@ -298,7 +298,7 @@ describe("Set Specific Booster Rules", function () {
 	testSet("mom", validateMOMBooster, "the correct MOM collation.");
 
 	it(`VOW boosters should have at least one common of each color, even with foil on.`, async function () {
-		const ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);
+		const ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
 		clients[ownerIdx].emit("ignoreCollections", true);
 		clients[ownerIdx].emit("setRestriction", ["vow"]);
 		clients[ownerIdx].emit("setFoil", true);
@@ -309,7 +309,7 @@ describe("Set Specific Booster Rules", function () {
 	});
 
 	it(`Validate mixed Custom boosters.`, async () => {
-		const ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);
+		const ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
 		clients[ownerIdx].emit("ignoreCollections", true);
 		clients[ownerIdx].emit("setRestriction", []);
 		clients[ownerIdx].emit("setCustomBoosters", ["dom", "war", "dom"]);
@@ -321,7 +321,7 @@ describe("Set Specific Booster Rules", function () {
 	});
 
 	it(`Validate mixed Custom boosters with regular set restriction.`, async () => {
-		const ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);
+		const ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
 		clients[ownerIdx].emit("ignoreCollections", true);
 		clients[ownerIdx].emit("setRestriction", ["dom"]);
 		clients[ownerIdx].emit("setCustomBoosters", ["", "war", "dom"]);
@@ -333,7 +333,7 @@ describe("Set Specific Booster Rules", function () {
 	});
 
 	it("common session settings for non-default bonus booster content tests.", () => {
-		const ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);
+		const ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
 		clients[ownerIdx].emit("ignoreCollections", true);
 		clients[ownerIdx].emit("setCustomBoosters", ["", "", ""]);
 		clients[ownerIdx].emit("setUseBoosterContent", true);
@@ -348,7 +348,7 @@ describe("Set Specific Booster Rules", function () {
 	for (const s of bonusSets) {
 		for (let i = 0; i < 4; ++i)
 			it(`Non-default bonus booster content (${i}) for set ${s.code}.`, async () => {
-				const ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);
+				const ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
 				clients[ownerIdx].emit("setRestriction", [s.code]);
 				clients[ownerIdx].emit("setBoosterContent", { common: 10, uncommon: 3, rare: 1, bonus: i });
 				clients[ownerIdx].emit("startDraft", ackNoError);
@@ -360,7 +360,7 @@ describe("Set Specific Booster Rules", function () {
 
 	for (let i = 0; i < 4; ++i)
 		it(`Non-default bonus booster content (${i}) for set tsr.`, async () => {
-			const ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);
+			const ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
 			clients[ownerIdx].emit("setRestriction", ["tsr"]);
 			clients[ownerIdx].emit("setBoosterContent", { common: 10, uncommon: 3, rare: 1, bonus: i });
 			clients[ownerIdx].emit("startDraft", ackNoError);
@@ -370,7 +370,7 @@ describe("Set Specific Booster Rules", function () {
 		});
 	for (let i = 0; i < 4; ++i)
 		it(`Non-default bonus booster content (${i}) for set mh2.`, async () => {
-			const ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);
+			const ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
 			clients[ownerIdx].emit("setRestriction", ["mh2"]);
 			clients[ownerIdx].emit("setBoosterContent", { common: 10, uncommon: 3, rare: 1, bonus: i });
 			clients[ownerIdx].emit("startDraft", ackNoError);

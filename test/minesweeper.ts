@@ -4,7 +4,7 @@ import chai from "chai";
 const expect = chai.expect;
 import { Sessions } from "../src/Session.js";
 import { Connections } from "../src/Connection.js";
-import { makeClients, enableLogs, disableLogs, waitForSocket, waitForClientDisconnects } from "./src/common.js";
+import { makeClients, enableLogs, disableLogs, waitForSocket, waitForClientDisconnects, getUID } from "./src/common.js";
 import { minesweeperApplyDiff, MinesweeperCellState, MinesweeperSyncData } from "../src/MinesweeperDraftTypes.js";
 import { SocketAck } from "../src/Message.js";
 
@@ -61,7 +61,7 @@ describe("Minesweeper Draft", function () {
 
 	it(`4 clients with different userID should be connected.`, function (done) {
 		expect(Object.keys(Connections).length).to.equal(4);
-		ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);
+		ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
 		expect(ownerIdx).to.not.be.null;
 		expect(ownerIdx).to.not.be.undefined;
 		done();
@@ -192,7 +192,7 @@ describe("Minesweeper Draft", function () {
 				});
 			}
 			// Pick the first card
-			const currPlayer = clients.findIndex((c) => (c as any).query.userID == minesweeper!.currentPlayer);
+			const currPlayer = clients.findIndex((c) => getUID(c) === minesweeper!.currentPlayer);
 
 			for (let i = 0; i < minesweeper!.grid.length; ++i)
 				for (let j = 0; j < minesweeper!.grid[0].length; ++j)
@@ -207,7 +207,7 @@ describe("Minesweeper Draft", function () {
 	};
 
 	const startDraftWithError = (
-		done: Function,
+		done: Mocha.Done,
 		gridCount = 3,
 		gridWidth = 10,
 		gridHeight = 9,

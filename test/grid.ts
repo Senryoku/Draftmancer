@@ -12,6 +12,7 @@ import {
 	waitForClientDisconnects,
 	ackNoError,
 	connectClient,
+	getUID,
 } from "./src/common.js";
 import { TurnBased } from "../src/IDraftState.js";
 
@@ -64,7 +65,7 @@ describe("Grid Draft", function () {
 
 	const startDraft = (boosterCount: number = 18) => {
 		it("When session owner launch Grid draft, everyone should receive a startGridDraft event", function (done) {
-			ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);
+			ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
 			nonOwnerIdx = 1 - ownerIdx;
 			let connectedClients = 0;
 			for (const c of clients) {

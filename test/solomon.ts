@@ -11,6 +11,7 @@ import {
 	waitForSocket,
 	waitForClientDisconnects,
 	ackNoError,
+	getUID,
 } from "./src/common.js";
 import { SolomonDraftSyncData, SolomonDraftState } from "../src/SolomonDraft.js";
 import { random, shuffleArray } from "../src/utils.js";
@@ -165,7 +166,7 @@ for (const settings of [
 		});
 
 		it("When session owner launch Solomon draft, everyone should receive a startSolomonDraft event", function (done) {
-			ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);
+			ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
 			nonOwnerIdx = (ownerIdx + 1) % clients.length;
 			let receivedStates = 0;
 			for (const c of clients) {
@@ -333,7 +334,7 @@ for (const settings of [
 			clients[ownerIdx].once("rejoinSolomonDraft", function (data) {
 				expect(data.pickedCards).to.exist;
 				expect(data.state).to.exist;
-				ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);
+				ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
 				nonOwnerIdx = (ownerIdx + 1) % clients.length;
 				done();
 			});

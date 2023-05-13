@@ -5,10 +5,10 @@ import chai from "chai";
 const expect = chai.expect;
 import { getCard } from "../src/Cards.js";
 import { Sessions } from "../src/Session.js";
-import { makeClients, enableLogs, disableLogs, waitForClientDisconnects, ackNoError } from "./src/common.js";
+import { makeClients, enableLogs, disableLogs, waitForClientDisconnects, ackNoError, getUID } from "./src/common.js";
 
 import MTGACards from "../client/src/data/MTGACards.json" assert { type: "json" };
-import { ArenaID, PlainCollection, UniqueCard } from "../src/CardTypes.js";
+import { PlainCollection, UniqueCard } from "../src/CardTypes.js";
 
 describe("Collection Restriction", function () {
 	let clients: ReturnType<typeof makeClients> = [];
@@ -99,7 +99,7 @@ describe("Collection Restriction", function () {
 
 	for (const set of ["znr", "stx"]) {
 		it(`Select ${set} as a known MTGA set.`, function (done) {
-			ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);
+			ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
 
 			clients[(ownerIdx + 1) % clients.length].once("setRestriction", () => {
 				done();
