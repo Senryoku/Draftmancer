@@ -16,11 +16,23 @@
 				"plugin:@typescript-eslint/recommended",
 				"prettier"
 			],
-			"plugins": ["@typescript-eslint"],
+			"plugins": ["import", "@typescript-eslint"],
 			"rules": {
 				"no-param-reassign": "warn",
 				"@typescript-eslint/no-inferrable-types": ["off", { "ignoreRestArgs": true }],
-				"import/extensions": ["error", "ignorePackages"]
+				"import/extensions": [
+					"error",
+					"ignorePackages",
+					{
+						"js": "never",
+						"ts": "never"
+					}
+				]
+			},
+			"settings": {
+				"import/resolver": {
+					"typescript": {} // this loads <rootdir>/tsconfig.json to eslint
+				}
 			}
 		},
 		// Client side
@@ -34,13 +46,7 @@
 			"parserOptions": {
 				"parser": "@typescript-eslint/parser"
 			},
-			"extends": [
-				"plugin:vue/strongly-recommended",
-				"eslint:recommended",
-				"plugin:vue/essential",
-				"@vue/typescript/recommended",
-				"prettier"
-			],
+			"extends": ["eslint:recommended", "plugin:vue/vue3-essential", "prettier"],
 			"plugins": ["@typescript-eslint", "prettier"],
 			"rules": {
 				"prettier/prettier": "error",
