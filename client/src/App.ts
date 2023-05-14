@@ -2332,7 +2332,7 @@ export default defineComponent({
 						const collectionStart = contents.indexOf("{", callIdx);
 						const collectionEnd = contents.indexOf("}}", collectionStart) + 2;
 						const collectionStr = contents.slice(collectionStart, collectionEnd);
-						const collection = JSON.parse(collectionStr)["payload"];
+						const collection = JSON.parse(collectionStr)["payload"] as PlainCollection;
 
 						const inventoryStart = contents.indexOf('{"InventoryInfo', collectionEnd);
 						const inventoryEnd = contents.indexOf("\n", inventoryStart);
@@ -2383,9 +2383,10 @@ export default defineComponent({
 						}
 						let cardids = Object.keys(collections[0]!);
 						// Filter ids
-						for (let i = 1; i < collections.length; ++i)
-							cardids = Object.keys(collections[i]!).filter((id) => cardids.includes(id));
-						// Find min amount of each card
+						for (const r of collections)
+							cardids = Object.keys(r.collection).filter(
+								(id) => cardids.includes(id) && r.collection[id] > 0
+							);
 						result = {
 							collection: {},
 							inventory: {
@@ -2398,14 +2399,9 @@ export default defineComponent({
 								vaultProgress: Math.min(...collections.map((c) => c.inventory.vaultProgress)),
 							},
 						};
+						// Find min amount of each card
 						for (const id of cardids)
-							result.collection[id] = collections[0]![id as keyof (typeof collections)[0]];
-						for (let i = 1; i < collections.length; ++i)
-							for (const id of cardids)
-								result.collection[id] = Math.min(
-									result.collection[id],
-									collections[i]![id as keyof ReturnType<typeof parseCollection>]
-								);
+							result.collection[id] = Math.min(...collections.map((c) => c.collection[id]!));
 					} else result = parseCollection(contents);
 				} else result = parseCollection(contents);
 
