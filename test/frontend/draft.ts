@@ -5,7 +5,6 @@ import {
 	waitAndClickXpath,
 	waitAndClickSelector,
 	getSessionLink,
-	join,
 	dragAndDrop,
 	dismissToast,
 	pickCard,
@@ -13,7 +12,7 @@ import {
 	setupBrowsers,
 	pages,
 } from "./src/common.js";
-import { Browser, ElementHandle, Page } from "puppeteer";
+import { ElementHandle, Page } from "puppeteer";
 
 async function clickDraft(page: Page) {
 	// Click 'Start' button

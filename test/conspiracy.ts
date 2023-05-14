@@ -3,7 +3,7 @@ import { before, after, beforeEach, afterEach, describe, it } from "mocha";
 import chai from "chai";
 const expect = chai.expect;
 import { Sessions } from "../src/Session.js";
-import { makeClients, waitForClientDisconnects, enableLogs, disableLogs, ackNoError } from "./src/common.js";
+import { makeClients, waitForClientDisconnects, enableLogs, disableLogs, ackNoError, getUID } from "./src/common.js";
 import { OptionalOnPickDraftEffect, UniqueCard, UniqueCardID, UsableDraftEffect } from "../src/CardTypes.js";
 import { CogworkLibrarianOracleID } from "../src/Conspiracy.js";
 
@@ -11,7 +11,7 @@ describe("Conspiracy Draft Matters Cards", () => {
 	let clients: ReturnType<typeof makeClients> = [];
 	let ownerIdx = 0;
 	let nonOwnerIdx = 1;
-	let states: {
+	const states: {
 		booster: UniqueCard[];
 		boosterCount: number;
 		boosterNumber: number;
@@ -39,7 +39,7 @@ describe("Conspiracy Draft Matters Cards", () => {
 			});
 		}
 		clients = makeClients(queries, () => {
-			ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[(c as any).query.sessionID].owner);
+			ownerIdx = clients.findIndex((c) => getUID(c) == Sessions[(c as any).query.sessionID].owner);
 			nonOwnerIdx = (ownerIdx + 1) % clients.length;
 			done();
 		});
@@ -47,7 +47,7 @@ describe("Conspiracy Draft Matters Cards", () => {
 
 	after(function (done) {
 		disableLogs();
-		for (let c of clients) c.disconnect();
+		for (const c of clients) c.disconnect();
 		waitForClientDisconnects(done);
 	});
 
@@ -74,7 +74,7 @@ describe("Conspiracy Draft Matters Cards", () => {
 	};
 
 	describe("Cogwork Librarian", () => {
-		let cogworkLibrarians: UniqueCardID[] = [0, 0];
+		const cogworkLibrarians: UniqueCardID[] = [0, 0];
 		before(loadCubeAndStart("CogworkLibrarian"));
 		after(stopDraft);
 
@@ -193,7 +193,7 @@ describe("Conspiracy Draft Matters Cards", () => {
 	});
 
 	describe("Lore Seeker", () => {
-		let loreSeekers: UniqueCardID[] = [0, 0];
+		const loreSeekers: UniqueCardID[] = [0, 0];
 		before(loadCubeAndStart("LoreSeeker"));
 		after(stopDraft);
 
