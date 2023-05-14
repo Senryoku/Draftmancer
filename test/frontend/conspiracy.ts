@@ -21,20 +21,19 @@ async function clickDraft(page: Page) {
 	await button.click();
 }
 
-describe("Cogwork Librarian", function () {
-	this.timeout(10000);
-	setupBrowsers(1);
-
+function selectCube(name: string) {
 	it(`Select Cube`, async function () {
 		await waitAndClickXpath(pages[0], "//button[contains(., 'Settings')]");
 		const cardListInput = (await pages[0].$("#card-list-input")) as ElementHandle<HTMLInputElement>;
-		console.error(`Current directory: ${cwd()}`);
-		await cardListInput.uploadFile("./test/data/CogworkLibrarian.txt");
+
+		await cardListInput.uploadFile(`./test/data/${name}.txt`);
 		await pages[0].waitForXPath("//*[contains(., 'Card list uploaded')]");
 		await dismissToast(pages[0]);
 		await pages[0].keyboard.press("Escape");
 	});
+}
 
+function launchDraft() {
 	it(`Launch Draft with Bots`, async function () {
 		await clickDraft(pages[0]);
 
@@ -50,6 +49,14 @@ describe("Cogwork Librarian", function () {
 			hidden: true,
 		});
 	});
+}
+
+describe("Cogwork Librarian", function () {
+	this.timeout(10000);
+	setupBrowsers(1);
+
+	selectCube("CogworkLibrarian");
+	launchDraft();
 
 	it(`Pick Cogwork Librarian, pick effect selector should appear`, async function () {
 		const card = await pages[0].$(".card");
@@ -71,5 +78,43 @@ describe("Cogwork Librarian", function () {
 		await cards![1]!.click();
 		await waitAndClickSelector(pages[0], 'input[value="Confirm Pick"]');
 		await pages[0].waitForXPath("//h2[contains(., 'Deck (2')]");
+	});
+});
+
+describe("Lore Seeker", function () {
+	this.timeout(10000);
+	setupBrowsers(1);
+
+	selectCube("LoreSeeker");
+	launchDraft();
+
+	it(`Click on Lore Seeker, pick effect selector should appear`, async function () {
+		const card = await pages[0].$(".card");
+		await card!.click();
+		const pickSelector = (await pages[0].waitForSelector(
+			"#optional-pick-effect"
+		)) as ElementHandle<HTMLSelectElement>;
+		expect(pickSelector).to.exist;
+		const options = await pickSelector!.$$("option");
+		expect(options).to.have.lengthOf(2);
+		expect(await options[0]!.evaluate((el) => el.innerText)).to.contain("Lore Seeker");
+	});
+
+	it(`Pick the Lore Seeker, next pack should be brand new`, async function () {
+		await waitAndClickSelector(pages[0], 'input[value="Confirm Pick"]');
+		await pages[0].waitForXPath("//h2[contains(., 'Deck (1')]");
+		await pages[0].waitForXPath("//h2[contains(., 'Booster (10')]");
+	});
+
+	it(`Pick the Lore Seeker, but don't activate effect.`, async function () {
+		const card = await pages[0].$(".card");
+		await card!.click();
+		const pickSelector = (await pages[0].waitForSelector(
+			"#optional-pick-effect"
+		)) as ElementHandle<HTMLSelectElement>;
+		pickSelector.select("Do not use");
+		await waitAndClickSelector(pages[0], 'input[value="Confirm Pick"]');
+		await pages[0].waitForXPath("//h2[contains(., 'Deck (2')]");
+		await pages[0].waitForXPath("//h2[contains(., 'Booster (9')]");
 	});
 });
