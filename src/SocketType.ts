@@ -11,7 +11,7 @@ import { RochesterDraftSyncData } from "./RochesterDraft";
 import { MinesweeperSyncData, MinesweeperSyncDataDiff } from "./MinesweeperDraftTypes";
 import { DraftState } from "./DraftState";
 import { BotScores } from "./Bot";
-import SessionsSettingsProps from "./Session/SessionProps";
+import { SessionsSettingsProps } from "./Session/SessionProps";
 import { getPublicSessionData } from "./Session";
 import { JHHBooster } from "./JumpstartHistoricHorizons";
 import { RotisserieDraftStartOptions, RotisserieDraftSyncData } from "./RotisserieDraft";
@@ -344,6 +344,7 @@ export interface ClientToServerEvents {
 	) => void;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface InterServerEvents {}
 
 export interface SocketData {

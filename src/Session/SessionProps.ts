@@ -1,4 +1,4 @@
-import Constants from "../Constants.js";
+import { Constants } from "../Constants.js";
 import { isArrayOf, isBoolean, isInteger, isObject, isString } from "../TypeChecks.js";
 import { SetCode } from "../Types";
 import { DistributionMode, DraftLogRecipients } from "./SessionTypes";

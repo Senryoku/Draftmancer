@@ -8,7 +8,6 @@ if (process.env.NODE_ENV !== "production") {
 
 import { shuffleArray, weightedRandomIdx } from "./utils.js";
 import { Card, OracleID } from "./CardTypes.js";
-import { off } from "process";
 
 const MTGDraftBotsAPITimeout = 10000;
 const MTGDraftBotsAPIURLs: { url: string; weight: number }[] = [];
@@ -314,6 +313,6 @@ export class Bot implements IBot {
 	}
 }
 
-export function isBot(obj: any): obj is IBot {
+export function isBot(obj: unknown): obj is IBot {
 	return obj instanceof Bot || obj instanceof SimpleBot;
 }

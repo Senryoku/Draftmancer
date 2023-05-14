@@ -36,7 +36,7 @@ export class MessageError extends Message {
 	}
 }
 
-export function isMessageError(obj: any): obj is MessageError {
+export function isMessageError(obj: unknown): obj is MessageError {
 	return obj instanceof MessageError;
 }
 
@@ -71,7 +71,7 @@ export class SocketError extends SocketAck {
 	}
 }
 
-export function isSocketError(obj: any): obj is SocketError {
+export function isSocketError(obj: unknown): obj is SocketError {
 	return (obj instanceof SocketAck && obj.code !== 0) || obj instanceof SocketError;
 }
 

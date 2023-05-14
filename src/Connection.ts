@@ -35,7 +35,7 @@ export function getPODConnection(conn: Connection): Omit<Connection, "socket" | 
 		userName: conn.userName,
 		sessionID: conn.sessionID,
 		useCollection: conn.useCollection,
-		pickedCards: conn.pickedCards, // This mostly what we want the preserve.
+		pickedCards: conn.pickedCards, // This is mostly what we want to preserve.
 	};
 }
 

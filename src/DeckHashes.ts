@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import { Card, CardColor, CardID, DeckList } from "./CardTypes.js";
-import Constants from "./Constants.js";
+import { Constants } from "./Constants.js";
 
 const basicNames: { [color: string]: string } = Constants.BasicLandNames["en"];
 

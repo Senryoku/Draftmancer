@@ -1,5 +1,4 @@
 import { v1 as uuidv1 } from "uuid";
-import { Options } from "./utils.js";
 import { IBot, SimpleBot, Bot, MTGDraftBotParameters } from "./Bot.js";
 import { UniqueCard } from "./CardTypes.js";
 import { Connections } from "./Connection.js";

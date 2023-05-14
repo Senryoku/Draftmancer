@@ -4,7 +4,7 @@ import { CardsByName, CardVersionsByName, getCard, isValidCardID } from "./Cards
 import { CCLSettings, CustomCardList, PackLayout } from "./CustomCardList.js";
 import { escapeHTML } from "./utils.js";
 import { ackError, isSocketError, SocketError } from "./Message.js";
-import { isAny, isArrayOf, isBoolean, isInteger, isNumber, isRecord, isString, isUnknown } from "./TypeChecks.js";
+import { isArrayOf, isBoolean, isInteger, isRecord, isString, isUnknown } from "./TypeChecks.js";
 
 const lineRegex = /^(?:(\d+)\s+)?([^(\v\n]+)??(?:\s\((\w+)\)(?:\s+([^+\s]+))?)?(?:\s+\+?(F))?$/;
 
@@ -121,11 +121,11 @@ function findMatching(str: string, opening: string, closing: string, start: numb
 	return index;
 }
 
-function jsonParsingErrorMessage(e: any, jsonStr: string): string {
+function jsonParsingErrorMessage(e: { message: string }, jsonStr: string): string {
 	let msg = `Error parsing json: ${e.message}.`;
-	let position = e.message.match(/at position (\d+)/);
-	if (position) {
-		position = parseInt(position[1]);
+	const positionStr = e.message.match(/at position (\d+)/);
+	if (positionStr) {
+		const position = parseInt(positionStr[1]);
 		msg += `<pre>${escapeHTML(
 			jsonStr.slice(Math.max(0, position - 50), Math.max(0, position - 1))
 		)}<span style="color: red; text-decoration: underline red;">${escapeHTML(jsonStr[position])}</span>${escapeHTML(

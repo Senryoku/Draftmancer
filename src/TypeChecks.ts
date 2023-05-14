@@ -47,5 +47,5 @@ type EnumType = { [key in EnumValueType]: EnumValueType };
 
 export const isSomeEnum =
 	<T extends EnumType>(e: T) =>
-	(token: any): token is T[keyof T] =>
+	(token: unknown): token is T[keyof T] =>
 		Object.values(e).includes(token as T[keyof T]);

@@ -86,8 +86,8 @@ export function generateBoosterFromCustomCardList(
 			? // Predetermined layouts
 			  (index: number): string => {
 					const choices =
-						customCardList.settings?.predeterminedLayouts![
-							index % customCardList.settings?.predeterminedLayouts!.length
+						customCardList.settings!.predeterminedLayouts![
+							index % customCardList.settings!.predeterminedLayouts!.length
 						]!;
 					if (choices.length === 1) return choices[0].name;
 					return choices[

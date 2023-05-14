@@ -48,7 +48,7 @@ import { DraftState, isDraftState } from "./DraftState.js";
 import { RochesterDraftState, isRochesterDraftState } from "./RochesterDraft.js";
 import { WinstonDraftState, isWinstonDraftState } from "./WinstonDraft.js";
 import { ServerToClientEvents } from "./SocketType";
-import Constants, { BasicLandNames } from "./Constants.js";
+import Constants, { EnglishBasicLandNames } from "./Constants.js";
 import { SessionsSettingsProps } from "./Session/SessionProps.js";
 import { DistributionMode, DraftLogRecipients, DisconnectedUser, UsersData } from "./Session/SessionTypes.js";
 import { IIndexable, SetCode } from "./Types.js";
@@ -714,7 +714,7 @@ export class Session implements IIndexable {
 
 	// @return array of cards with the 5 original basic lands removed (does not remove Wastes, Basic Snow Lands, etc)
 	removeBasicLands(cards: UniqueCard[]): UniqueCard[] {
-		return cards.filter((card) => !BasicLandNames.includes(card.name));
+		return cards.filter((card) => !EnglishBasicLandNames.includes(card.name));
 	}
 
 	notifyUserChange() {

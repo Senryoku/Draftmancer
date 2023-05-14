@@ -1,10 +1,9 @@
-import { init } from "mixpanel";
 import { isUniqueCard } from "./CardTypeCheck.js";
 import { UniqueCard, UniqueCardID } from "./CardTypes.js";
 import { IDraftState, TurnBased } from "./IDraftState.js";
 import { UserID } from "./IDTypes.js";
 import { MessageError } from "./Message.js";
-import { hasProperty, isArrayOf, isNumber, isObject, isSomeEnum, isString } from "./TypeChecks.js";
+import { hasProperty, isArrayOf, isNumber, isObject, isString } from "./TypeChecks.js";
 import { shuffleArray } from "./utils.js";
 
 export type SolomonDraftStep = "dividing" | "picking";
