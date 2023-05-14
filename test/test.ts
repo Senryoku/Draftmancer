@@ -7,7 +7,7 @@ const expect = chai.expect;
 import { Cards, getCard } from "../src/Cards.js";
 import { Connections } from "../src/Connection.js";
 import { Sessions } from "../src/Session.js";
-import randomjs from "random-js";
+import { Random, nodeCrypto } from "random-js";
 import {
 	connectClient,
 	makeClients,
@@ -19,7 +19,7 @@ import {
 	ValidCubes,
 	getUID,
 } from "./src/common.js";
-import Constants from "../src/Constants.js";
+import { Constants } from "../src/Constants.js";
 import type { DistributionMode } from "../src/Session/SessionTypes";
 import { ReadyState } from "../src/Session/SessionTypes.js";
 
@@ -327,7 +327,13 @@ describe("Sets content", function () {
 
 describe("Single Player Draft", function () {
 	let client: Socket<ServerToClientEvents, ClientToServerEvents>;
-	let state: ReturnType<DraftState["syncData"]> = { booster: [], boosterCount: 0, boosterNumber: 0, pickNumber: 0 };
+	let state: ReturnType<DraftState["syncData"]> = {
+		booster: [],
+		boosterCount: 0,
+		boosterNumber: 0,
+		pickNumber: 0,
+		skipPick: false,
+	};
 
 	beforeEach(function (done) {
 		disableLogs();
@@ -934,12 +940,7 @@ describe("Single Draft (Two Players)", function () {
 				expect(data.pickedCards.main.length).to.equal(5);
 				expect(data.pickedCards.side.length).to.equal(0);
 				clientStates[getUID(clients[nonOwnerIdx])].pickedCards = data.pickedCards.main;
-				clientStates[getUID(clients[nonOwnerIdx])].state = {
-					booster: data.booster ?? [],
-					boosterCount: data.boosterCount,
-					boosterNumber: data.boosterNumber,
-					pickNumber: data.pickNumber,
-				};
+				clientStates[getUID(clients[nonOwnerIdx])].state = data.state;
 				done();
 			});
 			clients[nonOwnerIdx].connect();
@@ -1103,7 +1104,7 @@ describe("Single Draft (Two Players)", function () {
 
 		it("Non-owner moves a card to the side board, spectator receives an update.", function (done) {
 			clients[ownerIdx].once("draftLogLive", function (data) {
-				expect(data.userID).to.equal((clients[nonOwnerIdx] as any).query.userID);
+				expect(data.userID).to.equal(getUID(clients[nonOwnerIdx]));
 				expect((data.decklist as DeckList).main.length).to.equal(0);
 				expect((data.decklist as DeckList).side.length).to.equal(1);
 				done();
@@ -1119,16 +1120,11 @@ describe("Single Draft (Two Players)", function () {
 		});
 
 		it("Non-owner reconnects and receives an appropriate event.", function (done) {
-			const clientState = clientStates[(clients[nonOwnerIdx] as any).query.userID];
+			const clientState = clientStates[getUID(clients[nonOwnerIdx])];
 			clients[nonOwnerIdx].once("rejoinDraft", function (data) {
 				expect(data.pickedCards.main.length).to.equal(0);
 				expect(data.pickedCards.side.length).to.equal(1);
-				clientState.state = {
-					booster: data.booster!,
-					boosterCount: data.boosterCount,
-					boosterNumber: data.boosterNumber,
-					pickNumber: data.pickNumber,
-				};
+				clientState.state = data.state;
 				clientState.pickedCards = data.pickedCards.main;
 				done();
 			});
@@ -1136,7 +1132,7 @@ describe("Single Draft (Two Players)", function () {
 		});
 
 		it("Pick enough times, and the draft should end.", function (done) {
-			const clientState = clientStates[(clients[nonOwnerIdx] as any).query.userID];
+			const clientState = clientStates[getUID(clients[nonOwnerIdx])];
 			clients[nonOwnerIdx].on("draftState", function (state) {
 				const s = state as ReturnType<DraftState["syncData"]>;
 				if (s.pickNumber !== clientState.state.pickNumber && s.boosterCount > 0) {
@@ -1927,7 +1923,7 @@ describe("Multiple Drafts", function () {
 						sessionID: sessionIDs[sess],
 						userName: `Client ${sess * playersPerSession + i}`,
 					}),
-					state: { booster: [], boosterCount: 0, boosterNumber: 0, pickNumber: 0 },
+					state: { booster: [], boosterCount: 0, boosterNumber: 0, pickNumber: 0, skipPick: false },
 					pickedCards: [],
 				});
 			}
@@ -2052,7 +2048,7 @@ describe("Multiple Drafts", function () {
 describe("Sealed", function () {
 	let clients: ReturnType<typeof makeClients> = [];
 	const sessionID = "sessionID";
-	const random = new randomjs.Random(randomjs.nodeCrypto);
+	const random = new Random(nodeCrypto);
 	const boosterCount = random.integer(1, 10);
 
 	beforeEach(function (done) {

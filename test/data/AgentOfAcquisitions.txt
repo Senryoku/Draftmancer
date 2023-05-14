@@ -1,0 +1,17 @@
+[Settings]
+{
+	"withReplacement": true,
+	"layouts": {
+		"normal": {
+			"weight": 1,
+			"slots": {
+				"AgentOfAcquisitions": 1,
+				"Forest": 9
+			}
+		}
+	}
+}
+[AgentOfAcquisitions]
+Agent of Acquisitions
+[Forest]
+Forest

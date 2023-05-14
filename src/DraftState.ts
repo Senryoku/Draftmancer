@@ -19,6 +19,10 @@ export class DraftState extends IDraftState {
 			pickNumber: number;
 			countdownInterval: NodeJS.Timer | null;
 			timer: number;
+			effect?: {
+				skipNPicks?: number;
+				skipUntilNextRound?: boolean;
+			};
 		};
 	} = {};
 
@@ -88,6 +92,9 @@ export class DraftState extends IDraftState {
 			boosterCount: this.players[userID].boosters.length,
 			boosterNumber: this.boosterNumber,
 			pickNumber: this.players[userID].pickNumber,
+			skipPick:
+				(this.players[userID].effect?.skipNPicks ?? 0) > 0 ||
+				this.players[userID].effect?.skipUntilNextRound === true,
 		};
 	}
 }

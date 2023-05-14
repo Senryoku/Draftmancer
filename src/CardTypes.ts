@@ -29,6 +29,7 @@ export enum UsableDraftEffect {
 	RemoveDraftCard = "RemoveDraftCard",
 	CogworkLibrarian = "CogworkLibrarian",
 	AgentOfAcquisitions = "AgentOfAcquisitions",
+	LeovoldsOperative = "LeovoldsOperative",
 	NoteCardName = "NotedCardName",
 	NoteCreatureName = "NoteCreatureName",
 	NoteCreatureTypes = "NoteCreatureTypes",

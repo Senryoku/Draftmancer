@@ -284,6 +284,10 @@ function setReady(userID: UserID, sessionID: SessionID, readyState: ReadyState) 
 	Sessions[sessionID].forUsers((user) => Connections[user]?.socket.emit("setReady", userID, readyState));
 }
 
+function passBooster(userID: UserID, sessionID: SessionID) {
+	Sessions[sessionID].skipPick(userID);
+}
+
 async function pickCard(
 	userID: UserID,
 	sessionID: SessionID,
@@ -1378,6 +1382,7 @@ io.on("connection", async function (socket) {
 	socket.on("chatMessage", prepareSocketCallback(chatMessage));
 	socket.on("setReady", prepareSocketCallback(setReady));
 	socket.on("pickCard", prepareSocketCallback(pickCard));
+	socket.on("passBooster", prepareSocketCallback(passBooster));
 	socket.on("gridDraftPick", prepareSocketCallback(gridDraftPick));
 	socket.on("rochesterDraftPick", prepareSocketCallback(rochesterDraftPick));
 	socket.on("rotisserieDraftPick", prepareSocketCallback(rotisserieDraftPick));

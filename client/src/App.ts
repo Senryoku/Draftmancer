@@ -319,6 +319,7 @@ export default defineComponent({
 			booster: [] as UniqueCard[],
 			boosterNumber: 0,
 			pickNumber: 0,
+			skipPick: false, // Used for some Conspiracy cards effects
 			botScores: null as BotScores | null,
 			winstonDraftState: null as WinstonDraftSyncData | null,
 			gridDraftState: null as GridDraftSyncData | null,
@@ -1065,14 +1066,14 @@ export default defineComponent({
 					for (const c of data.pickedCards.side) this.addToSideboard(c);
 
 					this.booster = [];
-					if (data.booster) {
-						for (const c of data.booster) this.booster.push(c);
+					if (data.state.booster) {
+						this.booster = data.state.booster;
 						this.draftingState = DraftState.Picking;
-					} else {
-						this.draftingState = DraftState.Waiting;
-					}
-					this.boosterNumber = data.boosterNumber;
-					this.pickNumber = data.pickNumber;
+					} else this.draftingState = DraftState.Waiting;
+
+					this.boosterNumber = data.state.boosterNumber;
+					this.pickNumber = data.state.pickNumber;
+					this.skipPick = data.state.skipPick;
 					this.botScores = data.botScores;
 
 					this.selectedCards = [];
@@ -1098,29 +1099,23 @@ export default defineComponent({
 					return;
 				}
 
-				const fullState = data as {
-					booster: UniqueCard[];
-					boosterCount: number;
-					boosterNumber: number;
-					pickNumber: 0;
-				};
-				if (fullState.boosterCount > 0) {
+				if ("boosterCount" in data && data.boosterCount > 0) {
 					if (
 						!this.booster ||
 						this.booster.length === 0 ||
-						this.pickNumber !== fullState.pickNumber! ||
+						this.pickNumber !== data.pickNumber ||
 						this.boosterNumber !== data.boosterNumber
 					) {
 						this.botScores = null; // Clear bot scores
 						this.selectedCards = [];
 						this.burningCards = [];
-						this.booster = [];
-						for (const c of fullState.booster!) this.booster.push(c);
+						this.booster = data.booster;
 						this.playSound("next");
 					}
-					this.boosterNumber = fullState.boosterNumber;
-					this.pickNumber = fullState.pickNumber!;
+					this.boosterNumber = data.boosterNumber;
+					this.pickNumber = data.pickNumber;
 					this.draftingState = DraftState.Picking;
+					this.skipPick = data.skipPick;
 				} else {
 					// No new booster, don't update the state yet.
 					this.draftingState = DraftState.Waiting;
@@ -1582,9 +1577,6 @@ export default defineComponent({
 							cardID: this.selectedUsableDraftEffect.cardID,
 						};
 						switch (draftEffect!.effect) {
-							case UsableDraftEffect.RemoveDraftCard:
-								dontAddSelectedCardstoCardPool = true;
-								break;
 							case UsableDraftEffect.CogworkLibrarian: {
 								onSuccess.push(() => {
 									// Remove used Cogwork Libarian from player's card pool
@@ -1602,6 +1594,15 @@ export default defineComponent({
 								});
 								break;
 							}
+							case UsableDraftEffect.AgentOfAcquisitions: {
+								if (toSideboard) this.addToSideboard(this.booster, options);
+								else this.addToDeck(this.booster, options);
+								dontAddSelectedCardstoCardPool = true;
+								break;
+							}
+							case UsableDraftEffect.RemoveDraftCard:
+								dontAddSelectedCardstoCardPool = true;
+								break;
 						}
 						onSuccess.push(() => {
 							this.selectedUsableDraftEffect = undefined;
@@ -1643,8 +1644,13 @@ export default defineComponent({
 			});
 			this.pickInFlight = true;
 		},
+		passBooster() {
+			this.socket.emit("passBooster");
+		},
 		forcePick() {
 			if (this.draftingState !== DraftState.Picking) return;
+
+			if (this.skipPick) return this.passBooster();
 
 			// Uses botScores to automatically select picks if available
 			if (this.botScores) {
@@ -3481,6 +3487,8 @@ export default defineComponent({
 								UsableDraftEffect.NoteCardName,
 								UsableDraftEffect.NoteCreatureName,
 								UsableDraftEffect.NoteCreatureTypes,
+								UsableDraftEffect.AgentOfAcquisitions,
+								UsableDraftEffect.LeovoldsOperative,
 							].includes(effect as UsableDraftEffect)
 						)
 							continue;

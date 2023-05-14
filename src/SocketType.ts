@@ -100,11 +100,8 @@ export interface ServerToClientEvents {
 	resumeDraft: () => void;
 	rejoinDraft: (data: {
 		pickedCards: { main: UniqueCard[]; side: UniqueCard[] };
-		booster: UniqueCard[] | null;
-		boosterCount: number;
-		boosterNumber: number;
-		pickNumber: number;
 		botScores: BotScores;
+		state: ReturnType<DraftState["syncData"]>;
 	}) => void;
 
 	startWinstonDraft: (state: WinstonDraftSyncData) => void;
@@ -233,6 +230,7 @@ export interface ClientToServerEvents {
 	useCollection: (useCollection: boolean) => void;
 	chatMessage: (message: { author: string; text: string; timestamp: number }) => void;
 	setReady: (readyState: ReadyState) => void;
+	passBooster: () => void;
 	pickCard: (
 		data: {
 			pickedCards: Array<number>;

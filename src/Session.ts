@@ -1735,15 +1735,42 @@ export class Session implements IIndexable {
 		);
 	}
 
+	// Pass the current booster without picking (Agent of Acquisitions; Leovold's Operative)
+	skipPick(userID: UserID) {
+		const s = this.draftState;
+		if (!this.drafting || !isDraftState(s)) return new SocketError("This session is not drafting.");
+		if (!s.syncData(userID).skipPick) return reportError(`Why would you skip this pick?`);
+		if (s.players[userID].boosters.length === 0) return reportError(`No booster to pass.`);
+
+		++s.players[userID].pickNumber;
+		if (s.players[userID].effect?.skipNPicks ?? 0 > 0) s.players[userID].effect!.skipNPicks!--;
+
+		this.stopCountdown(userID);
+		const booster = s.players[userID].boosters.splice(0, 1)[0];
+
+		this.passBooster(booster, userID);
+
+		this.sendDraftState(userID);
+		if (s.players[userID].boosters.length > 0) {
+			this.startCountdown(userID);
+			this.requestBotRecommendation(userID);
+		}
+
+		return new SocketAck();
+	}
+
 	async pickCard(
 		userID: UserID,
-		pickedCards: Array<number>,
-		burnedCards: Array<number>,
+		_pickedCards: Array<number>,
+		_burnedCards: Array<number>,
 		draftEffect?: { effect: UsableDraftEffect; cardID: UniqueCardID },
 		optionalOnPickDraftEffect?: { effect: OptionalOnPickDraftEffect; cardID: UniqueCardID }
 	) {
 		const s = this.draftState;
 		if (!this.drafting || !isDraftState(s)) return new SocketError("This session is not drafting.");
+
+		let pickedCards = _pickedCards;
+		let burnedCards = _burnedCards;
 
 		const reportError = (err: string) => {
 			//console.error(err);
@@ -1752,6 +1779,7 @@ export class Session implements IIndexable {
 
 		if (s.players[userID].boosters.length === 0)
 			return reportError(`You already picked! Wait for the other players.`);
+		if (s.syncData(userID).skipPick) return reportError(`You must skip this pick!`);
 
 		const booster = s.players[userID].boosters[0];
 
@@ -1806,6 +1834,23 @@ export class Session implements IIndexable {
 					picksThisRound += 1; // Allow an additional pick.
 					break;
 				}
+				case UsableDraftEffect.AgentOfAcquisitions: {
+					const card = findCard(draftEffect.cardID);
+					if (!card) return reportError("Invalid UniqueCardID.");
+					if (!card.state?.faceUp) return reportError("Already used this effect.");
+					picksThisRound = booster.length;
+					pickedCards = [...Array(booster.length).keys()];
+					burnThisRound = 0;
+					burnedCards = [];
+					applyDraftEffects.push(() => {
+						if (!card.state) card.state = {};
+						card.state.faceUp = false;
+						updatedCardStates.push({ cardID: card.uniqueID, state: card.state });
+						if (!s.players[userID].effect) s.players[userID].effect = {};
+						s.players[userID].effect!.skipUntilNextRound = true;
+					});
+					break;
+				}
 				case UsableDraftEffect.RemoveDraftCard: {
 					const recipient = findCard(draftEffect.cardID);
 					if (!recipient) return reportError("Invalid UniqueCardID.");
@@ -1836,6 +1881,7 @@ export class Session implements IIndexable {
 						card.state.cardName = cardName;
 						updatedCardStates.push({ cardID: card.uniqueID, state: card.state });
 					});
+					break;
 				}
 				case UsableDraftEffect.NoteCreatureName: {
 					const card = findCard(draftEffect.cardID);
@@ -1851,6 +1897,7 @@ export class Session implements IIndexable {
 						card.state.creatureName = creatureName;
 						updatedCardStates.push({ cardID: card.uniqueID, state: card.state });
 					});
+					break;
 				}
 				case UsableDraftEffect.NoteCreatureTypes: {
 					const card = findCard(draftEffect.cardID);
@@ -1866,6 +1913,7 @@ export class Session implements IIndexable {
 						card.state.creatureTypes = creatureTypes;
 						updatedCardStates.push({ cardID: card.uniqueID, state: card.state });
 					});
+					break;
 				}
 				default:
 					return reportError(`Unimplemented draft effect: ${draftEffect.effect}.`);
@@ -1893,6 +1941,7 @@ export class Session implements IIndexable {
 							s.players[userID].boosters.unshift(additionalBooster[0]);
 						});
 					}
+					break;
 				}
 			}
 		}
@@ -2240,6 +2289,8 @@ export class Session implements IIndexable {
 		let index = 0;
 		for (const userID in s.players) {
 			const p = s.players[userID];
+			if (p.effect?.skipUntilNextRound) p.effect.skipUntilNextRound = false;
+
 			assert(p.boosters.length === 0, `distributeBoosters: ${userID} boosters.length ${p.boosters.length}`);
 			const boosterIndex = negMod(index, totalVirtualPlayers);
 			p.boosters.push(boosters[boosterIndex]);
@@ -2772,14 +2823,8 @@ export class Session implements IIndexable {
 			this.addUser(userID);
 			Connections[userID].socket.emit("rejoinDraft", {
 				pickedCards: this.disconnectedUsers[userID].pickedCards,
-				booster:
-					this.draftState.players[userID].boosters.length > 0
-						? this.draftState.players[userID].boosters[0]
-						: null,
-				boosterNumber: this.draftState.boosterNumber,
-				boosterCount: this.draftState.players[userID].boosters.length,
-				pickNumber: this.draftState.players[userID].pickNumber,
 				botScores: this.draftState.players[userID].botInstance.lastScores,
+				state: this.draftState.syncData(userID),
 			});
 			delete this.disconnectedUsers[userID];
 		}

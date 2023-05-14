@@ -59,8 +59,12 @@ describe("Conspiracy Draft Matters Cards", () => {
 			states.length = clients.length;
 			for (let i = 0; i < clients.length; ++i) {
 				clients[i].once("draftState", (state) => {
+					if (!("pickNumber" in state)) {
+						expect(false, "invalid state");
+						return;
+					}
 					++eventReceived;
-					states[i] = state as any;
+					states[i] = state;
 					if (eventReceived === clients.length) done();
 				});
 			}
@@ -110,10 +114,15 @@ describe("Conspiracy Draft Matters Cards", () => {
 			};
 			for (let i = 0; i < clients.length; ++i) {
 				clients[i].once("message", (msg) => {
+					expect(msg).to.exist;
 					++messageReceived;
 					checkDone();
 				});
-				clients[i].on("draftState", (state: any) => {
+				clients[i].on("draftState", (state) => {
+					if (!("pickNumber" in state)) {
+						expect(false, "invalid state");
+						return;
+					}
 					if (state.pickNumber > 0 && state.boosterCount > 0) {
 						++eventReceived;
 						states[i] = state;
@@ -158,7 +167,11 @@ describe("Conspiracy Draft Matters Cards", () => {
 		it("Each player picks two cards using their Cogwork Librarian", (done) => {
 			let eventReceived = 0;
 			for (let i = 0; i < clients.length; ++i) {
-				clients[i].on("draftState", (state: any) => {
+				clients[i].on("draftState", (state) => {
+					if (!("pickNumber" in state)) {
+						expect(false);
+						return;
+					}
 					if (state.pickNumber > 1 && state.boosterCount > 0) {
 						++eventReceived;
 						states[i] = state;
@@ -209,6 +222,7 @@ describe("Conspiracy Draft Matters Cards", () => {
 			};
 			for (let i = 0; i < clients.length; ++i) {
 				clients[i].once("message", (msg) => {
+					expect(msg).to.exist;
 					++messageReceived;
 					checkDone();
 				});
@@ -263,6 +277,7 @@ describe("Conspiracy Draft Matters Cards", () => {
 			};
 			for (let i = 0; i < clients.length; ++i) {
 				clients[i].once("message", (msg) => {
+					expect(msg).to.exist;
 					++messageReceived;
 					checkDone();
 				});
