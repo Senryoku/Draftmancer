@@ -1787,7 +1787,7 @@ export class Session implements IIndexable {
 
 		for (const idx of pickedCards) {
 			Connections[userID].pickedCards.main.push(booster[idx]);
-			s.players[userID].botInstance?.addCard(booster[idx]);
+			s.players[userID].botInstance.addCard(booster[idx]);
 		}
 
 		const pickData: DraftPick = {
@@ -1997,7 +1997,7 @@ export class Session implements IIndexable {
 					numPicks: s.numPicks,
 				};
 				return p.botInstance
-					?.getScores(
+					.getScores(
 						localData.booster,
 						localData.boosterNumber,
 						localData.boostersPerPlayer,
@@ -2050,7 +2050,7 @@ export class Session implements IIndexable {
 			p.boosters.push(boosters[boosterIndex]);
 			p.pickNumber = 0;
 			if (p.isBot) {
-				delayRequest((p.botInstance as IBot).type)
+				delayRequest(p.botInstance.type)
 					.then(() => this.startBotPickChain(userID))
 					.catch((error) => {
 						console.error(

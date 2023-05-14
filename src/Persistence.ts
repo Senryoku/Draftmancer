@@ -8,15 +8,15 @@ import crypto from "crypto";
 import axios from "axios";
 import fs from "fs";
 import path from "path";
-import { Connections } from "./Connection.js";
+import { Connections, getPODConnection } from "./Connection.js";
 import { Session, Sessions } from "./Session.js";
 import { TeamSealedState } from "./TeamSealed.js";
 import { MinesweeperDraftState } from "./MinesweeperDraft.js";
 import { Bot, IBot, SimpleBot } from "./Bot.js";
-import Mixpanel from "mixpanel";
+import mixpanel from "mixpanel";
 const MixPanelToken = process.env.MIXPANEL_TOKEN ? process.env.MIXPANEL_TOKEN : null;
 const MixInstance = MixPanelToken
-	? Mixpanel.init(MixPanelToken, {
+	? mixpanel.init(MixPanelToken, {
 			//debug: process.env.NODE_ENV !== "production",
 			protocol: "https",
 	  })
@@ -53,10 +53,12 @@ const MTGDraftbotsLogEndpoint =
 const MTGDraftbotsAPIKey = process.env.MTGDRAFTBOTS_APIKEY;
 
 export let InactiveSessions: Record<SessionID, any> = {};
-export let InactiveConnections: Record<SessionID, Record<string, any>> = {};
+export let InactiveConnections: Record<UserID, ReturnType<typeof getPODConnection>> = {};
 
-function copyProps(obj: any, target: any) {
-	for (const prop of Object.getOwnPropertyNames(obj)) if (!(obj[prop] instanceof Function)) target[prop] = obj[prop];
+// Copy properties from source to target object, ignoring functions.
+export function copyPODProps<T>(source: Partial<T>, target: T): T {
+	for (const prop in source)
+		if (source[prop] !== undefined && !(source[prop] instanceof Function)) target[prop] = source[prop]!;
 	return target;
 }
 
@@ -65,11 +67,11 @@ function restoreBot(bot: any): IBot | undefined {
 
 	if (bot.type == "SimpleBot") {
 		const newBot = new SimpleBot(bot.name, bot.id);
-		copyProps(bot, newBot);
+		copyPODProps(bot, newBot);
 		return newBot;
 	} else if (bot.type == "mtgdraftbots") {
 		const newBot = new Bot(bot.name, bot.id);
-		copyProps(bot, newBot);
+		copyPODProps(bot, newBot);
 		return newBot;
 	}
 	console.error(`Error: Invalid bot type '${bot.type}'.`);
@@ -77,15 +79,11 @@ function restoreBot(bot: any): IBot | undefined {
 }
 
 async function requestSavedConnections() {
-	const InactiveConnections: Record<SessionID, Record<string, any>> = {};
+	const InactiveConnections: Record<UserID, ReturnType<typeof getPODConnection>> = {};
 
-	const handleConnections = (connections: any[]) => {
+	const handleConnections = (connections: ReturnType<typeof getPODConnection>[]) => {
 		if (connections && connections.length > 0) {
-			for (const c of connections) {
-				InactiveConnections[c.userID] = c;
-				if (InactiveConnections[c.userID].bot)
-					InactiveConnections[c.userID].bot = restoreBot(InactiveConnections[c.userID].bot);
-			}
+			for (const c of connections) InactiveConnections[c.userID] = c;
 			console.log(`[+] Restored ${connections.length} saved connections.`);
 		}
 	};
@@ -172,7 +170,7 @@ export function restoreSession(s: any, owner: UserID) {
 		switch (s.draftState.type) {
 			case "draft": {
 				const draftState = new DraftState([], [], { botCount: 0, simpleBots: false });
-				copyProps(s.draftState, draftState);
+				copyPODProps(s.draftState, draftState);
 				for (const userID in s.draftState.players) {
 					const bot = restoreBot(s.draftState.players[userID].botInstance);
 					if (!bot) {
@@ -190,42 +188,42 @@ export function restoreSession(s: any, owner: UserID) {
 			}
 			case "housman": {
 				r.draftState = new HousmanDraftState([], []);
-				copyProps(s.draftState, r.draftState);
+				copyPODProps(s.draftState, r.draftState);
 				return r;
 			}
 			case "winston": {
 				r.draftState = new WinstonDraftState([], []);
-				copyProps(s.draftState, r.draftState);
+				copyPODProps(s.draftState, r.draftState);
 				return r;
 			}
 			case "winchester": {
 				r.draftState = new WinchesterDraftState([], []);
-				copyProps(s.draftState, r.draftState);
+				copyPODProps(s.draftState, r.draftState);
 				return r;
 			}
 			case "grid": {
 				r.draftState = new GridDraftState([], []);
-				copyProps(s.draftState, r.draftState);
+				copyPODProps(s.draftState, r.draftState);
 				return r;
 			}
 			case "rochester": {
 				r.draftState = new RochesterDraftState([], []);
-				copyProps(s.draftState, r.draftState);
+				copyPODProps(s.draftState, r.draftState);
 				return r;
 			}
 			case "rotisserie": {
 				r.draftState = new RotisserieDraftState([], [], 0);
-				copyProps(s.draftState, r.draftState);
+				copyPODProps(s.draftState, r.draftState);
 				return r;
 			}
 			case "minesweeper": {
 				r.draftState = new MinesweeperDraftState([], [], 0, 0, 0);
-				copyProps(s.draftState, r.draftState);
+				copyPODProps(s.draftState, r.draftState);
 				return r;
 			}
 			case "teamSealed": {
 				r.draftState = new TeamSealedState();
-				copyProps(s.draftState, r.draftState);
+				copyPODProps(s.draftState, r.draftState);
 				return r;
 			}
 			case "solomon": {
@@ -265,16 +263,16 @@ export function getPoDSession(s: Session) {
 
 		if (s.draftState) {
 			PoDSession.draftState = {};
-			copyProps(s.draftState, PoDSession.draftState);
+			copyPODProps(s.draftState, PoDSession.draftState);
 
 			if (s.draftState instanceof DraftState) {
 				const players = {};
-				copyProps(s.draftState.players, players);
+				copyPODProps(s.draftState.players, players);
 				PoDSession.draftState.players = players;
 
 				for (const userID in s.draftState.players) {
 					const podBot = {};
-					copyProps(s.draftState.players[userID].botInstance, podBot);
+					copyPODProps(s.draftState.players[userID].botInstance, podBot);
 					PoDSession.draftState.players[userID].botInstance = podBot;
 					PoDSession.draftState.players[userID].botPickInFlight = false;
 					PoDSession.draftState.players[userID].countdownInterval = null;
@@ -299,18 +297,10 @@ async function tempDump(exitOnCompletion = false) {
 		}
 	}
 
-	const Promises: Promise<any>[] = [];
+	const Promises: Promise<unknown>[] = [];
 
-	const PoDConnections = [];
-	for (const userID in Connections) {
-		const c = Connections[userID];
-		const PoDConnection: any = {};
-
-		for (const prop of Object.getOwnPropertyNames(c).filter((p) => !["socket", "bot"].includes(p))) {
-			if (!((c as IIndexable)[prop] instanceof Function)) PoDConnection[prop] = (c as IIndexable)[prop];
-		}
-		PoDConnections.push(PoDConnection);
-	}
+	const PoDConnections: ReturnType<typeof getPODConnection>[] = [];
+	for (const userID in Connections) PoDConnections.push(getPODConnection(Connections[userID]));
 
 	const PoDSessions = [];
 	for (const sessionID in InactiveSessions) {

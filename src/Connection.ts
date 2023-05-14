@@ -28,6 +28,17 @@ export class Connection {
 	}
 }
 
+// Used on server restart to restore state.
+export function getPODConnection(conn: Connection): Omit<Connection, "socket" | "collection"> {
+	return {
+		userID: conn.userID,
+		userName: conn.userName,
+		sessionID: conn.sessionID,
+		useCollection: conn.useCollection,
+		pickedCards: conn.pickedCards, // This mostly what we want the preserve.
+	};
+}
+
 export function getPickedCardIds(pickedCards: { main: Array<UniqueCard>; side: Array<UniqueCard> }): CardID[] {
 	return pickedCards.main.map((c) => c.id).concat(pickedCards.side.map((c) => c.id));
 }

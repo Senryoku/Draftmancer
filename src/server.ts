@@ -18,7 +18,14 @@ import { v1 as uuidv1 } from "uuid";
 import { Options, shuffleArray } from "./utils.js";
 import { ackError, isSocketError, isMessageError, Message, MessageWarning, SocketAck, SocketError } from "./Message.js";
 import Constants from "./Constants.js";
-import { InactiveConnections, InactiveSessions, dumpError, restoreSession, getPoDSession } from "./Persistence.js";
+import {
+	InactiveConnections,
+	InactiveSessions,
+	dumpError,
+	restoreSession,
+	getPoDSession,
+	copyPODProps,
+} from "./Persistence.js";
 import { Connection, Connections } from "./Connection.js";
 import { DistributionMode, DraftLogRecipients, ReadyState } from "./Session/SessionTypes";
 import { Session, Sessions, getPublicSessionData } from "./Session.js";
@@ -1278,11 +1285,9 @@ io.on("connection", async function (socket) {
 	if (userID in InactiveConnections) {
 		// Restore previously saved connection
 		// TODO: Front and Back end may be out of sync after this!
-		InactiveConnections[userID].socket = socket;
+		console.log("Restoring connection...", InactiveConnections[userID]);
 		const connection = new Connection(socket, userID, query.userName as string);
-		for (const prop of Object.getOwnPropertyNames(InactiveConnections[userID])) {
-			(connection as IIndexable)[prop] = InactiveConnections[userID][prop];
-		}
+		copyPODProps(connection, InactiveConnections[userID]);
 		Connections[userID] = connection;
 		delete InactiveConnections[userID];
 	} else {
@@ -1311,7 +1316,7 @@ io.on("connection", async function (socket) {
 		}
 	});
 
-	socket.on("error", function (err: any) {
+	socket.on("error", function (err) {
 		console.error("Socket.io error: ");
 		console.error(err);
 	});
