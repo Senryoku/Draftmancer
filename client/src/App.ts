@@ -2361,7 +2361,7 @@ export default defineComponent({
 					}
 				};
 
-				let result: { [id: string]: any } | null = null;
+				let result: ReturnType<typeof parseCollection> | null = null;
 				if (playerIds.size > 1) {
 					const swalResult = await Alert.fire({
 						icon: "question",
@@ -2375,7 +2375,7 @@ export default defineComponent({
 						cancelButtonText: "Latest Only",
 					});
 					if (swalResult.value) {
-						const collections: ReturnType<typeof parseCollection>[] = [];
+						const collections: Exclude<ReturnType<typeof parseCollection>, null>[] = [];
 						for (const pid of playerIds) {
 							const startIdx = contents.lastIndexOf(`"payload":{"playerId":"${pid}"`);
 							const coll = parseCollection(contents, startIdx);
@@ -2386,12 +2386,24 @@ export default defineComponent({
 						for (let i = 1; i < collections.length; ++i)
 							cardids = Object.keys(collections[i]!).filter((id) => cardids.includes(id));
 						// Find min amount of each card
-						result = {};
-						for (const id of cardids) result[id] = collections[0]![id as keyof (typeof collections)[0]];
+						result = {
+							collection: {},
+							inventory: {
+								wildcards: {
+									common: Math.min(...collections.map((c) => c.inventory.wildcards.common)),
+									uncommon: Math.min(...collections.map((c) => c.inventory.wildcards.uncommon)),
+									rare: Math.min(...collections.map((c) => c.inventory.wildcards.rare)),
+									mythic: Math.min(...collections.map((c) => c.inventory.wildcards.mythic)),
+								},
+								vaultProgress: Math.min(...collections.map((c) => c.inventory.vaultProgress)),
+							},
+						};
+						for (const id of cardids)
+							result.collection[id] = collections[0]![id as keyof (typeof collections)[0]];
 						for (let i = 1; i < collections.length; ++i)
 							for (const id of cardids)
-								result[id] = Math.min(
-									result[id],
+								result.collection[id] = Math.min(
+									result.collection[id],
 									collections[i]![id as keyof ReturnType<typeof parseCollection>]
 								);
 					} else result = parseCollection(contents);
