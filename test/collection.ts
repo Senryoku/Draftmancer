@@ -5,14 +5,14 @@ import chai from "chai";
 const expect = chai.expect;
 import { getCard } from "../src/Cards.js";
 import { Sessions } from "../src/Session.js";
-import { makeClients, enableLogs, disableLogs, waitForClientDisconnects, ackNoError } from "./src/common.js";
+import { makeClients, enableLogs, disableLogs, waitForClientDisconnects, ackNoError, getUID } from "./src/common.js";
 
 import MTGACards from "../client/src/data/MTGACards.json" assert { type: "json" };
-import { ArenaID, PlainCollection, UniqueCard } from "../src/CardTypes.js";
+import { PlainCollection, UniqueCard } from "../src/CardTypes.js";
 
 describe("Collection Restriction", function () {
 	let clients: ReturnType<typeof makeClients> = [];
-	let sessionID = "sessionID";
+	const sessionID = "sessionID";
 	let collections: PlainCollection[] = [];
 	let ownerIdx = 0;
 
@@ -48,7 +48,7 @@ describe("Collection Restriction", function () {
 
 	after(function (done) {
 		disableLogs();
-		for (let c of clients) {
+		for (const c of clients) {
 			c.disconnect();
 		}
 		waitForClientDisconnects(done);
@@ -57,9 +57,9 @@ describe("Collection Restriction", function () {
 	it(`Submit random collections.`, function (done) {
 		collections = Array(clients.length).fill({});
 		// Generate random collections
-		for (let cid of MTGAIDs) {
+		for (const cid of MTGAIDs) {
 			for (let c = 0; c < clients.length; ++c) {
-				let cardCount = Math.floor(Math.random() * 5);
+				const cardCount = Math.floor(Math.random() * 5);
 				if (cardCount > 0) collections[c][cid] = cardCount;
 			}
 		}
@@ -75,9 +75,9 @@ describe("Collection Restriction", function () {
 
 	it(`All cards in Session collection should be in all user collections.`, function (done) {
 		const sessColl = Sessions[sessionID].collection();
-		for (let cid in sessColl) {
+		for (const cid in sessColl) {
 			const arena_id = getCard(cid).arena_id!;
-			for (let col of collections) {
+			for (const col of collections) {
 				expect(col).to.have.own.property(arena_id.toString());
 				expect(col[arena_id]).gte(sessColl.get(cid)!);
 			}
@@ -87,9 +87,9 @@ describe("Collection Restriction", function () {
 
 	it(`All cards in Session Card Pool (e.g. Session collection with applied set restrictions) should be in all user collections.`, function (done) {
 		const sessCardPool = Sessions[sessionID].cardPool();
-		for (let cid in sessCardPool) {
+		for (const cid in sessCardPool) {
 			const arena_id = getCard(cid).arena_id!;
-			for (let col of collections) {
+			for (const col of collections) {
 				expect(col).to.have.own.property(arena_id.toString());
 				expect(col[arena_id]).gte(sessCardPool.get(cid)!);
 			}
@@ -97,9 +97,9 @@ describe("Collection Restriction", function () {
 		done();
 	});
 
-	for (let set of ["znr", "stx"]) {
+	for (const set of ["znr", "stx"]) {
 		it(`Select ${set} as a known MTGA set.`, function (done) {
-			ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);
+			ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
 
 			clients[(ownerIdx + 1) % clients.length].once("setRestriction", () => {
 				done();
@@ -117,7 +117,7 @@ describe("Collection Restriction", function () {
 		it(`Start a draft with default settings (May fail randomly if there's not enough cards in random collections, but seems unlikely).`, function (done) {
 			let connectedClients = 0;
 			let receivedBoosters = 0;
-			for (let c in clients) {
+			for (const c in clients) {
 				clients[c].once("startDraft", function () {
 					connectedClients += 1;
 					if (connectedClients == clients.length && receivedBoosters == clients.length) done();
@@ -154,8 +154,8 @@ describe("Collection Restriction", function () {
 						pickNumber: 0;
 					};
 					if (s.pickNumber !== (clients[c] as any).state.pickNumber && s.boosterCount > 0) {
-						for (let card of s.booster)
-							for (let col of collections) {
+						for (const card of s.booster)
+							for (const col of collections) {
 								expect(
 									col,
 									"All cards should be in the intersection of player collections."

@@ -11,7 +11,7 @@ export const Alert = Swal.mixin({
 	customClass: SwalCustomClasses,
 });
 
-export function fireToast(type: SweetAlertIcon, title: string, text: string = "") {
+export function fireToast(type: SweetAlertIcon, title: string, text = "") {
 	Alert.fire({
 		toast: true,
 		position: "top-end",
@@ -30,7 +30,7 @@ export function fireToast(type: SweetAlertIcon, title: string, text: string = ""
 	});
 }
 
-export function loadingToast(title: string, text: string = "") {
+export function loadingToast(title: string, text = "") {
 	Alert.fire({
 		toast: true,
 		position: "top-end",

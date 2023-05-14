@@ -2,34 +2,34 @@ import parseCost from "./parseCost.js";
 import { escapeHTML } from "./utils.js";
 import { Card, CardColor, CardFace } from "./CardTypes.js";
 import { ackError, isMessageError, isSocketError, SocketAck, SocketError } from "./Message.js";
-import { isCard, isCardFace } from "./CardTypeCheck.js";
-import { hasProperty, isArrayOf, isObject, isRecord, isString, isUnion } from "./TypeChecks.js";
+import { isCard } from "./CardTypeCheck.js";
+import { hasProperty, isArrayOf, isObject, isRecord, isString } from "./TypeChecks.js";
 
-function errorWithJSON(title: string, msg: string, json: any) {
+function errorWithJSON(title: string, msg: string, json: unknown) {
 	return ackError({
 		title: title,
 		html: `${msg}: <pre>${escapeHTML(JSON.stringify(json, null, 2))}</pre>`,
 	});
 }
 
-function checkProperty(card: any, prop: string) {
+function checkProperty(card: object, prop: string) {
 	if (!(prop in card))
 		return errorWithJSON(`Missing Card Property`, `Missing mandatory property '${prop}' in custom card`, card);
 	return null;
 }
 
-function checkPropertyType(card: any, prop: string, type: string) {
+function checkPropertyType(card: Record<string, unknown>, prop: string, type: string) {
 	if (typeof card[prop] !== type)
 		return errorWithJSON(`Invalid Card Property`, `Property '${prop}' should be of type '${type}'`, card);
 	return null;
 }
 
-function checkPropertyTypeOrUndefined(card: any, prop: string, type: string) {
+function checkPropertyTypeOrUndefined(card: Record<string, unknown>, prop: string, type: string) {
 	if (!Object.hasOwn(card, prop)) return null;
 	return checkPropertyType(card, prop, type);
 }
 
-function checkPropertyIsArrayOrUndefined(card: any, prop: string) {
+function checkPropertyIsArrayOrUndefined(card: Record<string, unknown>, prop: string) {
 	if (Object.hasOwn(card, prop) && !Array.isArray(card[prop]))
 		return errorWithJSON(`Invalid Property`, `Invalid property '${prop}' in custom card, must be an Array`, card);
 	return null;

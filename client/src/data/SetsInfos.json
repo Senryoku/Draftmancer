@@ -697,11 +697,11 @@
     "cmm": {
         "code": "cmm",
         "fullName": "Commander Masters",
-        "cardCount": 8,
+        "cardCount": 28,
         "isPrimary": true,
         "icon": "img/sets/cmm.svg",
-        "mythicCount": 6,
-        "rareCount": 2
+        "mythicCount": 23,
+        "rareCount": 5
     },
     "cmr": {
         "code": "cmr",
@@ -2317,13 +2317,13 @@
     "ltr": {
         "code": "ltr",
         "fullName": "The Lord of the Rings: Tales of Middle-earth",
-        "cardCount": 38,
+        "cardCount": 46,
         "isPrimary": true,
         "icon": "img/sets/ltr.svg",
-        "commonCount": 10,
+        "commonCount": 11,
         "mythicCount": 12,
-        "rareCount": 8,
-        "uncommonCount": 8
+        "rareCount": 12,
+        "uncommonCount": 11
     },
     "m10": {
         "code": "m10",
@@ -5033,12 +5033,12 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 914,
+        "cardCount": 928,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
         "commonCount": 42,
-        "mythicCount": 161,
-        "rareCount": 691,
+        "mythicCount": 167,
+        "rareCount": 699,
         "uncommonCount": 20
     },
     "slp": {
@@ -5075,6 +5075,14 @@
         "block": "Innistrad: Double Feature",
         "icon": "img/sets/smid.svg",
         "commonCount": 9
+    },
+    "smom": {
+        "code": "smom",
+        "fullName": "March of the Machine Substitute Cards",
+        "cardCount": 1,
+        "isPrimary": false,
+        "icon": "img/sets/smom.svg",
+        "commonCount": 1
     },
     "snc": {
         "code": "snc",
@@ -5854,6 +5862,14 @@
         "commonCount": 33,
         "rareCount": 34,
         "uncommonCount": 33
+    },
+    "who": {
+        "code": "who",
+        "fullName": "Universes Beyond: Doctor Who",
+        "cardCount": 6,
+        "isPrimary": true,
+        "icon": "img/sets/who.svg",
+        "commonCount": 6
     },
     "wmc": {
         "code": "wmc",

@@ -8,6 +8,7 @@ import "../../src/server.js"; // Launch Server
 import { Connections } from "../../src/Connection.js";
 import { ClientToServerEvents, ServerToClientEvents } from "../../src/SocketType.js";
 import { SocketAck } from "../../src/Message.js";
+import type { UserID } from "../../src/IDTypes";
 
 export const ValidCubes: { [name: string]: string } = {
 	CustomSlotsTestFile: fs.readFileSync(`./test/data/CustomSheets.txt`, "utf8"),
@@ -51,10 +52,12 @@ const ioOptions = {
 
 let UniqueUserID = 0;
 
+export const getUID = (c: Socket) => (c as any).query.userID as UserID; // FIXME: This is how we store userID for now (see makeClients), but this should change.
+
 export function connectClient(query: any) {
 	if (!query.userID) query.userID = `UserID${++UniqueUserID}`;
 
-	let r = io(`http://localhost:${NODE_PORT}`, Object.assign({ query: query }, ioOptions)) as Socket<
+	const r = io(`http://localhost:${NODE_PORT}`, Object.assign({ query: query }, ioOptions)) as Socket<
 		ServerToClientEvents,
 		ClientToServerEvents
 	>;
@@ -72,9 +75,9 @@ let outputbuffer: string[];
 const baseConsogleLog = console.log;
 const baseConsogleDebug = console.debug;
 const baseConsogleWarn = console.warn;
-export const logReplacer = function () {
+export const logReplacer = function (...rest: unknown[]) {
 	let line = "";
-	for (var i = 0; i < arguments.length; i++) line += JSON.stringify(arguments[i]);
+	for (let i = 0; i < arguments.length; i++) line += JSON.stringify(rest[i]);
 	outputbuffer.push(line);
 };
 export function disableLogs() {
@@ -94,16 +97,16 @@ export function enableLogs(print: boolean) {
 }
 
 export function makeClients(queries: any[], done: Mocha.Done) {
-	let sockets = [];
+	const sockets = [];
 	disableLogs();
 	expect(Object.keys(Connections).length).to.equal(0);
-	for (let query of queries) {
+	for (const query of queries) {
 		sockets.push(connectClient(query));
 	}
 
 	// Wait for all clients to be connected
 	let connectedClientCount = 0;
-	for (let s of sockets) {
+	for (const s of sockets) {
 		s.once("connect", function () {
 			connectedClientCount += 1;
 			if (connectedClientCount == sockets.length) {

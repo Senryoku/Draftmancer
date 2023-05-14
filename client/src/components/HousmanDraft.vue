@@ -38,7 +38,7 @@
 			<transition name="revealed-cards" mode="out-in">
 				<div class="housman-revealed-cards card-container" :key="`revealed-cards-${state.roundNum}`">
 					<div class="zone-name">Common Cards</div>
-					<div v-for="(card, index) in state.revealedCards" class="revealed-card-container">
+					<div v-for="(card, index) in state.revealedCards" :key="index" class="revealed-card-container">
 						<transition
 							:name="isCurrentPlayer ? 'current-player-revealed-card' : 'revealed-card'"
 							mode="out-in"
@@ -59,7 +59,7 @@
 			<transition name="hand-cards" mode="out-in">
 				<div class="housman-hand card-container" :key="`hand-cards-${state.roundNum}`">
 					<div class="zone-name">Your Hand</div>
-					<div v-for="(card, index) in state.hand" class="hand-card-container">
+					<div v-for="(card, index) in state.hand" :key="index" class="hand-card-container">
 						<transition name="hand-card" mode="out-in">
 							<card
 								:key="card.uniqueID"

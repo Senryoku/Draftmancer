@@ -72,7 +72,8 @@
         "bro",
         "one",
         "sir",
-        "mom"
+        "mom",
+        "mat"
     ],
     "AlchemySets": [
         "hbg",
@@ -87,7 +88,8 @@
         "dmu",
         "bro",
         "one",
-        "mom"
+        "mom",
+        "mat"
     ],
     "BasicLandNames": {
         "en": {
@@ -286,6 +288,7 @@
         }
     ],
     "PrimarySets": [
+        "mat",
         "mom",
         "sir",
         "one",
@@ -445,6 +448,7 @@
         "hbg",
         "planeshifted_snc",
         "ydmu",
+        "mat",
         "mb1_convention_2019",
         "mb1_convention_2021",
         "sir0",

@@ -72,7 +72,7 @@ export async function startBrowsers(count: number): Promise<[Browser[], Page[]]>
 	const debugWindowWidth = Math.floor(DebugScreenWidth / cols);
 	const debugWindowHeight = Math.floor(DebugScreenHeight / rows);
 
-	let promises = [];
+	const promises = [];
 	const puppeteerArgs = ["--mute-audio"];
 	if (Headless) puppeteerArgs.push(`--window-size=1366,768`);
 	else puppeteerArgs.push(`--window-size=${debugWindowWidth},${debugWindowHeight}`);
@@ -98,7 +98,7 @@ export async function startBrowsers(count: number): Promise<[Browser[], Page[]]>
 	const pages: Page[] = [];
 	for (let i = 0; i < count; i++) {
 		browsers.push(await promises[i]);
-		let [page] = await browsers[i].pages();
+		const [page] = await browsers[i].pages();
 		disableAnimations(page);
 		pages.push(page);
 	}
@@ -156,7 +156,7 @@ export async function join(players: number): Promise<[Browser[], Page[]]> {
 	const [browsers, pages] = await startBrowsers(players);
 	await pages[0].goto(`http://localhost:${process.env.PORT}`);
 	const clipboard = await getSessionLink(pages[0]);
-	let promises = [];
+	const promises = [];
 	for (let idx = 1; idx < pages.length; ++idx) promises.push(pages[idx].goto(clipboard));
 	await Promise.all(promises);
 	return [browsers, pages];
@@ -253,6 +253,20 @@ export async function dragAndDrop(
 export let browsers: Browser[] = [];
 export let pages: Page[] = [];
 
+export function setBrowsersAndPages(_browsers: Browser[], _pages: Page[]) {
+	browsers = _browsers;
+	pages = _pages;
+}
+
+export async function browsersCleanup() {
+	disableLogs();
+	await Promise.all(pages.map((p) => p.close()));
+	pages = [];
+	await Promise.all(browsers.map((b) => b.close()));
+	browsers = [];
+	enableLogs(false);
+}
+
 export function setupBrowsers(playerCount: number) {
 	before("Owner joins", async function () {
 		if (browsers.length > 0 || pages.length > 0) throw new Error("Already setup");
@@ -261,12 +275,7 @@ export function setupBrowsers(playerCount: number) {
 		enableLogs(false);
 	});
 	after("Close browsers", async function () {
-		disableLogs();
-		await Promise.all(pages.map((p) => p.close()));
-		pages = [];
-		await Promise.all(browsers.map((b) => b.close()));
-		browsers = [];
-		enableLogs(false);
+		await browsersCleanup();
 	});
 }
 

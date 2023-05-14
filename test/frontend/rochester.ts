@@ -1,7 +1,7 @@
 import { describe, it } from "mocha";
 import chai from "chai";
 const expect = chai.expect;
-import { waitAndClickXpath, waitAndClickSelector, pages, setupBrowsers, PickResult, launchMode } from "./src/common.js";
+import { waitAndClickSelector, pages, setupBrowsers, PickResult, launchMode } from "./src/common.js";
 import { Page } from "puppeteer";
 import { getRandom } from "../../src/utils.js";
 
@@ -51,7 +51,7 @@ describe("Rochester", function () {
 
 	it(`Pick until done.`, async function () {
 		this.timeout(100000);
-		let done = [false, false];
+		const done = [false, false];
 		while (done.some((d) => !d))
 			for (let i = 0; i < pages.length; i++)
 				if (!done[i]) done[i] = (await pickRochester(pages[i])) === PickResult.Done;

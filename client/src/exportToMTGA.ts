@@ -26,10 +26,10 @@ export function fixSetCode(set: SetCode) {
 }
 
 function exportCardToMTGA(c: Card, language: Language, full: boolean) {
-	let set = fixSetCode(c.set);
+	const set = fixSetCode(c.set);
 	let name = c.name;
 	if (language in c.printed_names) name = c.printed_names[language];
-	let idx = name.indexOf("//");
+	const idx = name.indexOf("//");
 	// Ravnica Splits cards needs both names to be imported, others don't
 	if (idx != -1) {
 		if (c.set === "akr") name = name.replace("//", "///");
@@ -49,8 +49,8 @@ function exportCardToMTGA(c: Card, language: Language, full: boolean) {
 
 class MTGAExportOptions {
 	preferredBasics: SetCode = "";
-	sideboardBasics: number = 0;
-	full: boolean = true;
+	sideboardBasics = 0;
+	full = true;
 }
 
 export function exportToMTGA(
@@ -67,9 +67,9 @@ export function exportToMTGA(
 			: "";
 
 	let str = options.full ? "Deck\n" : "";
-	for (let c of deck) str += exportCardToMTGA(c, language, options.full);
+	for (const c of deck) str += exportCardToMTGA(c, language, options.full);
 	if (lands) {
-		for (let c in lands)
+		for (const c in lands)
 			if (lands[c as CardColor] > 0)
 				str += `${lands[c as CardColor]} ${Constants.BasicLandNames[language][c as CardColor]}${basicsSet}\n`;
 	}
@@ -84,10 +84,10 @@ export function exportToMTGA(
 				? 1
 				: 0
 		);
-		for (let c of sideboard) str += exportCardToMTGA(c, language, options.full);
+		for (const c of sideboard) str += exportCardToMTGA(c, language, options.full);
 		// Add some basic lands to the sideboard
 		if (options.sideboardBasics && options.sideboardBasics > 0)
-			for (let c of ["W", "U", "B", "R", "G"])
+			for (const c of ["W", "U", "B", "R", "G"])
 				str += `${options.sideboardBasics} ${Constants.BasicLandNames[language][c as CardColor]}${basicsSet}\n`;
 	}
 	return str;

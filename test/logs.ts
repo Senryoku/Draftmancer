@@ -4,7 +4,7 @@ import chai from "chai";
 const expect = chai.expect;
 import { Sessions } from "../src/Session.js";
 import { Connections } from "../src/Connection.js";
-import { makeClients, enableLogs, disableLogs, waitForClientDisconnects, ackNoError } from "./src/common.js";
+import { makeClients, enableLogs, disableLogs, waitForClientDisconnects, ackNoError, getUID } from "./src/common.js";
 import { DraftLogRecipients } from "../src/Session/SessionTypes.js";
 import { DraftLog } from "../src/DraftLog.js";
 import { RochesterDraftSyncData } from "../src/RochesterDraft.js";
@@ -13,7 +13,7 @@ import { PickSummary } from "../src/PickSummary.js";
 
 describe("Draft Logs", function () {
 	let clients: ReturnType<typeof makeClients> = [];
-	let sessionID = "sessionID";
+	const sessionID = "sessionID";
 	let ownerIdx = 0;
 
 	beforeEach(function (done) {
@@ -66,7 +66,7 @@ describe("Draft Logs", function () {
 
 	after(function (done) {
 		disableLogs();
-		for (let c of clients) {
+		for (const c of clients) {
 			c.disconnect();
 		}
 		waitForClientDisconnects(done);
@@ -74,7 +74,7 @@ describe("Draft Logs", function () {
 
 	it(`6 clients with different userID should be connected.`, function (done) {
 		expect(Object.keys(Connections).length).to.equal(6);
-		ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);
+		ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
 		expect(ownerIdx).to.not.be.null;
 		expect(ownerIdx).to.not.be.undefined;
 		done();
@@ -120,7 +120,7 @@ describe("Draft Logs", function () {
 			(clientIndex, draftLog) => {
 				expect(draftLog.personalLogs).to.be.true;
 				for (let i = 0; i < clients.length; ++i)
-					expect(draftLog.users[(clients[i] as any).query.userID].cards).to.be.not.empty;
+					expect(draftLog.users[getUID(clients[i])].cards).to.be.not.empty;
 			}
 		);
 
@@ -130,7 +130,7 @@ describe("Draft Logs", function () {
 			(clientIndex, draftLog) => {
 				expect(draftLog.personalLogs).to.be.false;
 				for (let i = 0; i < clients.length; ++i)
-					expect(draftLog.users[(clients[i] as any).query.userID].cards).to.be.not.empty;
+					expect(draftLog.users[getUID(clients[i])].cards).to.be.not.empty;
 			}
 		);
 
@@ -141,12 +141,11 @@ describe("Draft Logs", function () {
 				expect(draftLog.personalLogs).to.be.true;
 				if (clientIndex === ownerIdx) {
 					for (let i = 0; i < clients.length; ++i)
-						expect(draftLog.users[(clients[i] as any).query.userID].cards).to.be.not.empty;
+						expect(draftLog.users[getUID(clients[i])].cards).to.be.not.empty;
 				} else {
-					expect(draftLog.users[(clients[clientIndex] as any).query.userID].cards).to.be.not.empty;
+					expect(draftLog.users[getUID(clients[clientIndex])].cards).to.be.not.empty;
 					for (let i = 0; i < clients.length; ++i)
-						if (i !== clientIndex)
-							expect(draftLog.users[(clients[i] as any).query.userID].cards).to.be.empty;
+						if (i !== clientIndex) expect(draftLog.users[getUID(clients[i])].cards).to.be.empty;
 				}
 			}
 		);
@@ -158,10 +157,10 @@ describe("Draft Logs", function () {
 				expect(draftLog.personalLogs).to.be.false;
 				if (clientIndex === ownerIdx) {
 					for (let i = 0; i < clients.length; ++i)
-						expect(draftLog.users[(clients[i] as any).query.userID].cards).to.be.not.empty;
+						expect(draftLog.users[getUID(clients[i])].cards).to.be.not.empty;
 				} else {
 					for (let i = 0; i < clients.length; ++i)
-						expect(draftLog.users[(clients[i] as any).query.userID].cards).to.be.empty;
+						expect(draftLog.users[getUID(clients[i])].cards).to.be.empty;
 				}
 			}
 		);
@@ -171,9 +170,9 @@ describe("Draft Logs", function () {
 			setSettings("none", true),
 			(clientIndex, draftLog) => {
 				expect(draftLog.personalLogs).to.be.true;
-				expect(draftLog.users[(clients[clientIndex] as any).query.userID].cards).to.be.not.empty;
+				expect(draftLog.users[getUID(clients[clientIndex])].cards).to.be.not.empty;
 				for (let i = 0; i < clients.length; ++i)
-					if (i !== clientIndex) expect(draftLog.users[(clients[i] as any).query.userID].cards).to.be.empty;
+					if (i !== clientIndex) expect(draftLog.users[getUID(clients[i])].cards).to.be.empty;
 			}
 		);
 
@@ -182,8 +181,7 @@ describe("Draft Logs", function () {
 			setSettings("none", false),
 			(clientIndex, draftLog) => {
 				expect(draftLog.personalLogs).to.be.false;
-				for (let i = 0; i < clients.length; ++i)
-					expect(draftLog.users[(clients[i] as any).query.userID].cards).to.be.empty;
+				for (let i = 0; i < clients.length; ++i) expect(draftLog.users[getUID(clients[i])].cards).to.be.empty;
 			}
 		);
 	}
@@ -192,7 +190,7 @@ describe("Draft Logs", function () {
 		it("When session owner launches draft, everyone should receive a startDraft event", function (done) {
 			let connectedClients = 0;
 			let receivedBoosters = 0;
-			for (let c in clients) {
+			for (const c in clients) {
 				clients[c].once("startDraft", () => {
 					connectedClients += 1;
 					if (connectedClients == clients.length && receivedBoosters == clients.length) done();
@@ -240,7 +238,7 @@ describe("Draft Logs", function () {
 	const startRochesterDraft = () => {
 		it("When session owner launch Rochester draft, everyone should receive a startRochesterDraft event", function (done) {
 			let connectedClients = 0;
-			for (let c of clients) {
+			for (const c of clients) {
 				c.once("startRochesterDraft", function (state) {
 					connectedClients += 1;
 					if (connectedClients == clients.length) {
@@ -270,7 +268,7 @@ describe("Draft Logs", function () {
 				});
 			};
 			clients[c].on("rochesterDraftNextRound", function (state) {
-				if (state.currentPlayer === (clients[c] as any).query.userID) pick(state);
+				if (state.currentPlayer === getUID(clients[c])) pick(state);
 			});
 			clients[c].once("draftLog", function (draftLog) {
 				draftEnded += 1;
@@ -280,7 +278,7 @@ describe("Draft Logs", function () {
 			});
 		}
 		// Pick the first card
-		let currPlayer = clients.findIndex((c) => (c as any).query.userID == rochesterDraftState!.currentPlayer);
+		const currPlayer = clients.findIndex((c) => getUID(c) === rochesterDraftState!.currentPlayer);
 		clients[currPlayer].emit("rochesterDraftPick", [0], ackNoError);
 	};
 	test("Rochester Draft", startRochesterDraft, endRochesterDraft);

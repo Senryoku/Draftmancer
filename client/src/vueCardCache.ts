@@ -182,15 +182,15 @@ const cardCachePlugin = {
 	requestBulk(cardIDs: CardID[]): Promise<any[]> | null {
 		cardIDs = cardIDs.filter((cid) => !this.cardCache.value[cid]); // Request only missing cards
 		if (cardIDs.length === 0) return null;
-		let promises = [];
+		const promises = [];
 		// Scryfall API accepts requests for maximum 75 cards at once.
 		if (cardIDs.length > 75) {
-			let rest = cardIDs.slice(75);
+			const rest = cardIDs.slice(75);
 			promises.push(this.requestBulk(rest));
 			cardIDs = cardIDs.slice(0, 75);
 		}
-		let identifiers = [];
-		for (let cid of cardIDs) {
+		const identifiers = [];
+		for (const cid of cardIDs) {
 			identifiers.push({ id: cid });
 			this.cardCache.value[cid] = { id: cid, status: "pending" };
 		}
@@ -199,17 +199,17 @@ const cardCachePlugin = {
 				.post(`https://api.scryfall.com/cards/collection`, { identifiers }, { timeout: 10000 })
 				.then((response) => {
 					if (response.status === 200) {
-						for (let card of response.data.data) {
+						for (const card of response.data.data) {
 							card.status = "ready";
 							this.cardCache.value[card.id] = card;
 						}
 					}
-					for (let cid of cardIDs)
+					for (const cid of cardIDs)
 						if (this.cardCache.value[cid].status !== "ready") delete this.cardCache.value[cid];
 				})
 				.catch((error) => {
 					console.error("Error fetching card data:", error);
-					for (let cid of cardIDs) delete this.cardCache.value[cid];
+					for (const cid of cardIDs) delete this.cardCache.value[cid];
 				})
 		);
 		return Promise.all(promises);

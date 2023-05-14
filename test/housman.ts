@@ -11,6 +11,7 @@ import {
 	waitForSocket,
 	waitForClientDisconnects,
 	ackNoError,
+	getUID,
 } from "./src/common.js";
 import { HousmanDraftSyncData } from "../src/HousmanDraft.js";
 import { random } from "../src/utils.js";
@@ -27,14 +28,14 @@ for (const settings of [
 ])
 	describe(`Housman Draft: ${JSON.stringify(settings)}`, function () {
 		let clients: ReturnType<typeof makeClients> = [];
-		let sessionID = "sessionID";
+		const sessionID = "sessionID";
 		let ownerIdx: number;
 		let nonOwnerIdx: number;
-		let states: Record<string, HousmanDraftSyncData> = {};
+		const states: Record<string, HousmanDraftSyncData> = {};
 
 		const getCurrentPlayer = () => {
-			const currentPlayerID = states[(clients[ownerIdx] as any).query.userID].currentPlayer;
-			const currentPlayerIdx = clients.findIndex((c) => (c as any).query.userID === currentPlayerID);
+			const currentPlayerID = states[getUID(clients[ownerIdx])].currentPlayer;
+			const currentPlayerIdx = clients.findIndex((c) => getUID(c) === currentPlayerID);
 			return clients[currentPlayerIdx];
 		};
 
@@ -61,7 +62,7 @@ for (const settings of [
 
 		after(function (done) {
 			disableLogs();
-			for (let c of clients) {
+			for (const c of clients) {
 				c.disconnect();
 			}
 			waitForClientDisconnects(done);
@@ -73,16 +74,16 @@ for (const settings of [
 		});
 
 		it("When session owner launch Housman draft, everyone should receive a startHousmanDraft event", function (done) {
-			ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);
+			ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
 			nonOwnerIdx = (ownerIdx + 1) % clients.length;
 			let receivedStates = 0;
 			for (const c of clients) {
 				c.on("housmanDraftSync", function (state) {
-					states[(c as any).query.userID] = state;
+					states[getUID(c)] = state;
 				});
 				c.once("startHousmanDraft", function (state) {
 					receivedStates += 1;
-					states[(c as any).query.userID] = state;
+					states[getUID(c)] = state;
 					expect(state.exchangeNum).to.equal(0);
 					expect(state.roundNum).to.equal(0);
 					expect(state.currentPlayer).to.exist;
@@ -116,12 +117,12 @@ for (const settings of [
 						expect(index, "index should exist").to.exist;
 						expect(card, "card should exist").to.exist;
 						expect(currentPlayer, "currentPlayer should exist").to.exist;
-						states[(clients[c] as any).query.userID].revealedCards[index] = card;
-						states[(clients[c] as any).query.userID].currentPlayer = currentPlayer;
+						states[getUID(clients[c])].revealedCards[index] = card;
+						states[getUID(clients[c])].currentPlayer = currentPlayer;
 						if (nextExchange === clients.length) done();
 					});
 				}
-				randomPick(getCurrentPlayer(), states[(getCurrentPlayer() as any).query.userID]);
+				randomPick(getCurrentPlayer(), states[getUID(getCurrentPlayer())]);
 			});
 		}
 
@@ -136,7 +137,7 @@ for (const settings of [
 
 		it("Non-owner reconnects, draft restarts.", function (done) {
 			clients[nonOwnerIdx].once("rejoinHousmanDraft", function (data) {
-				states[(clients[nonOwnerIdx] as any).query.userID] = data.state;
+				states[getUID(clients[nonOwnerIdx])] = data.state;
 				done();
 			});
 			clients[nonOwnerIdx].connect();
@@ -153,7 +154,7 @@ for (const settings of [
 
 		it("Owner reconnects, draft restarts.", function (done) {
 			clients[ownerIdx].once("rejoinHousmanDraft", function () {
-				ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);
+				ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
 				nonOwnerIdx = (ownerIdx + 1) % clients.length;
 				done();
 			});
@@ -172,7 +173,7 @@ for (const settings of [
 			clients[ownerIdx].once("rejoinHousmanDraft", function (data) {
 				expect(data.pickedCards).to.exist;
 				expect(data.state).to.exist;
-				states[(clients[ownerIdx] as any).query.userID] = data.state;
+				states[getUID(clients[ownerIdx])] = data.state;
 				done();
 			});
 			clients[ownerIdx].connect();
@@ -182,7 +183,7 @@ for (const settings of [
 			clients[nonOwnerIdx].once("rejoinHousmanDraft", function (data) {
 				expect(data.pickedCards).to.exist;
 				expect(data.state).to.exist;
-				states[(clients[nonOwnerIdx] as any).query.userID] = data.state;
+				states[getUID(clients[nonOwnerIdx])] = data.state;
 				done();
 			});
 			clients[nonOwnerIdx].connect();
@@ -193,23 +194,20 @@ for (const settings of [
 			let draftEnded = 0;
 
 			let nextExchange = 0;
-			let round = 0;
 			for (let c = 0; c < clients.length; ++c) {
 				clients[c].on("housmanDraftExchange", function (index, card, currentPlayer) {
 					++nextExchange;
 					expect(index).to.exist;
 					expect(card).to.exist;
 					expect(currentPlayer).to.exist;
-					states[(clients[c] as any).query.userID].revealedCards[index] = card;
-					states[(clients[c] as any).query.userID].currentPlayer = currentPlayer;
+					states[getUID(clients[c])].revealedCards[index] = card;
+					states[getUID(clients[c])].currentPlayer = currentPlayer;
 					if (nextExchange === clients.length && draftEnded === 0) {
 						nextExchange = 0;
-						randomPick(getCurrentPlayer(), states[(getCurrentPlayer() as any).query.userID]);
+						randomPick(getCurrentPlayer(), states[getUID(getCurrentPlayer())]);
 					}
 				});
-				clients[c].on("housmanDraftRoundEnd", function (pickedCards) {
-					++round;
-				});
+				clients[c].on("housmanDraftRoundEnd", () => {});
 				clients[c].once("housmanDraftEnd", function () {
 					draftEnded += 1;
 					clients[c].removeListener("housmanDraftExchange");
@@ -218,6 +216,6 @@ for (const settings of [
 					if (draftEnded == clients.length) done();
 				});
 			}
-			randomPick(getCurrentPlayer(), states[(getCurrentPlayer() as any).query.userID]);
+			randomPick(getCurrentPlayer(), states[getUID(getCurrentPlayer())]);
 		});
 	});

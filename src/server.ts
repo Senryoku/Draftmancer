@@ -17,8 +17,15 @@ import { v1 as uuidv1 } from "uuid";
 
 import { Options, shuffleArray } from "./utils.js";
 import { ackError, isSocketError, isMessageError, Message, MessageWarning, SocketAck, SocketError } from "./Message.js";
-import Constants from "./Constants.js";
-import { InactiveConnections, InactiveSessions, dumpError, restoreSession, getPoDSession } from "./Persistence.js";
+import { Constants } from "./Constants.js";
+import {
+	InactiveConnections,
+	InactiveSessions,
+	dumpError,
+	restoreSession,
+	getPoDSession,
+	copyPODProps,
+} from "./Persistence.js";
 import { Connection, Connections } from "./Connection.js";
 import { DistributionMode, DraftLogRecipients, ReadyState } from "./Session/SessionTypes";
 import { Session, Sessions, getPublicSessionData } from "./Session.js";
@@ -42,9 +49,10 @@ import { hasProperty, isArrayOf, isBoolean, isNumber, isObject, isSomeEnum, isSt
 import { instanceOfTurnBased } from "./IDraftState.js";
 import { ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData } from "./SocketType.js";
 import { IIndexable, SetCode } from "./Types.js";
-import SessionsSettingsProps from "./Session/SessionProps.js";
+import { SessionsSettingsProps } from "./Session/SessionProps.js";
 import { isRotisserieDraftState, RotisserieDraftStartOptions } from "./RotisserieDraft.js";
 import { BracketPlayer } from "./Brackets.js";
+import { getQueueStatus, registerPlayer, unregisterPlayer } from "./draftQueue/DraftQueue.js";
 
 const app = express();
 const httpServer = new http.Server(app);
@@ -548,7 +556,7 @@ function startRotisserieDraft(
 	ack: (s: SocketAck) => void
 ) {
 	const sess = Sessions[sessionID];
-	let ret = sess.startRotisserieDraft(options);
+	const ret = sess.startRotisserieDraft(options);
 	if (!isMessageError(ret)) startPublicSession(sess);
 	ack(ret);
 }
@@ -700,7 +708,7 @@ function setSessionOwner(userID: UserID, sessionID: SessionID, newOwnerID: UserI
 		Connections[user]?.socket.emit(
 			"sessionOwner",
 			sess.owner,
-			sess.owner in Connections ? Connections[sess.owner].userName : null
+			sess.owner && sess.owner in Connections ? Connections[sess.owner].userName : null
 		)
 	);
 }
@@ -1319,11 +1327,9 @@ io.on("connection", async function (socket) {
 	if (userID in InactiveConnections) {
 		// Restore previously saved connection
 		// TODO: Front and Back end may be out of sync after this!
-		InactiveConnections[userID].socket = socket;
+		console.log("Restoring connection...", InactiveConnections[userID]);
 		const connection = new Connection(socket, userID, query.userName as string);
-		for (const prop of Object.getOwnPropertyNames(InactiveConnections[userID])) {
-			(connection as IIndexable)[prop] = InactiveConnections[userID][prop];
-		}
+		copyPODProps(connection, InactiveConnections[userID]);
 		Connections[userID] = connection;
 		delete InactiveConnections[userID];
 	} else {
@@ -1352,28 +1358,9 @@ io.on("connection", async function (socket) {
 		}
 	});
 
-	socket.on("error", function (err: any) {
+	socket.on("error", function (err) {
 		console.error("Socket.io error: ");
 		console.error(err);
-	});
-
-	socket.on("setSession", function (this: typeof socket, sessionID: SessionID, sessionSettings: Options) {
-		try {
-			const userID = this.data.userID;
-			if (!userID) {
-				console.error("setSession Error: Missing userID on socket.");
-				return;
-			}
-			if (sessionID === Connections[userID].sessionID) return;
-
-			const filteredSettings: Options = {};
-			if (sessionSettings)
-				for (const prop of Object.keys(SessionsSettingsProps))
-					if (prop in sessionSettings) filteredSettings[prop] = sessionSettings[prop];
-			joinSession(sessionID, userID, filteredSettings);
-		} catch (e) {
-			console.error("Error in socket event setSession: ", e);
-		}
 	});
 
 	if (process.env.NODE_ENV === undefined) {
@@ -1407,84 +1394,123 @@ io.on("connection", async function (socket) {
 	socket.on("updateDeckLands", prepareSocketCallback(updateDeckLands));
 	socket.on("moveCard", prepareSocketCallback(moveCard));
 
-	// Owner Only
-	socket.on("readyCheck", prepareSocketCallback(readyCheck, true));
-	socket.on("startDraft", prepareSocketCallback(startDraft, true));
-	socket.on("stopDraft", prepareSocketCallback(stopDraft, true));
-	socket.on("pauseDraft", prepareSocketCallback(pauseDraft, true));
-	socket.on("resumeDraft", prepareSocketCallback(resumeDraft, true));
-	socket.on("startGridDraft", prepareSocketCallback(startGridDraft, true));
-	socket.on("startRochesterDraft", prepareSocketCallback(startRochesterDraft, true));
-	socket.on("startRotisserieDraft", prepareSocketCallback(startRotisserieDraft, true));
-	socket.on("startWinstonDraft", prepareSocketCallback(startWinstonDraft, true));
-	socket.on("startWinchesterDraft", prepareSocketCallback(startWinchesterDraft, true));
-	socket.on("startHousmanDraft", prepareSocketCallback(startHousmanDraft, true));
-	socket.on("startMinesweeperDraft", prepareSocketCallback(startMinesweeperDraft, true));
-	socket.on("startSolomonDraft", prepareSocketCallback(startSolomonDraft, true));
-	socket.on("startTeamSealed", prepareSocketCallback(startTeamSealed, true));
-	socket.on("distributeJumpstart", prepareSocketCallback(distributeJumpstart, true));
-	socket.on("distributeSealed", prepareSocketCallback(distributeSealed, true));
-	socket.on("setSessionOwner", prepareSocketCallback(setSessionOwner, true));
-	socket.on("setOwnerIsPlayer", prepareSocketCallback(setOwnerIsPlayer, true));
-	socket.on("removePlayer", prepareSocketCallback(removePlayer, true));
-	socket.on("setSeating", prepareSocketCallback(setSeating, true));
-	socket.on("boostersPerPlayer", prepareSocketCallback(boostersPerPlayer, true));
-	socket.on("cardsPerBooster", prepareSocketCallback(cardsPerBooster, true));
-	socket.on("teamDraft", prepareSocketCallback(teamDraft, true));
-	socket.on("setRandomizeSeatingOrder", prepareSocketCallback(setRandomizeSeatingOrder, true));
-	socket.on("setDisableBotSuggestions", prepareSocketCallback(setDisableBotSuggestions, true));
-	socket.on("setDistributionMode", prepareSocketCallback(setDistributionMode, true));
-	socket.on("setCustomBoosters", prepareSocketCallback(setCustomBoosters, true));
-	socket.on("setBots", prepareSocketCallback(setBots, true));
-	socket.on("setRestriction", prepareSocketCallback(setRestriction, true));
-	socket.on("parseCustomCardList", prepareSocketCallback(parseCustomCardListEvent, true));
-	socket.on("importCube", prepareSocketCallback(importCube, true));
-	socket.on("loadLocalCustomCardList", prepareSocketCallback(loadLocalCustomCardList, true));
-	socket.on("ignoreCollections", prepareSocketCallback(ignoreCollections, true));
-	socket.on("setPickTimer", prepareSocketCallback(setPickTimer, true));
-	socket.on("setMaxPlayers", prepareSocketCallback(setMaxPlayers, true));
-	socket.on("setMythicPromotion", prepareSocketCallback(setMythicPromotion, true));
-	socket.on("setUseBoosterContent", prepareSocketCallback(setUseBoosterContent, true));
-	socket.on("setBoosterContent", prepareSocketCallback(setBoosterContent, true));
-	socket.on("setUsePredeterminedBoosters", prepareSocketCallback(setUsePredeterminedBoosters, true));
-	socket.on("setBoosters", prepareSocketCallback(setBoosters, true));
-	socket.on("shuffleBoosters", prepareSocketCallback(shuffleBoosters, true));
-	socket.on("setPersonalLogs", prepareSocketCallback(setPersonalLogs, true));
-	socket.on("setDraftLogRecipients", prepareSocketCallback(setDraftLogRecipients, true));
-	socket.on("setMaxDuplicates", prepareSocketCallback(setMaxDuplicates, true));
-	socket.on("setColorBalance", prepareSocketCallback(setColorBalance, true));
-	socket.on("setFoil", prepareSocketCallback(setFoil, true));
-	socket.on("setCollationType", prepareSocketCallback(setCollationType, true));
-	socket.on("setUseCustomCardList", prepareSocketCallback(setUseCustomCardList, true));
-	socket.on("setCustomCardListWithReplacement", prepareSocketCallback(setCustomCardListWithReplacement, true));
-	socket.on("setDoubleMastersMode", prepareSocketCallback(setDoubleMastersMode, true));
-	socket.on("setPickedCardsPerRound", prepareSocketCallback(setPickedCardsPerRound, true));
-	socket.on("setBurnedCardsPerRound", prepareSocketCallback(setBurnedCardsPerRound, true));
-	socket.on("setDiscardRemainingCardsAt", prepareSocketCallback(setDiscardRemainingCardsAt, true));
-	socket.on("setPublic", prepareSocketCallback(setPublic, true));
-	socket.on("setDescription", prepareSocketCallback(setDescription, true));
-	socket.on("replaceDisconnectedPlayers", prepareSocketCallback(replaceDisconnectedPlayers, true));
-	socket.on("generateBracket", prepareSocketCallback(generateBracket, true));
-	socket.on("generateSwissBracket", prepareSocketCallback(generateSwissBracket, true));
-	socket.on("generateDoubleBracket", prepareSocketCallback(generateDoubleBracket, true));
-	socket.on("lockBracket", prepareSocketCallback(lockBracket, true));
-	socket.on("shareDraftLog", prepareSocketCallback(shareDraftLog, true));
+	if (query.sessionID) {
+		socket.on("setSession", function (this: typeof socket, sessionID: SessionID, sessionSettings: Options) {
+			try {
+				const userID = this.data.userID;
+				if (!userID) {
+					console.error("setSession Error: Missing userID on socket.");
+					return;
+				}
+				if (sessionID === Connections[userID].sessionID) return;
 
-	// Apply preferred session settings in case we're creating a new one, filtering out invalid ones.
-	const filteredSettings: Options = {};
-	try {
-		if (query.sessionSettings) {
-			const sessionSettings: Options = JSON.parse(query.sessionSettings as string);
-			for (const prop of Object.keys(SessionsSettingsProps))
-				if (prop in sessionSettings && SessionsSettingsProps[prop](sessionSettings[prop]))
-					filteredSettings[prop] = sessionSettings[prop];
+				const filteredSettings: Options = {};
+				if (sessionSettings)
+					for (const prop of Object.keys(SessionsSettingsProps))
+						if (prop in sessionSettings) filteredSettings[prop] = sessionSettings[prop];
+				joinSession(sessionID, userID, filteredSettings);
+			} catch (e) {
+				console.error("Error in socket event setSession: ", e);
+			}
+		});
+
+		// Owner Only
+		socket.on("readyCheck", prepareSocketCallback(readyCheck, true));
+		socket.on("startDraft", prepareSocketCallback(startDraft, true));
+		socket.on("stopDraft", prepareSocketCallback(stopDraft, true));
+		socket.on("pauseDraft", prepareSocketCallback(pauseDraft, true));
+		socket.on("resumeDraft", prepareSocketCallback(resumeDraft, true));
+		socket.on("startGridDraft", prepareSocketCallback(startGridDraft, true));
+		socket.on("startRochesterDraft", prepareSocketCallback(startRochesterDraft, true));
+		socket.on("startRotisserieDraft", prepareSocketCallback(startRotisserieDraft, true));
+		socket.on("startWinstonDraft", prepareSocketCallback(startWinstonDraft, true));
+		socket.on("startWinchesterDraft", prepareSocketCallback(startWinchesterDraft, true));
+		socket.on("startHousmanDraft", prepareSocketCallback(startHousmanDraft, true));
+		socket.on("startMinesweeperDraft", prepareSocketCallback(startMinesweeperDraft, true));
+		socket.on("startSolomonDraft", prepareSocketCallback(startSolomonDraft, true));
+		socket.on("startTeamSealed", prepareSocketCallback(startTeamSealed, true));
+		socket.on("distributeJumpstart", prepareSocketCallback(distributeJumpstart, true));
+		socket.on("distributeSealed", prepareSocketCallback(distributeSealed, true));
+		socket.on("setSessionOwner", prepareSocketCallback(setSessionOwner, true));
+		socket.on("setOwnerIsPlayer", prepareSocketCallback(setOwnerIsPlayer, true));
+		socket.on("removePlayer", prepareSocketCallback(removePlayer, true));
+		socket.on("setSeating", prepareSocketCallback(setSeating, true));
+		socket.on("boostersPerPlayer", prepareSocketCallback(boostersPerPlayer, true));
+		socket.on("cardsPerBooster", prepareSocketCallback(cardsPerBooster, true));
+		socket.on("teamDraft", prepareSocketCallback(teamDraft, true));
+		socket.on("setRandomizeSeatingOrder", prepareSocketCallback(setRandomizeSeatingOrder, true));
+		socket.on("setDisableBotSuggestions", prepareSocketCallback(setDisableBotSuggestions, true));
+		socket.on("setDistributionMode", prepareSocketCallback(setDistributionMode, true));
+		socket.on("setCustomBoosters", prepareSocketCallback(setCustomBoosters, true));
+		socket.on("setBots", prepareSocketCallback(setBots, true));
+		socket.on("setRestriction", prepareSocketCallback(setRestriction, true));
+		socket.on("parseCustomCardList", prepareSocketCallback(parseCustomCardListEvent, true));
+		socket.on("importCube", prepareSocketCallback(importCube, true));
+		socket.on("loadLocalCustomCardList", prepareSocketCallback(loadLocalCustomCardList, true));
+		socket.on("ignoreCollections", prepareSocketCallback(ignoreCollections, true));
+		socket.on("setPickTimer", prepareSocketCallback(setPickTimer, true));
+		socket.on("setMaxPlayers", prepareSocketCallback(setMaxPlayers, true));
+		socket.on("setMythicPromotion", prepareSocketCallback(setMythicPromotion, true));
+		socket.on("setUseBoosterContent", prepareSocketCallback(setUseBoosterContent, true));
+		socket.on("setBoosterContent", prepareSocketCallback(setBoosterContent, true));
+		socket.on("setUsePredeterminedBoosters", prepareSocketCallback(setUsePredeterminedBoosters, true));
+		socket.on("setBoosters", prepareSocketCallback(setBoosters, true));
+		socket.on("shuffleBoosters", prepareSocketCallback(shuffleBoosters, true));
+		socket.on("setPersonalLogs", prepareSocketCallback(setPersonalLogs, true));
+		socket.on("setDraftLogRecipients", prepareSocketCallback(setDraftLogRecipients, true));
+		socket.on("setMaxDuplicates", prepareSocketCallback(setMaxDuplicates, true));
+		socket.on("setColorBalance", prepareSocketCallback(setColorBalance, true));
+		socket.on("setFoil", prepareSocketCallback(setFoil, true));
+		socket.on("setCollationType", prepareSocketCallback(setCollationType, true));
+		socket.on("setUseCustomCardList", prepareSocketCallback(setUseCustomCardList, true));
+		socket.on("setCustomCardListWithReplacement", prepareSocketCallback(setCustomCardListWithReplacement, true));
+		socket.on("setDoubleMastersMode", prepareSocketCallback(setDoubleMastersMode, true));
+		socket.on("setPickedCardsPerRound", prepareSocketCallback(setPickedCardsPerRound, true));
+		socket.on("setBurnedCardsPerRound", prepareSocketCallback(setBurnedCardsPerRound, true));
+		socket.on("setDiscardRemainingCardsAt", prepareSocketCallback(setDiscardRemainingCardsAt, true));
+		socket.on("setPublic", prepareSocketCallback(setPublic, true));
+		socket.on("setDescription", prepareSocketCallback(setDescription, true));
+		socket.on("replaceDisconnectedPlayers", prepareSocketCallback(replaceDisconnectedPlayers, true));
+		socket.on("generateBracket", prepareSocketCallback(generateBracket, true));
+		socket.on("generateSwissBracket", prepareSocketCallback(generateSwissBracket, true));
+		socket.on("generateDoubleBracket", prepareSocketCallback(generateDoubleBracket, true));
+		socket.on("lockBracket", prepareSocketCallback(lockBracket, true));
+		socket.on("shareDraftLog", prepareSocketCallback(shareDraftLog, true));
+
+		// Apply preferred session settings in case we're creating a new one, filtering out invalid ones.
+		const filteredSettings: Options = {};
+		try {
+			if (query.sessionSettings) {
+				const sessionSettings: Options = JSON.parse(query.sessionSettings as string);
+				for (const prop of Object.keys(SessionsSettingsProps))
+					if (prop in sessionSettings && SessionsSettingsProps[prop](sessionSettings[prop]))
+						filteredSettings[prop] = sessionSettings[prop];
+			}
+		} catch (e) {
+			console.error("Error parsing default session setting on user connection: ", e);
+			console.error("query.sessionSettings: ", query.sessionSettings);
 		}
-	} catch (e) {
-		console.error("Error parsing default session setting on user connection: ", e);
-		console.error("query.sessionSettings: ", query.sessionSettings);
+		joinSession(query.sessionID as string, userID, filteredSettings);
+	} else {
+		// Not in a session, allow registering to draft queues.
+		socket.on(
+			"draftQueueRegister",
+			function (this: typeof socket, setCode: unknown, ack: (result: SocketAck) => void) {
+				const userID = this.data.userID;
+				if (!userID) return ack?.(new SocketError("Internal Error."));
+				if (!isString(setCode)) return ack?.(new SocketError("Invalid setCode parameter."));
+				const r = registerPlayer(userID, setCode);
+				ack(r);
+			}
+		);
+		socket.on("draftQueueUnregister", function (this: typeof socket, ack: (result: SocketAck) => void) {
+			const userID = this.data.userID;
+			if (!userID) return ack?.(new SocketError("Internal Error."));
+			const r = unregisterPlayer(userID);
+			ack(r);
+		});
 	}
 
-	joinSession(query.sessionID as string, userID, filteredSettings);
 	socket.emit("publicSessions", getPublicSessions());
 });
 
@@ -1549,6 +1575,8 @@ function joinSession(sessionID: SessionID, userID: UserID, defaultSessionSetting
 					`This session (${sessionID}) is currently drafting. Please wait for them to finish.${bracketLink}`
 				);
 			}
+		} else if (sess.managed) {
+			refuse(`This session (${sessionID}) is closed.`);
 		} else if (sess.getHumanPlayerCount() >= sess.maxPlayers) {
 			// Session exists and is full
 			refuse(
@@ -1603,10 +1631,10 @@ function removeUserFromSession(userID: UserID) {
 			Connections[userID].sessionID = undefined;
 
 			//                           Keep session alive if the owner wasn't a player and is still connected.
-			if (sess.users.size === 0 && (sess.ownerIsPlayer || !(sess.owner in Connections))) {
+			if (sess.users.size === 0 && (sess.ownerIsPlayer || !(sess.owner && sess.owner in Connections))) {
 				// If a game was going, we'll keep the session around for a while in case a player reconnects
 				// (mostly useful in case of disconnection during a single player game)
-				if (sess.drafting) {
+				if (sess.drafting && !sess.managed) {
 					InactiveSessions[sessionID] = getPoDSession(sess);
 					// Keep Rotisserie Draft around since they're typically played over long period of time.
 					if (!isRotisserieDraftState(sess.draftState))
@@ -1631,6 +1659,8 @@ function removeUserFromSession(userID: UserID) {
 // Serve files in the public directory
 app.use(express.static("./client/dist/"));
 app.use("/bracket", express.static("./client/dist/bracket.html"));
+
+app.use("/draftqueue", express.static("./client/dist/index.html"));
 
 ///////////////////////////////////////////////////////////////////////////////
 // Endpoints
@@ -1842,6 +1872,10 @@ app.get("/getSessions/:key", requireAPIKey, (req, res) => {
 			setRestriction: Sessions[sid].setRestriction,
 		};
 	return returnCircularJSON(res, localSess);
+});
+
+app.get("/api/getDraftQueueStatus", (req, res) => {
+	return res.json(getQueueStatus());
 });
 
 Promise.all([InactiveConnections, InactiveSessions]).then(() => {

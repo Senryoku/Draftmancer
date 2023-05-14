@@ -10,17 +10,31 @@
 			"parser": "@typescript-eslint/parser",
 			"extends": [
 				"eslint:recommended",
+				"plugin:@typescript-eslint/recommended",
 				"plugin:import/recommended",
 				"plugin:import/typescript",
-				"plugin:@typescript-eslint/eslint-recommended",
-				"plugin:@typescript-eslint/recommended",
 				"prettier"
 			],
-			"plugins": ["@typescript-eslint"],
+			"plugins": ["import", "@typescript-eslint"],
 			"rules": {
 				"no-param-reassign": "warn",
+				"no-empty-function": "off",
+				"@typescript-eslint/no-empty-function": "off",
 				"@typescript-eslint/no-inferrable-types": ["off", { "ignoreRestArgs": true }],
-				"import/extensions": ["error", "ignorePackages"]
+				"@typescript-eslint/no-non-null-assertion": "off",
+				"import/extensions": [
+					"error",
+					"ignorePackages",
+					{
+						"js": "ignorePackages",
+						"ts": "never"
+					}
+				]
+			},
+			"settings": {
+				"import/resolver": {
+					"typescript": {} // this loads <rootdir>/tsconfig.json to eslint
+				}
 			}
 		},
 		// Client side
@@ -35,16 +49,23 @@
 				"parser": "@typescript-eslint/parser"
 			},
 			"extends": [
-				"plugin:vue/strongly-recommended",
 				"eslint:recommended",
-				"plugin:vue/essential",
-				"@vue/typescript/recommended",
+				"plugin:@typescript-eslint/recommended",
+				"plugin:vue/vue3-essential",
 				"prettier"
 			],
 			"plugins": ["@typescript-eslint", "prettier"],
 			"rules": {
 				"prettier/prettier": "error",
-				"vue/no-multiple-template-root": "off"
+				"@typescript-eslint/no-non-null-assertion": "off",
+				"vue/no-multiple-template-root": "off",
+				"vue/multi-word-component-names": "off",
+				"vue/no-mutating-props": [
+					"error",
+					{
+						"shallowOnly": true
+					}
+				]
 			}
 		},
 		{

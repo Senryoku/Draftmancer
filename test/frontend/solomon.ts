@@ -20,9 +20,9 @@ async function pickSolomon(page: Page) {
 	const drafting = await page.$$("#draft-in-progress");
 	if (drafting.length === 0) return true;
 
-	let next = await page.$$("xpath///*[contains(., 'Your turn')] | //*[contains(., 'Waiting for')]");
+	const next = await page.$$("xpath///*[contains(., 'Your turn')] | //*[contains(., 'Waiting for')]");
 	if (next.length === 0) return false;
-	let text = await next[0].evaluate((el) => (el as HTMLElement).innerText);
+	const text = await next[0].evaluate((el) => (el as HTMLElement).innerText);
 	if (text.includes("Waiting for")) return false;
 
 	if (text.includes("pick")) {

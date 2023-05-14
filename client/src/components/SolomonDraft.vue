@@ -54,12 +54,17 @@
 								<div v-for="round in state.lastPicks" :key="round.round">
 									<h2>Round {{ round.round + 1 }}</h2>
 									<div style="display: flex; gap: 1em">
-										<div v-for="(p, idx) in round.picks">
+										<div v-for="(p, idx) in round.picks" :key="idx">
 											<div style="text-align: center">
 												{{ sessionUsers[state.players[idx]]?.userName ?? "Disconnected" }}
 											</div>
 											<div class="card-column" style="width: 200px">
-												<card v-for="card in p" :card="card" :language="language" />
+												<card
+													v-for="card in p"
+													:card="card"
+													:language="language"
+													:key="card.uniqueID"
+												/>
 											</div>
 										</div>
 									</div>

@@ -2,11 +2,11 @@ import { before, after, beforeEach, afterEach, describe, it } from "mocha";
 import chai from "chai";
 const expect = chai.expect;
 import { Sessions } from "../src/Session.js";
-import { makeClients, waitForClientDisconnects, enableLogs, disableLogs, ackNoError } from "./src/common.js";
+import { makeClients, waitForClientDisconnects, enableLogs, disableLogs, ackNoError, getUID } from "./src/common.js";
 
 describe("Brackets", function () {
 	let clients: ReturnType<typeof makeClients> = [];
-	let sessionID = "SessionID";
+	const sessionID = "SessionID";
 	let ownerIdx: number = 0;
 
 	beforeEach(function (done) {
@@ -20,21 +20,21 @@ describe("Brackets", function () {
 	});
 
 	before(function (done) {
-		let queries = [];
+		const queries = [];
 		for (let i = 0; i < 8; ++i)
 			queries.push({
 				sessionID: sessionID,
 				userName: "DontCare",
 			});
 		clients = makeClients(queries, () => {
-			ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);
+			ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
 			done();
 		});
 	});
 
 	after(function (done) {
 		disableLogs();
-		for (let c of clients) {
+		for (const c of clients) {
 			c.disconnect();
 		}
 

@@ -235,15 +235,20 @@ export class Bot implements IBot {
 			numPicks,
 			seed: Math.floor(Math.random() * 65536),
 		};
+		const baseRatings: number[] = booster.map((c: Card) => c.rating);
 		try {
 			const response = await axios.post(
 				getMTGDraftBotsURL(this.parameters),
 				{ drafterState },
 				{ timeout: MTGDraftBotsAPITimeout }
 			);
-			if (response.status == 200 && response.data.success) {
+			if (response.status === 200 && response.data.success) {
 				let chosenOption = 0;
-				for (let i = 1; i < response.data.scores.length; ++i) {
+				for (let i = 0; i < response.data.scores.length; ++i) {
+					// Non-recognized cards will return a score of 0; Use the card rating as fallback if available (mostly useful for custom cards).
+					if (response.data.scores[i] === 0 && baseRatings[i])
+						response.data.scores[i] = 1.5 + (7.0 / 5.0) * baseRatings[i]; // Remap 0-5 to 1.5-8.5, totally arbitrary and only there to avoid bots completely ignoring custom cards.
+
 					if (response.data.scores[i] > response.data.scores[chosenOption]) chosenOption = i;
 				}
 				this.lastScores = {
@@ -308,6 +313,6 @@ export class Bot implements IBot {
 	}
 }
 
-export function isBot(obj: any): obj is IBot {
+export function isBot(obj: unknown): obj is IBot {
 	return obj instanceof Bot || obj instanceof SimpleBot;
 }

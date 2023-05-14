@@ -52,7 +52,7 @@ describe("Grid Draft", () => {
 			await Promise.all(
 				pages.map((page) => page.waitForXPath("//h2[contains(., 'Grid Draft')]", { timeout: 3000 }))
 			);
-			let promises = [];
+			const promises = [];
 			for (const page of pages) {
 				if ((await page.$x("//div[contains(., 'Draft Started!')]")).length > 0)
 					promises.push(
@@ -69,7 +69,7 @@ describe("Grid Draft", () => {
 			this.timeout(50000);
 			const done = Array(pages.length).fill(false);
 			while (done.some((d) => !d)) {
-				let promises = [];
+				const promises = [];
 				for (let i = 0; i < pages.length; i++) {
 					if (done[i]) promises.push(true);
 					else promises.push(pickCard(pages[i]));
@@ -88,7 +88,7 @@ describe("Grid Draft", () => {
 			await launchMode("Grid");
 			await waitAndClickSelector(pages[0], "button.swal2-confirm");
 
-			let promises = [];
+			const promises = [];
 			for (const page of pages)
 				promises.push(
 					page.waitForXPath("//div[contains(., 'Draft Started!')]", {
@@ -103,7 +103,7 @@ describe("Grid Draft", () => {
 			this.timeout(100000);
 			const done: boolean[] = Array(pages.length).fill(false);
 			while (done.some((d) => !d)) {
-				let promises = [];
+				const promises = [];
 				for (let i = 0; i < pages.length; i++) {
 					if (done[i]) promises.push(true);
 					else promises.push(pickCard(pages[i]));

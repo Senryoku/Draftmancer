@@ -22,7 +22,7 @@ jobs:
                   node-version: ${{ matrix.node-version }}
                   cache: "npm"
             - run: npm ci
-            - run: npm run build-ts
+            - run: npm run build-server
             - run: npm run client-type-check
             - run: npx webpack --config client/webpack.config.cjs --mode=production
             - run: mkdir screenshots

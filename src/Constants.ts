@@ -10,7 +10,7 @@ export type CubeDescription = {
 	cubeArtisanID?: string;
 };
 
-const Constants = _constants as {
+export const Constants = _constants as {
 	Languages: { code: string; name: string }[];
 	MTGASets: SetCode[];
 	AlchemySets: SetCode[];
@@ -20,6 +20,6 @@ const Constants = _constants as {
 	PrimarySets: SetCode[];
 };
 
-export const BasicLandNames = [...Object.values(Constants.BasicLandNames["en"])];
+export const EnglishBasicLandNames = [...Object.values(Constants.BasicLandNames["en"])];
 
 export default Constants;

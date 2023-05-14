@@ -115,7 +115,7 @@ describe("Custom Card List Parsing", function () {
 				1
 			);
 			const counts: Record<string, number> = {};
-			for (let name of boosters.map((b) => b[0].name)) counts[name] = counts[name] ? counts[name] + 1 : 1;
+			for (const name of boosters.map((b) => b[0].name)) counts[name] = counts[name] ? counts[name] + 1 : 1;
 			expect(Object.values(counts)[0]).to.equal(8);
 			for (const cardname in counts)
 				expect(counts[cardname], "All layouts should appear exactly 8 times.").to.be.equal(

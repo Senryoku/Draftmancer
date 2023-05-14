@@ -22,13 +22,14 @@ import { RochesterDraftSyncData } from "./RochesterDraft";
 import { MinesweeperSyncData, MinesweeperSyncDataDiff } from "./MinesweeperDraftTypes";
 import { DraftState } from "./DraftState";
 import { BotScores } from "./Bot";
-import SessionsSettingsProps from "./Session/SessionProps";
+import { SessionsSettingsProps } from "./Session/SessionProps";
 import { getPublicSessionData } from "./Session";
 import { JHHBooster } from "./JumpstartHistoricHorizons";
 import { RotisserieDraftStartOptions, RotisserieDraftSyncData } from "./RotisserieDraft";
 import { WinchesterDraftSyncData } from "./WinchesterDraft";
 import { HousmanDraftSyncData } from "./HousmanDraft";
 import { SolomonDraftSyncData } from "./SolomonDraft";
+import { QueueID } from "./draftQueue/QueueDescription";
 
 export type LoaderOptions = { title: string };
 
@@ -52,15 +53,20 @@ export interface ServerToClientEvents {
 	) => void;
 	updateUser: (data: { userID: UserID; updatedProperties: any }) => void; // FIXME
 
-	userDisconnected: (data: { owner: UserID; disconnectedUsers: { [uid: string]: any } }) => void; // FIXME
+	userDisconnected: (data: { owner?: UserID; disconnectedUsers: { [uid: string]: any } }) => void; // FIXME
 	sessionOptions: (sessionOptions: { [key: keyof typeof SessionsSettingsProps]: any }) => void; // FIXME: Specify allowed options and their types
 	setRestriction: (setRestriction: Array<SetCode>) => void;
 	ignoreCollections: (ignoreCollections: boolean) => void;
 	setPickTimer: (pickTimer: number) => void;
 	setMaxPlayers: (maxPlayers: number) => void;
-	sessionOwner: (owner: UserID, userName: string | null) => void;
+	sessionOwner: (owner: UserID | undefined, userName: string | null) => void;
 	isPublic: (isPublic: boolean) => void;
 	description: (description: string) => void;
+
+	// Draft Queue
+	draftQueueReadyCheck: (queue: QueueID, timeout: number, players: { status: ReadyState }[]) => void;
+	draftQueueReadyCheckUpdate: (queue: QueueID, players: { status: ReadyState }[]) => void;
+	draftQueueReadyCheckCancel: (queue: QueueID, backInQueue: boolean) => void;
 
 	draftLog: (draftLog: DraftLog) => void;
 	draftLogLive: (data: {
@@ -252,6 +258,11 @@ export interface ClientToServerEvents {
 	updateDeckLands: (lands: DeckBasicLands) => void;
 	moveCard: (uniqueID: UniqueCardID, destStr: string) => void;
 
+	// Draft Queue
+	draftQueueSetReadyState: (status: ReadyState) => void;
+	draftQueueRegister: (setCode: SetCode, ack: (result: SocketAck) => void) => void;
+	draftQueueUnregister: (ack: (result: SocketAck) => void) => void;
+
 	// Owner Only
 	setOwnerIsPlayer: (val: boolean) => void;
 	readyCheck: (ack: (result: SocketAck) => void) => void;
@@ -350,6 +361,7 @@ export interface ClientToServerEvents {
 	) => void;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface InterServerEvents {}
 
 export interface SocketData {

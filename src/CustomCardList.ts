@@ -3,8 +3,7 @@ import { CardID, Card, SlotedCardPool, UniqueCard, CardPool } from "./CardTypes.
 import { getCard } from "./Cards.js";
 import { pickCard } from "./cardUtils.js";
 import { MessageError } from "./Message.js";
-import { isEmpty, Options, random, weightedRandomIdx } from "./utils.js";
-import { shuffleArray } from "./utils.js";
+import { isEmpty, Options, random, weightedRandomIdx, shuffleArray } from "./utils.js";
 
 export type PackLayout = {
 	weight: number;
@@ -87,8 +86,8 @@ export function generateBoosterFromCustomCardList(
 			? // Predetermined layouts
 			  (index: number): string => {
 					const choices =
-						customCardList.settings?.predeterminedLayouts![
-							index % customCardList.settings?.predeterminedLayouts!.length
+						customCardList.settings!.predeterminedLayouts![
+							index % customCardList.settings!.predeterminedLayouts!.length
 						]!;
 					if (choices.length === 1) return choices[0].name;
 					return choices[

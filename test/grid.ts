@@ -12,12 +12,13 @@ import {
 	waitForClientDisconnects,
 	ackNoError,
 	connectClient,
+	getUID,
 } from "./src/common.js";
 import { TurnBased } from "../src/IDraftState.js";
 
 describe("Grid Draft", function () {
 	let clients: ReturnType<typeof makeClients> = [];
-	let sessionID = "sessionID";
+	const sessionID = "sessionID";
 	let ownerIdx = 0;
 	let nonOwnerIdx = 0;
 
@@ -51,7 +52,7 @@ describe("Grid Draft", function () {
 
 	after(function (done) {
 		disableLogs();
-		for (let c of clients) {
+		for (const c of clients) {
 			c.disconnect();
 		}
 		waitForClientDisconnects(done);
@@ -64,10 +65,10 @@ describe("Grid Draft", function () {
 
 	const startDraft = (boosterCount: number = 18) => {
 		it("When session owner launch Grid draft, everyone should receive a startGridDraft event", function (done) {
-			ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);
+			ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
 			nonOwnerIdx = 1 - ownerIdx;
 			let connectedClients = 0;
-			for (let c of clients) {
+			for (const c of clients) {
 				c.once("startGridDraft", function () {
 					++connectedClients;
 					if (connectedClients === clients.length) done();
@@ -101,8 +102,8 @@ describe("Grid Draft", function () {
 					if (draftEnded == clients.length) done();
 				});
 			}
-			let currentPlayerID = (Sessions[sessionID].draftState as TurnBased).currentPlayer();
-			let currentPlayerIdx = clients.findIndex((c) => (c as any).query.userID === currentPlayerID);
+			const currentPlayerID = (Sessions[sessionID].draftState as TurnBased).currentPlayer();
+			const currentPlayerIdx = clients.findIndex((c) => (c as any).query.userID === currentPlayerID);
 			clients[currentPlayerIdx].emit("gridDraftPick", Math.floor(Math.random() * 6), ackNoError);
 		});
 	};

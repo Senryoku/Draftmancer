@@ -1131,7 +1131,7 @@ ul.player-list {
 	display: inline-flex;
 	align-items: center;
 	justify-content: space-between;
-	width: 2.4em;
+	min-width: 2.6em;
 	will-change: transform;
 }
 
@@ -1294,6 +1294,20 @@ ul.player-list {
 	min-width: 200px;
 	background-color: rgba(0, 0, 0, 0.1);
 	border-radius: 6px;
+
+	transition: box-shadow 0.1s ease-in-out, background-color 0.1s ease-in-out;
+}
+
+.drag-column[drop-active="true"] {
+	/*box-shadow: -7px 0 5px -5px white, 7px 0 5px -5px white;*/
+	box-shadow: 0 0 4px 3px white;
+	background-color: rgba(255, 255, 255, 0.1);
+}
+/* :has isn't supported on Firefox yet, causing the whole rule to be ignored. This is duplicated on purpose. */
+.drag-column:has(.ghost),
+.drag-column[drop-active="true"] {
+	box-shadow: 0 0 4px 3px white;
+	background-color: rgba(255, 255, 255, 0.1);
 }
 
 /**** Draft Spectator ****/
@@ -1623,4 +1637,25 @@ See: https://stackoverflow.com/questions/52937708/why-does-applying-a-css-filter
 
 .v-popper--theme-dropdown.v-popper__popper {
 	z-index: 1010;
+}
+
+.timer-icon {
+	--timer-max: 75;
+	--timer-current: 75;
+	position: relative;
+}
+
+.timer-icon-moving {
+	position: absolute;
+	bottom: 6.6px;
+	left: calc(50% - 1px);
+	width: 2px;
+	height: 7px;
+	background-color: #222;
+	border-radius: 10px;
+
+	will-change: transform;
+	transform-origin: 50% calc(100% - 1px);
+	transition: transform 1s linear;
+	transform: rotate(calc(-360deg * min(var(--timer-max), var(--timer-current)) / var(--timer-max)));
 }

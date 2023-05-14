@@ -30,7 +30,7 @@
 					</option>
 				</select>
 			</div>
-			<span>
+			<span v-if="sessionID && !managed">
 				<label class="clickable" @click="displayedModal = hasCollection ? 'collection' : 'collectionHelp'">
 					<font-awesome-layers
 						v-tooltip="
@@ -200,7 +200,7 @@
 		</div>
 
 		<!-- Session Options -->
-		<div class="generic-container">
+		<div class="generic-container" v-if="sessionID !== undefined && !managed">
 			<div id="limited-controls" class="main-controls" v-bind:class="{ disabled: drafting }">
 				<span id="session-controls">
 					<div class="inline" v-tooltip="'Unique ID of your game session.'" style="margin-right: 0.25em">
@@ -382,7 +382,7 @@
 					</div>
 					<div class="inline" v-tooltip="'Pick Timer (sec.). Zero means no timer.'">
 						<label for="timer">
-							<font-awesome-icon icon="fa-solid fa-clock"></font-awesome-icon>
+							<font-awesome-icon icon="fa-solid fa-stopwatch" size="lg"></font-awesome-icon>
 						</label>
 						<input
 							type="number"
@@ -542,7 +542,7 @@
 		</div>
 
 		<!-- Session Players -->
-		<div class="main-controls session-players">
+		<div class="main-controls session-players" v-if="sessionID !== undefined">
 			<div class="session-players-header">
 				<div
 					v-if="!ownerIsPlayer"
@@ -786,7 +786,10 @@
 										></font-awesome-icon>
 									</template>
 								</template>
-								<font-awesome-icon v-if="user.isBot" icon="fa-solid fa-robot"></font-awesome-icon>
+								<font-awesome-icon
+									v-if="user.isBot || user.isReplaced"
+									icon="fa-solid fa-robot"
+								></font-awesome-icon>
 								<template v-if="user.boosterCount !== undefined">
 									<div
 										v-tooltip="`${user.userName} has ${user.boosterCount} boosters.`"
@@ -918,8 +921,15 @@
 							<div class="controls" style="flex-grow: 2">
 								<span>Pack #{{ boosterNumber + 1 }}, Pick #{{ pickNumber + 1 }}</span>
 								<span v-show="pickTimer >= 0" :class="{ redbg: pickTimer <= 10 }" id="chrono">
-									<font-awesome-icon icon="fa-solid fa-clock"></font-awesome-icon
-									><span>{{ pickTimer }}</span>
+									<div
+										class="timer-icon"
+										:key="`${maxTimer}_${boosterNumber}_${pickNumber}`"
+										:style="`--timer-max: ${maxTimer}; --timer-current: ${pickTimer - 1}`"
+									>
+										<font-awesome-icon icon="fa-solid fa-stopwatch" size="lg"></font-awesome-icon>
+										<div class="timer-icon-moving"></div>
+									</div>
+									<span>{{ pickTimer }}</span>
 								</span>
 								<template v-if="draftingState == DraftState.Picking">
 									<input
@@ -1316,6 +1326,13 @@
 				</transition>
 			</div>
 
+			<div v-if="managed && draftingState === DraftState.Brewing" style="padding: 0.5em 1em 0 1em">
+				<a href="/draftqueue">
+					<font-awesome-icon icon="fa-solid fa-arrow-left"></font-awesome-icon>
+					Back to Draft Queue
+				</a>
+			</div>
+
 			<!-- Brewing controls (Deck & Sideboard) -->
 			<div
 				class="deck-and-sideboard-container"
@@ -1356,6 +1373,7 @@
 								ref="deckDisplay"
 								group="deck"
 								@dragover="allowBoosterCardDrop($event)"
+								@dragleave="onDragLeave($event)"
 								@drop="dropBoosterCard($event)"
 								:cardConditionalClasses="cardConditionalClasses"
 							>
@@ -1528,6 +1546,7 @@
 							<div
 								class="card-container"
 								@dragover="allowBoosterCardDrop($event)"
+								@dragleave="onDragLeave($event)"
 								@drop="dropBoosterCard($event, { toSideboard: true })"
 							>
 								<Sortable
@@ -1538,6 +1557,7 @@
 									:options="{
 										group: 'deck',
 										animation: '200',
+										ghostClass: 'ghost',
 									}"
 									@add="onCollapsedSideDragAdd"
 									@remove="onCollapsedSideDragRemove"
@@ -1575,6 +1595,7 @@
 							ref="sideboardDisplay"
 							group="deck"
 							@dragover="allowBoosterCardDrop($event)"
+							@dragleave="onDragLeave($event)"
 							@drop="dropBoosterCard($event, { toSideboard: true })"
 							:cardConditionalClasses="cardConditionalClasses"
 						>
@@ -1596,94 +1617,146 @@
 			</div>
 
 			<div class="welcome" v-if="draftingState === DraftState.None">
-				<h1>Welcome to Draftmancer.com!</h1>
-				<p class="important">
-					Draft with other players and export your resulting deck to Magic: The Gathering Arena to play with
-					them, in pod!
-				</p>
-				<div class="welcome-sections">
-					<div class="container" style="grid-area: News">
-						<div class="section-title">
-							<h2>News</h2>
-						</div>
-						<news class="welcome-section" />
-					</div>
-					<div class="container" style="grid-area: Help">
-						<div class="section-title">
-							<h2>Help</h2>
-						</div>
-						<div class="welcome-section welcome-alt">
-							<div style="display: flex; justify-content: space-between">
-								<div>
-									<span class="link" @click="displayedModal = 'gettingStarted'">
-										<font-awesome-icon icon="fa-solid fa-rocket"></font-awesome-icon> Get Started
-									</span>
-									guide
-								</div>
-								<div>
-									<span class="link" @click="displayedModal = 'help'">
-										<font-awesome-icon icon="fa-solid fa-info-circle"></font-awesome-icon> FAQ /
-										Settings Description
-									</span>
-								</div>
+				<template v-if="page === 'draftqueue'">
+					<DraftQueue :socket="socket"></DraftQueue>
+				</template>
+				<template v-else>
+					<h1>Welcome to Draftmancer.com!</h1>
+					<p class="important">
+						Draft with other players and export your resulting deck to Magic: The Gathering Arena to play
+						with them, in pod!
+					</p>
+					<a href="/draftqueue" class="reset-style" style="display: block; margin: auto; width: fit-content">
+						<div
+							style="
+								position: relative;
+								padding: 0.5em;
+								padding-left: 70px;
+								border-radius: 1em;
+								background: #444;
+								min-height: 50px;
+								margin: 2em 1em 2em 2em;
+								display: flex;
+								align-items: center;
+							"
+						>
+							<div
+								style="
+									position: absolute;
+									top: 50%;
+									left: 10px;
+									transform: translateY(-50%) translateX(-50%) rotate(-20deg);
+									width: 100px;
+									height: 100px;
+									border-radius: 50px;
+									background: #2d508c;
+									border: 2px solid white;
+									font-size: 2rem;
+									font-weight: bold;
+									line-height: 100px;
+									text-align: center;
+								"
+							>
+								New!
 							</div>
-							<br />
-							For any question/bug report/feature request you can email to
-							<a href="mailto:dev@draftmancer.com">dev@draftmancer.com</a>
-							or join the
-							<a href="https://discord.gg/XscXXNw">
-								<font-awesome-icon icon="fa-brands fa-discord"></font-awesome-icon> Draftmancer Discord </a
-							>.
-						</div>
-					</div>
-					<div class="container" style="grid-area: Support">
-						<div class="section-title">
-							<h2>
-								<font-awesome-icon icon="fa-solid fa-mug-hot" aria-hidden="true"></font-awesome-icon>
-								Buy me a Coffee
-							</h2>
-						</div>
-						<div class="welcome-section welcome-alt">
 							<div>
-								Hello there!<br />
-								I hope you're enjoying using Draftmancer!<br />
-								If you find it useful, please consider supporting it by becoming a
-								<a href="https://github.com/sponsors/Senryoku" target="_blank">
-									<font-awesome-icon icon="fa-brands fa-github"></font-awesome-icon> GitHub Sponsor
-								</a>
-								or donating through
-								<a href="https://www.paypal.com/donate/?hosted_button_id=6L2CUS6DH82DL" target="_blank">
-									<font-awesome-icon icon="fa-brands fa-paypal"></font-awesome-icon> PayPal </a
-								>.<br />
-								Your support will help keep the project online, updated, and will motivate me to add new
-								features.<br />
-								Thank you! — Sen
+								Don't have a play group and just want to practice drafting the latest sets with other
+								players? Try the new
+								<strong>Draft Queue</strong>!
 							</div>
 						</div>
-					</div>
-					<div class="container" style="grid-area: Tools">
-						<div class="section-title">
-							<h2>Tools</h2>
+					</a>
+					<div class="welcome-sections">
+						<div class="container" style="grid-area: News">
+							<div class="section-title">
+								<h2>News</h2>
+							</div>
+							<news class="welcome-section" />
 						</div>
-						<div class="welcome-section welcome-alt">
-							<ul style="display: flex; flex-wrap: wrap; justify-content: space-around">
-								<li>
-									<span @click="displayedModal = 'importdeck'" class="link">
-										<font-awesome-icon icon="fa-solid fa-file-export"></font-awesome-icon> Card List
-										Importer
-									</span>
-								</li>
-								<li
-									v-tooltip="
-										'Download the intersection of the collections of players in the session in text format.'
-									"
-								>
-									<a :href="encodeURI(`/getCollectionPlainText/${sessionID}`)" target="_blank"
-										><font-awesome-icon icon="fa-solid fa-file-download"></font-awesome-icon>
-										Download Session Collection</a
+						<div class="container" style="grid-area: Help">
+							<div class="section-title">
+								<h2>Help</h2>
+							</div>
+							<div class="welcome-section welcome-alt">
+								<div style="display: flex; justify-content: space-between">
+									<div>
+										<span class="link" @click="displayedModal = 'gettingStarted'">
+											<font-awesome-icon icon="fa-solid fa-rocket"></font-awesome-icon> Get
+											Started
+										</span>
+										guide
+									</div>
+									<div>
+										<span class="link" @click="displayedModal = 'help'">
+											<font-awesome-icon icon="fa-solid fa-info-circle"></font-awesome-icon> FAQ /
+											Settings Description
+										</span>
+									</div>
+								</div>
+								<br />
+								For any question/bug report/feature request you can email to
+								<a href="mailto:dev@draftmancer.com">dev@draftmancer.com</a>
+								or join the
+								<a href="https://discord.gg/XscXXNw">
+									<font-awesome-icon icon="fa-brands fa-discord"></font-awesome-icon> Draftmancer
+									Discord </a
+								>.
+							</div>
+						</div>
+						<div class="container" style="grid-area: Support">
+							<div class="section-title">
+								<h2>
+									<font-awesome-icon
+										icon="fa-solid fa-mug-hot"
+										aria-hidden="true"
+									></font-awesome-icon>
+									Buy me a Coffee
+								</h2>
+							</div>
+							<div class="welcome-section welcome-alt">
+								<div>
+									Hello there!<br />
+									I hope you're enjoying using Draftmancer!<br />
+									If you find it useful, please consider supporting it by becoming a
+									<a href="https://github.com/sponsors/Senryoku" target="_blank">
+										<font-awesome-icon icon="fa-brands fa-github"></font-awesome-icon> GitHub
+										Sponsor
+									</a>
+									or donating through
+									<a
+										href="https://www.paypal.com/donate/?hosted_button_id=6L2CUS6DH82DL"
+										target="_blank"
 									>
-								</li>
-							</ul>
+										<font-awesome-icon icon="fa-brands fa-paypal"></font-awesome-icon> PayPal </a
+									>.<br />
+									Your support will help keep the project online, updated, and will motivate me to add
+									new features.<br />
+									Thank you! — Sen
+								</div>
+							</div>
+						</div>
+						<div class="container" style="grid-area: Tools">
+							<div class="section-title">
+								<h2>Tools</h2>
+							</div>
+							<div class="welcome-section welcome-alt">
+								<div style="display: flex; flex-wrap: wrap; justify-content: space-between">
+									<div @click="displayedModal = 'importdeck'" class="link">
+										<font-awesome-icon icon="fa-solid fa-file-export"></font-awesome-icon>
+										Card List Importer
+									</div>
+									<div
+										v-tooltip="
+											'Download the intersection of the collections of players in the session in text format.'
+										"
+									>
+										<a :href="encodeURI(`/getCollectionPlainText/${sessionID}`)" target="_blank">
+											<font-awesome-icon icon="fa-solid fa-file-download"></font-awesome-icon>
+											Download Session Collection
+										</a>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 					<div class="container" style="grid-area: PublicSessions">
@@ -1749,7 +1822,7 @@
 							</table>
 						</div>
 					</div>
-				</div>
+				</template>
 			</div>
 		</div>
 
@@ -1768,7 +1841,7 @@
 			<template v-slot:body>
 				<getting-started
 					:isSessionOwner="userID === sessionOwner"
-					:sessionOwnerName="userByID[sessionOwner].userName"
+					:sessionOwnerName="sessionOwner ? userByID[sessionOwner].userName : 'Unknown'"
 					@openSettings="displayedModal = 'sessionOptions'"
 					@sessionURLToClipboard="sessionURLToClipboard"
 				/>
@@ -2667,7 +2740,7 @@
 		</footer>
 		<div
 			class="disconnected-icon"
-			v-if="socket && socket.disconnected"
+			v-if="!socketConnected"
 			v-tooltip="
 				'You are disconnected from the server, some functionnalities won\'t be available until the connection is re-established.'
 			"

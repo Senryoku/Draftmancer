@@ -12,7 +12,7 @@ describe("Front End - 8 Players Draft", function () {
 		expect(button).to.exist;
 		await button!.click();
 
-		let promises = [];
+		const promises = [];
 		for (let i = 0; i < pages.length; i++) {
 			promises.push(
 				pages[i].waitForXPath("//h2[contains(., 'Your Booster')]", {
@@ -39,10 +39,10 @@ describe("Front End - 8 Players Draft", function () {
 	});
 
 	it("...and continues until the draft is done.", async function () {
-		let done = [];
+		const done = [];
 		for (let i = 0; i < pages.length; i++) done.push(false);
 		while (done.some((d) => !d)) {
-			let promises = [];
+			const promises = [];
 			for (let i = 0; i < pages.length; i++) {
 				if (!done[i])
 					promises.push(
@@ -52,6 +52,7 @@ describe("Front End - 8 Players Draft", function () {
 							return r === PickResult.Done;
 						})()
 					);
+				else promises.push(true);
 			}
 			await Promise.all(promises);
 			for (let i = 0; i < pages.length; i++) done[i] = await promises[i];

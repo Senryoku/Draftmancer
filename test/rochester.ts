@@ -11,13 +11,14 @@ import {
 	waitForSocket,
 	waitForClientDisconnects,
 	ackNoError,
+	getUID,
 } from "./src/common.js";
 import { RochesterDraftSyncData } from "../src/RochesterDraft.js";
 import { SocketAck } from "../src/Message.js";
 
 describe("Rochester Draft", function () {
 	let clients: ReturnType<typeof makeClients> = [];
-	let sessionID = "sessionID";
+	const sessionID = "sessionID";
 	let ownerIdx: number = 0;
 
 	beforeEach(function (done) {
@@ -70,7 +71,7 @@ describe("Rochester Draft", function () {
 
 	after(function (done) {
 		disableLogs();
-		for (let c of clients) {
+		for (const c of clients) {
 			c.disconnect();
 		}
 		waitForClientDisconnects(done);
@@ -78,7 +79,7 @@ describe("Rochester Draft", function () {
 
 	it(`6 clients with different userID should be connected.`, function (done) {
 		expect(Object.keys(Connections).length).to.equal(6);
-		ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);
+		ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
 		expect(ownerIdx).to.not.be.null;
 		expect(ownerIdx).to.not.be.undefined;
 		done();
@@ -89,7 +90,7 @@ describe("Rochester Draft", function () {
 	const startDraft = () => {
 		it("When session owner launch Rochester draft, everyone should receive a startRochesterDraft event", function (done) {
 			let connectedClients = 0;
-			for (let c of clients) {
+			for (const c of clients) {
 				c.once("startRochesterDraft", function (state) {
 					connectedClients += 1;
 					if (connectedClients == clients.length) {
@@ -128,7 +129,7 @@ describe("Rochester Draft", function () {
 				});
 			}
 			// Pick the first card
-			let currPlayer = clients.findIndex((c) => (c as any).query.userID == rochesterDraftState!.currentPlayer);
+			const currPlayer = clients.findIndex((c) => getUID(c) === rochesterDraftState!.currentPlayer);
 			clients[currPlayer].emit("rochesterDraftPick", [0], ackNoError);
 		});
 	};
@@ -137,7 +138,7 @@ describe("Rochester Draft", function () {
 		startDraft();
 
 		it("Non-owner disconnects, owner receives updated user infos.", function (done) {
-			let nonOwnerIdx = (ownerIdx + 1) % clients.length;
+			const nonOwnerIdx = (ownerIdx + 1) % clients.length;
 			clients[ownerIdx].once("userDisconnected", function () {
 				waitForSocket(clients[nonOwnerIdx], done);
 			});
@@ -145,7 +146,7 @@ describe("Rochester Draft", function () {
 		});
 
 		it("Non-owner reconnects, draft restarts.", function (done) {
-			let nonOwnerIdx = (ownerIdx + 1) % clients.length;
+			const nonOwnerIdx = (ownerIdx + 1) % clients.length;
 			clients[nonOwnerIdx].once("rejoinRochesterDraft", function () {
 				done();
 			});
@@ -157,7 +158,7 @@ describe("Rochester Draft", function () {
 
 	describe("Using a Cube", function () {
 		it("Emit Settings.", function (done) {
-			let nonOwnerIdx = (ownerIdx + 1) % clients.length;
+			const nonOwnerIdx = (ownerIdx + 1) % clients.length;
 			clients[nonOwnerIdx].once("sessionOptions", (options) => {
 				expect(options.useCustomCardList).to.be.true;
 				done();

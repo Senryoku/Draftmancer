@@ -1,10 +1,10 @@
-export const isAny = (x: any): x is any => true;
+export const isAny = (x: unknown): x is any => true;
 export const isUnknown = (x: unknown): x is unknown => true;
 
 export const isBoolean = (x: unknown): x is boolean => typeof x === "boolean";
 export const isNumber = (x: unknown): x is number => typeof x === "number";
 export const isString = (x: unknown): x is string => typeof x === "string";
-export const isArray = (x: unknown): x is any[] => Array.isArray(x);
+export const isArray = (x: unknown): x is unknown[] => Array.isArray(x);
 export const isObject = (x: unknown): x is object => typeof x === "object" && x !== null;
 
 export const isInteger = (x: unknown): x is number => typeof x === "number" && Number.isInteger(x);
@@ -47,5 +47,5 @@ type EnumType = { [key in EnumValueType]: EnumValueType };
 
 export const isSomeEnum =
 	<T extends EnumType>(e: T) =>
-	(token: any): token is T[keyof T] =>
+	(token: unknown): token is T[keyof T] =>
 		Object.values(e).includes(token as T[keyof T]);

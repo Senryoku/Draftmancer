@@ -1,10 +1,10 @@
 "use strict";
 
-import randomjs from "random-js";
-export const random = new randomjs.Random(randomjs.nodeCrypto);
+import { Random, nodeCrypto } from "random-js";
+export const random = new Random(nodeCrypto);
 
-export function isEmpty(obj: Object) {
-	for (let _ in obj) return false;
+export function isEmpty(obj: object) {
+	for (const _ in obj) return false;
 	return true;
 }
 
@@ -34,13 +34,13 @@ export function getNDisctinctRandom<Type>(arr: Type[], n: number): Type[] {
 
 export function getRandomMapKey<K, V>(map: Map<K, V>): K {
 	let idx = random.integer(0, map.size - 1);
-	for (let k of map.keys()) {
+	for (const k of map.keys()) {
 		if (idx-- === 0) return k;
 	}
 	return map.keys().next().value;
 }
 
-export function getRandomKey(obj: Object) {
+export function getRandomKey(obj: object) {
 	const keys = Object.keys(obj);
 	return keys[random.integer(0, keys.length - 1)];
 }
@@ -69,15 +69,10 @@ export function range(start: number, end: number, step: number = 1) {
 export function arrayIntersect<T>(args: Array<Array<T>>) {
 	if (!args.length) return [];
 	if (args.length === 1) return args[0];
-	let a,
-		c,
-		d,
-		e,
-		f,
-		g = [],
-		h: any = {},
-		i;
-	i = args.length - 1;
+	let a, c, d, e, f;
+	const g = [];
+	const h: any = {};
+	const i = args.length - 1;
 	d = args[0].length;
 	c = 0;
 	for (a = 0; a <= i; a++) {
@@ -91,7 +86,7 @@ export function arrayIntersect<T>(args: Array<Array<T>>) {
 		e = a === c ? 0 : a || c;
 		f = args[e].length;
 		for (let j = 0; j < f; j++) {
-			let k = args[e][j];
+			const k = args[e][j];
 			if (h[k] === a - 1) {
 				if (a === i) {
 					g.push(k);

@@ -117,17 +117,17 @@ const Comparators: { [name: string]: ComparatorType } = {
 };
 
 export function columnCMC(cards: Card[]) {
-	let a = cards.reduce((acc, item) => {
+	const a = cards.reduce((acc, item) => {
 		if (!acc[item.cmc]) acc[item.cmc] = [];
 		acc[item.cmc].push(item);
 		return acc;
 	}, {} as { [cmc: number]: Card[] });
-	for (let col in a) orderByArenaInPlace(a[col]);
+	for (const col in a) orderByArenaInPlace(a[col]);
 	return a;
 }
 
 export function columnColor(cards: Card[]) {
-	let a = cards.reduce(
+	const a = cards.reduce(
 		(acc, item) => {
 			if (item.colors.length > 1) {
 				if (!acc["multi"]) acc["multi"] = [];
@@ -142,7 +142,7 @@ export function columnColor(cards: Card[]) {
 		},
 		{ "": [], W: [], U: [], B: [], R: [], G: [], multi: [] } as { [key: string]: Card[] }
 	);
-	for (let col in a) orderByArenaInPlace(a[col]);
+	for (const col in a) orderByArenaInPlace(a[col]);
 	return a;
 }
 
