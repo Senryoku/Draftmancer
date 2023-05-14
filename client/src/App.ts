@@ -1129,7 +1129,7 @@ export default defineComponent({
 
 			this.socket.on("updateCardState", (updates) => {
 				for (const update of updates) {
-					let card = this.deck.find((c) => c.uniqueID === update.cardID);
+					const card = this.deck.find((c) => c.uniqueID === update.cardID);
 					if (!card) this.sideboard.find((c) => c.uniqueID === update.cardID);
 					if (card) card.state = update.state;
 				}
@@ -1554,7 +1554,7 @@ export default defineComponent({
 						Alert.fire(answer.error as SweetAlertOptions<any, any>);
 					} else {
 						if (toSideboard)
-							for (let cuid of selectedCards.map((c) => c.uniqueID))
+							for (const cuid of selectedCards.map((c) => c.uniqueID))
 								this.socket.emit("moveCard", cuid, "side");
 						for (const callback of onSuccess) callback();
 					}
@@ -3372,12 +3372,7 @@ export default defineComponent({
 			)
 				picksThisRound += 1;
 
-			const finalValue = Math.min(picksThisRound, this.booster.length);
-
-			// Automatically deselect cards if needed
-			while (this.selectedCards.length > 0 && this.selectedCards.length > finalValue) this.selectedCards.shift();
-
-			return finalValue;
+			return Math.min(picksThisRound, this.booster.length);
 		},
 		cardsToBurnThisRound(): number {
 			if (this.rochesterDraftState || !this.booster) return 0;
@@ -3893,6 +3888,11 @@ export default defineComponent({
 					if (oldV.length > newV.length) this.pushTitleNotification("🙁➖");
 				}
 			},
+		},
+		cardsToPick() {
+			// Automatically deselect cards if needed
+			while (this.selectedCards.length > 0 && this.selectedCards.length > this.cardsToPick)
+				this.selectedCards.shift();
 		},
 	},
 });
