@@ -1851,6 +1851,24 @@ export class Session implements IIndexable {
 					});
 					break;
 				}
+				case UsableDraftEffect.LeovoldsOperative: {
+					const card = findCard(draftEffect.cardID);
+					if (!card) return reportError("Invalid UniqueCardID.");
+					if (!card.state?.faceUp) return reportError("Already used this effect.");
+					if (picksThisRound >= booster.length)
+						return reportError("You can't use a Leovold's Operative on this booster: Not enough cards.");
+					if (pickedCards.length !== picksThisRound + 1)
+						return reportError("Missing Leovold's Operative pick.");
+					picksThisRound++;
+					applyDraftEffects.push(() => {
+						if (!card.state) card.state = {};
+						card.state.faceUp = false;
+						updatedCardStates.push({ cardID: card.uniqueID, state: card.state });
+						if (!s.players[userID].effect) s.players[userID].effect = {};
+						s.players[userID].effect!.skipNPicks = 1;
+					});
+					break;
+				}
 				case UsableDraftEffect.RemoveDraftCard: {
 					const recipient = findCard(draftEffect.cardID);
 					if (!recipient) return reportError("Invalid UniqueCardID.");

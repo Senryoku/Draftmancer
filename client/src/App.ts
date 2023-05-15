@@ -3374,7 +3374,8 @@ export default defineComponent({
 				picksThisRound = 1;
 			if (
 				this.selectedUsableDraftEffect &&
-				this.selectedUsableDraftEffect.effect === UsableDraftEffect.CogworkLibrarian
+				(this.selectedUsableDraftEffect.effect === UsableDraftEffect.CogworkLibrarian ||
+					this.selectedUsableDraftEffect.effect === UsableDraftEffect.LeovoldsOperative)
 			)
 				picksThisRound += 1;
 
