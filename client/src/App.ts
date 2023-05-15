@@ -490,7 +490,7 @@ export default defineComponent({
 				}
 
 				for (const prop in data.updatedProperties) {
-					(user as IIndexable)[prop] = data.updatedProperties[prop];
+					(user as IIndexable)[prop] = data.updatedProperties[prop as keyof typeof data.updatedProperties];
 				}
 			});
 

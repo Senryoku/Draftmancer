@@ -40,7 +40,15 @@ export interface ServerToClientEvents {
 			useCollection: boolean;
 		}[]
 	) => void;
-	updateUser: (data: { userID: UserID; updatedProperties: any }) => void; // FIXME
+	updateUser: (data: {
+		userID: UserID;
+		updatedProperties: {
+			userName?: string;
+			collection?: boolean;
+			useCollection?: boolean;
+			readyState?: ReadyState;
+		};
+	}) => void;
 
 	userDisconnected: (data: { owner?: UserID; disconnectedUsers: { [uid: string]: any } }) => void; // FIXME
 	sessionOptions: (sessionOptions: { [key: keyof typeof SessionsSettingsProps]: any }) => void; // FIXME: Specify allowed options and their types
