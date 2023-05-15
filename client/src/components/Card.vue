@@ -16,6 +16,9 @@
 			:displayCardText="displayCardText"
 			ref="image"
 		/>
+		<div v-if="notes" class="additional-notes">
+			{{ notes }}
+		</div>
 		<slot></slot>
 	</div>
 </template>
@@ -24,6 +27,7 @@
 import { Language } from "@/Types";
 import { defineComponent, PropType } from "vue";
 import { UniqueCard } from "@/CardTypes";
+import { OnPickDraftEffect } from "../../../src/CardTypes";
 
 import CardImage from "./CardImage.vue";
 
@@ -48,6 +52,29 @@ export default defineComponent({
 			classes.push("card");
 			if (this.card.foil) classes.push("foil");
 			return classes;
+		},
+		notes(): string | undefined {
+			if (!this.card?.state) return undefined;
+			if (this.card.draft_effects) {
+				if (this.card.draft_effects.includes("AnimusOfPredation") && this.card.state.removedCards)
+					return [...new Set(this.card.state.removedCards.map((card) => card.subtypes).flat())].join(", ");
+				if (this.card.draft_effects.includes("CogworkGrinder") && this.card.state.removedCards)
+					return this.card.state.removedCards.length.toString();
+				if (
+					this.card.draft_effects.includes(OnPickDraftEffect.NoteDraftedCards) &&
+					this.card.state.cardsDraftedThisRound
+				)
+					return this.card.state.cardsDraftedThisRound.toString();
+				if (
+					this.card.draft_effects.includes(OnPickDraftEffect.NotePassingPlayer) &&
+					this.card.state.passingPlayer
+				)
+					return this.card.state.passingPlayer;
+				if (this.card.state.cardName) return this.card.state.cardName;
+				if (this.card.state.creatureName) return this.card.state.creatureName;
+				if (this.card.state.creatureTypes) return this.card.state.creatureTypes.join(", ");
+			}
+			return undefined;
 		},
 	},
 	methods: {
@@ -167,6 +194,23 @@ export default defineComponent({
 
 .card-column .foil .card-image {
 	padding-bottom: 141.5%;
+}
+
+.card .additional-notes {
+	display: none;
+
+	position: absolute;
+	max-width: 100%;
+	left: calc(100% + 0.2em);
+	top: 0;
+	background-color: rgba(0, 0, 0, 0.8);
+	font-size: 0.8em;
+	padding: 0.2em 0.4em;
+	border-radius: 0.2em;
+}
+
+.card:hover .additional-notes {
+	display: block;
 }
 
 .foil:not(:hover) .card-image,

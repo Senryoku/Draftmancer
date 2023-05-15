@@ -1123,6 +1123,10 @@ ul.player-list {
 	filter: brightness(50%);
 }
 
+.skipped {
+	filter: grayscale();
+}
+
 #chrono {
 	padding: 0.2em;
 	padding-left: 0.5em;

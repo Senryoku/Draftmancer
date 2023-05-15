@@ -11,6 +11,37 @@ export enum CardColor {
 	G = "G",
 }
 
+// Draft effects activated immediatly when the card is picked.
+export enum OnPickDraftEffect {
+	FaceUp = "FaceUp",
+	Reveal = "Reveal",
+	NotePassingPlayer = "NotePassingPlayer",
+	NoteDraftedCards = "NoteDraftedCards",
+}
+
+// Same thing, but a may ability.
+export enum OptionalOnPickDraftEffect {
+	LoreSeeker = "LoreSeeker",
+}
+
+// Draft effect that can be activated after the card has been picked (generally while picking another card later).
+export enum UsableDraftEffect {
+	RemoveDraftCard = "RemoveDraftCard",
+	CogworkLibrarian = "CogworkLibrarian",
+	AgentOfAcquisitions = "AgentOfAcquisitions",
+	LeovoldsOperative = "LeovoldsOperative",
+	NoteCardName = "NotedCardName",
+	NoteCreatureName = "NoteCreatureName",
+	NoteCreatureTypes = "NoteCreatureTypes",
+}
+
+export type DraftEffect =
+	| OnPickDraftEffect
+	| OptionalOnPickDraftEffect
+	| UsableDraftEffect
+	| "AnimusOfPredation"
+	| "CogworkGrinder";
+
 export type CardFace = {
 	name: string;
 	printed_names: { [lang: string]: string };
@@ -41,6 +72,7 @@ export class Card {
 	image_uris: { [lang: string]: string } = {};
 	back?: CardFace;
 	related_cards?: Array<CardID | CardFace>;
+	draft_effects?: Array<DraftEffect>;
 	is_custom?: boolean;
 }
 
@@ -65,9 +97,20 @@ export function toUnique(card: Card): UniqueCard {
 	return { ...card, uniqueID: getNextCardID() };
 }
 
+export type UniqueCardState = {
+	faceUp?: boolean;
+	cardsDraftedThisRound?: number;
+	passingPlayer?: string;
+	cardName?: string;
+	creatureName?: string;
+	creatureTypes?: string[];
+	removedCards?: UniqueCard[];
+};
+
 export class UniqueCard extends Card {
 	uniqueID: UniqueCardID = 0;
 	foil?: boolean = false;
+	state?: UniqueCardState;
 }
 
 // JSON can't use numbers as keys, we have to use a string and not ArenaID here.

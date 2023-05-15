@@ -1,0 +1,23 @@
+[Settings]
+{
+	"withReplacement": true,
+	"layouts": {
+		"normal": {
+			"weight": 1,
+			"slots": {
+				"Garbage Fire": 1,
+				"Lurking Automaton": 1,
+				"Pyretic Hunter": 1,
+				"Custodi Peacekeeper": 1
+			}
+		}
+	}
+}
+[Garbage Fire]
+Garbage Fire
+[Lurking Automaton]
+Lurking Automaton
+[Pyretic Hunter]
+Pyretic Hunter
+[Custodi Peacekeeper]
+Custodi Peacekeeper

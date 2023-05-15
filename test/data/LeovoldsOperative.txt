@@ -1,0 +1,17 @@
+[Settings]
+{
+	"withReplacement": true,
+	"layouts": {
+		"normal": {
+			"weight": 1,
+			"slots": {
+				"Operative": 1,
+				"Forest": 9
+			}
+		}
+	}
+}
+[Operative]
+Leovold's Operative
+[Forest]
+Forest

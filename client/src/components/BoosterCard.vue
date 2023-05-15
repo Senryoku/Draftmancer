@@ -150,6 +150,9 @@ export default defineComponent({
 .booster-card:hover:not(.zoomedin) {
 	transform: scale(1.08);
 }
+.skipped .booster-card:hover:not(.zoomedin) {
+	transform: inherit;
+}
 
 .bot-picked .card-image .front-image,
 .bot-picked .card-image .back-image,

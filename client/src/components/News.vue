@@ -1,6 +1,30 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
+			<em>May, 2023</em>
+			<ul>
+				<li>
+					Experimental support for
+					<img src="img/sets/cns.svg" class="set-icon" style="--invertedness: 100%" alt="" /> Conspiracy draft
+					matters cards!<br />
+					Not all cards are supported, but I tried to focus on the most popular ones, like
+					<a href="https://scryfall.com/card/cns/58/cogwork-librarian" target="blank">
+						<font-awesome-icon icon="fa-solid fa-external-link-alt"></font-awesome-icon>
+						Cogwork Librarian
+					</a>
+					or
+					<a href="https://scryfall.com/card/cns/62/lore-seeker" target="blank">
+						<font-awesome-icon icon="fa-solid fa-external-link-alt"></font-awesome-icon>
+						Lore Seeker
+					</a>
+					. You can find the detailled list of supported cards on
+					<a href="https://github.com/Senryoku/Draftmancer/wiki/Conspiracy-cards-support" target="blank"
+						>this page of the GitHub wiki</a
+					>.
+				</li>
+			</ul>
+		</div>
+		<div class="news">
 			<em>May 09, 2023</em>
 			<ul>
 				<li>
@@ -24,26 +48,12 @@
 				<li>Various tweaks and fixes.</li>
 			</ul>
 		</div>
-		<div class="news">
-			<em>April 28, 2023</em>
-			<ul>
-				<li>
-					New game mode: <strong>Solomon Draft</strong>!<br />A draft variant for two players reminiscing of
-					the card Fact or Fiction.
-				</li>
-				<li>Added a pick history for Rotisserie Drafts.</li>
-				<li>
-					Updated <a href="cubeformat.html#custom-cards" target="blank">Custom Cards support</a>:
-					<ul>
-						<li>Added an optional 'related_cards' property.</li>
-						<li>Improved mana cost parsing.</li>
-					</ul>
-				</li>
-				<li>Various tweaks and fixes.</li>
-			</ul>
-		</div>
 	</div>
 </template>
+
+<script setup lang="ts">
+import { Tooltip as VTooltip } from "floating-vue";
+</script>
 
 <style scoped>
 .news:not(:last-child) {

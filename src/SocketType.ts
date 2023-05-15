@@ -6,7 +6,18 @@ import { DistributionMode, DraftLogRecipients, ReadyState, UsersData } from "./S
 import { Options } from "./utils";
 import { SetCode } from "./Types";
 import { DraftLog, DraftPick } from "./DraftLog";
-import { CardID, CardPool, DeckBasicLands, DeckList, PlainCollection, UniqueCard, UniqueCardID } from "./CardTypes";
+import {
+	CardID,
+	CardPool,
+	DeckBasicLands,
+	DeckList,
+	UsableDraftEffect,
+	PlainCollection,
+	UniqueCard,
+	UniqueCardID,
+	OptionalOnPickDraftEffect,
+	UniqueCardState,
+} from "./CardTypes";
 import { RochesterDraftSyncData } from "./RochesterDraft";
 import { MinesweeperSyncData, MinesweeperSyncDataDiff } from "./MinesweeperDraftTypes";
 import { DraftState } from "./DraftState";
@@ -85,6 +96,7 @@ export interface ServerToClientEvents {
 	resumeOnReconnection: (msg: Message) => void;
 
 	setCardSelection: (boosters: UniqueCard[][]) => void;
+	updateCardState: (updates: { cardID: UniqueCardID; state: UniqueCardState }[]) => void;
 
 	timer: (data: { countdown: number }) => void;
 	disableTimer: () => void;
@@ -96,11 +108,8 @@ export interface ServerToClientEvents {
 	resumeDraft: () => void;
 	rejoinDraft: (data: {
 		pickedCards: { main: UniqueCard[]; side: UniqueCard[] };
-		booster: UniqueCard[] | null;
-		boosterCount: number;
-		boosterNumber: number;
-		pickNumber: number;
 		botScores: BotScores;
+		state: ReturnType<DraftState["syncData"]>;
 	}) => void;
 
 	startWinstonDraft: (state: WinstonDraftSyncData) => void;
@@ -229,8 +238,14 @@ export interface ClientToServerEvents {
 	useCollection: (useCollection: boolean) => void;
 	chatMessage: (message: { author: string; text: string; timestamp: number }) => void;
 	setReady: (readyState: ReadyState) => void;
+	passBooster: () => void;
 	pickCard: (
-		data: { pickedCards: Array<number>; burnedCards: Array<number> },
+		data: {
+			pickedCards: Array<number>;
+			burnedCards: Array<number>;
+			draftEffect?: { effect: UsableDraftEffect; cardID: UniqueCardID };
+			optionalOnPickDraftEffect?: { effect: OptionalOnPickDraftEffect; cardID: UniqueCardID };
+		},
 		ack: (result: SocketAck) => void
 	) => void;
 	gridDraftPick: (choice: number, ack: (result: SocketAck) => void) => void;

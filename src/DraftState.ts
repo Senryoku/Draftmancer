@@ -1,4 +1,5 @@
 import { v1 as uuidv1 } from "uuid";
+import { negMod } from "./utils.js";
 import { IBot, SimpleBot, Bot, MTGDraftBotParameters } from "./Bot.js";
 import { UniqueCard } from "./CardTypes.js";
 import { Connections } from "./Connection.js";
@@ -18,6 +19,10 @@ export class DraftState extends IDraftState {
 			pickNumber: number;
 			countdownInterval: NodeJS.Timer | null;
 			timer: number;
+			effect?: {
+				skipNPicks?: number;
+				skipUntilNextRound?: boolean;
+			};
 		};
 	} = {};
 
@@ -65,12 +70,31 @@ export class DraftState extends IDraftState {
 		}
 	}
 
+	previousPlayer(userID: UserID) {
+		const playerIds = Object.keys(this.players);
+		let idx = playerIds.indexOf(userID);
+		idx += this.boosterNumber % 2 ? 1 : -1;
+		idx = negMod(idx, playerIds.length);
+		return playerIds[idx];
+	}
+
+	nextPlayer(userID: UserID) {
+		const playerIds = Object.keys(this.players);
+		let idx = playerIds.indexOf(userID);
+		idx += this.boosterNumber % 2 ? -1 : 1;
+		idx = negMod(idx, playerIds.length);
+		return playerIds[idx];
+	}
+
 	syncData(userID: UserID) {
 		return {
 			booster: this.players[userID].boosters[0],
 			boosterCount: this.players[userID].boosters.length,
 			boosterNumber: this.boosterNumber,
 			pickNumber: this.players[userID].pickNumber,
+			skipPick:
+				(this.players[userID].effect?.skipNPicks ?? 0) > 0 ||
+				this.players[userID].effect?.skipUntilNextRound === true,
 		};
 	}
 }

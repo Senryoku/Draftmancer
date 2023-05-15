@@ -29,13 +29,23 @@ import {
 import { Connection, Connections } from "./Connection.js";
 import { DistributionMode, DraftLogRecipients, ReadyState } from "./Session/SessionTypes";
 import { Session, Sessions, getPublicSessionData } from "./Session.js";
-import { CardPool, CardID, Card, UniqueCardID, DeckBasicLands, PlainCollection, ArenaID } from "./CardTypes.js";
+import {
+	CardPool,
+	CardID,
+	Card,
+	UniqueCardID,
+	DeckBasicLands,
+	PlainCollection,
+	ArenaID,
+	UsableDraftEffect,
+	OptionalOnPickDraftEffect,
+} from "./CardTypes.js";
 import { MTGACards, getUnique, getCard } from "./Cards.js";
 import { parseLine, parseCardList, XMageToArena } from "./parseCardList.js";
 import { SessionID, UserID } from "./IDTypes.js";
 import { CustomCardList } from "./CustomCardList.js";
 import { DraftLog } from "./DraftLog.js";
-import { isArrayOf, isBoolean, isNumber, isObject, isString } from "./TypeChecks.js";
+import { hasProperty, isArrayOf, isBoolean, isNumber, isObject, isSomeEnum, isString } from "./TypeChecks.js";
 import { instanceOfTurnBased } from "./IDraftState.js";
 import { ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData } from "./SocketType.js";
 import { IIndexable, SetCode } from "./Types.js";
@@ -274,16 +284,52 @@ function setReady(userID: UserID, sessionID: SessionID, readyState: ReadyState) 
 	Sessions[sessionID].forUsers((user) => Connections[user]?.socket.emit("setReady", userID, readyState));
 }
 
+function passBooster(userID: UserID, sessionID: SessionID) {
+	Sessions[sessionID].skipPick(userID);
+}
+
 async function pickCard(
 	userID: UserID,
 	sessionID: SessionID,
-	data: { pickedCards: Array<number>; burnedCards: Array<number> },
+	data: {
+		pickedCards: Array<number>;
+		burnedCards: Array<number>;
+		draftEffect?: unknown;
+		optionalOnPickDraftEffect?: unknown;
+	},
 	ack: (result: SocketAck) => void
 ) {
+	let draftEffect: { effect: UsableDraftEffect; cardID: UniqueCardID } | undefined;
+	if (data.draftEffect) {
+		if (!isObject(data.draftEffect)) return ack?.(new SocketError("draftEffect must be an object."));
+		if (!hasProperty("effect", isSomeEnum(UsableDraftEffect))(data.draftEffect))
+			return ack?.(new SocketError("draftEffect.effect must be a valid UsableDraftEffect."));
+		if (!hasProperty("cardID", isNumber)(data.draftEffect))
+			return ack?.(new SocketError("draftEffect.cardID must be a valid UniqueCardID."));
+		draftEffect = data.draftEffect;
+	}
+	let optionalOnPickDraftEffect: { effect: OptionalOnPickDraftEffect; cardID: UniqueCardID } | undefined;
+	if (data.optionalOnPickDraftEffect) {
+		if (!isObject(data.optionalOnPickDraftEffect))
+			return ack?.(new SocketError("optionalOnPickDraftEffect must be an object."));
+		if (!hasProperty("effect", isSomeEnum(OptionalOnPickDraftEffect))(data.optionalOnPickDraftEffect))
+			return ack?.(
+				new SocketError("optionalOnPickDraftEffect.effect must be a valid OptionalOnPickDraftEffect.")
+			);
+		if (!hasProperty("cardID", isNumber)(data.optionalOnPickDraftEffect))
+			return ack?.(new SocketError("optionalOnPickDraftEffect.cardID must be a valid UniqueCardID."));
+		optionalOnPickDraftEffect = data.optionalOnPickDraftEffect;
+	}
 	// Removes picked card from corresponding booster and notify other players.
 	// Moves to next round when each player have picked a card.
 	try {
-		const r = await Sessions[sessionID].pickCard(userID, data.pickedCards, data.burnedCards);
+		const r = await Sessions[sessionID].pickCard(
+			userID,
+			data.pickedCards,
+			data.burnedCards,
+			draftEffect,
+			optionalOnPickDraftEffect
+		);
 		ack?.(r);
 	} catch (err) {
 		ack?.(new SocketError("Internal server error."));
@@ -1285,7 +1331,6 @@ io.on("connection", async function (socket) {
 	if (userID in InactiveConnections) {
 		// Restore previously saved connection
 		// TODO: Front and Back end may be out of sync after this!
-		console.log("Restoring connection...", InactiveConnections[userID]);
 		const connection = new Connection(socket, userID, query.userName as string);
 		copyPODProps(connection, InactiveConnections[userID]);
 		Connections[userID] = connection;
@@ -1336,6 +1381,7 @@ io.on("connection", async function (socket) {
 	socket.on("chatMessage", prepareSocketCallback(chatMessage));
 	socket.on("setReady", prepareSocketCallback(setReady));
 	socket.on("pickCard", prepareSocketCallback(pickCard));
+	socket.on("passBooster", prepareSocketCallback(passBooster));
 	socket.on("gridDraftPick", prepareSocketCallback(gridDraftPick));
 	socket.on("rochesterDraftPick", prepareSocketCallback(rochesterDraftPick));
 	socket.on("rotisserieDraftPick", prepareSocketCallback(rotisserieDraftPick));

@@ -7,7 +7,7 @@ import { shuffleArray } from "./utils.js";
 
 export type GridDraftSyncData = {
 	round: number;
-	currentPlayer: string;
+	currentPlayer: string | null;
 	booster: (UniqueCard | null)[];
 	boosterCount: number;
 	lastPicks: PickSummary[];

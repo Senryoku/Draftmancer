@@ -932,27 +932,58 @@
 									<span>{{ pickTimer }}</span>
 								</span>
 								<template v-if="draftingState == DraftState.Picking">
-									<input
-										type="button"
-										@click="pickCard()"
-										value="Confirm Pick"
-										v-if="
-											selectedCards.length === cardsToPick &&
-											burningCards.length === cardsToBurnThisRound
-										"
-									/>
-									<span v-else>
-										<span v-if="cardsToPick === 1">Pick a card</span>
+									<template v-if="skipPick">
+										<button @click="passBooster">Pass Booster</button>
+									</template>
+									<template v-else>
+										<input
+											type="button"
+											@click="pickCard()"
+											value="Confirm Pick"
+											v-if="
+												selectedCards.length === cardsToPick &&
+												burningCards.length === cardsToBurnThisRound
+											"
+										/>
 										<span v-else>
-											Pick {{ cardsToPick }} cards ({{ selectedCards.length }}/{{ cardsToPick }})
+											<span v-if="cardsToPick === 1">Pick a card</span>
+											<span v-else>
+												Pick {{ cardsToPick }} cards ({{ selectedCards.length }}/{{
+													cardsToPick
+												}})
+											</span>
+											<span v-if="cardsToBurnThisRound === 1">
+												and remove a card from the pool.</span
+											>
+											<span v-else-if="cardsToBurnThisRound > 1">
+												and remove {{ cardsToBurnThisRound }} cards from the pool ({{
+													burningCards.length
+												}}/{{ cardsToBurnThisRound }}).
+											</span>
 										</span>
-										<span v-if="cardsToBurnThisRound === 1"> and remove a card from the pool.</span>
-										<span v-else-if="cardsToBurnThisRound > 1">
-											and remove {{ cardsToBurnThisRound }} cards from the pool ({{
-												burningCards.length
-											}}/{{ cardsToBurnThisRound }}).
+										<span v-if="availableOptionalDraftEffects.length > 0">
+											<label for="optional-pick-effect">Pick Effect:</label>
+											<select id="optional-pick-effect" v-model="selectedOptionalDraftPickEffect">
+												<option
+													v-for="v in availableOptionalDraftEffects"
+													:value="v"
+													:key="v.effect"
+												>
+													{{ v.name }} ({{ v.effect }})
+												</option>
+												<option :value="undefined">Do not use</option>
+											</select>
 										</span>
-									</span>
+										<span v-if="availableDraftEffects.length > 0">
+											<label for="pick-effect">Pick Effect:</label>
+											<select id="pick-effect" v-model="selectedUsableDraftEffect">
+												<option v-for="v in availableDraftEffects" :value="v" :key="v.effect">
+													{{ v.name }} ({{ v.effect }})
+												</option>
+												<option :value="undefined">None</option>
+											</select>
+										</span>
+									</template>
 								</template>
 								<template v-else>
 									<font-awesome-icon icon="fa-solid fa-spinner" spin></font-awesome-icon>
@@ -965,7 +996,7 @@
 							tag="div"
 							name="booster-cards"
 							class="booster card-container"
-							:class="{ 'booster-waiting': draftingState === DraftState.Waiting }"
+							:class="{ 'booster-waiting': draftingState === DraftState.Waiting, skipped: skipPick }"
 						>
 							<div class="wait" key="wait" v-if="draftingState === DraftState.Waiting">
 								<font-awesome-icon
@@ -998,12 +1029,12 @@
 								:canbeburned="burnedCardsPerRound > 0"
 								:burned="burningCards.includes(card)"
 								:class="{ selected: selectedCards.includes(card) }"
-								@click="selectCard($event, card)"
-								@dblclick="doubleClickCard($event, card)"
-								@burn="burnCard($event, card)"
-								@restore="restoreCard($event, card)"
-								:draggable="true"
-								@dragstart="dragBoosterCard($event, card)"
+								@click="skipPick ? () => {} : selectCard($event, card)"
+								@dblclick="skipPick ? () => {} : doubleClickCard($event, card)"
+								@burn="skipPick ? () => {} : burnCard($event, card)"
+								@restore="skipPick ? () => {} : restoreCard($event, card)"
+								:draggable="!skipPick"
+								@dragstart="skipPick ? () => {} : dragBoosterCard($event, card)"
 								:hasenoughwildcards="hasEnoughWildcards(card)"
 								:wildcardneeded="displayCollectionStatus && wildcardCost(card)"
 								:botscore="
