@@ -1,20 +1,9 @@
 import { describe, it } from "mocha";
 import chai from "chai";
 const expect = chai.expect;
-import {
-	waitAndClickXpath,
-	waitAndClickSelector,
-	getSessionLink,
-	dragAndDrop,
-	dismissToast,
-	pickCard,
-	PickResult,
-	setupBrowsers,
-	pages,
-} from "./src/common.js";
+import { waitAndClickXpath, waitAndClickSelector, dismissToast, setupBrowsers, pages } from "./src/common.js";
 import { ElementHandle, Page } from "puppeteer";
-import { cwd } from "node:process";
-import { formToJSON } from "axios";
+
 async function clickDraft(page: Page) {
 	// Click 'Start' button
 	const [button] = (await page.$x("//button[contains(., 'Start')]")) as ElementHandle<Element>[];

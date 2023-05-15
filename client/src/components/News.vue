@@ -51,10 +51,6 @@
 	</div>
 </template>
 
-<script setup lang="ts">
-import { Tooltip as VTooltip } from "floating-vue";
-</script>
-
 <style scoped>
 .news:not(:last-child) {
 	margin-bottom: 1em;
