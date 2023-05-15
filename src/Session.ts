@@ -18,7 +18,7 @@ import {
 	UniqueCardState,
 } from "./CardTypes.js";
 import { Cards, getUnique, BoosterCardsBySet, CardsBySet, MTGACardIDs, getCard } from "./Cards.js";
-import { IBot, fallbackToSimpleBots, isBot, MTGDraftBotParameters, MTGDraftBotsSetSpecializedModels } from "./Bot.js";
+import { fallbackToSimpleBots, isBot, MTGDraftBotParameters, MTGDraftBotsSetSpecializedModels } from "./Bot.js";
 import { computeHashes } from "./DeckHashes.js";
 import { BasicLandSlots, SpecialLandSlots } from "./LandSlot.js";
 import {
@@ -52,7 +52,7 @@ import { DraftState, isDraftState } from "./DraftState.js";
 import { RochesterDraftState, isRochesterDraftState } from "./RochesterDraft.js";
 import { WinstonDraftState, isWinstonDraftState } from "./WinstonDraft.js";
 import { ServerToClientEvents } from "./SocketType";
-import Constants, { EnglishBasicLandNames } from "./Constants.js";
+import { Constants, EnglishBasicLandNames } from "./Constants.js";
 import { SessionsSettingsProps } from "./Session/SessionProps.js";
 import { DistributionMode, DraftLogRecipients, DisconnectedUser, UsersData } from "./Session/SessionTypes.js";
 import { IIndexable, SetCode } from "./Types.js";
@@ -1123,7 +1123,7 @@ export class Session implements IIndexable {
 		// Refill Booster after the first pick at 3 players
 		if (s.players.length === 3 && s.round % 3 === 1) {
 			// Send the current state before re-filling for animation purposes.
-			const syncData: any = s.syncData();
+			const syncData = s.syncData();
 			syncData.currentPlayer = null; // Set current player to null as a flag to delay the display update
 			for (const user of this.users) Connections[user].socket.emit("gridDraftNextRound", syncData);
 
@@ -1134,7 +1134,7 @@ export class Session implements IIndexable {
 		}
 		if (s.round % s.players.length === 0) {
 			// Share the last pick before advancing to the next booster.
-			const syncData: any = s.syncData();
+			const syncData = s.syncData();
 			syncData.currentPlayer = null; // Set current player to null as a flag to delay the display update
 			for (const user of this.users) Connections[user].socket.emit("gridDraftNextRound", syncData);
 
@@ -1675,7 +1675,7 @@ export class Session implements IIndexable {
 			return new SocketError("Internal server error");
 		}
 
-		const log = this.initLogs("Draft", boosters);
+		this.initLogs("Draft", boosters);
 
 		const virtualPlayerData = this.getSortedVirtualPlayerData();
 		for (const uid of this.users) {
