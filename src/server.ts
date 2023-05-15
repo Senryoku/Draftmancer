@@ -1331,7 +1331,6 @@ io.on("connection", async function (socket) {
 	if (userID in InactiveConnections) {
 		// Restore previously saved connection
 		// TODO: Front and Back end may be out of sync after this!
-		console.log("Restoring connection...", InactiveConnections[userID]);
 		const connection = new Connection(socket, userID, query.userName as string);
 		copyPODProps(connection, InactiveConnections[userID]);
 		Connections[userID] = connection;
