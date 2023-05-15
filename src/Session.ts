@@ -1793,51 +1793,40 @@ export class Session implements IIndexable {
 		// Conspiracy draft matter cards
 		const applyDraftEffects: (() => void)[] = []; // Delay effects after we're sure the pick is valid.
 		if (draftEffect) {
-			const findCard = (cardID: UniqueCardID) => {
-				let cardOrNull = Connections[userID].pickedCards.main.find((c) => c.uniqueID === cardID);
-				if (!cardOrNull) cardOrNull = Connections[userID].pickedCards.side.find((c) => c.uniqueID === cardID);
-				return cardOrNull;
-			};
+			let cardInMain = true;
+			let cardOrNull = Connections[userID].pickedCards.main.find((c) => c.uniqueID === draftEffect.cardID);
+			if (!cardOrNull) {
+				cardInMain = false;
+				cardOrNull = Connections[userID].pickedCards.side.find((c) => c.uniqueID === draftEffect.cardID);
+			}
+			if (!cardOrNull) return reportError("Invalid UniqueCardID.");
+			const card = cardOrNull;
+			if (!card.draft_effects?.includes(draftEffect.effect))
+				return reportError(`Invalid request: '${card.name}' do not have effect '${draftEffect.effect}'.`);
+			if (!card.state?.faceUp) return reportError("Already used this effect (Card is face down).");
 
-			// Draft Cogwork Librarian face up.
-			// As you draft a card, you may draft an additional card from that booster pack. If you do, put Cogwork Librarian into that booster pack.
 			switch (draftEffect.effect) {
+				// Draft Cogwork Librarian face up.
+				// As you draft a card, you may draft an additional card from that booster pack. If you do, put Cogwork Librarian into that booster pack.
 				case UsableDraftEffect.CogworkLibrarian: {
 					if (picksThisRound >= booster.length)
 						return reportError("You can't use a Cogwork Librarian on this booster: Not enough cards.");
 					if (pickedCards.length !== picksThisRound + 1)
 						return reportError("Missing Cogwork Librarian pick.");
-
-					let index = Connections[userID].pickedCards.main.findIndex(
-						(c) => c.uniqueID === draftEffect.cardID
-					);
-					if (index >= 0) {
-						if (!Connections[userID].pickedCards.main[index].draft_effects?.includes(draftEffect.effect))
-							return reportError("Invalid card.");
-						applyDraftEffects.push(() => {
-							const cogworkLibrarian = Connections[userID].pickedCards.main.splice(index, 1)[0];
-							booster.push(cogworkLibrarian); // Pushing the cogwork librarian at the end right away should be safe as it doesn't change indexes of other cards.
-						});
-					} else {
-						// Search in sideboard
-						index = Connections[userID].pickedCards.side.findIndex(
+					applyDraftEffects.push(() => {
+						// We know we have a valid Cogwork Librarian, but we also have to know where it is, and its index, to be able to replace it in the booster.
+						const list = cardInMain ? "main" : "side";
+						const index = Connections[userID].pickedCards[list].findIndex(
 							(c) => c.uniqueID === draftEffect.cardID
 						);
-						if (index < 0) return reportError("You don't have a Cogwork Librarian.");
-						if (!Connections[userID].pickedCards.side[index].draft_effects?.includes(draftEffect.effect))
-							return reportError("Invalid card.");
-						applyDraftEffects.push(() => {
-							const cogworkLibrarian = Connections[userID].pickedCards.side.splice(index, 1)[0];
-							booster.push(cogworkLibrarian);
-						});
-					}
-					picksThisRound += 1; // Allow an additional pick.
+						const cogworkLibrarian = Connections[userID].pickedCards[list].splice(index, 1)[0];
+						cogworkLibrarian.state = undefined;
+						booster.push(cogworkLibrarian); // Pushing the cogwork librarian at the end right away should be safe as it won't change indices of other cards.
+					});
+					picksThisRound++; // Allow an additional pick.
 					break;
 				}
 				case UsableDraftEffect.AgentOfAcquisitions: {
-					const card = findCard(draftEffect.cardID);
-					if (!card) return reportError("Invalid UniqueCardID.");
-					if (!card.state?.faceUp) return reportError("Already used this effect.");
 					picksThisRound = booster.length;
 					pickedCards = [...Array(booster.length).keys()];
 					burnThisRound = 0;
@@ -1852,9 +1841,6 @@ export class Session implements IIndexable {
 					break;
 				}
 				case UsableDraftEffect.LeovoldsOperative: {
-					const card = findCard(draftEffect.cardID);
-					if (!card) return reportError("Invalid UniqueCardID.");
-					if (!card.state?.faceUp) return reportError("Already used this effect.");
 					if (picksThisRound >= booster.length)
 						return reportError("You can't use a Leovold's Operative on this booster: Not enough cards.");
 					if (pickedCards.length !== picksThisRound + 1)
@@ -1870,29 +1856,22 @@ export class Session implements IIndexable {
 					break;
 				}
 				case UsableDraftEffect.RemoveDraftCard: {
-					const recipient = findCard(draftEffect.cardID);
-					if (!recipient) return reportError("Invalid UniqueCardID.");
-
+					const removedCards = pickedCards.map((index) => booster[index]);
 					burnThisRound += pickedCards.length;
 					picksThisRound -= pickedCards.length;
 					burnedCards = burnedCards.concat(pickedCards);
-					const removedCards = pickedCards.map((index) => booster[index]);
-					applyDraftEffects.push(() => {
-						if (!recipient.state) recipient.state = {};
-						if (!recipient.state?.removedCards) recipient.state.removedCards = [];
-						// Associate the removed cards with the effect origin
-						recipient.state.removedCards.push(...removedCards);
-						updatedCardStates.push({ cardID: recipient.uniqueID, state: recipient.state });
-					});
 					pickedCards = [];
+					applyDraftEffects.push(() => {
+						if (!card.state) card.state = {};
+						if (!card.state?.removedCards) card.state.removedCards = [];
+						// Associate the removed cards with the effect origin
+						card.state.removedCards.push(...removedCards);
+						updatedCardStates.push({ cardID: card.uniqueID, state: card.state });
+					});
 					break;
 				}
 				case UsableDraftEffect.NoteCardName: {
-					const card = findCard(draftEffect.cardID);
-					if (!card) return reportError("Invalid UniqueCardID.");
-					if (!card.state?.faceUp) return reportError("Already used this effect.");
 					const cardName = booster[pickedCards[0]].name;
-
 					applyDraftEffects.push(() => {
 						if (!card.state) card.state = {};
 						card.state.faceUp = false;
@@ -1902,13 +1881,9 @@ export class Session implements IIndexable {
 					break;
 				}
 				case UsableDraftEffect.NoteCreatureName: {
-					const card = findCard(draftEffect.cardID);
-					if (!card) return reportError("Invalid UniqueCardID.");
-					if (!card.state?.faceUp) return reportError("Already used this effect.");
 					if (!booster[pickedCards[0]].type.includes("Creature"))
 						return reportError("Pick should be a creature.");
 					const creatureName = booster[pickedCards[0]].name;
-
 					applyDraftEffects.push(() => {
 						if (!card.state) card.state = {};
 						card.state.faceUp = false;
@@ -1918,9 +1893,6 @@ export class Session implements IIndexable {
 					break;
 				}
 				case UsableDraftEffect.NoteCreatureTypes: {
-					const card = findCard(draftEffect.cardID);
-					if (!card) return reportError("Invalid UniqueCardID.");
-					if (!card.state?.faceUp) return reportError("Already used this effect.");
 					if (!booster[pickedCards[0]].type.includes("Creature"))
 						return reportError("Pick should be a creature.");
 					const creatureTypes = booster[pickedCards[0]].subtypes;
@@ -1948,17 +1920,18 @@ export class Session implements IIndexable {
 					const additionalBooster = this.generateBoosters(1, {
 						useCustomBoosters: true,
 					});
-					if (isMessageError(additionalBooster)) {
-						const msg = new MessageError(
-							"Could not generate additional booster, Lore Seeker effect ignored.",
-							`Original Error: ${additionalBooster.title} ${additionalBooster.text}`
+					if (isMessageError(additionalBooster))
+						Connections[userID].socket?.emit(
+							"message",
+							new MessageError(
+								"Could not generate additional booster, Lore Seeker effect ignored.",
+								`Original Error: ${additionalBooster.title} ${additionalBooster.text}`
+							)
 						);
-						Connections[userID].socket?.emit("message", msg);
-					} else {
+					else
 						applyDraftEffects.push(() => {
 							s.players[userID].boosters.unshift(additionalBooster[0]);
 						});
-					}
 					break;
 				}
 			}
