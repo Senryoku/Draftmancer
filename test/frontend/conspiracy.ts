@@ -14,6 +14,7 @@ import {
 } from "./src/common.js";
 import { ElementHandle, Page } from "puppeteer";
 import { cwd } from "node:process";
+import { formToJSON } from "axios";
 async function clickDraft(page: Page) {
 	// Click 'Start' button
 	const [button] = (await page.$x("//button[contains(., 'Start')]")) as ElementHandle<Element>[];
@@ -51,70 +52,107 @@ function launchDraft() {
 	});
 }
 
-describe("Cogwork Librarian", function () {
-	this.timeout(10000);
-	setupBrowsers(1);
+describe("Conspiracy", function () {
+	describe("Cogwork Librarian", function () {
+		this.timeout(10000);
+		setupBrowsers(1);
 
-	selectCube("CogworkLibrarian");
-	launchDraft();
+		selectCube("CogworkLibrarian");
+		launchDraft();
 
-	it(`Pick Cogwork Librarian, pick effect selector should appear`, async function () {
-		const card = await pages[0].$(".card");
-		await card!.click();
-		await waitAndClickSelector(pages[0], 'input[value="Confirm Pick"]');
-		const pickSelector = await pages[0].waitForSelector("#pick-effect");
-		expect(pickSelector).to.exist;
-		const options = await pickSelector!.$$("option");
-		expect(options).to.have.lengthOf(2);
-		expect(await options![0]!.evaluate((el) => el.innerText)).to.contain("Cogwork Librarian");
+		it(`Pick Cogwork Librarian, pick effect selector should appear`, async function () {
+			const card = await pages[0].$(".card");
+			await card!.click();
+			await waitAndClickSelector(pages[0], 'input[value="Confirm Pick"]');
+			const pickSelector = await pages[0].waitForSelector("#pick-effect");
+			expect(pickSelector).to.exist;
+			const options = await pickSelector!.$$("option");
+			expect(options).to.have.lengthOf(2);
+			expect(await options![0]!.evaluate((el) => el.innerText)).to.contain("Cogwork Librarian");
+		});
+
+		it(`Should be able to pick two cards and still have only two in deck afterwards.`, async function () {
+			const pickSelector = (await pages[0].waitForSelector("#pick-effect")) as ElementHandle<HTMLSelectElement>;
+			pickSelector.select("Cogwork Librarian");
+			await pages[0].waitForXPath("//span[contains(., 'Pick 2')]");
+			const cards = await pages[0].$$(".card");
+			await cards![0]!.click();
+			await cards![1]!.click();
+			await waitAndClickSelector(pages[0], 'input[value="Confirm Pick"]');
+			await pages[0].waitForXPath("//h2[contains(., 'Deck (2')]");
+		});
 	});
 
-	it(`Should be able to pick two cards and still have only two in deck afterwards.`, async function () {
-		const pickSelector = (await pages[0].waitForSelector("#pick-effect")) as ElementHandle<HTMLSelectElement>;
-		pickSelector.select("Cogwork Librarian");
-		await pages[0].waitForXPath("//span[contains(., 'Pick 2')]");
-		const cards = await pages[0].$$(".card");
-		await cards![0]!.click();
-		await cards![1]!.click();
-		await waitAndClickSelector(pages[0], 'input[value="Confirm Pick"]');
-		await pages[0].waitForXPath("//h2[contains(., 'Deck (2')]");
+	describe("Lore Seeker", function () {
+		this.timeout(10000);
+		setupBrowsers(1);
+
+		selectCube("LoreSeeker");
+		launchDraft();
+
+		it(`Click on Lore Seeker, pick effect selector should appear`, async function () {
+			const card = await pages[0].$(".card");
+			await card!.click();
+			const pickSelector = (await pages[0].waitForSelector(
+				"#optional-pick-effect"
+			)) as ElementHandle<HTMLSelectElement>;
+			expect(pickSelector).to.exist;
+			const options = await pickSelector!.$$("option");
+			expect(options).to.have.lengthOf(2);
+			expect(await options[0]!.evaluate((el) => el.innerText)).to.contain("Lore Seeker");
+		});
+
+		it(`Pick the Lore Seeker, next pack should be brand new`, async function () {
+			await waitAndClickSelector(pages[0], 'input[value="Confirm Pick"]');
+			await pages[0].waitForXPath("//h2[contains(., 'Deck (1')]");
+			await pages[0].waitForXPath("//h2[contains(., 'Booster (10')]");
+		});
+
+		it(`Pick the Lore Seeker, but don't activate effect.`, async function () {
+			const card = await pages[0].$(".card");
+			await card!.click();
+			const pickSelector = (await pages[0].waitForSelector(
+				"#optional-pick-effect"
+			)) as ElementHandle<HTMLSelectElement>;
+			pickSelector.select("Do not use");
+			await waitAndClickSelector(pages[0], 'input[value="Confirm Pick"]');
+			await pages[0].waitForXPath("//h2[contains(., 'Deck (2')]");
+			await pages[0].waitForXPath("//h2[contains(., 'Booster (9')]");
+		});
 	});
-});
 
-describe("Lore Seeker", function () {
-	this.timeout(10000);
-	setupBrowsers(1);
+	describe("Agent of Acquisitions", function () {
+		this.timeout(10000);
+		setupBrowsers(1);
 
-	selectCube("LoreSeeker");
-	launchDraft();
+		selectCube("AgentOfAcquisitions");
+		launchDraft();
 
-	it(`Click on Lore Seeker, pick effect selector should appear`, async function () {
-		const card = await pages[0].$(".card");
-		await card!.click();
-		const pickSelector = (await pages[0].waitForSelector(
-			"#optional-pick-effect"
-		)) as ElementHandle<HTMLSelectElement>;
-		expect(pickSelector).to.exist;
-		const options = await pickSelector!.$$("option");
-		expect(options).to.have.lengthOf(2);
-		expect(await options[0]!.evaluate((el) => el.innerText)).to.contain("Lore Seeker");
-	});
+		it(`Pick Agent of Acquisitions, pick effect selector should appear`, async function () {
+			const card = await pages[0].$(".card");
+			await card!.click();
+			await waitAndClickSelector(pages[0], 'input[value="Confirm Pick"]');
+			const pickSelector = await pages[0].waitForSelector("#pick-effect");
+			expect(pickSelector).to.exist;
+			const options = await pickSelector!.$$("option");
+			expect(options).to.have.lengthOf(2);
+			expect(await options![0]!.evaluate((el) => el.innerText)).to.contain("Agent of Acquisitions");
+		});
 
-	it(`Pick the Lore Seeker, next pack should be brand new`, async function () {
-		await waitAndClickSelector(pages[0], 'input[value="Confirm Pick"]');
-		await pages[0].waitForXPath("//h2[contains(., 'Deck (1')]");
-		await pages[0].waitForXPath("//h2[contains(., 'Booster (10')]");
-	});
+		it(`Pick, should have 10 cards and still have to pass 8 times.`, async function () {
+			const cards = await pages[0].$$(".card");
+			await cards![0]!.click();
+			const pickSelector = (await pages[0].waitForSelector("#pick-effect")) as ElementHandle<HTMLSelectElement>;
+			pickSelector.select("Agent of Acquisitions");
+			await waitAndClickSelector(pages[0], 'input[value="Confirm Pick"]');
+			await pages[0].waitForXPath("//h2[contains(., 'Deck (10')]");
+			for (let i = 0; i < 8; ++i) await waitAndClickXpath(pages[0], '//button[contains(., "Pass Booster")]');
+		});
 
-	it(`Pick the Lore Seeker, but don't activate effect.`, async function () {
-		const card = await pages[0].$(".card");
-		await card!.click();
-		const pickSelector = (await pages[0].waitForSelector(
-			"#optional-pick-effect"
-		)) as ElementHandle<HTMLSelectElement>;
-		pickSelector.select("Do not use");
-		await waitAndClickSelector(pages[0], 'input[value="Confirm Pick"]');
-		await pages[0].waitForXPath("//h2[contains(., 'Deck (2')]");
-		await pages[0].waitForXPath("//h2[contains(., 'Booster (9')]");
+		it(`Next booster; should be able to pick again.`, async function () {
+			const card = await pages[0].$(".card");
+			await card!.click();
+			await waitAndClickSelector(pages[0], 'input[value="Confirm Pick"]');
+		});
 	});
 });
