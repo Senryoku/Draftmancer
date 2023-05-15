@@ -12,6 +12,17 @@
 				There is an experimental support for custom cards in cube, see the
 				<a href="cubeformat.html" target="_blank" rel="noopener nofollow">Cube Format</a> for more information.
 			</p>
+			<strong>Are Conspiray draft matters cards supported?</strong>
+			<p>
+				Yes! Well, some of them at least. I tried to implement the most popular ones (Cogwork Librarian, Lore
+				Seeker...), you can find the status of each card in
+				<a
+					href="https://github.com/Senryoku/Draftmancer/wiki/Conspiracy-cards-support"
+					target="_blank"
+					rel="noopener nofollow"
+					>this page of the GitHub wiki</a
+				>.
+			</p>
 			Your question isn't answered here? Head to the
 			<a href="https://discord.gg/ZkMyKpPYSz" target="_blank" rel="noopener nofollow"
 				>Help section of the Draftmancer Discord</a
