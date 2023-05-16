@@ -1,7 +1,7 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
-			<em>May, 2023</em>
+			<em>May 16, 2023</em>
 			<ul>
 				<li>
 					Experimental support for
