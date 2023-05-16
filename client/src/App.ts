@@ -1546,7 +1546,8 @@ export default defineComponent({
 						this.sideboard = this.sideboard.filter((c) => !selectedCards.includes(c));
 						this.booster.push(...selectedCards);
 						this.booster.push(...burningCards);
-						Alert.fire(answer.error as SweetAlertOptions<any, any>);
+						this.draftingState = DraftState.Picking;
+						Alert.fire(answer.error as SweetAlertOptions);
 					} else {
 						if (toSideboard)
 							for (const cuid of selectedCards.map((c) => c.uniqueID))
