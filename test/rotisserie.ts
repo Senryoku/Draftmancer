@@ -284,6 +284,7 @@ describe("Rotisserie Draft", function () {
 				"WithReplacementLayouts",
 				"DOMLayoutExample",
 				"CustomCards_RelatedCards",
+				"CustomCards_DraftEffects",
 			].includes(k)
 	)) {
 		describe(`Singleton collation, '${key}' cube.`, () => {

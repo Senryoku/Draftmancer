@@ -86,7 +86,7 @@ describe("Grid Draft", function () {
 				const cl = clients[c];
 				cl.on("gridDraftNextRound", function (state) {
 					if (state.booster) expect(state.booster.length).to.equal(9);
-					if (state.currentPlayer === (cl as any).query.userID) {
+					if (state.currentPlayer === getUID(cl)) {
 						// Pick randomly and retry on error (empty col/row)
 						const pick = () => {
 							cl.emit("gridDraftPick", Math.floor(Math.random() * 6), (response) => {
@@ -103,28 +103,30 @@ describe("Grid Draft", function () {
 				});
 			}
 			const currentPlayerID = (Sessions[sessionID].draftState as TurnBased).currentPlayer();
-			const currentPlayerIdx = clients.findIndex((c) => (c as any).query.userID === currentPlayerID);
+			const currentPlayerIdx = clients.findIndex((c) => getUID(c) === currentPlayerID);
 			clients[currentPlayerIdx].emit("gridDraftPick", Math.floor(Math.random() * 6), ackNoError);
 		});
 	};
 
-	startDraft();
+	describe("Basic, with disconnect", function () {
+		startDraft();
 
-	it("Non-owner disconnects, owner receives updated user infos.", function (done) {
-		clients[ownerIdx].once("userDisconnected", function () {
-			waitForSocket(clients[nonOwnerIdx], done);
+		it("Non-owner disconnects, owner receives updated user infos.", function (done) {
+			clients[ownerIdx].once("userDisconnected", function () {
+				waitForSocket(clients[nonOwnerIdx], done);
+			});
+			clients[nonOwnerIdx].disconnect();
 		});
-		clients[nonOwnerIdx].disconnect();
-	});
 
-	it("Non-owner reconnects, draft restarts.", function (done) {
-		clients[nonOwnerIdx].once("rejoinGridDraft", function (state) {
-			done();
+		it("Non-owner reconnects, draft restarts.", function (done) {
+			clients[nonOwnerIdx].once("rejoinGridDraft", function (state) {
+				done();
+			});
+			clients[nonOwnerIdx].connect();
 		});
-		clients[nonOwnerIdx].connect();
-	});
 
-	endDraft();
+		endDraft();
+	});
 
 	describe("Using a Cube", function () {
 		it("Emit Settings.", function (done) {
@@ -141,14 +143,17 @@ describe("Grid Draft", function () {
 
 	describe("3 Players", function () {
 		it("Third player connects.", function (done) {
-			clients.push(
-				connectClient({
-					userID: "id3",
-					sessionID: sessionID,
-					userName: "Client3",
-				})
-			);
-			done();
+			const client = connectClient({
+				userID: "id3",
+				sessionID: sessionID,
+				userName: "Client3",
+			});
+			clients.push(client);
+
+			client.once("connect", function () {
+				expect(Object.keys(Connections).length).to.equal(3);
+				done();
+			});
 		});
 
 		startDraft();
