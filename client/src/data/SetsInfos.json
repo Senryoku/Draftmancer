@@ -3371,6 +3371,17 @@
         "icon": "img/sets/pcsp.svg",
         "rareCount": 1
     },
+    "pctb": {
+        "code": "pctb",
+        "fullName": "From Cute to Brute",
+        "cardCount": 95,
+        "isPrimary": false,
+        "icon": "img/sets/pctb.svg",
+        "commonCount": 17,
+        "mythicCount": 14,
+        "rareCount": 47,
+        "uncommonCount": 17
+    },
     "pcy": {
         "code": "pcy",
         "fullName": "Prophecy",
@@ -4127,12 +4138,11 @@
     "pmom": {
         "code": "pmom",
         "fullName": "March of the Machine Promos",
-        "cardCount": 154,
+        "cardCount": 134,
         "isPrimary": false,
         "icon": "img/sets/pmom.svg",
         "mythicCount": 30,
-        "rareCount": 104,
-        "uncommonCount": 20
+        "rareCount": 104
     },
     "pmor": {
         "code": "pmor",
@@ -4704,11 +4714,11 @@
     "pvow": {
         "code": "pvow",
         "fullName": "Innistrad: Crimson Vow Promos",
-        "cardCount": 109,
+        "cardCount": 110,
         "isPrimary": false,
         "icon": "img/sets/pvow.svg",
         "mythicCount": 26,
-        "rareCount": 83
+        "rareCount": 84
     },
     "pw11": {
         "code": "pw11",
@@ -5033,22 +5043,22 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 928,
+        "cardCount": 929,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
         "commonCount": 42,
         "mythicCount": 167,
-        "rareCount": 699,
+        "rareCount": 700,
         "uncommonCount": 20
     },
     "slp": {
         "code": "slp",
         "fullName": "Secret Lair Showdown",
-        "cardCount": 6,
+        "cardCount": 7,
         "isPrimary": false,
         "icon": "img/sets/slp.svg",
         "mythicCount": 2,
-        "rareCount": 4
+        "rareCount": 5
     },
     "slu": {
         "code": "slu",
