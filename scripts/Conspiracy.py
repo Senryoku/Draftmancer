@@ -67,6 +67,13 @@ for c in d["data"]:
     if c['oracle_id'] not in draft_effects:
         draft_effects[c['oracle_id']] = []
     draft_effects[c['oracle_id']].append("NotePassingPlayer")
+    
+r = requests.get('https://api.scryfall.com/cards/search?q=o:"The player to your right chooses a color, you choose another color, then the player to your left chooses a third color."')
+d = json.loads(r.content)
+for c in d["data"]:
+    if c['oracle_id'] not in draft_effects:
+        draft_effects[c['oracle_id']] = []
+    draft_effects[c['oracle_id']].append("ChooseColors")
 
 # Unique effects
 draft_effects["ec0d964e-ca2c-4252-8551-cf1916576653"].append("CogworkLibrarian")

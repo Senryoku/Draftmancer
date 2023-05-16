@@ -17,6 +17,7 @@ export enum OnPickDraftEffect {
 	Reveal = "Reveal",
 	NotePassingPlayer = "NotePassingPlayer",
 	NoteDraftedCards = "NoteDraftedCards",
+	ChooseColors = "ChooseColors",
 }
 
 // Same thing, but a may ability.
@@ -105,6 +106,7 @@ export type UniqueCardState = {
 	creatureName?: string;
 	creatureTypes?: string[];
 	removedCards?: UniqueCard[];
+	colors?: CardColor[];
 };
 
 export class UniqueCard extends Card {

@@ -1,0 +1,17 @@
+[Settings]
+{
+	"withReplacement": true,
+	"layouts": {
+		"normal": {
+			"weight": 1,
+			"slots": {
+				"Paliano": 1,
+				"Regicide": 1
+			}
+		}
+	}
+}
+[Paliano]
+Paliano, the High City
+[Regicide]
+Regicide

@@ -42,7 +42,7 @@
 			<div class="ready-check" v-if="readyCheck !== null">
 				<div class="ready-check-inner">
 					<div
-						class="ready-check-timer"
+						class="line-timer"
 						:key="readyCheck.timeout"
 						:style="`--timer:${readyCheck.animDuration}ms;`"
 					></div>
@@ -115,6 +115,7 @@ import { SweetAlertIcon } from "sweetalert2";
 import { Sounds } from "../App.vue";
 
 const Queues: (QueueDescription & { image: string })[] = [];
+// eslint-disable-next-line no-undef
 for (const q of AvailableQueues) Queues.push({ ...q, image: require(`../assets/img/queues/${q.id}.jpg`) });
 
 const { emitter } = useEmitter();
@@ -133,7 +134,7 @@ const queueStatus = ref(
 let queueStatusRequest = setTimeout(() => {
 	requestQueueStatus();
 }, 0);
-let readyCheckCountdownInterval: NodeJS.Timeout;
+let readyCheckCountdownInterval: ReturnType<typeof setInterval>;
 
 const readyCheck = ref(
 	null as null | {
@@ -405,56 +406,6 @@ function unregister() {
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
 }
 
-.ready-check-timer {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 4px;
-	background-color: #518ae6;
-	will-change: width;
-
-	transform-origin: left;
-	animation: timer var(--timer) linear forwards;
-}
-
-@keyframes timer {
-	from {
-		width: 100%;
-	}
-
-	to {
-		width: 0;
-	}
-}
-
-.ready-check-timer:after {
-	content: "";
-	position: absolute;
-	top: -2px;
-	right: -2px;
-	width: 4px;
-	height: 8px;
-	border-radius: 2px/4px;
-	background-color: #518ae6;
-	box-shadow: 0 0 2px #518ae6;
-	animation: timer-pulse 1s infinite;
-}
-
-@keyframes timer-pulse {
-	0% {
-		box-shadow: 0 0 0 0 rgba(81, 138, 230, 0.8);
-	}
-
-	70% {
-		box-shadow: 0 0 0 6px rgba(81, 138, 230, 0);
-	}
-
-	100% {
-		box-shadow: 0 0 0 0 rgba(81, 138, 230, 0);
-	}
-}
-
 .ready-check-question {
 	text-align: center;
 	height: 2em;
@@ -519,3 +470,5 @@ function unregister() {
 	}
 }
 </style>
+
+<style src="../css/line-timer.css" />

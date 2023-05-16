@@ -70,6 +70,19 @@ export class DraftState extends IDraftState {
 		}
 	}
 
+	leftPlayer(userID: UserID) {
+		const playerIds = Object.keys(this.players);
+		let idx = playerIds.indexOf(userID) + 1;
+		idx = negMod(idx, playerIds.length);
+		return playerIds[idx];
+	}
+	rightPlayer(userID: UserID) {
+		const playerIds = Object.keys(this.players);
+		let idx = playerIds.indexOf(userID) - 1;
+		idx = negMod(idx, playerIds.length);
+		return playerIds[idx];
+	}
+
 	previousPlayer(userID: UserID) {
 		const playerIds = Object.keys(this.players);
 		let idx = playerIds.indexOf(userID);

@@ -17,6 +17,7 @@ import {
 	UniqueCardID,
 	OptionalOnPickDraftEffect,
 	UniqueCardState,
+	CardColor,
 } from "./CardTypes";
 import { RochesterDraftSyncData } from "./RochesterDraft";
 import { MinesweeperSyncData, MinesweeperSyncDataDiff } from "./MinesweeperDraftTypes";
@@ -213,16 +214,10 @@ export interface ServerToClientEvents {
 		sessionID: string;
 		time: number;
 		userID: string;
-		decklist?:
-			| DeckList
-			| {
-					hashes:
-						| {
-								[key: string]: string;
-						  }
-						| undefined;
-			  };
+		decklist?: DeckList | { hashes: { [key: string]: string } | undefined };
 	}) => void;
+
+	askColor: (userName: string, card: UniqueCard, callback: (color: CardColor) => void) => void;
 }
 
 export interface ClientToServerEvents {

@@ -1,0 +1,49 @@
+.line-timer {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 4px;
+	background-color: #518ae6;
+	will-change: width;
+
+	transform-origin: left;
+	animation: line-timer var(--timer) linear forwards;
+}
+
+@keyframes line-timer {
+	from {
+		width: 100%;
+	}
+
+	to {
+		width: 0;
+	}
+}
+
+.line-timer:after {
+	content: "";
+	position: absolute;
+	top: -2px;
+	right: -2px;
+	width: 4px;
+	height: 8px;
+	border-radius: 2px/4px;
+	background-color: #518ae6;
+	box-shadow: 0 0 2px #518ae6;
+	animation: line-timer-pulse 1s infinite;
+}
+
+@keyframes line-timer-pulse {
+	0% {
+		box-shadow: 0 0 0 0 rgba(81, 138, 230, 0.8);
+	}
+
+	70% {
+		box-shadow: 0 0 0 6px rgba(81, 138, 230, 0);
+	}
+
+	100% {
+		box-shadow: 0 0 0 0 rgba(81, 138, 230, 0);
+	}
+}

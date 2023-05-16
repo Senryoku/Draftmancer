@@ -161,6 +161,7 @@ type SessionUser = {
 };
 
 const DraftLogLiveComponent = defineAsyncComponent(() => import("./components/DraftLogLive.vue"));
+const ConspiracyAskColor = defineAsyncComponent(() => import("./components/ConspiracyAskColor.vue"));
 
 export default defineComponent({
 	components: {
@@ -1245,6 +1246,26 @@ export default defineComponent({
 
 			this.socket.on("disableTimer", () => {
 				this.pickTimer = -1;
+			});
+
+			this.socket.on("askColor", (userName, card, ack) => {
+				const el = document.createElement("div");
+				el.id = "ask-color-dialog";
+				this.$el.appendChild(el);
+
+				const instance = createCommonApp(ConspiracyAskColor, {
+					userName: userName,
+					card: card,
+					timer: 30,
+					unmounted: () => {
+						this.$el.removeChild(el);
+					},
+					onSelectColor: (color: CardColor) => {
+						ack(color);
+						instance.unmount();
+					},
+				});
+				instance.mount("#ask-color-dialog");
 			});
 		},
 		clearState() {

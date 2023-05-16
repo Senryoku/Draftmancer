@@ -62,6 +62,7 @@ import { WinchesterDraftState, isWinchesterDraftState } from "./WinchesterDraft.
 import { HousmanDraftState, isHousmanDraftState } from "./HousmanDraft.js";
 import { SolomonDraftState, isSolomonDraftState } from "./SolomonDraft.js";
 import { isSomeEnum } from "./TypeChecks.js";
+import { askColors } from "./Conspiracy.js";
 
 export class Session implements IIndexable {
 	id: SessionID;
@@ -2029,6 +2030,12 @@ export class Session implements IIndexable {
 							card.state.cardsDraftedThisRound = s.players[userID].pickNumber + 1;
 							updatedCardStates.push({ cardID: card.uniqueID, state: card.state });
 							break;
+						case OnPickDraftEffect.ChooseColors: {
+							const leftPlayer = s.leftPlayer(userID);
+							const rightPlayer = s.rightPlayer(userID);
+							askColors(card, userID, leftPlayer, rightPlayer);
+							break;
+						}
 						default:
 							if (isSomeEnum(OnPickDraftEffect)(effect))
 								console.info("Unimplemented on pick draft effect: " + effect);

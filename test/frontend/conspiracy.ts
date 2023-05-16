@@ -1,8 +1,16 @@
 import { describe, it } from "mocha";
 import chai from "chai";
 const expect = chai.expect;
-import { waitAndClickXpath, waitAndClickSelector, dismissToast, setupBrowsers, pages } from "./src/common.js";
+import {
+	waitAndClickXpath,
+	waitAndClickSelector,
+	dismissToast,
+	setupBrowsers,
+	pages,
+	replaceInput,
+} from "./src/common.js";
 import { ElementHandle, Page } from "puppeteer";
+import { getRandom } from "../../src/utils.js";
 
 async function clickDraft(page: Page) {
 	// Click 'Start' button
@@ -142,6 +150,64 @@ describe("Conspiracy", function () {
 			const card = await pages[0].$(".card");
 			await card!.click();
 			await waitAndClickSelector(pages[0], 'input[value="Confirm Pick"]');
+		});
+	});
+
+	describe("Choose Colors", function () {
+		this.timeout(10000);
+		setupBrowsers(3);
+
+		selectCube("ChooseColors");
+
+		it(`Reorder players`, async function () {
+			for (let i = 0; i < 3; i++) {
+				const nameInput = await pages[i].$(`#user-name`);
+				await replaceInput(`Player ${i}`)(nameInput);
+				await nameInput!.press("Enter");
+				const el = (await pages[0].$x(`//li[div[contains(., 'Player ${i}')]]`))[0];
+				let pos = await el.evaluate((e) => Array.prototype.indexOf.call(e.parentNode!.children, e));
+				while (pos !== i) {
+					(await el.$(".move-player-left"))!.click();
+					await new Promise((resolve) => setTimeout(resolve, 50));
+					pos = await el.evaluate((e) => Array.prototype.indexOf.call(e.parentNode!.children, e));
+				}
+			}
+		});
+
+		it(`Launch Draft`, async function () {
+			await clickDraft(pages[0]);
+			await pages[0].waitForXPath("//h2[contains(., 'Your Booster')]");
+			await pages[0].waitForXPath("//div[contains(., 'Draft Started!')]", {
+				hidden: true,
+			});
+		});
+
+		it(`Center player pick a ChooseColors card`, async function () {
+			const card = await pages[1].$(".card");
+			await card!.click();
+			await waitAndClickSelector(pages[1], 'input[value="Confirm Pick"]');
+			await new Promise((resolve) => setTimeout(resolve, 1000));
+		});
+
+		it(`Left Player should be asked a color.`, async function () {
+			const dialog = await pages[0].waitForSelector("#ask-color-dialog");
+			const choices = await dialog!.$$(".choice");
+			await getRandom(choices).click();
+			await new Promise((resolve) => setTimeout(resolve, 1000));
+		});
+
+		it(`Center Player should be asked a color.`, async function () {
+			const dialog = await pages[1].waitForSelector("#ask-color-dialog");
+			const choices = await dialog!.$$(".choice");
+			await getRandom(choices).click();
+			await new Promise((resolve) => setTimeout(resolve, 1000));
+		});
+
+		it(`Right Player should be asked a color.`, async function () {
+			const dialog = await pages[2].waitForSelector("#ask-color-dialog");
+			const choices = await dialog!.$$(".choice");
+			await getRandom(choices).click();
+			await new Promise((resolve) => setTimeout(resolve, 1000));
 		});
 	});
 });
