@@ -2,7 +2,7 @@ import parseCost from "./parseCost.js";
 import { escapeHTML } from "./utils.js";
 import { Card, CardColor, CardFace } from "./CardTypes.js";
 import { ackError, isMessageError, isSocketError, SocketAck, SocketError } from "./Message.js";
-import { isCard } from "./CardTypeCheck.js";
+import { isCard, isDraftEffect } from "./CardTypeCheck.js";
 import { hasProperty, isArrayOf, isObject, isRecord, isString } from "./TypeChecks.js";
 
 function errorWithJSON(title: string, msg: string, json: unknown) {
@@ -171,6 +171,24 @@ export function validateCustomCard(inputCard: any): SocketError | Card {
 						2
 					)}</pre>`,
 				});
+		}
+	}
+
+	if ("draft_effects" in inputCard) {
+		const arrayCheck = checkPropertyIsArrayOrUndefined(inputCard, "draft_effects");
+		if (arrayCheck) return arrayCheck;
+		card.draft_effects = [];
+		for (const entry of inputCard.draft_effects) {
+			if (!isDraftEffect(entry))
+				return ackError({
+					title: `Invalid Property`,
+					html: `Invalid entry in 'draft_effects' of custom card, must be a valid DraftEffect. <pre>${JSON.stringify(
+						inputCard,
+						null,
+						2
+					)}</pre>`,
+				});
+			card.draft_effects.push(entry);
 		}
 	}
 

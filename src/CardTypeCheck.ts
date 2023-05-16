@@ -1,4 +1,12 @@
-import { Card, CardFace, UniqueCard } from "./CardTypes";
+import {
+	Card,
+	CardFace,
+	DraftEffect,
+	OnPickDraftEffect,
+	OptionalOnPickDraftEffect,
+	UniqueCard,
+	UsableDraftEffect,
+} from "./CardTypes.js";
 import {
 	hasOptionalProperty,
 	hasProperty,
@@ -9,7 +17,18 @@ import {
 	isString,
 	isNumber,
 	isUnion,
+	isSomeEnum,
 } from "./TypeChecks.js";
+
+export function isDraftEffect(str: unknown): str is DraftEffect {
+	return (
+		isString(str) &&
+		(isSomeEnum(OnPickDraftEffect)(str) ||
+			isSomeEnum(OptionalOnPickDraftEffect)(str) ||
+			isSomeEnum(UsableDraftEffect)(str) ||
+			["AnimusOfPredation", "CogworkGrinder"].includes(str))
+	);
+}
 
 export function isCardFace(obj: unknown): obj is CardFace {
 	return (
@@ -44,7 +63,8 @@ export function isCard(obj: unknown): obj is Card {
 		hasProperty("image_uris", isRecord(isString, isString))(obj) &&
 		hasOptionalProperty("back", isCardFace)(obj) &&
 		hasOptionalProperty("is_custom", isBoolean)(obj) &&
-		hasOptionalProperty("related_cards", isArrayOf(isUnion(isString, isCardFace)))(obj)
+		hasOptionalProperty("related_cards", isArrayOf(isUnion(isString, isCardFace)))(obj) &&
+		hasOptionalProperty("draft_effects", isArrayOf(isDraftEffect))(obj)
 	);
 }
 

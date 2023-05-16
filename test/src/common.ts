@@ -24,6 +24,7 @@ export const ValidCubes: { [name: string]: string } = {
 	WithSettings: fs.readFileSync(`./test/data/WithSettings.txt`, "utf8"),
 	DOMLayoutExample: fs.readFileSync(`./test/data/DOMLayoutExample.txt`, "utf8"),
 	CustomCards_RelatedCards: fs.readFileSync(`./test/data/CustomCards_RelatedCards.txt`, "utf8"),
+	CustomCards_DraftEffects: fs.readFileSync(`./test/data/CustomCards_DraftEffects.txt`, "utf8"),
 };
 
 export const InvalidCubes: { [name: string]: string } = {
@@ -40,6 +41,7 @@ export const InvalidCubes: { [name: string]: string } = {
 	InvalidSettings_UnknownLayout: fs.readFileSync(`./test/data/InvalidSettings_UnknownLayout.txt`, "utf8"),
 	InvalidSettings_WrongSlotType: fs.readFileSync(`./test/data/InvalidSettings_WrongSlotType.txt`, "utf8"),
 	CustomCards_RelatedCards_Invalid: fs.readFileSync(`./test/data/CustomCards_RelatedCards_Invalid.txt`, "utf8"),
+	CustomCards_DraftEffects_Invalid: fs.readFileSync(`./test/data/CustomCards_DraftEffects_Invalid.txt`, "utf8"),
 };
 
 const NODE_PORT = process.env.PORT ?? 3000;

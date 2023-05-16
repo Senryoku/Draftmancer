@@ -1,0 +1,15 @@
+[CustomCards]
+[
+	{	
+		"name": "My Fake Cogwork",
+		"rarity": "mythic",
+		"mana_cost": "{1}{B}",
+		"type": "Creature",
+		"image_uris": {
+			"en": "http://fake.dmn/img.jpg"
+		},
+		"draft_effects": ["FaceUp", "CogworkLibrarian", "NonValidValue"]
+	}
+]
+[Common]
+999 My Fake Cogwork
