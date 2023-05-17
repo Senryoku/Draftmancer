@@ -5,12 +5,12 @@ const expect = chai.expect;
 import { Sessions } from "../src/Session.js";
 import { makeClients, waitForClientDisconnects, enableLogs, disableLogs, ackNoError, getUID } from "./src/common.js";
 import { OptionalOnPickDraftEffect, UniqueCard, UniqueCardID, UsableDraftEffect } from "../src/CardTypes.js";
-import { CogworkLibrarianOracleID } from "../src/Conspiracy.js";
+
+const CogworkLibrarianOracleID = "ec0d964e-ca2c-4252-8551-cf1916576653";
 
 describe("Conspiracy Draft Matters Cards", () => {
 	let clients: ReturnType<typeof makeClients> = [];
 	let ownerIdx = 0;
-	let nonOwnerIdx = 1;
 	const states: {
 		booster: UniqueCard[];
 		boosterCount: number;
@@ -40,7 +40,6 @@ describe("Conspiracy Draft Matters Cards", () => {
 		}
 		clients = makeClients(queries, () => {
 			ownerIdx = clients.findIndex((c) => getUID(c) == Sessions[(c as any).query.sessionID].owner);
-			nonOwnerIdx = (ownerIdx + 1) % clients.length;
 			done();
 		});
 	});
