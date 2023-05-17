@@ -161,7 +161,8 @@ type SessionUser = {
 };
 
 const DraftLogLiveComponent = defineAsyncComponent(() => import("./components/DraftLogLive.vue"));
-const ConspiracyAskColor = defineAsyncComponent(() => import("./components/ConspiracyAskColor.vue"));
+const ChooseColorComponent = defineAsyncComponent(() => import("./components/ChooseColor.vue"));
+const ChoosePlayerComponent = defineAsyncComponent(() => import("./components/ChoosePlayer.vue"));
 
 export default defineComponent({
 	components: {
@@ -1253,10 +1254,9 @@ export default defineComponent({
 				el.id = "ask-color-dialog";
 				this.$el.appendChild(el);
 
-				const instance = createCommonApp(ConspiracyAskColor, {
+				const instance = createCommonApp(ChooseColorComponent, {
 					userName: userName,
 					card: card,
-					timer: 30,
 					unmounted: () => {
 						this.$el.removeChild(el);
 					},
@@ -1266,6 +1266,26 @@ export default defineComponent({
 					},
 				});
 				instance.mount("#ask-color-dialog");
+			});
+
+			this.socket.on("choosePlayer", (reason, users, ack) => {
+				const el = document.createElement("div");
+				el.id = "choose-player-dialog";
+				this.$el.appendChild(el);
+
+				const instance = createCommonApp(ChoosePlayerComponent, {
+					sessionUsers: this.sessionUsers,
+					reason: reason,
+					users: users,
+					unmounted: () => {
+						this.$el.removeChild(el);
+					},
+					onChoose: (uid: UserID) => {
+						ack(uid);
+						instance.unmount();
+					},
+				});
+				instance.mount("#choose-player-dialog");
 			});
 		},
 		clearState() {

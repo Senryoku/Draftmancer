@@ -22,6 +22,7 @@ export class DraftState extends IDraftState {
 			effect?: {
 				skipNPicks?: number;
 				skipUntilNextRound?: boolean;
+				canalDredger?: boolean;
 			};
 		};
 	} = {};
@@ -97,6 +98,12 @@ export class DraftState extends IDraftState {
 		idx += this.boosterNumber % 2 ? -1 : 1;
 		idx = negMod(idx, playerIds.length);
 		return playerIds[idx];
+	}
+
+	getPlayersWithCanalDredger() {
+		return Object.entries(this.players)
+			.filter((p) => p[1].effect?.canalDredger)
+			.map((p) => p[0]);
 	}
 
 	syncData(userID: UserID) {

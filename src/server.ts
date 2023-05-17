@@ -284,8 +284,8 @@ function setReady(userID: UserID, sessionID: SessionID, readyState: ReadyState) 
 	Sessions[sessionID].forUsers((user) => Connections[user]?.socket.emit("setReady", userID, readyState));
 }
 
-function passBooster(userID: UserID, sessionID: SessionID) {
-	Sessions[sessionID].skipPick(userID);
+async function passBooster(userID: UserID, sessionID: SessionID) {
+	await Sessions[sessionID].skipPick(userID);
 }
 
 async function pickCard(

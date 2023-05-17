@@ -62,7 +62,7 @@ import { WinchesterDraftState, isWinchesterDraftState } from "./WinchesterDraft.
 import { HousmanDraftState, isHousmanDraftState } from "./HousmanDraft.js";
 import { SolomonDraftState, isSolomonDraftState } from "./SolomonDraft.js";
 import { isSomeEnum } from "./TypeChecks.js";
-import { askColors } from "./Conspiracy.js";
+import { askColors, choosePlayer } from "./Conspiracy.js";
 
 export class Session implements IIndexable {
 	id: SessionID;
@@ -1698,7 +1698,7 @@ export class Session implements IIndexable {
 	}
 
 	// Pass a booster to the next player at the table
-	passBooster(booster: Array<UniqueCard>, userID: UserID) {
+	passBooster(booster: Array<UniqueCard>, to: UserID) {
 		const s = this.draftState;
 		if (!isDraftState(s)) return;
 
@@ -1708,21 +1708,17 @@ export class Session implements IIndexable {
 			this.checkDraftRoundEnd();
 		} else {
 			// Re-insert the booster back for the next player
-			const nextUserID = s.nextPlayer(userID);
-			s.players[nextUserID].boosters.push(booster);
+			s.players[to].boosters.push(booster);
 
 			// Synchronize concerned users
-			if (
-				s.players[nextUserID].isBot ||
-				(this.isDisconnected(nextUserID) && this.disconnectedUsers[nextUserID].replaced)
-			) {
-				this.startBotPickChain(nextUserID);
-			} else if (!this.isDisconnected(nextUserID)) {
-				this.sendDraftState(nextUserID);
+			if (s.players[to].isBot || (this.isDisconnected(to) && this.disconnectedUsers[to].replaced)) {
+				this.startBotPickChain(to);
+			} else if (!this.isDisconnected(to)) {
+				this.sendDraftState(to);
 				// This user was waiting for a booster
-				if (s.players[nextUserID].boosters.length === 1) {
-					this.startCountdown(nextUserID);
-					this.requestBotRecommendation(nextUserID);
+				if (s.players[to].boosters.length === 1) {
+					this.startCountdown(to);
+					this.requestBotRecommendation(to);
 				}
 			}
 		}
@@ -1737,11 +1733,25 @@ export class Session implements IIndexable {
 	}
 
 	// Pass the current booster without picking (Agent of Acquisitions; Leovold's Operative)
-	skipPick(userID: UserID) {
+	async skipPick(userID: UserID) {
 		const s = this.draftState;
 		if (!this.drafting || !isDraftState(s)) return new SocketError("This session is not drafting.");
-		if (!s.syncData(userID).skipPick) return reportError(`Why would you skip this pick?`);
-		if (s.players[userID].boosters.length === 0) return reportError(`No booster to pass.`);
+		if (!s.syncData(userID).skipPick) return new SocketError(`Why would you skip this pick?`);
+		if (s.players[userID].boosters.length === 0) return new SocketError(`No booster to pass.`);
+
+		let nextPlayer: UserID = s.nextPlayer(userID);
+		// "Each player passes the last card from each booster pack to a player who drafted a card named Canal Dredger."
+		if (s.players[userID].boosters[0].length === 1) {
+			const playersWithCanalDedger = s.getPlayersWithCanalDredger();
+			// Note: This await comes with the possibly of a re-entry before the state is updated.
+			//       This is a problem, but I don't think it's worth preventing. It should not be possible in legitimate circumstances.
+			if (playersWithCanalDedger.length > 0)
+				nextPlayer = await choosePlayer(
+					userID,
+					`Choose a player with a Canal Dredger to pass '${s.players[userID].boosters[0][0].name}' to:`,
+					playersWithCanalDedger
+				);
+		}
 
 		++s.players[userID].pickNumber;
 		if (s.players[userID].effect?.skipNPicks ?? 0 > 0) s.players[userID].effect!.skipNPicks!--;
@@ -1749,7 +1759,7 @@ export class Session implements IIndexable {
 		this.stopCountdown(userID);
 		const booster = s.players[userID].boosters.splice(0, 1)[0];
 
-		this.passBooster(booster, userID);
+		this.passBooster(booster, nextPlayer);
 
 		this.sendDraftState(userID);
 		if (s.players[userID].boosters.length > 0) {
@@ -1938,6 +1948,20 @@ export class Session implements IIndexable {
 			}
 		}
 
+		let nextPlayer: UserID = s.nextPlayer(userID);
+		// "Each player passes the last card from each booster pack to a player who drafted a card named Canal Dredger."
+		if (booster.length - pickedCards.length - burnedCards.length === 1) {
+			const playersWithCanalDedger = s.getPlayersWithCanalDredger();
+			// Note: This await comes with the possibly of a re-entry before the state is updated.
+			//       This is a problem, but I don't think it's worth preventing. It should not be possible in legitimate circumstances.
+			if (playersWithCanalDedger.length > 0)
+				nextPlayer = await choosePlayer(
+					userID,
+					`Choose a player with a Canal Dredger to pass '${booster[0].name}' to:`,
+					playersWithCanalDedger
+				);
+		}
+
 		if (!pickedCards || pickedCards.length !== picksThisRound)
 			return reportError(
 				`Invalid picked cards (pickedCards: ${pickedCards}, booster length: ${booster.length}).`
@@ -2036,6 +2060,11 @@ export class Session implements IIndexable {
 							askColors(card, userID, leftPlayer, rightPlayer);
 							break;
 						}
+						case OnPickDraftEffect.CanalDredger: {
+							if (!s.players[userID].effect) s.players[userID].effect = {};
+							s.players[userID].effect!.canalDredger = true;
+							break;
+						}
 						default:
 							if (isSomeEnum(OnPickDraftEffect)(effect))
 								console.info("Unimplemented on pick draft effect: " + effect);
@@ -2060,7 +2089,7 @@ export class Session implements IIndexable {
 
 		++s.players[userID].pickNumber;
 
-		this.passBooster(booster, userID);
+		this.passBooster(booster, nextPlayer);
 
 		this.sendDraftState(userID);
 		if (updatedCardStates.length > 0) Connections[userID]?.socket?.emit("updateCardState", updatedCardStates);
@@ -2209,7 +2238,12 @@ export class Session implements IIndexable {
 		cardsToRemove.sort((a, b) => b - a); // Remove last index first to avoid shifting indices
 		for (const idx of cardsToRemove) booster.splice(idx, 1);
 
-		this.passBooster(booster, userID);
+		let nextPlayer = s.nextPlayer(userID);
+		if (booster.length === 1) {
+			const playersWithCanalDedger = s.getPlayersWithCanalDredger();
+			if (playersWithCanalDedger.length > 0) nextPlayer = getRandom(playersWithCanalDedger);
+		}
+		this.passBooster(booster, nextPlayer);
 
 		// Chain calls as long as we have boosters left
 		if (s.players[userID].boosters.length > 0) {
@@ -2221,12 +2255,14 @@ export class Session implements IIndexable {
 	}
 
 	sendDraftState(userID: UserID) {
-		const s = this.draftState as DraftState;
-		if (userID in Connections) Connections[userID].socket.emit("draftState", s.syncData(userID));
+		const s = this.draftState;
+		if (!isDraftState(s)) return;
+		Connections[userID]?.socket.emit("draftState", s.syncData(userID));
 	}
 
 	requestBotRecommendation(userID: UserID) {
-		const s = this.draftState as DraftState;
+		const s = this.draftState;
+		if (!isDraftState(s)) return;
 		const p = s.players[userID];
 		// Asyncronously ask for bot recommendations, and send then when available
 		if (!this.disableBotSuggestions && p.botInstance && p.boosters.length > 0) {

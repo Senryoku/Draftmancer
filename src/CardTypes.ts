@@ -18,6 +18,7 @@ export enum OnPickDraftEffect {
 	NotePassingPlayer = "NotePassingPlayer",
 	NoteDraftedCards = "NoteDraftedCards",
 	ChooseColors = "ChooseColors",
+	CanalDredger = "CanalDredger",
 }
 
 // Same thing, but a may ability.

@@ -218,6 +218,7 @@ export interface ServerToClientEvents {
 	}) => void;
 
 	askColor: (userName: string, card: UniqueCard, callback: (color: CardColor) => void) => void;
+	choosePlayer: (reason: string, users: UserID[], callback: (user: UserID) => void) => void;
 }
 
 export interface ClientToServerEvents {

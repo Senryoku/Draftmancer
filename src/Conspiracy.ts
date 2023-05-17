@@ -1,5 +1,6 @@
 import { CardColor, UniqueCard } from "./CardTypes.js";
 import { Connections } from "./Connection.js";
+import { UserID } from "./IDTypes";
 import { getRandom } from "./utils.js";
 
 // Ask neighbors to choose a color to be noted on a card (see the Conspiracy cards 'Paliano, the High City' and 'Regicide')
@@ -26,4 +27,16 @@ export async function askColors(card: UniqueCard, userID: string, leftPlayer: st
 
 		Connections[userID]?.socket?.emit("updateCardState", [{ cardID: card.uniqueID, state: card.state }]);
 	}
+}
+
+export function choosePlayer(userID: UserID, reason: string, users: UserID[]) {
+	if (users.length === 1) return users[0];
+	return new Promise<UserID>((resolve) => {
+		if (!Connections[userID]?.socket) resolve(getRandom(users));
+		else
+			Connections[userID].socket.timeout(31000).emit("choosePlayer", reason, users, (err, selectedUser) => {
+				if (err || !users.includes(selectedUser)) resolve(getRandom(users));
+				else resolve(selectedUser);
+			});
+	});
 }
