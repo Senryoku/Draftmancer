@@ -13,6 +13,8 @@ import installMouseHelper from "./mouse-helper.js";
 import { beforeEach, afterEach } from "mocha";
 import { enableLogs, disableLogs } from "../../src/common.js";
 
+process.setMaxListeners(32); // Allow up to 32 opened browsers (puppeteer attaches events to process)
+
 beforeEach(function (done) {
 	disableLogs();
 	done();

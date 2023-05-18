@@ -65,8 +65,11 @@ function readyCheck(queueID: QueueID, users: UserID[]) {
 		};
 
 	for (const uid of users) {
-		Connections[uid]?.socket?.once("disconnect", playersStatus[uid].onDisconnect);
-		Connections[uid]?.socket?.once("draftQueueSetReadyState", (status: ReadyState) => {
+		// Make sure player is still connected. This shouldn't be needed, but the case comes up in tests, and I'm not sure how...
+		if (!Connections[uid]) return playersStatus[uid].onDisconnect();
+
+		Connections[uid].socket.once("disconnect", playersStatus[uid].onDisconnect);
+		Connections[uid].socket.once("draftQueueSetReadyState", (status: ReadyState) => {
 			playersStatus[uid].status = status;
 
 			if (status !== ReadyState.Ready) {
@@ -80,7 +83,7 @@ function readyCheck(queueID: QueueID, users: UserID[]) {
 				}
 			}
 		});
-		Connections[uid].socket.emit("draftQueueReadyCheck", queueID, timeout, Object.values(playersStatus));
+		Connections[uid].socket.emit("draftQueueReadyCheck", queueID, timeout, getTableStatus());
 	}
 }
 
@@ -138,7 +141,7 @@ export function registerPlayer(userID: UserID, queueID: QueueID): SocketAck {
 
 	conn.socket.once("disconnect", onDisconnect);
 
-	if (queue.users.length === queue.description.playerCount) {
+	if (queue.users.length >= queue.description.playerCount) {
 		const users = queue.users.slice(0, queue.description.playerCount);
 		for (const uid of users) unregisterPlayer(uid, queueID);
 		readyCheck(queueID, users);
@@ -159,7 +162,7 @@ export function unregisterPlayer(userID: UserID, queueID?: QueueID): SocketAck {
 	const idx = queue.users.indexOf(userID);
 	if (idx < 0) return new SocketError(`Player not found.`);
 	queue.users.splice(idx, 1);
-	Connections[userID]?.socket?.off("disconnect", onDisconnect);
+	Connections[userID]?.socket.off("disconnect", onDisconnect);
 	return new SocketAck();
 }
 
