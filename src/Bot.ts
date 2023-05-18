@@ -276,7 +276,7 @@ export class Bot implements IBot {
 		pickNum: number,
 		numPicks: number
 	) {
-		if (!this.fallbackBot) {
+		if (!(this.fallbackBot instanceof SimpleBot)) {
 			this.fallbackBot = new SimpleBot(this.name, this.id);
 			for (const card of this.cards) this.fallbackBot.addCard(card);
 		}
