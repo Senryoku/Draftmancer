@@ -23,12 +23,13 @@ beforeEach(function (done) {
 afterEach(async function () {
 	enableLogs(this.currentTest!.state === "failed");
 	if (this.currentTest!.state === "failed") {
-		await pages[0].screenshot({
-			path: `${process.env.GITHUB_WORKSPACE ?? "tmp"}/screenshots/${this.currentTest!.fullTitle().replace(
-				/\W/g,
-				"_"
-			)}_failed.png`,
-		});
+		for (let i = 0; i < pages.length; ++i)
+			await pages[i].screenshot({
+				path: `${process.env.GITHUB_WORKSPACE ?? "tmp"}/screenshots/${this.currentTest!.fullTitle().replace(
+					/\W/g,
+					"_"
+				)}_${i}_failed.png`,
+			});
 	}
 });
 
