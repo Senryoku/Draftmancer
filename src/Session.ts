@@ -2787,10 +2787,10 @@ export class Session implements IIndexable {
 	reconnectUser(userID: UserID) {
 		if (!this.draftState) return;
 
-		if (!isDraftState(this.draftState)) {
-			Connections[userID].pickedCards = this.disconnectedUsers[userID].pickedCards;
-			this.addUser(userID);
+		Connections[userID].pickedCards = this.disconnectedUsers[userID].pickedCards;
+		this.addUser(userID);
 
+		if (!isDraftState(this.draftState)) {
 			const msgData: { name?: keyof ServerToClientEvents; state: IDraftState } = { state: this.draftState };
 			const EventNames: Record<string, keyof ServerToClientEvents> = {
 				winston: "rejoinWinstonDraft",
@@ -2803,29 +2803,23 @@ export class Session implements IIndexable {
 				teamSealed: "rejoinTeamSealed",
 				solomon: "rejoinSolomonDraft",
 			};
-			if (!(this.draftState.type in EventNames)) {
-				console.error(`Unknown draft state type: ${this.draftState.type}`);
-				return;
-			}
+			if (!(this.draftState.type in EventNames))
+				return console.error(`Unknown draft state type: ${this.draftState.type}`);
+
 			msgData.name = EventNames[this.draftState.type];
 			// FIXME: Refactor to get full type checking
 			Connections[userID].socket.emit(msgData.name!, {
 				pickedCards: this.disconnectedUsers[userID].pickedCards,
 				state: msgData.state.syncData(userID),
 			});
-
-			delete this.disconnectedUsers[userID];
 		} else {
-			Connections[userID].pickedCards = this.disconnectedUsers[userID].pickedCards;
-
-			this.addUser(userID);
 			Connections[userID].socket.emit("rejoinDraft", {
 				pickedCards: this.disconnectedUsers[userID].pickedCards,
 				botScores: this.draftState.players[userID].botInstance.lastScores,
 				state: this.draftState.syncData(userID),
 			});
-			delete this.disconnectedUsers[userID];
 		}
+		delete this.disconnectedUsers[userID];
 
 		// Resume draft if everyone is here or broacast the new state.
 		if (Object.keys(this.disconnectedUsers).length == 0)
