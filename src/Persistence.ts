@@ -271,8 +271,9 @@ export function getPoDSession(s: Session) {
 				PoDSession.draftState.players = players;
 
 				for (const userID in s.draftState.players) {
-					const podBot = {};
+					const podBot: any = {};
 					copyPODProps(s.draftState.players[userID].botInstance, podBot);
+					if (podBot.fallbackBot) podBot.fallbackBot = undefined;
 					PoDSession.draftState.players[userID].botInstance = podBot;
 					PoDSession.draftState.players[userID].botPickInFlight = false;
 					PoDSession.draftState.players[userID].countdownInterval = null;
