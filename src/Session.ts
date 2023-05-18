@@ -2300,32 +2300,26 @@ export class Session implements IIndexable {
 		const s = this.draftState;
 		if (!isDraftState(s)) return;
 
-		// End draft if there is no more booster to distribute
-		if (s.boosters.length == 0) {
-			this.endDraft();
-			return;
-		}
+		// End draft if there are no more boosters to distribute
+		if (s.boosters.length === 0) return this.endDraft();
 
-		const totalVirtualPlayers = this.getVirtualPlayersCount();
-		const boosters = s.boosters.splice(0, totalVirtualPlayers);
+		const boosters = s.boosters.splice(0, Object.keys(s.players).length);
 
-		let index = 0;
+		let boosterIndex = 0;
 		for (const userID in s.players) {
 			const p = s.players[userID];
 			if (p.effect?.skipUntilNextRound) p.effect.skipUntilNextRound = false;
-
 			assert(p.boosters.length === 0, `distributeBoosters: ${userID} boosters.length ${p.boosters.length}`);
+
 			p.pickNumber = 0;
-			const boosterIndex = negMod(index, totalVirtualPlayers);
 			this.passBooster(boosters[boosterIndex], userID);
-			++index;
+			++boosterIndex;
 		}
 
-		if (this.owner && !this.ownerIsPlayer) {
+		if (this.owner && !this.ownerIsPlayer)
 			Connections[this.owner]?.socket.emit("draftState", {
 				boosterNumber: s.boosterNumber,
 			});
-		}
 	}
 
 	checkDraftRoundEnd() {
