@@ -143,10 +143,14 @@ describe("Conspiracy", function () {
 			pickSelector.select("Agent of Acquisitions");
 			await waitAndClickSelector(pages[0], 'input[value="Confirm Pick"]');
 			await pages[0].waitForXPath("//h2[contains(., 'Deck (10')]");
-			for (let i = 0; i < 8; ++i) await waitAndClickXpath(pages[0], '//button[contains(., "Pass Booster")]');
+			for (let i = 0; i < 8; ++i) {
+				await pages[0].waitForXPath(`//*[contains(., 'Pick #${i + 3}')]`);
+				await waitAndClickXpath(pages[0], '//button[contains(., "Pass Booster")]');
+			}
 		});
 
 		it(`Next booster; should be able to pick again.`, async function () {
+			await pages[0].waitForXPath("//*[contains(., 'Pick a card')]");
 			const card = await pages[0].$(".card");
 			await card!.click();
 			await waitAndClickSelector(pages[0], 'input[value="Confirm Pick"]');
