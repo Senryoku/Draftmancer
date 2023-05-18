@@ -2300,25 +2300,14 @@ export class Session implements IIndexable {
 		const s = this.draftState;
 		if (!isDraftState(s)) return;
 
-		const totalVirtualPlayers = this.getVirtualPlayersCount();
-
 		// End draft if there is no more booster to distribute
 		if (s.boosters.length == 0) {
 			this.endDraft();
 			return;
 		}
 
+		const totalVirtualPlayers = this.getVirtualPlayersCount();
 		const boosters = s.boosters.splice(0, totalVirtualPlayers);
-		s.numPicks = boosters[0].length;
-
-		const staggerDelay = 100; // Will delay successive calls to the mtgdraftbots API
-		let inFlightBots = 0;
-		const delayRequest = (botType: string) => {
-			if (botType !== "mtgdraftbots") return Promise.resolve();
-			const r = new Promise((resolve) => setTimeout(resolve, staggerDelay * inFlightBots));
-			inFlightBots++;
-			return r;
-		};
 
 		let index = 0;
 		for (const userID in s.players) {
@@ -2326,26 +2315,9 @@ export class Session implements IIndexable {
 			if (p.effect?.skipUntilNextRound) p.effect.skipUntilNextRound = false;
 
 			assert(p.boosters.length === 0, `distributeBoosters: ${userID} boosters.length ${p.boosters.length}`);
-			const boosterIndex = negMod(index, totalVirtualPlayers);
-			p.boosters.push(boosters[boosterIndex]);
 			p.pickNumber = 0;
-			if (p.isBot) {
-				delayRequest(p.botInstance.type)
-					.then(() => this.startBotPickChain(userID))
-					.catch((error) => {
-						console.error(
-							`Session ${this.id}: Error in initial startBotPickChain call (Bot ID: ${userID}):`
-						);
-						console.error(error);
-					});
-			} else {
-				if (userID in this.disconnectedUsers) {
-					this.startBotPickChain(userID);
-				} else {
-					this.sendDraftState(userID);
-					this.requestBotRecommendation(userID);
-				}
-			}
+			const boosterIndex = negMod(index, totalVirtualPlayers);
+			this.passBooster(boosters[boosterIndex], userID);
 			++index;
 		}
 
@@ -2354,8 +2326,6 @@ export class Session implements IIndexable {
 				boosterNumber: s.boosterNumber,
 			});
 		}
-
-		this.startCountdowns(); // Starts countdown now that everyone has their booster
 	}
 
 	checkDraftRoundEnd() {
