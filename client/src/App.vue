@@ -1640,44 +1640,12 @@
 						with them, in pod!
 					</p>
 					<a href="/draftqueue" class="reset-style" style="display: block; margin: auto; width: fit-content">
-						<div
-							style="
-								position: relative;
-								padding: 0.5em;
-								padding-left: 70px;
-								border-radius: 1em;
-								background: #444;
-								min-height: 50px;
-								margin: 2em 1em 2em 2em;
-								display: flex;
-								align-items: center;
-							"
-						>
-							<div
-								style="
-									position: absolute;
-									top: 50%;
-									left: 10px;
-									transform: translateY(-50%) translateX(-50%) rotate(-20deg);
-									width: 100px;
-									height: 100px;
-									border-radius: 50px;
-									background: #2d508c;
-									border: 2px solid white;
-									font-size: 2rem;
-									font-weight: bold;
-									line-height: 100px;
-									text-align: center;
-								"
-							>
-								New!
-							</div>
-							<div>
-								Don't have a play group and just want to practice drafting the latest sets with other
-								players? Try the new
-								<strong>Draft Queue</strong>!
-							</div>
-						</div>
+						<img
+							src="./assets/img/LotR_banner.png"
+							width="728"
+							height="90"
+							style="border-radius: 1em; max-width: 90vw; filter: drop-shadow(0px 0px 2px #00000080)"
+						/>
 					</a>
 					<div class="welcome-sections">
 						<div class="container" style="grid-area: News">
