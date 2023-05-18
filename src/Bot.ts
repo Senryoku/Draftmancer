@@ -182,7 +182,7 @@ export class SimpleBot implements IBot {
 			const c = booster[idx];
 			let score = c.rating;
 			for (const color of c.colors) score += 0.35 * this.pickedColors[color];
-			scores.push(score / 10);
+			scores.push(score);
 			if (score > maxScore) {
 				maxScore = score;
 				bestPick = idx;
