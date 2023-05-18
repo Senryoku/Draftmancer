@@ -2304,6 +2304,7 @@ export class Session implements IIndexable {
 		if (s.boosters.length === 0) return this.endDraft();
 
 		const boosters = s.boosters.splice(0, Object.keys(s.players).length);
+		s.numPicks = boosters[0].length;
 
 		let boosterIndex = 0;
 		for (const userID in s.players) {
