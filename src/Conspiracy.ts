@@ -4,6 +4,7 @@ import { UserID } from "./IDTypes";
 import { getRandom } from "./utils.js";
 
 // Ask neighbors to choose a color to be noted on a card (see the Conspiracy cards 'Paliano, the High City' and 'Regicide')
+// Meant to run completely asynchronously, it will directly send the updated state to the card owner.
 export async function askColors(card: UniqueCard, userID: string, leftPlayer: string, rightPlayer: string) {
 	if (!card.state) card.state = {};
 	card.state.colors = [];
@@ -29,6 +30,8 @@ export async function askColors(card: UniqueCard, userID: string, leftPlayer: st
 	}
 }
 
+// Asks 'userID' to choose a player among 'users' by emiting a 'choosePlayer' event.
+// Returns the chosen player userID as a promise.
 export function choosePlayer(userID: UserID, reason: string, users: UserID[]) {
 	if (users.length === 1) return users[0];
 	return new Promise<UserID>((resolve) => {

@@ -2025,6 +2025,19 @@ export class Session implements IIndexable {
 			});
 		}
 
+		if (s.players[userID].effect?.aetherSearcher) {
+			const target = s.players[userID].effect!.aetherSearcher!.card;
+			if (!target.state) target.state = {};
+			target.state.cardName = booster[pickedCards[0]].name;
+			updatedCardStates.push({ cardID: target.uniqueID, state: target.state });
+			const msg = new Message(
+				`${Connections[userID].userName} picked '${target.state.cardName}' and noted its name on their '${target.name}'!`
+			);
+			msg.toast = true;
+			this.forUsers((uid) => Connections[uid]?.socket?.emit("message", msg));
+			s.players[userID].effect!.aetherSearcher = undefined;
+		}
+
 		for (const card of pickedCards.map((idx) => booster[idx])) {
 			if (card.draft_effects) {
 				let notify = false;
@@ -2063,6 +2076,11 @@ export class Session implements IIndexable {
 						case OnPickDraftEffect.CanalDredger: {
 							if (!s.players[userID].effect) s.players[userID].effect = {};
 							s.players[userID].effect!.canalDredger = true;
+							break;
+						}
+						case OnPickDraftEffect.AetherSearcher: {
+							if (!s.players[userID].effect) s.players[userID].effect = {};
+							s.players[userID].effect!.aetherSearcher = { card: card };
 							break;
 						}
 						default:
