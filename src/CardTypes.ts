@@ -20,6 +20,7 @@ export enum OnPickDraftEffect {
 	ChooseColors = "ChooseColors",
 	CanalDredger = "CanalDredger",
 	AetherSearcher = "AetherSearcher",
+	ArchdemonOfPaliano = "ArchdemonOfPaliano",
 }
 
 // Same thing, but a may ability.

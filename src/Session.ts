@@ -1718,6 +1718,18 @@ export class Session implements IIndexable {
 			// Re-insert the booster back for the next player
 			s.players[to].boosters.push(booster);
 
+			// Player is currently randomly picking (Archdemon of Paliano effect), immediately pick and return.
+			if (s.players[to].effect?.randomPicks !== undefined && s.players[to].effect!.randomPicks! > 0) {
+				assert(
+					s.players[to].boosters.length === 1,
+					"Error: Randomly picking player shouldn't have boosters in waiting."
+				);
+				this.randomPick(to).then((picks) =>
+					Connections[to]?.socket.emit("addCards", "You randomly picked:", picks)
+				);
+				return;
+			}
+
 			// Synchronize concerned users
 			if (s.players[to].isBot || (this.isDisconnected(to) && this.disconnectedUsers[to].replaced)) {
 				this.startBotPickChain(to);
@@ -1776,6 +1788,32 @@ export class Session implements IIndexable {
 		}
 
 		return new SocketAck();
+	}
+
+	// Used by the Archdemon of Paliano effect.
+	async randomPick(userID: UserID): Promise<UniqueCard[]> {
+		const s = this.draftState;
+		if (!isDraftState(s)) return [];
+
+		const booster = s.players[userID].boosters[0];
+		const picksThisRound = Math.min(
+			this.doubleMastersMode && s.players[userID].pickNumber > 0 ? 1 : this.pickedCardsPerRound,
+			booster.length
+		);
+		const burnThisRound = this.burnedCardsPerRound;
+
+		const randomIndices = [...Array(booster.length).keys()];
+		shuffleArray(randomIndices);
+		const pickIndices: number[] = randomIndices.splice(0, picksThisRound);
+		const burnIndices: number[] = randomIndices.splice(0, burnThisRound);
+
+		const picks = pickIndices.map((idx) => booster[idx]);
+
+		await this.pickCard(userID, pickIndices, burnIndices);
+
+		s.players[userID].effect!.randomPicks = s.players[userID].effect!.randomPicks! - 1;
+
+		return picks;
 	}
 
 	async pickCard(
@@ -2088,6 +2126,20 @@ export class Session implements IIndexable {
 						case OnPickDraftEffect.AetherSearcher: {
 							if (!s.players[userID].effect) s.players[userID].effect = {};
 							s.players[userID].effect!.aetherSearcher = { card: card };
+							break;
+						}
+						case OnPickDraftEffect.ArchdemonOfPaliano: {
+							if (!s.players[userID].effect) s.players[userID].effect = {};
+							s.players[userID].effect!.randomPicks = Math.max(
+								3,
+								s.players[userID].effect!.randomPicks ?? 0
+							);
+							// Immediately randomly pick as much as possible. The rest will be handled in passBooster when new boosters become available.
+							const picks: UniqueCard[] = [];
+							while (s.players[userID].boosters.length > 0 && s.players[userID].effect!.randomPicks)
+								picks.push(...(await this.randomPick(userID)));
+							if (picks.length > 0)
+								Connections[userID]?.socket.emit("addCards", "You randomly picked:", picks);
 							break;
 						}
 						default:

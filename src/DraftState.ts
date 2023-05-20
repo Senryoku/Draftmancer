@@ -22,6 +22,7 @@ export class DraftState extends IDraftState {
 			effect?: {
 				skipNPicks?: number;
 				skipUntilNextRound?: boolean;
+				randomPicks?: number;
 				canalDredger?: boolean;
 				aetherSearcher?: { card: UniqueCard };
 			};

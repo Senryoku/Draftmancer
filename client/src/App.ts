@@ -1228,6 +1228,11 @@ export default defineComponent({
 				});
 			});
 
+			this.socket.on("addCards", (message, cards) => {
+				fireToast("info", `${message} ${cards.map((c) => c.name).join(", ")}`);
+				this.addToDeck(cards);
+			});
+
 			this.socket.on("timer", (data) => {
 				if (data.countdown < 0) data.countdown = 0;
 				if (data.countdown <= 0) this.$nextTick(this.forcePick);
