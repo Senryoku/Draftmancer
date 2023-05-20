@@ -1672,6 +1672,9 @@ export class Session implements IIndexable {
 		// raising an exception and leaving the session in an invalid state. I hope this will catch all possible failure cases.
 		try {
 			this.draftState = new DraftState(boosters, this.getSortedHumanPlayersIDs(), {
+				pickedCardsPerRound: this.pickedCardsPerRound,
+				burnedCardsPerRound: this.burnedCardsPerRound,
+				doubleMastersMode: this.doubleMastersMode,
 				simpleBots: simpleBots,
 				botCount: this.bots,
 				botParameters,
@@ -1796,16 +1799,12 @@ export class Session implements IIndexable {
 		if (!isDraftState(s)) return [];
 
 		const booster = s.players[userID].boosters[0];
-		const picksThisRound = Math.min(
-			this.doubleMastersMode && s.players[userID].pickNumber > 0 ? 1 : this.pickedCardsPerRound,
-			booster.length
-		);
-		const burnThisRound = this.burnedCardsPerRound;
+		const { picksThisRound, burnsThisRound } = s.picksAndBurnsThisRound(userID);
 
 		const randomIndices = [...Array(booster.length).keys()];
 		shuffleArray(randomIndices);
 		const pickIndices: number[] = randomIndices.splice(0, picksThisRound);
-		const burnIndices: number[] = randomIndices.splice(0, burnThisRound);
+		const burnIndices: number[] = randomIndices.splice(0, burnsThisRound);
 
 		const picks = pickIndices.map((idx) => booster[idx]);
 
@@ -1839,12 +1838,7 @@ export class Session implements IIndexable {
 		if (s.syncData(userID).skipPick) return reportError(`You must skip this pick!`);
 
 		const booster = s.players[userID].boosters[0];
-
-		let picksThisRound = Math.min(
-			this.doubleMastersMode && s.players[userID].pickNumber > 0 ? 1 : this.pickedCardsPerRound,
-			booster.length
-		);
-		let burnThisRound = this.burnedCardsPerRound;
+		let { picksThisRound, burnsThisRound } = s.picksAndBurnsThisRound(userID);
 
 		const updatedCardStates: { cardID: UniqueCardID; state: UniqueCardState }[] = [];
 		// Conspiracy draft matter cards
@@ -1886,7 +1880,7 @@ export class Session implements IIndexable {
 				case UsableDraftEffect.AgentOfAcquisitions: {
 					picksThisRound = booster.length;
 					pickedCards = [...Array(booster.length).keys()];
-					burnThisRound = 0;
+					burnsThisRound = 0;
 					burnedCards = [];
 					applyDraftEffects.push(() => {
 						if (!card.state) card.state = {};
@@ -1914,7 +1908,7 @@ export class Session implements IIndexable {
 				}
 				case UsableDraftEffect.RemoveDraftCard: {
 					const removedCards = pickedCards.map((index) => booster[index]);
-					burnThisRound += pickedCards.length;
+					burnsThisRound += pickedCards.length;
 					picksThisRound -= pickedCards.length;
 					burnedCards = burnedCards.concat(pickedCards);
 					pickedCards = [];
@@ -2019,12 +2013,12 @@ export class Session implements IIndexable {
 
 		if (
 			burnedCards &&
-			(burnedCards.length > burnThisRound ||
-				burnedCards.length !== Math.min(burnThisRound, booster.length - pickedCards.length) ||
+			(burnedCards.length > burnsThisRound ||
+				burnedCards.length !== Math.min(burnsThisRound, booster.length - pickedCards.length) ||
 				burnedCards.some((idx) => idx >= booster.length))
 		)
 			return reportError(
-				`Invalid burned cards (expected length: ${burnThisRound}, burnedCards: ${burnedCards.length}, booster: ${booster.length}).`
+				`Invalid burned cards (expected length: ${burnsThisRound}, burnedCards: ${burnedCards.length}, booster: ${booster.length}).`
 			);
 
 		if (process.env.NODE_ENV !== "production")
@@ -2237,7 +2231,7 @@ export class Session implements IIndexable {
 			return false;
 		};
 
-		// Since startBotPickChain can be deplayed by multiple seconds to stagger the API calls, the session may be
+		// Since startBotPickChain can be delayed by multiple seconds to stagger the API calls, the session may be
 		// stashed away when we reach this point (if the user left the application right after launching a draft for example),
 		// in this case the session is turned into a PoD structure ('isBot' test will fail) and we should stop there.
 		if (shouldStop()) return;
@@ -2250,7 +2244,7 @@ export class Session implements IIndexable {
 			const pickNumber = s.players[userID].pickNumber;
 			const numPicks = s.numPicks;
 
-			const picksThisRound = this.doubleMastersMode && pickNumber > 0 ? 1 : this.pickedCardsPerRound;
+			const { picksThisRound, burnsThisRound } = s.picksAndBurnsThisRound(userID);
 
 			const booster = s.players[userID].boosters[0];
 			// Avoid using bots if it is not necessary: We're picking the whole pack.
@@ -2276,7 +2270,7 @@ export class Session implements IIndexable {
 					pickedIndices.push(originalIdx);
 					boosterCopy.splice(pickedIdx, 1);
 				}
-				for (let i = 0; i < this.burnedCardsPerRound && boosterCopy.length > 0; ++i) {
+				for (let i = 0; i < burnsThisRound && boosterCopy.length > 0; ++i) {
 					const burnedIdx = await s.players[userID].botInstance.burn(
 						boosterCopy,
 						boosterNumber,

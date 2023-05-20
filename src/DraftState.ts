@@ -7,6 +7,10 @@ import { IDraftState } from "./IDraftState.js";
 import { UserID } from "./IDTypes.js";
 
 export class DraftState extends IDraftState {
+	readonly pickedCardsPerRound: number;
+	readonly burnedCardsPerRound: number;
+	readonly doubleMastersMode: boolean;
+
 	boosters: Array<Array<UniqueCard>>;
 	boosterNumber = 0;
 	numPicks = 0;
@@ -32,11 +36,21 @@ export class DraftState extends IDraftState {
 	constructor(
 		boosters: UniqueCard[][],
 		players: UserID[],
-		options: { botCount: number; simpleBots: boolean; botParameters?: MTGDraftBotParameters }
+		options: {
+			pickedCardsPerRound: number;
+			burnedCardsPerRound: number;
+			doubleMastersMode: boolean;
+			botCount: number;
+			simpleBots: boolean;
+			botParameters?: MTGDraftBotParameters;
+		}
 	) {
 		super("draft");
+		this.pickedCardsPerRound = options.pickedCardsPerRound;
+		this.burnedCardsPerRound = options.burnedCardsPerRound;
+		this.doubleMastersMode = options.doubleMastersMode;
+
 		this.boosters = boosters;
-		let botIndex = 0;
 
 		const playersToCreate = players.map((uid) => {
 			return {
@@ -55,6 +69,7 @@ export class DraftState extends IDraftState {
 			playersToCreate.splice(idx, 0, { isBot: true, userID: uuidv1() });
 		}
 
+		let botIndex = 0;
 		for (const user of playersToCreate) {
 			const userName = user.isBot ? `Bot #${++botIndex}` : Connections[user.userID].userName;
 			const botInstance = options.simpleBots
@@ -71,6 +86,16 @@ export class DraftState extends IDraftState {
 				timer: 0,
 			};
 		}
+	}
+
+	picksAndBurnsThisRound(userID: UserID) {
+		return {
+			picksThisRound: Math.min(
+				this.doubleMastersMode && this.players[userID].pickNumber > 0 ? 1 : this.pickedCardsPerRound,
+				this.players[userID].boosters[0].length
+			),
+			burnsThisRound: this.burnedCardsPerRound,
+		};
 	}
 
 	leftPlayer(userID: UserID) {

@@ -169,7 +169,13 @@ export function restoreSession(s: any, owner: UserID) {
 	if (s.draftState) {
 		switch (s.draftState.type) {
 			case "draft": {
-				const draftState = new DraftState([], [], { botCount: 0, simpleBots: false });
+				const draftState = new DraftState([], [], {
+					pickedCardsPerRound: s.draftState.pickedCardsPerRound,
+					burnedCardsPerRound: s.draftState.burnedCardsPerRound,
+					doubleMastersMode: s.draftState.doubleMastersMode,
+					botCount: 0,
+					simpleBots: false,
+				});
 				copyPODProps(s.draftState, draftState);
 				for (const userID in s.draftState.players) {
 					const bot = restoreBot(s.draftState.players[userID].botInstance);
