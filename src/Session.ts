@@ -36,7 +36,15 @@ import JumpstartHHBoosters from "./data/JumpstartHHBoosters.json" assert { type:
 import SuperJumpBoosters from "./data/SuperJumpBoosters.json" assert { type: "json" };
 Object.freeze(JumpstartBoosters);
 Object.freeze(SuperJumpBoosters);
-import { isMessageError, isSocketError, Message, MessageError, SocketAck, SocketError } from "./Message.js";
+import {
+	isMessageError,
+	isSocketError,
+	Message,
+	MessageError,
+	SocketAck,
+	SocketError,
+	ToastMessage,
+} from "./Message.js";
 import { logSession } from "./Persistence.js";
 import { Bracket, TeamBracket, SwissBracket, DoubleBracket, BracketPlayer } from "./Brackets.js";
 import { CustomCardList, generateBoosterFromCustomCardList, generateCustomGetCardFunction } from "./CustomCardList.js";
@@ -2030,10 +2038,9 @@ export class Session implements IIndexable {
 			if (!target.state) target.state = {};
 			target.state.cardName = booster[pickedCards[0]].name;
 			updatedCardStates.push({ cardID: target.uniqueID, state: target.state });
-			const msg = new Message(
+			const msg = new ToastMessage(
 				`${Connections[userID].userName} picked '${target.state.cardName}' and noted its name on their '${target.name}'!`
 			);
-			msg.toast = true;
 			this.forUsers((uid) => Connections[uid]?.socket?.emit("message", msg));
 			s.players[userID].effect!.aetherSearcher = undefined;
 		}
@@ -2094,8 +2101,7 @@ export class Session implements IIndexable {
 						if (card.state.passingPlayer) str += ` (Passing Player: ${card.state.passingPlayer})`;
 						if (card.state.cardsDraftedThisRound) str += ` (X=${card.state.cardsDraftedThisRound})`;
 					}
-					const msg = new Message(str);
-					msg.toast = true;
+					const msg = new ToastMessage(str);
 					this.forUsers((uid) => {
 						if (uid !== userID) Connections[uid]?.socket?.emit("message", msg);
 					});

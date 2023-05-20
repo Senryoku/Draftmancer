@@ -16,7 +16,16 @@ import cookieParser from "cookie-parser";
 import { v1 as uuidv1 } from "uuid";
 
 import { Options, shuffleArray } from "./utils.js";
-import { ackError, isSocketError, isMessageError, Message, MessageWarning, SocketAck, SocketError } from "./Message.js";
+import {
+	ackError,
+	isSocketError,
+	isMessageError,
+	Message,
+	MessageWarning,
+	SocketAck,
+	SocketError,
+	ToastMessage,
+} from "./Message.js";
 import { Constants } from "./Constants.js";
 import {
 	InactiveConnections,
@@ -1308,9 +1317,7 @@ io.on("connection", async function (socket) {
 					targetSocket.disconnect();
 					// Wait for the socket to be properly disconnected and the previous Connection deleted.
 					process.nextTick(() => {
-						const toast = new Message("Connected");
-						toast.toast = true;
-						socket.emit("message", toast);
+						socket.emit("message", new ToastMessage("Connected"));
 						resolve();
 					});
 				}, 3000);
@@ -1553,9 +1560,7 @@ function joinSession(sessionID: SessionID, userID: UserID, defaultSessionSetting
 		// User was the owner, but not playing
 		if (userID === sess.owner && !sess.ownerIsPlayer) {
 			sess.reconnectOwner(userID);
-			const msg = new Message("Reconnected as Organizer");
-			msg.toast = true;
-			Connections[userID].socket.emit("message", msg);
+			Connections[userID].socket.emit("message", new ToastMessage("Reconnected as Organizer"));
 			return;
 		}
 
