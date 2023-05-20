@@ -39,6 +39,7 @@ import { DraftLog, DraftPick } from "./DraftLog";
 import { WinchesterDraftState } from "./WinchesterDraft.js";
 import { HousmanDraftState } from "./HousmanDraft.js";
 import { SolomonDraftState } from "./SolomonDraft.js";
+import { DraftEffect, OnPickDraftEffect, OptionalOnPickDraftEffect, UsableDraftEffect } from "./CardTypes.js";
 
 const PersistenceLocalPath = process.env.PERSISTENCE_LOCAL_PATH;
 const LocalPersitenceDirectory = "tmp";
@@ -422,8 +423,22 @@ function anonymizeDraftLog(log: DraftLog): DraftLog {
 
 function saveLog(type: string, session: Session) {
 	if (session.draftLog) {
-		const localLog = anonymizeDraftLog(session.draftLog);
+		// Ignore drafts that contains effects messing with the packs. These won't be useful for training.
+		const excludedEffects: DraftEffect[] = [
+			OnPickDraftEffect.CanalDredger,
+			OptionalOnPickDraftEffect.LoreSeeker,
+			UsableDraftEffect.CogworkLibrarian,
+			UsableDraftEffect.AgentOfAcquisitions,
+			UsableDraftEffect.LeovoldsOperative,
+		];
+		if (
+			Object.values(session.draftLog.carddata).some((c) =>
+				c.draft_effects?.some((effect) => excludedEffects.includes(effect))
+			)
+		)
+			return;
 
+		const localLog = anonymizeDraftLog(session.draftLog);
 		// Send log to MTGDraftbots endpoint
 		if (MTGDraftbotsAPIKey && type === "Draft" && !session.customCardList?.customCards) {
 			const data: MTGDraftbotsLog = {
