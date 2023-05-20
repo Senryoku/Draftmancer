@@ -4239,12 +4239,12 @@
     "por": {
         "code": "por",
         "fullName": "Portal",
-        "cardCount": 229,
+        "cardCount": 228,
         "isPrimary": false,
         "icon": "img/sets/por.svg",
         "commonCount": 115,
         "rareCount": 55,
-        "uncommonCount": 59
+        "uncommonCount": 58
     },
     "pori": {
         "code": "pori",
@@ -5043,12 +5043,12 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 929,
+        "cardCount": 930,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
         "commonCount": 42,
         "mythicCount": 167,
-        "rareCount": 700,
+        "rareCount": 701,
         "uncommonCount": 20
     },
     "slp": {
