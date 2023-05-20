@@ -1808,9 +1808,8 @@ export class Session implements IIndexable {
 
 		const picks = pickIndices.map((idx) => booster[idx]);
 
-		await this.pickCard(userID, pickIndices, burnIndices);
-
 		s.players[userID].effect!.randomPicks = s.players[userID].effect!.randomPicks! - 1;
+		await this.pickCard(userID, pickIndices, burnIndices);
 
 		return picks;
 	}

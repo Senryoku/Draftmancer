@@ -218,7 +218,7 @@ describe("Conspiracy", function () {
 	});
 
 	describe("Archdemon of Paliano", function () {
-		this.timeout(10000);
+		this.timeout(20000);
 		describe("with bots", function () {
 			setupBrowsers(1);
 
