@@ -1615,7 +1615,8 @@
 							<template v-slot:title> Sideboard ({{ sideboard.length }}) </template>
 							<template v-slot:controls>
 								<font-awesome-icon
-									icon="fa-solid fa-columns clickable"
+									icon="fa-solid fa-columns"
+									class="clickable"
 									@click="collapseSideboard = true"
 									v-tooltip="'Minimize sideboard'"
 								></font-awesome-icon>
