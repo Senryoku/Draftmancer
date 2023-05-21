@@ -126,7 +126,6 @@ export class Session implements IIndexable {
 	draftLog?: DraftLog;
 	disconnectedUsers: { [uid: UserID]: DisconnectedUser } = {};
 	draftPaused: boolean = false;
-	countdown: number = 75;
 
 	constructor(id: SessionID, owner: UserID | undefined, options: Options = {}) {
 		this.id = id;
