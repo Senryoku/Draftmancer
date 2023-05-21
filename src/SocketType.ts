@@ -260,6 +260,7 @@ export interface ClientToServerEvents {
 	updateBracket: (results: Array<[number, number]>) => void;
 	updateDeckLands: (lands: DeckBasicLands) => void;
 	moveCard: (uniqueID: UniqueCardID, destStr: string) => void;
+	removeBasicsFromDeck: () => void;
 
 	// Draft Queue
 	draftQueueSetReadyState: (status: ReadyState) => void;

@@ -3132,12 +3132,23 @@ export class Session implements IIndexable {
 		this.updateDecklist(userID);
 	}
 
+	removeBasicsFromDeck(userID: UserID) {
+		if (!this.draftLog?.users[userID]?.decklist) return;
+		Connections[userID].pickedCards.main = Connections[userID].pickedCards.main.filter(
+			(c) => !EnglishBasicLandNames.includes(c.name)
+		);
+		Connections[userID].pickedCards.side = Connections[userID].pickedCards.side.filter(
+			(c) => !EnglishBasicLandNames.includes(c.name)
+		);
+		this.updateDecklistInLog(userID);
+	}
+
 	updateDecklistInLog(userID: UserID) {
 		if (!this.draftLog?.users[userID] || !Connections[userID]) return;
 		if (!this.draftLog.users[userID].decklist) this.draftLog.users[userID].decklist = { main: [], side: [] };
-		(this.draftLog.users[userID].decklist as DeckList).main = Connections[userID].pickedCards.main.map((c) => c.id);
-		(this.draftLog.users[userID].decklist as DeckList).side = Connections[userID].pickedCards.side.map((c) => c.id);
-		this.draftLog.users[userID].decklist = computeHashes(this.draftLog.users[userID].decklist as DeckList, {
+		this.draftLog.users[userID].decklist!.main = Connections[userID].pickedCards.main.map((c) => c.id);
+		this.draftLog.users[userID].decklist!.side = Connections[userID].pickedCards.side.map((c) => c.id);
+		this.draftLog.users[userID].decklist = computeHashes(this.draftLog.users[userID].decklist!, {
 			getCard: this.getCustomGetCardFunction(),
 		});
 	}

@@ -500,6 +500,10 @@ function moveCard(userID: UserID, sessionID: SessionID, uniqueID: UniqueCardID, 
 	}
 }
 
+function removeBasicsFromDeck(userID: UserID, sessionID: SessionID) {
+	Sessions[sessionID].removeBasicsFromDeck(userID);
+}
+
 function setOwnerIsPlayer(userID: UserID, sessionID: SessionID, val: boolean) {
 	if (!SessionsSettingsProps.ownerIsPlayer(val)) return;
 	const sess = Sessions[sessionID];
@@ -1404,6 +1408,7 @@ io.on("connection", async function (socket) {
 	socket.on("updateBracket", prepareSocketCallback(updateBracket));
 	socket.on("updateDeckLands", prepareSocketCallback(updateDeckLands));
 	socket.on("moveCard", prepareSocketCallback(moveCard));
+	socket.on("removeBasicsFromDeck", prepareSocketCallback(removeBasicsFromDeck));
 
 	if (query.sessionID) {
 		socket.on("setSession", function (this: typeof socket, sessionID: SessionID, sessionSettings: Options) {

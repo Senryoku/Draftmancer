@@ -36,7 +36,7 @@ import type SessionsSettingsProps from "@/Session/SessionProps";
 import { MinesweeperSyncData } from "@/MinesweeperDraftTypes";
 import { HousmanDraftSyncData } from "@/HousmanDraft";
 import { minesweeperApplyDiff } from "../../src/MinesweeperDraftTypes";
-import Constants, { CubeDescription } from "../../src/Constants";
+import Constants, { CubeDescription, EnglishBasicLandNames } from "../../src/Constants";
 import { CardColor, OptionalOnPickDraftEffect, UsableDraftEffect } from "../../src/CardTypes";
 
 import io, { Socket } from "socket.io-client";
@@ -3179,8 +3179,9 @@ export default defineComponent({
 			}
 		},
 		removeBasicsFromDeck() {
-			this.deck = this.deck.filter((c) => c.type !== "Basic Land");
-			this.sideboard = this.sideboard.filter((c) => c.type !== "Basic Land");
+			this.socket.emit("removeBasicsFromDeck");
+			this.deck = this.deck.filter((c) => !EnglishBasicLandNames.includes(c.name));
+			this.sideboard = this.sideboard.filter((c) => !EnglishBasicLandNames.includes(c.name));
 			this.deckDisplay?.filterBasics();
 			this.sideboardDisplay?.filterBasics();
 		},
