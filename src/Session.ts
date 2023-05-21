@@ -1,7 +1,7 @@
 "use strict";
 import { UserID, SessionID } from "./IDTypes.js";
 import { countCards } from "./cardUtils.js";
-import { negMod, shuffleArray, getRandom, arrayIntersect, Options, getNDisctinctRandom, pickRandom } from "./utils.js";
+import { shuffleArray, getRandom, arrayIntersect, Options, getNDisctinctRandom, pickRandom } from "./utils.js";
 import { Connections, getPickedCardIds } from "./Connection.js";
 import {
 	CardID,
@@ -45,7 +45,8 @@ import {
 	SocketError,
 	ToastMessage,
 } from "./Message.js";
-import { logSession, sendDecks } from "./Persistence.js";
+import { logSession } from "./Persistence.js";
+import { sendDecks } from "./BotTrainingAPI.js";
 import { Bracket, TeamBracket, SwissBracket, DoubleBracket, BracketPlayer } from "./Brackets.js";
 import { CustomCardList, generateBoosterFromCustomCardList, generateCustomGetCardFunction } from "./CustomCardList.js";
 import { DraftLog, DraftPick, GridDraftPick } from "./DraftLog.js";
@@ -2514,7 +2515,7 @@ export class Session implements IIndexable {
 	///////////////////// Traditional Draft End  //////////////////////
 
 	initLogs(type: string = "Draft", boosters: UniqueCard[][]): DraftLog {
-		if (this.draftLog && this.sendDecklogTimeout) this.sendDecklog(); // Immediately send pending decklog, if any.
+		if (this.draftLog && this.sendDecklogTimeout) this.sendDecklog(); // Immediately send pending decklog, if any, before overwriting the logs.
 
 		const carddata: { [cid: string]: Card } = {};
 		const customGetCard = this.getCustomGetCardFunction();
@@ -2626,7 +2627,7 @@ export class Session implements IIndexable {
 	// Send decklogs to CubeArtisan after 5min of inactivity (or when the session is closed).
 	initSendDecklogTimeout() {
 		assert(!this.sendDecklogTimeout, "Session.initSendDecklogTimeout: sendDecklogTimeout already set");
-		console.log(`Session ${this.id}: initSendDecklogTimeout`);
+		console.log(`Session ${this.id}: initSendDecklogTimeout`); // TODO: Temp log, get rid of it later.
 		this.sendDecklogTimeout = setTimeout(this.sendDecklog.bind(this), 5 * 60 * 1000);
 	}
 
@@ -2643,7 +2644,7 @@ export class Session implements IIndexable {
 	sendDecklog() {
 		// Not scheduled, ignore (we don't want to send the same log twice).
 		if (!this.sendDecklogTimeout) return;
-		console.log(`Session ${this.id}: sendDecklog`);
+		console.log(`Session ${this.id}: sendDecklog`); // TODO: Temp log, get rid of it later.
 		console.trace();
 
 		clearTimeout(this.sendDecklogTimeout);

@@ -1,5 +1,6 @@
 "use strict";
 
+import { InTesting } from "./Context.js";
 import dotenv from "dotenv";
 if (process.env.NODE_ENV !== "production") {
 	dotenv.config();
@@ -22,12 +23,10 @@ const MixInstance = MixPanelToken
 	  })
 	: null;
 
-const InTesting = typeof (global as any).it === "function"; // Testing in mocha
 //                                      Explicitly disabled
 const DisablePersistence = InTesting || process.env.DISABLE_PERSISTENCE === "TRUE";
 
 import { SessionID, UserID } from "./IDTypes.js";
-import { getCard } from "./Cards.js";
 import { GridDraftState } from "./GridDraft.js";
 import { DraftState } from "./DraftState.js";
 import { RochesterDraftState } from "./RochesterDraft.js";
@@ -35,11 +34,11 @@ import { WinstonDraftState } from "./WinstonDraft.js";
 import { Message } from "./Message.js";
 import { IIndexable } from "./Types.js";
 import { RotisserieDraftState } from "./RotisserieDraft.js";
-import { DraftLog, DraftPick } from "./DraftLog";
+import { DraftLog } from "./DraftLog";
 import { WinchesterDraftState } from "./WinchesterDraft.js";
 import { HousmanDraftState } from "./HousmanDraft.js";
 import { SolomonDraftState } from "./SolomonDraft.js";
-import { DraftEffect, OnPickDraftEffect, OptionalOnPickDraftEffect, UsableDraftEffect } from "./CardTypes.js";
+import { sendLog } from "./BotTrainingAPI.js";
 
 const PersistenceLocalPath = process.env.PERSISTENCE_LOCAL_PATH;
 const LocalPersitenceDirectory = "tmp";
@@ -48,12 +47,6 @@ const LocalSessionsFile = path.join(PersistenceLocalPath ?? ".", LocalPersitence
 
 const PersistenceStoreURL = process.env.PERSISTENCE_STORE_URL ?? "http://localhost:3008";
 const PersistenceKey = process.env.PERSISTENCE_KEY ?? "1234";
-
-const MTGDraftbotsLogEndpoint =
-	process.env.MTGDRAFTBOTS_ENDPOINT ?? "https://staging.cubeartisan.net/integrations/draftlog";
-const MTGDraftbotsDeckEndpoint =
-	process.env.MTGDRAFTBOTS_DECKENDPOINT ?? " https://cubeartisan.net/integrations/decklog";
-const MTGDraftbotsAPIKey = process.env.MTGDRAFTBOTS_APIKEY;
 
 export let InactiveSessions: Record<SessionID, any> = {};
 export let InactiveConnections: Record<UserID, ReturnType<typeof getPODConnection>> = {};
@@ -389,22 +382,7 @@ async function tempDump(exitOnCompletion = false) {
 	if (exitOnCompletion) process.exit(0);
 }
 
-type MTGDraftbotsLogEntry = {
-	pack: string[];
-	picks: number[];
-	trash: number[];
-	packNum: number;
-	numPacks: number;
-	pickNum: number;
-	numPicks: number;
-};
-
-type MTGDraftbotsLog = {
-	players: MTGDraftbotsLogEntry[][];
-	apiKey: string;
-};
-
-function anonymizeDraftLog(log: DraftLog): DraftLog {
+export function anonymizeDraftLog(log: DraftLog): DraftLog {
 	const localLog = JSON.parse(JSON.stringify(log)) as DraftLog;
 	const sha1 = crypto.createHash("sha1");
 	const hash = sha1
@@ -423,113 +401,6 @@ function anonymizeDraftLog(log: DraftLog): DraftLog {
 	return localLog;
 }
 
-function saveLog(type: string, session: Session) {
-	if (session.draftLog) {
-		// Ignore drafts that contains effects messing with the packs. These won't be useful for training.
-		const excludedEffects: DraftEffect[] = [
-			OnPickDraftEffect.CanalDredger,
-			OptionalOnPickDraftEffect.LoreSeeker,
-			UsableDraftEffect.CogworkLibrarian,
-			UsableDraftEffect.AgentOfAcquisitions,
-			UsableDraftEffect.LeovoldsOperative,
-		];
-		if (
-			Object.values(session.draftLog.carddata).some((c) =>
-				c.draft_effects?.some((effect) => excludedEffects.includes(effect))
-			)
-		)
-			return;
-
-		const localLog = anonymizeDraftLog(session.draftLog);
-		// Send log to MTGDraftbots endpoint
-		if (MTGDraftbotsAPIKey && type === "Draft" && !session.customCardList?.customCards) {
-			const data: MTGDraftbotsLog = {
-				players: [],
-				apiKey: MTGDraftbotsAPIKey,
-			};
-			for (const uid in localLog.users) {
-				const u = localLog.users[uid];
-				// Skip bots, and players replaced by bots
-				if (!u.isBot && u.picks.length > 0 && !session.disconnectedUsers[uid]?.replaced) {
-					const player: MTGDraftbotsLogEntry[] = [];
-					let packNum = 0;
-					let pickNum = 0;
-					let lastPackSize = (u.picks[0] as DraftPick).booster.length + 1;
-					let lastPackPicks = 0;
-					for (const pick of u.picks) {
-						const p = pick as DraftPick;
-						if (p.booster.length >= lastPackSize) {
-							// Patch last pack picks with the correct numPicks
-							for (let i = player.length - lastPackPicks; i < player.length; ++i)
-								player[i].numPicks = pickNum;
-							packNum += 1;
-							pickNum = 0;
-							lastPackPicks = 0;
-						}
-						lastPackSize = p.booster.length;
-						player.push({
-							pack: p.booster.map((cid: string) => getCard(cid).oracle_id),
-							picks: p.pick,
-							trash: p.burn ?? [],
-							packNum: packNum,
-							numPacks: -1,
-							pickNum: pickNum,
-							numPicks: -1,
-						});
-						pickNum += p.pick.length;
-						++lastPackPicks;
-					}
-					// Patch each pick with the correct numPacks and the last pack with the correct numPicks
-					for (const p of player) {
-						p.numPacks = packNum + 1;
-						if (p.numPicks === -1) p.numPicks = pickNum;
-					}
-					if (player.length > 0) data.players.push(player);
-				}
-			}
-			if (!InTesting && process.env.NODE_ENV === "production" && data.players.length > 0)
-				axios
-					.post(MTGDraftbotsLogEndpoint, data)
-					.then((response) => {
-						// We expect a 201 (Created) response
-						if (response.status !== 201) {
-							console.warn("Unexpected response after sending draft logs to MTGDraftbots: ");
-							console.warn(response);
-						}
-					})
-					.catch((err) => console.error("Error sending logs to cubeartisan: ", err.message));
-		}
-	}
-}
-
-export function sendDecks(log: DraftLog) {
-	if (!InTesting && process.env.NODE_ENV === "production" && MTGDraftbotsAPIKey) {
-		for (const uid in log.users) {
-			const decklist = log.users[uid].decklist;
-			if (!log.users[uid].isBot && decklist) {
-				const addedLands = decklist.lands ? Object.values(decklist.lands!).reduce((a, b) => a + b, 0) : 0;
-				if (decklist.main.length + addedLands !== 40) continue;
-				const data = {
-					apiKey: MTGDraftbotsAPIKey,
-					main: decklist.main.map((cid) => getCard(cid).oracle_id),
-					side: decklist.side.map((cid) => getCard(cid).oracle_id),
-					lands: decklist.lands,
-				};
-				axios
-					.post(MTGDraftbotsDeckEndpoint, data)
-					.then((response) => {
-						// We expect a 201 (Created) response
-						if (response.status !== 201) {
-							console.warn("Unexpected response after sending deck logs to MTGDraftbots: ");
-							console.warn(response);
-						}
-					})
-					.catch((err) => console.error("Error sending decks to cubeartisan: ", err.message));
-			}
-		}
-	}
-}
-
 export function dumpError(name: string, data: any) {
 	axios
 		.post(`${PersistenceStoreURL}/store/${name}`, data, {
@@ -542,7 +413,7 @@ export function dumpError(name: string, data: any) {
 
 export function logSession(type: string, session: Session) {
 	try {
-		saveLog(type, session);
+		sendLog(type, session);
 	} catch (err) {
 		console.error("Error saving logs: ", err);
 	}
