@@ -45,7 +45,7 @@ import {
 	SocketError,
 	ToastMessage,
 } from "./Message.js";
-import { logSession } from "./Persistence.js";
+import { logSession, sendDecks } from "./Persistence.js";
 import { Bracket, TeamBracket, SwissBracket, DoubleBracket, BracketPlayer } from "./Brackets.js";
 import { CustomCardList, generateBoosterFromCustomCardList, generateCustomGetCardFunction } from "./CustomCardList.js";
 import { DraftLog, DraftPick, GridDraftPick } from "./DraftLog.js";
@@ -127,6 +127,8 @@ export class Session implements IIndexable {
 	disconnectedUsers: { [uid: UserID]: DisconnectedUser } = {};
 	draftPaused: boolean = false;
 
+	sendDecklogTimeout?: NodeJS.Timeout = undefined; // Timeout for sending deck logs to cube artisan.
+
 	constructor(id: SessionID, owner: UserID | undefined, options: Options = {}) {
 		this.id = id;
 		this.owner = owner;
@@ -136,6 +138,12 @@ export class Session implements IIndexable {
 		for (const p in options)
 			if (p in SessionsSettingsProps && SessionsSettingsProps[p](options[p]))
 				(this as IIndexable)[p] = options[p];
+	}
+
+	// Expected to be called before disposing of a Session.
+	beforeDelete() {
+		// We had a pending sendDecklog, cancel the timeout and execute it immediately.
+		if (this.sendDecklogTimeout) this.sendDecklog();
 	}
 
 	addUser(userID: UserID) {
@@ -2436,6 +2444,7 @@ export class Session implements IIndexable {
 						this.draftLog.users[userID].cards = s.players[userID].botInstance.cards.map((c: Card) => c.id);
 				this.finalizeLogs();
 				this.sendLogs();
+				this.initSendDecklogTimeout();
 			}
 			logSession("Draft", this);
 			this.cleanDraftState();
@@ -2505,6 +2514,8 @@ export class Session implements IIndexable {
 	///////////////////// Traditional Draft End  //////////////////////
 
 	initLogs(type: string = "Draft", boosters: UniqueCard[][]): DraftLog {
+		if (this.draftLog && this.sendDecklogTimeout) this.sendDecklog(); // Immediately send pending decklog, if any.
+
 		const carddata: { [cid: string]: Card } = {};
 		const customGetCard = this.getCustomGetCardFunction();
 		for (const c of boosters.flat()) carddata[c.id] = customGetCard(c.id);
@@ -2610,6 +2621,34 @@ export class Session implements IIndexable {
 				this.forUsers((uid) => Connections[uid]?.socket.emit("draftLog", this.draftLog!));
 				break;
 		}
+	}
+
+	// Send decklogs to CubeArtisan after 5min of inactivity (or when the session is closed).
+	initSendDecklogTimeout() {
+		assert(!this.sendDecklogTimeout, "Session.initSendDecklogTimeout: sendDecklogTimeout already set");
+		console.log(`Session ${this.id}: initSendDecklogTimeout`);
+		this.sendDecklogTimeout = setTimeout(this.sendDecklog.bind(this), 5 * 60 * 1000);
+	}
+
+	// Delay sending deck logs to CubeArtisan. Intended to be called repeatedly while users are still tweaking their decks.
+	rescheduleSendDecklogTimeout() {
+		// Not scheduled, ignore (we don't want to send the same log twice).
+		if (!this.sendDecklogTimeout) return;
+
+		clearTimeout(this.sendDecklogTimeout);
+		this.sendDecklogTimeout = setTimeout(this.sendDecklog.bind(this), 5 * 60 * 1000);
+	}
+
+	// Sends decks to CubeArtisan for bot training.
+	sendDecklog() {
+		// Not scheduled, ignore (we don't want to send the same log twice).
+		if (!this.sendDecklogTimeout) return;
+		console.log(`Session ${this.id}: sendDecklog`);
+		console.trace();
+
+		clearTimeout(this.sendDecklogTimeout);
+		this.sendDecklogTimeout = undefined;
+		if (this.draftLog) sendDecks(this.draftLog);
 	}
 
 	distributeSealed(boostersPerPlayer: number, customBoosters: Array<string>): SocketAck {
@@ -3150,6 +3189,7 @@ export class Session implements IIndexable {
 		this.draftLog.users[userID].decklist = computeHashes(this.draftLog.users[userID].decklist!, {
 			getCard: this.getCustomGetCardFunction(),
 		});
+		this.rescheduleSendDecklogTimeout();
 	}
 
 	updateDecklist(userID: UserID) {

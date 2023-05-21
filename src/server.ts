@@ -1627,6 +1627,7 @@ function addUserToSession(userID: UserID, sessionID: SessionID, defaultSessionSe
 
 function deleteSession(sessionID: SessionID) {
 	const wasPublic = Sessions[sessionID].isPublic;
+	Sessions[sessionID].beforeDelete();
 	process.nextTick(() => {
 		delete Sessions[sessionID];
 		if (wasPublic) updatePublicSession(sessionID);

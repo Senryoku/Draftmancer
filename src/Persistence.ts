@@ -51,6 +51,8 @@ const PersistenceKey = process.env.PERSISTENCE_KEY ?? "1234";
 
 const MTGDraftbotsLogEndpoint =
 	process.env.MTGDRAFTBOTS_ENDPOINT ?? "https://staging.cubeartisan.net/integrations/draftlog";
+const MTGDraftbotsDeckEndpoint =
+	process.env.MTGDRAFTBOTS_DECKENDPOINT ?? " https://cubeartisan.net/integrations/decklog";
 const MTGDraftbotsAPIKey = process.env.MTGDRAFTBOTS_APIKEY;
 
 export let InactiveSessions: Record<SessionID, any> = {};
@@ -257,7 +259,7 @@ export function getPoDSession(s: Session) {
 	const PoDSession: Record<string, any> = {};
 
 	for (const prop of Object.getOwnPropertyNames(s).filter(
-		(p) => !["users", "countdownInterval", "draftState"].includes(p)
+		(p) => !["users", "draftState", "sendDecklogTimeout"].includes(p)
 	)) {
 		if (!((s as IIndexable)[prop] instanceof Function)) PoDSession[prop] = (s as IIndexable)[prop];
 	}
@@ -496,6 +498,34 @@ function saveLog(type: string, session: Session) {
 						}
 					})
 					.catch((err) => console.error("Error sending logs to cubeartisan: ", err.message));
+		}
+	}
+}
+
+export function sendDecks(log: DraftLog) {
+	if (!InTesting && process.env.NODE_ENV === "production" && MTGDraftbotsAPIKey) {
+		for (const uid in log.users) {
+			const decklist = log.users[uid].decklist;
+			if (!log.users[uid].isBot && decklist) {
+				const addedLands = decklist.lands ? Object.values(decklist.lands!).reduce((a, b) => a + b, 0) : 0;
+				if (decklist.main.length + addedLands !== 40) continue;
+				const data = {
+					apiKey: MTGDraftbotsAPIKey,
+					main: decklist.main.map((cid) => getCard(cid).oracle_id),
+					side: decklist.side.map((cid) => getCard(cid).oracle_id),
+					lands: decklist.lands,
+				};
+				axios
+					.post(MTGDraftbotsDeckEndpoint, data)
+					.then((response) => {
+						// We expect a 201 (Created) response
+						if (response.status !== 201) {
+							console.warn("Unexpected response after sending deck logs to MTGDraftbots: ");
+							console.warn(response);
+						}
+					})
+					.catch((err) => console.error("Error sending decks to cubeartisan: ", err.message));
+			}
 		}
 	}
 }
