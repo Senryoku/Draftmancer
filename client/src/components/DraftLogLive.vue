@@ -44,7 +44,7 @@
 						<transition :name="'slide-fade-' + pickTransition" mode="out-in">
 							<draft-log-pick
 								:key="`${player}-${pick}`"
-								:pick="picksPerPack[pack][pick].data"
+								:pick="picksPerPack[pack][pick]"
 								:carddata="draftlog.carddata"
 								:language="language"
 								:scale="cardScale"
@@ -113,11 +113,10 @@ import Card from "./Card.vue";
 import ScaleSlider from "./ScaleSlider.vue";
 import { Sortable } from "sortablejs-vue3";
 import { Language } from "@/Types";
-import { DraftLog, DraftPick } from "@/DraftLog";
-import { pick } from "random-js";
+import { DraftLog, DraftPick, DeprecatedDraftPick } from "@/DraftLog";
 import { CardID, UniqueCard } from "@/CardTypes";
 import { UserID } from "@/IDTypes";
-import { sortableUpdate } from "../helper";
+import { sortableUpdate, groupPicksPerPack } from "../helper";
 
 export default defineComponent({
 	name: "DraftLogLive",
@@ -207,7 +206,7 @@ export default defineComponent({
 		},
 		registerPlayerSelectEvents() {
 			this.clearPlayerSelectEvents();
-			const playerEls = document.querySelectorAll("ul.player-list li") as NodeListOf<HTMLElement>;
+			const playerEls = document.querySelectorAll<HTMLElement>("ul.player-list li");
 			for (let el of playerEls) {
 				const callback = () => {
 					const id = el.dataset.userid;
@@ -229,7 +228,7 @@ export default defineComponent({
 	computed: {
 		pickNames() {
 			if (this.picksPerPack.length === 0 || !this.validPick) return "";
-			const pick = this.picksPerPack[this.pack][this.pick].data;
+			const pick = this.picksPerPack[this.pack][this.pick];
 			return pick.pick
 				.map((idx) => pick.booster[idx])
 				.map(this.getCardName)
@@ -261,33 +260,32 @@ export default defineComponent({
 				this.draftlog.type !== "Draft"
 			)
 				return [];
-			// Infer PackNumber & PickNumber
-			let r: {
-				key: number;
-				data: DraftPick;
-				packNumber: number;
-				pickNumber: number;
-			}[][] = [];
-			let currPick = 0;
-			let currBooster = -1;
-			let lastSize = 0;
-			let currPickNumber = 0;
-			while (currPick < this.selectedLog.picks.length) {
-				if ((this.selectedLog.picks[currPick] as DraftPick).booster.length > lastSize) {
-					++currBooster;
-					currPickNumber = 0;
-					r.push([]);
-				} else ++currPickNumber;
-				r[currBooster].push({
-					key: currPick,
-					data: this.selectedLog.picks[currPick] as DraftPick,
-					packNumber: currBooster,
-					pickNumber: currPickNumber,
-				});
-				lastSize = (this.selectedLog.picks[currPick] as DraftPick).booster.length;
-				++currPick;
-			}
-			return r;
+			if (this.draftlog.version === "2.0") {
+				// Infer PackNumber & PickNumber
+				let r: DraftPick[][] = [];
+				let currPick = 0;
+				let currBooster = -1;
+				let lastSize = 0;
+				let currPickNumber = 0;
+				while (currPick < this.selectedLog.picks.length) {
+					const p = this.selectedLog.picks[currPick] as DeprecatedDraftPick;
+					if (p.booster.length > lastSize) {
+						++currBooster;
+						currPickNumber = 0;
+						r.push([]);
+					} else ++currPickNumber;
+					r[currBooster].push({
+						packNum: currBooster,
+						pickNum: currPickNumber,
+						pick: p.pick,
+						burn: p.burn,
+						booster: p.booster,
+					});
+					lastSize = p.booster.length;
+					++currPick;
+				}
+				return r;
+			} else return groupPicksPerPack(this.selectedLog.picks as DraftPick[]);
 		},
 		validPick() {
 			return this.pack < this.picksPerPack.length && this.pick < this.picksPerPack[this.pack].length;

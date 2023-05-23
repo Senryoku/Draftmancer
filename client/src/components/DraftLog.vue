@@ -1,5 +1,5 @@
 <template>
-	<div v-if="draftlog.version === '2.0'">
+	<div v-if="draftlog.version === '2.0' || draftlog.version === '2.1'">
 		<!-- Table -->
 		<div>
 			<p>Click on a player to display their details.</p>
@@ -186,7 +186,7 @@
 				<template v-else-if="displayOptions.category === 'Picks Summary'">
 					<div class="log-container">
 						<draft-log-picks-summary
-							:picks="picksPerPack"
+							:picks="(picksPerPack as DraftPick[][])"
 							:carddata="draftlog.carddata"
 							:language="language"
 							@selectPick="
@@ -218,7 +218,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
-import { DraftLog, DraftLogUserData, DraftPick, GenericDraftPick } from "@/DraftLog";
+import { DraftLog, DraftLogUserData, DraftPick, DeprecatedDraftPick, GridDraftPick } from "@/DraftLog";
 import { UserID } from "@/IDTypes";
 
 import * as helper from "../helper";
@@ -231,13 +231,6 @@ import DraftLogPicksSummary from "./DraftLogPicksSummary.vue";
 import ExportDropdown from "./ExportDropdown.vue";
 import { CardColor, CardID, UniqueCard } from "@/CardTypes";
 import { Language } from "@/Types";
-
-export type PickDetails = {
-	key: number;
-	data: GenericDraftPick;
-	packNumber: number;
-	pickNumber: number;
-};
 
 type PlayerSummary = {
 	userID: UserID;
@@ -409,14 +402,14 @@ export default defineComponent({
 					};
 					// Previous packs
 					for (let pack = 0; pack < Math.min(this.picksPerPack.length, this.displayOptions.pack); ++pack)
-						for (const pick of this.picksPerPack[pack]) add(pick.data as DraftPick);
+						for (const pick of this.picksPerPack[pack]) add(pick as DraftPick);
 					// Current pack
 					for (
 						let pick = 0;
 						pick < Math.min(this.picksPerPack[this.displayOptions.pack].length, this.displayOptions.pick);
 						++pick
 					)
-						add(this.picksPerPack[this.displayOptions.pack][pick].data as DraftPick);
+						add(this.picksPerPack[this.displayOptions.pack][pick] as DraftPick);
 					return cards;
 				}
 			}
@@ -460,48 +453,54 @@ export default defineComponent({
 		teamDraft() {
 			return this.draftlog.teamDraft;
 		},
-		picksPerPack(): PickDetails[][] {
+		picksPerPack(): (DraftPick | GridDraftPick)[][] {
 			if (!this.validSelectedUser || !this.selectedUser.picks || this.selectedUser.picks.length === 0) return [];
 			switch (this.type) {
 				default:
 					return [];
 				case "Rochester Draft":
 				case "Draft": {
-					// Infer PackNumber & PickNumber
-					let r: PickDetails[][] = [];
-					let currPick = 0;
-					let currBooster = -1;
-					let lastSize = 0;
-					let currPickNumber = 0;
-					while (currPick < this.selectedUser.picks.length) {
-						const p = this.selectedUser.picks[currPick] as DraftPick;
-						if (p.booster.length > lastSize) {
-							++currBooster;
-							currPickNumber = 0;
-							r.push([]);
-						} else ++currPickNumber;
-						r[currBooster].push({
-							key: currPick,
-							data: p,
-							packNumber: currBooster,
-							pickNumber: currPickNumber,
-						});
-						lastSize = p.booster.length;
-						++currPick;
+					if (this.draftlog.version === "2.0") {
+						// Infer PackNumber & PickNumber
+						let r: DraftPick[][] = [];
+						let lastSize = 0;
+						let currPickNumber = 0;
+						let currBooster = -1;
+						for (let currPick = 0; currPick < this.selectedUser.picks.length; ++currPick) {
+							const p = this.selectedUser.picks[currPick] as DeprecatedDraftPick;
+							if (p.booster.length > lastSize) {
+								++currBooster;
+								currPickNumber = 0;
+								r.push([]);
+							} else ++currPickNumber;
+							r[currBooster].push({
+								packNum: currBooster,
+								pickNum: currPickNumber,
+								pick: p.pick,
+								burn: p.burn,
+								booster: p.booster,
+							});
+							lastSize = p.booster.length;
+						}
+						return r;
+					} else {
+						// Version >= 2.1
+						return helper.groupPicksPerPack(this.selectedUser.picks as DraftPick[]);
 					}
-					return r;
 				}
 				case "Winston Draft": // TODO
 					return [];
 				case "Grid Draft": {
-					let key = 0;
+					let packNum = 0;
 					return this.selectedUser.picks.map((p) => {
+						const gp = p as GridDraftPick;
 						return [
 							{
-								key: key,
-								data: p,
-								packNumber: key++,
-								pickNumber: 0,
+								packNum: packNum++,
+								pickNum: 0,
+								pick: gp.pick,
+								burn: gp.burn,
+								booster: gp.booster,
 							},
 						];
 					});
@@ -509,7 +508,7 @@ export default defineComponent({
 			}
 		},
 		draftPick() {
-			return this.picksPerPack[this.displayOptions.pack][this.displayOptions.pick].data as DraftPick;
+			return this.picksPerPack[this.displayOptions.pack][this.displayOptions.pick] as DraftPick;
 		},
 		pickTitle() {
 			const draftPick = this.draftPick;

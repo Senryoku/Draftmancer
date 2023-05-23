@@ -3,7 +3,10 @@ import { SessionID, UserID } from "./IDTypes.js";
 import { Session } from "./Session.js";
 import { UsersData } from "./Session/SessionTypes.js";
 
-export type DraftPick = { pick: number[]; burn?: number[]; booster: CardID[] };
+// Used in DraftLogs Version 2.0, used in the client for backwards compatibility.
+export type DeprecatedDraftPick = { pick: number[]; burn?: number[]; booster: CardID[] };
+
+export type DraftPick = { packNum: number; pickNum: number; pick: number[]; burn?: number[]; booster: CardID[] };
 export type GridDraftPick = { pick: number[]; burn?: number[]; booster: (CardID | null)[] };
 export type WinstonDraftPick =
 	| {
@@ -31,7 +34,7 @@ export type DraftLogUsersData = {
 };
 
 export class DraftLog {
-	version: string = "2.0";
+	version: string = "2.1";
 	type: string;
 	users: DraftLogUsersData = {};
 	sessionID: SessionID;

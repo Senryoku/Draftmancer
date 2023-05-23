@@ -1,4 +1,4 @@
-import { DraftLog, DraftPick } from "@/DraftLog";
+import { DeprecatedDraftPick, DraftLog, DraftPick } from "@/DraftLog";
 import { UserID } from "@/IDTypes";
 import { SortableEvent } from "sortablejs";
 
@@ -62,6 +62,19 @@ export const copyToClipboard = (str: string) => {
 	}
 };
 
+export function groupPicksPerPack(picks: DraftPick[]) {
+	const r: DraftPick[][] = [];
+	let lastPackNum = -1;
+	for (const p of picks) {
+		if (p.packNum !== lastPackNum) {
+			lastPackNum = p.packNum;
+			r.push([]);
+		}
+		r[r.length - 1].push(p);
+	}
+	return r;
+}
+
 export function exportToMagicProTools(draftLog: DraftLog, userID: UserID) {
 	let str = "";
 	str += `Event #: ${draftLog.sessionID}_${draftLog.time}\n`;
@@ -74,25 +87,43 @@ export function exportToMagicProTools(draftLog: DraftLog, userID: UserID) {
 
 	str += "\n";
 
-	let boosterNumber = 0;
-	let pickNumber = 1;
-	let lastLength = 0;
-	for (const p of draftLog.users[userID].picks) {
-		const dp = p as DraftPick;
-		if (dp.booster.length > lastLength) {
-			boosterNumber += 1;
-			pickNumber = 1;
-			if (draftLog.setRestriction && draftLog.setRestriction.length === 1)
-				str += `------ ${draftLog.setRestriction[0].toUpperCase()} ------\n\n`;
-			else str += `------ THB ------\n\n`;
+	const boosterHeader =
+		draftLog.setRestriction && draftLog.setRestriction.length === 1
+			? `------ ${draftLog.setRestriction[0].toUpperCase()} ------\n\n`
+			: `------ THB ------\n\n`;
+
+	if (draftLog.version === "2.0") {
+		let boosterNumber = 0;
+		let pickNumber = 1;
+		let lastLength = 0;
+		for (const p of draftLog.users[userID].picks) {
+			const dp = p as DeprecatedDraftPick;
+			if (dp.booster.length > lastLength) {
+				boosterNumber += 1;
+				pickNumber = 1;
+				str += boosterHeader;
+			}
+			lastLength = dp.booster.length;
+			str += `Pack ${boosterNumber} pick ${pickNumber}:\n`;
+			for (const [idx, cid] of dp.booster.entries())
+				if (dp.pick.includes(idx)) str += `--> ${draftLog.carddata[cid].name}\n`;
+				else str += `    ${draftLog.carddata[cid].name}\n`;
+			str += "\n";
+			pickNumber += 1;
 		}
-		lastLength = dp.booster.length;
-		str += `Pack ${boosterNumber} pick ${pickNumber}:\n`;
-		for (const [idx, cid] of dp.booster.entries())
-			if (dp.pick.includes(idx)) str += `--> ${draftLog.carddata[cid].name}\n`;
-			else str += `    ${draftLog.carddata[cid].name}\n`;
-		str += "\n";
-		pickNumber += 1;
+	} else {
+		// >= v2.1
+		const r = groupPicksPerPack(draftLog.users[userID].picks as DraftPick[]);
+		for (const pack of r) {
+			str += boosterHeader;
+			for (const pick of pack) {
+				str += `Pack ${pick.packNum + 1} pick ${pick.pickNum + 1}:\n`;
+				for (const [idx, cid] of pick.booster.entries())
+					if (pick.pick.includes(idx)) str += `--> ${draftLog.carddata[cid].name}\n`;
+					else str += `    ${draftLog.carddata[cid].name}\n`;
+				str += "\n";
+			}
+		}
 	}
 
 	return str;

@@ -1266,6 +1266,8 @@ export class Session implements IIndexable {
 		Connections[s.currentPlayer()].pickedCards.main.push(s.boosters[0][idx]);
 
 		this.draftLog?.users[s.currentPlayer()].picks.push({
+			packNum: s.boosterNumber,
+			pickNum: s.pickNumber,
 			pick: [idx],
 			booster: s.boosters[0].map((c) => c.id),
 		});
@@ -2052,6 +2054,8 @@ export class Session implements IIndexable {
 		}
 
 		const pickData: DraftPick = {
+			packNum: s.boosterNumber,
+			pickNum: s.players[userID].pickNumber,
 			pick: pickedCards,
 			burn: burnedCards,
 			booster: booster.map((c) => c.id),
@@ -2310,6 +2314,8 @@ export class Session implements IIndexable {
 			this.disconnectedUsers[userID].pickedCards.main.push(...pickedIndices.map((idx) => booster[idx]));
 
 		const pickData: DraftPick = {
+			packNum: s.boosterNumber,
+			pickNum: s.players[userID].pickNumber,
 			pick: pickedIndices,
 			burn: burnedIndices,
 			booster: booster.map((c) => c.id),
