@@ -369,7 +369,7 @@ export default defineComponent({
 					this.displayOptions.pack = Math.min(this.displayOptions.pack, this.picksPerPack.length - 1);
 					this.displayOptions.pick = Math.min(
 						this.displayOptions.pick,
-						this.picksPerPack[this.displayOptions.pack].length - 1
+						(this.picksPerPack[this.displayOptions.pack]?.length ?? 0) - 1
 					);
 				});
 			}
@@ -537,7 +537,7 @@ export default defineComponent({
 				if (this.picksPerPack.length > this.displayOptions.pack)
 					this.displayOptions.pick = Math.min(
 						this.displayOptions.pick,
-						this.picksPerPack[this.displayOptions.pack].length - 1
+						(this.picksPerPack[this.displayOptions.pack]?.length ?? 0) - 1
 					); // Make sure pick is still valid.
 			},
 		},
