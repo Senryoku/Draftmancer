@@ -444,12 +444,14 @@ CustomCard {
 				field. Here are the implemented effects:
 				<pre>
 <comment>// On pick effects:</comment>
-FaceUp              <comment>// Reveal the card to other players and mark the card as face up (necessary for most 'UsableEffects").</comment>
+FaceUp              <comment>// Reveal the card to other players and mark the card as face up. <strong>Important note</strong>: Necessary for most 'UsableEffects" to function correctly!.</comment>
 Reveal              <comment>// Reveal the card to other players</comment>
 NotePassingPlayer   <comment>// Note the previous player's name on the card.</comment>
 NoteDraftedCards    <comment>// Note the number of cards drafted this round, including this card.</comment>
 ChooseColors        <comment>// Note colors chosen by your neighbors and you.</comment>
 AetherSearcher      <comment>// Reveal and note the next drafted card.</comment>
+CanalDredger        <comment>// The last card of each booster is passed to you.</comment>
+ArchdemonOfPaliano  <comment>// Pick the next 3 cards randomly.</comment>
 <comment>// Optional on pick effects:</comment>
 LoreSeeker          <comment>// "You may add a booster pack to the draft".</comment>
 <comment>// Usable effects (when the card is already in the player's pool):</comment>
@@ -466,7 +468,10 @@ NoteCreatureTypes   <comment>// Note the picked creature's types on the card.</c
 	"FaceUp",
 	"CogworkLibrarian"
 ]</pre>
-				Please note that only the combinations of effects found on actual Conspiracy cards are officially supported, some might not work as intended!
+				Please note that only the combinations of effects found on actual Conspiracy cards are officially supported, some might not work as intended! See the list of
+				supported official cards on
+				<a href="https://github.com/Senryoku/Draftmancer/wiki/Conspiracy-cards-support" target="_blank">this page of the GitHub wiki</a>
+				.
 			</section>
 		</div>
 	</body>
