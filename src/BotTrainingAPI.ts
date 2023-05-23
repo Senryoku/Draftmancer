@@ -1,5 +1,5 @@
 import axios from "axios";
-import { InTesting } from "./Context.js";
+import { InTesting, InProduction } from "./Context.js";
 import { Session } from "./Session.js";
 import { getCard } from "./Cards.js";
 import { DraftEffect, OnPickDraftEffect, OptionalOnPickDraftEffect, UsableDraftEffect } from "./CardTypes.js";
@@ -88,23 +88,25 @@ export function sendLog(type: string, session: Session) {
 					if (player.length > 0) data.players.push(player);
 				}
 			}
-			if (!InTesting && process.env.NODE_ENV === "production" && data.players.length > 0)
+			if (!InTesting && InProduction && data.players.length > 0)
 				axios
 					.post(MTGDraftbotsLogEndpoint, data)
 					.then((response) => {
 						// We expect a 201 (Created) response
 						if (response.status !== 201) {
-							console.warn("Unexpected response after sending draft logs to MTGDraftbots: ");
+							console.warn("Unexpected response after sending draft log to CubeArtisan: ");
 							console.warn(response);
 						}
 					})
-					.catch((err) => console.error("Error sending logs to cubeartisan: ", err.message));
+					.catch((err) => console.error("Error sending logs to CubeArtisan: ", err.message));
 		}
 	}
 }
 
 export function sendDecks(log: DraftLog) {
-	if (!InTesting && process.env.NODE_ENV === "production" && MTGDraftbotsAPIKey) {
+	if (!InTesting && InProduction && MTGDraftbotsAPIKey) {
+		// Ignore drafts containing custom cards
+		if (Object.values(log.carddata).some((c) => c.is_custom)) return;
 		for (const uid in log.users) {
 			const decklist = log.users[uid].decklist;
 			if (!log.users[uid].isBot && decklist) {
@@ -121,11 +123,11 @@ export function sendDecks(log: DraftLog) {
 					.then((response) => {
 						// We expect a 201 (Created) response
 						if (response.status !== 201) {
-							console.warn("Unexpected response after sending decks to MTGDraftbots: ");
+							console.warn("Unexpected response after sending decks to CubeArtisan: ");
 							console.warn(response);
-						} else console.log("[+] Successfully sent deck to MTGDraftbots"); // TODO: Temp log, get rid of it later.
+						}
 					})
-					.catch((err) => console.error("Error sending decks to cubeartisan: ", err.message));
+					.catch((err) => console.error("Error sending decks to CubeArtisan: ", err.message));
 			}
 		}
 	}

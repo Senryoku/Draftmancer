@@ -72,6 +72,7 @@ import { HousmanDraftState, isHousmanDraftState } from "./HousmanDraft.js";
 import { SolomonDraftState, isSolomonDraftState } from "./SolomonDraft.js";
 import { isSomeEnum } from "./TypeChecks.js";
 import { askColors, choosePlayer } from "./Conspiracy.js";
+import { InProduction } from "./Context.js";
 
 export class Session implements IIndexable {
 	id: SessionID;
@@ -2028,7 +2029,7 @@ export class Session implements IIndexable {
 				`Invalid burned cards (expected length: ${burnsThisRound}, burnedCards: ${burnedCards.length}, booster: ${booster.length}).`
 			);
 
-		if (process.env.NODE_ENV !== "production")
+		if (!InProduction)
 			console.log(
 				`Session ${this.id}: ${Connections[userID].userName} [${userID}] picked card '${pickedCards.map(
 					(idx) => booster[idx].name
@@ -2626,8 +2627,7 @@ export class Session implements IIndexable {
 
 	// Send decklogs to CubeArtisan after 5min of inactivity (or when the session is closed).
 	initSendDecklogTimeout() {
-		assert(!this.sendDecklogTimeout, "Session.initSendDecklogTimeout: sendDecklogTimeout already set");
-		console.log(`Session ${this.id}: initSendDecklogTimeout`); // TODO: Temp log, get rid of it later.
+		if (this.sendDecklogTimeout) return;
 		this.sendDecklogTimeout = setTimeout(this.sendDecklog.bind(this), 5 * 60 * 1000);
 	}
 
@@ -2644,8 +2644,6 @@ export class Session implements IIndexable {
 	sendDecklog() {
 		// Not scheduled, ignore (we don't want to send the same log twice).
 		if (!this.sendDecklogTimeout) return;
-		console.log(`Session ${this.id}: sendDecklog`); // TODO: Temp log, get rid of it later.
-		console.trace();
 
 		clearTimeout(this.sendDecklogTimeout);
 		this.sendDecklogTimeout = undefined;
@@ -2959,7 +2957,7 @@ export class Session implements IIndexable {
 		}
 	}
 
-	async replaceDisconnectedPlayers() {
+	replaceDisconnectedPlayers() {
 		if (!this.drafting || !isDraftState(this.draftState)) return;
 
 		console.warn(`Session ${this.id}: Replacing disconnected players with bots!`);
