@@ -857,6 +857,7 @@ export class Session implements IIndexable {
 		// Give a random card from the card pool if this was the last pile
 		if (s.currentPile === 2) {
 			const card = s.cardPool.pop() as UniqueCard;
+			Connections[s.currentPlayer()].pickedCards.main.push(card);
 			Connections[s.currentPlayer()].socket.emit("winstonDraftRandomCard", card);
 			this.draftLog?.users[s.currentPlayer()].picks.push({
 				randomCard: card.id,
@@ -879,9 +880,7 @@ export class Session implements IIndexable {
 			pickedPile: s.currentPile,
 			piles: [...s.piles],
 		});
-		Connections[s.currentPlayer()].pickedCards.main = Connections[s.currentPlayer()].pickedCards.main.concat(
-			s.piles[s.currentPile]
-		);
+		Connections[s.currentPlayer()].pickedCards.main.push(...s.piles[s.currentPile]);
 		if (s.cardPool.length > 0) s.piles[s.currentPile] = [s.cardPool.pop() as UniqueCard];
 		else s.piles[s.currentPile] = [];
 		this.winstonNextRound();
