@@ -1817,7 +1817,10 @@ export class Session implements IIndexable {
 
 		const picks = pickIndices.map((idx) => booster[idx]);
 
-		s.players[userID].effect!.randomPicks = s.players[userID].effect!.randomPicks! - 1;
+		s.players[userID].effect!.randomPicks = Math.max(
+			0,
+			s.players[userID].effect!.randomPicks! - pickIndices.length
+		);
 		await this.pickCard(userID, pickIndices, burnIndices);
 
 		return picks;
@@ -2138,7 +2141,11 @@ export class Session implements IIndexable {
 							);
 							// Immediately randomly pick as much as possible. The rest will be handled in passBooster when new boosters become available.
 							const picks: UniqueCard[] = [];
-							while (s.players[userID].boosters.length > 0 && s.players[userID].effect!.randomPicks)
+							while (
+								s.players[userID].boosters.length > 0 &&
+								s.players[userID].effect?.randomPicks !== undefined &&
+								s.players[userID].effect!.randomPicks! > 0
+							)
 								picks.push(...(await this.randomPick(userID)));
 							if (picks.length > 0)
 								Connections[userID]?.socket.emit("addCards", "You randomly picked:", picks);
