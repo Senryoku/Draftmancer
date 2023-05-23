@@ -27,13 +27,12 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import { Card, CardID } from "@/CardTypes";
-import { DraftPick } from "@/DraftLog";
 import { replaceManaSymbols } from "../ManaSymbols";
 
 export default defineComponent({
 	name: "DraftLogPicksSummary",
 	props: {
-		picks: { type: Array as PropType<DraftPick[][]>, required: true },
+		picks: { type: Array as PropType<{ pick: number[]; booster: CardID[] }[][]>, required: true },
 		carddata: { type: Object as PropType<{ [cid: CardID]: Card }>, required: true },
 		language: { type: String, required: true },
 	},

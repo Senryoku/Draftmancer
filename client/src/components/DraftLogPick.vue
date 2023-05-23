@@ -1,7 +1,7 @@
 <template>
 	<div class="card-container" v-if="type === 'Draft' || type === 'Rochester Draft'">
 		<booster-card
-			v-for="(cid, index) in pick.booster"
+			v-for="(cid, index) in (pick as DraftPick).booster"
 			:key="index"
 			:card="getUnique(cid)"
 			:language="language"
@@ -34,7 +34,7 @@
 </template>
 
 <script lang="ts">
-import { DraftPick } from "@/DraftLog";
+import { DraftPick, GridDraftPick } from "@/DraftLog";
 import { Card, CardID, UniqueCard } from "@/CardTypes";
 import { Language } from "@/Types";
 
@@ -48,7 +48,7 @@ export default defineComponent({
 	name: "DraftLogPick",
 	components: { Card: CardComponent, BoosterCard },
 	props: {
-		pick: { type: Object as PropType<DraftPick>, required: true },
+		pick: { type: Object as PropType<DraftPick | GridDraftPick>, required: true },
 		carddata: { type: Object as PropType<{ [cid: CardID]: Card }>, required: true },
 		language: { type: String as PropType<Language>, required: true },
 		type: { type: String, default: "Draft" },

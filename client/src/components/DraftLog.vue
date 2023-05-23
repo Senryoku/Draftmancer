@@ -60,11 +60,8 @@
 							@change="displayOptions.pack = displayOptions.pick = 0"
 						>
 							<option>Cards</option>
-							<!-- Winston Draft picks display is not implemented -->
-							<option v-if="type.includes('Draft') && type !== 'Winston Draft'">Picks</option>
-							<option v-if="type.includes('Draft') && type !== 'Winston Draft' && type !== 'Grid Draft'">
-								Picks Summary
-							</option>
+							<option v-if="picksPerPack.length > 0">Picks</option>
+							<option v-if="picksPerPack.length > 0 && type !== 'Grid Draft'">Picks Summary</option>
 							<option v-if="selectedLogDecklist !== undefined || displayOptions.category === 'Deck'">
 								Deck
 							</option>
@@ -458,7 +455,7 @@ export default defineComponent({
 			switch (this.type) {
 				default:
 					return [];
-				case "Rochester Draft":
+				case "Rochester Draft": // Intended Fallthrough
 				case "Draft": {
 					if (this.draftlog.version === "2.0") {
 						// Infer PackNumber & PickNumber
@@ -488,8 +485,6 @@ export default defineComponent({
 						return helper.groupPicksPerPack(this.selectedUser.picks as DraftPick[]);
 					}
 				}
-				case "Winston Draft": // TODO
-					return [];
 				case "Grid Draft": {
 					let packNum = 0;
 					return this.selectedUser.picks.map((p) => {
@@ -508,11 +503,15 @@ export default defineComponent({
 			}
 		},
 		draftPick() {
-			return this.picksPerPack[this.displayOptions.pack][this.displayOptions.pick] as DraftPick;
+			return this.picksPerPack[this.displayOptions.pack][this.displayOptions.pick];
 		},
 		pickTitle() {
-			const draftPick = this.draftPick;
-			return draftPick.pick.map((idx: number) => this.draftlog.carddata[draftPick.booster[idx]].name).join(", ");
+			return this.draftPick.pick
+				.map((idx: number) =>
+					this.draftPick.booster[idx] ? this.draftlog.carddata[this.draftPick.booster[idx]!].name : null
+				)
+				.filter((n) => n !== null)
+				.join(", ");
 		},
 	},
 	watch: {
