@@ -1,7 +1,12 @@
-app = "mtgadraft"
+# fly.toml app configuration file generated for draftmancer on 2023-05-24T09:54:53+02:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = "draftmancer"
+primary_region = "dfw"
 kill_signal = "SIGINT"
-kill_timeout = 5
-processes = []
+kill_timeout = "5s"
 
 [build]
   [build.args]
@@ -12,41 +17,40 @@ processes = []
 
 [env]
   NODE_ENV = "production"
-  NODE_OPTIONS = "--max-old-space-size=440"
+  NODE_OPTIONS = "--max-old-space-size=700"
   PORT = "8080"
-  PERSISTENCE_LOCAL_PATH="/persistence/"
-#  SWAP = "true"
+  PERSISTENCE_LOCAL_PATH = "/persistence/"
+  # SWAP = "true"
 
 [mounts]
-  source="mtgadraft_data"
-  destination="/persistence"
+  source = "draftmancer_data"
+  destination = "/persistence"
 
 [experimental]
-  allowed_public_ports = []
   auto_rollback = true
 
 [[services]]
-  http_checks = []
+  protocol = "tcp"
   internal_port = 8080
   processes = ["app"]
-  protocol = "tcp"
-  script_checks = []
+  auto_stop_machines = false
+  auto_start_machines = false
+
+  [[services.ports]]
+    port = 80
+    handlers = ["http"]
+    force_https = true
+
+  [[services.ports]]
+    port = 443
+    handlers = ["tls", "http"]
   [services.concurrency]
+    type = "connections"
     hard_limit = 1000
     soft_limit = 800
-    type = "connections"
-
-  [[services.ports]]
-    force_https = true
-    handlers = ["http"]
-    port = 80
-
-  [[services.ports]]
-    handlers = ["tls", "http"]
-    port = 443
 
   [[services.tcp_checks]]
-    grace_period = "1s"
     interval = "15s"
-    restart_limit = 0
     timeout = "2s"
+    grace_period = "7s"
+    restart_limit = 0
