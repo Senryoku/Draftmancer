@@ -35,11 +35,7 @@
 								class="column-card-container"
 								:style="{ '--anim-index': cardIndex }"
 							>
-								<transition
-									name="flip-card"
-									mode="out-in"
-									:duration="{ enter: 0.25, leave: 0.25 + 0.1 * cardIndex }"
-								>
+								<transition name="flip-card" mode="out-in">
 									<template
 										v-if="
 											userID === winstonDraftState.currentPlayer &&
