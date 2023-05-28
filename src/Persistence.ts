@@ -401,16 +401,6 @@ export function anonymizeDraftLog(log: DraftLog): DraftLog {
 	return localLog;
 }
 
-export function dumpError(name: string, data: any) {
-	axios
-		.post(`${PersistenceStoreURL}/store/${name}`, data, {
-			headers: {
-				"access-key": PersistenceKey,
-			},
-		})
-		.catch((err) => console.error("Error dumping error(wup): ", err.message));
-}
-
 export function logSession(type: string, session: Session) {
 	try {
 		sendLog(type, session);

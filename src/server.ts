@@ -27,14 +27,7 @@ import {
 	ToastMessage,
 } from "./Message.js";
 import { Constants } from "./Constants.js";
-import {
-	InactiveConnections,
-	InactiveSessions,
-	dumpError,
-	restoreSession,
-	getPoDSession,
-	copyPODProps,
-} from "./Persistence.js";
+import { InactiveConnections, InactiveSessions, restoreSession, getPoDSession, copyPODProps } from "./Persistence.js";
 import { Connection, Connections } from "./Connection.js";
 import { DistributionMode, DraftLogRecipients, ReadyState } from "./Session/SessionTypes";
 import { Session, Sessions, getPublicSessionData } from "./Session.js";
@@ -331,26 +324,14 @@ async function pickCard(
 	}
 	// Removes picked card from corresponding booster and notify other players.
 	// Moves to next round when each player have picked a card.
-	try {
-		const r = await Sessions[sessionID].pickCard(
-			userID,
-			data.pickedCards,
-			data.burnedCards,
-			draftEffect,
-			optionalOnPickDraftEffect
-		);
-		ack?.(r);
-	} catch (err) {
-		ack?.(new SocketError("Internal server error."));
-		console.error("Error in pickCard:", err);
-		const data: any = {
-			draftState: Sessions[sessionID].draftState,
-			sessionProps: {},
-		};
-		for (const p of Object.keys(SessionsSettingsProps))
-			data.sessionProps[p] = (Sessions[sessionID] as IIndexable)[p];
-		dumpError(`Error_PickCard_${sessionID}_${new Date().toISOString()}`, data);
-	}
+	const r = await Sessions[sessionID].pickCard(
+		userID,
+		data.pickedCards,
+		data.burnedCards,
+		draftEffect,
+		optionalOnPickDraftEffect
+	);
+	ack?.(r);
 }
 
 function gridDraftPick(userID: UserID, sessionID: SessionID, choice: number, ack: (result: SocketAck) => void) {
