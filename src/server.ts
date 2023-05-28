@@ -1517,16 +1517,13 @@ function joinSession(sessionID: SessionID, userID: UserID, defaultSessionSetting
 	// Fallback to previous session if possible, or generate a new one
 	const refuse = (msg: string) => {
 		Connections[userID].socket.emit("message", new Message("Cannot join session", "", "", msg));
-		if (!Connections[userID].sessionID) sessionID = shortguid();
-		else sessionID = Connections[userID].sessionID as SessionID;
-		Connections[userID].socket.emit("setSession", sessionID);
+		const newSessionID = Connections[userID].sessionID ? Connections[userID].sessionID! : shortguid();
+		Connections[userID].socket.emit("setSession", newSessionID);
 	};
 
 	if (sessionID in InactiveSessions) {
-		if (InactiveSessions[sessionID].drafting && !(userID in InactiveSessions[sessionID].disconnectedUsers)) {
-			refuse(`Session '${sessionID}' is currently drafting.`);
-			return;
-		}
+		if (InactiveSessions[sessionID].drafting && !(userID in InactiveSessions[sessionID].disconnectedUsers))
+			return refuse(`Session '${sessionID}' is currently drafting.`);
 
 		console.log(`Restoring inactive session '${sessionID}'...`);
 		if (InactiveSessions[sessionID].deleteTimeout) {
@@ -1558,23 +1555,22 @@ function joinSession(sessionID: SessionID, userID: UserID, defaultSessionSetting
 		// Session exists and is drafting
 		if (sess.drafting) {
 			console.log(
-				`${userID} wants to join drafting session '${sessionID}'... userID in sess.disconnectedUsers: ${
-					userID in sess.disconnectedUsers
+				`Session ${sessionID}: ${userID} wants to rejoin draft: ${
+					userID in sess.disconnectedUsers ? "Ok!" : "Not allowed."
 				}`
 			);
 
-			if (userID in sess.disconnectedUsers) {
-				sess.reconnectUser(userID);
-			} else {
-				refuse(
+			if (userID in sess.disconnectedUsers) sess.reconnectUser(userID);
+			else
+				return refuse(
 					`This session (${sessionID}) is currently drafting. Please wait for them to finish.${bracketLink}`
 				);
-			}
 		} else if (sess.managed) {
-			refuse(`This session (${sessionID}) is closed.`);
+			// Session exists and is managed but not drafting, it cannot be joined anymore.
+			return refuse(`This session (${sessionID}) is closed.`);
 		} else if (sess.getHumanPlayerCount() >= sess.maxPlayers) {
 			// Session exists and is full
-			refuse(
+			return refuse(
 				`This session (${sessionID}) is full (${sess.users.size}/${sess.maxPlayers} players).${bracketLink}`
 			);
 		} else {
