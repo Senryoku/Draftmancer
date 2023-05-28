@@ -615,18 +615,19 @@ function startHousmanDraft(
 function startMinesweeperDraft(
 	userID: UserID,
 	sessionID: SessionID,
-	gridCount: unknown,
-	gridWidth: unknown,
-	gridHeight: unknown,
-	picksPerGrid: unknown,
-	revealBorders: boolean,
+	unsafeGridCount: unknown,
+	unsafeGridWidth: unknown,
+	unsafeGridHeight: unknown,
+	unsafePicksPerGrid: unknown,
+	unsafeRevealBorders: unknown,
 	ack: (result: SocketAck) => void
 ) {
 	const sess = Sessions[sessionID];
-	if (!isNumber(gridCount)) gridCount = parseInt(gridCount as string);
-	if (!isNumber(gridWidth)) gridWidth = parseInt(gridWidth as string);
-	if (!isNumber(gridHeight)) gridHeight = parseInt(gridHeight as string);
-	if (!isNumber(picksPerGrid)) picksPerGrid = parseInt(picksPerGrid as string);
+	const gridCount = !isNumber(unsafeGridCount) ? parseInt(unsafeGridCount as string) : unsafeGridCount;
+	const gridWidth = !isNumber(unsafeGridWidth) ? parseInt(unsafeGridWidth as string) : unsafeGridWidth;
+	const gridHeight = !isNumber(unsafeGridHeight) ? parseInt(unsafeGridHeight as string) : unsafeGridHeight;
+	const picksPerGrid = !isNumber(unsafePicksPerGrid) ? parseInt(unsafePicksPerGrid as string) : unsafePicksPerGrid;
+	const revealBorders = !isBoolean(unsafeRevealBorders) ? false : unsafeRevealBorders;
 	if (
 		!isNumber(gridCount) ||
 		gridCount <= 0 ||
@@ -636,13 +637,14 @@ function startMinesweeperDraft(
 		gridHeight <= 0 ||
 		!isNumber(picksPerGrid) ||
 		picksPerGrid <= 0 ||
-		picksPerGrid > gridWidth * gridHeight
+		picksPerGrid > gridWidth * gridHeight ||
+		!isBoolean(revealBorders)
 	) {
 		return ack?.(
 			new SocketError(
 				`Invalid parameters`,
 				`Grid parameters are invalid. Please check your settings.`,
-				`Values: gridCount: ${gridCount}, gridWidth: ${gridWidth}, gridHeight: ${gridHeight}, picksPerGrid: ${picksPerGrid}`
+				`Values: gridCount: ${gridCount}, gridWidth: ${gridWidth}, gridHeight: ${gridHeight}, picksPerGrid: ${picksPerGrid}, revealBorders: ${revealBorders}`
 			)
 		);
 	}

@@ -29,7 +29,7 @@ export class MinesweeperCell {
 export class MinesweeperGrid {
 	state: Array<Array<MinesweeperCell>> = []; // Row-Major order
 
-	constructor(cards: Array<UniqueCard>, width: number, height: number, options: Options = {}) {
+	constructor(cards: Array<UniqueCard>, width: number, height: number, options: { revealBorders?: boolean } = {}) {
 		for (let i = 0; i < height; i++) {
 			this.state.push([]);
 			for (let j = 0; j < width; j++) {
@@ -118,7 +118,7 @@ export class MinesweeperDraftState extends IDraftState implements TurnBased {
 		gridWidth: number,
 		gridHeight: number,
 		picksPerGrid: number,
-		options: Options = {}
+		options: { revealBorders?: boolean } = {}
 	) {
 		super("minesweeper");
 		this.players = players;

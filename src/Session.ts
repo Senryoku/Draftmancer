@@ -1397,7 +1397,7 @@ export class Session implements IIndexable {
 		gridWidth: number,
 		gridHeight: number,
 		picksPerGrid: number,
-		options: Options = {}
+		options: { revealBorders?: boolean } = {}
 	): SocketAck {
 		if (this.users.size <= 1)
 			return new SocketError(
