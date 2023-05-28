@@ -5,7 +5,7 @@ import { Cards, getUnique, BoosterCardsBySet, CardsBySet, getCard } from "./Card
 import { shuffleArray, randomInt, Options, random, getRandom, weightedRandomIdx } from "./utils.js";
 import { removeCardFromCardPool, pickCard, countCards } from "./cardUtils.js";
 import { BasicLandSlot } from "./LandSlot.js";
-import Constants from "./Constants.js";
+import { Constants } from "./Constants.js";
 
 // Generates booster for regular MtG Sets
 
@@ -197,13 +197,13 @@ export class BoosterFactory implements IBoosterFactory {
 			if (this.cardPool["mythic"].size === 0 && this.cardPool["rare"].size === 0) {
 				return new MessageError("Error generating boosters", `Not enough rare or mythic cards in collection.`);
 			} else if (this.cardPool["mythic"].size === 0) {
-				booster.push(pickCard(this.cardPool["rare"]));
+				booster.push(pickCard(this.cardPool["rare"], booster));
 			} else if (this.options.mythicPromotion && this.cardPool["rare"].size === 0) {
-				booster.push(pickCard(this.cardPool["mythic"]));
+				booster.push(pickCard(this.cardPool["mythic"], booster));
 			} else {
 				if (this.options.mythicPromotion && random.bool(mythicRate))
-					booster.push(pickCard(this.cardPool["mythic"]));
-				else booster.push(pickCard(this.cardPool["rare"]));
+					booster.push(pickCard(this.cardPool["mythic"], booster));
+				else booster.push(pickCard(this.cardPool["rare"], booster));
 			}
 		}
 
