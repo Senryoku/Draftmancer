@@ -1,6 +1,6 @@
 "use strict";
 
-import { InTesting } from "./Context.js";
+import { InTesting, TestingOnly } from "./Context.js";
 import dotenv from "dotenv";
 if (process.env.NODE_ENV !== "production") {
 	dotenv.config();
@@ -453,11 +453,7 @@ export function logSession(type: string, session: Session) {
 }
 
 // Dumps and reloads inactive sessions, ONLY for testing purposes.
-export async function simulateRestart() {
-	if (!InTesting) {
-		console.error("Error: simulateRestart should only be used in testing.");
-		return;
-	}
+export const simulateRestart = TestingOnly(async () => {
 	await tempDump();
 	clearConnections();
 	clearSessions();
@@ -465,7 +461,7 @@ export async function simulateRestart() {
 		InactiveConnections = values[0];
 		InactiveSessions = values[1];
 	});
-}
+});
 
 if (!DisablePersistence) {
 	// Can make asynchronous calls, is not called on process.exit() or uncaught

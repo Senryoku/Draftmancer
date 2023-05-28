@@ -4,7 +4,7 @@ import { Socket } from "socket.io";
 import { UserID, SessionID } from "./IDTypes.js";
 import { CardID, CardPool, UniqueCard } from "./CardTypes.js";
 import { ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData } from "./SocketType.js";
-import { InTesting } from "./Context.js";
+import { InTesting, TestingOnly } from "./Context.js";
 
 export const Connections: { [uid: string]: Connection } = {};
 export class Connection {
@@ -44,14 +44,9 @@ export function getPickedCardIds(pickedCards: { main: Array<UniqueCard>; side: A
 	return pickedCards.main.map((c) => c.id).concat(pickedCards.side.map((c) => c.id));
 }
 
-// TESTING ONLY
-export function clearConnections() {
-	if (!InTesting) {
-		console.error("Error: clearConnections should only be used in testing.");
-		return;
-	}
+export const clearConnections = TestingOnly(() => {
 	for (const uid in Connections) {
 		Connections[uid].socket.disconnect();
 		delete Connections[uid];
 	}
-}
+});
