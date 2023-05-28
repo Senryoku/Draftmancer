@@ -193,18 +193,19 @@ export class BoosterFactory implements IBoosterFactory {
 		}
 
 		for (let i = 0; i < targets["rare"]; ++i) {
-			// 1 Rare/Mythic
-			if (this.cardPool["mythic"].size === 0 && this.cardPool["rare"].size === 0) {
-				return new MessageError("Error generating boosters", `Not enough rare or mythic cards in collection.`);
-			} else if (this.cardPool["mythic"].size === 0) {
-				booster.push(pickCard(this.cardPool["rare"], booster));
-			} else if (this.options.mythicPromotion && this.cardPool["rare"].size === 0) {
-				booster.push(pickCard(this.cardPool["mythic"], booster));
-			} else {
-				if (this.options.mythicPromotion && random.bool(mythicRate))
-					booster.push(pickCard(this.cardPool["mythic"], booster));
-				else booster.push(pickCard(this.cardPool["rare"], booster));
-			}
+			if (
+				(!this.options.mythicPromotion || this.cardPool["mythic"].size === 0) &&
+				this.cardPool["rare"].size === 0
+			)
+				return new MessageError("Error generating boosters", `Not enough rare or mythic cards in card pool.`);
+
+			const pool =
+				this.options.mythicPromotion &&
+				this.cardPool["mythic"].size > 0 &&
+				(random.bool(mythicRate) || this.cardPool["rare"].size === 0)
+					? "mythic"
+					: "rare";
+			booster.push(pickCard(this.cardPool[pool], booster));
 		}
 
 		for (let i = 0; i < targets["uncommon"]; ++i) booster.push(pickCard(this.cardPool["uncommon"], booster));
