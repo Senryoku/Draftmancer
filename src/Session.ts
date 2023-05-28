@@ -3109,7 +3109,7 @@ export class Session implements IIndexable {
 				userID: userID,
 				userName: this.isDisconnected(userID)
 					? this.disconnectedUsers[userID].userName
-					: Connections[userID].userName,
+					: Connections[userID]?.userName ?? "(Unknown)",
 				isBot: false,
 				isReplaced: this.isDisconnected(userID) && this.disconnectedUsers[userID].replaced === true,
 				isDisconnected: this.isDisconnected(userID),
@@ -3120,8 +3120,8 @@ export class Session implements IIndexable {
 	}
 
 	getSortedVirtualPlayerData() {
-		const r: UsersData = {};
-		if (this.draftState instanceof DraftState) {
+		if (isDraftState(this.draftState)) {
+			const r: UsersData = {};
 			for (const userID in this.draftState.players) {
 				r[userID] = {
 					userID: userID,
@@ -3129,17 +3129,15 @@ export class Session implements IIndexable {
 						? this.draftState.players[userID].botInstance.name
 						: this.isDisconnected(userID)
 						? this.disconnectedUsers[userID].userName
-						: Connections[userID].userName,
+						: Connections[userID]?.userName ?? "(Unknown)",
 					isBot: this.draftState.players[userID].isBot,
 					isReplaced: this.isDisconnected(userID) && this.disconnectedUsers[userID].replaced === true,
 					isDisconnected: this.isDisconnected(userID),
 					boosterCount: this.draftState.players[userID].boosters.length,
 				};
 			}
-		} else {
-			return this.getSortedHumanPlayerData();
-		}
-		return r;
+			return r;
+		} else return this.getSortedHumanPlayerData();
 	}
 
 	emitMessage(title: string, text: string = "", showConfirmButton = true, timer = 1500) {
