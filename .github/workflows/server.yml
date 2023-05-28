@@ -23,4 +23,5 @@ jobs:
                   cache: "npm"
             - run: npm ci
             - run: npm run build-server
+            - run: mkdir tmp # For simulating server restarts
             - run: npm test
