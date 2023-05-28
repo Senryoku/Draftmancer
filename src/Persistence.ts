@@ -45,7 +45,7 @@ const LocalPersitenceDirectory = "tmp";
 const LocalConnectionsFile = path.join(PersistenceLocalPath ?? ".", LocalPersitenceDirectory, "/connections.json");
 const LocalSessionsFile = path.join(PersistenceLocalPath ?? ".", LocalPersitenceDirectory, "/sessions.json");
 
-const PersistenceStoreURL = process.env.PERSISTENCE_STORE_URL ?? "http://localhost:3008";
+const PersistenceStoreURL = process.env.PERSISTENCE_STORE_URL ?? (InTesting ? undefined : "http://localhost:3008");
 const PersistenceKey = process.env.PERSISTENCE_KEY ?? "1234";
 
 export let InactiveSessions: Record<SessionID, any> = {};
