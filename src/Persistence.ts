@@ -9,8 +9,8 @@ import crypto from "crypto";
 import axios from "axios";
 import fs from "fs";
 import path from "path";
-import { Connections, getPODConnection } from "./Connection.js";
-import { Session, Sessions } from "./Session.js";
+import { Connections, clearConnections, getPODConnection } from "./Connection.js";
+import { Session, Sessions, clearSessions } from "./Session.js";
 import { TeamSealedState } from "./TeamSealed.js";
 import { MinesweeperDraftState } from "./MinesweeperDraft.js";
 import { Bot, IBot, SimpleBot } from "./Bot.js";
@@ -219,8 +219,14 @@ export function restoreSession(s: any, owner: UserID) {
 				return r;
 			}
 			case "minesweeper": {
-				r.draftState = new MinesweeperDraftState([], [], 0, 0, 0);
-				copyPODProps(s.draftState, r.draftState);
+				r.draftState = MinesweeperDraftState.deserialize(s.draftState);
+				if (!r.draftState) {
+					console.error(
+						`[Persistence::restoreSession] Error: Invalid minesweeper draft state.`,
+						s.draftState
+					);
+					r.drafting = false;
+				}
 				return r;
 			}
 			case "teamSealed": {
@@ -446,6 +452,21 @@ export function logSession(type: string, session: Session) {
 	MixInstance.track(type === "" ? "DefaultEvent" : type, mixdata);
 }
 
+// Dumps and reloads inactive sessions, ONLY for testing purposes.
+export async function simulateRestart() {
+	if (!InTesting) {
+		console.error("Error: simulateRestart should only be used in testing.");
+		return;
+	}
+	await tempDump();
+	clearConnections();
+	clearSessions();
+	await Promise.all([requestSavedConnections(), requestSavedSessions()]).then((values) => {
+		InactiveConnections = values[0];
+		InactiveSessions = values[1];
+	});
+}
+
 if (!DisablePersistence) {
 	// Can make asynchronous calls, is not called on process.exit() or uncaught
 	// exceptions.
@@ -493,7 +514,7 @@ if (!DisablePersistence) {
 		}, 20000);
 	});
 
-	Promise.all([requestSavedConnections(), requestSavedSessions()]).then((values) => {
+	await Promise.all([requestSavedConnections(), requestSavedSessions()]).then((values) => {
 		InactiveConnections = values[0];
 		InactiveSessions = values[1];
 	});

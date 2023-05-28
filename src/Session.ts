@@ -72,7 +72,7 @@ import { HousmanDraftState, isHousmanDraftState } from "./HousmanDraft.js";
 import { SolomonDraftState, isSolomonDraftState } from "./SolomonDraft.js";
 import { isSomeEnum } from "./TypeChecks.js";
 import { askColors, choosePlayer } from "./Conspiracy.js";
-import { InProduction } from "./Context.js";
+import { InProduction, InTesting } from "./Context.js";
 
 export class Session implements IIndexable {
 	id: SessionID;
@@ -3292,3 +3292,12 @@ export function getPublicSessionData(s: Session) {
 }
 
 export const Sessions: { [sid: string]: Session } = {};
+
+// TESTING ONLY
+export function clearSessions() {
+	if (!InTesting) {
+		console.error("Error: clearSessions should only be used in testing.");
+		return;
+	}
+	for (const sid in Sessions) delete Sessions[sid];
+}

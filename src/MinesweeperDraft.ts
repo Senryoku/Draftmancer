@@ -1,9 +1,11 @@
+import { isUniqueCard } from "./CardTypeCheck.js";
 import { UniqueCard } from "./CardTypes.js";
 import { IDraftState, TurnBased } from "./IDraftState.js";
 import { UserID } from "./IDTypes.js";
 import { MinesweeperCellState, MinesweeperSyncData, MinesweeperSyncDataDiff } from "./MinesweeperDraftTypes.js";
-import { PickSummary } from "./PickSummary";
-import { negMod, Options } from "./utils.js";
+import { PickSummary, isPickSummary } from "./PickSummary.js";
+import { hasProperty, isArray, isArrayOf, isNumber, isObject, isSomeEnum, isString } from "./TypeChecks.js";
+import { negMod } from "./utils.js";
 
 export class MinesweeperCell {
 	state: MinesweeperCellState = MinesweeperCellState.Hidden;
@@ -24,12 +26,24 @@ export class MinesweeperCell {
 	constructor(card: UniqueCard) {
 		this.card = card;
 	}
+
+	static deserialize(data: unknown): MinesweeperCell | undefined {
+		if (!isObject(data)) return;
+		if (!hasProperty("state", isSomeEnum(MinesweeperCellState))(data)) return;
+		if (!hasProperty("card", isUniqueCard)(data)) return;
+
+		const r = new MinesweeperCell(data.card);
+		r.state = data.state;
+		return r;
+	}
 }
 
 export class MinesweeperGrid {
 	state: Array<Array<MinesweeperCell>> = []; // Row-Major order
 
 	constructor(cards: Array<UniqueCard>, width: number, height: number, options: { revealBorders?: boolean } = {}) {
+		if (cards.length === 0 || width <= 0 || height <= 0) return;
+
 		for (let i = 0; i < height; i++) {
 			this.state.push([]);
 			for (let j = 0; j < width; j++) {
@@ -98,6 +112,21 @@ export class MinesweeperGrid {
 	}
 	height() {
 		return this.state.length;
+	}
+
+	static deserialize(data: unknown): MinesweeperGrid | undefined {
+		if (!isObject(data)) return;
+		if (!hasProperty("state", isArrayOf(isArray))(data)) return;
+		const r = new MinesweeperGrid([], 0, 0);
+		for (const row of data.state) {
+			r.state.push([]);
+			for (const cell of row) {
+				const deserialized = MinesweeperCell.deserialize(cell);
+				if (deserialized === undefined) return;
+				r.state[r.state.length - 1].push(deserialized);
+			}
+		}
+		return r;
 	}
 }
 
@@ -203,6 +232,34 @@ export class MinesweeperDraftState extends IDraftState implements TurnBased {
 			grid: grid,
 			lastPicks: this.lastPicks,
 		};
+	}
+
+	static deserialize(data: unknown): MinesweeperDraftState | undefined {
+		if (!isObject(data)) return;
+		if (!hasProperty("players", isArrayOf(isString))(data)) return;
+		if (!hasProperty("grids", isArray)(data)) return;
+		if (!hasProperty("gridWidth", isNumber)(data)) return;
+		if (!hasProperty("gridHeight", isNumber)(data)) return;
+		if (!hasProperty("pickNumber", isNumber)(data)) return;
+		if (!hasProperty("gridNumber", isNumber)(data)) return;
+		if (!hasProperty("picksPerGrid", isNumber)(data)) return;
+		if (!hasProperty("lastPicks", isArrayOf(isPickSummary))(data)) return;
+
+		const r = new MinesweeperDraftState([], [], 0, 0, 0);
+		r.players = data.players;
+		r.grids = [];
+		for (const grid of data.grids) {
+			const deserialized = MinesweeperGrid.deserialize(grid);
+			if (!deserialized) return;
+			r.grids.push(deserialized);
+		}
+		r.gridWidth = data.gridWidth;
+		r.gridHeight = data.gridHeight;
+		r.pickNumber = data.pickNumber;
+		r.gridNumber = data.gridNumber;
+		r.picksPerGrid = data.picksPerGrid;
+		r.lastPicks = data.lastPicks;
+		return r;
 	}
 }
 
