@@ -1,6 +1,25 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
+			<em>May 30, 2023</em>
+			<ul>
+				<li>
+					Extended
+					<img src="img/sets/cns.svg" class="set-icon" style="--invertedness: 100%" alt="" /> Conspiracy draft
+					effects support to
+					<a href="https://github.com/Senryoku/Draftmancer/wiki/Conspiracy-cards-support" target="blank">
+						more cards</a
+					>.
+				</li>
+				<li>
+					Added a way to apply these Conspiracy draft effects on
+					<a href="https://draftmancer.com/cubeformat.html#custom-cards" target="blank">Custom Cards</a>.
+				</li>
+				<li>Enhanced draft logs to include picks for more Game Modes.</li>
+				<li>Various bug fixes and improvements.</li>
+			</ul>
+		</div>
+		<div class="news">
 			<em>May 16, 2023</em>
 			<ul>
 				<li>
@@ -35,17 +54,6 @@
 					<img src="img/sets/mat.svg" class="set-icon" style="--invertedness: 100%" alt="" /> March of the
 					Machine: The Aftermath draft, mimicking Arena's with one MAT card in a MOM booster.
 				</li>
-			</ul>
-		</div>
-		<div class="news">
-			<em>May 04, 2023</em>
-			<ul>
-				<li>
-					<img src="img/sets/mat.svg" class="set-icon" style="--invertedness: 100%" alt="" /> March of the
-					Machine: The Aftermath cards.
-				</li>
-				<li>Option to remove basics in Solomon and Housman drafts. Thanks NerdyNathan for his contribution!</li>
-				<li>Various tweaks and fixes.</li>
 			</ul>
 		</div>
 	</div>

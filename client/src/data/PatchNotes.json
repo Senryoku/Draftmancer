@@ -1,5 +1,13 @@
 [
 	{
+		"date": "30/05/2023",
+		"notes": [
+			"Extended Conspirary draft effects support to more cards and custom cards.",
+			"Enhanced draft logs to include picks for more Game Modes.",
+			"Various bug fixes and improvements."
+		]
+	},
+	{
 		"date": "15/05/2023",
 		"notes": ["Conspirary draft matters cards experimental support."]
 	},
