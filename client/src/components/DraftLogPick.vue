@@ -1,23 +1,26 @@
 <template>
 	<div class="card-container" v-if="type === 'Draft' || type === 'Rochester Draft'">
 		<booster-card
-			v-for="(cid, index) in (pick as DraftPick).booster"
+			v-for="(cid, index) in draftPick.booster"
 			:key="index"
 			:card="getUnique(cid)"
 			:language="language"
-			:class="{ 'selected-high': pick.pick.includes(index), burned: pick.burn && pick.burn.includes(index) }"
+			:class="{
+				'selected-high': draftPick.pick.includes(index),
+				burned: draftPick.burn && draftPick.burn.includes(index),
+			}"
 			:lazyLoad="true"
 			:scale="scale"
 		></booster-card>
 	</div>
 	<div class="card-container grid3x3" v-else-if="type === 'Grid Draft'">
-		<template v-for="(cid, index) in pick.booster">
+		<template v-for="(cid, index) in gridDraftPick.booster">
 			<card
 				v-if="cid"
 				:key="index + '_' + cid"
 				:card="getUnique(cid)"
 				:language="language"
-				:class="{ 'selected-high': pick.pick.includes(index) }"
+				:class="{ 'selected-high': gridDraftPick.pick.includes(index) }"
 				:lazyLoad="true"
 			></card>
 			<font-awesome-icon
@@ -29,12 +32,30 @@
 			></font-awesome-icon>
 		</template>
 	</div>
-	<!-- Winston Draft; Fail safe -->
+	<div class="card-container winston-pick" v-else-if="type === 'Winston Draft'">
+		<div
+			v-for="(cards, index) in winstonDraftPick.piles"
+			:key="index"
+			class="card-column"
+			:class="{ selected: 'pickedPile' in winstonDraftPick && winstonDraftPick.pickedPile === index }"
+		>
+			<card
+				v-for="(cid, cidx) in cards"
+				:key="index + '_' + cidx"
+				:card="getUnique(cid)"
+				:language="language"
+			></card>
+		</div>
+		<div v-if="'randomCard' in winstonDraftPick">
+			<h3>Drawn Card:</h3>
+			<card :card="getUnique(winstonDraftPick.randomCard)" :language="language"></card>
+		</div>
+	</div>
 	<div class="card-container" v-else>Not Implemented</div>
 </template>
 
 <script lang="ts">
-import { DraftPick, GridDraftPick } from "@/DraftLog";
+import { DraftPick, GridDraftPick, WinstonDraftPick } from "@/DraftLog";
 import { Card, CardID, UniqueCard } from "@/CardTypes";
 import { Language } from "@/Types";
 
@@ -48,7 +69,7 @@ export default defineComponent({
 	name: "DraftLogPick",
 	components: { Card: CardComponent, BoosterCard },
 	props: {
-		pick: { type: Object as PropType<DraftPick | GridDraftPick>, required: true },
+		pick: { type: Object as PropType<DraftPick | GridDraftPick | WinstonDraftPick>, required: true },
 		carddata: { type: Object as PropType<{ [cid: CardID]: Card }>, required: true },
 		language: { type: String as PropType<Language>, required: true },
 		type: { type: String, default: "Draft" },
@@ -56,14 +77,27 @@ export default defineComponent({
 	},
 	methods: {
 		getUnique(cid: CardID): UniqueCard {
+			if (typeof cid !== "string") return toUnique(cid); // FIXME: Backward compatility with previously unused WinstonDraftPick where cards were stored as full objects, should be removed at some point.
 			return toUnique(this.carddata[cid]);
+		},
+	},
+	computed: {
+		draftPick() {
+			return this.pick as DraftPick;
+		},
+		gridDraftPick() {
+			return this.pick as GridDraftPick;
+		},
+		winstonDraftPick() {
+			return this.pick as WinstonDraftPick;
 		},
 	},
 });
 </script>
 
 <style scoped>
-.card {
+.booster-card,
+.grid3x3 .card {
 	margin: 0.75em;
 }
 
@@ -74,5 +108,10 @@ export default defineComponent({
 	justify-content: center;
 	grid-template-columns: 300px 300px 300px;
 	grid-template-rows: 300px 300px 300px;
+}
+
+.winston-pick {
+	display: flex;
+	gap: 1em;
 }
 </style>

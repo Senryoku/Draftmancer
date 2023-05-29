@@ -215,7 +215,14 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
-import { DraftLog, DraftLogUserData, DraftPick, DeprecatedDraftPick, GridDraftPick } from "@/DraftLog";
+import {
+	DraftLog,
+	DraftLogUserData,
+	DraftPick,
+	DeprecatedDraftPick,
+	GridDraftPick,
+	WinstonDraftPick,
+} from "@/DraftLog";
 import { UserID } from "@/IDTypes";
 
 import * as helper from "../helper";
@@ -450,7 +457,7 @@ export default defineComponent({
 		teamDraft() {
 			return this.draftlog.teamDraft;
 		},
-		picksPerPack(): (DraftPick | GridDraftPick)[][] {
+		picksPerPack(): (DraftPick | GridDraftPick | WinstonDraftPick)[][] {
 			if (!this.validSelectedUser || !this.selectedUser.picks || this.selectedUser.picks.length === 0) return [];
 			switch (this.type) {
 				default:
@@ -500,16 +507,23 @@ export default defineComponent({
 						];
 					});
 				}
+				case "Winston Draft": {
+					return [this.selectedUser.picks as WinstonDraftPick[]];
+				}
 			}
 		},
 		draftPick() {
 			return this.picksPerPack[this.displayOptions.pack][this.displayOptions.pick];
 		},
 		pickTitle() {
-			return this.draftPick.pick
-				.map((idx: number) =>
-					this.draftPick.booster[idx] ? this.draftlog.carddata[this.draftPick.booster[idx]!].name : null
-				)
+			// Winston Draft
+			if ("piles" in this.draftPick) {
+				if ("randomCard" in this.draftPick) return this.draftlog.carddata[this.draftPick.randomCard].name;
+				return `Pile #${this.draftPick.pickedPile + 1}`;
+			}
+			const p = this.draftPick;
+			return p.pick
+				.map((idx: number) => (p.booster[idx] ? this.draftlog.carddata[p.booster[idx]!].name : null))
 				.filter((n) => n !== null)
 				.join(", ");
 		},
