@@ -222,6 +222,7 @@ import {
 	DeprecatedDraftPick,
 	GridDraftPick,
 	WinstonDraftPick,
+	WinchesterDraftPick,
 } from "@/DraftLog";
 import { UserID } from "@/IDTypes";
 
@@ -457,7 +458,7 @@ export default defineComponent({
 		teamDraft() {
 			return this.draftlog.teamDraft;
 		},
-		picksPerPack(): (DraftPick | GridDraftPick | WinstonDraftPick)[][] {
+		picksPerPack(): (DraftPick | GridDraftPick | WinstonDraftPick | WinchesterDraftPick)[][] {
 			if (!this.validSelectedUser || !this.selectedUser.picks || this.selectedUser.picks.length === 0) return [];
 			switch (this.type) {
 				default:
@@ -507,9 +508,10 @@ export default defineComponent({
 						];
 					});
 				}
-				case "Winston Draft": {
+				case "Winston Draft":
 					return [this.selectedUser.picks as WinstonDraftPick[]];
-				}
+				case "Winchester Draft":
+					return [this.selectedUser.picks as WinchesterDraftPick[]];
 			}
 		},
 		draftPick() {

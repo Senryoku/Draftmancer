@@ -17,8 +17,12 @@ export type WinstonDraftPick =
 			pickedPile: number;
 			piles: CardID[][];
 	  };
+export type WinchesterDraftPick = {
+	pickedPile: number;
+	piles: CardID[][];
+};
 
-export type GenericDraftPick = DraftPick | GridDraftPick | WinstonDraftPick;
+export type GenericDraftPick = DraftPick | GridDraftPick | WinstonDraftPick | WinchesterDraftPick;
 
 export type DraftLogUserData = {
 	userID: UserID;

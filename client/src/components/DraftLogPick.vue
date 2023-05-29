@@ -32,7 +32,7 @@
 			></font-awesome-icon>
 		</template>
 	</div>
-	<div class="card-container winston-pick" v-else-if="type === 'Winston Draft'">
+	<div class="card-container winston-pick" v-else-if="type === 'Winston Draft' || type === 'Winchester Draft'">
 		<div
 			v-for="(cards, index) in winstonDraftPick.piles"
 			:key="index"
@@ -55,7 +55,7 @@
 </template>
 
 <script lang="ts">
-import { DraftPick, GridDraftPick, WinstonDraftPick } from "@/DraftLog";
+import { DraftPick, GridDraftPick, WinchesterDraftPick, WinstonDraftPick } from "@/DraftLog";
 import { Card, CardID, UniqueCard } from "@/CardTypes";
 import { Language } from "@/Types";
 
@@ -69,7 +69,10 @@ export default defineComponent({
 	name: "DraftLogPick",
 	components: { Card: CardComponent, BoosterCard },
 	props: {
-		pick: { type: Object as PropType<DraftPick | GridDraftPick | WinstonDraftPick>, required: true },
+		pick: {
+			type: Object as PropType<DraftPick | GridDraftPick | WinstonDraftPick | WinchesterDraftPick>,
+			required: true,
+		},
 		carddata: { type: Object as PropType<{ [cid: CardID]: Card }>, required: true },
 		language: { type: String as PropType<Language>, required: true },
 		type: { type: String, default: "Draft" },
@@ -89,6 +92,7 @@ export default defineComponent({
 			return this.pick as GridDraftPick;
 		},
 		winstonDraftPick() {
+			// And Winchester Draft, as WinchesterDraftPick is a subset of WinstonDraftPick
 			return this.pick as WinstonDraftPick;
 		},
 	},
