@@ -32,7 +32,10 @@
 			></font-awesome-icon>
 		</template>
 	</div>
-	<div class="card-container winston-pick" v-else-if="type === 'Winston Draft' || type === 'Winchester Draft'">
+	<div
+		class="card-container winston-pick"
+		v-else-if="type === 'Winston Draft' || type === 'Winchester Draft' || type === 'Solomon Draft'"
+	>
 		<div
 			v-for="(cards, index) in winstonDraftPick.piles"
 			:key="index"

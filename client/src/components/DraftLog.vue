@@ -512,6 +512,8 @@ export default defineComponent({
 					return [this.selectedUser.picks as WinstonDraftPick[]];
 				case "Winchester Draft":
 					return [this.selectedUser.picks as WinchesterDraftPick[]];
+				case "Solomon Draft":
+					return [this.selectedUser.picks as WinchesterDraftPick[]];
 			}
 		},
 		draftPick() {

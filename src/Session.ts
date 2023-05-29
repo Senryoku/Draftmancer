@@ -1602,6 +1602,16 @@ export class Session implements IIndexable {
 		const r = s.pick(pileIdx);
 		if (isMessageError(r)) return new SocketAck(r);
 
+		if (this.draftLog) {
+			const piles = Object.values(r);
+			const pilesIds = piles.map((p) => p.map((c) => c.id));
+			for (const uid in r)
+				this.draftLog.users[uid].picks.push({
+					pickedPile: piles.findIndex((p) => p[0].uniqueID === r[uid][0].uniqueID),
+					piles: pilesIds,
+				});
+		}
+
 		for (const uid of s.players) {
 			Connections[uid]?.pickedCards.main.push(...r[uid]);
 			Connections[uid]?.socket.emit("solomonDraftPicked", pileIdx);
