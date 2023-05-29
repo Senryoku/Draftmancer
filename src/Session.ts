@@ -1608,13 +1608,15 @@ export class Session implements IIndexable {
 		if (isMessageError(r)) return new SocketAck(r);
 
 		if (this.draftLog) {
-			const piles = Object.values(r);
-			const pilesIds = piles.map((p) => p.map((c) => c.id));
-			for (const uid in r)
+			let pickedPile = 0;
+			const piles = Object.values(r).map((p) => p.map((c) => c.id));
+			for (const uid in r) {
 				this.draftLog.users[uid].picks.push({
-					pickedPile: piles.findIndex((p) => p[0].uniqueID === r[uid][0].uniqueID),
-					piles: pilesIds,
+					pickedPile,
+					piles,
 				});
+				++pickedPile;
+			}
 		}
 
 		for (const uid of s.players) {
