@@ -54,11 +54,35 @@
 			<card :card="getUnique(winstonDraftPick.randomCard)" :language="language"></card>
 		</div>
 	</div>
+	<div class="housman-pick" v-else-if="type === 'Housman Draft'">
+		<h2 style="margin: 0">Revealed Cards</h2>
+		<div class="card-container">
+			<card
+				v-for="(cid, cidx) in housmanDraftPick.revealedCards"
+				:key="cidx + '_' + cid"
+				:card="getUnique(cid)"
+				:language="language"
+				:class="{ 'selected-high': housmanDraftPick.picked === cidx }"
+				:lazyLoad="true"
+			></card>
+		</div>
+		<h2 style="margin: 0">Hand</h2>
+		<div class="card-container">
+			<card
+				v-for="(cid, cidx) in housmanDraftPick.hand"
+				:key="cidx + '_' + cid"
+				:card="getUnique(cid)"
+				:language="language"
+				:class="{ replaced: housmanDraftPick.replaced === cidx }"
+				:lazyLoad="true"
+			></card>
+		</div>
+	</div>
 	<div class="card-container" v-else>Not Implemented</div>
 </template>
 
 <script lang="ts">
-import { DraftPick, GridDraftPick, WinchesterDraftPick, WinstonDraftPick } from "@/DraftLog";
+import { DraftPick, GridDraftPick, HousmanDraftPick, WinchesterDraftPick, WinstonDraftPick } from "@/DraftLog";
 import { Card, CardID, UniqueCard } from "@/CardTypes";
 import { Language } from "@/Types";
 
@@ -73,7 +97,9 @@ export default defineComponent({
 	components: { Card: CardComponent, BoosterCard },
 	props: {
 		pick: {
-			type: Object as PropType<DraftPick | GridDraftPick | WinstonDraftPick | WinchesterDraftPick>,
+			type: Object as PropType<
+				DraftPick | GridDraftPick | WinstonDraftPick | WinchesterDraftPick | HousmanDraftPick
+			>,
 			required: true,
 		},
 		carddata: { type: Object as PropType<{ [cid: CardID]: Card }>, required: true },
@@ -98,13 +124,17 @@ export default defineComponent({
 			// And Winchester Draft, as WinchesterDraftPick is a subset of WinstonDraftPick
 			return this.pick as WinstonDraftPick;
 		},
+		housmanDraftPick() {
+			return this.pick as HousmanDraftPick;
+		},
 	},
 });
 </script>
 
 <style scoped>
 .booster-card,
-.grid3x3 .card {
+.grid3x3 .card,
+.housman-pick .card {
 	margin: 0.75em;
 }
 
@@ -120,5 +150,15 @@ export default defineComponent({
 .winston-pick {
 	display: flex;
 	gap: 1em;
+}
+</style>
+
+<style>
+.replaced .card-image .front-image,
+.replaced .card-image .back-image,
+.replaced .card-placeholder {
+	-webkit-box-shadow: 0px 0px 20px 4px rgb(200, 0, 0);
+	-moz-box-shadow: 0px 0px 20px 4px rgba(200, 0, 0, 1);
+	box-shadow: 0px 0px 20px 4px rgba(200, 0, 0, 1);
 }
 </style>

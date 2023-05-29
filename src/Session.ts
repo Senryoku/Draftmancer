@@ -1046,11 +1046,16 @@ export class Session implements IIndexable {
 				}, revealedCardsIndex (${revealedCardsIndex}) should be between 0 and ${s.revealedCardsCount - 1}`
 			);
 
-		/*
-		// TODO: Update draft log picks.
 		const currentPlayer = s.currentPlayer();
-		this.draftLog?.users[currentPlayer].picks = ...
-		*/
+		this.draftLog?.users[currentPlayer].picks.push({
+			round: s.roundNum,
+			exchange: s.exchangeNum,
+			revealedCards: s.revealedCards.map((c) => c.id),
+			hand: s.playerHands[currentPlayer].map((c) => c.id),
+			picked: revealedCardsIndex,
+			replaced: handIndex,
+		});
+
 		const nextRound = s.exchange(handIndex, revealedCardsIndex);
 
 		this.forUsers((uid) =>

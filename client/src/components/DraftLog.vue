@@ -61,7 +61,16 @@
 						>
 							<option>Cards</option>
 							<option v-if="picksPerPack.length > 0">Picks</option>
-							<option v-if="picksPerPack.length > 0 && type !== 'Grid Draft'">Picks Summary</option>
+							<option
+								v-if="
+									picksPerPack.length > 0 &&
+									picksPerPack[0].length > 0 &&
+									'pick' in picksPerPack[0][0] &&
+									'booster' in picksPerPack[0][0]
+								"
+							>
+								Picks Summary
+							</option>
 							<option v-if="selectedLogDecklist !== undefined || displayOptions.category === 'Deck'">
 								Deck
 							</option>
@@ -223,6 +232,7 @@ import {
 	GridDraftPick,
 	WinstonDraftPick,
 	WinchesterDraftPick,
+	HousmanDraftPick,
 } from "@/DraftLog";
 import { UserID } from "@/IDTypes";
 
@@ -458,7 +468,7 @@ export default defineComponent({
 		teamDraft() {
 			return this.draftlog.teamDraft;
 		},
-		picksPerPack(): (DraftPick | GridDraftPick | WinstonDraftPick | WinchesterDraftPick)[][] {
+		picksPerPack(): (DraftPick | GridDraftPick | WinstonDraftPick | WinchesterDraftPick | HousmanDraftPick)[][] {
 			if (!this.validSelectedUser || !this.selectedUser.picks || this.selectedUser.picks.length === 0) return [];
 			switch (this.type) {
 				default:
@@ -514,17 +524,32 @@ export default defineComponent({
 					return [this.selectedUser.picks as WinchesterDraftPick[]];
 				case "Solomon Draft":
 					return [this.selectedUser.picks as WinchesterDraftPick[]];
+				case "Housman Draft": {
+					const r: HousmanDraftPick[][] = [];
+					let lastRoundNum = -1;
+					for (const p of this.selectedUser.picks as HousmanDraftPick[]) {
+						if (p.round !== lastRoundNum) {
+							lastRoundNum = p.round;
+							r.push([]);
+						}
+						r[r.length - 1].push(p);
+					}
+					return r;
+				}
 			}
 		},
 		draftPick() {
 			return this.picksPerPack[this.displayOptions.pack][this.displayOptions.pick];
 		},
 		pickTitle() {
-			// Winston Draft
+			// Winston Draft, and other pile based modes
 			if ("piles" in this.draftPick) {
 				if ("randomCard" in this.draftPick) return this.draftlog.carddata[this.draftPick.randomCard].name;
 				return `Pile #${this.draftPick.pickedPile + 1}`;
 			}
+			// Housman Draft
+			if ("revealedCards" in this.draftPick)
+				return this.draftlog.carddata[this.draftPick.revealedCards[this.draftPick.picked]].name;
 			const p = this.draftPick;
 			return p.pick
 				.map((idx: number) => (p.booster[idx] ? this.draftlog.carddata[p.booster[idx]!].name : null))
