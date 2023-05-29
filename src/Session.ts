@@ -861,7 +861,7 @@ export class Session implements IIndexable {
 			Connections[s.currentPlayer()].socket.emit("winstonDraftRandomCard", card);
 			this.draftLog?.users[s.currentPlayer()].picks.push({
 				randomCard: card.id,
-				piles: [...s.piles],
+				piles: [...s.piles.map((p) => p.map((c) => c.id))],
 			});
 			this.winstonNextRound();
 		} else {
@@ -878,7 +878,7 @@ export class Session implements IIndexable {
 		if (!this.drafting || !isWinstonDraftState(s)) return false;
 		this.draftLog?.users[s.currentPlayer()].picks.push({
 			pickedPile: s.currentPile,
-			piles: [...s.piles],
+			piles: [...s.piles.map((p) => p.map((c) => c.id))],
 		});
 		Connections[s.currentPlayer()].pickedCards.main.push(...s.piles[s.currentPile]);
 		if (s.cardPool.length > 0) s.piles[s.currentPile] = [s.cardPool.pop() as UniqueCard];
@@ -937,7 +937,7 @@ export class Session implements IIndexable {
 
 		this.draftLog?.users[s.currentPlayer()].picks.push({
 			pickedPile: pickedColumn,
-			piles: [...s.piles],
+			piles: [...s.piles.map((p) => p.map((c) => c.id))],
 		});
 		Connections[s.currentPlayer()].pickedCards.main = Connections[s.currentPlayer()].pickedCards.main.concat(
 			s.piles[pickedColumn]

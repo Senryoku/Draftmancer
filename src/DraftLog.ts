@@ -1,4 +1,4 @@
-import { Card, CardID, DeckList, UniqueCard } from "./CardTypes.js";
+import { Card, CardID, DeckList } from "./CardTypes.js";
 import { SessionID, UserID } from "./IDTypes.js";
 import { Session } from "./Session.js";
 import { UsersData } from "./Session/SessionTypes.js";
@@ -11,11 +11,11 @@ export type GridDraftPick = { pick: number[]; burn?: number[]; booster: (CardID 
 export type WinstonDraftPick =
 	| {
 			randomCard: CardID;
-			piles: UniqueCard[][];
+			piles: CardID[][];
 	  }
 	| {
 			pickedPile: number;
-			piles: UniqueCard[][];
+			piles: CardID[][];
 	  };
 
 export type GenericDraftPick = DraftPick | GridDraftPick | WinstonDraftPick;
