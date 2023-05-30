@@ -264,10 +264,10 @@ export function getPoDSession(s: Session) {
 	}
 
 	if (s.drafting) {
+		PoDSession.disconnectedUsers = structuredClone(s.disconnectedUsers); // Avoid modifying the original
 		// Flag every user as disconnected so they can reconnect later
-		for (const userID of s.users) {
+		for (const userID of s.users)
 			if (Connections[userID]) PoDSession.disconnectedUsers[userID] = s.getDisconnectedUserData(userID);
-		}
 
 		if (s.draftState) {
 			PoDSession.draftState = {};

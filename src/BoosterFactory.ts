@@ -321,7 +321,7 @@ class WARBoosterFactory extends BoosterFactory {
 			const pickedRarity = rollSpecialCardRarity(plwCounts, targets, this.options);
 			const pickedPL = pickCard(this.planeswalkers[pickedRarity], []);
 
-			const updatedTargets = Object.assign({}, targets);
+			const updatedTargets = structuredClone(targets);
 			if (pickedRarity === "mythic") --updatedTargets["rare"];
 			else --updatedTargets[pickedRarity];
 
@@ -359,7 +359,7 @@ class DOMBoosterFactory extends BoosterFactory {
 			const pickedRarity = rollSpecialCardRarity(legendaryCounts, targets, this.options);
 			const pickedCard = pickCard(this.legendaryCreatures[pickedRarity], []);
 
-			const updatedTargets = Object.assign({}, targets);
+			const updatedTargets = structuredClone(targets);
 			if (pickedRarity === "mythic") --updatedTargets["rare"];
 			else --updatedTargets[pickedRarity];
 
@@ -398,7 +398,7 @@ class ZNRBoosterFactory extends BoosterFactory {
 			const pickedRarity = rollSpecialCardRarity(mdfcCounts, targets, this.options);
 			const pickedMDFC = pickCard(this.mdfcByRarity[pickedRarity], []);
 
-			const updatedTargets = Object.assign({}, targets);
+			const updatedTargets = structuredClone(targets);
 			if (pickedRarity === "mythic") --updatedTargets["rare"];
 			else --updatedTargets[pickedRarity];
 
@@ -438,7 +438,7 @@ class CMRBoosterFactory extends BoosterFactory {
 
 	// Not using the suplied cardpool here
 	generateBooster(targets: Targets) {
-		let updatedTargets = Object.assign({}, targets);
+		let updatedTargets = structuredClone(targets);
 		// 20 Cards: *13 Commons (Higher chance of a Prismatic Piper); *3 Uncommons; 2 Legendary Creatures; *1 Non-"Legendary Creature" Rare/Mythic; 1 Foil
 		// * These slots are handled by the originalGenBooster function; Others are special slots with custom logic.
 		if (targets === DefaultBoosterTargets)
@@ -555,7 +555,7 @@ class STXBoosterFactory extends BoosterFactory {
 	}
 
 	generateBooster(targets: Targets) {
-		const updatedTargets = Object.assign({}, targets);
+		const updatedTargets = structuredClone(targets);
 		const mythicPromotion = this.options?.mythicPromotion ?? true;
 		const allowRares = targets["rare"] > 0; // Avoid rare & mythic lessons/mystical archives
 
@@ -662,7 +662,7 @@ class MIDBoosterFactory extends BoosterFactory {
 		} else {
 			let pickedDoubleFacedCommon: UniqueCard | null = null;
 			let pickedDoubleFacedRareOrUncommon: UniqueCard | null = null;
-			const updatedTargets = Object.assign({}, targets);
+			const updatedTargets = structuredClone(targets);
 			if (targets["common"] > 0) {
 				pickedDoubleFacedCommon = pickCard(this.doubleFacedCards["common"], []);
 				--updatedTargets["common"];
@@ -721,7 +721,7 @@ class DBLBoosterFactory extends BoosterFactory {
 	}
 
 	generateBooster(targets: Targets) {
-		let updatedTargets = Object.assign({}, targets);
+		let updatedTargets = structuredClone(targets);
 		if (targets !== DefaultBoosterTargets) {
 			updatedTargets = {
 				rare: Math.ceil(targets["rare"] / 2),
@@ -788,7 +788,7 @@ class NEOBoosterFactory extends BoosterFactory {
 			return super.generateBooster(targets);
 		} else {
 			let pickedDoubleFacedUC: UniqueCard | null = null;
-			const updatedTargets = Object.assign({}, targets);
+			const updatedTargets = structuredClone(targets);
 			if (targets["common"] > 0) {
 				// The Double-Faced Uncommon/Common takes a common slot
 				--updatedTargets["common"];
@@ -844,7 +844,7 @@ class CLBBoosterFactory extends BoosterFactory {
 
 	// Not using the suplied cardpool here
 	generateBooster(targets: Targets) {
-		let updatedTargets = Object.assign({}, targets);
+		let updatedTargets = structuredClone(targets);
 		// These slots are handled by the originalGenBooster function; Others are special slots with custom logic.
 		if (targets === DefaultBoosterTargets)
 			updatedTargets = {
@@ -919,7 +919,7 @@ class M2X2BoosterFactory extends BoosterFactory {
 	}
 
 	generateBooster(targets: Targets) {
-		let updatedTargets = Object.assign({}, targets);
+		let updatedTargets = structuredClone(targets);
 		if (targets === DefaultBoosterTargets) {
 			updatedTargets = {
 				rare: 2,
@@ -967,7 +967,7 @@ class DMUBoosterFactory extends BoosterFactory {
 		if (isEmpty(this.legendaryCreatures)) {
 			return super.generateBooster(targets);
 		} else {
-			const updatedTargets = Object.assign({}, targets);
+			const updatedTargets = structuredClone(targets);
 
 			let legendaryCreature = null;
 			if (
@@ -1032,7 +1032,7 @@ class YDMUBoosterFactory extends BoosterFactory {
 		if (isEmpty(this.legendaryCreatures)) {
 			return super.generateBooster(targets);
 		} else {
-			const updatedTargets = Object.assign({}, targets);
+			const updatedTargets = structuredClone(targets);
 
 			let legendaryCreature = null;
 			if (
@@ -1103,7 +1103,7 @@ class UNFBoosterFactory extends BoosterFactory {
 		if (isEmpty(this.attractions)) {
 			return super.generateBooster(targets);
 		} else {
-			let updatedTargets = Object.assign({}, targets);
+			let updatedTargets = structuredClone(targets);
 			if (targets === DefaultBoosterTargets) {
 				updatedTargets = {
 					rare: 1,
@@ -1218,7 +1218,7 @@ class DMRBoosterFactory extends BoosterFactory {
 			const retroCardsCounts = countBySlot(this.retroCards);
 			const retroRarityRoll = random.real(0, 1);
 
-			const updatedTargets = Object.assign({}, targets);
+			const updatedTargets = structuredClone(targets);
 
 			let pickedRarity = "common";
 			if (retroCardsCounts["rare"] > 0 && retroRarityRoll < this.RetroRareChance) {
@@ -1257,7 +1257,7 @@ class ONEBoosterFactory extends BoosterFactory {
 	}
 
 	generateBooster(targets: Targets) {
-		const updatedTargets = Object.assign({}, targets);
+		const updatedTargets = structuredClone(targets);
 
 		let conceptPraetor: null | UniqueCard = null;
 		const praetorRarityRoll = random.real(0, 1);
@@ -1300,7 +1300,7 @@ class SIRBoosterFactory extends BoosterFactory {
 	}
 
 	generateBooster(targets: Targets) {
-		const updatedTargets = Object.assign({}, targets);
+		const updatedTargets = structuredClone(targets);
 
 		const bonusCards: UniqueCard[] = [];
 		for (let i = 0; i < targets.bonus; ++i) {
@@ -1397,7 +1397,7 @@ class MOMBoosterFactory extends BoosterFactory {
 		if (isEmpty(this.multiverseLegend) || isEmpty(this.battleCards) || isEmpty(this.doubleFacedCards)) {
 			return super.generateBooster(targets);
 		} else {
-			const updatedTargets = Object.assign({}, targets);
+			const updatedTargets = structuredClone(targets);
 			updatedTargets.common = Math.max(0, updatedTargets.common - 1);
 
 			const mulCards: UniqueCard[] = [];
@@ -1482,7 +1482,7 @@ class MATBoosterFactory extends MOMBoosterFactory {
 		if (isEmpty(this.matPool)) {
 			return super.generateBooster(targets);
 		} else {
-			const updatedTargets = Object.assign({}, targets);
+			const updatedTargets = structuredClone(targets);
 			const matCards: UniqueCard[] = [];
 			for (let i = 0; i < targets.bonus; ++i) {
 				updatedTargets.common = Math.max(0, updatedTargets.common - 1);
