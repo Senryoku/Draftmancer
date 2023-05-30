@@ -7,7 +7,7 @@ if (process.env.NODE_ENV !== "production") {
 
 const port = process.env.PORT || 3000;
 import fs from "fs";
-import request from "request";
+import axios, { AxiosResponse } from "axios";
 import compression from "compression";
 import express, { json as ExpressJSON, text as ExpressText } from "express";
 import http from "http";
@@ -133,7 +133,11 @@ const useCustomCardList = function (session: Session, list: CustomCardList) {
 const parseCustomCardList = function (
 	session: Session,
 	txtlist: string,
-	options: Options,
+	options: {
+		name?: string | undefined;
+		fallbackToCardName?: boolean | undefined;
+		ignoreUnknownCards?: boolean | undefined;
+	},
 	ack: (result: SocketAck) => void
 ) {
 	let parsedList = null;
@@ -141,14 +145,10 @@ const parseCustomCardList = function (
 		parsedList = parseCardList(txtlist, options);
 	} catch (e) {
 		console.error(e);
-		ack?.(new SocketError("Internal server error"));
-		return;
+		return ack?.(new SocketError("Internal server error"));
 	}
 
-	if (isSocketError(parsedList)) {
-		ack?.(parsedList);
-		return;
-	}
+	if (isSocketError(parsedList)) return ack?.(parsedList);
 
 	useCustomCardList(session, parsedList);
 
@@ -819,7 +819,6 @@ function parseCustomCardListEvent(
 	parseCustomCardList(Sessions[sessionID], customCardList, {}, ack);
 }
 
-// FIXME: Remove dependency to request (use axios instead); Write some tests.
 function importCube(userID: UserID, sessionID: SessionID, data: unknown, ack: (result: SocketAck) => void) {
 	if (!isObject(data)) return ack?.(new SocketError("Invalid data"));
 	if (!hasProperty("service", isString)(data)) return ack?.(new SocketError("Invalid data: Missing service."));
@@ -829,9 +828,34 @@ function importCube(userID: UserID, sessionID: SessionID, data: unknown, ack: (r
 		return ack?.(new SocketError(`Invalid cube service ('${data.service}').`));
 	if (!hasProperty("cubeID", isString)(data)) return ack?.(new SocketError("Invalid data: Missing cubeID."));
 	// Cube Infos from Cube Cobra: https://cubecobra.com/cube/api/cubeJSON/${data.cubeID} ; Cards are listed in the cards array and hold a scryfall id (cardID property), but this endpoint is extremely rate limited.
+	const validateResponse = (
+		response: AxiosResponse<unknown, unknown>,
+		data: { service: string; cubeID: string },
+		ack: (result: SocketAck) => void
+	) => {
+		if (response.status !== 200) {
+			ack?.(
+				new SocketError(
+					"Error retrieving cube.",
+					`${data.service} responded '${response.statusText} (${response.status}): ${response.data}'.`
+				)
+			);
+			return false;
+		} else if (
+			(data.service === "Cube Cobra" && response.data === "Cube not found.") ||
+			(data.service === "CubeArtisan" && response.request.path.endsWith("/404"))
+		) {
+			ack?.(new SocketError("Cube not found.", `Cube '${data.cubeID}' not found on ${data.service}.`));
+			return false;
+		} else if (!response.data) {
+			ack?.(new SocketError("Empty Cube.", `Cube '${data.cubeID}' on ${data.service} seems empty.`));
+			return false;
+		}
+		return true;
+	};
+
 	// Plain text card list
 	const fromTextList = (
-		userID: UserID,
 		sessionID: SessionID,
 		data: { service: string; cubeID: string },
 		ack: (result: SocketAck) => void
@@ -840,93 +864,50 @@ function importCube(userID: UserID, sessionID: SessionID, data: unknown, ack: (r
 		if (data.service === "Cube Cobra") url = `https://cubecobra.com/cube/api/cubelist/${data.cubeID}`;
 		if (data.service === "CubeArtisan") url = `https://cubeartisan.net/cube/${data.cubeID}/export/plaintext`;
 		if (!url) return ack?.(new SocketError(`Invalid cube service ('${data.service}').`));
-		request({ url: url, timeout: 3000 }, (err, res, body) => {
-			try {
-				if (err) {
-					return ack?.(
-						new SocketError(
-							"Error retrieving cube.",
-							`Couldn't retrieve the card list from ${data.service}.`,
-							`Full error: ${err}`
-						)
-					);
-				} else if (res.statusCode !== 200) {
-					return ack?.(
-						new SocketError(
-							"Error retrieving cube.",
-							`${data.service} responded '${res.statusCode}: ${body}'`
-						)
-					);
-				} else if (
-					(data.service === "Cube Cobra" && body === "Cube not found.") ||
-					(data.service === "CubeArtisan" && res.request.path.endsWith("/404"))
-				) {
-					return ack?.(
-						new SocketError("Cube not found.", `Cube '${data.cubeID}' not found on ${data.service}.`)
-					);
-				} else if (!body) {
-					return ack?.(
-						new SocketError("Empty Cube.", `Cube '${data.cubeID}' on ${data.service} seems empty.`)
-					);
-				} else {
-					parseCustomCardList(Sessions[sessionID], body, data, ack);
-				}
-			} catch (e) {
-				ack?.(new SocketError("Internal server error."));
-			}
-		});
+		axios
+			.get(url, { timeout: 3000 })
+			.then((response) => {
+				if (validateResponse(response, data, ack))
+					parseCustomCardList(Sessions[sessionID], response.data, {}, ack);
+			})
+			.catch((err) =>
+				ack?.(
+					new SocketError(
+						"Error retrieving cube.",
+						`Couldn't retrieve the card list from ${data.service}.`,
+						`Full error: ${err}`
+					)
+				)
+			);
 	};
-	if (data.matchVersions) {
+
+	if (!data.matchVersions) fromTextList(sessionID, data, ack);
+	else {
 		// Xmage (.dck) format
 		let url = null;
 		if (data.service === "Cube Cobra") url = `https://cubecobra.com/cube/download/xmage/${data.cubeID}`;
 		if (data.service === "CubeArtisan") url = `https://cubeartisan.net/cube/${data.cubeID}/export/xmage`;
 		if (!url) return ack?.(new SocketError(`Invalid cube service ('${data.service}').`));
 
-		request({ url: url, timeout: 3000 }, (err, res, body) => {
-			try {
-				if (err) {
-					return ack?.(
-						new SocketError(
-							"Error retrieving cube",
-							`Couldn't retrieve the card list from ${data.service}.`,
-							`Full error: ${err}`
-						)
-					);
-				} else if (res.statusCode !== 200) {
-					return ack?.(
-						new SocketError(
-							"Error retrieving cube.",
-							`${data.service} responded '${res.statusCode}: ${body}'`
-						)
-					);
-				} else if (res.request.path.endsWith("/404")) {
-					// Missing cube redirects to /404
-					return ack?.(
-						new SocketError("Cube not found.", `Cube '${data.cubeID}' not found on ${data.service}.`)
-					);
-				} else if (!body) {
-					return ack?.(
-						new SocketError("Empty Cube.", `Cube '${data.cubeID}' on ${data.service} seems empty.`)
-					);
-				} else {
-					const converted = XMageToArena(body);
+		axios
+			.get(url, { timeout: 3000 })
+			.then((response) => {
+				if (validateResponse(response, data, ack)) {
+					const converted = XMageToArena(response.data);
 					// Fallback to plain text list
-					if (!converted) fromTextList(userID, sessionID, data, ack);
-					else
-						parseCustomCardList(
-							Sessions[sessionID],
-							converted,
-							Object.assign({ fallbackToCardName: true }, data),
-							ack
-						);
+					if (!converted) fromTextList(sessionID, data, ack);
+					else parseCustomCardList(Sessions[sessionID], converted, { fallbackToCardName: true }, ack);
 				}
-			} catch (e) {
-				return ack?.(new SocketError("Internal server error."));
-			}
-		});
-	} else {
-		fromTextList(userID, sessionID, data, ack);
+			})
+			.catch((err) =>
+				ack?.(
+					new SocketError(
+						"Error retrieving cube",
+						`Couldn't retrieve the card list from ${data.service}.`,
+						`Full error: ${err}`
+					)
+				)
+			);
 	}
 }
 

@@ -320,7 +320,10 @@ export interface ClientToServerEvents {
 	setBots: (bots: number) => void;
 	setRestriction: (setRestriction: Array<SetCode>) => void;
 	parseCustomCardList: (customCardList: string, ack: (result: SocketAck) => void) => void;
-	importCube: (data: any, ack: (result: SocketAck) => void) => void; // FIXME
+	importCube: (
+		data: { service: string; matchVersions: boolean; cubeID: string },
+		ack: (result: SocketAck) => void
+	) => void;
 	loadLocalCustomCardList: (cubeName: string, ack: (result: SocketAck) => void) => void;
 	ignoreCollections: (ignoreCollections: boolean) => void;
 	setPickTimer: (maxTimer: number) => void;

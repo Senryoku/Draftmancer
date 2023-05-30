@@ -2685,7 +2685,7 @@ export default defineComponent({
 			};
 
 			if (cube.cubeCobraID || cube.cubeArtisanID) {
-				const cubeID = cube.cubeCobraID ?? cube.cubeArtisanID;
+				const cubeID = (cube.cubeCobraID ?? cube.cubeArtisanID)!;
 				const service = cube.cubeCobraID ? "Cube Cobra" : "CubeArtisan";
 				Alert.fire({
 					position: "center",
