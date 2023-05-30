@@ -4,7 +4,7 @@ import { Socket } from "socket.io";
 import { UserID, SessionID } from "./IDTypes.js";
 import { CardID, CardPool, UniqueCard } from "./CardTypes.js";
 import { ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData } from "./SocketType.js";
-import { InTesting, TestingOnly } from "./Context.js";
+import { TestingOnly } from "./Context.js";
 
 export const Connections: { [uid: string]: Connection } = {};
 export class Connection {

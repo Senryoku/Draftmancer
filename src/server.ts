@@ -9,7 +9,7 @@ const port = process.env.PORT || 3000;
 import fs from "fs";
 import request from "request";
 import compression from "compression";
-import express from "express";
+import express, { json as ExpressJSON, text as ExpressText } from "express";
 import http from "http";
 import { Server, Socket } from "socket.io";
 import cookieParser from "cookie-parser";
@@ -47,7 +47,16 @@ import { parseLine, parseCardList, XMageToArena } from "./parseCardList.js";
 import { SessionID, UserID } from "./IDTypes.js";
 import { CustomCardList } from "./CustomCardList.js";
 import { DraftLog } from "./DraftLog.js";
-import { hasProperty, isArrayOf, isBoolean, isNumber, isObject, isSomeEnum, isString } from "./TypeChecks.js";
+import {
+	hasOptionalProperty,
+	hasProperty,
+	isArrayOf,
+	isBoolean,
+	isNumber,
+	isObject,
+	isSomeEnum,
+	isString,
+} from "./TypeChecks.js";
 import { instanceOfTurnBased } from "./IDraftState.js";
 import { ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData } from "./SocketType.js";
 import { IIndexable, SetCode } from "./Types.js";
@@ -64,8 +73,8 @@ const io = new Server<ClientToServerEvents, ServerToClientEvents, InterServerEve
 
 app.use(compression());
 app.use(cookieParser());
-app.use(express.json());
-app.use(express.text({ type: "text/*" }));
+app.use(ExpressJSON());
+app.use(ExpressText({ type: "text/*" }));
 
 function shortguid() {
 	function s4() {
@@ -747,32 +756,25 @@ function cardsPerBooster(userID: UserID, sessionID: SessionID, cardsPerBooster: 
 	Sessions[sessionID].setCardsPerBooster(cardsPerBooster, userID);
 }
 
-function teamDraft(userID: UserID, sessionID: SessionID, teamDraft: boolean) {
-	if (!(typeof teamDraft === "boolean")) teamDraft = teamDraft === "true" || !!teamDraft;
+function teamDraft(userID: UserID, sessionID: SessionID, unsafeTeamDraft: unknown) {
+	const teamDraft = isBoolean(unsafeTeamDraft) ? unsafeTeamDraft : unsafeTeamDraft === "true" || !!unsafeTeamDraft;
 	if (!SessionsSettingsProps.teamDraft(teamDraft)) return;
-
-	if (teamDraft === Sessions[sessionID].teamDraft) return;
-
 	Sessions[sessionID].setTeamDraft(teamDraft);
 }
 
-function setRandomizeSeatingOrder(userID: UserID, sessionID: SessionID, randomizeSeatingOrder: boolean) {
-	if (!(typeof randomizeSeatingOrder === "boolean"))
-		randomizeSeatingOrder = randomizeSeatingOrder === "true" || !!randomizeSeatingOrder;
+function setRandomizeSeatingOrder(userID: UserID, sessionID: SessionID, unsafeRandomizeSeatingOrder: unknown) {
+	const randomizeSeatingOrder = isBoolean(unsafeRandomizeSeatingOrder)
+		? unsafeRandomizeSeatingOrder
+		: unsafeRandomizeSeatingOrder === "true" || !!unsafeRandomizeSeatingOrder;
 	if (!SessionsSettingsProps.randomizeSeatingOrder(randomizeSeatingOrder)) return;
-
-	if (randomizeSeatingOrder === Sessions[sessionID].randomizeSeatingOrder) return;
-
 	Sessions[sessionID].setRandomizeSeatingOrder(randomizeSeatingOrder);
 }
 
-function setDisableBotSuggestions(userID: UserID, sessionID: SessionID, disableBotSuggestions: boolean) {
-	if (!(typeof disableBotSuggestions === "boolean"))
-		disableBotSuggestions = disableBotSuggestions === "true" || !!disableBotSuggestions;
+function setDisableBotSuggestions(userID: UserID, sessionID: SessionID, unsafeDisableBotSuggestions: unknown) {
+	const disableBotSuggestions = isBoolean(unsafeDisableBotSuggestions)
+		? unsafeDisableBotSuggestions
+		: unsafeDisableBotSuggestions === "true" || !!unsafeDisableBotSuggestions;
 	if (!SessionsSettingsProps.disableBotSuggestions(disableBotSuggestions)) return;
-
-	if (disableBotSuggestions === Sessions[sessionID].disableBotSuggestions) return;
-
 	Sessions[sessionID].setDisableBotSuggestions(disableBotSuggestions);
 }
 
@@ -793,7 +795,7 @@ function setCustomBoosters(userID: UserID, sessionID: SessionID, customBoosters:
 function setBots(userID: UserID, sessionID: SessionID, bots: number) {
 	if (!SessionsSettingsProps.bots(bots)) return;
 
-	if (bots == Sessions[sessionID].bots) return;
+	if (bots === Sessions[sessionID].bots) return;
 
 	Sessions[sessionID].bots = bots;
 	Sessions[sessionID].emitToConnectedNonOwners("sessionOptions", { bots: bots });
@@ -810,59 +812,62 @@ function setRestriction(userID: UserID, sessionID: SessionID, setRestriction: Ar
 function parseCustomCardListEvent(
 	userID: UserID,
 	sessionID: SessionID,
-	customCardList: string,
+	customCardList: unknown,
 	ack: (result: SocketAck) => void
 ) {
-	if (!customCardList) {
-		ack?.(new SocketError("No list supplied."));
-		return;
-	}
+	if (!isString(customCardList) || customCardList === "") return ack?.(new SocketError("No list supplied."));
 	parseCustomCardList(Sessions[sessionID], customCardList, {}, ack);
 }
 
-function importCube(userID: UserID, sessionID: SessionID, data: any, ack: (result: SocketAck) => void) {
-	if (!["Cube Cobra", "CubeArtisan"].includes(data.service)) {
-		ack?.(new SocketError(`Invalid cube service ('${data.service}').`));
-		return;
-	}
+// FIXME: Remove dependency to request (use axios instead); Write some tests.
+function importCube(userID: UserID, sessionID: SessionID, data: unknown, ack: (result: SocketAck) => void) {
+	if (!isObject(data)) return ack?.(new SocketError("Invalid data"));
+	if (!hasProperty("service", isString)(data)) return ack?.(new SocketError("Invalid data: Missing service."));
+	if (!hasOptionalProperty("matchVersions", isBoolean)(data))
+		return ack?.(new SocketError("Invalid data: matchVersions should be a boolean."));
+	if (!["Cube Cobra", "CubeArtisan"].includes(data.service))
+		return ack?.(new SocketError(`Invalid cube service ('${data.service}').`));
+	if (!hasProperty("cubeID", isString)(data)) return ack?.(new SocketError("Invalid data: Missing cubeID."));
 	// Cube Infos from Cube Cobra: https://cubecobra.com/cube/api/cubeJSON/${data.cubeID} ; Cards are listed in the cards array and hold a scryfall id (cardID property), but this endpoint is extremely rate limited.
 	// Plain text card list
-	const fromTextList = (userID: UserID, sessionID: SessionID, data: any, ack: (result: SocketAck) => void) => {
+	const fromTextList = (
+		userID: UserID,
+		sessionID: SessionID,
+		data: { service: string; cubeID: string },
+		ack: (result: SocketAck) => void
+	) => {
 		let url = null;
 		if (data.service === "Cube Cobra") url = `https://cubecobra.com/cube/api/cubelist/${data.cubeID}`;
 		if (data.service === "CubeArtisan") url = `https://cubeartisan.net/cube/${data.cubeID}/export/plaintext`;
-		if (!url) {
-			ack?.(new SocketError(`Invalid cube service ('${data.service}').`));
-			return;
-		}
+		if (!url) return ack?.(new SocketError(`Invalid cube service ('${data.service}').`));
 		request({ url: url, timeout: 3000 }, (err, res, body) => {
 			try {
 				if (err) {
-					ack?.(
+					return ack?.(
 						new SocketError(
 							"Error retrieving cube.",
 							`Couldn't retrieve the card list from ${data.service}.`,
 							`Full error: ${err}`
 						)
 					);
-					return;
 				} else if (res.statusCode !== 200) {
-					ack?.(
+					return ack?.(
 						new SocketError(
 							"Error retrieving cube.",
 							`${data.service} responded '${res.statusCode}: ${body}'`
 						)
 					);
-					return;
 				} else if (
 					(data.service === "Cube Cobra" && body === "Cube not found.") ||
 					(data.service === "CubeArtisan" && res.request.path.endsWith("/404"))
 				) {
-					ack?.(new SocketError("Cube not found.", `Cube '${data.cubeID}' not found on ${data.service}.`));
-					return;
+					return ack?.(
+						new SocketError("Cube not found.", `Cube '${data.cubeID}' not found on ${data.service}.`)
+					);
 				} else if (!body) {
-					ack?.(new SocketError("Empty Cube.", `Cube '${data.cubeID}' on ${data.service} seems empty.`));
-					return;
+					return ack?.(
+						new SocketError("Empty Cube.", `Cube '${data.cubeID}' on ${data.service} seems empty.`)
+					);
 				} else {
 					parseCustomCardList(Sessions[sessionID], body, data, ack);
 				}
@@ -876,38 +881,38 @@ function importCube(userID: UserID, sessionID: SessionID, data: any, ack: (resul
 		let url = null;
 		if (data.service === "Cube Cobra") url = `https://cubecobra.com/cube/download/xmage/${data.cubeID}`;
 		if (data.service === "CubeArtisan") url = `https://cubeartisan.net/cube/${data.cubeID}/export/xmage`;
-		if (!url) {
-			ack?.(new SocketError(`Invalid cube service ('${data.service}').`));
-			return;
-		}
+		if (!url) return ack?.(new SocketError(`Invalid cube service ('${data.service}').`));
+
 		request({ url: url, timeout: 3000 }, (err, res, body) => {
 			try {
 				if (err) {
-					new SocketError(
-						"Error retrieving cube",
-						`Couldn't retrieve the card list from ${data.service}.`,
-						`Full error: ${err}`
+					return ack?.(
+						new SocketError(
+							"Error retrieving cube",
+							`Couldn't retrieve the card list from ${data.service}.`,
+							`Full error: ${err}`
+						)
 					);
-					return;
 				} else if (res.statusCode !== 200) {
-					ack?.(
+					return ack?.(
 						new SocketError(
 							"Error retrieving cube.",
 							`${data.service} responded '${res.statusCode}: ${body}'`
 						)
 					);
-					return;
 				} else if (res.request.path.endsWith("/404")) {
 					// Missing cube redirects to /404
-					ack?.(new SocketError("Cube not found.", `Cube '${data.cubeID}' not found on ${data.service}.`));
-					return;
+					return ack?.(
+						new SocketError("Cube not found.", `Cube '${data.cubeID}' not found on ${data.service}.`)
+					);
 				} else if (!body) {
-					ack?.(new SocketError("Empty Cube.", `Cube '${data.cubeID}' on ${data.service} seems empty.`));
-					return;
+					return ack?.(
+						new SocketError("Empty Cube.", `Cube '${data.cubeID}' on ${data.service} seems empty.`)
+					);
 				} else {
 					const converted = XMageToArena(body);
-					if (!converted) fromTextList(userID, sessionID, data, ack);
 					// Fallback to plain text list
+					if (!converted) fromTextList(userID, sessionID, data, ack);
 					else
 						parseCustomCardList(
 							Sessions[sessionID],
@@ -917,7 +922,7 @@ function importCube(userID: UserID, sessionID: SessionID, data: any, ack: (resul
 						);
 				}
 			} catch (e) {
-				ack?.(new SocketError("Internal server error."));
+				return ack?.(new SocketError("Internal server error."));
 			}
 		});
 	} else {

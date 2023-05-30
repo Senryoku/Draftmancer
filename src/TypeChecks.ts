@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isAny = (x: unknown): x is any => true;
 export const isUnknown = (x: unknown): x is unknown => true;
 

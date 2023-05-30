@@ -72,7 +72,7 @@ import { HousmanDraftState, isHousmanDraftState } from "./HousmanDraft.js";
 import { SolomonDraftState, isSolomonDraftState } from "./SolomonDraft.js";
 import { isSomeEnum } from "./TypeChecks.js";
 import { askColors, choosePlayer } from "./Conspiracy.js";
-import { InProduction, InTesting, TestingOnly } from "./Context.js";
+import { InProduction, TestingOnly } from "./Context.js";
 
 export class Session implements IIndexable {
 	id: SessionID;
@@ -260,7 +260,7 @@ export class Session implements IIndexable {
 	}
 
 	setTeamDraft(teamDraft: boolean) {
-		if (this.teamDraft != teamDraft) {
+		if (this.teamDraft !== teamDraft) {
 			this.teamDraft = teamDraft;
 			if (teamDraft) {
 				this.maxPlayers = 6;
@@ -280,7 +280,7 @@ export class Session implements IIndexable {
 	}
 
 	setDisableBotSuggestions(disableBotSuggestions: boolean) {
-		if (this.disableBotSuggestions != disableBotSuggestions) {
+		if (this.disableBotSuggestions !== disableBotSuggestions) {
 			this.disableBotSuggestions = disableBotSuggestions;
 			this.forUsers((u) =>
 				Connections[u]?.socket.emit("sessionOptions", {
@@ -291,7 +291,7 @@ export class Session implements IIndexable {
 	}
 
 	setRandomizeSeatingOrder(randomizeSeatingOrder: boolean) {
-		if (this.randomizeSeatingOrder != randomizeSeatingOrder) {
+		if (this.randomizeSeatingOrder !== randomizeSeatingOrder) {
 			this.randomizeSeatingOrder = randomizeSeatingOrder;
 			this.forUsers((u) =>
 				Connections[u]?.socket.emit("sessionOptions", {

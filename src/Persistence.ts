@@ -318,7 +318,7 @@ async function tempDump(exitOnCompletion = false) {
 			if (InactiveSessions[sessionID].draftState?.type === "rotisserie")
 				PoDSessions.push(InactiveSessions[sessionID]);
 		} catch (e) {
-			console.error(`Error while saving inactive session '${sessionID}'.`);
+			console.error(`Error while saving inactive session '${sessionID}': `, e);
 		}
 	}
 
@@ -326,7 +326,7 @@ async function tempDump(exitOnCompletion = false) {
 		try {
 			PoDSessions.push(getPoDSession(Sessions[sessionID]));
 		} catch (e) {
-			console.error(`Error while saving session '${sessionID}'.`);
+			console.error(`Error while saving session '${sessionID}': `, e);
 		}
 	}
 
