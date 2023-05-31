@@ -431,8 +431,10 @@ export class Session implements IIndexable {
 		const restricted: CardPool = new Map();
 		if (sets && sets.length > 0) {
 			for (const s of sets)
-				for (const cid of CardsBySet[s].filter((cid) => cardPool.has(cid)))
-					restricted.set(cid, cardPool.get(cid) as number);
+				if (s in CardsBySet)
+					for (const cid of CardsBySet[s].filter((cid) => cardPool.has(cid)))
+						restricted.set(cid, cardPool.get(cid) as number);
+				else console.error(`Session.restrictedCollection Error: '${s}' not in CardsBySet.`);
 			return restricted;
 		} else return cardPool;
 	}
