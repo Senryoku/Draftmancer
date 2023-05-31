@@ -297,13 +297,11 @@ async function tempDump(exitOnCompletion = false) {
 	// (Disconnecting the socket would be better, but explicitly
 	// disconnecting socket prevents their automatic reconnection)
 	if (exitOnCompletion) {
-		for (const userID in Connections) {
-			const msg = new Message("Server Restarting", "Please wait...");
-			msg.showConfirmButton = false;
-			msg.allowOutsideClick = false;
-			msg.timer = 0;
-			Connections[userID].socket.emit("message", msg);
-		}
+		const msg = new Message("Server Restarting", "Please wait...");
+		msg.showConfirmButton = false;
+		msg.allowOutsideClick = false;
+		msg.timer = 0;
+		for (const userID in Connections) Connections[userID].socket.emit("message", msg);
 	}
 
 	const Promises: Promise<unknown>[] = [];

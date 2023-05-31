@@ -62,7 +62,7 @@ export interface ServerToClientEvents {
 		};
 	}) => void;
 
-	userDisconnected: (data: { owner?: UserID; disconnectedUsers: { [uid: string]: any } }) => void; // FIXME
+	userDisconnected: (data: { owner?: UserID; disconnectedUsers: { [uid: string]: { userName: string } } }) => void;
 	sessionOptions: (sessionOptions: { [key: keyof typeof SessionsSettingsProps]: any }) => void; // FIXME: Specify allowed options and their types
 	setRestriction: (setRestriction: Array<SetCode>) => void;
 	ignoreCollections: (ignoreCollections: boolean) => void;

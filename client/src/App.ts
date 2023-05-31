@@ -271,7 +271,7 @@ export default defineComponent({
 			sessionOwner: (sessionID ? userID : undefined) as UserID | undefined,
 			sessionOwnerUsername: userName as string,
 			sessionUsers: [] as SessionUser[],
-			disconnectedUsers: {} as { [uid: UserID]: DisconnectedUser },
+			disconnectedUsers: {} as { [uid: UserID]: { userName: string } },
 			// Session settings
 			ownerIsPlayer: true,
 			isPublic: false,

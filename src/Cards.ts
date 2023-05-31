@@ -24,9 +24,9 @@ if (process.env.NODE_ENV !== "production") {
 } else {
 	for (const file of DBFiles) {
 		// Stream the JSON file on production to reduce memory usage (to the detriment of runtime)
-		const cardsPromise = new Promise((resolve, reject) => {
+		const cardsPromise = new Promise((resolve /*, reject*/) => {
 			const stream = JSONStream.parse("$*");
-			stream.on("data", function (entry: any) {
+			stream.on("data", function (entry) {
 				tmpCards.set(entry.key, entry.value as Card);
 			});
 			stream.on("end", resolve);
