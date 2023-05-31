@@ -45,7 +45,7 @@ const LocalPersitenceDirectory = "tmp";
 const LocalConnectionsFile = path.join(PersistenceLocalPath ?? ".", LocalPersitenceDirectory, "/connections.json");
 const LocalSessionsFile = path.join(PersistenceLocalPath ?? ".", LocalPersitenceDirectory, "/sessions.json");
 
-const PersistenceStoreURL = process.env.PERSISTENCE_STORE_URL ?? (InTesting ? undefined : "http://localhost:3008");
+const PersistenceStoreURL = InTesting ? undefined : process.env.PERSISTENCE_STORE_URL;
 const PersistenceKey = process.env.PERSISTENCE_KEY ?? "1234";
 
 export let InactiveSessions: Record<SessionID, any> = {};
@@ -330,19 +330,23 @@ async function tempDump(exitOnCompletion = false) {
 
 	if (PersistenceLocalPath) {
 		try {
-			console.log("Saving Connections and Sessions to disk...");
+			console.log(`Saving ${PoDConnections.length} Connections and ${PoDSessions.length} Sessions to disk...`);
 			if (!fs.existsSync(path.join(PersistenceLocalPath, LocalPersitenceDirectory)))
 				fs.mkdirSync(path.join(PersistenceLocalPath, LocalPersitenceDirectory));
 			Promises.push(
 				fs.promises
 					.writeFile(LocalConnectionsFile, JSON.stringify(PoDConnections))
-					.catch((err) => console.log(err))
+					.then(() => console.log("  [+] Connections successfully saved to disk."))
+					.catch((err) => console.log("  [-] Error saving connections to disk:", err))
 			);
 			Promises.push(
-				fs.promises.writeFile(LocalSessionsFile, JSON.stringify(PoDSessions)).catch((err) => console.log(err))
+				fs.promises
+					.writeFile(LocalSessionsFile, JSON.stringify(PoDSessions))
+					.then(() => console.log("  [+] Sessions successfully saved to disk."))
+					.catch((err) => console.log("  [-] Error saving sessions to disk:", err))
 			);
 		} catch (err) {
-			console.log("Error: ", err);
+			console.log("Error saving to disk: ", err);
 		}
 	}
 
@@ -357,10 +361,11 @@ async function tempDump(exitOnCompletion = false) {
 							"access-key": PersistenceKey,
 						},
 					})
-					.catch((err) => console.error("Error storing connections: ", err.message))
+					.then(() => console.log("  [+] Connections successfully sent to remote store."))
+					.catch((err) => console.error("  [-] Error storing connections: ", err.message))
 			);
 		} catch (err) {
-			console.log("Error: ", err);
+			console.log("  [-] Error: ", err);
 		}
 		try {
 			Promises.push(
@@ -372,10 +377,11 @@ async function tempDump(exitOnCompletion = false) {
 							"access-key": PersistenceKey,
 						},
 					})
-					.catch((err) => console.error("Error storing sessions: ", err.message))
+					.then(() => console.log("  [+] Sessions successfully sent to remote store."))
+					.catch((err) => console.error("  [-] Error storing sessions: ", err.message))
 			);
 		} catch (err) {
-			console.log("Error: ", err);
+			console.log("  [-] Error: ", err);
 		}
 	}
 
