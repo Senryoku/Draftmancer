@@ -1495,7 +1495,9 @@
         "cardCount": 46,
         "isPrimary": false,
         "icon": "img/sets/fj22.svg",
-        "commonCount": 46
+        "commonCount": 20,
+        "mythicCount": 11,
+        "rareCount": 15
     },
     "fjmp": {
         "code": "fjmp",
@@ -2307,23 +2309,24 @@
     "ltc": {
         "code": "ltc",
         "fullName": "Tales of Middle-earth Commander",
-        "cardCount": 14,
+        "cardCount": 44,
         "isPrimary": false,
         "icon": "img/sets/ltc.svg",
-        "mythicCount": 11,
-        "rareCount": 2,
-        "uncommonCount": 1
+        "commonCount": 1,
+        "mythicCount": 34,
+        "rareCount": 4,
+        "uncommonCount": 5
     },
     "ltr": {
         "code": "ltr",
         "fullName": "The Lord of the Rings: Tales of Middle-earth",
-        "cardCount": 46,
+        "cardCount": 210,
         "isPrimary": true,
         "icon": "img/sets/ltr.svg",
-        "commonCount": 11,
-        "mythicCount": 12,
-        "rareCount": 12,
-        "uncommonCount": 11
+        "commonCount": 62,
+        "mythicCount": 33,
+        "rareCount": 58,
+        "uncommonCount": 57
     },
     "m10": {
         "code": "m10",
@@ -3621,6 +3624,14 @@
         "icon": "img/sets/pf20.svg",
         "rareCount": 6
     },
+    "pf23": {
+        "code": "pf23",
+        "fullName": "MagicFest 2023",
+        "cardCount": 2,
+        "isPrimary": false,
+        "icon": "img/sets/pf23.svg",
+        "rareCount": 2
+    },
     "pfrf": {
         "code": "pfrf",
         "fullName": "Fate Reforged Promos",
@@ -4754,6 +4765,14 @@
         "mythicCount": 1,
         "rareCount": 3
     },
+    "pw23": {
+        "code": "pw23",
+        "fullName": "Wizards Play Network 2023",
+        "cardCount": 1,
+        "isPrimary": false,
+        "icon": "img/sets/pw23.svg",
+        "rareCount": 1
+    },
     "pwar": {
         "code": "pwar",
         "fullName": "War of the Spark Promos",
@@ -4984,11 +5003,11 @@
     "sch": {
         "code": "sch",
         "fullName": "Store Championships",
-        "cardCount": 12,
+        "cardCount": 14,
         "isPrimary": false,
         "icon": "img/sets/sch.svg",
         "mythicCount": 2,
-        "rareCount": 10
+        "rareCount": 12
     },
     "shm": {
         "code": "shm",
@@ -5054,11 +5073,12 @@
     "slp": {
         "code": "slp",
         "fullName": "Secret Lair Showdown",
-        "cardCount": 7,
+        "cardCount": 8,
         "isPrimary": false,
         "icon": "img/sets/slp.svg",
         "mythicCount": 2,
-        "rareCount": 5
+        "rareCount": 5,
+        "uncommonCount": 1
     },
     "slu": {
         "code": "slu",
