@@ -8,6 +8,8 @@ import {
 	setupBrowsers,
 	pages,
 	replaceInput,
+	pickCard,
+	PickResult,
 } from "./src/common.js";
 import { ElementHandle, Page } from "puppeteer";
 import { getRandom } from "../../src/utils.js";
@@ -212,6 +214,110 @@ describe("Conspiracy", function () {
 			const choices = await dialog!.$$(".choice");
 			await getRandom(choices).click();
 			await new Promise((resolve) => setTimeout(resolve, 1000));
+		});
+	});
+
+	describe("Archdemon of Paliano", function () {
+		this.timeout(20000);
+		describe("with bots", function () {
+			setupBrowsers(1);
+
+			selectCube("Archdemon of Paliano");
+			launchDraft();
+
+			it("...and make sure it finishes.", async function () {
+				const done = [];
+				for (let i = 0; i < pages.length; i++) done.push(false);
+				while (done.some((d) => !d)) {
+					const promises = [];
+					for (let i = 0; i < pages.length; i++) {
+						if (!done[i])
+							promises.push(
+								(async () => {
+									let r: PickResult = PickResult.Waiting;
+									while ((r = await pickCard(pages[i])) === PickResult.Waiting);
+									return r === PickResult.Done;
+								})()
+							);
+						else promises.push(true);
+					}
+					await Promise.all(promises);
+					for (let i = 0; i < pages.length; i++) done[i] = await promises[i];
+				}
+				for (const page of pages) await page.waitForXPath("//h2[contains(., 'Deck (30')]");
+			});
+		});
+
+		describe("with multiple players", function () {
+			setupBrowsers(4);
+
+			selectCube("Archdemon of Paliano");
+			it(`Launch Draft`, async function () {
+				await clickDraft(pages[0]);
+				await pages[0].waitForXPath("//h2[contains(., 'Your Booster')]");
+				await pages[0].waitForXPath("//div[contains(., 'Draft Started!')]", {
+					hidden: true,
+				});
+			});
+
+			it("...and make sure it finishes.", async function () {
+				const done = [];
+				for (let i = 0; i < pages.length; i++) done.push(false);
+				while (done.some((d) => !d)) {
+					const promises = [];
+					for (let i = 0; i < pages.length; i++) {
+						if (!done[i])
+							promises.push(
+								(async () => {
+									return (await pickCard(pages[i])) === PickResult.Done;
+								})()
+							);
+						else promises.push(true);
+					}
+					await Promise.all(promises);
+					for (let i = 0; i < pages.length; i++) done[i] = await promises[i];
+				}
+				for (const page of pages) await page.waitForXPath("//h2[contains(., 'Deck (30')]");
+			});
+		});
+
+		describe("with multiple players and bots", function () {
+			setupBrowsers(4);
+
+			selectCube("Archdemon of Paliano");
+			it(`Launch Draft`, async function () {
+				const input = await pages[0].waitForSelector("#bots");
+				expect(input, "Could not find bots input").to.exist;
+				await input!.click({ clickCount: 3 }); // Focus and select all text
+				await pages[0].keyboard.type("4");
+				await pages[0].keyboard.press("Enter");
+
+				await clickDraft(pages[0]);
+				await pages[0].waitForXPath("//h2[contains(., 'Your Booster')]");
+				await pages[0].waitForXPath("//div[contains(., 'Draft Started!')]", {
+					hidden: true,
+				});
+			});
+
+			it("...and make sure it finishes.", async function () {
+				const done = [];
+				for (let i = 0; i < pages.length; i++) done.push(false);
+				while (done.some((d) => !d)) {
+					const promises = [];
+					for (let i = 0; i < pages.length; i++) {
+						if (!done[i])
+							promises.push(
+								(async () => {
+									return (await pickCard(pages[i])) === PickResult.Done;
+								})()
+							);
+						else promises.push(true);
+					}
+					await Promise.all(promises);
+					for (let i = 0; i < pages.length; i++) done[i] = await promises[i];
+				}
+				for (const page of pages) await page.waitForXPath("//h2[contains(., 'Deck (30')]");
+			});
 		});
 	});
 });

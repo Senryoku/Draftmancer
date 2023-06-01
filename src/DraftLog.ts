@@ -1,21 +1,36 @@
-import { Card, CardID, DeckList, UniqueCard } from "./CardTypes.js";
+import { Card, CardID, DeckList } from "./CardTypes.js";
 import { SessionID, UserID } from "./IDTypes.js";
 import { Session } from "./Session.js";
 import { UsersData } from "./Session/SessionTypes.js";
 
-export type DraftPick = { pick: number[]; burn?: number[]; booster: CardID[] };
+// Used in DraftLogs Version 2.0, used in the client for backwards compatibility.
+export type DeprecatedDraftPick = { pick: number[]; burn?: number[]; booster: CardID[] };
+
+export type DraftPick = { packNum: number; pickNum: number; pick: number[]; burn?: number[]; booster: CardID[] };
 export type GridDraftPick = { pick: number[]; burn?: number[]; booster: (CardID | null)[] };
 export type WinstonDraftPick =
 	| {
 			randomCard: CardID;
-			piles: UniqueCard[][];
+			piles: CardID[][];
 	  }
 	| {
 			pickedPile: number;
-			piles: UniqueCard[][];
+			piles: CardID[][];
 	  };
+export type WinchesterDraftPick = {
+	pickedPile: number;
+	piles: CardID[][];
+};
+export type HousmanDraftPick = {
+	round: number;
+	exchange: number;
+	revealedCards: CardID[];
+	hand: CardID[];
+	picked: number;
+	replaced: number;
+};
 
-export type GenericDraftPick = DraftPick | GridDraftPick | WinstonDraftPick;
+export type GenericDraftPick = DraftPick | GridDraftPick | WinstonDraftPick | WinchesterDraftPick | HousmanDraftPick;
 
 export type DraftLogUserData = {
 	userID: UserID;
@@ -31,7 +46,7 @@ export type DraftLogUsersData = {
 };
 
 export class DraftLog {
-	version: string = "2.0";
+	version: string = "2.1";
 	type: string;
 	users: DraftLogUsersData = {};
 	sessionID: SessionID;

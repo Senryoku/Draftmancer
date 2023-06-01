@@ -4,6 +4,7 @@ import { Socket } from "socket.io";
 import { UserID, SessionID } from "./IDTypes.js";
 import { CardID, CardPool, UniqueCard } from "./CardTypes.js";
 import { ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData } from "./SocketType.js";
+import { TestingOnly } from "./Context.js";
 
 export const Connections: { [uid: string]: Connection } = {};
 export class Connection {
@@ -42,3 +43,10 @@ export function getPODConnection(conn: Connection): Omit<Connection, "socket" | 
 export function getPickedCardIds(pickedCards: { main: Array<UniqueCard>; side: Array<UniqueCard> }): CardID[] {
 	return pickedCards.main.map((c) => c.id).concat(pickedCards.side.map((c) => c.id));
 }
+
+export const clearConnections = TestingOnly(() => {
+	for (const uid in Connections) {
+		Connections[uid].socket.disconnect();
+		delete Connections[uid];
+	}
+});

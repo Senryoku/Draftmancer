@@ -1,5 +1,6 @@
 "use strict";
 
+import { InTesting, TestingOnly } from "./Context.js";
 import dotenv from "dotenv";
 if (process.env.NODE_ENV !== "production") {
 	dotenv.config();
@@ -8,8 +9,8 @@ import crypto from "crypto";
 import axios from "axios";
 import fs from "fs";
 import path from "path";
-import { Connections, getPODConnection } from "./Connection.js";
-import { Session, Sessions } from "./Session.js";
+import { Connections, clearConnections, getPODConnection } from "./Connection.js";
+import { Session, Sessions, clearSessions } from "./Session.js";
 import { TeamSealedState } from "./TeamSealed.js";
 import { MinesweeperDraftState } from "./MinesweeperDraft.js";
 import { Bot, IBot, SimpleBot } from "./Bot.js";
@@ -22,12 +23,10 @@ const MixInstance = MixPanelToken
 	  })
 	: null;
 
-const InTesting = typeof (global as any).it === "function"; // Testing in mocha
 //                                      Explicitly disabled
 const DisablePersistence = InTesting || process.env.DISABLE_PERSISTENCE === "TRUE";
 
 import { SessionID, UserID } from "./IDTypes.js";
-import { getCard } from "./Cards.js";
 import { GridDraftState } from "./GridDraft.js";
 import { DraftState } from "./DraftState.js";
 import { RochesterDraftState } from "./RochesterDraft.js";
@@ -35,22 +34,19 @@ import { WinstonDraftState } from "./WinstonDraft.js";
 import { Message } from "./Message.js";
 import { IIndexable } from "./Types.js";
 import { RotisserieDraftState } from "./RotisserieDraft.js";
-import { DraftLog, DraftPick } from "./DraftLog";
+import { DraftLog } from "./DraftLog";
 import { WinchesterDraftState } from "./WinchesterDraft.js";
 import { HousmanDraftState } from "./HousmanDraft.js";
 import { SolomonDraftState } from "./SolomonDraft.js";
+import { sendLog } from "./BotTrainingAPI.js";
 
 const PersistenceLocalPath = process.env.PERSISTENCE_LOCAL_PATH;
 const LocalPersitenceDirectory = "tmp";
 const LocalConnectionsFile = path.join(PersistenceLocalPath ?? ".", LocalPersitenceDirectory, "/connections.json");
 const LocalSessionsFile = path.join(PersistenceLocalPath ?? ".", LocalPersitenceDirectory, "/sessions.json");
 
-const PersistenceStoreURL = process.env.PERSISTENCE_STORE_URL ?? "http://localhost:3008";
+const PersistenceStoreURL = InTesting ? undefined : process.env.PERSISTENCE_STORE_URL;
 const PersistenceKey = process.env.PERSISTENCE_KEY ?? "1234";
-
-const MTGDraftbotsLogEndpoint =
-	process.env.MTGDRAFTBOTS_ENDPOINT ?? "https://staging.cubeartisan.net/integrations/draftlog";
-const MTGDraftbotsAPIKey = process.env.MTGDRAFTBOTS_APIKEY;
 
 export let InactiveSessions: Record<SessionID, any> = {};
 export let InactiveConnections: Record<UserID, ReturnType<typeof getPODConnection>> = {};
@@ -169,7 +165,13 @@ export function restoreSession(s: any, owner: UserID) {
 	if (s.draftState) {
 		switch (s.draftState.type) {
 			case "draft": {
-				const draftState = new DraftState([], [], { botCount: 0, simpleBots: false });
+				const draftState = new DraftState([], [], {
+					pickedCardsPerRound: s.draftState.pickedCardsPerRound,
+					burnedCardsPerRound: s.draftState.burnedCardsPerRound,
+					doubleMastersMode: s.draftState.doubleMastersMode,
+					botCount: 0,
+					simpleBots: false,
+				});
 				copyPODProps(s.draftState, draftState);
 				for (const userID in s.draftState.players) {
 					const bot = restoreBot(s.draftState.players[userID].botInstance);
@@ -217,8 +219,14 @@ export function restoreSession(s: any, owner: UserID) {
 				return r;
 			}
 			case "minesweeper": {
-				r.draftState = new MinesweeperDraftState([], [], 0, 0, 0);
-				copyPODProps(s.draftState, r.draftState);
+				r.draftState = MinesweeperDraftState.deserialize(s.draftState);
+				if (!r.draftState) {
+					console.error(
+						`[Persistence::restoreSession] Error: Invalid minesweeper draft state.`,
+						s.draftState
+					);
+					r.drafting = false;
+				}
 				return r;
 			}
 			case "teamSealed": {
@@ -250,16 +258,16 @@ export function getPoDSession(s: Session) {
 	const PoDSession: Record<string, any> = {};
 
 	for (const prop of Object.getOwnPropertyNames(s).filter(
-		(p) => !["users", "countdownInterval", "draftState"].includes(p)
+		(p) => !["users", "draftState", "sendDecklogTimeout"].includes(p)
 	)) {
 		if (!((s as IIndexable)[prop] instanceof Function)) PoDSession[prop] = (s as IIndexable)[prop];
 	}
 
 	if (s.drafting) {
+		PoDSession.disconnectedUsers = structuredClone(s.disconnectedUsers); // Avoid modifying the original
 		// Flag every user as disconnected so they can reconnect later
-		for (const userID of s.users) {
+		for (const userID of s.users)
 			if (Connections[userID]) PoDSession.disconnectedUsers[userID] = s.getDisconnectedUserData(userID);
-		}
 
 		if (s.draftState) {
 			PoDSession.draftState = {};
@@ -289,13 +297,11 @@ async function tempDump(exitOnCompletion = false) {
 	// (Disconnecting the socket would be better, but explicitly
 	// disconnecting socket prevents their automatic reconnection)
 	if (exitOnCompletion) {
-		for (const userID in Connections) {
-			const msg = new Message("Server Restarting", "Please wait...");
-			msg.showConfirmButton = false;
-			msg.allowOutsideClick = false;
-			msg.timer = 0;
-			Connections[userID].socket.emit("message", msg);
-		}
+		const msg = new Message("Server Restarting", "Please wait...");
+		msg.showConfirmButton = false;
+		msg.allowOutsideClick = false;
+		msg.timer = 0;
+		for (const userID in Connections) Connections[userID].socket.emit("message", msg);
 	}
 
 	const Promises: Promise<unknown>[] = [];
@@ -310,7 +316,7 @@ async function tempDump(exitOnCompletion = false) {
 			if (InactiveSessions[sessionID].draftState?.type === "rotisserie")
 				PoDSessions.push(InactiveSessions[sessionID]);
 		} catch (e) {
-			console.error(`Error while saving inactive session '${sessionID}'.`);
+			console.error(`Error while saving inactive session '${sessionID}': `, e);
 		}
 	}
 
@@ -318,25 +324,29 @@ async function tempDump(exitOnCompletion = false) {
 		try {
 			PoDSessions.push(getPoDSession(Sessions[sessionID]));
 		} catch (e) {
-			console.error(`Error while saving session '${sessionID}'.`);
+			console.error(`Error while saving session '${sessionID}': `, e);
 		}
 	}
 
 	if (PersistenceLocalPath) {
 		try {
-			console.log("Saving Connections and Sessions to disk...");
+			console.log(`Saving ${PoDConnections.length} Connections and ${PoDSessions.length} Sessions to disk...`);
 			if (!fs.existsSync(path.join(PersistenceLocalPath, LocalPersitenceDirectory)))
 				fs.mkdirSync(path.join(PersistenceLocalPath, LocalPersitenceDirectory));
 			Promises.push(
 				fs.promises
 					.writeFile(LocalConnectionsFile, JSON.stringify(PoDConnections))
-					.catch((err) => console.log(err))
+					.then(() => console.log("  [+] Connections successfully saved to disk."))
+					.catch((err) => console.log("  [-] Error saving connections to disk:", err))
 			);
 			Promises.push(
-				fs.promises.writeFile(LocalSessionsFile, JSON.stringify(PoDSessions)).catch((err) => console.log(err))
+				fs.promises
+					.writeFile(LocalSessionsFile, JSON.stringify(PoDSessions))
+					.then(() => console.log("  [+] Sessions successfully saved to disk."))
+					.catch((err) => console.log("  [-] Error saving sessions to disk:", err))
 			);
 		} catch (err) {
-			console.log("Error: ", err);
+			console.log("Error saving to disk: ", err);
 		}
 	}
 
@@ -351,10 +361,11 @@ async function tempDump(exitOnCompletion = false) {
 							"access-key": PersistenceKey,
 						},
 					})
-					.catch((err) => console.error("Error storing connections: ", err.message))
+					.then(() => console.log("  [+] Connections successfully sent to remote store."))
+					.catch((err) => console.error("  [-] Error storing connections: ", err.message))
 			);
 		} catch (err) {
-			console.log("Error: ", err);
+			console.log("  [-] Error: ", err);
 		}
 		try {
 			Promises.push(
@@ -366,10 +377,11 @@ async function tempDump(exitOnCompletion = false) {
 							"access-key": PersistenceKey,
 						},
 					})
-					.catch((err) => console.error("Error storing sessions: ", err.message))
+					.then(() => console.log("  [+] Sessions successfully sent to remote store."))
+					.catch((err) => console.error("  [-] Error storing sessions: ", err.message))
 			);
 		} catch (err) {
-			console.log("Error: ", err);
+			console.log("  [-] Error: ", err);
 		}
 	}
 
@@ -380,22 +392,7 @@ async function tempDump(exitOnCompletion = false) {
 	if (exitOnCompletion) process.exit(0);
 }
 
-type MTGDraftbotsLogEntry = {
-	pack: string[];
-	picks: number[];
-	trash: number[];
-	packNum: number;
-	numPacks: number;
-	pickNum: number;
-	numPicks: number;
-};
-
-type MTGDraftbotsLog = {
-	players: MTGDraftbotsLogEntry[][];
-	apiKey: string;
-};
-
-function anonymizeDraftLog(log: DraftLog): DraftLog {
+export function anonymizeDraftLog(log: DraftLog): DraftLog {
 	const localLog = JSON.parse(JSON.stringify(log)) as DraftLog;
 	const sha1 = crypto.createHash("sha1");
 	const hash = sha1
@@ -414,84 +411,9 @@ function anonymizeDraftLog(log: DraftLog): DraftLog {
 	return localLog;
 }
 
-function saveLog(type: string, session: Session) {
-	if (session.draftLog) {
-		const localLog = anonymizeDraftLog(session.draftLog);
-
-		// Send log to MTGDraftbots endpoint
-		if (MTGDraftbotsAPIKey && type === "Draft" && !session.customCardList?.customCards) {
-			const data: MTGDraftbotsLog = {
-				players: [],
-				apiKey: MTGDraftbotsAPIKey,
-			};
-			for (const uid in localLog.users) {
-				const u = localLog.users[uid];
-				// Skip bots, and players replaced by bots
-				if (!u.isBot && u.picks.length > 0 && !session.disconnectedUsers[uid]?.replaced) {
-					const player: MTGDraftbotsLogEntry[] = [];
-					let packNum = 0;
-					let pickNum = 0;
-					let lastPackSize = (u.picks[0] as DraftPick).booster.length + 1;
-					let lastPackPicks = 0;
-					for (const pick of u.picks) {
-						const p = pick as DraftPick;
-						if (p.booster.length >= lastPackSize) {
-							// Patch last pack picks with the correct numPicks
-							for (let i = player.length - lastPackPicks; i < player.length; ++i)
-								player[i].numPicks = pickNum;
-							packNum += 1;
-							pickNum = 0;
-							lastPackPicks = 0;
-						}
-						lastPackSize = p.booster.length;
-						player.push({
-							pack: p.booster.map((cid: string) => getCard(cid).oracle_id),
-							picks: p.pick,
-							trash: p.burn ?? [],
-							packNum: packNum,
-							numPacks: -1,
-							pickNum: pickNum,
-							numPicks: -1,
-						});
-						pickNum += p.pick.length;
-						++lastPackPicks;
-					}
-					// Patch each pick with the correct numPacks and the last pack with the correct numPicks
-					for (const p of player) {
-						p.numPacks = packNum + 1;
-						if (p.numPicks === -1) p.numPicks = pickNum;
-					}
-					if (player.length > 0) data.players.push(player);
-				}
-			}
-			if (!InTesting && process.env.NODE_ENV === "production" && data.players.length > 0)
-				axios
-					.post(MTGDraftbotsLogEndpoint, data)
-					.then((response) => {
-						// We expect a 201 (Created) response
-						if (response.status !== 201) {
-							console.warn("Unexpected response after sending draft logs to MTGDraftbots: ");
-							console.warn(response);
-						}
-					})
-					.catch((err) => console.error("Error sending logs to cubeartisan: ", err.message));
-		}
-	}
-}
-
-export function dumpError(name: string, data: any) {
-	axios
-		.post(`${PersistenceStoreURL}/store/${name}`, data, {
-			headers: {
-				"access-key": PersistenceKey,
-			},
-		})
-		.catch((err) => console.error("Error dumping error(wup): ", err.message));
-}
-
 export function logSession(type: string, session: Session) {
 	try {
-		saveLog(type, session);
+		sendLog(type, session);
 	} catch (err) {
 		console.error("Error saving logs: ", err);
 	}
@@ -533,6 +455,17 @@ export function logSession(type: string, session: Session) {
 	if (session.customCardList && session.customCardList.name) mixdata.customCardListName = session.customCardList.name;
 	MixInstance.track(type === "" ? "DefaultEvent" : type, mixdata);
 }
+
+// Dumps and reloads inactive sessions, ONLY for testing purposes.
+export const simulateRestart = TestingOnly(async () => {
+	await tempDump();
+	clearConnections();
+	clearSessions();
+	await Promise.all([requestSavedConnections(), requestSavedSessions()]).then((values) => {
+		InactiveConnections = values[0];
+		InactiveSessions = values[1];
+	});
+});
 
 if (!DisablePersistence) {
 	// Can make asynchronous calls, is not called on process.exit() or uncaught
@@ -581,7 +514,7 @@ if (!DisablePersistence) {
 		}, 20000);
 	});
 
-	Promise.all([requestSavedConnections(), requestSavedSessions()]).then((values) => {
+	await Promise.all([requestSavedConnections(), requestSavedSessions()]).then((values) => {
 		InactiveConnections = values[0];
 		InactiveSessions = values[1];
 	});

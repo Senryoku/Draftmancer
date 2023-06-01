@@ -24,9 +24,9 @@ if (process.env.NODE_ENV !== "production") {
 } else {
 	for (const file of DBFiles) {
 		// Stream the JSON file on production to reduce memory usage (to the detriment of runtime)
-		const cardsPromise = new Promise((resolve, reject) => {
+		const cardsPromise = new Promise((resolve /*, reject*/) => {
 			const stream = JSONStream.parse("$*");
-			stream.on("data", function (entry: any) {
+			stream.on("data", function (entry) {
 				tmpCards.set(entry.key, entry.value as Card);
 			});
 			stream.on("end", resolve);
@@ -82,7 +82,9 @@ for (const [cid, card] of Cards) {
 Object.freeze(Cards);
 
 // preferred version of each card
-export const CardsByName = JSON.parse(fs.readFileSync("./data/CardsByName.json", "utf-8"));
+export const CardsByName = JSON.parse(fs.readFileSync("./data/CardsByName.json", "utf-8")) as {
+	[name: string]: CardID;
+};
 
 // Cache for cards organized by set.
 export const CardsBySet: { [set: string]: Array<CardID> } = { alchemy_dmu: [], planeshifted_snc: [] };

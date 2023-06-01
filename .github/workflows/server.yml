@@ -14,6 +14,9 @@ jobs:
             matrix:
                 node-version: [18.x]
 
+        env:
+            PERSISTENCE_LOCAL_PATH: .
+
         steps:
             - uses: actions/checkout@v3
             - name: Use Node.js ${{ matrix.node-version }}
@@ -23,4 +26,5 @@ jobs:
                   cache: "npm"
             - run: npm ci
             - run: npm run build-server
+            - run: mkdir tmp # For simulating server restarts
             - run: npm test

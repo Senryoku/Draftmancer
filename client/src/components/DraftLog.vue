@@ -1,5 +1,5 @@
 <template>
-	<div v-if="draftlog.version === '2.0'">
+	<div v-if="draftlog.version === '2.0' || draftlog.version === '2.1'">
 		<!-- Table -->
 		<div>
 			<p>Click on a player to display their details.</p>
@@ -60,9 +60,15 @@
 							@change="displayOptions.pack = displayOptions.pick = 0"
 						>
 							<option>Cards</option>
-							<!-- Winston Draft picks display is not implemented -->
-							<option v-if="type.includes('Draft') && type !== 'Winston Draft'">Picks</option>
-							<option v-if="type.includes('Draft') && type !== 'Winston Draft' && type !== 'Grid Draft'">
+							<option v-if="picksPerPack.length > 0">Picks</option>
+							<option
+								v-if="
+									picksPerPack.length > 0 &&
+									picksPerPack[0].length > 0 &&
+									'pick' in picksPerPack[0][0] &&
+									'booster' in picksPerPack[0][0]
+								"
+							>
 								Picks Summary
 							</option>
 							<option v-if="selectedLogDecklist !== undefined || displayOptions.category === 'Deck'">
@@ -186,7 +192,7 @@
 				<template v-else-if="displayOptions.category === 'Picks Summary'">
 					<div class="log-container">
 						<draft-log-picks-summary
-							:picks="picksPerPack"
+							:picks="(picksPerPack as DraftPick[][])"
 							:carddata="draftlog.carddata"
 							:language="language"
 							@selectPick="
@@ -218,7 +224,16 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
-import { DraftLog, DraftLogUserData, DraftPick, GenericDraftPick } from "@/DraftLog";
+import {
+	DraftLog,
+	DraftLogUserData,
+	DraftPick,
+	DeprecatedDraftPick,
+	GridDraftPick,
+	WinstonDraftPick,
+	WinchesterDraftPick,
+	HousmanDraftPick,
+} from "@/DraftLog";
 import { UserID } from "@/IDTypes";
 
 import * as helper from "../helper";
@@ -231,13 +246,6 @@ import DraftLogPicksSummary from "./DraftLogPicksSummary.vue";
 import ExportDropdown from "./ExportDropdown.vue";
 import { CardColor, CardID, UniqueCard } from "@/CardTypes";
 import { Language } from "@/Types";
-
-export type PickDetails = {
-	key: number;
-	data: GenericDraftPick;
-	packNumber: number;
-	pickNumber: number;
-};
 
 type PlayerSummary = {
 	userID: UserID;
@@ -376,7 +384,7 @@ export default defineComponent({
 					this.displayOptions.pack = Math.min(this.displayOptions.pack, this.picksPerPack.length - 1);
 					this.displayOptions.pick = Math.min(
 						this.displayOptions.pick,
-						this.picksPerPack[this.displayOptions.pack].length - 1
+						(this.picksPerPack[this.displayOptions.pack]?.length ?? 0) - 1
 					);
 				});
 			}
@@ -409,14 +417,14 @@ export default defineComponent({
 					};
 					// Previous packs
 					for (let pack = 0; pack < Math.min(this.picksPerPack.length, this.displayOptions.pack); ++pack)
-						for (const pick of this.picksPerPack[pack]) add(pick.data as DraftPick);
+						for (const pick of this.picksPerPack[pack]) add(pick as DraftPick);
 					// Current pack
 					for (
 						let pick = 0;
 						pick < Math.min(this.picksPerPack[this.displayOptions.pack].length, this.displayOptions.pick);
 						++pick
 					)
-						add(this.picksPerPack[this.displayOptions.pack][pick].data as DraftPick);
+						add(this.picksPerPack[this.displayOptions.pack][pick] as DraftPick);
 					return cards;
 				}
 			}
@@ -460,60 +468,93 @@ export default defineComponent({
 		teamDraft() {
 			return this.draftlog.teamDraft;
 		},
-		picksPerPack(): PickDetails[][] {
+		picksPerPack(): (DraftPick | GridDraftPick | WinstonDraftPick | WinchesterDraftPick | HousmanDraftPick)[][] {
 			if (!this.validSelectedUser || !this.selectedUser.picks || this.selectedUser.picks.length === 0) return [];
 			switch (this.type) {
 				default:
 					return [];
-				case "Rochester Draft":
+				case "Rochester Draft": // Intended Fallthrough
 				case "Draft": {
-					// Infer PackNumber & PickNumber
-					let r: PickDetails[][] = [];
-					let currPick = 0;
-					let currBooster = -1;
-					let lastSize = 0;
-					let currPickNumber = 0;
-					while (currPick < this.selectedUser.picks.length) {
-						const p = this.selectedUser.picks[currPick] as DraftPick;
-						if (p.booster.length > lastSize) {
-							++currBooster;
-							currPickNumber = 0;
-							r.push([]);
-						} else ++currPickNumber;
-						r[currBooster].push({
-							key: currPick,
-							data: p,
-							packNumber: currBooster,
-							pickNumber: currPickNumber,
-						});
-						lastSize = p.booster.length;
-						++currPick;
+					if (this.draftlog.version === "2.0") {
+						// Infer PackNumber & PickNumber
+						let r: DraftPick[][] = [];
+						let lastSize = 0;
+						let currPickNumber = 0;
+						let currBooster = -1;
+						for (let currPick = 0; currPick < this.selectedUser.picks.length; ++currPick) {
+							const p = this.selectedUser.picks[currPick] as DeprecatedDraftPick;
+							if (p.booster.length > lastSize) {
+								++currBooster;
+								currPickNumber = 0;
+								r.push([]);
+							} else ++currPickNumber;
+							r[currBooster].push({
+								packNum: currBooster,
+								pickNum: currPickNumber,
+								pick: p.pick,
+								burn: p.burn,
+								booster: p.booster,
+							});
+							lastSize = p.booster.length;
+						}
+						return r;
+					} else {
+						// Version >= 2.1
+						return helper.groupPicksPerPack(this.selectedUser.picks as DraftPick[]);
 					}
-					return r;
 				}
-				case "Winston Draft": // TODO
-					return [];
 				case "Grid Draft": {
-					let key = 0;
+					let packNum = 0;
 					return this.selectedUser.picks.map((p) => {
+						const gp = p as GridDraftPick;
 						return [
 							{
-								key: key,
-								data: p,
-								packNumber: key++,
-								pickNumber: 0,
+								packNum: packNum++,
+								pickNum: 0,
+								pick: gp.pick,
+								burn: gp.burn,
+								booster: gp.booster,
 							},
 						];
 					});
 				}
+				case "Winston Draft":
+					return [this.selectedUser.picks as WinstonDraftPick[]];
+				case "Winchester Draft":
+					return [this.selectedUser.picks as WinchesterDraftPick[]];
+				case "Solomon Draft":
+					return [this.selectedUser.picks as WinchesterDraftPick[]];
+				case "Housman Draft": {
+					const r: HousmanDraftPick[][] = [];
+					let lastRoundNum = -1;
+					for (const p of this.selectedUser.picks as HousmanDraftPick[]) {
+						if (p.round !== lastRoundNum) {
+							lastRoundNum = p.round;
+							r.push([]);
+						}
+						r[r.length - 1].push(p);
+					}
+					return r;
+				}
 			}
 		},
 		draftPick() {
-			return this.picksPerPack[this.displayOptions.pack][this.displayOptions.pick].data as DraftPick;
+			return this.picksPerPack[this.displayOptions.pack][this.displayOptions.pick];
 		},
 		pickTitle() {
-			const draftPick = this.draftPick;
-			return draftPick.pick.map((idx: number) => this.draftlog.carddata[draftPick.booster[idx]].name).join(", ");
+			// Winston Draft, and other pile based modes
+			if ("piles" in this.draftPick) {
+				if ("randomCard" in this.draftPick) return this.draftlog.carddata[this.draftPick.randomCard].name;
+				return `Pile #${this.draftPick.pickedPile + 1}`;
+			}
+			// Housman Draft
+			if ("revealedCards" in this.draftPick)
+				return this.draftlog.carddata[this.draftPick.revealedCards[this.draftPick.picked]].name;
+			const p = this.draftPick;
+			return p.pick
+				.map((idx: number) => (p.booster[idx] ? this.draftlog.carddata[p.booster[idx]!].name : null))
+				.filter((n) => n !== null)
+				.join(", ");
 		},
 	},
 	watch: {
@@ -538,7 +579,7 @@ export default defineComponent({
 				if (this.picksPerPack.length > this.displayOptions.pack)
 					this.displayOptions.pick = Math.min(
 						this.displayOptions.pick,
-						this.picksPerPack[this.displayOptions.pack].length - 1
+						(this.picksPerPack[this.displayOptions.pack]?.length ?? 0) - 1
 					); // Make sure pick is still valid.
 			},
 		},

@@ -1260,6 +1260,7 @@ ul.player-list {
 }
 
 .card-column > .column-card-container,
+.card-column > .column-card-container > .card,
 .card-column > .card {
 	height: 0;
 	padding-bottom: 13.5%; /* As a percentage of the container width, used to display card name (instead of setting a height), makes its 'responsive' */
@@ -1274,6 +1275,7 @@ ul.player-list {
 }
 
 .card-column > .column-card-container:last-child,
+.card-column > .column-card-container:last-child > .card,
 .card-column > .card:last-child {
 	margin-bottom: 142.5%;
 }
@@ -1281,14 +1283,12 @@ ul.player-list {
 /* Only use this hover rule on desktop (hover capabilities and a mouse or equivalent device) */
 @media (hover: hover) and (pointer: fine) {
 	/* No :hover outside of the div bounds, will let the card disappear when the mouse moves outside of it */
-	.card-column > .column-card-container > div {
-		pointer-events: none;
-	}
+	.card-column > .column-card-container > .card > div, /* This version doesn't ~always~ work as expected on Chrome (Sometimes it just fixes itself...), but does in Firefox  */
 	.card-column > .card > div {
 		pointer-events: none;
 	}
 	/* Except if its fully visible */
-	.card-column > .column-card-container:last-child > div,
+	.card-column > .column-card-container:last-child > .card > div,
 	.card-column > .card:last-child > div {
 		pointer-events: auto;
 	}

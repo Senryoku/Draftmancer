@@ -27,14 +27,12 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import { Card, CardID } from "@/CardTypes";
-import { DraftPick } from "@/DraftLog";
 import { replaceManaSymbols } from "../ManaSymbols";
-import { PickDetails } from "./DraftLog.vue";
 
 export default defineComponent({
 	name: "DraftLogPicksSummary",
 	props: {
-		picks: { type: Array as PropType<PickDetails[][]>, required: true },
+		picks: { type: Array as PropType<{ pick: number[]; booster: CardID[] }[][]>, required: true },
 		carddata: { type: Object as PropType<{ [cid: CardID]: Card }>, required: true },
 		language: { type: String, required: true },
 	},
@@ -43,7 +41,7 @@ export default defineComponent({
 			return replaceManaSymbols(str);
 		},
 		getPick(packIdx: number, pickIdx: number) {
-			const p = this.picks[packIdx][pickIdx].data as DraftPick;
+			const p = this.picks[packIdx][pickIdx];
 			return this.carddata[p.booster[p.pick[0]]];
 		},
 	},

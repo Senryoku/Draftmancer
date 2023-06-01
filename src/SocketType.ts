@@ -62,7 +62,7 @@ export interface ServerToClientEvents {
 		};
 	}) => void;
 
-	userDisconnected: (data: { owner?: UserID; disconnectedUsers: { [uid: string]: any } }) => void; // FIXME
+	userDisconnected: (data: { owner?: UserID; disconnectedUsers: { [uid: string]: { userName: string } } }) => void;
 	sessionOptions: (sessionOptions: { [key: keyof typeof SessionsSettingsProps]: any }) => void; // FIXME: Specify allowed options and their types
 	setRestriction: (setRestriction: Array<SetCode>) => void;
 	ignoreCollections: (ignoreCollections: boolean) => void;
@@ -97,6 +97,7 @@ export interface ServerToClientEvents {
 	resumeOnReconnection: (msg: Message) => void;
 
 	setCardSelection: (boosters: UniqueCard[][]) => void;
+	addCards: (message: string, cards: UniqueCard[]) => void;
 	updateCardState: (updates: { cardID: UniqueCardID; state: UniqueCardState }[]) => void;
 
 	timer: (data: { countdown: number }) => void;
@@ -259,6 +260,7 @@ export interface ClientToServerEvents {
 	updateBracket: (results: Array<[number, number]>) => void;
 	updateDeckLands: (lands: DeckBasicLands) => void;
 	moveCard: (uniqueID: UniqueCardID, destStr: string) => void;
+	removeBasicsFromDeck: () => void;
 
 	// Draft Queue
 	draftQueueSetReadyState: (status: ReadyState) => void;
@@ -318,7 +320,10 @@ export interface ClientToServerEvents {
 	setBots: (bots: number) => void;
 	setRestriction: (setRestriction: Array<SetCode>) => void;
 	parseCustomCardList: (customCardList: string, ack: (result: SocketAck) => void) => void;
-	importCube: (data: any, ack: (result: SocketAck) => void) => void; // FIXME
+	importCube: (
+		data: { service: string; matchVersions: boolean; cubeID: string },
+		ack: (result: SocketAck) => void
+	) => void;
 	loadLocalCustomCardList: (cubeName: string, ack: (result: SocketAck) => void) => void;
 	ignoreCollections: (ignoreCollections: boolean) => void;
 	setPickTimer: (maxTimer: number) => void;

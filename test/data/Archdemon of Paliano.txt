@@ -1,0 +1,21 @@
+[Settings]
+{
+	"withReplacement": true,
+	"layouts": {
+		"normal": {
+			"weight": 1,
+			"slots": {
+				"Archdemon of Paliano": 2,
+				"Lands": 8
+			}
+		}
+	}
+}
+[Archdemon of Paliano]
+Archdemon of Paliano
+[Lands]
+Plains
+Island
+Swamp
+Mountain
+Forest

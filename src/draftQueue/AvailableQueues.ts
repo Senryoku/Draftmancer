@@ -5,6 +5,7 @@ export const AvailableQueues: readonly QueueDescription[] = [
 	{ id: "mom", name: "March of the Machine", playerCount: 8, setCode: "mom" },
 	{ id: "one", name: "Phyrexia: All Will Be One", playerCount: 8, setCode: "one" },
 	// { id: "mat", name: "March of the Machine: the Aftermath", playerCount: 8, setCode: "mat" },
+	// { id: "mid", name: "Innistrad: Midnight Hunt", playerCount: 8, setCode: "mid" },
 	// { id: "sir", name: "Shadows over Innistrad Remastered", playerCount: 8, setCode: "sir", },
 	// { id: "dmu", name: "Dominaria United", playerCount: 8, setCode: "dmu" },
 ];

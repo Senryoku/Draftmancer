@@ -27,10 +27,7 @@
 				:class="{ 'winston-current-pile': index === winstonDraftState.currentPile }"
 			>
 				<transition name="pile" mode="out-in">
-					<div
-						class="card-column winstom-card-column"
-						:key="pile.length > 0 ? pile[0].uniqueID : `column-${index}`"
-					>
+					<div class="card-column" :key="pile.length > 0 ? pile[0].uniqueID : `column-${index}`">
 						<TransitionGroup name="card">
 							<div
 								v-for="(card, cardIndex) in pile"
@@ -38,11 +35,7 @@
 								class="column-card-container"
 								:style="{ '--anim-index': cardIndex }"
 							>
-								<transition
-									name="flip-card"
-									mode="out-in"
-									:duration="{ enter: 0.25, leave: 0.25 + 0.1 * cardIndex }"
-								>
+								<transition name="flip-card" mode="out-in">
 									<template
 										v-if="
 											userID === winstonDraftState.currentPlayer &&
@@ -146,11 +139,6 @@ const winstonCanSkipPile = computed(() => {
 }
 
 .winston-current-pile-options {
-	display: flex;
-	flex-direction: column;
-}
-
-.winstom-card-column {
 	display: flex;
 	flex-direction: column;
 }

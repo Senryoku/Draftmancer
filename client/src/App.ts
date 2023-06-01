@@ -36,7 +36,7 @@ import type SessionsSettingsProps from "@/Session/SessionProps";
 import { MinesweeperSyncData } from "@/MinesweeperDraftTypes";
 import { HousmanDraftSyncData } from "@/HousmanDraft";
 import { minesweeperApplyDiff } from "../../src/MinesweeperDraftTypes";
-import Constants, { CubeDescription } from "../../src/Constants";
+import Constants, { CubeDescription, EnglishBasicLandNames } from "../../src/Constants";
 import { CardColor, OptionalOnPickDraftEffect, UsableDraftEffect } from "../../src/CardTypes";
 
 import io, { Socket } from "socket.io-client";
@@ -271,7 +271,7 @@ export default defineComponent({
 			sessionOwner: (sessionID ? userID : undefined) as UserID | undefined,
 			sessionOwnerUsername: userName as string,
 			sessionUsers: [] as SessionUser[],
-			disconnectedUsers: {} as { [uid: UserID]: DisconnectedUser },
+			disconnectedUsers: {} as { [uid: UserID]: { userName: string } },
 			// Session settings
 			ownerIsPlayer: true,
 			isPublic: false,
@@ -1226,6 +1226,11 @@ export default defineComponent({
 					fireToast("success", "Cards received!");
 					this.pushNotification("Cards received!");
 				});
+			});
+
+			this.socket.on("addCards", (message, cards) => {
+				fireToast("info", `${message} ${cards.map((c) => c.name).join(", ")}`);
+				this.addToDeck(cards);
 			});
 
 			this.socket.on("timer", (data) => {
@@ -2680,7 +2685,7 @@ export default defineComponent({
 			};
 
 			if (cube.cubeCobraID || cube.cubeArtisanID) {
-				const cubeID = cube.cubeCobraID ?? cube.cubeArtisanID;
+				const cubeID = (cube.cubeCobraID ?? cube.cubeArtisanID)!;
 				const service = cube.cubeCobraID ? "Cube Cobra" : "CubeArtisan";
 				Alert.fire({
 					position: "center",
@@ -3174,8 +3179,9 @@ export default defineComponent({
 			}
 		},
 		removeBasicsFromDeck() {
-			this.deck = this.deck.filter((c) => c.type !== "Basic Land");
-			this.sideboard = this.sideboard.filter((c) => c.type !== "Basic Land");
+			this.socket.emit("removeBasicsFromDeck");
+			this.deck = this.deck.filter((c) => !EnglishBasicLandNames.includes(c.name));
+			this.sideboard = this.sideboard.filter((c) => !EnglishBasicLandNames.includes(c.name));
 			this.deckDisplay?.filterBasics();
 			this.sideboardDisplay?.filterBasics();
 		},

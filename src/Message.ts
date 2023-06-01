@@ -27,6 +27,18 @@ export class Message {
 		this.html = html;
 		this.footer = footer ? escapeHTML(footer) : undefined; // footer is not escaped by swal2
 	}
+
+	setToast(toast: boolean = true) {
+		this.toast = toast;
+		return this;
+	}
+}
+
+export class ToastMessage extends Message {
+	constructor(title: string, text: string = "", footer: string = "", html: string = "") {
+		super(title, text, footer, html);
+		this.toast = true;
+	}
 }
 
 export class MessageError extends Message {

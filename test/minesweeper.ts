@@ -4,9 +4,18 @@ import chai from "chai";
 const expect = chai.expect;
 import { Sessions } from "../src/Session.js";
 import { Connections } from "../src/Connection.js";
-import { makeClients, enableLogs, disableLogs, waitForSocket, waitForClientDisconnects, getUID } from "./src/common.js";
+import {
+	makeClients,
+	enableLogs,
+	disableLogs,
+	waitForSocket,
+	waitForClientDisconnects,
+	getUID,
+	ackNoError,
+} from "./src/common.js";
 import { minesweeperApplyDiff, MinesweeperCellState, MinesweeperSyncData } from "../src/MinesweeperDraftTypes.js";
 import { SocketAck } from "../src/Message.js";
+import { simulateRestart } from "../src/Persistence.js";
 
 describe("Minesweeper Draft", function () {
 	let clients: ReturnType<typeof makeClients> = [];
@@ -76,9 +85,7 @@ describe("Minesweeper Draft", function () {
 				if (options.useCustomCardList) done();
 			});
 			clients[ownerIdx].emit("setUseCustomCardList", true);
-			clients[ownerIdx].emit("loadLocalCustomCardList", "Arena Historic Cube #1", (r: SocketAck) => {
-				expect(r.code).to.equal(0);
-			});
+			clients[ownerIdx].emit("loadLocalCustomCardList", "Arena Historic Cube #1", ackNoError);
 		});
 	};
 
@@ -141,6 +148,30 @@ describe("Minesweeper Draft", function () {
 		return choices;
 	};
 
+	const singlePick = () => {
+		it("Single pick.", function (done) {
+			let receivedUpdate = 0;
+			for (let c = 0; c < clients.length; ++c) {
+				clients[c].once("minesweeperDraftUpdateState", function (diff) {
+					++receivedUpdate;
+					if (receivedUpdate === clients.length) {
+						expect(minesweeper).to.exist;
+						if (!minesweeper) return;
+						minesweeperApplyDiff(minesweeper, diff);
+						done();
+					}
+				});
+			}
+			expect(minesweeper?.currentPlayer).to.not.be.undefined;
+			const cl = clients.find((c) => getUID(c) === minesweeper?.currentPlayer);
+			expect(cl).to.exist;
+			const choices = validateState(minesweeper!);
+			expect(choices.length).to.be.above(0);
+			const choice = choices[Math.floor(Math.random() * choices.length)];
+			cl!.emit("minesweeperDraftPick", choice[0], choice[1], ackNoError);
+		});
+	};
+
 	const endDraft = () => {
 		it("Every player randomly chooses a card and the draft should end.", function (done) {
 			this.timeout(4000);
@@ -151,7 +182,7 @@ describe("Minesweeper Draft", function () {
 
 			const pick = (row: number, col: number) => {
 				if (minesweeper?.currentPlayer === "") return;
-				const cl = clients.find((c) => (c as any).query.userID === minesweeper?.currentPlayer);
+				const cl = clients.find((c) => getUID(c) === minesweeper?.currentPlayer);
 				if (!cl) return;
 				cl.emit("minesweeperDraftPick", row, col, (response: SocketAck) => {
 					if (response?.error) console.error(response?.error);
@@ -197,10 +228,7 @@ describe("Minesweeper Draft", function () {
 			for (let i = 0; i < minesweeper!.grid.length; ++i)
 				for (let j = 0; j < minesweeper!.grid[0].length; ++j)
 					if (minesweeper!.grid[i][j].state === MinesweeperCellState.Revealed) {
-						clients[currPlayer].emit("minesweeperDraftPick", i, j, (response: SocketAck) => {
-							if (response?.error) console.error(response?.error);
-							expect(response?.error).to.be.undefined;
-						});
+						clients[currPlayer].emit("minesweeperDraftPick", i, j, ackNoError);
 						return;
 					}
 		});
@@ -277,6 +305,115 @@ describe("Minesweeper Draft", function () {
 				done();
 			});
 			clients[nonOwnerIdx].connect();
+		});
+
+		endDraft();
+	});
+
+	describe("Default settings, all disconnect", function () {
+		selectCube();
+		startDraft();
+
+		singlePick();
+
+		it("Non-owner disconnects, owner receives updated user infos.", function (done) {
+			const nonOwnerIdx = (ownerIdx + 1) % clients.length;
+			clients[ownerIdx].once("userDisconnected", function () {
+				waitForSocket(clients[nonOwnerIdx], done);
+			});
+			clients[nonOwnerIdx].disconnect();
+		});
+
+		it("Non-owner reconnects, draft restarts.", function (done) {
+			const nonOwnerIdx = (ownerIdx + 1) % clients.length;
+			clients[nonOwnerIdx].once("rejoinMinesweeperDraft", function (state) {
+				expect(state).to.exist;
+				done();
+			});
+			clients[nonOwnerIdx].connect();
+		});
+
+		singlePick();
+
+		it("Non-owners disconnects, owner receives updated user infos.", function (done) {
+			let disconnected = 0;
+			clients[ownerIdx].on("userDisconnected", function (data) {
+				++disconnected;
+				if (disconnected === clients.length - 1) {
+					expect(Object.keys(data.disconnectedUsers).length).to.equal(clients.length - 1);
+					clients[ownerIdx].off("userDisconnected");
+					done();
+				}
+			});
+			for (let c = 0; c < clients.length; ++c) if (c !== ownerIdx) clients[c].disconnect();
+		});
+
+		it("Owner disconnects", function (done) {
+			clients[ownerIdx].disconnect();
+			waitForSocket(clients[ownerIdx], done);
+		});
+
+		it("Owner reconnects.", function (done) {
+			clients[ownerIdx].once("rejoinMinesweeperDraft", function (state) {
+				expect(state).to.exist;
+				done();
+			});
+			clients[ownerIdx].connect();
+		});
+
+		it("Non-owner reconnects, draft restarts.", function (done) {
+			let reconnected = 0;
+			for (let c = 0; c < clients.length; ++c)
+				if (c !== ownerIdx) {
+					clients[c].on("rejoinMinesweeperDraft", function (state) {
+						++reconnected;
+						expect(state).to.exist;
+						if (reconnected === clients.length - 1) {
+							for (const cl of clients) cl.off("rejoinMinesweeperDraft");
+							done();
+						}
+					});
+					clients[c].connect();
+				}
+		});
+
+		singlePick();
+
+		endDraft();
+	});
+
+	describe("Default settings, server restart", function () {
+		selectCube();
+		startDraft();
+
+		singlePick();
+
+		it("Simulate server restart.", async function () {
+			await simulateRestart();
+		});
+
+		it("Owner reconnects.", function (done) {
+			clients[ownerIdx].once("rejoinMinesweeperDraft", function (state) {
+				expect(state).to.exist;
+				done();
+			});
+			clients[ownerIdx].connect();
+		});
+
+		it("Non-owner reconnects, draft restarts.", function (done) {
+			let reconnected = 0;
+			for (let c = 0; c < clients.length; ++c)
+				if (c !== ownerIdx) {
+					clients[c].on("rejoinMinesweeperDraft", function (state) {
+						++reconnected;
+						expect(state).to.exist;
+						if (reconnected === clients.length - 1) {
+							for (const cl of clients) cl.off("rejoinMinesweeperDraft");
+							done();
+						}
+					});
+					clients[c].connect();
+				}
 		});
 
 		endDraft();
