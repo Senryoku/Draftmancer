@@ -258,6 +258,7 @@ describe("Sets content", function () {
 		one: { common: 101, uncommon: 80, rare: 60, mythic: 20 },
 		sir: { common: 94, uncommon: 93, rare: 66, mythic: 23 },
 		mom: { common: 116, uncommon: 80, rare: 60, mythic: 20 },
+		ltr: { common: 101, uncommon: 80, rare: 60, mythic: 20 },
 	};
 
 	beforeEach(function (done) {
