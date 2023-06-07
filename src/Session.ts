@@ -568,7 +568,7 @@ export class Session implements IIndexable {
 
 		let defaultFactory: IBoosterFactory | null = null;
 
-		const customBoosters = options?.customBoosters ?? this.customBoosters; // Use override value if provided via options
+		const customBoosters = structuredClone(options?.customBoosters ?? this.customBoosters); // Use override value if provided via options
 		const boosterSpecificRules = options.useCustomBoosters && customBoosters.some((v: string) => v !== "");
 		const acceptPaperBoosterFactories =
 			!this.useBoosterContent && this.mythicPromotion && !this.maxDuplicates && this.unrestrictedCardPool();
@@ -637,7 +637,9 @@ export class Session implements IIndexable {
 		// Exceptions for inclusion of basic land slot: Commander Legends as the booster size will be wrong anyway, and TSR/STX/MH2/DBL/BRO that already have 15 cards.
 		const irregularSets = ["cmr", "tsr", "stx", "mh2", "dbl", "bro"];
 		// If randomized, we'll have to make sure all boosters are of the same size: Adding a land slot to the default rule.
-		const addLandSlot = this.distributionMode !== "regular" || customBoosters.some((v: string) => v === "random");
+		const addLandSlot =
+			this.distributionMode !== "regular" ||
+			customBoosters.some((v: string) => v === "random" || v === "randomShared");
 		if (
 			addLandSlot &&
 			defaultFactory &&
@@ -650,6 +652,16 @@ export class Session implements IIndexable {
 					: BasicLandSlots[this.setRestriction[0]];
 
 		let randomSetsPool: string[] = []; // 'Bag' to pick a random set from, avoiding duplicates until necessary
+		const pickSet = () => {
+			// Refill the bag with all possible sets
+			if (randomSetsPool.length === 0)
+				randomSetsPool = [...(this.setRestriction.length === 0 ? Constants.PrimarySets : this.setRestriction)];
+			return pickRandom(randomSetsPool);
+		};
+
+		// "Random Shared Set from Card Pool", Pick random sets common accross all players
+		for (let i = 0; i < customBoosters.length; ++i)
+			if (customBoosters[i] === "randomShared") customBoosters[i] = pickSet();
 
 		for (let i = 0; i < boosterQuantity; ++i) {
 			let boosterSet = customBoosters[Math.floor(i / playerCount) % customBoosters.length];
@@ -659,14 +671,8 @@ export class Session implements IIndexable {
 				continue;
 			}
 			// "Random Set from Card Pool" in Chaos Draft
-			if (boosterSet === "random") {
-				// Refill the bag with all possible sets
-				if (randomSetsPool.length === 0)
-					randomSetsPool = [
-						...(this.setRestriction.length === 0 ? Constants.PrimarySets : this.setRestriction),
-					];
-				boosterSet = pickRandom(randomSetsPool);
-			}
+			if (boosterSet === "random") boosterSet = pickSet();
+
 			// Compile necessary data for this set (Multiple boosters of the same set will share it)
 			if (!usedSets[boosterSet]) {
 				// Use the corresponding PaperBoosterFactories if possible (is available and of the excepted size when addLandSlot is needed)

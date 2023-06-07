@@ -2326,6 +2326,7 @@
 									<select class="right" v-model="customBoosters[index]">
 										<option value>(Default)</option>
 										<option value="random">Random Set from Card Pool</option>
+										<option value="randomShared">Random Shared Set from Card Pool</option>
 										<option style="color: #888" disabled>————————————————</option>
 										<option v-for="code in sets.slice().reverse()" :value="code" :key="code">
 											{{ setsInfos[code].fullName }}
