@@ -422,7 +422,7 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
 
         # Workaround: Remove alternate printings and Jumpstart cards from LTR draft boosters (and the 20 basics)
         if c['set'] == "ltr":
-            selection['in_booster'] = int(c['collector_number']) <= 261
+            selection['in_booster'] = int(c['collector_number']) > 0 and int(c['collector_number']) <= 261
 
         if c['layout'] == "split":
             if 'Aftermath' in c['keywords']:
