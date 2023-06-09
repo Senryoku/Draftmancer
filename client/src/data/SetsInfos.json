@@ -579,7 +579,7 @@
     },
     "ced": {
         "code": "ced",
-        "fullName": "Collectors’ Edition",
+        "fullName": "Collectors' Edition",
         "cardCount": 302,
         "isPrimary": false,
         "icon": "img/sets/ced.svg",
@@ -589,7 +589,7 @@
     },
     "cei": {
         "code": "cei",
-        "fullName": "Intl. Collectors’ Edition",
+        "fullName": "Intl. Collectors' Edition",
         "cardCount": 302,
         "isPrimary": false,
         "icon": "img/sets/cei.svg",
@@ -2309,24 +2309,24 @@
     "ltc": {
         "code": "ltc",
         "fullName": "Tales of Middle-earth Commander",
-        "cardCount": 44,
+        "cardCount": 61,
         "isPrimary": false,
         "icon": "img/sets/ltc.svg",
         "commonCount": 1,
-        "mythicCount": 34,
-        "rareCount": 4,
+        "mythicCount": 50,
+        "rareCount": 5,
         "uncommonCount": 5
     },
     "ltr": {
         "code": "ltr",
         "fullName": "The Lord of the Rings: Tales of Middle-earth",
-        "cardCount": 210,
+        "cardCount": 387,
         "isPrimary": true,
         "icon": "img/sets/ltr.svg",
-        "commonCount": 62,
-        "mythicCount": 33,
-        "rareCount": 58,
-        "uncommonCount": 57
+        "commonCount": 88,
+        "mythicCount": 50,
+        "rareCount": 137,
+        "uncommonCount": 112
     },
     "m10": {
         "code": "m10",
@@ -2754,13 +2754,13 @@
     "neo": {
         "code": "neo",
         "fullName": "Kamigawa: Neon Dynasty",
-        "cardCount": 531,
+        "cardCount": 532,
         "isPrimary": true,
         "icon": "img/sets/neo.svg",
         "commonCount": 161,
         "mythicCount": 67,
         "rareCount": 189,
-        "uncommonCount": 114
+        "uncommonCount": 115
     },
     "nph": {
         "code": "nph",
@@ -5073,12 +5073,11 @@
     "slp": {
         "code": "slp",
         "fullName": "Secret Lair Showdown",
-        "cardCount": 8,
+        "cardCount": 7,
         "isPrimary": false,
         "icon": "img/sets/slp.svg",
         "mythicCount": 2,
-        "rareCount": 5,
-        "uncommonCount": 1
+        "rareCount": 5
     },
     "slu": {
         "code": "slu",
