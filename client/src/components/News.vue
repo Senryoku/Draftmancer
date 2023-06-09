@@ -1,6 +1,13 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
+			<em>June 09, 2023</em>
+			<p>
+				<img src="img/sets/ltr.svg" class="set-icon" style="--invertedness: 100%" alt="" /> The Lord of the
+				Rings: Tales of Middle-earth support!
+			</p>
+		</div>
+		<div class="news">
 			<em>May 30, 2023</em>
 			<ul>
 				<li>
