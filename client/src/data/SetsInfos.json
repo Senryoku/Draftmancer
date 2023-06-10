@@ -2320,13 +2320,13 @@
     "ltr": {
         "code": "ltr",
         "fullName": "The Lord of the Rings: Tales of Middle-earth",
-        "cardCount": 387,
+        "cardCount": 444,
         "isPrimary": true,
         "icon": "img/sets/ltr.svg",
-        "commonCount": 88,
-        "mythicCount": 50,
-        "rareCount": 137,
-        "uncommonCount": 112
+        "commonCount": 132,
+        "mythicCount": 51,
+        "rareCount": 148,
+        "uncommonCount": 113
     },
     "m10": {
         "code": "m10",
