@@ -60,14 +60,14 @@
 								icon="fa-solid fa-spinner"
 								spin
 								:class="{ 'carousel-selected': currentPart === idx + 1 }"
-								:key="part.id"
+								:key="`${part.id}_${part.status}`"
 							></font-awesome-icon>
 						</template>
 						<template v-else>
 							<font-awesome-icon
 								icon="fa-solid fa-square"
 								size="sm"
-								:key="part.id"
+								:key="`${part.id}_${part.status}`"
 								:class="{ 'carousel-selected': currentPart === idx + 1 }"
 							></font-awesome-icon>
 						</template>
