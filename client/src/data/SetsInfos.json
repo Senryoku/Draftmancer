@@ -2309,23 +2309,23 @@
     "ltc": {
         "code": "ltc",
         "fullName": "Tales of Middle-earth Commander",
-        "cardCount": 61,
+        "cardCount": 383,
         "isPrimary": false,
         "icon": "img/sets/ltc.svg",
-        "commonCount": 1,
-        "mythicCount": 50,
-        "rareCount": 5,
-        "uncommonCount": 5
+        "commonCount": 38,
+        "mythicCount": 59,
+        "rareCount": 237,
+        "uncommonCount": 49
     },
     "ltr": {
         "code": "ltr",
         "fullName": "The Lord of the Rings: Tales of Middle-earth",
-        "cardCount": 444,
+        "cardCount": 462,
         "isPrimary": true,
         "icon": "img/sets/ltr.svg",
         "commonCount": 132,
-        "mythicCount": 51,
-        "rareCount": 148,
+        "mythicCount": 54,
+        "rareCount": 163,
         "uncommonCount": 113
     },
     "m10": {
