@@ -271,6 +271,9 @@ export default defineComponent({
 					}
 				if (this.spellbooks[this.card?.name]?.size > 0)
 					for (const cid of this.spellbooks[this.card.name]) r.push(this.$cardCache.get(cid));
+
+				if (this.card.related_cards)
+					for (const cid of this.card.related_cards) if (isString(cid)) r.push(this.$cardCache.get(cid));
 			}
 			return r;
 		},

@@ -420,9 +420,13 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
         if c['id'] in ["057c66a8-9424-4c88-9707-5d8ef9170119", "e07d5fd5-d513-46d4-8812-6e6e55a6dfda", "a5cbda07-53a0-4526-9955-36f902073cf1", "ea4f1d5d-7991-4a2d-b907-3522e951ad4c", "884565bb-ed33-4372-8c81-487c2ee2f73c"]:
             selection['in_booster'] = False
 
-        # Workaround: Remove alternate printings and Jumpstart cards from LTR draft boosters (and the 20 basics)
         if c['set'] == "ltr":
+            # Workaround: Remove alternate printings and Jumpstart cards from LTR draft boosters (and the 20 basics)
             selection['in_booster'] = int(c['collector_number']) > 0 and int(c['collector_number']) <= 261
+            if "Ring tempts you" in c['oracle_text']:
+                if "related_cards" not in selection:
+                    selection["related_cards"] = []
+                selection["related_cards"].append("7215460e-8c06-47d0-94e5-d1832d0218af")
 
         if c['layout'] == "split":
             if 'Aftermath' in c['keywords']:
