@@ -119,10 +119,7 @@ BoosterCardsBySet["mat"] = BoosterCardsBySet["mom"].concat(BoosterCardsBySet["ma
 BoosterCardsBySet["dbl"] = BoosterCardsBySet["mid"].concat(BoosterCardsBySet["vow"]); // Innistrad: Double Feature (All cards from Midnight Hunt and Crimson Vow)
 BoosterCardsBySet["ydmu"] = BoosterCardsBySet["dmu"]; // Dominaria United Alchemy
 // Shadows over Innistrad with specific Bonus Sheet
-BoosterCardsBySet["sir0"] = BoosterCardsBySet["sir"];
-BoosterCardsBySet["sir1"] = BoosterCardsBySet["sir"];
-BoosterCardsBySet["sir2"] = BoosterCardsBySet["sir"];
-BoosterCardsBySet["sir3"] = BoosterCardsBySet["sir"];
+for (let i = 0; i < 4; ++i) CardsBySet["sir" + i] = BoosterCardsBySet["sir" + i] = BoosterCardsBySet["sir"];
 // Mystery boosters convention editions with playtest cards
 BoosterCardsBySet["mb1_convention_2019"] = BoosterCardsBySet["mb1"].concat(CardsBySet["cmb1"]);
 BoosterCardsBySet["mb1_convention_2021"] = BoosterCardsBySet["mb1"].concat(CardsBySet["cmb2"]);
