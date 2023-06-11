@@ -1270,7 +1270,7 @@ describe("Single Draft (Two Players)", function () {
 				}
 			});
 		}
-		expectCardCount(3 * 15);
+		expectCardCount(2 * 15 + 14);
 		disconnect();
 	});
 

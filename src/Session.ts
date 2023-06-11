@@ -632,24 +632,6 @@ export class Session implements IIndexable {
 		// Booster specific rules
 		const boosterFactories = [];
 		const usedSets: { [set: string]: IBoosterFactory } = {};
-		const defaultBasics = BasicLandSlots["znr"]; // Arbitrary set of default basic lands if a specific set doesn't have them.
-
-		// Exceptions for inclusion of basic land slot: Commander Legends as the booster size will be wrong anyway, and TSR/STX/MH2/DBL/BRO that already have 15 cards.
-		const irregularSets = ["cmr", "tsr", "stx", "mh2", "dbl", "bro"];
-		// If randomized, we'll have to make sure all boosters are of the same size: Adding a land slot to the default rule.
-		const addLandSlot =
-			this.distributionMode !== "regular" ||
-			customBoosters.some((v: string) => v === "random" || v === "randomShared");
-		if (
-			addLandSlot &&
-			defaultFactory &&
-			!(defaultFactory as BoosterFactory).landSlot &&
-			!(this.setRestriction.length === 1 && irregularSets.includes(this.setRestriction[0]))
-		)
-			(defaultFactory as BoosterFactory).landSlot =
-				this.setRestriction.length === 0 || !BasicLandSlots[this.setRestriction[0]]
-					? defaultBasics
-					: BasicLandSlots[this.setRestriction[0]];
 
 		let randomSetsPool: string[] = []; // 'Bag' to pick a random set from, avoiding duplicates until necessary
 		const pickSet = () => {
@@ -659,7 +641,7 @@ export class Session implements IIndexable {
 			return pickRandom(randomSetsPool);
 		};
 
-		// "Random Shared Set from Card Pool", Pick random sets common accross all players
+		// "Random Set from Card Pool (Shared)", Pick random sets common accross all players
 		for (let i = 0; i < customBoosters.length; ++i)
 			if (customBoosters[i] === "randomShared") customBoosters[i] = pickSet();
 
@@ -676,22 +658,13 @@ export class Session implements IIndexable {
 			// Compile necessary data for this set (Multiple boosters of the same set will share it)
 			if (!usedSets[boosterSet]) {
 				// Use the corresponding PaperBoosterFactories if possible (is available and of the excepted size when addLandSlot is needed)
-				if ((!addLandSlot || PaperBoosterSizes[boosterSet] === 15) && usePaperBoosterFactory(boosterSet)) {
+				if (usePaperBoosterFactory(boosterSet)) {
 					usedSets[boosterSet] = getPaperBoosterFactory(boosterSet, boosterFactoryOptions);
 				} else {
-					// As booster distribution and sets can be randomized, we have to make sure that every booster are of the same size: We'll use basic land slot if we have to.
-					const landSlot =
-						boosterSet in SpecialLandSlots
-							? SpecialLandSlots[boosterSet]
-							: addLandSlot && !irregularSets.includes(boosterSet)
-							? BasicLandSlots[boosterSet]
-								? BasicLandSlots[boosterSet]
-								: defaultBasics
-							: null;
 					usedSets[boosterSet] = getBoosterFactory(
 						boosterSet,
 						this.setByRarity(boosterSet),
-						landSlot,
+						boosterSet in SpecialLandSlots ? SpecialLandSlots[boosterSet] : null,
 						boosterFactoryOptions
 					);
 					// Check if we have enough card, considering maxDuplicate is a limiting factor
@@ -723,23 +696,13 @@ export class Session implements IIndexable {
 		for (let b = 0; b < boosterQuantity; ++b) {
 			const rule = boosterFactories[b];
 			if (!rule) return new MessageError("Internal Error");
-			const booster = rule?.generateBooster(targets);
+			const booster = rule.generateBooster(targets);
 			if (isMessageError(booster)) return booster;
 			boosters.push(booster);
 		}
 
 		if (this.distributionMode === "shuffleBoosterPool") shuffleArray(boosters);
 
-		// Boosters within a round much be of the same length.
-		// For example CMR packs have a default length of 20 cards and may cause problems if boosters are shuffled.
-		if (this.distributionMode !== "regular" || customBoosters.some((v: string) => v === "random")) {
-			if (boosters.some((b) => b.length !== boosters[0].length)) {
-				const msg = `Inconsistent booster sizes`;
-				console.error(msg);
-				console.error(boosters.map((b) => `Length: ${b.length}, First Card: (${b[0].set}) ${b[0].name}`));
-				return new MessageError("Error generating boosters", msg);
-			}
-		}
 		return boosters;
 	}
 
