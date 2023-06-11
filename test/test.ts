@@ -1293,8 +1293,8 @@ describe("Single Draft (Two Players)", function () {
 				expect(data.customBoosters).to.eql(CustomBoosters);
 				done();
 			});
-			clients[ownerIdx].emit("setCustomBoosters", CustomBoosters);
 			clients[ownerIdx].emit("setRestriction", Sets);
+			clients[ownerIdx].emit("setCustomBoosters", CustomBoosters);
 		});
 
 		for (const distributionMode of [
@@ -1318,8 +1318,62 @@ describe("Single Draft (Two Players)", function () {
 			});
 			it("should have one pack of each set.", function () {
 				for (const [k, v] of Object.entries(counts)) {
+					expect(Sets).to.include(k);
 					expect(v, `${k}: ${v}`).to.equal(1);
 				}
+			});
+		}
+		disconnect();
+	});
+
+	describe("With shared random custom boosters and bots", function () {
+		const CustomBoosters = ["randomShared", "randomShared", "randomShared"];
+		const Sets = ["afr", "mid", "one", "vow", "dmu", "snc", "iko", "thb", "eld", "m20", "war", "rna"];
+		connect();
+
+		it("Clients should receive the updated booster spec.", function (done) {
+			ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
+			nonOwnerIdx = 1 - ownerIdx;
+			clients[nonOwnerIdx].once("sessionOptions", function (data) {
+				expect(data.customBoosters).to.eql(CustomBoosters);
+				done();
+			});
+			clients[ownerIdx].emit("setRestriction", Sets);
+			clients[ownerIdx].emit("setCustomBoosters", CustomBoosters);
+		});
+
+		for (const distributionMode of [
+			"regular",
+			"shufflePlayerBoosters",
+			"shuffleBoosterPool",
+		] as DistributionMode[]) {
+			const counts: Record<string, number> = {};
+			it(`Setting distributionMode to ${distributionMode}.`, function (done) {
+				clients[nonOwnerIdx].once("sessionOptions", function (data) {
+					expect(data.distributionMode).to.eql(distributionMode);
+					done();
+				});
+				clients[ownerIdx].emit("setDistributionMode", distributionMode);
+			});
+
+			startDraft();
+			it("received boosters should be from setRestriction.", function () {
+				for (const b of [
+					clientStates[getUID(clients[ownerIdx])].state,
+					clientStates[getUID(clients[nonOwnerIdx])].state,
+				].map((s) => s.booster)) {
+					expect(Sets).to.include(b[0].set);
+					if (!(b[0].set in counts)) counts[b[0].set] = 0;
+					++counts[b[0].set];
+				}
+			});
+			endDraft((b) => {
+				if (!(b[0].set in counts)) counts[b[0].set] = 0;
+				++counts[b[0].set];
+			});
+			it("should have booster from three different sets.", function () {
+				expect(Object.keys(counts).length).to.equal(3);
+				for (const [k, v] of Object.entries(counts)) expect(v, `${k}: ${v}`).to.equal(2);
 			});
 		}
 		disconnect();
