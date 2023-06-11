@@ -1596,9 +1596,21 @@ function weightedRandomPick(
 ): CardInfo {
 	const idx = weightedRandomIdx(arr, totalWeight);
 	// Duplicate protection (allows duplicates between foil and non-foil)
-	// Not sure if we should checks ids or (set, number) here.
-	if (attempt < 10 && picked.some((c: CardInfo) => c.id === arr[idx].id && c.foil === arr[idx].foil))
-		return weightedRandomPick(arr, totalWeight, picked, attempt + 1);
+	if (picked.some((c: CardInfo) => c.id === arr[idx].id && c.foil === arr[idx].foil)) {
+		if (attempt < 3) return weightedRandomPick(arr, totalWeight, picked, attempt + 1);
+		else {
+			// Apparently, we're strugguling to find a non duplicate, take the time to make sure we don't miss this time (or that none exists).
+			const valid = arr.filter((c) => c.id !== arr[idx].id || c.foil !== arr[idx].foil);
+			if (valid.length > 0)
+				return weightedRandomPick(
+					valid,
+					valid.reduce((acc, val) => acc + val.weight, 0),
+					[],
+					0
+				);
+			// else: give up and return the duplicate.
+		}
+	}
 	return arr[idx];
 }
 
