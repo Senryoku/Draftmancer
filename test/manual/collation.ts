@@ -3,11 +3,11 @@
 import fs from "fs";
 import chai from "chai";
 const expect = chai.expect;
-import randomjs from "random-js";
+import * as randomjs from "random-js";
 import { Cards, getCard } from "../../src/Cards.js";
 import { Session } from "../../src/Session.js";
 import { SetSpecificFactories } from "../../src/BoosterFactory.js";
-import parseCardList from "../../src/parseCardList.js";
+import { parseCardList } from "../../src/parseCardList.js";
 import { getRandomKey, getRandom } from "../../src/utils.js";
 import { SpecialLandSlots } from "../../src/LandSlot.js";
 import { isMessageError, isSocketError, MessageError } from "../../src/Message.js";
@@ -18,7 +18,6 @@ if (isSocketError(ArenaCube)) {
 }
 
 const CustomSheetsTestFile = fs.readFileSync(`./test/data/CustomSheets.txt`, "utf8");
-import constants from "../../src/data/constants.json" assert { type: "json" };
 import { CardID } from "../../src/CardTypes.js";
 import { isNumber } from "../../src/TypeChecks.js";
 
@@ -355,7 +354,7 @@ describe("Statistical color balancing tests", function () {
 			return maxDuplicates;
 		}
 
-		const isArrayOfNumber = (arr: any[]): arr is number[] => arr.every((v) => isNumber(v));
+		const isArrayOfNumber = (arr: unknown[]): arr is number[] => arr.every((v) => isNumber(v));
 
 		function countDuplicates<T>(populate: () => T[], distinctResults?: number) {
 			const results = [0];
