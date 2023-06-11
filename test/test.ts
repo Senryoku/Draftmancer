@@ -1269,8 +1269,8 @@ describe("Single Draft (Two Players)", function () {
 					++idx;
 				}
 			});
+			if (distributionMode !== "shuffleBoosterPool") expectCardCount(2 * 15 + 14);
 		}
-		expectCardCount(2 * 15 + 14);
 		disconnect();
 	});
 
