@@ -2317,7 +2317,7 @@
 								v-tooltip.right="{
 									popperClass: 'option-tooltip',
 									content:
-										'<p>Specify the set of indiviual boosters handed to each player. Useful for classic Chaos Draft or Ixalan/Rivals of Ixalan draft for example.</p><p>Note: Collections are ignored for each booster with any other value than (Default).</p>',
+										'<p>Specify the set of indiviual boosters handed to each player. Useful for classic Chaos Draft or Ixalan/Rivals of Ixalan draft for example.</p><p>Note: Collections are ignored for each booster with any other value than (Default).</p><p>\'Random Set from Card Pool\' will pick a different extension for each player, \'Random Set from Card Pool (Shared)\' means the randomly picked set will be the same for all players.</p>',
 									html: true,
 								}"
 							>
@@ -2326,7 +2326,7 @@
 									<select class="right" v-model="customBoosters[index]">
 										<option value>(Default)</option>
 										<option value="random">Random Set from Card Pool</option>
-										<option value="randomShared">Random Shared Set from Card Pool</option>
+										<option value="randomShared">Random Set from Card Pool (Shared)</option>
 										<option style="color: #888" disabled>————————————————</option>
 										<option v-for="code in sets.slice().reverse()" :value="code" :key="code">
 											{{ setsInfos[code].fullName }}
