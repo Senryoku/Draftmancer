@@ -396,11 +396,8 @@ export class Session implements IIndexable {
 	// Returns true if the card pool is not restricted by players collections (and ignoreCollections is true or no-one is using their collection)
 	unrestrictedCardPool() {
 		if (this.ignoreCollections) return true;
-
-		for (const userID of this.users) {
+		for (const userID of this.users)
 			if (Connections[userID].useCollection && Connections[userID].collection.size > 0) return false;
-		}
-
 		return true;
 	}
 
@@ -482,10 +479,10 @@ export class Session implements IIndexable {
 			mythic: new Map(),
 		};
 		const cardPool = this.cardPool();
-		for (const cid of cardPool.keys()) {
+		for (const [cid, count] of cardPool) {
 			const rarity = getCard(cid).rarity;
 			if (!(rarity in cardPoolByRarity)) cardPoolByRarity[rarity] = new Map();
-			cardPoolByRarity[rarity].set(cid, cardPool.get(cid) as number);
+			cardPoolByRarity[rarity].set(cid, Math.min(count, this.maxDuplicates?.[rarity] ?? 99));
 		}
 		return cardPoolByRarity;
 	}
@@ -529,21 +526,16 @@ export class Session implements IIndexable {
 
 		// Use pre-determined boosters; Make sure supplied booster are correct.
 		if (this.usePredeterminedBoosters) {
-			if (!this.predeterminedBoosters) {
+			if (!this.predeterminedBoosters)
 				return new MessageError(
 					"No Provided Boosters",
 					`Please upload your boosters in the session settings to use Pre-determined boosters.`
 				);
-			}
-			if (this.predeterminedBoosters.length !== boosterQuantity) {
+			if (this.predeterminedBoosters.length !== boosterQuantity)
 				return new MessageError(
 					"Incorrect Provided Boosters",
 					`Incorrect number of booster: Expected ${boosterQuantity}, got ${this.predeterminedBoosters.length}.`
 				);
-			}
-			if (this.predeterminedBoosters.some((b) => b.length !== this.predeterminedBoosters[0].length)) {
-				return new MessageError("Incorrect Provided Boosters", `Inconsistent booster sizes.`);
-			}
 			return this.predeterminedBoosters;
 		}
 		const playerCount = options?.playerCount ?? 1; // This is only used for booster ordering, using 1 when it doesn't matter should be fine.
@@ -590,28 +582,27 @@ export class Session implements IIndexable {
 			if (this.setRestriction.length === 1 && usePaperBoosterFactory(this.setRestriction[0])) {
 				defaultFactory = getPaperBoosterFactory(this.setRestriction[0], boosterFactoryOptions);
 			} else {
-				const localCollection = this.cardPoolByRarity();
-				let defaultLandSlot = null;
-				if (this.setRestriction.length === 1 && this.setRestriction[0] in SpecialLandSlots)
-					defaultLandSlot = SpecialLandSlots[this.setRestriction[0]];
 				defaultFactory = getBoosterFactory(
 					this.setRestriction.length === 1 ? this.setRestriction[0] : null,
-					localCollection,
-					defaultLandSlot,
+					this.cardPoolByRarity(),
+					this.setRestriction.length === 1 && this.setRestriction[0] in SpecialLandSlots
+						? SpecialLandSlots[this.setRestriction[0]]
+						: null,
 					boosterFactoryOptions
 				);
 				// Make sure we have enough cards
 				for (const slot of ["common", "uncommon", "rare"]) {
 					const card_count = countCards((defaultFactory as BoosterFactory).cardPool[slot]);
-					const card_target = targets[slot] * boosterQuantity;
-					if (card_count < card_target) {
-						const msg = `Not enough cards (${card_count}/${card_target} ${slot}s) in collection.`;
-						console.warn(msg);
+					const card_target =
+						targets[slot] *
+						(boosterSpecificRules
+							? boosterQuantity
+							: customBoosters.reduce((a, v) => (v === "" ? a + 1 : a), 0));
+					if (card_count < card_target)
 						return new MessageError(
 							"Error generating boosters",
 							`Not enough cards (${card_count}/${card_target} ${slot}s) in collection.`
 						);
-					}
 				}
 			}
 		}
@@ -620,9 +611,8 @@ export class Session implements IIndexable {
 
 		// Simple case, generate all boosters using the default rule
 		if (!boosterSpecificRules) {
-			if (!defaultFactory) return new MessageError("Internal Error", "No default booster factory.");
 			for (let i = 0; i < boosterQuantity; ++i) {
-				const booster = defaultFactory.generateBooster(targets);
+				const booster = defaultFactory!.generateBooster(targets);
 				if (isMessageError(booster)) return booster;
 				boosters.push(booster);
 			}
@@ -630,7 +620,7 @@ export class Session implements IIndexable {
 		}
 
 		// Booster specific rules
-		const boosterFactories = [];
+		const boosterFactories: IBoosterFactory[] = [];
 		const usedSets: { [set: string]: IBoosterFactory } = {};
 
 		let randomSetsPool: string[] = []; // 'Bag' to pick a random set from, avoiding duplicates until necessary
@@ -649,7 +639,7 @@ export class Session implements IIndexable {
 			let boosterSet = customBoosters[Math.floor(i / playerCount) % customBoosters.length];
 			// No specific rules
 			if (boosterSet === "") {
-				boosterFactories.push(defaultFactory);
+				boosterFactories.push(defaultFactory!);
 				continue;
 			}
 			// "Random Set from Card Pool" in Chaos Draft
@@ -668,16 +658,16 @@ export class Session implements IIndexable {
 						boosterFactoryOptions
 					);
 					// Check if we have enough card, considering maxDuplicate is a limiting factor
-					const multiplier = customBoosters.reduce((a, v) => (v == boosterSet ? a + 1 : a), 0);
+					const multiplier = customBoosters.reduce((a, v) => (v === boosterSet ? a + 1 : a), 0); // Note: This won't be accurate in the case of 'random' sets.
 					for (const slot of ["common", "uncommon", "rare"]) {
 						if (
 							countCards((usedSets[boosterSet] as BoosterFactory).cardPool[slot]) <
 							multiplier * playerCount * targets[slot]
-						) {
-							const msg = `Not enough (${slot}) cards in card pool for individual booster restriction '${boosterSet}'. Please check the Max. Duplicates setting.`;
-							console.warn(msg);
-							return new MessageError("Error generating boosters", msg);
-						}
+						)
+							return new MessageError(
+								"Error generating boosters",
+								`Not enough (${slot}) cards in card pool for individual booster restriction '${boosterSet}'. Please check the Max. Duplicates setting.`
+							);
 					}
 				}
 			}
@@ -693,10 +683,8 @@ export class Session implements IIndexable {
 		}
 
 		// Generate Boosters
-		for (let b = 0; b < boosterQuantity; ++b) {
-			const rule = boosterFactories[b];
-			if (!rule) return new MessageError("Internal Error");
-			const booster = rule.generateBooster(targets);
+		for (const factory of boosterFactories) {
+			const booster = factory.generateBooster(targets);
 			if (isMessageError(booster)) return booster;
 			boosters.push(booster);
 		}
