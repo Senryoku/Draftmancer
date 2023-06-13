@@ -48,7 +48,7 @@
 		"chart.js": "^4.2.1",
 		"compression": "^1.7.4",
 		"cookie-parser": "^1.4.6",
-		"dotenv": "^16.0.3",
+		"dotenv": "^16.1.4",
 		"express": "^4.18.2",
 		"floating-vue": "^2.0.0-beta.1",
 		"glob": "^10.2.6",
