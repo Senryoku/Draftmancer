@@ -241,7 +241,7 @@ if not os.path.isfile(RatingsDest) or ForceRatings:
         with open(path, 'r', encoding="utf8") as file:
             text = file.read()
             matches = re.findall(
-                r"([^\s][^\n]+)\n\n.*\n?\*Pro Rating: ([0-9]*\.?[0-9]*)\*", text)
+                r"([^\s][^\n]+)\n\n.*\n?\*Pro Rating: ([0-9]*\.?[0-9]*( // ([0-9]*\.?[0-9]*))?)\*", text)
             print("Extracting ratings from ", path,
                   ": Found ", len(matches), " matches.")
             for m in matches:
