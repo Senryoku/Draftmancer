@@ -2309,11 +2309,11 @@
     "ltc": {
         "code": "ltc",
         "fullName": "Tales of Middle-earth Commander",
-        "cardCount": 383,
+        "cardCount": 410,
         "isPrimary": false,
         "icon": "img/sets/ltc.svg",
         "commonCount": 38,
-        "mythicCount": 59,
+        "mythicCount": 86,
         "rareCount": 237,
         "uncommonCount": 49
     },
