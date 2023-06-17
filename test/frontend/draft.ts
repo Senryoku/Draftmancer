@@ -201,6 +201,46 @@ describe("Front End - Multi", function () {
 	});
 });
 
+describe.only("Front End - Multi, Tournament Timer", function () {
+	this.timeout(100000);
+	setupBrowsers(2);
+
+	it(`Select the Tournament Timer Setting`, async function () {
+		await waitAndClickXpath(pages[0], "//button[contains(., 'Settings')]");
+		await waitAndClickSelector(pages[0], "#tournament-timer");
+		await pages[0].keyboard.press("Escape");
+	});
+
+	it(`Launch Draft`, async function () {
+		await clickDraft(pages[0]);
+		await pages[0].waitForXPath("//h2[contains(., 'Your Booster')]", {
+			visible: true,
+		});
+		await pages[1].waitForXPath("//h2[contains(., 'Your Booster')]", {
+			visible: true,
+		});
+		// Timer should start at 40
+		await pages[0].waitForXPath("//span[contains(., '40')]", {
+			visible: true,
+		});
+		await pages[0].waitForXPath("//div[contains(., 'Draft Started!')]", {
+			hidden: true,
+		});
+		await pages[1].waitForXPath("//div[contains(., 'Draft Started!')]", {
+			hidden: true,
+		});
+	});
+
+	it("Each player picks a card", async function () {
+		let done = false;
+		while (!done) {
+			const ownerPromise = pickCard(pages[0]);
+			const otherPromise = pickCard(pages[1]);
+			done = (await ownerPromise) === PickResult.Done && (await otherPromise) === PickResult.Done;
+		}
+	});
+});
+
 describe("Front End - Multi, with bots", function () {
 	this.timeout(100000);
 	setupBrowsers(2);

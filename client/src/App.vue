@@ -380,7 +380,11 @@
 							v-model.number="bots"
 						/>
 					</div>
-					<div class="inline" v-tooltip="'Pick Timer (sec.). Zero means no timer.'">
+					<div
+						class="inline"
+						v-tooltip="'Pick Timer (sec.). Zero means no timer.'"
+						:class="{ disabled: tournamentTimer }"
+					>
 						<label for="timer">
 							<font-awesome-icon icon="fa-solid fa-stopwatch" size="lg"></font-awesome-icon>
 						</label>
@@ -2398,6 +2402,19 @@
 							<label for="disable-bot-suggestions">Disable Bot Suggestions</label>
 							<div class="right">
 								<input type="checkbox" id="disable-bot-suggestions" v-model="disableBotSuggestions" />
+							</div>
+						</div>
+						<div
+							class="line"
+							v-tooltip.right="{
+								popperClass: 'option-tooltip',
+								content: '<p>Stricter timer starting at 40sec. used in official tournaments.</p>',
+								html: true,
+							}"
+						>
+							<label for="tournament-timer">Tournament Timer</label>
+							<div class="right">
+								<input type="checkbox" id="tournament-timer" v-model="tournamentTimer" />
 							</div>
 						</div>
 					</div>

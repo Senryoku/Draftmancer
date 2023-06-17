@@ -52,6 +52,7 @@ import {
 	hasProperty,
 	isArrayOf,
 	isBoolean,
+	isInteger,
 	isNumber,
 	isObject,
 	isSomeEnum,
@@ -939,6 +940,24 @@ function setPickTimer(userID: UserID, sessionID: SessionID, maxTimer: number) {
 	Sessions[sessionID].emitToConnectedNonOwners("setPickTimer", maxTimer);
 }
 
+function setTournamentTimer(userID: UserID, sessionID: SessionID, tournamentTimer: unknown) {
+	if (!isBoolean(tournamentTimer)) return;
+	Sessions[sessionID].tournamentTimer = tournamentTimer;
+	Sessions[sessionID].emitToConnectedNonOwners("sessionOptions", { tournamentTimer });
+}
+
+function setReviewTimer(userID: UserID, sessionID: SessionID, reviewTimer: unknown) {
+	if (!isInteger(reviewTimer)) return;
+	Sessions[sessionID].reviewTimer = reviewTimer;
+	Sessions[sessionID].emitToConnectedNonOwners("sessionOptions", { reviewTimer });
+}
+
+function setHidePicks(userID: UserID, sessionID: SessionID, hidePicks: unknown) {
+	if (!isBoolean(hidePicks)) return;
+	Sessions[sessionID].hidePicks = hidePicks;
+	Sessions[sessionID].emitToConnectedNonOwners("sessionOptions", { hidePicks });
+}
+
 function setMaxPlayers(userID: UserID, sessionID: SessionID, maxPlayers: number) {
 	if (!SessionsSettingsProps.maxPlayers(maxPlayers)) return;
 	Sessions[sessionID].maxPlayers = maxPlayers;
@@ -1434,6 +1453,9 @@ io.on("connection", async function (socket) {
 		socket.on("loadLocalCustomCardList", prepareSocketCallback(loadLocalCustomCardList, true));
 		socket.on("ignoreCollections", prepareSocketCallback(ignoreCollections, true));
 		socket.on("setPickTimer", prepareSocketCallback(setPickTimer, true));
+		socket.on("setTournamentTimer", prepareSocketCallback(setTournamentTimer, true));
+		socket.on("setReviewTimer", prepareSocketCallback(setReviewTimer, true));
+		socket.on("setHidePicks", prepareSocketCallback(setHidePicks, true));
 		socket.on("setMaxPlayers", prepareSocketCallback(setMaxPlayers, true));
 		socket.on("setMythicPromotion", prepareSocketCallback(setMythicPromotion, true));
 		socket.on("setUseBoosterContent", prepareSocketCallback(setUseBoosterContent, true));

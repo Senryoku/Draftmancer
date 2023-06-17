@@ -20,13 +20,12 @@ import {
 import { Cards, getUnique, BoosterCardsBySet, CardsBySet, MTGACardIDs, getCard } from "./Cards.js";
 import { fallbackToSimpleBots, isBot, MTGDraftBotParameters, MTGDraftBotsSetSpecializedModels } from "./Bot.js";
 import { computeHashes } from "./DeckHashes.js";
-import { BasicLandSlots, SpecialLandSlots } from "./LandSlot.js";
+import { SpecialLandSlots } from "./LandSlot.js";
 import {
 	BoosterFactory,
 	SetSpecificFactories,
 	DefaultBoosterTargets,
 	IBoosterFactory,
-	PaperBoosterSizes,
 	getBoosterFactory,
 	getPaperBoosterFactory,
 	isPaperBoosterFactoryAvailable,
@@ -74,6 +73,25 @@ import { isSomeEnum } from "./TypeChecks.js";
 import { askColors, choosePlayer } from "./Conspiracy.js";
 import { InProduction, TestingOnly } from "./Context.js";
 
+// Tournament timer depending on the number of remaining cards in a pack.
+const TournamentTimer = [
+	0,
+	5, // 1 card remaining. Should be immediate
+	5,
+	5,
+	5,
+	10, // 5 cards remaining
+	10,
+	15,
+	20,
+	20,
+	25,
+	25,
+	30,
+	35,
+	40, // 14 cards remaining, and more
+];
+
 export class Session implements IIndexable {
 	id: SessionID;
 	owner?: UserID;
@@ -95,6 +113,9 @@ export class Session implements IIndexable {
 	bots: number = 0;
 	maxTimer: number = 75;
 	maxPlayers: number = 8;
+	tournamentTimer: boolean = false; // Stricter timer used for tournaments, see https://blogs.magicjudges.org/rules/mtr-appendix-b/.
+	reviewTimer: number = 0; // A value of 0 will deactivate the review phase.
+	hidePicks: boolean = false; // Hide picks while drafting (outside of the review phase between packs). See https://blogs.magicjudges.org/rules/mtr7-7/
 	mythicPromotion: boolean = true;
 	useBoosterContent: boolean = false; // Use the specified booster content if true, DefaultBoosterTargets otherwise
 	boosterContent: { [slot: string]: number } = DefaultBoosterTargets;
@@ -3006,10 +3027,15 @@ export class Session implements IIndexable {
 
 		this.stopCountdown(userID);
 
-		const dec = (0.9 * this.maxTimer) / Math.max(1, s.numPicks - 1);
-		// Note: pickNumber can actually be greater or equal to numPicks in some cases (e.g. Lore Seeker)
-		const pickNumber = Math.min(s.players[userID].pickNumber, s.numPicks - 1);
-		s.players[userID].timer = Math.floor(this.maxTimer - pickNumber * dec);
+		if (this.tournamentTimer) {
+			const remainingCards = s.players[userID].boosters[0].length;
+			s.players[userID].timer = TournamentTimer[Math.min(TournamentTimer.length - 1, remainingCards)];
+		} else {
+			const dec = (0.9 * this.maxTimer) / Math.max(1, s.numPicks - 1);
+			// Note: pickNumber can actually be greater or equal to numPicks in some cases (e.g. Lore Seeker)
+			const pickNumber = Math.min(s.players[userID].pickNumber, s.numPicks - 1);
+			s.players[userID].timer = Math.floor(this.maxTimer - pickNumber * dec);
+		}
 
 		// Immediatly share the new value.
 		this.syncCountdown(userID);

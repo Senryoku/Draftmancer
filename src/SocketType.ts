@@ -327,6 +327,9 @@ export interface ClientToServerEvents {
 	loadLocalCustomCardList: (cubeName: string, ack: (result: SocketAck) => void) => void;
 	ignoreCollections: (ignoreCollections: boolean) => void;
 	setPickTimer: (maxTimer: number) => void;
+	setTournamentTimer: (tournamentTimer: boolean) => void;
+	setReviewTimer: (reviewTimer: number) => void;
+	setHidePicks: (hidePicks: boolean) => void;
 	setMaxPlayers: (maxPlayers: number) => void;
 	setMythicPromotion: (mythicPromotion: boolean) => void;
 	setUseBoosterContent: (useBoosterContent: boolean) => void;
