@@ -167,6 +167,8 @@ export class Session implements IIndexable {
 	beforeDelete() {
 		// We had a pending sendDecklog, cancel the timeout and execute it immediately.
 		if (this.sendDecklogTimeout) this.sendDecklog();
+		if (isDraftState(this.draftState) && this.draftState.pendingTimeout)
+			clearTimeout(this.draftState.pendingTimeout);
 	}
 
 	addUser(userID: UserID) {
@@ -2385,29 +2387,42 @@ export class Session implements IIndexable {
 
 	distributeBoosters() {
 		const s = this.draftState;
+		console.log(`Session.distributeBoosters (sessionID: ${this.id}) ${isDraftState(s)}`);
 		if (!isDraftState(s)) return;
+
+		console.log(`Session.distributeBoosters (sessionID: ${this.id}) OK`);
 
 		// End draft if there are no more boosters to distribute
 		if (s.boosters.length === 0) return this.endDraft();
 
-		const boosters = s.boosters.splice(0, Object.keys(s.players).length);
-		s.numPicks = boosters[0].length;
+		const doDistributeBoosters = () => {
+			if (s.pendingTimeout) s.pendingTimeout = null;
+			const boosters = s.boosters.splice(0, Object.keys(s.players).length);
+			s.numPicks = boosters[0].length;
 
-		let boosterIndex = 0;
-		for (const userID in s.players) {
-			const p = s.players[userID];
-			if (p.effect?.skipUntilNextRound) p.effect.skipUntilNextRound = false;
-			assert(p.boosters.length === 0, `distributeBoosters: ${userID} boosters.length ${p.boosters.length}`);
+			let boosterIndex = 0;
+			for (const userID in s.players) {
+				const p = s.players[userID];
+				if (p.effect?.skipUntilNextRound) p.effect.skipUntilNextRound = false;
+				assert(p.boosters.length === 0, `distributeBoosters: ${userID} boosters.length ${p.boosters.length}`);
 
-			p.pickNumber = 0;
-			this.passBooster(boosters[boosterIndex], userID);
-			++boosterIndex;
-		}
+				p.pickNumber = 0;
+				this.passBooster(boosters[boosterIndex], userID);
+				++boosterIndex;
+			}
 
-		if (this.owner && !this.ownerIsPlayer)
-			Connections[this.owner]?.socket.emit("draftState", {
-				boosterNumber: s.boosterNumber,
-			});
+			if (this.owner && !this.ownerIsPlayer)
+				Connections[this.owner]?.socket.emit("draftState", {
+					boosterNumber: s.boosterNumber,
+				});
+		};
+
+		if (this.reviewTimer > 0 && s.boosterNumber > 0) {
+			this.forUsers((uid) => Connections[uid]?.socket.emit("startReviewPhase", this.reviewTimer));
+			// FIXME: Using this method, if everyone disconnects during the review phase (not impossible, especially with a single player), the draft will be completely stuck.
+			//        This is currently handled by a workaround in resumeOnReconnection, but we can probably do better.
+			s.pendingTimeout = setTimeout(doDistributeBoosters, this.reviewTimer * 1000);
+		} else doDistributeBoosters();
 	}
 
 	checkDraftRoundEnd() {
@@ -2437,6 +2452,20 @@ export class Session implements IIndexable {
 			// Restart bot pick chains
 			for (const uid in this.draftState.players)
 				if (this.draftState.players[uid].isBot) this.startBotPickChain(uid);
+			// Disconnect happened during the review phase
+			if (Object.values(this.draftState.players).every((p) => p.boosters.length === 0)) {
+				// Workaround for a very specific case where everyone disconnects during a review phase, leaving everyone waiting for the next round to start.
+				if (!this.draftState.pendingTimeout) setImmediate(this.distributeBoosters.bind(this));
+				else {
+					// FIXME: This is clearly non-standard, but it works in Node 18.
+					const remainingTime =
+						((this.draftState.pendingTimeout as unknown as { _idleStart: number })._idleStart +
+							(this.draftState.pendingTimeout as unknown as { _idleTimeout: number })._idleTimeout) /
+							1000 -
+							process.uptime() ?? 0;
+					this.forUsers((uid) => Connections[uid]?.socket.emit("startReviewPhase", remainingTime));
+				}
+			}
 		}
 
 		this.forUsers((u) => Connections[u]?.socket.emit("resumeOnReconnection", new Message(msg.title, msg.text)));

@@ -105,6 +105,7 @@ export interface ServerToClientEvents {
 
 	startDraft: (userData: UsersData) => void;
 	draftState: (state: ReturnType<DraftState["syncData"]> | { boosterNumber: number }) => void;
+	startReviewPhase: (timer: number) => void;
 	endDraft: () => void;
 	pauseDraft: () => void;
 	resumeDraft: () => void;

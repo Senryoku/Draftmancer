@@ -11,8 +11,10 @@ import {
 	PickResult,
 	setupBrowsers,
 	pages,
+	replaceInput,
 } from "./src/common.js";
 import { ElementHandle, Page } from "puppeteer";
+import { simulateRestart } from "../../src/Persistence.js";
 
 async function clickDraft(page: Page) {
 	// Click 'Start' button
@@ -201,7 +203,7 @@ describe("Front End - Multi", function () {
 	});
 });
 
-describe.only("Front End - Multi, Tournament Timer", function () {
+describe("Front End - Multi, Tournament Timer", function () {
 	this.timeout(100000);
 	setupBrowsers(2);
 
@@ -232,6 +234,172 @@ describe.only("Front End - Multi, Tournament Timer", function () {
 	});
 
 	it("Each player picks a card", async function () {
+		let done = false;
+		while (!done) {
+			const ownerPromise = pickCard(pages[0]);
+			const otherPromise = pickCard(pages[1]);
+			done = (await ownerPromise) === PickResult.Done && (await otherPromise) === PickResult.Done;
+		}
+	});
+});
+
+describe("Front End - Multi, Review Timer", function () {
+	let sessionLink: string;
+	this.timeout(100000);
+	setupBrowsers(2);
+
+	it(`Adjust the Review Timer Setting`, async function () {
+		sessionLink = await getSessionLink(pages[0]);
+		await waitAndClickXpath(pages[0], "//button[contains(., 'Settings')]");
+		await replaceInput("5")(await pages[0].waitForSelector("#review-timer"));
+		await replaceInput("5")(await pages[0].waitForSelector("#boosters-per-player"));
+		await waitAndClickSelector(pages[0], "#hide-picks");
+		await pages[0].keyboard.press("Escape");
+	});
+
+	it(`Launch Draft`, async function () {
+		await clickDraft(pages[0]);
+		await pages[0].waitForXPath("//h2[contains(., 'Your Booster')]", {
+			visible: true,
+		});
+		await pages[1].waitForXPath("//h2[contains(., 'Your Booster')]", {
+			visible: true,
+		});
+		await pages[0].waitForXPath("//div[contains(., 'Draft Started!')]", {
+			hidden: true,
+		});
+		await pages[1].waitForXPath("//div[contains(., 'Draft Started!')]", {
+			hidden: true,
+		});
+	});
+
+	it("Each player picks 14 cards", async function () {
+		const picks = [0, 0];
+		while (picks[0] !== 14 && picks[1] !== 14) {
+			if ((await pickCard(pages[0])) === PickResult.Picked) picks[0]++;
+			if ((await pickCard(pages[1])) === PickResult.Picked) picks[1]++;
+		}
+	});
+
+	it("We should now be in a review phase", async function () {
+		this.timeout(10000);
+		await pages[1].waitForXPath("//*[contains(., 'Review Phase')]", {
+			hidden: false,
+		});
+		// Wait for it to end
+		await pages[1].waitForXPath("//*[contains(., 'Review Phase')]", {
+			hidden: true,
+		});
+	});
+
+	it("Each player picks 14 cards", async function () {
+		const picks = [0, 0];
+		while (picks[0] !== 14 && picks[1] !== 14) {
+			if ((await pickCard(pages[0])) === PickResult.Picked) picks[0]++;
+			if ((await pickCard(pages[1])) === PickResult.Picked) picks[1]++;
+		}
+	});
+
+	it("We should now be in a review phase", async function () {
+		await pages[1].waitForXPath("//*[contains(., 'Review Phase')]", {
+			hidden: false,
+		});
+	});
+
+	it("One player disconnects and reconnects", async function () {
+		await pages[1].goto("about:blank", { waitUntil: ["networkidle0", "domcontentloaded"] });
+		await new Promise((r) => setTimeout(r, 250));
+		await pages[1].goto(sessionLink, { waitUntil: ["networkidle0", "domcontentloaded"] });
+		await pages[1].waitForXPath("//div[contains(., 'Reconnected')]", {
+			hidden: true,
+		});
+	});
+
+	it("We should still be in a review phase", async function () {
+		this.timeout(10000);
+		await pages[1].waitForXPath("//*[contains(., 'Review Phase')]", {
+			hidden: false,
+		});
+		// Wait for it to end
+		await pages[1].waitForXPath("//*[contains(., 'Review Phase')]", {
+			hidden: true,
+		});
+	});
+
+	it("Each player picks 14 cards", async function () {
+		const picks = [0, 0];
+		while (picks[0] !== 14 && picks[1] !== 14) {
+			if ((await pickCard(pages[0])) === PickResult.Picked) picks[0]++;
+			if ((await pickCard(pages[1])) === PickResult.Picked) picks[1]++;
+		}
+	});
+
+	it("We should now be in a review phase", async function () {
+		await pages[1].waitForXPath("//*[contains(., 'Review Phase')]", {
+			hidden: false,
+		});
+	});
+
+	it("Both players disconnect", async function () {
+		await pages[0].goto("about:blank", { waitUntil: ["networkidle0", "domcontentloaded"] });
+		await pages[1].goto("about:blank", { waitUntil: ["networkidle0", "domcontentloaded"] });
+
+		await new Promise((r) => setTimeout(r, 250));
+
+		await pages[0].goto(sessionLink, { waitUntil: ["networkidle0", "domcontentloaded"] });
+		await pages[1].goto(sessionLink, { waitUntil: ["networkidle0", "domcontentloaded"] });
+
+		await pages[0].waitForXPath("//div[contains(., 'Reconnected')]", {
+			hidden: true,
+		});
+		await pages[1].waitForXPath("//div[contains(., 'Reconnected')]", {
+			hidden: true,
+		});
+	});
+
+	it("We should still be in a review phase", async function () {
+		this.timeout(10000);
+		await pages[1].waitForXPath("//*[contains(., 'Review Phase')]", {
+			hidden: false,
+		});
+		// Wait for it to end
+		await pages[1].waitForXPath("//*[contains(., 'Review Phase')]", {
+			hidden: true,
+		});
+	});
+
+	it("Each player picks 14 cards", async function () {
+		const picks = [0, 0];
+		while (picks[0] !== 14 && picks[1] !== 14) {
+			if ((await pickCard(pages[0])) === PickResult.Picked) picks[0]++;
+			if ((await pickCard(pages[1])) === PickResult.Picked) picks[1]++;
+		}
+	});
+
+	it("We should now be in a review phase", async function () {
+		await pages[1].waitForXPath("//*[contains(., 'Review Phase')]", {
+			hidden: false,
+		});
+	});
+
+	it("Simulate server restart", async function () {
+		await simulateRestart();
+		await pages[0].goto(sessionLink, { waitUntil: ["networkidle0", "domcontentloaded"] });
+		await pages[1].goto(sessionLink, { waitUntil: ["networkidle0", "domcontentloaded"] });
+	});
+
+	it("We should still be in a review phase", async function () {
+		this.timeout(10000);
+		await pages[1].waitForXPath("//*[contains(., 'Review Phase')]", {
+			hidden: false,
+		});
+		// Wait for it to end
+		await pages[1].waitForXPath("//*[contains(., 'Review Phase')]", {
+			hidden: true,
+		});
+	});
+
+	it("Draft should end normally", async function () {
 		let done = false;
 		while (!done) {
 			const ownerPromise = pickCard(pages[0]);

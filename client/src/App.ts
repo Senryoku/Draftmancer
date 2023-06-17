@@ -90,6 +90,7 @@ enum DraftState {
 	None = "None",
 	Waiting = "Waiting",
 	Picking = "Picking",
+	Reviewing = "Reviewing",
 	Brewing = "Brewing",
 	Watching = "Watching",
 	WinstonPicking = "WinstonPicking",
@@ -309,6 +310,8 @@ export default defineComponent({
 			discardRemainingCardsAt: 0,
 			maxTimer: 75,
 			tournamentTimer: false,
+			reviewTimer: 0,
+			hidePicks: false,
 			pickTimer: 75,
 			personalLogs: true,
 			draftLogRecipients: "everyone" as DraftLogRecipients,
@@ -1072,7 +1075,7 @@ export default defineComponent({
 					if (data.state.booster) {
 						this.booster = data.state.booster;
 						this.draftingState = DraftState.Picking;
-					} else this.draftingState = DraftState.Waiting;
+					} else if (this.draftingState !== DraftState.Reviewing) this.draftingState = DraftState.Waiting;
 
 					this.boosterNumber = data.state.boosterNumber;
 					this.pickNumber = data.state.pickNumber;
@@ -1120,9 +1123,21 @@ export default defineComponent({
 					this.draftingState = DraftState.Picking;
 					this.skipPick = data.skipPick;
 				} else {
-					// No new booster, don't update the state yet.
-					this.draftingState = DraftState.Waiting;
+					if (this.draftingState !== DraftState.Reviewing) {
+						// No new booster, don't update the state yet.
+						this.draftingState = DraftState.Waiting;
+					}
 				}
+			});
+
+			this.socket.on("startReviewPhase", (timer) => {
+				this.draftingState = DraftState.Reviewing;
+				this.pickTimer = Math.ceil(timer);
+				// This one is purely visual.
+				const interval = setInterval(() => {
+					--this.pickTimer;
+					if (this.pickTimer <= 0 || this.pickTimer >= timer) clearInterval(interval);
+				}, 1000);
 			});
 
 			this.socket.on("updateCardState", (updates) => {
@@ -3613,7 +3628,9 @@ export default defineComponent({
 		},
 		displayDeckAndSideboard(): boolean {
 			return (
-				(this.drafting && this.draftingState !== DraftState.Watching) ||
+				(this.drafting &&
+					(!this.hidePicks || this.draftingState === DraftState.Reviewing) &&
+					this.draftingState !== DraftState.Watching) ||
 				this.draftingState === DraftState.Brewing
 			);
 		},
@@ -3889,6 +3906,14 @@ export default defineComponent({
 		tournamentTimer() {
 			if (this.userID !== this.sessionOwner || !this.socket) return;
 			this.socket.emit("setTournamentTimer", this.tournamentTimer);
+		},
+		reviewTimer() {
+			if (this.userID !== this.sessionOwner || !this.socket) return;
+			this.socket.emit("setReviewTimer", this.reviewTimer);
+		},
+		hidePicks() {
+			if (this.userID !== this.sessionOwner || !this.socket) return;
+			this.socket.emit("setHidePicks", this.hidePicks);
 		},
 		ignoreCollections() {
 			if (this.userID !== this.sessionOwner || !this.socket) return;

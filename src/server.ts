@@ -947,7 +947,7 @@ function setTournamentTimer(userID: UserID, sessionID: SessionID, tournamentTime
 }
 
 function setReviewTimer(userID: UserID, sessionID: SessionID, reviewTimer: unknown) {
-	if (!isInteger(reviewTimer)) return;
+	if (!isInteger(reviewTimer) || reviewTimer < 0) return;
 	Sessions[sessionID].reviewTimer = reviewTimer;
 	Sessions[sessionID].emitToConnectedNonOwners("sessionOptions", { reviewTimer });
 }

@@ -33,6 +33,8 @@ export class DraftState extends IDraftState {
 		};
 	} = {};
 
+	pendingTimeout: NodeJS.Timeout | null = null;
+
 	constructor(
 		boosters: UniqueCard[][],
 		players: UserID[],
