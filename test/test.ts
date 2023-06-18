@@ -1857,17 +1857,6 @@ describe("Single Draft (Two Players)", function () {
 			});
 		});
 
-		it("Expect error on valid booster list but with inconsistent sizes.", function (done) {
-			clients[ownerIdx].emit(
-				"setBoosters",
-				"15 Forest\n\n18 Forest\n\n18 Forest\n\n18 Forest\n\n18 Forest\n\n18 Forest",
-				(r) => {
-					expect(r.error);
-					done();
-				}
-			);
-		});
-
 		it("Sumbit valid booster list", function (done) {
 			clients[ownerIdx].emit(
 				"setBoosters",

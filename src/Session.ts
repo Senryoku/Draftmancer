@@ -351,16 +351,6 @@ export class Session implements IIndexable {
 
 		if (boosters.length === 0) return new SocketError("Empty list");
 
-		// Check booster size consistency.
-		for (let i = 1; i < boosters.length; ++i)
-			if (boosters[i].length !== boosters[0].length)
-				return new SocketError(
-					"Inconsistent booster sizes",
-					`All boosters must be of the same size. Booster #${i + 1} has ${
-						boosters[i].length
-					} cards, expected ${boosters[0].length}.`
-				);
-
 		this.predeterminedBoosters = boosters;
 		this.setUsePredeterminedBoosters(true);
 		return new SocketAck();
