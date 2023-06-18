@@ -2573,11 +2573,11 @@ export class Session implements IIndexable {
 		if (this.draftLog)
 			for (const uid in this.draftLog.users) {
 				if (!this.draftLog.users[uid].isBot) {
-					this.draftLog.users[uid].cards = getPickedCardIds(
-						// Has this user been replaced by a bot?
-						(this.isDisconnected(uid) ? this.disconnectedUsers[uid] : Connections[uid]).pickedCards
-					);
-					this.updateDecklistInLog(uid);
+					const p = this.isDisconnected(uid) ? this.disconnectedUsers[uid] : Connections[uid]; // FIXME: This should not be necessary, I don't know why Connections[uid] can be undefined here (if the user isn't disconnected).
+					if (p) {
+						this.draftLog.users[uid].cards = getPickedCardIds(p.pickedCards);
+						this.updateDecklistInLog(uid);
+					}
 				}
 			}
 	}
