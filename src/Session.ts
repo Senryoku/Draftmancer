@@ -2475,6 +2475,11 @@ export class Session implements IIndexable {
 		const s = this.draftState;
 		if (!isDraftState(s)) return;
 
+		if (s.pendingTimeout) {
+			clearTimeout(s.pendingTimeout);
+			s.pendingTimeout = null;
+		}
+
 		// Allow other callbacks (like distributeBoosters) to finish before proceeding (actually an issue in tests).
 		process.nextTick(() => {
 			if (this.draftLog) {
