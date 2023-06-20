@@ -18,15 +18,11 @@ export class WinstonDraftState extends IDraftState implements TurnBased {
 			shuffleArray(this.cardPool);
 		}
 		if (this.cardPool.length >= 3)
-			this.piles = [
-				[this.cardPool.pop() as UniqueCard],
-				[this.cardPool.pop() as UniqueCard],
-				[this.cardPool.pop() as UniqueCard],
-			];
+			this.piles = [[this.cardPool.pop()!], [this.cardPool.pop()!], [this.cardPool.pop()!]];
 	}
 
 	currentPlayer() {
-		return this.players[this.round % 2];
+		return this.players[this.round % this.players.length];
 	}
 
 	syncData(uid: UserID) {

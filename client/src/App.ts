@@ -1775,26 +1775,26 @@ export default defineComponent({
 				return;
 			}
 
-			let { value: boosterCount } = await Alert.fire({
+			let { value: boostersPerPlayer } = await Alert.fire({
 				title: "Winston Draft",
-				html: `<p>Winston Draft is a draft variant for two players. <a href="https://mtg.gamepedia.com/Winston_Draft" target="_blank" rel="noopener nofollow">More information here</a>.</p>How many boosters for the main stack (default is 6)?`,
-				inputPlaceholder: "Booster count",
+				html: `<p>Winston Draft is a draft variant designed for two players, but playable with more participants. Players takes turns choosing between 3 growing piles of cards, or drawing a random one. <a href="https://mtg.gamepedia.com/Winston_Draft" target="_blank" rel="noopener nofollow">More information here</a>.</p>How many boosters per player for the main stack (default is 3)?`,
+				inputPlaceholder: "Boosters per player",
 				input: "number",
 				inputAttributes: {
-					min: "6",
+					min: "1",
 					max: "12",
 					step: "1",
 				},
-				inputValue: 6,
+				inputValue: 3,
 				showCancelButton: true,
 				confirmButtonColor: ButtonColor.Safe,
 				cancelButtonColor: ButtonColor.Critical,
 				confirmButtonText: "Start Winston Draft",
 			});
 
-			if (boosterCount) {
-				if (typeof boosterCount !== "number") boosterCount = parseInt(boosterCount);
-				this.socket.emit("startWinstonDraft", boosterCount, true, (answer: SocketAck) => {
+			if (boostersPerPlayer) {
+				if (typeof boostersPerPlayer !== "number") boostersPerPlayer = parseInt(boostersPerPlayer);
+				this.socket.emit("startWinstonDraft", boostersPerPlayer, true, (answer: SocketAck) => {
 					if (answer.code !== 0 && answer.error) Alert.fire(answer.error);
 				});
 			}

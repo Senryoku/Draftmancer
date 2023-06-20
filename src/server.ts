@@ -571,14 +571,16 @@ function startRotisserieDraft(
 function startWinstonDraft(
 	userID: UserID,
 	sessionID: SessionID,
-	boosterCount: unknown,
+	boostersPerPlayer: unknown,
 	removeBasicLands: unknown,
 	ack: (s: SocketAck) => void
 ) {
 	const sess = Sessions[sessionID];
-	const localBoosterCount = !isNumber(boosterCount) ? parseInt(boosterCount as string) : boosterCount;
+	const localBoostersPerPlayer = !isNumber(boostersPerPlayer)
+		? parseInt(boostersPerPlayer as string)
+		: boostersPerPlayer;
 	const localRemoveBasicLands = isBoolean(removeBasicLands) ? removeBasicLands : true;
-	const r = sess.startWinstonDraft(localBoosterCount || 6, localRemoveBasicLands);
+	const r = sess.startWinstonDraft(localBoostersPerPlayer || 6, localRemoveBasicLands);
 	if (!isSocketError(r)) startPublicSession(sess);
 	ack(r);
 }
