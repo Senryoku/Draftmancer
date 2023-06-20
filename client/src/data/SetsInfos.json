@@ -697,11 +697,11 @@
     "cmm": {
         "code": "cmm",
         "fullName": "Commander Masters",
-        "cardCount": 28,
+        "cardCount": 29,
         "isPrimary": true,
         "icon": "img/sets/cmm.svg",
         "mythicCount": 23,
-        "rareCount": 5
+        "rareCount": 6
     },
     "cmr": {
         "code": "cmr",
@@ -3023,11 +3023,11 @@
     "p30a": {
         "code": "p30a",
         "fullName": "30th Anniversary Play Promos",
-        "cardCount": 26,
+        "cardCount": 27,
         "isPrimary": false,
         "icon": "img/sets/p30a.svg",
         "mythicCount": 1,
-        "rareCount": 25
+        "rareCount": 26
     },
     "p30h": {
         "code": "p30h",
@@ -5894,9 +5894,9 @@
     },
     "who": {
         "code": "who",
-        "fullName": "Universes Beyond: Doctor Who",
+        "fullName": "Doctor Who",
         "cardCount": 6,
-        "isPrimary": true,
+        "isPrimary": false,
         "icon": "img/sets/who.svg",
         "commonCount": 6
     },
