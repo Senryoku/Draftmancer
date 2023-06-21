@@ -2377,10 +2377,7 @@ export class Session implements IIndexable {
 
 	distributeBoosters() {
 		const s = this.draftState;
-		console.log(`Session.distributeBoosters (sessionID: ${this.id}) ${isDraftState(s)}`);
 		if (!isDraftState(s)) return;
-
-		console.log(`Session.distributeBoosters (sessionID: ${this.id}) OK`);
 
 		// End draft if there are no more boosters to distribute
 		if (s.boosters.length === 0) return this.endDraft();
