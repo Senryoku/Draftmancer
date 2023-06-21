@@ -406,10 +406,10 @@
 								<span class="game-modes-cat-title">Draft</span>
 								<div
 									v-tooltip.left="
-										'Starts a Winston Draft. This is a draft variant for only two players.'
+										'Starts a Winston Draft. This is a draft variant intended for two players, but playable at any number.'
 									"
 								>
-									<button @click="startWinstonDraft()">Winston (2p.)</button>
+									<button @click="startWinstonDraft()">Winston</button>
 								</div>
 								<div
 									v-tooltip.left="

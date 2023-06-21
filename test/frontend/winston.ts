@@ -45,58 +45,49 @@ async function pickWinston(page: Page, forceDepth?: number) {
 }
 
 describe("Winston Draft", function () {
-	describe("Winston Draft - Basic", function () {
-		this.timeout(20000);
-		setupBrowsers(2);
+	for (let playerCount = 2; playerCount <= 4; ++playerCount)
+		describe(`Winston Draft - ${playerCount} players`, function () {
+			this.timeout(20000);
+			setupBrowsers(playerCount);
 
-		it(`Launch Winston Draft`, async function () {
-			await launchMode("Winston");
-			await waitAndClickXpath(pages[0], "//button[contains(., 'Start Winston Draft')]");
+			it(`Launch Winston Draft`, async function () {
+				await launchMode("Winston");
+				await waitAndClickXpath(pages[0], "//button[contains(., 'Start Winston Draft')]");
 
-			await Promise.all(
-				pages.map((page) =>
-					page.waitForXPath("//h2[contains(., 'Winston Draft')]", {
-						visible: true,
-					})
-				)
-			);
+				await Promise.all(
+					pages.map((page) =>
+						page.waitForXPath("//h2[contains(., 'Winston Draft')]", {
+							visible: true,
+						})
+					)
+				);
+			});
+
+			it(`should be able to pick the first pile.`, async function () {
+				await Promise.all(pages.map((p) => pickWinston(p, 0)));
+			});
+
+			it(`should be able to pick the second pile.`, async function () {
+				await Promise.all(pages.map((p) => pickWinston(p, 1)));
+			});
+
+			it(`should be able to pick the third pile.`, async function () {
+				await Promise.all(pages.map((p) => pickWinston(p, 2)));
+			});
+
+			it(`should be able to skip all piles and draw.`, async function () {
+				await Promise.all(pages.map((p) => pickWinston(p, -1)));
+			});
+
+			it(`Pick until done.`, async function () {
+				this.timeout(100000);
+				let done = false;
+				while (!done) {
+					done = (await Promise.all(pages.map((p) => pickWinston(p)))).every((b) => b);
+					await new Promise((resolve) => setTimeout(resolve, 100));
+				}
+			});
 		});
-
-		it(`should be able to pick the first pile.`, async function () {
-			const ownerPromise = pickWinston(pages[0], 0);
-			const otherPromise = pickWinston(pages[1], 0);
-			await Promise.all([ownerPromise, otherPromise]);
-		});
-
-		it(`should be able to pick the second pile.`, async function () {
-			const ownerPromise = pickWinston(pages[0], 1);
-			const otherPromise = pickWinston(pages[1], 1);
-			await Promise.all([ownerPromise, otherPromise]);
-		});
-
-		it(`should be able to pick the third pile.`, async function () {
-			const ownerPromise = pickWinston(pages[0], 2);
-			const otherPromise = pickWinston(pages[1], 2);
-			await Promise.all([ownerPromise, otherPromise]);
-		});
-
-		it(`should be able to skip all piles and draw.`, async function () {
-			const ownerPromise = pickWinston(pages[0], -1);
-			const otherPromise = pickWinston(pages[1], -1);
-			await Promise.all([ownerPromise, otherPromise]);
-		});
-
-		it(`Pick until done.`, async function () {
-			this.timeout(100000);
-			let done = false;
-			while (!done) {
-				const ownerPromise = pickWinston(pages[0]);
-				const otherPromise = pickWinston(pages[1]);
-				done = (await ownerPromise) && (await otherPromise);
-				await new Promise((resolve) => setTimeout(resolve, 100));
-			}
-		});
-	});
 
 	describe("Winston Draft with disconnects", function () {
 		let sessionLink: string;
