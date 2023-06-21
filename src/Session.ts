@@ -2418,18 +2418,24 @@ export class Session implements IIndexable {
 		// Allow other callbacks (like distributeBoosters) to finish before proceeding (actually an issue in tests).
 		process.nextTick(() => {
 			if (this.draftLog) {
-				// Bots are not handled by finalizeLogs()
-				for (const userID in s.players)
-					if (s.players[userID].isBot)
-						this.draftLog.users[userID].cards = s.players[userID].botInstance.cards.map((c: Card) => c.id);
-				this.finalizeLogs();
-				this.sendLogs();
-				this.initSendDecklogTimeout();
+				try {
+					// Bots are not handled by finalizeLogs()
+					for (const userID in s.players)
+						if (s.players[userID].isBot)
+							this.draftLog.users[userID].cards = s.players[userID].botInstance.cards.map(
+								(c: Card) => c.id
+							);
+					this.finalizeLogs();
+					this.sendLogs();
+					this.initSendDecklogTimeout();
+				} catch (e) {
+					console.error(`Error handling log in endDraft for session ${this.id}:`, e);
+				}
 			}
 			logSession("Draft", this);
 			this.cleanDraftState();
 
-			this.forUsers((u) => Connections[u].socket.emit("endDraft"));
+			this.forUsers((u) => Connections[u]?.socket.emit("endDraft"));
 			console.log(`Session ${this.id} draft ended.`);
 		});
 	}
