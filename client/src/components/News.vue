@@ -1,6 +1,23 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
+			<em>June 21, 2023</em>
+			<ul>
+				<li>Experimental tournament settings for standard drafts:</li>
+				<ul>
+					<li>
+						Stricter timer following
+						<a href="https://blogs.magicjudges.org/rules/mtr-appendix-b/" target="_blank"
+							>official rulings</a
+						>.
+					</li>
+					<li>Option to hide picks during the draft.</li>
+					<li>Optional review phase between boosters.</li>
+				</ul>
+				<li>Extended Winston Draft to any number of players.</li>
+			</ul>
+		</div>
+		<div class="news">
 			<em>June 09, 2023</em>
 			<p>
 				<img src="img/sets/ltr.svg" class="set-icon" style="--invertedness: 100%" alt="" /> The Lord of the
@@ -24,43 +41,6 @@
 				</li>
 				<li>Enhanced draft logs to include picks for more Game Modes.</li>
 				<li>Various bug fixes and improvements.</li>
-			</ul>
-		</div>
-		<div class="news">
-			<em>May 16, 2023</em>
-			<ul>
-				<li>
-					Experimental support for
-					<img src="img/sets/cns.svg" class="set-icon" style="--invertedness: 100%" alt="" /> Conspiracy draft
-					matters cards!<br />
-					Not all cards are supported, but I tried to focus on the most popular ones, like
-					<a href="https://scryfall.com/card/cns/58/cogwork-librarian" target="blank">
-						<font-awesome-icon icon="fa-solid fa-external-link-alt"></font-awesome-icon>
-						Cogwork Librarian
-					</a>
-					or
-					<a href="https://scryfall.com/card/cns/62/lore-seeker" target="blank">
-						<font-awesome-icon icon="fa-solid fa-external-link-alt"></font-awesome-icon>
-						Lore Seeker
-					</a>
-					. You can find the detailled list of supported cards on
-					<a href="https://github.com/Senryoku/Draftmancer/wiki/Conspiracy-cards-support" target="blank"
-						>this page of the GitHub wiki</a
-					>.
-				</li>
-			</ul>
-		</div>
-		<div class="news">
-			<em>May 09, 2023</em>
-			<ul>
-				<li>
-					New feature: <a href="/draftqueue">Draft Queues</a>!<br />
-					Quickly and conveniently practice drafting againt actual humans!
-				</li>
-				<li>
-					<img src="img/sets/mat.svg" class="set-icon" style="--invertedness: 100%" alt="" /> March of the
-					Machine: The Aftermath draft, mimicking Arena's with one MAT card in a MOM booster.
-				</li>
 			</ul>
 		</div>
 	</div>
