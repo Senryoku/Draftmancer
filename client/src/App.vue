@@ -380,7 +380,11 @@
 							v-model.number="bots"
 						/>
 					</div>
-					<div class="inline" v-tooltip="'Pick Timer (sec.). Zero means no timer.'">
+					<div
+						class="inline"
+						v-tooltip="'Pick Timer (sec.). Zero means no timer.'"
+						:class="{ disabled: tournamentTimer }"
+					>
 						<label for="timer">
 							<font-awesome-icon icon="fa-solid fa-stopwatch" size="lg"></font-awesome-icon>
 						</label>
@@ -1344,6 +1348,21 @@
 					<font-awesome-icon icon="fa-solid fa-arrow-left"></font-awesome-icon>
 					Back to Draft Queue
 				</a>
+			</div>
+
+			<div v-if="draftingState === DraftState.Reviewing" style="text-align: center">
+				<h1>Review Phase</h1>
+				<span class="chrono">
+					<div
+						class="timer-icon"
+						:key="`${reviewTimer}_${boosterNumber}_${pickNumber}`"
+						:style="`--timer-max: ${reviewTimer}; --timer-current: ${pickTimer - 1}`"
+					>
+						<font-awesome-icon icon="fa-solid fa-stopwatch" size="lg"></font-awesome-icon>
+						<div class="timer-icon-moving"></div>
+					</div>
+					<span>{{ pickTimer }}</span>
+				</span>
 			</div>
 
 			<!-- Brewing controls (Deck & Sideboard) -->
@@ -2398,6 +2417,54 @@
 							<label for="disable-bot-suggestions">Disable Bot Suggestions</label>
 							<div class="right">
 								<input type="checkbox" id="disable-bot-suggestions" v-model="disableBotSuggestions" />
+							</div>
+						</div>
+						<h4>Tournament Settings</h4>
+						<div
+							class="line"
+							v-tooltip.right="{
+								popperClass: 'option-tooltip',
+								content: '<p>Stricter timer starting at 40sec. used in official tournaments.</p>',
+								html: true,
+							}"
+						>
+							<label for="tournament-timer">Tournament Timer</label>
+							<div class="right">
+								<input type="checkbox" id="tournament-timer" v-model="tournamentTimer" />
+							</div>
+						</div>
+						<div
+							class="line"
+							v-tooltip.right="{
+								popperClass: 'option-tooltip',
+								content:
+									'<p>Controls the duration of the review phase between booster. This is generally used in conjonction with the \'Hide Picks\' settings. A value of 0 disables the review phase.</p>',
+								html: true,
+							}"
+						>
+							<label for="review-timer">Review Timer</label>
+							<div class="right">
+								<input
+									type="number"
+									id="review-timer"
+									class="small-number-input"
+									min="0"
+									step="15"
+									v-model.number="reviewTimer"
+								/>
+							</div>
+						</div>
+						<div
+							class="line"
+							v-tooltip.right="{
+								popperClass: 'option-tooltip',
+								content: '<p>Hide picks during the draft, outside of the review phase.</p>',
+								html: true,
+							}"
+						>
+							<label for="hide-picks">Hide Picks</label>
+							<div class="right">
+								<input type="checkbox" id="hide-picks" v-model="hidePicks" />
 							</div>
 						</div>
 					</div>

@@ -37,6 +37,12 @@ export const SessionsSettingsProps: { [propName: string]: (val: unknown) => bool
 		if (!isInteger(val)) return false;
 		return val >= 0;
 	},
+	tournamentTimer: isBoolean,
+	reviewTimer(val: unknown) {
+		if (!isInteger(val)) return false;
+		return val >= 0;
+	},
+	hidePicks: isBoolean,
 	maxPlayers(val: unknown) {
 		if (!isInteger(val)) return false;
 		return val >= 1;

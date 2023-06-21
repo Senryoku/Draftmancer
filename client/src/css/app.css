@@ -1127,7 +1127,8 @@ ul.player-list {
 	filter: grayscale();
 }
 
-#chrono {
+#chrono,
+.chrono {
 	padding: 0.2em;
 	padding-left: 0.5em;
 	padding-right: 0.5em;

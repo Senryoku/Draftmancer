@@ -274,6 +274,7 @@ export function getPoDSession(s: Session) {
 			copyPODProps(s.draftState, PoDSession.draftState);
 
 			if (s.draftState instanceof DraftState) {
+				PoDSession.draftState.pendingTimeout = null;
 				const players = {};
 				copyPODProps(s.draftState.players, players);
 				PoDSession.draftState.players = players;

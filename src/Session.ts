@@ -20,13 +20,12 @@ import {
 import { Cards, getUnique, BoosterCardsBySet, CardsBySet, MTGACardIDs, getCard } from "./Cards.js";
 import { fallbackToSimpleBots, isBot, MTGDraftBotParameters, MTGDraftBotsSetSpecializedModels } from "./Bot.js";
 import { computeHashes } from "./DeckHashes.js";
-import { BasicLandSlots, SpecialLandSlots } from "./LandSlot.js";
+import { SpecialLandSlots } from "./LandSlot.js";
 import {
 	BoosterFactory,
 	SetSpecificFactories,
 	DefaultBoosterTargets,
 	IBoosterFactory,
-	PaperBoosterSizes,
 	getBoosterFactory,
 	getPaperBoosterFactory,
 	isPaperBoosterFactoryAvailable,
@@ -74,6 +73,25 @@ import { isSomeEnum } from "./TypeChecks.js";
 import { askColors, choosePlayer } from "./Conspiracy.js";
 import { InProduction, TestingOnly } from "./Context.js";
 
+// Tournament timer depending on the number of remaining cards in a pack.
+const TournamentTimer = [
+	0,
+	5, // 1 card remaining. Should be immediate
+	5,
+	5,
+	5,
+	10, // 5 cards remaining
+	10,
+	15,
+	20,
+	20,
+	25,
+	25,
+	30,
+	35,
+	40, // 14 cards remaining, and more
+];
+
 export class Session implements IIndexable {
 	id: SessionID;
 	owner?: UserID;
@@ -95,6 +113,9 @@ export class Session implements IIndexable {
 	bots: number = 0;
 	maxTimer: number = 75;
 	maxPlayers: number = 8;
+	tournamentTimer: boolean = false; // Stricter timer used for tournaments, see https://blogs.magicjudges.org/rules/mtr-appendix-b/.
+	reviewTimer: number = 0; // A value of 0 will deactivate the review phase.
+	hidePicks: boolean = false; // Hide picks while drafting (outside of the review phase between packs). See https://blogs.magicjudges.org/rules/mtr7-7/
 	mythicPromotion: boolean = true;
 	useBoosterContent: boolean = false; // Use the specified booster content if true, DefaultBoosterTargets otherwise
 	boosterContent: { [slot: string]: number } = DefaultBoosterTargets;
@@ -146,6 +167,8 @@ export class Session implements IIndexable {
 	beforeDelete() {
 		// We had a pending sendDecklog, cancel the timeout and execute it immediately.
 		if (this.sendDecklogTimeout) this.sendDecklog();
+		if (isDraftState(this.draftState) && this.draftState.pendingTimeout)
+			clearTimeout(this.draftState.pendingTimeout);
 	}
 
 	addUser(userID: UserID) {
@@ -2354,29 +2377,42 @@ export class Session implements IIndexable {
 
 	distributeBoosters() {
 		const s = this.draftState;
+		console.log(`Session.distributeBoosters (sessionID: ${this.id}) ${isDraftState(s)}`);
 		if (!isDraftState(s)) return;
+
+		console.log(`Session.distributeBoosters (sessionID: ${this.id}) OK`);
 
 		// End draft if there are no more boosters to distribute
 		if (s.boosters.length === 0) return this.endDraft();
 
-		const boosters = s.boosters.splice(0, Object.keys(s.players).length);
-		s.numPicks = boosters[0].length;
+		const doDistributeBoosters = () => {
+			if (s.pendingTimeout) s.pendingTimeout = null;
+			const boosters = s.boosters.splice(0, Object.keys(s.players).length);
+			s.numPicks = boosters[0].length;
 
-		let boosterIndex = 0;
-		for (const userID in s.players) {
-			const p = s.players[userID];
-			if (p.effect?.skipUntilNextRound) p.effect.skipUntilNextRound = false;
-			assert(p.boosters.length === 0, `distributeBoosters: ${userID} boosters.length ${p.boosters.length}`);
+			let boosterIndex = 0;
+			for (const userID in s.players) {
+				const p = s.players[userID];
+				if (p.effect?.skipUntilNextRound) p.effect.skipUntilNextRound = false;
+				assert(p.boosters.length === 0, `distributeBoosters: ${userID} boosters.length ${p.boosters.length}`);
 
-			p.pickNumber = 0;
-			this.passBooster(boosters[boosterIndex], userID);
-			++boosterIndex;
-		}
+				p.pickNumber = 0;
+				this.passBooster(boosters[boosterIndex], userID);
+				++boosterIndex;
+			}
 
-		if (this.owner && !this.ownerIsPlayer)
-			Connections[this.owner]?.socket.emit("draftState", {
-				boosterNumber: s.boosterNumber,
-			});
+			if (this.owner && !this.ownerIsPlayer)
+				Connections[this.owner]?.socket.emit("draftState", {
+					boosterNumber: s.boosterNumber,
+				});
+		};
+
+		if (this.reviewTimer > 0 && s.boosterNumber > 0) {
+			this.forUsers((uid) => Connections[uid]?.socket.emit("startReviewPhase", this.reviewTimer));
+			// FIXME: Using this method, if everyone disconnects during the review phase (not impossible, especially with a single player), the draft will be completely stuck.
+			//        This is currently handled by a workaround in resumeOnReconnection, but we can probably do better.
+			s.pendingTimeout = setTimeout(doDistributeBoosters, this.reviewTimer * 1000);
+		} else doDistributeBoosters();
 	}
 
 	checkDraftRoundEnd() {
@@ -2406,6 +2442,20 @@ export class Session implements IIndexable {
 			// Restart bot pick chains
 			for (const uid in this.draftState.players)
 				if (this.draftState.players[uid].isBot) this.startBotPickChain(uid);
+			// Disconnect happened during the review phase
+			if (Object.values(this.draftState.players).every((p) => p.boosters.length === 0)) {
+				// Workaround for a very specific case where everyone disconnects during a review phase, leaving everyone waiting for the next round to start.
+				if (!this.draftState.pendingTimeout) setImmediate(this.distributeBoosters.bind(this));
+				else {
+					// FIXME: This is clearly non-standard, but it works in Node 18.
+					const remainingTime =
+						((this.draftState.pendingTimeout as unknown as { _idleStart: number })._idleStart +
+							(this.draftState.pendingTimeout as unknown as { _idleTimeout: number })._idleTimeout) /
+							1000 -
+							process.uptime() ?? 0;
+					this.forUsers((uid) => Connections[uid]?.socket.emit("startReviewPhase", remainingTime));
+				}
+			}
 		}
 
 		this.forUsers((u) => Connections[u]?.socket.emit("resumeOnReconnection", new Message(msg.title, msg.text)));
@@ -2414,6 +2464,11 @@ export class Session implements IIndexable {
 	endDraft() {
 		const s = this.draftState;
 		if (!isDraftState(s)) return;
+
+		if (s.pendingTimeout) {
+			clearTimeout(s.pendingTimeout);
+			s.pendingTimeout = null;
+		}
 
 		// Allow other callbacks (like distributeBoosters) to finish before proceeding (actually an issue in tests).
 		process.nextTick(() => {
@@ -3002,10 +3057,15 @@ export class Session implements IIndexable {
 
 		this.stopCountdown(userID);
 
-		const dec = (0.9 * this.maxTimer) / Math.max(1, s.numPicks - 1);
-		// Note: pickNumber can actually be greater or equal to numPicks in some cases (e.g. Lore Seeker)
-		const pickNumber = Math.min(s.players[userID].pickNumber, s.numPicks - 1);
-		s.players[userID].timer = Math.floor(this.maxTimer - pickNumber * dec);
+		if (this.tournamentTimer) {
+			const remainingCards = s.players[userID].boosters[0].length;
+			s.players[userID].timer = TournamentTimer[Math.min(TournamentTimer.length - 1, remainingCards)];
+		} else {
+			const dec = (0.9 * this.maxTimer) / Math.max(1, s.numPicks - 1);
+			// Note: pickNumber can actually be greater or equal to numPicks in some cases (e.g. Lore Seeker)
+			const pickNumber = Math.min(s.players[userID].pickNumber, s.numPicks - 1);
+			s.players[userID].timer = Math.floor(this.maxTimer - pickNumber * dec);
+		}
 
 		// Immediatly share the new value.
 		this.syncCountdown(userID);

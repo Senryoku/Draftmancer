@@ -90,6 +90,7 @@ enum DraftState {
 	None = "None",
 	Waiting = "Waiting",
 	Picking = "Picking",
+	Reviewing = "Reviewing",
 	Brewing = "Brewing",
 	Watching = "Watching",
 	WinstonPicking = "WinstonPicking",
@@ -308,6 +309,9 @@ export default defineComponent({
 			burnedCardsPerRound: 0,
 			discardRemainingCardsAt: 0,
 			maxTimer: 75,
+			tournamentTimer: false,
+			reviewTimer: 0,
+			hidePicks: false,
 			pickTimer: 75,
 			personalLogs: true,
 			draftLogRecipients: "everyone" as DraftLogRecipients,
@@ -1071,7 +1075,7 @@ export default defineComponent({
 					if (data.state.booster) {
 						this.booster = data.state.booster;
 						this.draftingState = DraftState.Picking;
-					} else this.draftingState = DraftState.Waiting;
+					} else if (this.draftingState !== DraftState.Reviewing) this.draftingState = DraftState.Waiting;
 
 					this.boosterNumber = data.state.boosterNumber;
 					this.pickNumber = data.state.pickNumber;
@@ -1119,9 +1123,21 @@ export default defineComponent({
 					this.draftingState = DraftState.Picking;
 					this.skipPick = data.skipPick;
 				} else {
-					// No new booster, don't update the state yet.
-					this.draftingState = DraftState.Waiting;
+					if (this.draftingState !== DraftState.Reviewing) {
+						// No new booster, don't update the state yet.
+						this.draftingState = DraftState.Waiting;
+					}
 				}
+			});
+
+			this.socket.on("startReviewPhase", (timer) => {
+				this.draftingState = DraftState.Reviewing;
+				this.pickTimer = Math.ceil(timer);
+				// This one is purely visual.
+				const interval = setInterval(() => {
+					--this.pickTimer;
+					if (this.pickTimer <= 0 || this.pickTimer >= timer) clearInterval(interval);
+				}, 1000);
 			});
 
 			this.socket.on("updateCardState", (updates) => {
@@ -3612,7 +3628,9 @@ export default defineComponent({
 		},
 		displayDeckAndSideboard(): boolean {
 			return (
-				(this.drafting && this.draftingState !== DraftState.Watching) ||
+				(this.drafting &&
+					(!this.hidePicks || this.draftingState === DraftState.Reviewing) &&
+					this.draftingState !== DraftState.Watching) ||
 				this.draftingState === DraftState.Brewing
 			);
 		},
@@ -3793,24 +3811,24 @@ export default defineComponent({
 		},
 		// Session settings
 		ownerIsPlayer() {
-			if (this.userID != this.sessionOwner || !this.socket) return;
+			if (this.userID !== this.sessionOwner || !this.socket) return;
 			setCookie("userID", this.userID); // Used for reconnection
 			this.socket.emit("setOwnerIsPlayer", this.ownerIsPlayer);
 		},
 		setRestriction: {
 			deep: true,
 			handler() {
-				if (this.userID != this.sessionOwner || !this.socket) return;
+				if (this.userID !== this.sessionOwner || !this.socket) return;
 
 				this.socket.emit("setRestriction", this.setRestriction);
 			},
 		},
 		isPublic() {
-			if (this.userID != this.sessionOwner || !this.socket) return;
+			if (this.userID !== this.sessionOwner || !this.socket) return;
 			this.socket.emit("setPublic", this.isPublic);
 		},
 		description() {
-			if (this.userID != this.sessionOwner || !this.socket) return;
+			if (this.userID !== this.sessionOwner || !this.socket) return;
 			this.socket.emit("setDescription", this.description);
 		},
 		usePredeterminedBoosters() {
@@ -3818,54 +3836,54 @@ export default defineComponent({
 			this.socket.emit("setUsePredeterminedBoosters", this.usePredeterminedBoosters);
 		},
 		boostersPerPlayer() {
-			if (this.userID != this.sessionOwner || !this.socket) return;
+			if (this.userID !== this.sessionOwner || !this.socket) return;
 			this.socket.emit("boostersPerPlayer", this.boostersPerPlayer);
 		},
 		cardsPerBooster() {
-			if (this.userID != this.sessionOwner || !this.socket) return;
+			if (this.userID !== this.sessionOwner || !this.socket) return;
 			this.socket.emit("cardsPerBooster", this.cardsPerBooster);
 		},
 		teamDraft() {
-			if (this.userID != this.sessionOwner || !this.socket) return;
+			if (this.userID !== this.sessionOwner || !this.socket) return;
 			this.socket.emit("teamDraft", this.teamDraft);
 		},
 		randomizeSeatingOrder(oldValue, newValue) {
-			if (this.userID != this.sessionOwner || !this.socket || oldValue === newValue) return;
+			if (this.userID !== this.sessionOwner || !this.socket || oldValue === newValue) return;
 			this.socket.emit("setRandomizeSeatingOrder", this.randomizeSeatingOrder);
 			this.updateStoredSessionSettings({ randomizeSeatingOrder: this.randomizeSeatingOrder });
 		},
 		disableBotSuggestions(oldValue, newValue) {
-			if (this.userID != this.sessionOwner || !this.socket || oldValue === newValue) return;
+			if (this.userID !== this.sessionOwner || !this.socket || oldValue === newValue) return;
 			this.socket.emit("setDisableBotSuggestions", this.disableBotSuggestions);
 			this.updateStoredSessionSettings({ disableBotSuggestions: this.disableBotSuggestions });
 		},
 		distributionMode() {
-			if (this.userID != this.sessionOwner || !this.socket) return;
+			if (this.userID !== this.sessionOwner || !this.socket) return;
 			this.socket.emit("setDistributionMode", this.distributionMode);
 		},
 		customBoosters: {
 			deep: true,
 			handler() {
-				if (this.userID != this.sessionOwner || !this.socket) return;
+				if (this.userID !== this.sessionOwner || !this.socket) return;
 				this.socket.emit("setCustomBoosters", this.customBoosters);
 			},
 		},
 		bots() {
-			if (this.userID != this.sessionOwner || !this.socket) return;
+			if (this.userID !== this.sessionOwner || !this.socket) return;
 			this.socket.emit("setBots", this.bots);
 		},
 		maxPlayers() {
-			if (this.userID != this.sessionOwner || !this.socket) return;
+			if (this.userID !== this.sessionOwner || !this.socket) return;
 			if (this.maxPlayers < 1) return;
 			document.title = this.pageTitle;
 			this.socket.emit("setMaxPlayers", this.maxPlayers);
 		},
 		mythicPromotion() {
-			if (this.userID != this.sessionOwner || !this.socket) return;
+			if (this.userID !== this.sessionOwner || !this.socket) return;
 			this.socket.emit("setMythicPromotion", this.mythicPromotion);
 		},
 		useBoosterContent() {
-			if (this.userID != this.sessionOwner || !this.socket) return;
+			if (this.userID !== this.sessionOwner || !this.socket) return;
 			this.socket.emit("setUseBoosterContent", this.useBoosterContent);
 		},
 		boosterContent: {
@@ -3881,24 +3899,36 @@ export default defineComponent({
 			},
 		},
 		maxTimer() {
-			if (this.userID != this.sessionOwner || !this.socket) return;
+			if (this.userID !== this.sessionOwner || !this.socket) return;
 			this.socket.emit("setPickTimer", this.maxTimer);
 			this.updateStoredSessionSettings({ maxTimer: this.maxTimer });
 		},
+		tournamentTimer() {
+			if (this.userID !== this.sessionOwner || !this.socket) return;
+			this.socket.emit("setTournamentTimer", this.tournamentTimer);
+		},
+		reviewTimer() {
+			if (this.userID !== this.sessionOwner || !this.socket) return;
+			this.socket.emit("setReviewTimer", this.reviewTimer);
+		},
+		hidePicks() {
+			if (this.userID !== this.sessionOwner || !this.socket) return;
+			this.socket.emit("setHidePicks", this.hidePicks);
+		},
 		ignoreCollections() {
-			if (this.userID != this.sessionOwner || !this.socket) return;
+			if (this.userID !== this.sessionOwner || !this.socket) return;
 			this.socket.emit("ignoreCollections", this.ignoreCollections);
 			this.updateStoredSessionSettings({ ignoreCollections: this.ignoreCollections });
 		},
 		maxDuplicates: {
 			deep: true,
 			handler() {
-				if (this.userID != this.sessionOwner || !this.socket) return;
+				if (this.userID !== this.sessionOwner || !this.socket) return;
 				this.socket.emit("setMaxDuplicates", this.maxDuplicates);
 			},
 		},
 		colorBalance() {
-			if (this.userID != this.sessionOwner || !this.socket) return;
+			if (this.userID !== this.sessionOwner || !this.socket) return;
 			this.socket.emit("setColorBalance", this.colorBalance);
 			this.updateStoredSessionSettings({ colorBalance: this.colorBalance });
 		},
@@ -3908,36 +3938,36 @@ export default defineComponent({
 			this.updateStoredSessionSettings({ foil: this.foil });
 		},
 		useCustomCardList() {
-			if (this.userID != this.sessionOwner || !this.socket) return;
+			if (this.userID !== this.sessionOwner || !this.socket) return;
 			this.socket.emit("setUseCustomCardList", this.useCustomCardList);
 		},
 		customCardListWithReplacement() {
-			if (this.userID != this.sessionOwner || !this.socket) return;
+			if (this.userID !== this.sessionOwner || !this.socket) return;
 			this.socket.emit("setCustomCardListWithReplacement", this.customCardListWithReplacement);
 		},
 		doubleMastersMode() {
-			if (this.userID != this.sessionOwner || !this.socket) return;
+			if (this.userID !== this.sessionOwner || !this.socket) return;
 			this.socket.emit("setDoubleMastersMode", this.doubleMastersMode);
 		},
 		pickedCardsPerRound() {
-			if (this.userID != this.sessionOwner || !this.socket) return;
+			if (this.userID !== this.sessionOwner || !this.socket) return;
 			this.socket.emit("setPickedCardsPerRound", this.pickedCardsPerRound);
 		},
 		burnedCardsPerRound() {
-			if (this.userID != this.sessionOwner || !this.socket) return;
+			if (this.userID !== this.sessionOwner || !this.socket) return;
 			this.socket.emit("setBurnedCardsPerRound", this.burnedCardsPerRound);
 		},
 		discardRemainingCardsAt() {
-			if (this.userID != this.sessionOwner || !this.socket) return;
+			if (this.userID !== this.sessionOwner || !this.socket) return;
 			this.socket.emit("setDiscardRemainingCardsAt", this.discardRemainingCardsAt);
 		},
 		personalLogs() {
-			if (this.userID != this.sessionOwner || !this.socket) return;
+			if (this.userID !== this.sessionOwner || !this.socket) return;
 			this.socket.emit("setPersonalLogs", this.personalLogs);
 			this.updateStoredSessionSettings({ personalLogs: this.personalLogs });
 		},
 		draftLogRecipients() {
-			if (this.userID != this.sessionOwner || !this.socket) return;
+			if (this.userID !== this.sessionOwner || !this.socket) return;
 			this.socket.emit("setDraftLogRecipients", this.draftLogRecipients);
 			this.updateStoredSessionSettings({ draftLogRecipients: this.draftLogRecipients });
 		},
