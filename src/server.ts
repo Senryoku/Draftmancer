@@ -1134,8 +1134,9 @@ function replaceDisconnectedPlayers(userID: UserID, sessionID: SessionID) {
 	Sessions[sessionID].replaceDisconnectedPlayers();
 }
 
-function distributeJumpstart(userID: UserID, sessionID: SessionID, set?: string) {
-	Sessions[sessionID].distributeJumpstart(set);
+function distributeJumpstart(userID: UserID, sessionID: SessionID, set: unknown, ack: (result: SocketAck) => void) {
+	if (!isString(set)) return ack?.(new SocketError("Invalid parameter 'set'."));
+	ack?.(Sessions[sessionID].distributeJumpstart(set));
 }
 
 function validateBracketPlayersType(players: unknown, ack: (result: SocketAck) => void) {

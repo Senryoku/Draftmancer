@@ -2163,6 +2163,7 @@ describe("Sealed", function () {
 });
 
 import JumpstartBoosters from "../src/data/JumpstartBoosters.json" assert { type: "json" };
+import Jumpstart2022Boosters from "../src/data/Jumpstart2022Boosters.json" assert { type: "json" };
 import { Card, CardColor, DeckList, UniqueCard } from "../src/CardTypes.js";
 import { SessionID, UserID } from "../src/IDTypes.js";
 import { SetCode } from "../src/Types.js";
@@ -2225,7 +2226,65 @@ describe("Jumpstart", function () {
 				if (receivedPools === clients.length) done();
 			});
 		}
-		clients[ownerIdx].emit("distributeJumpstart");
+		clients[ownerIdx].emit("distributeJumpstart", "jmp", ackNoError);
+	});
+});
+
+describe("Jumpstart 2022", function () {
+	let clients: ReturnType<typeof makeClients> = [];
+	const sessionID = "JumpStart 2022 Session";
+
+	beforeEach(function (done) {
+		disableLogs();
+		done();
+	});
+
+	afterEach(function (done) {
+		enableLogs(this.currentTest!.state === "failed");
+		done();
+	});
+
+	before(function (done) {
+		const queries = [];
+		for (let i = 0; i < 8; ++i)
+			queries.push({
+				sessionID: sessionID,
+				userName: "DontCare",
+			});
+		clients = makeClients(queries, done);
+	});
+
+	after(function (done) {
+		disableLogs();
+		for (const c of clients) {
+			c.disconnect();
+		}
+
+		waitForClientDisconnects(done);
+	});
+
+	it("Each booster contains 20 valid cards", function (done) {
+		for (const b of Jumpstart2022Boosters) {
+			expect(b.cards.length).to.equals(20);
+			for (const c of b.cards) {
+				expect(Cards.has(c)).to.be.true;
+			}
+		}
+		done();
+	});
+
+	it(`Owner launches a Jumpstart 2022 game, clients should receive their card selection (2*20 cards).`, function (done) {
+		const ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
+		let receivedPools = 0;
+		for (const client of clients) {
+			client.once("setCardSelection", function (boosters) {
+				expect(boosters.length).to.equal(2);
+				for (const b of boosters) expect(b.length).to.equal(20);
+				++receivedPools;
+				if (receivedPools === clients.length) done();
+			});
+		}
+		clients[ownerIdx].emit("distributeJumpstart", "j22", ackNoError);
 	});
 });
 
@@ -2279,7 +2338,7 @@ describe("Jumpstart: Historic Horizons", function () {
 				if (receivedPools === clients.length) done();
 			});
 		}
-		clients[ownerIdx].emit("distributeJumpstart", "j21");
+		clients[ownerIdx].emit("distributeJumpstart", "j21", ackNoError);
 	});
 
 	it(`Clients make their choice and draft log updates accordingly.`, function (done) {
@@ -2348,7 +2407,7 @@ describe("Jumpstart: Super Jump!", function () {
 				if (receivedPools === clients.length) done();
 			});
 		}
-		clients[ownerIdx].emit("distributeJumpstart", "super");
+		clients[ownerIdx].emit("distributeJumpstart", "super", ackNoError);
 	});
 
 	it(`Clients make their choice and draft log updates accordingly.`, function (done) {

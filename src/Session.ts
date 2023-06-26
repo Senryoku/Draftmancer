@@ -31,9 +31,11 @@ import {
 	isPaperBoosterFactoryAvailable,
 } from "./BoosterFactory.js";
 import JumpstartBoosters from "./data/JumpstartBoosters.json" assert { type: "json" };
+import Jumpstart2022Boosters from "./data/Jumpstart2022Boosters.json" assert { type: "json" };
 import JumpstartHHBoosters from "./data/JumpstartHHBoosters.json" assert { type: "json" };
 import SuperJumpBoosters from "./data/SuperJumpBoosters.json" assert { type: "json" };
 Object.freeze(JumpstartBoosters);
+Object.freeze(Jumpstart2022Boosters);
 Object.freeze(SuperJumpBoosters);
 import {
 	isMessageError,
@@ -2846,9 +2848,7 @@ export class Session implements IIndexable {
 		return new SocketError("Not playing", "You're not playing in this team sealed?!");
 	}
 
-	distributeJumpstart(set?: string) {
-		this.emitMessage("Distributing jumpstart boosters...", "", false, 0);
-
+	distributeJumpstart(set: string): SocketAck {
 		const log = this.initLogs("Jumpstart", []);
 		log.carddata = {};
 
@@ -2897,10 +2897,12 @@ export class Session implements IIndexable {
 					}
 				});
 			}
-		} else {
-			// Original Jumpstart
+		} else if (set === "jmp" || set === "j22") {
+			// Original Jumpstart and Jumpstart 2022
+			const JMPBoosters = { jmp: JumpstartBoosters, j22: Jumpstart2022Boosters }[set];
+			const BoosterImage = { jmp: "/img/2JumpstartBoosters.webp", j22: "/img/2Jumpstart2022Boosters.webp" }[set];
 			for (const user of this.users) {
-				const boosters = [getRandom(JumpstartBoosters), getRandom(JumpstartBoosters)];
+				const boosters = [getRandom(JMPBoosters), getRandom(JMPBoosters)];
 				const cards = boosters.map((b) => b.cards.map((cid: CardID) => getUnique(cid)));
 
 				log.users[user].cards = cards.flat().map((c: Card) => c.id);
@@ -2909,22 +2911,24 @@ export class Session implements IIndexable {
 				Connections[user].socket.emit("setCardSelection", cards);
 				Connections[user].socket.emit("message", {
 					icon: "success",
-					imageUrl: "/img/2JumpstartBoosters.webp",
-					title: "Here are your Jumpstart boosters!",
+					imageUrl: BoosterImage,
+					title: "Opened two Jumpstart boosters!",
 					text: `You got '${boosters[0].name}' and '${boosters[1].name}'.`,
 					showConfirmButton: true,
 				} as Message);
 			}
 			this.sendLogs();
 			logSession("Jumpstart", this);
-		}
+		} else return new SocketError("Invalid Set", "Invalid Jumpstart set.");
 
 		// If owner is not playing, let them know everything went ok.
-		if (!this.ownerIsPlayer && this.owner && this.owner in Connections) {
-			const msg = new Message("Jumpstart boosters successfully distributed!");
-			msg.showConfirmButton = false;
-			Connections[this.owner].socket.emit("message", msg);
+		if (!this.ownerIsPlayer && this.owner) {
+			const msg = new ToastMessage("Jumpstart boosters successfully distributed!");
+			msg.icon = "success";
+			Connections[this.owner]?.socket.emit("message", msg);
 		}
+
+		return new SocketAck();
 	}
 
 	reconnectUser(userID: UserID) {

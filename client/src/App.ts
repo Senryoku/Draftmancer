@@ -2869,9 +2869,7 @@ export default defineComponent({
 					cancelButtonColor: ButtonColor.Safe,
 					confirmButtonText: "Start new game!",
 				}).then((result) => {
-					if (result.value) {
-						call(...options);
-					}
+					if (result.value) call(...options);
 				});
 			} else {
 				call(...options);
@@ -2899,17 +2897,11 @@ export default defineComponent({
 				if (r.error) Alert.fire(r.error);
 			});
 		},
-		distributeJumpstart() {
-			if (this.userID != this.sessionOwner) return;
-			this.socket.emit("distributeJumpstart");
-		},
-		distributeJumpstartHH() {
-			if (this.userID != this.sessionOwner) return;
-			this.socket.emit("distributeJumpstart", "j21");
-		},
-		distributeSuperJump() {
-			if (this.userID != this.sessionOwner) return;
-			this.socket.emit("distributeJumpstart", "super");
+		distributeJumpstart(set: string) {
+			if (this.userID !== this.sessionOwner) return;
+			this.socket.emit("distributeJumpstart", set, (r) => {
+				if (r.error) Alert.fire(r.error);
+			});
 		},
 		async displayPackChoice(boosters: JHHBooster[], currentPack: number, packCount: number) {
 			let boostersDisplay = "";

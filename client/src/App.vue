@@ -469,7 +469,12 @@
 									<button @click="sealedDialog(true)">Team Sealed</button>
 								</div>
 								<div v-tooltip.left="'Distributes two Jumpstart boosters to everyone.'">
-									<button @click="deckWarning(distributeJumpstart)">Jumpstart</button>
+									<button @click="deckWarning(() => distributeJumpstart('jmp'))">Jumpstart</button>
+								</div>
+								<div v-tooltip.left="'Distributes two Jumpstart 2022 boosters to everyone.'">
+									<button @click="deckWarning(() => distributeJumpstart('j22'))">
+										Jumpstart 2022
+									</button>
 								</div>
 								<div
 									v-tooltip.left="
@@ -477,7 +482,7 @@
 									"
 								>
 									<button
-										@click="deckWarning(distributeJumpstartHH)"
+										@click="deckWarning(() => distributeJumpstart('j21'))"
 										style="
 											white-space: normal;
 											line-height: normal;
@@ -490,7 +495,7 @@
 								</div>
 								<div v-tooltip.left="'Distributes two Super Jump! boosters to everyone.'">
 									<button
-										@click="deckWarning(distributeSuperJump)"
+										@click="deckWarning(() => distributeJumpstart('super'))"
 										style="
 											white-space: normal;
 											line-height: normal;

@@ -1,6 +1,13 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
+			<em>June 26, 2023</em>
+			<p>
+				<img src="img/sets/j22.svg" class="set-icon" style="--invertedness: 100%" alt="" /> Jumpstart 2022
+				support.
+			</p>
+		</div>
+		<div class="news">
 			<em>June 21, 2023</em>
 			<ul>
 				<li>Experimental tournament settings for standard drafts:</li>
