@@ -1,0 +1,3 @@
+user-agent: *
+sitemap: https://draftmancer.com/sitemap.txt
+disallow: /getCollectionPlainText/*
