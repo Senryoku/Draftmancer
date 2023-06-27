@@ -1509,6 +1509,14 @@
         "mythicCount": 11,
         "rareCount": 15
     },
+    "fltr": {
+        "code": "fltr",
+        "fullName": "Tales of Middle-earth Front Cards",
+        "cardCount": 5,
+        "isPrimary": false,
+        "icon": "img/sets/fltr.svg",
+        "commonCount": 5
+    },
     "fmb1": {
         "code": "fmb1",
         "fullName": "Mystery Booster Retail Edition Foils",
@@ -5062,22 +5070,22 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 930,
+        "cardCount": 967,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
         "commonCount": 42,
-        "mythicCount": 167,
-        "rareCount": 701,
-        "uncommonCount": 20
+        "mythicCount": 173,
+        "rareCount": 729,
+        "uncommonCount": 23
     },
     "slp": {
         "code": "slp",
         "fullName": "Secret Lair Showdown",
-        "cardCount": 7,
+        "cardCount": 10,
         "isPrimary": false,
         "icon": "img/sets/slp.svg",
-        "mythicCount": 2,
-        "rareCount": 5
+        "mythicCount": 3,
+        "rareCount": 7
     },
     "slu": {
         "code": "slu",
