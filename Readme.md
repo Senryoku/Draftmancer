@@ -16,10 +16,10 @@ Join the discord for development related discussions: https://discord.gg/XscXXNw
 ### Development tips
 
 -   Running `npm run start-dev` instead of `npm start` will restart the node server on any changes. (Install nodemon globally with `npm install nodemon -g`)
--   Use `npm run build-dev` to watch for changes in the client js code and automatically re-build it.
--   Use `npm run build-dev-ts` to watch for changes in the server typescript code and automatically re-build it.
+-   Use `npm run build-client-dev` to watch for changes in the client js code and automatically re-build it.
+-   Use `npm run build-server-dev` to watch for changes in the server typescript code and automatically re-build it.
 
--   Setting the environment variable `DISABLE_PERSISTENCE` to `TRUE` (one can use a `.env` file for development) will disable retrieving/saving the states of Connections/Sessions between server execution from an external store (see `src/Persistence.ts`).
+-   Setting the environment variable `DISABLE_PERSISTENCE` to `TRUE` (one can use a `.env` file for development) will disable retrieving/saving the states of Connections/Sessions between server execution from disk (see `src/Persistence.ts`).
 
 ### Tests
 

@@ -1,12 +1,10 @@
 "use strict";
 
 import { InTesting, TestingOnly } from "./Context.js";
-import dotenv from "dotenv";
-if (process.env.NODE_ENV !== "production") {
-	dotenv.config();
-}
+import { config as dotenvConfig } from "dotenv";
+if (process.env.NODE_ENV !== "production") dotenvConfig();
+
 import crypto from "crypto";
-import axios from "axios";
 import fs from "fs";
 import path from "path";
 import { Connections, clearConnections, getPODConnection } from "./Connection.js";
@@ -40,13 +38,10 @@ import { HousmanDraftState } from "./HousmanDraft.js";
 import { SolomonDraftState } from "./SolomonDraft.js";
 import { sendLog } from "./BotTrainingAPI.js";
 
-const PersistenceLocalPath = process.env.PERSISTENCE_LOCAL_PATH;
+const PersistenceLocalPath = process.env.PERSISTENCE_LOCAL_PATH ?? ".";
 const LocalPersitenceDirectory = "tmp";
-const LocalConnectionsFile = path.join(PersistenceLocalPath ?? ".", LocalPersitenceDirectory, "/connections.json");
-const LocalSessionsFile = path.join(PersistenceLocalPath ?? ".", LocalPersitenceDirectory, "/sessions.json");
-
-const PersistenceStoreURL = InTesting ? undefined : process.env.PERSISTENCE_STORE_URL;
-const PersistenceKey = process.env.PERSISTENCE_KEY ?? "1234";
+const LocalConnectionsFile = path.join(PersistenceLocalPath, LocalPersitenceDirectory, "/connections.json");
+const LocalSessionsFile = path.join(PersistenceLocalPath, LocalPersitenceDirectory, "/sessions.json");
 
 export let InactiveSessions: Record<SessionID, any> = {};
 export let InactiveConnections: Record<UserID, ReturnType<typeof getPODConnection>> = {};
@@ -74,82 +69,28 @@ function restoreBot(bot: any): IBot | undefined {
 	return undefined;
 }
 
-async function requestSavedConnections() {
+function loadSavedConnections() {
 	const InactiveConnections: Record<UserID, ReturnType<typeof getPODConnection>> = {};
 
-	const handleConnections = (connections: ReturnType<typeof getPODConnection>[]) => {
+	if (!DisablePersistence && fs.existsSync(LocalConnectionsFile)) {
+		const connections = JSON.parse(fs.readFileSync(LocalConnectionsFile, "utf8"));
 		if (connections && connections.length > 0) {
 			for (const c of connections) InactiveConnections[c.userID] = c;
 			console.log(`[+] Restored ${connections.length} saved connections.`);
-		}
-	};
-
-	if (PersistenceLocalPath && fs.existsSync(LocalConnectionsFile)) {
-		handleConnections(JSON.parse(fs.readFileSync(LocalConnectionsFile, "utf8")));
-	}
-
-	if (PersistenceStoreURL && Object.keys(InactiveConnections).length === 0) {
-		try {
-			const response = await axios.get(`${PersistenceStoreURL}/temp/connections`, {
-				headers: {
-					"access-key": PersistenceKey,
-					"Accept-Encoding": "gzip, deflate",
-				},
-			});
-			if (response.status !== 200) {
-				console.error(`requestSavedConnections::Error ${response.status}: ${response.statusText}`);
-				console.error(`	Data: `, response.data);
-			} else {
-				handleConnections(response.data);
-			}
-		} catch (err: any) {
-			console.error(
-				"requestSavedConnections::",
-				err.message,
-				err.response?.statusText ?? "",
-				err.response?.data ?? ""
-			);
 		}
 	}
 
 	return InactiveConnections;
 }
 
-async function requestSavedSessions() {
+function loadSavedSessions() {
 	const InactiveSessions: Record<SessionID, any> = {};
 
-	const handleSessions = (sessions: any[]) => {
+	if (!DisablePersistence && fs.existsSync(LocalSessionsFile)) {
+		const sessions = JSON.parse(fs.readFileSync(LocalSessionsFile, "utf8"));
 		if (sessions && sessions.length > 0) {
 			for (const s of sessions) InactiveSessions[s.id] = s;
 			console.log(`[+] Restored ${sessions.length} saved sessions.`);
-		}
-	};
-
-	if (PersistenceLocalPath && fs.existsSync(path.join(PersistenceLocalPath, LocalSessionsFile))) {
-		handleSessions(JSON.parse(fs.readFileSync(path.join(PersistenceLocalPath, LocalSessionsFile), "utf8")));
-	}
-
-	if (PersistenceStoreURL && Object.keys(InactiveSessions).length === 0) {
-		try {
-			const response = await axios.get(`${PersistenceStoreURL}/temp/sessions`, {
-				headers: {
-					"access-key": PersistenceKey,
-					"Accept-Encoding": "gzip, deflate",
-				},
-			});
-			if (response.status !== 200) {
-				console.error(`requestSavedSessions::Error ${response.status}: ${response.statusText}`);
-				console.error(`	Data: `, response.data);
-			} else {
-				handleSessions(response.data);
-			}
-		} catch (err: any) {
-			console.error(
-				"requestSavedSessions::",
-				err.message,
-				err.response?.statusText ?? "",
-				err.response?.data ?? ""
-			);
 		}
 	}
 
@@ -293,7 +234,7 @@ export function getPoDSession(s: Session) {
 	return PoDSession;
 }
 
-async function tempDump(exitOnCompletion = false) {
+function dumpToDisk(exitOnCompletion = false) {
 	// Avoid user interaction during saving
 	// (Disconnecting the socket would be better, but explicitly
 	// disconnecting socket prevents their automatic reconnection)
@@ -305,21 +246,14 @@ async function tempDump(exitOnCompletion = false) {
 		for (const userID in Connections) Connections[userID].socket.emit("message", msg);
 	}
 
-	const Promises: Promise<unknown>[] = [];
-
 	const PoDConnections: ReturnType<typeof getPODConnection>[] = [];
 	for (const userID in Connections) PoDConnections.push(getPODConnection(Connections[userID]));
 
 	const PoDSessions = [];
-	for (const sessionID in InactiveSessions) {
-		try {
-			// Keep inactive Rotisserie Draft sessions across runs.
-			if (InactiveSessions[sessionID].draftState?.type === "rotisserie")
-				PoDSessions.push(InactiveSessions[sessionID]);
-		} catch (e) {
-			console.error(`Error while saving inactive session '${sessionID}': `, e);
-		}
-	}
+	// Keep inactive Rotisserie sessions alive, as they can be ran asynchronously over a longer period
+	for (const sessionID in InactiveSessions)
+		if (InactiveSessions[sessionID].draftState?.type === "rotisserie")
+			PoDSessions.push(InactiveSessions[sessionID]);
 
 	for (const sessionID in Sessions) {
 		try {
@@ -329,66 +263,15 @@ async function tempDump(exitOnCompletion = false) {
 		}
 	}
 
-	if (PersistenceLocalPath) {
-		try {
-			console.log(`Saving ${PoDConnections.length} Connections and ${PoDSessions.length} Sessions to disk...`);
-			if (!fs.existsSync(path.join(PersistenceLocalPath, LocalPersitenceDirectory)))
-				fs.mkdirSync(path.join(PersistenceLocalPath, LocalPersitenceDirectory));
-			Promises.push(
-				fs.promises
-					.writeFile(LocalConnectionsFile, JSON.stringify(PoDConnections))
-					.then(() => console.log("  [+] Connections successfully saved to disk."))
-					.catch((err) => console.log("  [-] Error saving connections to disk:", err))
-			);
-			Promises.push(
-				fs.promises
-					.writeFile(LocalSessionsFile, JSON.stringify(PoDSessions))
-					.then(() => console.log("  [+] Sessions successfully saved to disk."))
-					.catch((err) => console.log("  [-] Error saving sessions to disk:", err))
-			);
-		} catch (err) {
-			console.log("Error saving to disk: ", err);
-		}
+	if (!DisablePersistence) {
+		console.log(`Saving ${PoDConnections.length} Connections and ${PoDSessions.length} Sessions to disk...`);
+		if (!fs.existsSync(path.join(PersistenceLocalPath, LocalPersitenceDirectory)))
+			fs.mkdirSync(path.join(PersistenceLocalPath, LocalPersitenceDirectory), { recursive: true });
+		fs.writeFileSync(LocalConnectionsFile, JSON.stringify(PoDConnections));
+		console.log("  [+] Connections successfully saved to disk.");
+		fs.writeFileSync(LocalSessionsFile, JSON.stringify(PoDSessions));
+		console.log("  [+] Sessions successfully saved to disk.");
 	}
-
-	if (PersistenceStoreURL) {
-		try {
-			Promises.push(
-				axios
-					.post(`${PersistenceStoreURL}/temp/connections`, PoDConnections, {
-						maxContentLength: Infinity,
-						maxBodyLength: Infinity,
-						headers: {
-							"access-key": PersistenceKey,
-						},
-					})
-					.then(() => console.log("  [+] Connections successfully sent to remote store."))
-					.catch((err) => console.error("  [-] Error storing connections: ", err.message))
-			);
-		} catch (err) {
-			console.log("  [-] Error: ", err);
-		}
-		try {
-			Promises.push(
-				axios
-					.post(`${PersistenceStoreURL}/temp/sessions`, PoDSessions, {
-						maxContentLength: Infinity,
-						maxBodyLength: Infinity,
-						headers: {
-							"access-key": PersistenceKey,
-						},
-					})
-					.then(() => console.log("  [+] Sessions successfully sent to remote store."))
-					.catch((err) => console.error("  [-] Error storing sessions: ", err.message))
-			);
-		} catch (err) {
-			console.log("  [-] Error: ", err);
-		}
-	}
-
-	console.log("  Waiting for all promises to return...");
-	await Promise.all(Promises);
-	console.log("  Connections and Sessions dumped.");
 
 	if (exitOnCompletion) process.exit(0);
 }
@@ -458,14 +341,12 @@ export function logSession(type: string, session: Session) {
 }
 
 // Dumps and reloads inactive sessions, ONLY for testing purposes.
-export const simulateRestart = TestingOnly(async () => {
-	await tempDump();
+export const simulateRestart = TestingOnly(() => {
+	dumpToDisk();
 	clearConnections();
 	clearSessions();
-	await Promise.all([requestSavedConnections(), requestSavedSessions()]).then((values) => {
-		InactiveConnections = values[0];
-		InactiveSessions = values[1];
-	});
+	InactiveConnections = loadSavedConnections();
+	InactiveSessions = loadSavedSessions();
 });
 
 if (!DisablePersistence) {
@@ -482,41 +363,37 @@ if (!DisablePersistence) {
 		console.log(`exit callback: Process exited with code: ${code}`);
 	});
 
-	/* SIGTERM will be called on new deploy, changes to config vars/add-ons, manual
-	 * restarts and automatic cycling of dynos (~ every 24h)
-	 * Process have 30sec. before getting SIGKILL'd.
-	 * See https://devcenter.heroku.com/articles/dynos#shutdown
-	 */
 	process.on("SIGTERM", () => {
 		console.log("Received SIGTERM.");
-		tempDump(true);
-		// Gives tempDump 20sec. to finish saving everything.
+		// Gives dumpToDisk 30sec. to finish saving everything.
 		setTimeout(() => {
+			console.error("[-] dumpToDisk did not finish in time after SIGTERM, force quitting...");
 			process.exit(0);
-		}, 20000);
+		}, 30000);
+		dumpToDisk(true);
 	});
 
 	process.on("SIGINT", () => {
 		console.log("Received SIGINT.");
-		tempDump(true);
-		// Gives tempDump 20sec. to finish saving everything.
+		// Gives dumpToDisk 30sec. to finish saving everything.
 		setTimeout(() => {
+			console.error("[-] dumpToDisk did not finish in time after SIGINT, force quitting...");
 			process.exit(0);
-		}, 20000);
+		}, 30000);
+		dumpToDisk(true);
 	});
 
 	process.on("uncaughtException", (err) => {
 		console.error("Uncaught Exception thrown: ");
 		console.error(err);
-		tempDump(true);
-		// Gives tempDump 20sec. to finish saving everything.
+		// Gives dumpToDisk 30sec. to finish saving everything.
 		setTimeout(() => {
+			console.error("[-] dumpToDisk did not finish in time after Uncaught Exception, force quitting...");
 			process.exit(1);
-		}, 20000);
+		}, 30000);
+		dumpToDisk(true);
 	});
 
-	await Promise.all([requestSavedConnections(), requestSavedSessions()]).then((values) => {
-		InactiveConnections = values[0];
-		InactiveSessions = values[1];
-	});
+	InactiveConnections = loadSavedConnections();
+	InactiveSessions = loadSavedSessions();
 }
