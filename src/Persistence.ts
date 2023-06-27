@@ -72,7 +72,7 @@ function restoreBot(bot: any): IBot | undefined {
 function loadSavedConnections() {
 	const InactiveConnections: Record<UserID, ReturnType<typeof getPODConnection>> = {};
 
-	if (!DisablePersistence && fs.existsSync(LocalConnectionsFile)) {
+	if (fs.existsSync(LocalConnectionsFile)) {
 		const connections = JSON.parse(fs.readFileSync(LocalConnectionsFile, "utf8"));
 		if (connections && connections.length > 0) {
 			for (const c of connections) InactiveConnections[c.userID] = c;
@@ -86,7 +86,7 @@ function loadSavedConnections() {
 function loadSavedSessions() {
 	const InactiveSessions: Record<SessionID, any> = {};
 
-	if (!DisablePersistence && fs.existsSync(LocalSessionsFile)) {
+	if (fs.existsSync(LocalSessionsFile)) {
 		const sessions = JSON.parse(fs.readFileSync(LocalSessionsFile, "utf8"));
 		if (sessions && sessions.length > 0) {
 			for (const s of sessions) InactiveSessions[s.id] = s;
@@ -263,15 +263,13 @@ function dumpToDisk(exitOnCompletion = false) {
 		}
 	}
 
-	if (!DisablePersistence) {
-		console.log(`Saving ${PoDConnections.length} Connections and ${PoDSessions.length} Sessions to disk...`);
-		if (!fs.existsSync(path.join(PersistenceLocalPath, LocalPersitenceDirectory)))
-			fs.mkdirSync(path.join(PersistenceLocalPath, LocalPersitenceDirectory), { recursive: true });
-		fs.writeFileSync(LocalConnectionsFile, JSON.stringify(PoDConnections));
-		console.log("  [+] Connections successfully saved to disk.");
-		fs.writeFileSync(LocalSessionsFile, JSON.stringify(PoDSessions));
-		console.log("  [+] Sessions successfully saved to disk.");
-	}
+	console.log(`Saving ${PoDConnections.length} Connections and ${PoDSessions.length} Sessions to disk...`);
+	if (!fs.existsSync(path.join(PersistenceLocalPath, LocalPersitenceDirectory)))
+		fs.mkdirSync(path.join(PersistenceLocalPath, LocalPersitenceDirectory), { recursive: true });
+	fs.writeFileSync(LocalConnectionsFile, JSON.stringify(PoDConnections));
+	console.log("  [+] Connections successfully saved to disk.");
+	fs.writeFileSync(LocalSessionsFile, JSON.stringify(PoDSessions));
+	console.log("  [+] Sessions successfully saved to disk.");
 
 	if (exitOnCompletion) process.exit(0);
 }
@@ -350,8 +348,7 @@ export const simulateRestart = TestingOnly(() => {
 });
 
 if (!DisablePersistence) {
-	// Can make asynchronous calls, is not called on process.exit() or uncaught
-	// exceptions.
+	// Can make asynchronous calls, is not called on process.exit() or uncaught exceptions.
 	// See https://nodejs.org/api/process.html#process_event_beforeexit
 	process.on("beforeExit", () => {
 		console.log("beforeExit callback.");
