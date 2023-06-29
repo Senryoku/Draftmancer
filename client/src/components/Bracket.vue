@@ -37,7 +37,19 @@
 		</div>
 		<h2 v-if="isDoubleBracket">Upper Bracket</h2>
 		<div class="bracket-columns">
-			<div class="bracket-column" v-for="(col, colIndex) in matches" :key="colIndex">
+			<div
+				class="bracket-column"
+				v-for="(col, colIndex) in matches"
+				:key="colIndex"
+				:class="{
+					disabled:
+						colIndex > 0 &&
+						type === 'swiss' &&
+						matches[colIndex - 1].some(
+							(m) => bracket.results[m.index][0] === 0 && bracket.results[m.index][1] === 0
+						),
+				}"
+			>
 				<BracketMatch
 					v-for="m in col"
 					:key="m.index"
@@ -141,9 +153,10 @@ export default defineComponent({
 			? "swiss"
 			: "single";
 		return {
+			type,
 			selectedUser: null,
 			typeToGenerate: type,
-		} as { selectedUser: MatchPlayerData | null; typeToGenerate: string };
+		} as { type: string; selectedUser: MatchPlayerData | null; typeToGenerate: string };
 	},
 	props: {
 		bracket: { type: Object as PropType<Bracket>, required: true },

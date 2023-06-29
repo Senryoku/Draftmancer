@@ -118,7 +118,7 @@ export default defineComponent({
 			return `${this.records[p.userID!].wins} - ${this.records[p.userID!].losses}`;
 		},
 		update(event: Event, index: number) {
-			this.$emit("updated", index, (event.target as HTMLInputElement)?.value);
+			this.$emit("updated", index, parseInt((event.target as HTMLInputElement)?.value));
 		},
 	},
 	computed: {
