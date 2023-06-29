@@ -1664,15 +1664,11 @@
 						Draft with other players and export your resulting deck to Magic: The Gathering Arena to play
 						with them, in pod!
 					</p>
-					<a href="/draftqueue" class="reset-style" style="display: block; margin: auto; width: fit-content">
-						<img
-							src="./assets/img/LotR_banner.png"
-							width="728"
-							height="90"
-							style="border-radius: 1em; max-width: 90vw; filter: drop-shadow(0px 0px 2px #00000080)"
-						/>
-					</a>
-					<Communities />
+					<div style="display: flex; margin: auto">
+						<div>Help Here?</div>
+						<Communities />
+						<div>Link to Draft Queues</div>
+					</div>
 					<div class="welcome-sections">
 						<div class="container" style="grid-area: News">
 							<div class="section-title">
