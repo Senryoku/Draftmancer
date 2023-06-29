@@ -1672,6 +1672,7 @@
 							style="border-radius: 1em; max-width: 90vw; filter: drop-shadow(0px 0px 2px #00000080)"
 						/>
 					</a>
+					<Communities />
 					<div class="welcome-sections">
 						<div class="container" style="grid-area: News">
 							<div class="section-title">

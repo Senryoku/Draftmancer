@@ -1,24 +1,8 @@
 import type { ClientToServerEvents, LoaderOptions, ServerToClientEvents } from "@/SocketType";
 import type { UserID } from "@/IDTypes";
 import type { SetCode, IIndexable, Language } from "@/Types";
-import {
-	DisconnectedUser,
-	DistributionMode,
-	DraftLogRecipients,
-	ReadyState,
-	UserData,
-	UsersData,
-} from "../../src/Session/SessionTypes";
-import {
-	ArenaID,
-	Card,
-	CardID,
-	DeckList,
-	OnPickDraftEffect,
-	PlainCollection,
-	UniqueCard,
-	UniqueCardID,
-} from "@/CardTypes";
+import { DistributionMode, DraftLogRecipients, ReadyState, UserData, UsersData } from "../../src/Session/SessionTypes";
+import { ArenaID, Card, CardID, DeckList, PlainCollection, UniqueCard, UniqueCardID } from "@/CardTypes";
 import type { DraftLog } from "@/DraftLog";
 import type { BotScores } from "@/Bot";
 import type { WinstonDraftSyncData } from "@/WinstonDraft";
@@ -63,6 +47,7 @@ import parseCSV from "./parseCSV";
 
 import LoadingComponent from "./components/LoadingComponent.vue";
 import News from "./components/News.vue";
+import Communities from "./components/Communities.vue";
 import BoosterCard from "./components/BoosterCard.vue";
 import CardComponent from "./components/Card.vue";
 import CardPlaceholder from "./components/CardPlaceholder.vue";
@@ -195,6 +180,7 @@ export default defineComponent({
 		MinesweeperDraft: defineAsyncComponent(() => import("./components/MinesweeperDraft.vue")),
 		Modal,
 		News,
+		Communities,
 		PatchNotes: defineAsyncComponent(() => import("./components/PatchNotes.vue")),
 		PickSummary: defineAsyncComponent(() => import("./components/PickSummary.vue")),
 		DraftQueue: defineAsyncComponent(() => import("./components/DraftQueue.vue")),
