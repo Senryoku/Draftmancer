@@ -4,6 +4,7 @@
 		:style="`height: ${displayFixedDeck ? fixedDeckState.mainHeight : '100vh'}`"
 		:class="{ 'using-fixed-deck': displayFixedDeck }"
 	>
+		<div class="backgound-image"></div>
 		<!-- Personal Options -->
 		<div id="view-controls" class="main-controls">
 			<span>
@@ -1664,19 +1665,21 @@
 						Draft with other players and export your resulting deck to Magic: The Gathering Arena to play
 						with them, in pod!
 					</p>
-					<div style="display: flex; margin: auto">
-						<div>Help Here?</div>
-						<Communities />
-						<div>Link to Draft Queues</div>
-					</div>
-					<div class="welcome-sections">
-						<div class="container" style="grid-area: News">
+					<div style="display: flex; justify-content: center; gap: 1em">
+						<div style="max-width: 600px">
 							<div class="section-title">
-								<h2>News</h2>
+								<h2>Quick Start</h2>
 							</div>
-							<news class="welcome-section" />
-						</div>
-						<div class="container" style="grid-area: Help">
+							<div class="welcome-section welcome-alt">
+								<ul style="list-style: disc">
+									<li>Pratice with other players in the <a href="/draftqueue">Draft Queue</a>!</li>
+									<li>
+										Draft with bots simply by selecting a set and hitting "Draft" on top of the
+										page.
+									</li>
+									<li>Join one of the featured communities and participate in events.</li>
+								</ul>
+							</div>
 							<div class="section-title">
 								<h2>Help</h2>
 							</div>
@@ -1705,6 +1708,15 @@
 									Discord </a
 								>.
 							</div>
+						</div>
+						<Communities />
+					</div>
+					<div class="welcome-sections">
+						<div class="container" style="grid-area: News">
+							<div class="section-title">
+								<h2>News</h2>
+							</div>
+							<news class="welcome-section" />
 						</div>
 						<div class="container" style="grid-area: Support">
 							<div class="section-title">

@@ -1,6 +1,8 @@
 <template>
 	<div>
-		<h1>Featured Communities</h1>
+		<div class="section-title">
+			<h2>Featured Communities</h2>
+		</div>
 		<div style="position: relative">
 			<div class="community-carousel">
 				<div class="scroller">
@@ -93,6 +95,13 @@ const communities = [
 		tags: ["XMage", "Remastered", "Historical", "Swiss"],
 		links: { discord: "https://discord.gg/7xWaCvWyq8" },
 	},
+	{
+		name: "Custom Magic",
+		brief: "A Custom Magic community primarily focused on custom set design and development.",
+		icon: "custom_magic.webp",
+		tags: ["Custom ", "Cockatrice"],
+		links: { discord: "https://discord.gg/custommagic" },
+	},
 ];
 shuffleArray(communities);
 
@@ -107,12 +116,13 @@ const prev = () => {
 	resetTimeout();
 };
 
-let timeout = setTimeout(next, 1000 * 10);
+const timer = 1000 * 15;
+let timeout = setTimeout(next, timer);
 const timeoutStart = ref(0);
 
 const resetTimeout = () => {
 	clearInterval(timeout);
-	timeout = setInterval(next, 1000 * 10);
+	timeout = setInterval(next, timer);
 	timeoutStart.value = Date.now();
 };
 
@@ -141,6 +151,7 @@ const select = (idx: number) => {
 	gap: 1em;
 	margin: 0.2em auto;
 	width: fit-content;
+	--timer: calc(1ms * v-bind(timer));
 }
 
 .bubbles {
@@ -174,7 +185,7 @@ const select = (idx: number) => {
 
 .fill {
 	background-color: #fff;
-	animation: fill 10s linear both;
+	animation: fill var(--timer) linear both;
 }
 
 @keyframes fill {
@@ -211,7 +222,7 @@ const select = (idx: number) => {
 	height: var(--card-height);
 	overflow: hidden;
 	border-radius: 20px;
-	background-color: #444;
+	background-color: #333;
 }
 
 h1 {
@@ -247,6 +258,7 @@ h2 {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	padding: 0.5em;
 }
 
 .links {
