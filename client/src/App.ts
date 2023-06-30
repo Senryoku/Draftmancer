@@ -1407,15 +1407,19 @@ export default defineComponent({
 				const ret = await Alert.fire({
 					icon: "info",
 					title: "Not enough players",
-					text: `At least 2 players (including bots) are needed to start a draft.`,
+					html: `At least 2 players, including bots, are required to start a draft. Add bots, or join a <a href="/draftqueue">Draft queue</a> to be automatically matched with other players.`,
 					showDenyButton: true,
+					showCancelButton: true,
 					denyButtonColor: "darkgreen",
 					denyButtonText: `Draft alone with ${proposedBots} bots`,
-					confirmButtonText: "Dismiss",
+					confirmButtonText: `Go to Draft Queues`,
 				});
 				if (ret.isDenied) {
 					this.bots = proposedBots;
 					await this.$nextTick();
+				} else if (ret.isConfirmed) {
+					window.location.href = "/draftqueue";
+					return false;
 				} else return false;
 			}
 
