@@ -1671,15 +1671,31 @@
 								<h2>Quick Start</h2>
 							</div>
 							<div class="welcome-section welcome-alt">
-								<ul style="list-style: disc">
-									<li>Pratice with other players in the <a href="/draftqueue">Draft Queue</a>!</li>
+								There are multiple ways to get started with Draftmancer:
+								<ul class="quick-start-list">
+									<li>
+										Pratice the latest sets with other players in the
+										<a href="/draftqueue">Draft Queue</a>!
+									</li>
 									<li>
 										Draft with bots simply by selecting a set and hitting "Draft" on top of the
 										page.
 									</li>
 									<li>Join one of the featured communities and participate in events.</li>
+									<li>Tinker with the settings and organize your own events!</li>
 								</ul>
 							</div>
+						</div>
+						<Communities />
+					</div>
+					<div class="welcome-sections">
+						<div class="container" style="grid-area: News">
+							<div class="section-title">
+								<h2>News</h2>
+							</div>
+							<news class="welcome-section" />
+						</div>
+						<div class="container" style="grid-area: Support">
 							<div class="section-title">
 								<h2>Help</h2>
 							</div>
@@ -1708,17 +1724,6 @@
 									Discord </a
 								>.
 							</div>
-						</div>
-						<Communities />
-					</div>
-					<div class="welcome-sections">
-						<div class="container" style="grid-area: News">
-							<div class="section-title">
-								<h2>News</h2>
-							</div>
-							<news class="welcome-section" />
-						</div>
-						<div class="container" style="grid-area: Support">
 							<div class="section-title">
 								<h2>
 									<font-awesome-icon

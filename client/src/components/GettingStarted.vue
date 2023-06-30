@@ -8,20 +8,15 @@
 				</h2>
 			</div>
 			<div style="margin-top: 0.5em; margin-bottom: 1em">
-				Customize your personal settings, like your User Name or Card Language on top of the page.<br />
-				There are also toggles to enable e.g. sound alerts and notifications in the upper right.
-				<br />
-				<span v-if="!isSessionOwner">
-					<ul>
-						<li>
-							Wait for the session owner (<em
-								>{{ sessionOwnerName }}
-								<font-awesome-icon icon="fa-solid fa-crown" class="subtle-gold"></font-awesome-icon></em
-							>) to select the settings and launch the game!
-						</li>
-						<li>Or, to create a new session that you own, change "Session ID" in the top left.</li>
-					</ul>
-				</span>
+				<p>
+					Customize your personal settings, like your User Name or Card Language on top of the page.<br />
+					There are also toggles to enable e.g. sound alerts and notifications in the upper right.
+				</p>
+				<p>
+					Join the desired session by entering its Session ID in the top left, or by following the link shared
+					by the session owner.
+				</p>
+				<p>You can also enter an arbitrary Session ID at any to start your own session.</p>
 			</div>
 		</div>
 		<div>
@@ -29,8 +24,8 @@
 				<h2>
 					As Session owner
 					<font-awesome-icon icon="fa-solid fa-crown" class="subtle-gold"></font-awesome-icon>
-					<span v-if="isSessionOwner">(That's you!)</span
-					><span v-else
+					<span v-if="isSessionOwner"> (That's you!)</span>
+					<span v-else
 						>(currently <em>{{ sessionOwnerName }}</em
 						>)</span
 					>

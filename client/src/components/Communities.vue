@@ -12,7 +12,7 @@
 							:style="`background-image: url(${require(`../assets/img/communities/${c.icon}`)})`"
 						></div>
 						<h2 class="name">{{ c.name }}</h2>
-						<div class="description">{{ c.brief }}</div>
+						<div class="description" :style="`font-size: ${c.fontSize ?? '1em'}`">{{ c.brief }}</div>
 						<div class="links">
 							<a v-if="c.links.discord" :href="c.links.discord" target="_blank">
 								<font-awesome-icon icon="fa-brands fa-discord"></font-awesome-icon> Discord server
@@ -83,12 +83,13 @@ const communities = [
 		description:
 			"We are a Limited Magic Community on Discord running regular tournaments played out on Arena. Each tournament uses the Gauntlet format (of our own creation) as a base: a six-week tournament where you make a 60-card sealed deck from 6 packs, play 5 matches a week against different players, and add a “punishment pack” to your pool after each loss. The Top 8 then compete in a 3-round 6-pack Megadraft for the coveted title of League Champion. We also run weekly Side-Quests which are one-time events usually run via Draftmancer trying out all kinds of different draft types.",
 		icon: "gauntlet_league_logo.webp",
-		tags: ["Sealed", "Draft", "Tournament", "Event", "Arena"],
+		tags: ["Sealed", "Draft", "Tournament", "Event", "MTGA"],
 		links: { discord: "https://discord.gg/Ssd6JB4GCY", website: "https://f2fleague.wordpress.com/" },
 	},
 	{
 		name: "XMage Draft Historical Society",
-		brief: 'Come experience the history of Limited Magic with the XDHS! Draftmancer makes it possible for us to run events where we draft custom "remastered" sets designed by members of our community.',
+		brief: 'Come experience the history of Limited Magic with the XDHS! We host seven drafts each week, open to all, with a chronological progression plus bonus formats. Sundays (1:50pm EDT / 7:50pm CEST) are custom "remastered" sets designed by members of our community which we draft on Draftmancer. Matches are played on XMage with a full rules engine, all for free!',
+		fontSize: "0.90em",
 		description:
 			'Come experience the history of Limited Magic with the XDHS! Draftmancer makes it possible for us to run events where we draft custom "remastered" sets designed by members of our community. These are basically cubes with rarities, either refining an existing format or mixing together ideas from across different sets. We also offer a chronological progression where we draft almost every historical format in order. Remastered sets are Sundays at 1:50pm EDT / 7:50pm CEST, with other events offered each day to accommodate most timezones. After the draft, we play out the matches as a 3-round Swiss tourney on XMage with a full rules engine, all for free. No matter your experience level, we\'d love to have you play with us!',
 		icon: "xdhs.webp",
@@ -230,7 +231,7 @@ h1 {
 }
 
 h2 {
-	margin: 0.5em;
+	margin: 0.25em;
 }
 
 .icon {
