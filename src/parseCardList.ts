@@ -514,25 +514,29 @@ export function parseCardList(
 			}
 			// Check layout declarations
 			if (cardList.layouts) {
-				let commonPackSize = -1;
 				for (const layoutName in cardList.layouts) {
 					let packSize = 0;
 					for (const slotName in cardList.layouts[layoutName].slots) {
-						if (!Object.prototype.hasOwnProperty.call(cardList.slots, slotName)) {
+						if (!Object.prototype.hasOwnProperty.call(cardList.slots, slotName))
 							return ackError({
 								title: `Parsing Error`,
-								text: `Layout ${layoutName} refers to slot ${slotName} which is not defined.`,
+								text: `Layout '${layoutName}' refers to slot '${slotName}' which is not defined.`,
 							});
-						}
+						if (
+							!isInteger(cardList.layouts[layoutName].slots[slotName]) ||
+							cardList.layouts[layoutName].slots[slotName] <= 0
+						)
+							return ackError({
+								title: `Parsing Error`,
+								text: `Layout '${layoutName}' slot '${slotName}' value is invalid, must be a positive integer (got '${cardList.layouts[layoutName].slots[slotName]}').`,
+							});
 						packSize += cardList.layouts[layoutName].slots[slotName];
 					}
-					if (commonPackSize == -1) commonPackSize = packSize;
-					else if (commonPackSize != packSize) {
+					if (packSize <= 0)
 						return ackError({
 							title: `Parsing Error`,
-							text: `All layouts must contains the same total number of cards.`,
+							text: `Layout '${layoutName}' is empty.`,
 						});
-					}
 				}
 			} else {
 				// No explicit or default (via slot sizes) layout, expect a single slot.
@@ -548,6 +552,7 @@ export function parseCardList(
 					});
 			}
 		} else {
+			// Simple list (one card name per line)
 			cardList.slots["default"] = {};
 			for (const line of lines) {
 				if (line) {

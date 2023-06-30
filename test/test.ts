@@ -46,7 +46,6 @@ const checkDuplicates = function (booster: UniqueCard[]) {
 
 const CustomSlotsTestFile = fs.readFileSync(`./test/data/CustomSheets.txt`, "utf8");
 const CustomLayoutsTestFile = fs.readFileSync(`./test/data/CustomLayouts.txt`, "utf8");
-const CustomLayouts_WrongPackSizeTestFile = fs.readFileSync(`./test/data/CustomLayouts_WrongPackSize.txt`, "utf8");
 const CustomLayouts_MixedLayoutDefinitionsTestFile = fs.readFileSync(
 	`./test/data/CustomLayouts_MixedLayoutDefinitions.txt`,
 	"utf8"
@@ -1542,12 +1541,6 @@ describe("Single Draft (Two Players)", function () {
 
 	describe("Custom card list with incorrect custom layouts should fail.", function () {
 		connect();
-		it("Wrong Pack Size.", function (done) {
-			clients[ownerIdx].emit("parseCustomCardList", CustomLayouts_WrongPackSizeTestFile, (response) => {
-				expect(response.error).to.not.be.null;
-				done();
-			});
-		});
 		it("Mixed Layout Definitions.", function (done) {
 			clients[ownerIdx].emit("parseCustomCardList", CustomLayouts_MixedLayoutDefinitionsTestFile, (response) => {
 				expect(response.error).to.not.be.null;

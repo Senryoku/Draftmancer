@@ -15,6 +15,7 @@ export const ValidCubes: { [name: string]: string } = {
 	CustomLayoutsTestFile: fs.readFileSync(`./test/data/CustomLayouts.txt`, "utf8"),
 	CustomCards_NoLayout: fs.readFileSync(`./test/data/CustomCards_NoLayout.txt`, "utf8"),
 	CustomCards_SlotSize: fs.readFileSync(`./test/data/CustomCards_SlotSize.txt`, "utf8"),
+	CustomLayouts_MismatchedLayoutSizes: fs.readFileSync(`./test/data/CustomLayouts_MismatchedLayoutSizes.txt`, "utf8"),
 	WithReplacement: fs.readFileSync(`./test/data/ReplacementTest.txt`, "utf8"),
 	WithReplacementLayouts: fs.readFileSync(`./test/data/ReplacementTest_Layouts.txt`, "utf8"),
 	Real_CustomCards: fs.readFileSync(`./test/data/SWR_MTGA_Draft_Experiment_2.txt`, "utf8"),
@@ -32,7 +33,6 @@ export const InvalidCubes: { [name: string]: string } = {
 		`./test/data/CustomLayouts_MixedLayoutDefinitions.txt`,
 		"utf8"
 	),
-	CustomLayouts_WrongPackSizeTestFile: fs.readFileSync(`./test/data/CustomLayouts_WrongPackSize.txt`, "utf8"),
 	CustomCards_MultipleDefaultSlots_Invalid: fs.readFileSync(
 		`./test/data/CustomCards_MultipleDefaultSlots_Invalid.txt`,
 		"utf8"
