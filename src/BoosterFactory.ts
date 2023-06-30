@@ -1600,7 +1600,7 @@ function weightedRandomPick(
 		if (attempt < 3) return weightedRandomPick(arr, totalWeight, picked, attempt + 1);
 		else {
 			// Apparently, we're strugguling to find a non duplicate, take the time to make sure we don't miss this time (or that none exists).
-			const valid = arr.filter((c) => c.id !== arr[idx].id || c.foil !== arr[idx].foil);
+			const valid = arr.filter((c) => picked.every((card) => c.id !== card.id || c.foil !== card.foil));
 			if (valid.length > 0)
 				return weightedRandomPick(
 					valid,
