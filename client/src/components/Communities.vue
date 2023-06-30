@@ -6,13 +6,15 @@
 		<div style="position: relative">
 			<div class="community-carousel">
 				<div class="scroller">
-					<div v-for="c in communities" :key="c.name" class="community">
-						<div
-							class="icon"
-							:style="`background-image: url(${require(`../assets/img/communities/${c.icon}`)})`"
-						></div>
+					<div
+						v-for="c in communities"
+						:key="c.name"
+						class="community"
+						:style="`--icon: url(${require(`../assets/img/communities/${c.icon}`)})`"
+					>
+						<div class="icon"></div>
 						<h2 class="name">{{ c.name }}</h2>
-						<div class="description" :style="`font-size: ${c.fontSize ?? '1em'}`">{{ c.brief }}</div>
+						<div class="description" :style="`font-size: ${c.fontSize ?? '1em'}`" v-html="c.brief"></div>
 						<div class="links">
 							<a v-if="c.links.discord" :href="c.links.discord" target="_blank">
 								<font-awesome-icon icon="fa-brands fa-discord"></font-awesome-icon> Discord server
@@ -88,8 +90,8 @@ const communities = [
 	},
 	{
 		name: "XMage Draft Historical Society",
-		brief: 'Come experience the history of Limited Magic with the XDHS! We host seven drafts each week, open to all, with a chronological progression plus bonus formats. Sundays (1:50pm EDT / 7:50pm CEST) are custom "remastered" sets designed by members of our community which we draft on Draftmancer. Matches are played on XMage with a full rules engine, all for free!',
-		fontSize: "0.90em",
+		brief: 'Come experience the history of Limited Magic with the XDHS!<br />We host seven drafts each week, open to all, with a chronological progression plus bonus formats. Sundays (1:50pm EDT / 7:50pm CEST) are custom "remastered" sets designed by members of our community which we draft on Draftmancer. Matches are played on XMage with a full rules engine, all for free!',
+		fontSize: "0.95em",
 		description:
 			'Come experience the history of Limited Magic with the XDHS! Draftmancer makes it possible for us to run events where we draft custom "remastered" sets designed by members of our community. These are basically cubes with rarities, either refining an existing format or mixing together ideas from across different sets. We also offer a chronological progression where we draft almost every historical format in order. Remastered sets are Sundays at 1:50pm EDT / 7:50pm CEST, with other events offered each day to accommodate most timezones. After the draft, we play out the matches as a 3-round Swiss tourney on XMage with a full rules engine, all for free. No matter your experience level, we\'d love to have you play with us!',
 		icon: "xdhs.webp",
@@ -113,7 +115,7 @@ const next = () => {
 	resetTimeout();
 };
 const prev = () => {
-	selected.value = (selected.value - 1) % communities.length;
+	selected.value = (communities.length + selected.value - 1) % communities.length;
 	resetTimeout();
 };
 
@@ -217,7 +219,7 @@ const select = (idx: number) => {
 		"icon links"
 		"icon tags";
 	grid-template-rows: auto 1fr auto auto;
-	column-gap: 1em;
+	column-gap: 0.5em;
 	row-gap: 0.25em;
 	width: var(--card-width);
 	height: var(--card-height);
@@ -236,17 +238,10 @@ h2 {
 
 .icon {
 	grid-area: icon;
-	display: flex;
-	justify-content: center;
-	align-items: center;
 	background-size: cover;
 	background-position: center;
+	background-image: var(--icon);
 	width: var(--card-height);
-}
-
-.icon img {
-	max-width: 200px;
-	max-height: 200px;
 }
 
 .name {
@@ -259,19 +254,23 @@ h2 {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	padding: 0.5em;
+	padding-left: 0.5em;
+	padding-right: 0.5em;
 }
 
 .links {
 	grid-area: links;
 	display: flex;
 	justify-content: space-evenly;
+	align-content: center;
+	align-items: center;
 }
 
 .tags {
 	grid-area: tags;
 	display: flex;
 	flex-wrap: wrap;
+	align-content: center;
 	gap: 0.25em;
 	padding: 0.5em;
 }
@@ -280,5 +279,31 @@ h2 {
 	padding: 2.5px 10px 2.5px 10px;
 	border-radius: 10px;
 	background-color: rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 799px) {
+	.community-carousel {
+		--card-width: 95vw;
+		--card-height: 300px;
+	}
+	.community {
+		grid-template-rows: auto 1fr auto auto;
+		grid-template-columns: 100px 1fr;
+		grid-template-areas:
+			"name name"
+			"description description"
+			"icon links"
+			"icon tags";
+	}
+
+	.icon {
+		width: auto;
+		height: auto;
+		aspect-ratio: 1;
+	}
+
+	.name {
+		text-align: center;
+	}
 }
 </style>

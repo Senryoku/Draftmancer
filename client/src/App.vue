@@ -1665,8 +1665,8 @@
 						Draft with other players and export your resulting deck to Magic: The Gathering Arena to play
 						with them, in pod!
 					</p>
-					<div style="display: flex; justify-content: center; gap: 1em">
-						<div style="max-width: 600px">
+					<div class="welcome-top">
+						<div>
 							<div class="section-title">
 								<h2>Quick Start</h2>
 							</div>
@@ -1695,7 +1695,7 @@
 							</div>
 							<news class="welcome-section" />
 						</div>
-						<div class="container" style="grid-area: Support">
+						<div class="container" style="grid-area: Help">
 							<div class="section-title">
 								<h2>Help</h2>
 							</div>
@@ -1724,6 +1724,8 @@
 									Discord </a
 								>.
 							</div>
+						</div>
+						<div class="container" style="grid-area: Support">
 							<div class="section-title">
 								<h2>
 									<font-awesome-icon
