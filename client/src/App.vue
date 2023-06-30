@@ -1678,8 +1678,12 @@
 										<a href="/draftqueue">Draft Queue</a>!
 									</li>
 									<li>
-										Draft with bots simply by selecting a set and hitting "Draft" on top of the
-										page.
+										Draft with bots by selecting a set and clicking "<span
+											@click="startDraft"
+											:class="{ link: userID === sessionOwner }"
+											style="font-variant: small-caps"
+											>Start</span
+										>" on top of the page.
 									</li>
 									<li>Join one of the featured communities and participate in events.</li>
 									<li>Tinker with the settings and organize your own events!</li>

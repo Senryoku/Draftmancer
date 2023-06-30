@@ -1,7 +1,15 @@
 <template>
 	<div>
 		<div class="section-title">
-			<h2>Featured Communities</h2>
+			<h2>
+				Featured Communities
+				<font-awesome-icon
+					class="clickable"
+					@click="explain"
+					:icon="['fas', 'question-circle']"
+					size="sm"
+				></font-awesome-icon>
+			</h2>
 		</div>
 		<div style="position: relative">
 			<div class="community-carousel">
@@ -55,6 +63,7 @@
 </template>
 
 <script setup lang="ts">
+import { Alert } from "../alerts";
 import { ref } from "vue";
 
 function shuffleArray<T>(array: Array<T>, start = 0, end = array.length) {
@@ -132,6 +141,16 @@ const resetTimeout = () => {
 const select = (idx: number) => {
 	selected.value = idx;
 	resetTimeout();
+};
+
+const explain = () => {
+	Alert.fire({
+		icon: "info",
+		title: "Featured Communities",
+		html: `<p>These communities are focused around diverse aspects of Limited Magic and are known to organize tournaments and events using Draftmancer.</p>
+		<p>Do you want your own community to be featured here?<br />
+		You can submit it by contacting me (Senryoku) via <a href="mailto:dev@draftmancer.com">email</a> or the <a href="https://discord.gg/XscXXNw">Draftmancer Discord</a></p>`,
+	});
 };
 </script>
 
