@@ -3577,7 +3577,8 @@ export default defineComponent({
 		},
 		basicsInDeck(): boolean {
 			return (
-				this.deck.some((c) => c.type === "Basic Land") || this.sideboard.some((c) => c.type === "Basic Land")
+				this.deck.some((c) => EnglishBasicLandNames.includes(c.name)) ||
+				this.sideboard.some((c) => EnglishBasicLandNames.includes(c.name))
 			);
 		},
 		deckCreatureCount(): number {

@@ -171,6 +171,7 @@ import Checkbox from "./Checkbox.vue";
 import { Language } from "@/Types";
 import { UniqueCard } from "@/CardTypes";
 import { sortableUpdate } from "../helper";
+import { EnglishBasicLandNames } from "../../../src/Constants";
 
 export default defineComponent({
 	name: "CardPool",
@@ -226,7 +227,7 @@ export default defineComponent({
 					r.splice(
 						i,
 						1,
-						r[i].filter((c) => c.type !== "Basic Land")
+						r[i].filter((c) => !EnglishBasicLandNames.includes(c.name))
 					);
 		},
 		selectRow(card: UniqueCard) {
