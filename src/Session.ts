@@ -3260,9 +3260,14 @@ export class Session implements IIndexable {
 				default:
 				case "delayed":
 					if (this.draftLog.delayed) {
-						// Complete log has not been shared yet, send only hashes to non-owners.
+						// Complete log has not been shared yet, send only hashes to non-owners, unless its their own and personalLogs is enabled.
 						if (this.owner) Connections[this.owner]?.socket.emit("shareDecklist", shareData);
-						this.forNonOwners((uid) => Connections[uid]?.socket.emit("shareDecklist", hashesOnly));
+						this.forNonOwners((uid) =>
+							Connections[uid]?.socket.emit(
+								"shareDecklist",
+								this.personalLogs && userID === uid ? shareData : hashesOnly
+							)
+						);
 						break;
 					}
 				// Else, fall through to "everyone"
@@ -3274,11 +3279,21 @@ export class Session implements IIndexable {
 					break;
 				case "owner":
 					if (this.owner) Connections[this.owner]?.socket.emit("shareDecklist", shareData);
-					this.forNonOwners((uid) => Connections[uid]?.socket.emit("shareDecklist", hashesOnly));
+					this.forNonOwners((uid) =>
+						Connections[uid]?.socket.emit(
+							"shareDecklist",
+							this.personalLogs && userID === uid ? shareData : hashesOnly
+						)
+					);
 					break;
 				case "none":
 					if (this.owner) Connections[this.owner]?.socket.emit("shareDecklist", hashesOnly);
-					this.forNonOwners((uid) => Connections[uid]?.socket.emit("shareDecklist", hashesOnly));
+					this.forNonOwners((uid) =>
+						Connections[uid]?.socket.emit(
+							"shareDecklist",
+							this.personalLogs && userID === uid ? shareData : hashesOnly
+						)
+					);
 					break;
 			}
 		}

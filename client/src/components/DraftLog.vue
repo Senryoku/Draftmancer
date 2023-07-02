@@ -185,7 +185,7 @@
 							:username="selectedUser.userName"
 							:carddata="draftlog.carddata"
 							:language="language"
-							:hashesonly="draftlog.delayed"
+							:hashesonly="draftlog.delayed && (!draftlog.personalLogs || userID !== selectedUser.userID)"
 						/>
 					</div>
 				</template>
