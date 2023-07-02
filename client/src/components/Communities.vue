@@ -76,7 +76,7 @@ function shuffleArray<T>(array: Array<T>, start = 0, end = array.length) {
 const communities = [
 	{
 		name: "MTG Cube Talk",
-		brief: "A friendly server to discuss cube design and organise online cube play.",
+		brief: "A friendly server to discuss cube design, organize online limited events, and talk with over 2,500 other cube and Magic enthusiasts about the best game in the world!",
 		icon: "mtg_cube_talk.webp",
 		tags: ["Cube", "Cockatrice", "Design", "Discussion"],
 		links: { discord: "https://discord.gg/mtg-cube-talk-263828508126609420" },
