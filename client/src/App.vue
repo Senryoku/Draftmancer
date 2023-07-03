@@ -1659,6 +1659,7 @@
 					<DraftQueue :socket="socket"></DraftQueue>
 				</template>
 				<template v-else>
+					<button>Reload last deck TODO</button>
 					<h1>Welcome to Draftmancer.com!</h1>
 					<p class="important">
 						Draft with other players and export your resulting deck to Magic: The Gathering Arena to play
