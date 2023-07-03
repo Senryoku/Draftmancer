@@ -27,6 +27,9 @@
 							<a v-if="c.links.discord" :href="c.links.discord" target="_blank">
 								<font-awesome-icon icon="fa-brands fa-discord"></font-awesome-icon> Discord server
 							</a>
+							<a v-if="c.links.youtube" :href="c.links.youtube" target="_blank">
+								<font-awesome-icon :icon="['brands', 'youtube']" /> Youtube
+							</a>
 							<a v-if="c.links.website" :href="c.links.website" target="_blank">
 								<font-awesome-icon :icon="['fas', 'globe']" /> Website
 							</a>
@@ -113,6 +116,13 @@ const communities = [
 		icon: "custom_magic.webp",
 		tags: ["Custom ", "Cockatrice"],
 		links: { discord: "https://discord.gg/custommagic" },
+	},
+	{
+		name: "Jank Diver Gaming",
+		brief: "A community dedicated to the Cube format, specifically for Magic: Arena play.",
+		icon: "jank_diver_gaming.webp",
+		tags: ["Cube", "MTGA", "Social"],
+		links: { youtube: "https://www.youtube.com/@JankDiverGaming" },
 	},
 ];
 shuffleArray(communities);
