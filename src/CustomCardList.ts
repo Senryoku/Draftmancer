@@ -17,6 +17,8 @@ export type CCLSettings = {
 	withReplacement?: boolean;
 	predeterminedLayouts?: { name: LayoutName; weight: number }[][];
 	layoutWithReplacement?: boolean;
+	colors?: Record<string, { id: string; symbol: string; name: string }>;
+	symbols?: Record<string, { symbol: string; icon: string; cmc: number; colors: string[] }>;
 };
 
 export type CustomCardList = {

@@ -1,0 +1,40 @@
+[Settings]
+{
+	"withReplacement": true,
+	"colors": [{"id": "NewA", "symbol": "{NewA}", "name": "NewA", "basic": "NewA"}, {"id": "NewB", "symbol": "{NewB}", "name": "NewB", "basic": "NewB"}],
+	"symbols": [{"symbol": "{NewA}", "icon": "https://svgs.scryfall.io/card-symbols/T.svg", "cmc": 1, "colors": ["NewA"]}, {"symbol": "{NewB}", "icon": "https://svgs.scryfall.io/card-symbols/Q.svg", "cmc": 1, "colors": ["NewB"]}]
+}
+[CustomCards]
+[
+	{	
+		"name": "NewA",
+		"rarity": "mythic",
+		"mana_cost": "{1}{NewA}",
+		"type": "Creature",
+		"image_uris": {
+			"en": "https://cards.scryfall.io/border_crop/front/6/0/60e16d94-1166-4050-8554-686e153a7f80.jpg?1576381454"
+		}
+	},
+	{	
+		"name": "NewB",
+		"rarity": "mythic",
+		"mana_cost": "{1}{NewB}",
+		"type": "Creature",
+		"image_uris": {
+			"en": "https://cards.scryfall.io/border_crop/front/e/3/e384c20b-d0c1-4781-9d11-e89e5a6bf3fc.jpg?1686967821"
+		}
+	},
+	{	
+		"name": "NewAB",
+		"rarity": "mythic",
+		"mana_cost": "{NewA}{NewB}",
+		"type": "Creature",
+		"image_uris": {
+			"en": "https://cards.scryfall.io/border_crop/front/e/7/e724c648-0585-451f-afcd-7efff2521151.jpg?1599354187"
+		}
+	}
+]
+[Default]
+NewA
+NewB
+NewAB
