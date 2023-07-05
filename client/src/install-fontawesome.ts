@@ -90,6 +90,7 @@ import {
 	faGithub,
 	faPatreon,
 	faPaypal,
+	faTwitter,
 	faWindows,
 	faYoutube,
 } from "@fortawesome/free-brands-svg-icons";
@@ -177,7 +178,7 @@ library.add(
 	faVolumeMute,
 	faVolumeUp
 );
-library.add(faGithub, faPaypal, faDiscord, faPatreon, faWindows, faApple, faYoutube);
+library.add(faGithub, faPaypal, faDiscord, faPatreon, faTwitter, faWindows, faApple, faYoutube);
 
 export const installFontAwesome = (app: ReturnType<typeof createApp>) => {
 	app.component("font-awesome-layers", FontAwesomeLayers);

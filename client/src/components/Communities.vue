@@ -25,7 +25,10 @@
 						<div class="description" :style="`font-size: ${c.fontSize ?? '1em'}`" v-html="c.brief"></div>
 						<div class="links">
 							<a v-if="c.links.discord" :href="c.links.discord" target="_blank">
-								<font-awesome-icon icon="fa-brands fa-discord"></font-awesome-icon> Discord server
+								<font-awesome-icon :icon="['brands', 'discord']" /> Discord server
+							</a>
+							<a v-if="c.links.youtube" :href="c.links.twitter" target="_blank">
+								<font-awesome-icon :icon="['brands', 'twitter']" /> Twitter
 							</a>
 							<a v-if="c.links.youtube" :href="c.links.youtube" target="_blank">
 								<font-awesome-icon :icon="['brands', 'youtube']" /> Youtube
@@ -122,7 +125,11 @@ const communities = [
 		brief: "A community dedicated to the Cube format, specifically for Magic: Arena play.",
 		icon: "jank_diver_gaming.webp",
 		tags: ["Cube", "MTGA", "Social"],
-		links: { youtube: "https://www.youtube.com/@JankDiverGaming" },
+		links: {
+			youtube: "https://www.youtube.com/@JankDiverGaming",
+			discord: "https://discord.gg/G7ucDuK3v9",
+			twitter: "https://twitter.com/JankDiverGaming",
+		},
 	},
 ];
 shuffleArray(communities);
