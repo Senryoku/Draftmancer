@@ -1,24 +1,8 @@
 import type { ClientToServerEvents, LoaderOptions, ServerToClientEvents } from "@/SocketType";
 import type { UserID } from "@/IDTypes";
 import type { SetCode, IIndexable, Language } from "@/Types";
-import {
-	DisconnectedUser,
-	DistributionMode,
-	DraftLogRecipients,
-	ReadyState,
-	UserData,
-	UsersData,
-} from "../../src/Session/SessionTypes";
-import {
-	ArenaID,
-	Card,
-	CardID,
-	DeckList,
-	OnPickDraftEffect,
-	PlainCollection,
-	UniqueCard,
-	UniqueCardID,
-} from "@/CardTypes";
+import { DistributionMode, DraftLogRecipients, ReadyState, UserData, UsersData } from "../../src/Session/SessionTypes";
+import { ArenaID, Card, CardID, DeckList, PlainCollection, UniqueCard, UniqueCardID } from "@/CardTypes";
 import type { DraftLog } from "@/DraftLog";
 import type { BotScores } from "@/Bot";
 import type { WinstonDraftSyncData } from "@/WinstonDraft";
@@ -40,7 +24,7 @@ import Constants, { CubeDescription, EnglishBasicLandNames } from "../../src/Con
 import { CardColor, OptionalOnPickDraftEffect, UsableDraftEffect } from "../../src/CardTypes";
 
 import io, { Socket } from "socket.io-client";
-import { toRaw, defineComponent, defineAsyncComponent } from "vue";
+import { toRaw, defineComponent, defineAsyncComponent, computed } from "vue";
 import { Sortable } from "sortablejs-vue3";
 import Swal, { SweetAlertIcon, SweetAlertOptions, SweetAlertResult } from "sweetalert2";
 import { SortableEvent } from "sortablejs";
@@ -414,6 +398,22 @@ export default defineComponent({
 				text: string;
 				timestamp: number;
 			}[],
+		};
+	},
+	provide() {
+		return {
+			cardColors: computed(() => {
+				const CardColors = {
+					W: { id: "W", icon: "img/mana/W.svg" },
+					U: { id: "U", icon: "img/mana/U.svg" },
+					B: { id: "B", icon: "img/mana/B.svg" },
+					R: { id: "R", icon: "img/mana/R.svg" },
+					G: { id: "G", icon: "img/mana/G.svg" },
+				};
+				if (this.customCardList?.settings?.colors)
+					return { ...CardColors, ...this.customCardList.settings.colors };
+				return CardColors;
+			}),
 		};
 	},
 	methods: {
