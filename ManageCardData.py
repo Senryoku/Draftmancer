@@ -533,6 +533,11 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
 
     # Select the "best" (most recent, non special) printing of each card
     def selectCard(a, b):
+        # Avoid special frame effects
+        if ('frame_effects' in a and any(i in ["showcase","extendedart","etched"] for i in a['frame_effects'])) and (('frame_effects' not in b) or (not any(i in ["showcase","extendedart","etched"] for i in b['frame_effects']))):
+            return b
+        if ('frame_effects' in b and any(i in ["showcase","extendedart","etched"] for i in b['frame_effects'])) and (('frame_effects' not in a) or (not any(i in ["showcase","extendedart","etched"] for i in a['frame_effects']))):
+            return a
         # Special case for conjure-only cards from J21 that should be avoided.
         if a['set'] == 'j21' and int(a['collector_number']) >= 777:
             return b
