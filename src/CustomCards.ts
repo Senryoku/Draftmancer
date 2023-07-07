@@ -4,6 +4,7 @@ import { Card, CardColor, CardFace } from "./CardTypes.js";
 import { ackError, isMessageError, isSocketError, SocketAck, SocketError } from "./Message.js";
 import { isCard, isDraftEffect } from "./CardTypeCheck.js";
 import { hasProperty, isArrayOf, isObject, isRecord, isString } from "./TypeChecks.js";
+import { CCLSettings } from "./CustomCardList";
 
 function errorWithJSON(title: string, msg: string, json: unknown) {
 	return ackError({
@@ -58,7 +59,7 @@ export function validateCustomCardFace(face: unknown): SocketError | CardFace {
 	};
 }
 
-export function validateCustomCard(inputCard: any): SocketError | Card {
+export function validateCustomCard(inputCard: any, settings?: CCLSettings): SocketError | Card {
 	// Check mandatory fields
 	const missing =
 		checkProperty(inputCard, "name") ??
@@ -128,7 +129,7 @@ export function validateCustomCard(inputCard: any): SocketError | Card {
 	const card = new Card();
 	card.is_custom = true;
 	card.name = card.id = card.oracle_id = inputCard.name;
-	const ret = parseCost(inputCard.mana_cost);
+	const ret = parseCost(inputCard.mana_cost, settings);
 	if (isMessageError(ret)) return new SocketAck(ret);
 	const { cmc, colors, normalizedCost } = ret;
 	card.mana_cost = normalizedCost;

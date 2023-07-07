@@ -4,7 +4,7 @@ import { CardsByName, CardVersionsByName, getCard, isValidCardID } from "./Cards
 import { CCLSettings, CustomCardList, PackLayout } from "./CustomCardList.js";
 import { escapeHTML } from "./utils.js";
 import { ackError, isSocketError, SocketError } from "./Message.js";
-import { isArrayOf, isBoolean, isInteger, isRecord, isString, isUnknown } from "./TypeChecks.js";
+import { hasProperty, isArrayOf, isBoolean, isInteger, isObject, isRecord, isString, isUnknown } from "./TypeChecks.js";
 
 const lineRegex = /^(?:(\d+)\s+)?([^(\v\n]+)??(?:\s\((\w+)\)(?:\s+([^+\s]+))?)?(?:\s+\+?(F))?$/;
 
@@ -309,13 +309,56 @@ function parseSettings(
 		}
 	}
 
+	if ("symbols" in parsedSettings) {
+		if (!isArrayOf(isObject)(parsedSettings.symbols))
+			return ackError({
+				title: `[Settings]`,
+				text: `'symbols' must be an array of symbol objects.`,
+			});
+		settings.symbols = {};
+		for (const symbol of parsedSettings.symbols) {
+			if (
+				!hasProperty("icon", isString)(symbol) ||
+				!hasProperty("symbol", isString)(symbol) ||
+				!hasProperty("cmc", isInteger)(symbol) ||
+				!hasProperty("colors", isArrayOf(isString))(symbol)
+			)
+				return ackError({
+					title: `[Settings]`,
+					text: `Invalid symbol object '${symbol}'.`,
+				});
+			settings.symbols[symbol.symbol] = symbol;
+		}
+	}
+
+	if ("colors" in parsedSettings) {
+		if (!isArrayOf(isObject)(parsedSettings.colors))
+			return ackError({
+				title: `[Settings]`,
+				text: `'colors' must be an array of color objects.`,
+			});
+		settings.colors = {};
+		for (const color of parsedSettings.colors) {
+			if (
+				!hasProperty("id", isString)(color) ||
+				!hasProperty("name", isString)(color) ||
+				!hasProperty("symbol", isString)(color)
+			)
+				return ackError({
+					title: `[Settings]`,
+					text: `Invalid color object '${color}'.`,
+				});
+			settings.colors[color.id] = color;
+		}
+	}
+
 	return {
 		advance: (settingsStr.match(/\r?\n/g)?.length ?? 0) + 1, // Skip this section's lines
 		settings: settings,
 	};
 }
 
-function parseCustomCards(lines: string[], startIdx: number, txtcardlist: string) {
+function parseCustomCards(lines: string[], startIdx: number, txtcardlist: string, settings?: CCLSettings) {
 	const lineIdx = startIdx;
 	if (lines.length <= lineIdx)
 		return ackError({
@@ -355,7 +398,7 @@ function parseCustomCards(lines: string[], startIdx: number, txtcardlist: string
 	const customCards: Card[] = [];
 	const customCardsKeys: CardID[] = [];
 	for (const c of parsedCustomCards) {
-		const cardOrError = validateCustomCard(c);
+		const cardOrError = validateCustomCard(c, settings);
 		if (isSocketError(cardOrError)) return cardOrError;
 		customCardsKeys.push(cardOrError.id);
 		// Validate related card references.
@@ -452,7 +495,7 @@ export function parseCardList(
 					if (settingsOrError.settings.name) cardList.name = settingsOrError.settings.name;
 					lineIdx += settingsOrError.advance;
 				} else if (lowerCaseHeader === "customcards") {
-					const cardsOrError = parseCustomCards(lines, lineIdx, txtcardlist);
+					const cardsOrError = parseCustomCards(lines, lineIdx, txtcardlist, cardList.settings);
 					if (isSocketError(cardsOrError)) return cardsOrError;
 					if (!cardList.customCards) cardList.customCards = {};
 					for (const customCard of cardsOrError.customCards) {
