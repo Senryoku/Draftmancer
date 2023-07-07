@@ -1659,7 +1659,14 @@
 					<DraftQueue :socket="socket"></DraftQueue>
 				</template>
 				<template v-else>
-					<button>Reload last deck TODO</button>
+					<button
+						v-if="previousDeck"
+						@click="loadPreviousDeck"
+						style="float: right"
+						v-tooltip="`Reload deck of the last played session from your game logs.`"
+					>
+						<font-awesome-icon :icon="['fas', 'rotate-left']" /> Reload last deck
+					</button>
 					<h1>Welcome to Draftmancer.com!</h1>
 					<p class="important">
 						Draft with other players and export your resulting deck to Magic: The Gathering Arena to play

@@ -1309,6 +1309,15 @@ export default defineComponent({
 				instance.mount("#choose-player-dialog");
 			});
 		},
+		loadPreviousDeck() {
+			const d = this.previousDeck;
+			if (!d) return;
+			this.clearDeck();
+			this.clearSideboard();
+			this.addToDeck(d.main);
+			this.addToSideboard(d.side);
+			this.draftingState = DraftState.Brewing;
+		},
 		clearState() {
 			this.disconnectedUsers = {};
 			this.virtualPlayersData = null;
@@ -3432,6 +3441,23 @@ export default defineComponent({
 			if (this.useCustomCardList) return "Cube Draft";
 			if (this.burnedCardsPerRound > 0) return "Glimpse Draft";
 			return "Draft";
+		},
+		previousDeck() {
+			if (this.draftLogs.length > 0 && this.draftLogs[this.draftLogs.length - 1].users[this.userID]) {
+				const s = this.draftLogs[this.draftLogs.length - 1].users[this.userID].decklist ?? {
+					main: this.draftLogs[this.draftLogs.length - 1].users[this.userID].cards,
+					side: [],
+				};
+				let uniqueID = 0;
+				const getUnique = (cid: string) => {
+					return { uniqueID: uniqueID++, ...this.draftLogs[this.draftLogs.length - 1].carddata[cid] };
+				};
+				return {
+					main: s.main.map(getUnique),
+					side: s.side.map(getUnique),
+				};
+			}
+			return null;
 		},
 		cardsToPick(): number {
 			if (this.rochesterDraftState || !this.booster) return 1;
