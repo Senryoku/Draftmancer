@@ -553,9 +553,9 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
             return a
         if (a['name'], a['collector_number'], a['set'].lower()) not in CardsCollectorNumberAndSet and (b['name'], b['collector_number'], b['set'].lower()) in CardsCollectorNumberAndSet:
             return b
-        if a['image_status'] == "lowres" and b['image_status'] == "highres_scan":
+        if a['image_status'] != "highres_scan" and b['image_status'] == "highres_scan":
             return b
-        if a['image_status'] == "highres_scan" and b['image_status'] == "lowres":
+        if a['image_status'] == "highres_scan" and b['image_status'] != "highres_scan":
             return a
         # Prefer a card with an Arena ID
         if 'arena_id' in a and 'arena_id' not in b:
