@@ -8,6 +8,13 @@ body {
 	min-height: calc(100vh);
 }
 
+@media (max-width: 1600px) {
+	body {
+		overflow-x: hidden;
+		background-position: 90% 5em;
+	}
+}
+
 .backgound-image {
 	position: absolute;
 	right: 2em;
@@ -22,10 +29,11 @@ body {
 	height: 45em;
 }
 
-@media (max-width: 1600px) {
-	body {
-		overflow-x: hidden;
-		background-position: 90% 5em;
+@media (max-width: 1200px) {
+	.backgound-image {
+		top: 12em;
+		right: 50%;
+		transform: translateX(50%);
 	}
 }
 

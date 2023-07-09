@@ -4,6 +4,7 @@
 		:style="`height: ${displayFixedDeck ? fixedDeckState.mainHeight : '100vh'}`"
 		:class="{ 'using-fixed-deck': displayFixedDeck }"
 	>
+		<div class="backgound-image"></div>
 		<!-- Personal Options -->
 		<div id="view-controls" class="main-controls">
 			<span>
@@ -1672,14 +1673,33 @@
 						Draft with other players and export your resulting deck to Magic: The Gathering Arena to play
 						with them, in pod!
 					</p>
-					<a href="/draftqueue" class="reset-style" style="display: block; margin: auto; width: fit-content">
-						<img
-							src="./assets/img/LotR_banner.png"
-							width="728"
-							height="90"
-							style="border-radius: 1em; max-width: 90vw; filter: drop-shadow(0px 0px 2px #00000080)"
-						/>
-					</a>
+					<div class="welcome-top">
+						<div>
+							<div class="section-title">
+								<h2>Quick Start</h2>
+							</div>
+							<div class="welcome-section welcome-alt">
+								There are multiple ways to get started with Draftmancer:
+								<ul class="quick-start-list">
+									<li>
+										Pratice the latest sets with other players in the
+										<a href="/draftqueue">Draft Queue</a>!
+									</li>
+									<li>
+										Draft with bots by selecting a set and clicking "<span
+											@click="startDraft"
+											:class="{ link: userID === sessionOwner }"
+											style="font-variant: small-caps"
+											>Start</span
+										>" on top of the page.
+									</li>
+									<li>Join one of the featured communities and participate in events.</li>
+									<li>Tinker with the settings and organize your own events!</li>
+								</ul>
+							</div>
+						</div>
+						<Communities />
+					</div>
 					<div class="welcome-sections">
 						<div class="container" style="grid-area: News">
 							<div class="section-title">

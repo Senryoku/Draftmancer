@@ -505,6 +505,20 @@ select.swal2-input option {
 	margin: 1rem;
 }
 
+.welcome-top {
+	display: flex;
+	justify-content: center;
+	gap: 1em;
+}
+
+@media (max-width: 1200px) {
+	.welcome-top {
+		flex-direction: column;
+		align-items: center;
+		align-content: stretch;
+	}
+}
+
 .welcome-sections {
 	width: 85%;
 	margin: auto;
@@ -559,6 +573,13 @@ select.swal2-input option {
 
 .welcome-alt {
 	background-color: #202020e0;
+}
+
+ul.quick-start-list {
+	list-style-type: disc;
+}
+.quick-start-list li {
+	margin: 1em;
 }
 
 .public-sessions {

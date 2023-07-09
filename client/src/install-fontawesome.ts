@@ -42,6 +42,7 @@ import {
 	faFileExport,
 	faFileLines,
 	faFileUpload,
+	faGlobe,
 	faInfoCircle,
 	faList,
 	faLock,
@@ -84,7 +85,16 @@ import {
 	faVolumeMute,
 	faVolumeUp,
 } from "@fortawesome/free-solid-svg-icons";
-import { faGithub, faPaypal, faDiscord, faPatreon, faWindows, faApple } from "@fortawesome/free-brands-svg-icons";
+import {
+	faApple,
+	faDiscord,
+	faGithub,
+	faPatreon,
+	faPaypal,
+	faTwitter,
+	faWindows,
+	faYoutube,
+} from "@fortawesome/free-brands-svg-icons";
 
 library.add(faEye, faEyeSlash, faComments, faWindowMaximize);
 library.add(
@@ -127,6 +137,7 @@ library.add(
 	faFileExport,
 	faFileLines,
 	faFileUpload,
+	faGlobe,
 	faInfoCircle,
 	faList,
 	faLock,
@@ -169,7 +180,7 @@ library.add(
 	faVolumeMute,
 	faVolumeUp
 );
-library.add(faGithub, faPaypal, faDiscord, faPatreon, faWindows, faApple);
+library.add(faGithub, faPaypal, faDiscord, faPatreon, faTwitter, faWindows, faApple, faYoutube);
 
 export const installFontAwesome = (app: ReturnType<typeof createApp>) => {
 	app.component("font-awesome-layers", FontAwesomeLayers);
