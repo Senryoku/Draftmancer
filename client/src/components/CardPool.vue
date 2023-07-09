@@ -730,16 +730,3 @@ export default defineComponent({
 	width: 100%;
 }
 </style>
-
-<style>
-.multi-drag-selected::before {
-	content: "";
-	position: absolute;
-	top: -3px;
-	left: -3px;
-	right: -3px;
-	bottom: -3px;
-	border-radius: 3.5%/28% 28% 3px 3px;
-	background-color: #518ae6;
-}
-</style>

@@ -3118,18 +3118,28 @@ export default defineComponent({
 			);
 		},
 		onCollapsedSideDragAdd(e: SortableEvent) {
-			e.item.remove();
-			const idx = this.deck.findIndex((c) => c.uniqueID === parseInt(e.item.dataset["uniqueid"]!));
-			if (idx >= 0) {
-				const card = this.deck[idx];
-				this.sideboard.splice(e.newIndex!, 0, card);
-				this.socket.emit("moveCard", card.uniqueID, "side");
-				this.sideboardDisplay?.sync();
+			const entries =
+				e.newIndicies.length > 0 ? e.newIndicies : [{ multiDragElement: e.item, index: e.newIndex! }];
+			entries.sort((l, r) => l.index - r.index);
+			for (const { multiDragElement, index } of entries) {
+				multiDragElement.remove();
+				const idx = this.deck.findIndex((c) => c.uniqueID === parseInt(multiDragElement.dataset["uniqueid"]!));
+				if (idx >= 0) {
+					const card = this.deck[idx];
+					this.sideboard.splice(index, 0, card);
+					this.socket.emit("moveCard", card.uniqueID, "side");
+					this.sideboardDisplay?.sync();
+				}
 			}
 		},
 		onCollapsedSideDragRemove(e: SortableEvent) {
-			this.sideboard.splice(e.oldIndex!, 1);
-			this.sideboardDisplay?.sync();
+			const entries =
+				e.oldIndicies.length > 0 ? e.oldIndicies : [{ multiDragElement: e.item, index: e.oldIndex! }];
+			entries.sort((l, r) => r.index - l.index);
+			for (const { index } of entries) {
+				this.sideboard.splice(index, 1);
+				this.sideboardDisplay?.sync();
+			}
 		},
 		clearDeck() {
 			this.deck = [];
