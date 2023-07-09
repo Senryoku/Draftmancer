@@ -553,6 +553,15 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
             return a
         if 'arena_id' not in a and 'arena_id' in b:
             return b
+        # Avoid special frame effects
+        if ('frame_effects' in a and any(i in ["showcase","extendedart","etched"] for i in a['frame_effects'])) and (('frame_effects' not in b) or (not any(i in ["showcase","extendedart","etched"] for i in b['frame_effects']))):
+            return b
+        if ('frame_effects' in b and any(i in ["showcase","extendedart","etched"] for i in b['frame_effects'])) and (('frame_effects' not in a) or (not any(i in ["showcase","extendedart","etched"] for i in a['frame_effects']))):
+            return a
+        if a['image_status'] != "highres_scan" and b['image_status'] == "highres_scan":
+            return b
+        if a['image_status'] == "highres_scan" and b['image_status'] != "highres_scan":
+            return a
         if a['set'] in PrimarySets and not b['set'] in PrimarySets:
             return a
         if a['set'] not in PrimarySets and b['set'] in PrimarySets:
