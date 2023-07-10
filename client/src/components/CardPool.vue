@@ -169,8 +169,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
-import SortableJS, { MultiDrag, SortableEvent } from "sortablejs";
-SortableJS.mount(new MultiDrag());
+import { SortableEvent } from "sortablejs";
 import { Sortable } from "sortablejs-vue3";
 import CardOrder, { ComparatorType } from "../cardorder";
 import Card from "./Card.vue";
