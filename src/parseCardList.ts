@@ -290,6 +290,16 @@ function parseSettings(
 		settings.layoutWithReplacement = parsedSettings.layoutWithReplacement;
 	}
 
+	if ("boostersPerPlayer" in parsedSettings) {
+		if (!isInteger(parsedSettings.boostersPerPlayer)) {
+			return ackError({
+				title: `[Settings]`,
+				text: `'boostersPerPlayer' must be a integer.`,
+			});
+		}
+		settings.boostersPerPlayer = parsedSettings.boostersPerPlayer;
+	}
+
 	if (settings.predeterminedLayouts) {
 		if (!customCardList.layouts) {
 			return ackError({
@@ -307,6 +317,9 @@ function parseSettings(
 				}
 			}
 		}
+		// If not explicitly declared, infer boostersPerPlayer from predeterminedLayouts count.
+		if (!settings.boostersPerPlayer && settings.predeterminedLayouts.length !== 3)
+			settings.boostersPerPlayer = settings.predeterminedLayouts.length;
 	}
 
 	return {

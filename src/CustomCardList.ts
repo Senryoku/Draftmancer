@@ -17,6 +17,7 @@ export type CCLSettings = {
 	withReplacement?: boolean;
 	predeterminedLayouts?: { name: LayoutName; weight: number }[][];
 	layoutWithReplacement?: boolean;
+	boostersPerPlayer?: number;
 };
 
 export type CustomCardList = {

@@ -274,12 +274,14 @@ export class Session implements IIndexable {
 		this.customCardList = cardList;
 
 		if (cardList.settings?.withReplacement) this.customCardListWithReplacement = true;
+		if (cardList.settings?.boostersPerPlayer) this.boostersPerPlayer = cardList.settings?.boostersPerPlayer;
 
 		this.forUsers((uid: UserID) =>
 			Connections[uid]?.socket.emit("sessionOptions", {
 				useCustomCardList: this.useCustomCardList,
 				customCardList: this.customCardList,
 				customCardListWithReplacement: this.customCardListWithReplacement,
+				boostersPerPlayer: this.boostersPerPlayer,
 			})
 		);
 	}
