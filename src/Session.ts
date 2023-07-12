@@ -3067,7 +3067,7 @@ export class Session implements IIndexable {
 			const dec = (0.9 * this.maxTimer) / Math.max(1, s.numPicks - 1);
 			// Note: pickNumber can actually be greater or equal to numPicks in some cases (e.g. Lore Seeker)
 			const pickNumber = Math.min(s.players[userID].pickNumber, s.numPicks - 1);
-			s.players[userID].timer = Math.floor(this.maxTimer - pickNumber * dec);
+			s.players[userID].timer = Math.max(1, Math.floor(this.maxTimer - pickNumber * dec));
 		}
 
 		// Immediatly share the new value.
