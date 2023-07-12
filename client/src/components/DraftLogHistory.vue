@@ -289,7 +289,7 @@ export default defineComponent({
 .log-controls {
 	display: flex;
 	justify-content: space-between;
-	align-items: baseline;
+	align-items: center;
 	width: 100%;
 	gap: 0.2em;
 }
