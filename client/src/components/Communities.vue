@@ -91,7 +91,7 @@ const communities = [
 		name: "Arena Pod Draft",
 		brief: "Community for frequent and new limited players. Great place to ask for assistance and start a new pod with active members.",
 		icon: "arena_pod_draft.webp",
-		tags: ["Cube", "Chaos", "Competitive", "Tournaments", "MTGA", "Duelist", "EU", "NA"],
+		tags: ["Pod Draft", "Cube", "Chaos", "MTGA", "Duelist", "EU", "NA"],
 		links: { discord: "https://discord.gg/wg8dcfD4j3" },
 	},
 	{
