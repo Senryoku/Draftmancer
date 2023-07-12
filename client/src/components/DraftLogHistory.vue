@@ -106,6 +106,7 @@
 					:userID="userID"
 					:userName="userName"
 					@storelogs="$emit('storelogs')"
+					@loadDeck="(log: DraftLog, uid: UserID) => $emit('loadDeck', log, uid)"
 				></draft-log>
 			</transition>
 		</div>

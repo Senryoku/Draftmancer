@@ -3,7 +3,7 @@ import type { UserID } from "@/IDTypes";
 import type { SetCode, IIndexable, Language } from "@/Types";
 import { DistributionMode, DraftLogRecipients, ReadyState, UserData, UsersData } from "../../src/Session/SessionTypes";
 import { ArenaID, Card, CardID, DeckList, PlainCollection, UniqueCard, UniqueCardID } from "@/CardTypes";
-import type { DraftLog } from "@/DraftLog";
+import type { DraftLog, DraftLogUserData } from "@/DraftLog";
 import type { BotScores } from "@/Bot";
 import type { WinstonDraftSyncData } from "@/WinstonDraft";
 import type { WinchesterDraftSyncData } from "@/WinchesterDraft";
@@ -1298,6 +1298,25 @@ export default defineComponent({
 		loadPreviousDeck() {
 			const d = this.previousDeck;
 			if (!d) return;
+			this.loadDeck(d.log, d.uid);
+		},
+		loadDeckFromLogs(log: DraftLog, uid: UserID) {
+			this.loadDeck(log, uid);
+			this.displayedModal = "";
+		},
+		loadDeck(log: DraftLog, uid: UserID) {
+			const s = log.users[uid].decklist ?? {
+				main: log.users[uid].cards,
+				side: [],
+			};
+			let uniqueID = 0;
+			const getUnique = (cid: string) => {
+				return { uniqueID: uniqueID++, ...log.carddata[cid] };
+			};
+			const d = {
+				main: s.main.map(getUnique),
+				side: s.side.map(getUnique),
+			};
 			this.clearDeck();
 			this.clearSideboard();
 			this.addToDeck(d.main);
@@ -3430,17 +3449,9 @@ export default defineComponent({
 		},
 		previousDeck() {
 			if (this.draftLogs.length > 0 && this.draftLogs[this.draftLogs.length - 1].users[this.userID]) {
-				const s = this.draftLogs[this.draftLogs.length - 1].users[this.userID].decklist ?? {
-					main: this.draftLogs[this.draftLogs.length - 1].users[this.userID].cards,
-					side: [],
-				};
-				let uniqueID = 0;
-				const getUnique = (cid: string) => {
-					return { uniqueID: uniqueID++, ...this.draftLogs[this.draftLogs.length - 1].carddata[cid] };
-				};
 				return {
-					main: s.main.map(getUnique),
-					side: s.side.map(getUnique),
+					log: this.draftLogs[this.draftLogs.length - 1],
+					uid: this.userID,
 				};
 			}
 			return null;

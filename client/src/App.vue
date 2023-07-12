@@ -1963,6 +1963,7 @@
 					:userName="userName"
 					@sharelog="shareSavedDraftLog"
 					@storelogs="storeDraftLogs"
+					@loadDeck="loadDeckFromLogs"
 				></draft-log-history>
 			</template>
 		</modal>

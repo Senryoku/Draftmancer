@@ -75,6 +75,9 @@
 								Deck
 							</option>
 						</select>
+						<button @click="$emit('loadDeck', draftlog, selectedUser.userID)">
+							<font-awesome-icon :icon="['fas', 'rotate-left']" /> Load Deck
+						</button>
 						<button
 							@click="downloadMPT(selectedUser.userID)"
 							v-tooltip="`Download ${selectedUser.userName} picks in MTGO draft log format.`"
