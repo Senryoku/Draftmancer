@@ -1349,11 +1349,19 @@
 				</transition>
 			</div>
 
-			<div v-if="managed && draftingState === DraftState.Brewing" style="padding: 0.5em 1em 0 1em">
-				<a href="/draftqueue">
-					<font-awesome-icon icon="fa-solid fa-arrow-left"></font-awesome-icon>
-					Back to Draft Queue
-				</a>
+			<div v-if="draftingState === DraftState.Brewing" style="padding: 0.5em 1em 0 1em">
+				<template v-if="managed">
+					<a href="/draftqueue">
+						<font-awesome-icon icon="fa-solid fa-arrow-left"></font-awesome-icon>
+						Back to Draft Queue
+					</a>
+				</template>
+				<template v-else>
+					<a @click="draftingState = DraftState.None">
+						<font-awesome-icon icon="fa-solid fa-arrow-left"></font-awesome-icon>
+						Back to Home
+					</a>
+				</template>
 			</div>
 
 			<div v-if="draftingState === DraftState.Reviewing" style="text-align: center">
