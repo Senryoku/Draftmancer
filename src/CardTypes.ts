@@ -97,8 +97,8 @@ export function getNextCardID() {
 	return ++UniqueID;
 }
 
-export function toUnique(card: Card): UniqueCard {
-	return { ...card, uniqueID: getNextCardID() };
+export function toUnique(card: Card, slot?: string): UniqueCard {
+	return { ...card, uniqueID: getNextCardID(), slot };
 }
 
 export type UniqueCardState = {
@@ -116,6 +116,7 @@ export class UniqueCard extends Card {
 	uniqueID: UniqueCardID = 0;
 	foil?: boolean = false;
 	state?: UniqueCardState;
+	slot?: string;
 }
 
 // JSON can't use numbers as keys, we have to use a string and not ArenaID here.

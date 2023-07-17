@@ -15,6 +15,7 @@ export type LayoutName = string;
 export type CCLSettings = {
 	name?: string;
 	withReplacement?: boolean;
+	showSlots?: boolean;
 	predeterminedLayouts?: { name: LayoutName; weight: number }[][];
 	layoutWithReplacement?: boolean;
 	boostersPerPlayer?: number;
@@ -44,6 +45,7 @@ export function generateBoosterFromCustomCardList(
 		colorBalance?: boolean;
 		cardsPerBooster?: number;
 		withReplacement?: boolean;
+		showSlots?: boolean;
 		playerCount?: number; // Allow correct ordering of boosters when using predetermined layouts
 	}
 ): MessageError | Array<UniqueCard>[] {
@@ -54,7 +56,12 @@ export function generateBoosterFromCustomCardList(
 		return new MessageError("Error generating boosters", "No custom card list provided.");
 	}
 
-	const pickOptions: Options = { uniformAll: true, withReplacement: options?.withReplacement };
+	const pickOptions: Options = {
+		uniformAll: true,
+		withReplacement: options?.withReplacement,
+		showSlots: options?.showSlots,
+	};
+
 	pickOptions.getCard = generateCustomGetCardFunction(customCardList);
 
 	// List is using custom layouts
@@ -154,7 +161,7 @@ export function generateBoosterFromCustomCardList(
 						);
 					} else {
 						for (let i = 0; i < pickedLayout.slots[slotName]; ++i) {
-							const pickedCard = pickCard(cardsBySlot[slotName], booster, pickOptions);
+							const pickedCard = pickCard(cardsBySlot[slotName], booster, pickOptions, slotName);
 							booster.push(pickedCard);
 						}
 					}

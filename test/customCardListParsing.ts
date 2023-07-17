@@ -42,6 +42,29 @@ describe("Custom Card List Parsing", function () {
 			expect(boosters[i][0].name).to.be.equal(
 				["Adventure Awaits", "Akoum Hellhound", "Angelheart Protector"][Math.floor(i / 8) % 3]
 			);
+			// Checking that slots did not leak out if showSlots not explicitly set to true.
+			expect(boosters[i][0].slot).to.be.equal([undefined, undefined, undefined][Math.floor(i / 8) % 3]);
+		}
+	});
+
+	it(`should respect the 'predeterminedLayouts' & 'showSlots' setting.`, () => {
+		const session = new Session("sessionid", "clientid");
+		const list = parseCardList(fs.readFileSync(`./test/data/PredeterminedLayouts_ShowSlot.txt`, "utf8"), {});
+		if (isSocketError(list)) {
+			expect(isSocketError(list), `Got ${JSON.stringify((list as SocketError).error)}`).to.be.false;
+			return;
+		}
+		session.setCustomCardList(list);
+		const boosters = session.generateBoosters(3 * 8, { playerCount: 8 });
+		if (isMessageError(boosters)) {
+			expect(isMessageError(boosters), `Got ${JSON.stringify(boosters)}`).to.be.false;
+			return;
+		}
+		for (let i = 0; i < boosters.length; i++) {
+			expect(boosters[i][0].name).to.be.equal(
+				["Adventure Awaits", "Akoum Hellhound", "Angelheart Protector"][Math.floor(i / 8) % 3]
+			);
+			expect(boosters[i][0].slot).to.be.equal(["SheetA", "SheetB", "SheetC"][Math.floor(i / 8) % 3]);
 		}
 	});
 

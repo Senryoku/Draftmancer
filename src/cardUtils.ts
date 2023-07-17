@@ -27,7 +27,7 @@ function getRandomCardFromCardPool(cardPool: CardPool): CardID {
 }
 
 // TODO: Prevent multiples by name?
-export function pickCard(cardPool: CardPool, booster: Array<Card> = [], options: Options = {}) {
+export function pickCard(cardPool: CardPool, booster: Array<Card> = [], options: Options = {}, slot?: string) {
 	if (cardPool.size === 0) {
 		console.trace(`Called pickCard on an empty card pool.`);
 		throw `Called pickCard on an empty card pool.`;
@@ -55,8 +55,10 @@ export function pickCard(cardPool: CardPool, booster: Array<Card> = [], options:
 			}
 		}
 	}
+	let cardSlot: string | undefined = undefined;
+	if (options?.showSlots) cardSlot = slot;
 	if (options?.withReplacement !== true) removeCardFromCardPool(cid, cardPool);
-	return getUnique(cid, options);
+	return getUnique(cid, options, cardSlot);
 }
 
 export function countCards(dict: CardPool): number {

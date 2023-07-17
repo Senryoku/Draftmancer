@@ -134,6 +134,7 @@ export class Session implements IIndexable {
 		customCards: null,
 	};
 	customCardListWithReplacement: boolean = false;
+	customCardListWithShowSlots: boolean = false;
 	distributionMode: DistributionMode = "regular"; // Specifies how boosters are distributed when using boosters from different sets (see customBoosters)
 	customBoosters: Array<string> = ["", "", ""]; // Specify a set for an individual booster (Draft Only)
 	doubleMastersMode: boolean = false; // Apply the pickedCardsPerRound rule only for the first pick then revert to one.
@@ -274,6 +275,7 @@ export class Session implements IIndexable {
 		this.customCardList = cardList;
 
 		if (cardList.settings?.withReplacement) this.customCardListWithReplacement = true;
+		if (cardList.settings?.showSlots) this.customCardListWithShowSlots = true;
 		if (cardList.settings?.boostersPerPlayer) this.boostersPerPlayer = cardList.settings?.boostersPerPlayer;
 
 		this.forUsers((uid: UserID) =>
@@ -281,6 +283,7 @@ export class Session implements IIndexable {
 				useCustomCardList: this.useCustomCardList,
 				customCardList: this.customCardList,
 				customCardListWithReplacement: this.customCardListWithReplacement,
+				customCardListWithShowSlots: this.customCardListWithShowSlots,
 				boostersPerPlayer: this.boostersPerPlayer,
 			})
 		);
@@ -559,7 +562,12 @@ export class Session implements IIndexable {
 
 		if (this.useCustomCardList) {
 			const cclOptions = Object.assign(
-				{ colorBalance: this.colorBalance, withReplacement: this.customCardListWithReplacement, playerCount },
+				{
+					colorBalance: this.colorBalance,
+					withReplacement: this.customCardListWithReplacement,
+					showSlots: this.customCardListWithShowSlots,
+					playerCount,
+				},
 				options
 			);
 			return generateBoosterFromCustomCardList(this.customCardList, boosterQuantity, cclOptions);
