@@ -43,13 +43,13 @@ describe("Custom Card List Parsing", function () {
 				["Adventure Awaits", "Akoum Hellhound", "Angelheart Protector"][Math.floor(i / 8) % 3]
 			);
 			// Checking that slots did not leak out if showSlots not explicitly set to true.
-			expect(boosters[i][0].slot).to.be.equal([undefined, undefined, undefined][Math.floor(i / 8) % 3]);
+			expect(boosters[i][0].slot).to.be.undefined;
 		}
 	});
 
 	it(`should respect the 'predeterminedLayouts' & 'showSlots' setting.`, () => {
 		const session = new Session("sessionid", "clientid");
-		const list = parseCardList(fs.readFileSync(`./test/data/PredeterminedLayouts_ShowSlot.txt`, "utf8"), {});
+		const list = parseCardList(fs.readFileSync(`./test/data/PredeterminedLayouts_ShowSlots.txt`, "utf8"), {});
 		if (isSocketError(list)) {
 			expect(isSocketError(list), `Got ${JSON.stringify((list as SocketError).error)}`).to.be.false;
 			return;
