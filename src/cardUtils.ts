@@ -55,10 +55,8 @@ export function pickCard(cardPool: CardPool, booster: Array<Card> = [], options:
 			}
 		}
 	}
-	let cardSlot: string | undefined = undefined;
-	if (options?.showSlots) cardSlot = slot;
 	if (options?.withReplacement !== true) removeCardFromCardPool(cid, cardPool);
-	return getUnique(cid, options, cardSlot);
+	return getUnique(cid, options, options?.showSlots ? slot : undefined);
 }
 
 export function countCards(dict: CardPool): number {

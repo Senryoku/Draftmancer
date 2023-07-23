@@ -45,7 +45,6 @@ export function generateBoosterFromCustomCardList(
 		colorBalance?: boolean;
 		cardsPerBooster?: number;
 		withReplacement?: boolean;
-		showSlots?: boolean;
 		playerCount?: number; // Allow correct ordering of boosters when using predetermined layouts
 	}
 ): MessageError | Array<UniqueCard>[] {
@@ -59,7 +58,7 @@ export function generateBoosterFromCustomCardList(
 	const pickOptions: Options = {
 		uniformAll: true,
 		withReplacement: options?.withReplacement,
-		showSlots: options?.showSlots,
+		showSlots: customCardList.settings?.showSlots,
 	};
 
 	pickOptions.getCard = generateCustomGetCardFunction(customCardList);
