@@ -58,7 +58,6 @@ export function generateBoosterFromCustomCardList(
 	const pickOptions: Options = {
 		uniformAll: true,
 		withReplacement: options?.withReplacement,
-		showSlots: customCardList.settings?.showSlots,
 	};
 
 	pickOptions.getCard = generateCustomGetCardFunction(customCardList);
@@ -133,7 +132,7 @@ export function generateBoosterFromCustomCardList(
 		// Generate Boosters
 		const boosters: Array<UniqueCard>[] = [];
 		for (let i = 0; i < boosterQuantity; ++i) {
-			let booster: Array<UniqueCard> = [];
+			const booster: Array<UniqueCard> = [];
 
 			// Pick a layout
 			const pickedLayoutName = nextLayout(options.playerCount ? Math.floor(i / options.playerCount) : i);
@@ -150,20 +149,21 @@ export function generateBoosterFromCustomCardList(
 					colorBalancedSlotGenerators[slotName];
 				// Checking the card count beforehand is tricky, we'll rely on pickCard throwing an exception if we run out of cards to pick.
 				try {
-					if (useColorBalance) {
-						booster = booster.concat(
-							colorBalancedSlotGenerators[slotName].generate(
-								pickedLayout.slots[slotName],
-								[],
-								pickOptions
-							)
+					let pickedCards = [];
+
+					if (useColorBalance)
+						pickedCards = colorBalancedSlotGenerators[slotName].generate(
+							pickedLayout.slots[slotName],
+							[],
+							pickOptions
 						);
-					} else {
-						for (let i = 0; i < pickedLayout.slots[slotName]; ++i) {
-							const pickedCard = pickCard(cardsBySlot[slotName], booster, pickOptions, slotName);
-							booster.push(pickedCard);
-						}
-					}
+					else
+						for (let i = 0; i < pickedLayout.slots[slotName]; ++i)
+							pickedCards.push(pickCard(cardsBySlot[slotName], booster, pickOptions));
+
+					if (customCardList.settings?.showSlots) for (const card of pickedCards) card.slot = slotName;
+
+					booster.push(...pickedCards);
 				} catch (e) {
 					return new MessageError(
 						"Error generating boosters",

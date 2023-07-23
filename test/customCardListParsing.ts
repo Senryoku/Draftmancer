@@ -68,6 +68,22 @@ describe("Custom Card List Parsing", function () {
 		}
 	});
 
+	it(`should respect the 'showSlots' setting, using Pillar of the Paruns Master cube.`, () => {
+		const session = new Session("sessionid", "clientid");
+		const list = parseCardList(fs.readFileSync(`./test/data/PotPMaster_0.3.txt`, "utf8"), {});
+		if (isSocketError(list)) {
+			expect(isSocketError(list), `Got ${JSON.stringify((list as SocketError).error)}`).to.be.false;
+			return;
+		}
+		session.setCustomCardList(list);
+		const boosters = session.generateBoosters(3 * 8, { playerCount: 8 });
+		if (isMessageError(boosters)) {
+			expect(isMessageError(boosters), `Got ${JSON.stringify(boosters)}`).to.be.false;
+			return;
+		}
+		for (let i = 0; i < boosters.length; i++) expect(boosters[i][0].slot).not.to.be.undefined;
+	});
+
 	it(`should respect the 'predeterminedLayouts' setting using arrays.`, () => {
 		const session = new Session("sessionid", "clientid");
 		const list = parseCardList(fs.readFileSync(`./test/data/PredeterminedLayouts_Arrays.txt`, "utf8"), {});

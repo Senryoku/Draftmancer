@@ -1565,7 +1565,6 @@ class CardInfo {
 	weight: number = 0;
 	foil: boolean = false;
 	uuid: string = "";
-	slot?: string = undefined;
 	// computed
 	id: string = "";
 }
@@ -1680,7 +1679,7 @@ export class PaperBoosterFactory implements IBoosterFactory {
 				}
 			}
 		}
-		return booster.map((c) => getUnique(c.id, { foil: c.foil }, c.slot)).reverse();
+		return booster.map((c) => getUnique(c.id, { foil: c.foil })).reverse();
 	}
 }
 

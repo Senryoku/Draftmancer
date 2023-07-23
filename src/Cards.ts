@@ -54,13 +54,9 @@ export function isValidCardID(cid: CardID): boolean {
 	return Cards.has(cid);
 }
 
-export function getUnique(
-	cid: CardID,
-	options: { foil?: boolean; getCard?: (cid: CardID) => Card } = {},
-	slot?: string
-) {
+export function getUnique(cid: CardID, options: { foil?: boolean; getCard?: (cid: CardID) => Card } = {}) {
 	const uc: UniqueCard = Object.assign(
-		{ uniqueID: getNextCardID(), slot },
+		{ uniqueID: getNextCardID() },
 		options.getCard ? options.getCard(cid) : getCard(cid)
 	);
 	if (options.foil) uc.foil = options.foil;
