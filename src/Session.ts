@@ -571,7 +571,7 @@ export class Session implements IIndexable {
 			foil: this.foil,
 			colorBalance: this.colorBalance,
 			mythicPromotion: this.mythicPromotion,
-			maxDuplicates: this.maxDuplicates,
+			maxDuplicates: this.maxDuplicates ?? undefined,
 			session: this,
 		};
 

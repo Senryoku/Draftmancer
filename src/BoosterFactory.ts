@@ -154,13 +154,24 @@ export interface IBoosterFactory {
 	generateBooster(targets: Targets): UniqueCard[] | MessageError;
 }
 
+type BoosterFactoryOptions = {
+	foil?: boolean;
+	foilRate?: number;
+	foilCardPool?: SlotedCardPool;
+	mythicPromotion?: boolean;
+	colorBalance?: boolean;
+	session?: Session;
+	maxDuplicates?: Record<string, number>;
+	bonusSheet?: number;
+};
+
 export class BoosterFactory implements IBoosterFactory {
 	cardPool: SlotedCardPool;
 	landSlot: BasicLandSlot | null;
-	options: Options;
+	options: BoosterFactoryOptions;
 	colorBalancedSlot?: ColorBalancedSlot;
 
-	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
 		this.cardPool = cardPool;
 		this.landSlot = landSlot;
 		if (this.landSlot && this.landSlot.setup) this.landSlot.setup(this.cardPool["common"]);
@@ -299,7 +310,7 @@ function insertInBooster(card: UniqueCard, booster: Array<UniqueCard>) {
 class WARBoosterFactory extends BoosterFactory {
 	planeswalkers: SlotedCardPool;
 
-	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
 		const [planeswalkers, filteredCardPool] = filterCardPool(cardPool, (cid: CardID) =>
 			getCard(cid).type.includes("Planeswalker")
 		);
@@ -339,7 +350,7 @@ class DOMBoosterFactory extends BoosterFactory {
 	static regex = /Legendary.*Creature/;
 	legendaryCreatures: SlotedCardPool;
 
-	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
 		const [legendaryCreatures, filteredCardPool] = filterCardPool(
 			cardPool,
 			(cid: CardID) => getCard(cid).type.match(DOMBoosterFactory.regex) !== null
@@ -377,7 +388,7 @@ class DOMBoosterFactory extends BoosterFactory {
 class ZNRBoosterFactory extends BoosterFactory {
 	mdfcByRarity: SlotedCardPool;
 
-	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
 		const [mdfcByRarity, filteredCardPool] = filterCardPool(cardPool, (cid: CardID) =>
 			getCard(cid).name.includes("//")
 		);
@@ -422,15 +433,16 @@ class ZNRBoosterFactory extends BoosterFactory {
 */
 class CMRBoosterFactory extends BoosterFactory {
 	static regex = /Legendary.*Creature/;
+	static PrismaticPiperID = "a69e6d8f-f742-4508-a83a-38ae84be228c";
 	completeCardPool: SlotedCardPool;
 	legendaryCreatures: SlotedCardPool;
 
-	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
 		const [legendaryCreatures, filteredCardPool] = filterCardPool(
 			cardPool,
 			(cid: CardID) => getCard(cid).type.match(CMRBoosterFactory.regex) !== null
 		);
-		filteredCardPool["common"].delete("a69e6d8f-f742-4508-a83a-38ae84be228c"); // Remove Prismatic Piper from the common pool (can still be found in the foil pool completeCardPool)
+		filteredCardPool["common"].delete(CMRBoosterFactory.PrismaticPiperID); // Remove Prismatic Piper from the common pool (can still be found in the foil pool completeCardPool)
 		super(filteredCardPool, landSlot, options);
 		this.completeCardPool = cardPool;
 		this.legendaryCreatures = legendaryCreatures;
@@ -438,31 +450,30 @@ class CMRBoosterFactory extends BoosterFactory {
 
 	// Not using the suplied cardpool here
 	generateBooster(targets: Targets) {
-		let updatedTargets = structuredClone(targets);
 		// 20 Cards: *13 Commons (Higher chance of a Prismatic Piper); *3 Uncommons; 2 Legendary Creatures; *1 Non-"Legendary Creature" Rare/Mythic; 1 Foil
 		// * These slots are handled by the originalGenBooster function; Others are special slots with custom logic.
-		if (targets === DefaultBoosterTargets)
-			updatedTargets = {
-				common: 13,
-				uncommon: 3,
-				rare: 1,
-			};
+		const updatedTargets =
+			targets === DefaultBoosterTargets
+				? {
+						common: 13,
+						uncommon: 3,
+						rare: 1,
+				  }
+				: structuredClone(targets);
 		const legendaryCounts = countBySlot(this.legendaryCreatures);
 		// Ignore the rule if there's no legendary creatures left
 		if (Object.values(legendaryCounts).every((c) => c === 0)) {
 			return super.generateBooster(updatedTargets);
 		} else {
-			let booster: Array<UniqueCard> | MessageError = [];
+			const booster: Array<UniqueCard> = [];
 			// Prismatic Piper instead of a common in about 1 of every 6 packs
 			if (random.bool(1 / 6)) {
 				--updatedTargets.common;
-				booster = super.generateBooster(updatedTargets);
-				if (isMessageError(booster)) return booster;
-				booster.push(getUnique("a69e6d8f-f742-4508-a83a-38ae84be228c"));
-			} else {
-				booster = super.generateBooster(updatedTargets);
-				if (isMessageError(booster)) return booster;
+				booster.push(getUnique(CMRBoosterFactory.PrismaticPiperID));
 			}
+			const nonLegendary = super.generateBooster(updatedTargets);
+			if (isMessageError(nonLegendary)) return nonLegendary;
+			booster.push(...nonLegendary);
 
 			// 2 Legends: any combination of Uncommon/Rare/Mythic, except two Mythics
 			const pickedRarities = [
@@ -489,12 +500,12 @@ class CMRBoosterFactory extends BoosterFactory {
 					foilRarity = r;
 					break;
 				}
-			const pickedFoil = pickCard(this.completeCardPool[foilRarity], []);
+			const pickedFoil = pickCard(this.completeCardPool[foilRarity], [], { foil: true });
 			if (this.cardPool[pickedFoil.rarity].has(pickedFoil.id))
 				removeCardFromCardPool(pickedFoil.id, this.cardPool[pickedFoil.rarity]);
 			if (this.legendaryCreatures[pickedFoil.rarity].has(pickedFoil.id))
 				removeCardFromCardPool(pickedFoil.id, this.legendaryCreatures[pickedFoil.rarity]);
-			booster.unshift(Object.assign({ foil: true }, pickedFoil));
+			booster.unshift(pickedFoil);
 
 			return booster;
 		}
@@ -504,7 +515,7 @@ class CMRBoosterFactory extends BoosterFactory {
 // One Timeshifted Card ("special" rarity) per booster.
 // Foil rarity should be higher for this set, but we'll probably just rely on the other collation method.
 class TSRBoosterFactory extends BoosterFactory {
-	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
 		super(cardPool, landSlot, options);
 	}
 	generateBooster(targets: Targets) {
@@ -523,7 +534,7 @@ class STXBoosterFactory extends BoosterFactory {
 	lessonsByRarity: SlotedCardPool;
 	mysticalArchiveByRarity: SlotedCardPool;
 
-	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
 		const [lessons, filteredCardPool] = filterCardPool(
 			cardPool,
 			(cid: CardID) => getCard(cid).subtypes.includes("Lesson") && getCard(cid).rarity !== "uncommon"
@@ -607,7 +618,7 @@ class STXBoosterFactory extends BoosterFactory {
 // 1 New-to-Modern reprint card (uncommon, rare, or mythic rare) [numbered #261-#303]
 class MH2BoosterFactory extends BoosterFactory {
 	newToModern: SlotedCardPool;
-	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
 		const [newToModern, filteredCardPool] = filterCardPool(
 			cardPool,
 			(cid: CardID) =>
@@ -647,7 +658,7 @@ class MH2BoosterFactory extends BoosterFactory {
 //  - Exactly one uncommon or rare/mythic DFC
 class MIDBoosterFactory extends BoosterFactory {
 	doubleFacedCards: SlotedCardPool;
-	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
 		const [doubleFacedCards, filteredCardPool] = filterCardPool(cardPool, (cid: CardID) =>
 			getCard(cid).name.includes("//")
 		);
@@ -714,7 +725,7 @@ class MIDBoosterFactory extends BoosterFactory {
 class DBLBoosterFactory extends BoosterFactory {
 	midCardPool: SlotedCardPool;
 	vowCardPool: SlotedCardPool;
-	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
 		// We won't use the default booster generator, or the land slot
 		super(cardPool, landSlot, options);
 		[this.midCardPool, this.vowCardPool] = filterCardPool(cardPool, (cid: CardID) => getCard(cid).set === "mid");
@@ -771,7 +782,7 @@ class DBLBoosterFactory extends BoosterFactory {
 //   1 Land card, featuring an ukiyo-e land in 33% of Draft Boosters
 class NEOBoosterFactory extends BoosterFactory {
 	doubleFacedUCs: SlotedCardPool;
-	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
 		const [doubleFacedUCs, filteredCardPool] = filterCardPool(
 			cardPool,
 			(cid: CardID) =>
@@ -824,7 +835,7 @@ class CLBBoosterFactory extends BoosterFactory {
 	legendaryCreaturesAndPlaneswalkers: SlotedCardPool;
 	legendaryBackgrounds: SlotedCardPool;
 
-	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
 		const [legendaryCreaturesAndPlaneswalkers, intermediaryFilteredCardPool] = filterCardPool(
 			cardPool,
 			(cid: CardID) =>
@@ -914,7 +925,7 @@ class CLBBoosterFactory extends BoosterFactory {
  * 1 Cryptic Spires (As the land slot)
  */
 class M2X2BoosterFactory extends BoosterFactory {
-	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
 		super(cardPool, landSlot, options);
 	}
 
@@ -953,7 +964,7 @@ class DMUBoosterFactory extends BoosterFactory {
 	static legendaryCreatureRegex = /Legendary.*Creature/;
 	legendaryCreatures: SlotedCardPool;
 
-	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
 		const [legendaryCreatures, filteredCardPool] = filterCardPool(
 			cardPool,
 			(cid: CardID) => getCard(cid).type.match(DMUBoosterFactory.legendaryCreatureRegex) !== null
@@ -1003,7 +1014,7 @@ class YDMUBoosterFactory extends BoosterFactory {
 	legendaryCreatures: SlotedCardPool;
 	alchemyCards: SlotedCardPool;
 
-	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
 		const [legendaryCreatures, filteredCardPool] = filterCardPool(
 			cardPool,
 			(cid: CardID) => getCard(cid).type.match(DMUBoosterFactory.legendaryCreatureRegex) !== null
@@ -1090,7 +1101,7 @@ class UNFBoosterFactory extends BoosterFactory {
 	attractions: SlotedCardPool;
 	stickers: CardID[];
 
-	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
 		const [attractions, filteredCardPool] = filterCardPool(cardPool, (cid: CardID) =>
 			getCard(cid).subtypes.includes("Attraction")
 		);
@@ -1148,7 +1159,7 @@ class BROBoosterFactory extends BoosterFactory {
 
 	retroArtifacts: SlotedCardPool = { uncommon: new Map(), rare: new Map(), mythic: new Map() };
 
-	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
 		super(cardPool, landSlot, options);
 
 		if (options.session && !options.session.unrestrictedCardPool()) {
@@ -1201,7 +1212,7 @@ class DMRBoosterFactory extends BoosterFactory {
 
 	retroCards: SlotedCardPool = { common: new Map(), uncommon: new Map(), rare: new Map(), mythic: new Map() };
 
-	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
 		const [retroCards, filteredCardPool] = filterCardPool(
 			cardPool,
 			(cid: CardID) =>
@@ -1252,7 +1263,7 @@ class ONEBoosterFactory extends BoosterFactory {
 		"c13670af-e266-4e19-b479-92fae2b15f4a", // Urabrask, Heretic Praetor (SNC) 468
 	];
 
-	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
 		super(cardPool, landSlot, options);
 	}
 
@@ -1288,7 +1299,7 @@ import ShadowOfThePastLists from "./data/shadow_of_the_past.json" assert { type:
 class SIRBoosterFactory extends BoosterFactory {
 	bonusSheet: SlotedCardPool = { common: new Map(), uncommon: new Map(), rare: new Map(), mythic: new Map() };
 
-	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
 		super(cardPool, landSlot, options);
 		const currentSheet =
 			options.bonusSheet ??
@@ -1321,22 +1332,22 @@ class SIRBoosterFactory extends BoosterFactory {
 
 // Allow users to specify the bonus sheet
 class SIRBoosterFactoryBonusSheet0 extends SIRBoosterFactory {
-	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
 		super(cardPool, landSlot, Object.assign({ bonusSheet: 0 }, options));
 	}
 }
 class SIRBoosterFactoryBonusSheet1 extends SIRBoosterFactory {
-	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
 		super(cardPool, landSlot, Object.assign({ bonusSheet: 1 }, options));
 	}
 }
 class SIRBoosterFactoryBonusSheet2 extends SIRBoosterFactory {
-	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
 		super(cardPool, landSlot, Object.assign({ bonusSheet: 2 }, options));
 	}
 }
 class SIRBoosterFactoryBonusSheet3 extends SIRBoosterFactory {
-	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
 		super(cardPool, landSlot, Object.assign({ bonusSheet: 3 }, options));
 	}
 }
@@ -1359,7 +1370,7 @@ class MOMBoosterFactory extends BoosterFactory {
 	battleCards: SlotedCardPool = { uncommon: new Map(), rare: new Map(), mythic: new Map() };
 	doubleFacedCards: SlotedCardPool = { common: new Map(), uncommon: new Map(), rare: new Map(), mythic: new Map() };
 
-	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
 		const [battleCards, filteredCardPool] = filterCardPool(
 			cardPool,
 			(cid: CardID) => getCard(cid).type.includes("Battle") // Note: We could use the layout, but it's not always correctly set on scryfall yet
@@ -1472,7 +1483,7 @@ class MOMBoosterFactory extends BoosterFactory {
 class MATBoosterFactory extends MOMBoosterFactory {
 	matPool: SlotedCardPool;
 
-	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
 		const [matPool, momCardPool] = filterCardPool(cardPool, (cid: CardID) => getCard(cid).set === "mat");
 		super(momCardPool, landSlot, options);
 		this.matPool = matPool;
@@ -1507,10 +1518,105 @@ class MATBoosterFactory extends MOMBoosterFactory {
 	}
 }
 
+/* Commander Masters
+ * 11 Commons - In every sixth booster, one common is replaced with the Prismatic Piper.
+ * 3 Nonlegendary uncommons
+ * 2 Legendary uncommons
+ * 1 Legendary rare or mythic rare
+ * 1 Nonlegendary rare or mythic rare
+ * 1 Nonlegendary uncommon (in two thirds of boosters) or nonlegendary rare or mythic rare (in one third of boosters)
+ * (?) 1 Traditional Foil C/U/R/M
+ */
+class CMMBoosterFactory extends BoosterFactory {
+	static PrismaticPiperID = "c78c2713-39e7-4a6e-a132-027099a89665";
+	completeCardPool: SlotedCardPool;
+	legendaryCards: SlotedCardPool;
+
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
+		const [legendary, filteredCardPool] = filterCardPool(cardPool, (cid: CardID) =>
+			getCard(cid).type.includes("Legendary")
+		);
+		filteredCardPool["common"].delete(CMMBoosterFactory.PrismaticPiperID); // Remove Prismatic Piper from the common pool (can still be found in the foil pool completeCardPool)
+		options.foil = false; // Don't generate additional foils (one is always garanteed)
+		super(filteredCardPool, landSlot, options);
+		this.completeCardPool = cardPool;
+		this.legendaryCards = legendary;
+	}
+
+	// Not using the suplied cardpool here
+	generateBooster(targets: Targets) {
+		const updatedTargets =
+			targets === DefaultBoosterTargets
+				? {
+						common: 11,
+						uncommon: 4,
+						rare: 1,
+				  }
+				: structuredClone(targets);
+		const legendaryCounts = countBySlot(this.legendaryCards);
+
+		// 1 Nonlegendary uncommon (in two thirds of boosters) or nonlegendary rare or mythic rare (in one third of boosters)
+		if (random.bool(1 / 3)) {
+			--updatedTargets.uncommon;
+			++updatedTargets.rare;
+		}
+
+		const booster: Array<UniqueCard> = [];
+		// In every sixth booster, one common is replaced with the Prismatic Piper.
+		if (random.bool(1 / 6)) {
+			--updatedTargets.common;
+			booster.push(getUnique(CMMBoosterFactory.PrismaticPiperID));
+		}
+		const nonLegendary = super.generateBooster(updatedTargets);
+		if (isMessageError(nonLegendary)) return nonLegendary;
+		booster.unshift(...nonLegendary);
+
+		// 2 Legendary uncommons
+		const addedUncommonLegendaries = Math.min(legendaryCounts["uncommon"], 2);
+		for (let i = 0; i < addedUncommonLegendaries; ++i)
+			booster.splice(updatedTargets["rare"], 0, pickCard(this.legendaryCards["uncommon"], booster));
+		// Fallback
+		for (let i = 0; i < Math.max(2 - addedUncommonLegendaries, 0); ++i)
+			booster.splice(updatedTargets["rare"], 0, pickCard(this.cardPool["uncommon"], booster));
+
+		// 1 Legendary rare or mythic rare
+		const pickedRarity = random.bool(1 / 8) ? "mythic" : "rare";
+		booster.splice(
+			updatedTargets["rare"],
+			0,
+			pickCard(
+				legendaryCounts[pickedRarity] > 0 ? this.legendaryCards[pickedRarity] : this.cardPool[pickedRarity],
+				booster
+			)
+		);
+
+		// One random foil
+		let foilRarity = "common";
+		const foilRarityCheck = random.real(0, 1);
+		for (const r in foilRarityRates)
+			if (foilRarityCheck <= foilRarityRates[r] && this.completeCardPool[r].size > 0) {
+				foilRarity = r;
+				break;
+			}
+		const pickedFoil = pickCard(this.completeCardPool[foilRarity], [], { foil: true });
+		if (this.cardPool[pickedFoil.rarity].has(pickedFoil.id))
+			removeCardFromCardPool(pickedFoil.id, this.cardPool[pickedFoil.rarity]);
+		if (this.legendaryCards[pickedFoil.rarity].has(pickedFoil.id))
+			removeCardFromCardPool(pickedFoil.id, this.legendaryCards[pickedFoil.rarity]);
+		booster.unshift(pickedFoil);
+
+		return booster;
+	}
+}
+
 // Set specific rules.
 // Neither DOM, WAR or ZNR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
 export const SetSpecificFactories: {
-	[set: string]: new (cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) => BoosterFactory;
+	[set: string]: new (
+		cardPool: SlotedCardPool,
+		landSlot: BasicLandSlot | null,
+		options: BoosterFactoryOptions
+	) => BoosterFactory;
 } = {
 	war: WARBoosterFactory,
 	dom: DOMBoosterFactory,
@@ -1538,13 +1644,14 @@ export const SetSpecificFactories: {
 	sir3: SIRBoosterFactoryBonusSheet3,
 	mom: MOMBoosterFactory,
 	mat: MATBoosterFactory,
+	cmm: CMMBoosterFactory,
 };
 
 export const getBoosterFactory = function (
 	set: string | null,
 	cardPool: SlotedCardPool,
 	landSlot: BasicLandSlot | null,
-	options: Options
+	options: BoosterFactoryOptions
 ) {
 	const localOptions = Object.assign({ foilRate: getSetFoilRate(set) }, options);
 	// Check for a special booster factory
@@ -1558,6 +1665,7 @@ export const getBoosterFactory = function (
 
 import PaperBoosterData from "./data/sealed_extended_data.json" assert { type: "json" };
 import { isMessageError, MessageError } from "./Message.js";
+import { Session } from "./Session";
 
 class CardInfo {
 	set: string = "";
@@ -1689,7 +1797,7 @@ export const isPaperBoosterFactoryAvailable = (set: string) => {
 	return (set in PaperBoosterFactories || `${set}-arena` in PaperBoosterFactories) && !excludedSets.includes(set);
 };
 
-export const getPaperBoosterFactory = (set: string, boosterFactoryOptions: Options) => {
+export const getPaperBoosterFactory = (set: string, boosterFactoryOptions: BoosterFactoryOptions) => {
 	if (set === "mb1_convention_2019") return PaperBoosterFactories["cmb1"](boosterFactoryOptions);
 	if (set === "mb1_convention_2021") return PaperBoosterFactories["cmb2"](boosterFactoryOptions);
 

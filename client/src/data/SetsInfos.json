@@ -2,13 +2,13 @@
     "10e": {
         "code": "10e",
         "fullName": "Tenth Edition",
-        "cardCount": 508,
+        "cardCount": 509,
         "isPrimary": true,
         "block": "Core Set",
         "icon": "img/sets/10e.svg",
         "commonCount": 187,
         "rareCount": 161,
-        "uncommonCount": 160
+        "uncommonCount": 161
     },
     "2ed": {
         "code": "2ed",
@@ -701,11 +701,14 @@
     "cmm": {
         "code": "cmm",
         "fullName": "Commander Masters",
-        "cardCount": 29,
+        "cardCount": 1067,
         "isPrimary": true,
         "icon": "img/sets/cmm.svg",
-        "mythicCount": 23,
-        "rareCount": 6
+        "commonCount": 211,
+        "mythicCount": 144,
+        "rareCount": 475,
+        "specialCount": 1,
+        "uncommonCount": 236
     },
     "cmr": {
         "code": "cmr",
@@ -1239,6 +1242,17 @@
         "mythicCount": 4,
         "rareCount": 10,
         "uncommonCount": 5
+    },
+    "ea3": {
+        "code": "ea3",
+        "fullName": "Explorer Anthology 3",
+        "cardCount": 25,
+        "isPrimary": false,
+        "icon": "img/sets/ea3.svg",
+        "commonCount": 1,
+        "mythicCount": 4,
+        "rareCount": 12,
+        "uncommonCount": 8
     },
     "eld": {
         "code": "eld",
@@ -1928,6 +1942,17 @@
         "mythicCount": 3,
         "rareCount": 7
     },
+    "ha7": {
+        "code": "ha7",
+        "fullName": "Historic Anthology 7",
+        "cardCount": 25,
+        "isPrimary": false,
+        "icon": "img/sets/ha7.svg",
+        "commonCount": 6,
+        "mythicCount": 6,
+        "rareCount": 9,
+        "uncommonCount": 4
+    },
     "hbg": {
         "code": "hbg",
         "fullName": "Alchemy Horizons: Baldur's Gate",
@@ -2017,11 +2042,11 @@
     "inv": {
         "code": "inv",
         "fullName": "Invasion",
-        "cardCount": 350,
+        "cardCount": 351,
         "isPrimary": true,
         "block": "Invasion",
         "icon": "img/sets/inv.svg",
-        "commonCount": 130,
+        "commonCount": 131,
         "rareCount": 110,
         "uncommonCount": 110
     },
@@ -3056,6 +3081,14 @@
         "icon": "img/sets/p30h.svg",
         "rareCount": 10
     },
+    "p30t": {
+        "code": "p30t",
+        "fullName": "30th Anniversary Celebration Tokyo",
+        "cardCount": 2,
+        "isPrimary": false,
+        "icon": "img/sets/p30t.svg",
+        "rareCount": 2
+    },
     "p5dn": {
         "code": "p5dn",
         "fullName": "Fifth Dawn Promos",
@@ -3987,14 +4020,14 @@
     "plist": {
         "code": "plist",
         "fullName": "The List",
-        "cardCount": 1089,
+        "cardCount": 1164,
         "isPrimary": true,
         "icon": "img/sets/plist.svg",
-        "commonCount": 139,
-        "mythicCount": 144,
-        "rareCount": 498,
+        "commonCount": 152,
+        "mythicCount": 146,
+        "rareCount": 539,
         "specialCount": 4,
-        "uncommonCount": 304
+        "uncommonCount": 323
     },
     "plrw": {
         "code": "plrw",
@@ -4019,11 +4052,13 @@
     "pltr": {
         "code": "pltr",
         "fullName": "Tales of Middle-earth Promos",
-        "cardCount": 80,
+        "cardCount": 86,
         "isPrimary": false,
         "icon": "img/sets/pltr.svg",
+        "commonCount": 1,
         "mythicCount": 20,
-        "rareCount": 60
+        "rareCount": 62,
+        "uncommonCount": 3
     },
     "pm10": {
         "code": "pm10",
@@ -5342,6 +5377,14 @@
         "icon": "img/sets/tcma.svg",
         "commonCount": 1
     },
+    "tcmm": {
+        "code": "tcmm",
+        "fullName": "Commander Masters Tokens",
+        "cardCount": 1,
+        "isPrimary": false,
+        "icon": "img/sets/tcmm.svg",
+        "commonCount": 1
+    },
     "td0": {
         "code": "td0",
         "fullName": "Magic Online Theme Decks",
@@ -5924,10 +5967,13 @@
     "who": {
         "code": "who",
         "fullName": "Doctor Who",
-        "cardCount": 6,
+        "cardCount": 16,
         "isPrimary": false,
         "icon": "img/sets/who.svg",
-        "commonCount": 6
+        "commonCount": 10,
+        "mythicCount": 2,
+        "rareCount": 1,
+        "uncommonCount": 3
     },
     "wmc": {
         "code": "wmc",

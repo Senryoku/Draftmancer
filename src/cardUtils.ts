@@ -27,7 +27,11 @@ function getRandomCardFromCardPool(cardPool: CardPool): CardID {
 }
 
 // TODO: Prevent multiples by name?
-export function pickCard(cardPool: CardPool, booster: Array<Card> = [], options: Options = {}) {
+export function pickCard(
+	cardPool: CardPool,
+	booster: Array<Card> = [],
+	options?: { withReplacement?: boolean; uniformAll?: boolean; foil?: boolean; getCard?: (cid: CardID) => Card }
+) {
 	if (cardPool.size === 0) {
 		console.trace(`Called pickCard on an empty card pool.`);
 		throw `Called pickCard on an empty card pool.`;
@@ -35,7 +39,7 @@ export function pickCard(cardPool: CardPool, booster: Array<Card> = [], options:
 	// if uniformAll is false, distribution will be uniform across UNIQUE cards
 	// (the probability of picking a card with a given ID is the same for any ID, regardeless of the number of copies)
 	// if it is true, distribution will be uniform across ALL cards (for a given card ID, more copies means a higher chance to be picked).
-	const randomFunc = options.uniformAll ? getRandomCardFromCardPool : getRandomMapKey;
+	const randomFunc = options?.uniformAll ? getRandomCardFromCardPool : getRandomMapKey;
 	let cid = randomFunc(cardPool);
 	if (booster) {
 		let prevention_attempts = 0;
