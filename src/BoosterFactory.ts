@@ -422,6 +422,7 @@ class ZNRBoosterFactory extends BoosterFactory {
 */
 class CMRBoosterFactory extends BoosterFactory {
 	static regex = /Legendary.*Creature/;
+	static PrismaticPiperID = "a69e6d8f-f742-4508-a83a-38ae84be228c";
 	completeCardPool: SlotedCardPool;
 	legendaryCreatures: SlotedCardPool;
 
@@ -430,7 +431,7 @@ class CMRBoosterFactory extends BoosterFactory {
 			cardPool,
 			(cid: CardID) => getCard(cid).type.match(CMRBoosterFactory.regex) !== null
 		);
-		filteredCardPool["common"].delete("a69e6d8f-f742-4508-a83a-38ae84be228c"); // Remove Prismatic Piper from the common pool (can still be found in the foil pool completeCardPool)
+		filteredCardPool["common"].delete(CMRBoosterFactory.PrismaticPiperID); // Remove Prismatic Piper from the common pool (can still be found in the foil pool completeCardPool)
 		super(filteredCardPool, landSlot, options);
 		this.completeCardPool = cardPool;
 		this.legendaryCreatures = legendaryCreatures;
@@ -438,31 +439,30 @@ class CMRBoosterFactory extends BoosterFactory {
 
 	// Not using the suplied cardpool here
 	generateBooster(targets: Targets) {
-		let updatedTargets = structuredClone(targets);
 		// 20 Cards: *13 Commons (Higher chance of a Prismatic Piper); *3 Uncommons; 2 Legendary Creatures; *1 Non-"Legendary Creature" Rare/Mythic; 1 Foil
 		// * These slots are handled by the originalGenBooster function; Others are special slots with custom logic.
-		if (targets === DefaultBoosterTargets)
-			updatedTargets = {
-				common: 13,
-				uncommon: 3,
-				rare: 1,
-			};
+		const updatedTargets =
+			targets === DefaultBoosterTargets
+				? {
+						common: 13,
+						uncommon: 3,
+						rare: 1,
+				  }
+				: structuredClone(targets);
 		const legendaryCounts = countBySlot(this.legendaryCreatures);
 		// Ignore the rule if there's no legendary creatures left
 		if (Object.values(legendaryCounts).every((c) => c === 0)) {
 			return super.generateBooster(updatedTargets);
 		} else {
-			let booster: Array<UniqueCard> | MessageError = [];
+			const booster: Array<UniqueCard> = [];
 			// Prismatic Piper instead of a common in about 1 of every 6 packs
 			if (random.bool(1 / 6)) {
 				--updatedTargets.common;
-				booster = super.generateBooster(updatedTargets);
-				if (isMessageError(booster)) return booster;
-				booster.push(getUnique("a69e6d8f-f742-4508-a83a-38ae84be228c"));
-			} else {
-				booster = super.generateBooster(updatedTargets);
-				if (isMessageError(booster)) return booster;
+				booster.push(getUnique(CMRBoosterFactory.PrismaticPiperID));
 			}
+			const nonLegendary = super.generateBooster(updatedTargets);
+			if (isMessageError(nonLegendary)) return nonLegendary;
+			booster.push(...nonLegendary);
 
 			// 2 Legends: any combination of Uncommon/Rare/Mythic, except two Mythics
 			const pickedRarities = [
@@ -489,11 +489,13 @@ class CMRBoosterFactory extends BoosterFactory {
 					foilRarity = r;
 					break;
 				}
-			const pickedFoil = pickCard(this.completeCardPool[foilRarity], []);
-			if (this.cardPool[pickedFoil.rarity].has(pickedFoil.id))
-				removeCardFromCardPool(pickedFoil.id, this.cardPool[pickedFoil.rarity]);
-			if (this.legendaryCreatures[pickedFoil.rarity].has(pickedFoil.id))
-				removeCardFromCardPool(pickedFoil.id, this.legendaryCreatures[pickedFoil.rarity]);
+			const pickedFoil = pickCard(this.completeCardPool[foilRarity], [], this.options);
+			if (this.options?.withReplacement !== true) {
+				if (this.cardPool[pickedFoil.rarity].has(pickedFoil.id))
+					removeCardFromCardPool(pickedFoil.id, this.cardPool[pickedFoil.rarity]);
+				if (this.legendaryCreatures[pickedFoil.rarity].has(pickedFoil.id))
+					removeCardFromCardPool(pickedFoil.id, this.legendaryCreatures[pickedFoil.rarity]);
+			}
 			booster.unshift(Object.assign({ foil: true }, pickedFoil));
 
 			return booster;
@@ -1507,6 +1509,100 @@ class MATBoosterFactory extends MOMBoosterFactory {
 	}
 }
 
+/* Commander Masters
+ * 11 Commons - In every sixth booster, one common is replaced with the Prismatic Piper.
+ * 3 Nonlegendary uncommons
+ * 2 Legendary uncommons
+ * 1 Legendary rare or mythic rare
+ * 1 Nonlegendary rare or mythic rare
+ * 1 Nonlegendary uncommon (in two thirds of boosters) or nonlegendary rare or mythic rare (in one third of boosters)
+ * (?) 1 Traditional Foil C/U/R/M
+ */
+class CMMBoosterFactory extends BoosterFactory {
+	static PrismaticPiperID = "c78c2713-39e7-4a6e-a132-027099a89665";
+	completeCardPool: SlotedCardPool;
+	legendaryCards: SlotedCardPool;
+
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
+		const [legendary, filteredCardPool] = filterCardPool(cardPool, (cid: CardID) =>
+			getCard(cid).type.includes("Legendary")
+		);
+		filteredCardPool["common"].delete(CMMBoosterFactory.PrismaticPiperID); // Remove Prismatic Piper from the common pool (can still be found in the foil pool completeCardPool)
+		options.foil = false; // Don't generate additional foils (one is always garanteed)
+		super(filteredCardPool, landSlot, options);
+		this.completeCardPool = cardPool;
+		this.legendaryCards = legendary;
+	}
+
+	// Not using the suplied cardpool here
+	generateBooster(targets: Targets) {
+		const updatedTargets =
+			targets === DefaultBoosterTargets
+				? {
+						common: 11,
+						uncommon: 4,
+						rare: 1,
+				  }
+				: structuredClone(targets);
+		const legendaryCounts = countBySlot(this.legendaryCards);
+
+		// 1 Nonlegendary uncommon (in two thirds of boosters) or nonlegendary rare or mythic rare (in one third of boosters)
+		if (random.bool(1 / 3)) {
+			--updatedTargets.uncommon;
+			++updatedTargets.rare;
+		}
+
+		const booster: Array<UniqueCard> = [];
+		// In every sixth booster, one common is replaced with the Prismatic Piper.
+		if (random.bool(1 / 6)) {
+			--updatedTargets.common;
+			booster.push(getUnique(CMMBoosterFactory.PrismaticPiperID));
+		}
+		const nonLegendary = super.generateBooster(updatedTargets);
+		if (isMessageError(nonLegendary)) return nonLegendary;
+		booster.unshift(...nonLegendary);
+
+		// 2 Legendary uncommons
+		const addedUncommonLegendaries = Math.min(legendaryCounts["uncommon"], 2);
+		for (let i = 0; i < addedUncommonLegendaries; ++i)
+			booster.splice(updatedTargets["rare"], 0, pickCard(this.legendaryCards["uncommon"], booster));
+		// Fallback
+		for (let i = 0; i < Math.max(2 - addedUncommonLegendaries, 0); ++i)
+			booster.splice(updatedTargets["rare"], 0, pickCard(this.cardPool["uncommon"], booster));
+
+		// 1 Legendary rare or mythic rare
+		const pickedRarity = random.bool(1 / 8) ? "mythic" : "rare";
+		booster.splice(
+			updatedTargets["rare"],
+			0,
+			pickCard(
+				legendaryCounts[pickedRarity] > 0 ? this.legendaryCards[pickedRarity] : this.cardPool[pickedRarity],
+				booster
+			)
+		);
+
+		// One random foil
+		let foilRarity = "common";
+		const foilRarityCheck = random.real(0, 1);
+		for (const r in foilRarityRates)
+			if (foilRarityCheck <= foilRarityRates[r] && this.completeCardPool[r].size > 0) {
+				foilRarity = r;
+				break;
+			}
+		const pickedFoil = pickCard(this.completeCardPool[foilRarity], [], this.options);
+		if (this.options?.withReplacement !== true) {
+			if (this.cardPool[pickedFoil.rarity].has(pickedFoil.id))
+				removeCardFromCardPool(pickedFoil.id, this.cardPool[pickedFoil.rarity]);
+			if (this.legendaryCards[pickedFoil.rarity].has(pickedFoil.id))
+				removeCardFromCardPool(pickedFoil.id, this.legendaryCards[pickedFoil.rarity]);
+		}
+		pickedFoil.foil = true;
+		booster.unshift(pickedFoil);
+
+		return booster;
+	}
+}
+
 // Set specific rules.
 // Neither DOM, WAR or ZNR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
 export const SetSpecificFactories: {
@@ -1538,6 +1634,7 @@ export const SetSpecificFactories: {
 	sir3: SIRBoosterFactoryBonusSheet3,
 	mom: MOMBoosterFactory,
 	mat: MATBoosterFactory,
+	cmm: CMMBoosterFactory,
 };
 
 export const getBoosterFactory = function (
