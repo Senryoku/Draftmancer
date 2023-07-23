@@ -1589,14 +1589,13 @@ class CMMBoosterFactory extends BoosterFactory {
 				foilRarity = r;
 				break;
 			}
-		const pickedFoil = pickCard(this.completeCardPool[foilRarity], [], this.options);
+		const pickedFoil = pickCard(this.completeCardPool[foilRarity], [], { foil: true });
 		if (this.options?.withReplacement !== true) {
 			if (this.cardPool[pickedFoil.rarity].has(pickedFoil.id))
 				removeCardFromCardPool(pickedFoil.id, this.cardPool[pickedFoil.rarity]);
 			if (this.legendaryCards[pickedFoil.rarity].has(pickedFoil.id))
 				removeCardFromCardPool(pickedFoil.id, this.legendaryCards[pickedFoil.rarity]);
 		}
-		pickedFoil.foil = true;
 		booster.unshift(pickedFoil);
 
 		return booster;
