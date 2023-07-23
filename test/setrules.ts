@@ -202,6 +202,40 @@ describe("Set Specific Booster Rules", function () {
 		).to.equal(1);
 	};
 
+	const validateCMMBooster = function (booster: UniqueCard[]) {
+		expect(booster.map((c) => c.set).every((s) => s === "cmm")).to.be.true;
+		// 3 Nonlegendary uncommons (or 4, 2/3 of the time)
+		const NonlegendaryUnco = booster.reduce((acc, c) => {
+			return acc + (!c.foil && c.rarity === "uncommon" && !c.type.includes("Legendary") ? 1 : 0);
+		}, 0);
+		expect(NonlegendaryUnco, "3 or 4 Nonlegendary uncommons.").to.be.oneOf([3, 4]);
+		// 1 Nonlegendary rare or mythic rare (or 2, 1/3 of the time)
+		const NonlegendaryRM = booster.reduce((acc, c) => {
+			return (
+				acc +
+				(!c.foil && (c.rarity === "rare" || c.rarity === "mythic") && !c.type.includes("Legendary") ? 1 : 0)
+			);
+		}, 0);
+		expect(NonlegendaryRM, "1 or 2 Nonlegendary Rare/Mythic.").to.be.oneOf([1, 2]);
+		// 2 Legendary uncommons
+		const LegendaryUnco = booster.reduce((acc, c) => {
+			return acc + (!c.foil && c.rarity === "uncommon" && c.type.includes("Legendary") ? 1 : 0);
+		}, 0);
+		expect(LegendaryUnco, "2 Legendary uncommons.").to.equal(2);
+		// 1 Legendary rare or mythic rare
+		const LegendaryRM = booster.reduce((acc, c) => {
+			return (
+				acc +
+				(!c.foil && (c.rarity === "rare" || c.rarity === "mythic") && c.type.includes("Legendary") ? 1 : 0)
+			);
+		}, 0);
+		expect(LegendaryRM, "1 Legendary rare or mythic rare.").to.equal(1);
+		const Foil = booster.reduce((acc, val) => {
+			return acc + (val.foil ? 1 : 0);
+		}, 0);
+		expect(Foil, "1 Traditional Foil").to.equal(1);
+	};
+
 	beforeEach(function (done) {
 		disableLogs();
 		done();
@@ -296,6 +330,7 @@ describe("Set Specific Booster Rules", function () {
 	testSet("vow", validateColorBalance, "at least one common of each color.");
 	testSet("sir", validateSIRBooster, "exactly one 'sis' (Shadow of the Past) card.");
 	testSet("mom", validateMOMBooster, "the correct MOM collation.");
+	testSet("cmm", validateCMMBooster, "the correct CMM collation.");
 
 	it(`VOW boosters should have at least one common of each color, even with foil on.`, async function () {
 		const ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
