@@ -1,6 +1,22 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
+			<em>July 23, 2023</em>
+			<p>
+				<img src="img/sets/cmm.svg" class="set-icon" style="--invertedness: 100%" alt="" /> Commander Masters
+				experimental support.
+			</p>
+			<ul>
+				<li>
+					Available from the <font-awesome-icon icon="fa-solid fa-ellipsis-v"></font-awesome-icon> More
+					sets... menu.
+				</li>
+				<li>
+					Use 'Picked cards per booster' set to 2 with 'First pick only' enabled to draft the set as intended!
+				</li>
+			</ul>
+		</div>
+		<div class="news">
 			<em>June 26, 2023</em>
 			<p>
 				<img src="img/sets/j22.svg" class="set-icon" style="--invertedness: 100%" alt="" /> Jumpstart 2022
