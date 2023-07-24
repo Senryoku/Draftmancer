@@ -246,31 +246,48 @@ function dumpToDisk(exitOnCompletion = false) {
 		for (const userID in Connections) Connections[userID].socket.emit("message", msg);
 	}
 
-	const PoDConnections: ReturnType<typeof getPODConnection>[] = [];
-	for (const userID in Connections) PoDConnections.push(getPODConnection(Connections[userID]));
-
-	const PoDSessions = [];
-	// Keep inactive Rotisserie sessions alive, as they can be ran asynchronously over a longer period
-	for (const sessionID in InactiveSessions)
-		if (InactiveSessions[sessionID].draftState?.type === "rotisserie")
-			PoDSessions.push(InactiveSessions[sessionID]);
-
-	for (const sessionID in Sessions) {
-		try {
-			PoDSessions.push(getPoDSession(Sessions[sessionID]));
-		} catch (e) {
-			console.error(`Error while saving session '${sessionID}': `, e);
-		}
-	}
-
-	console.log(`Saving ${PoDConnections.length} Connections and ${PoDSessions.length} Sessions to disk...`);
 	if (!fs.existsSync(path.join(PersistenceLocalPath, LocalPersitenceDirectory)))
 		fs.mkdirSync(path.join(PersistenceLocalPath, LocalPersitenceDirectory), { recursive: true });
-	fs.writeFileSync(LocalConnectionsFile, JSON.stringify(PoDConnections));
-	console.log("  [+] Connections successfully saved to disk.");
-	fs.writeFileSync(LocalSessionsFile, JSON.stringify(PoDSessions));
-	console.log("  [+] Sessions successfully saved to disk.");
 
+	{
+		console.log(`Saving ${Object.keys(Connections).length} Connections to disk (${LocalConnectionsFile})...`);
+		const connectionsFile = fs.openSync(LocalConnectionsFile, "w");
+		fs.writeSync(connectionsFile, "[\n");
+		let firstConnection = true;
+		for (const userID in Connections) {
+			if (!firstConnection) fs.writeSync(connectionsFile, ",\n");
+			else firstConnection = false;
+			fs.writeSync(connectionsFile, JSON.stringify(getPODConnection(Connections[userID])));
+		}
+		fs.writeSync(connectionsFile, "\n]\n");
+		fs.closeSync(connectionsFile);
+		console.log("  [+] Connections successfully saved to disk.");
+	}
+	{
+		console.log(`Saving ${Object.keys(Sessions).length} Sessions to disk (${LocalSessionsFile})...`);
+		const sessionsFile = fs.openSync(LocalSessionsFile, "w");
+		fs.writeSync(sessionsFile, "[\n");
+		let firstSession = true;
+		// Keep inactive Rotisserie sessions alive, as they can be ran asynchronously over a longer period
+		for (const sessionID in InactiveSessions) {
+			if (!firstSession) fs.writeSync(sessionsFile, ",\n");
+			else firstSession = false;
+			if (InactiveSessions[sessionID].draftState?.type === "rotisserie")
+				fs.writeSync(sessionsFile, JSON.stringify(InactiveSessions[sessionID]));
+		}
+		for (const sessionID in Sessions) {
+			if (!firstSession) fs.writeSync(sessionsFile, ",\n");
+			else firstSession = false;
+			try {
+				fs.writeSync(sessionsFile, JSON.stringify(getPoDSession(Sessions[sessionID])));
+			} catch (e) {
+				console.error(`Error while saving session '${sessionID}': `, e);
+			}
+		}
+		fs.writeSync(sessionsFile, "\n]\n");
+		fs.closeSync(sessionsFile);
+		console.log("  [+] Sessions successfully saved to disk.");
+	}
 	if (exitOnCompletion) process.exit(0);
 }
 
