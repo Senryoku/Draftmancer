@@ -1,4 +1,4 @@
-import { validateCustomCard } from "./CustomCards.js";
+import { genCustomCardID, validateCustomCard } from "./CustomCards.js";
 import { Card, CardID } from "./CardTypes.js";
 import { CardsByName, CardVersionsByName, getCard, isValidCardID } from "./Cards.js";
 import { CCLSettings, CustomCardList, PackLayout } from "./CustomCardList.js";
@@ -18,6 +18,7 @@ export function parseLine(
 		customCards?: {
 			[cardID: string]: Card;
 		} | null;
+		customCardsNameCache?: Record<string, Card>;
 	} = { fallbackToCardName: false, customCards: null }
 ): SocketError | { count: number; cardID: CardID; foil: boolean } {
 	const trimedLine = line.trim();
@@ -36,9 +37,12 @@ export function parseLine(
 	if (!Number.isInteger(count)) count = 1;
 
 	// Override with custom cards if available
-	if (options?.customCards) {
-		// FIXME: This assumes cardID and name are the same.
-		if (name in options.customCards) return { count, cardID: name, foil };
+	if (options?.customCards && options.customCardsNameCache) {
+		if (set && number) {
+			const cid = genCustomCardID(name, set, number);
+			if (cid in options.customCards) return { count, cardID: cid, foil };
+		} else if (name in options.customCardsNameCache)
+			return { count, cardID: options.customCardsNameCache[name].id, foil };
 	}
 
 	if (set) {
@@ -458,6 +462,10 @@ export function parseCardList(
 		while (lines[lineIdx] === "") ++lineIdx; // Skip heading empty lines
 		// List has to start with a header if it has custom slots
 		if (lines[lineIdx][0] === "[") {
+			const localOptions: typeof options & {
+				customCards?: Record<string, Card>;
+				customCardsNameCache?: Record<string, Card>; // Quick lookup using the name only as key
+			} = { ...options };
 			while (lineIdx < lines.length) {
 				if (!lines[lineIdx].startsWith("[") || !lines[lineIdx].endsWith("]")) {
 					return ackError({
@@ -479,13 +487,18 @@ export function parseCardList(
 					if (isSocketError(cardsOrError)) return cardsOrError;
 					if (!cardList.customCards) cardList.customCards = {};
 					for (const customCard of cardsOrError.customCards) {
-						if (customCard.name in cardList.customCards)
+						if (customCard.id in cardList.customCards)
 							return ackError({
 								title: `[CustomCards]`,
-								text: `Duplicate card '${customCard.name}'.`,
+								text: `Duplicate card '${customCard.name}' (Full id: ${customCard.id}).`,
 							});
-						cardList.customCards[customCard.name] = customCard;
+						cardList.customCards[customCard.id] = customCard;
 					}
+					localOptions.customCards = cardList.customCards;
+					localOptions.customCardsNameCache = {};
+					for (const cid in localOptions.customCards)
+						localOptions.customCardsNameCache[localOptions.customCards[cid].name] =
+							localOptions.customCards[cid];
 					lineIdx += cardsOrError.advance;
 				} else if (lowerCaseHeader === "layouts") {
 					if (cardList.layouts) {
@@ -515,13 +528,12 @@ export function parseCardList(
 						cardList.layouts["default"].slots[slotName] = parseInt(match[2]);
 					}
 					cardList.slots[slotName] = {};
-					const parseLineOptions = Object.assign({ customCards: cardList.customCards }, options);
 					while (lineIdx < lines.length && lines[lineIdx][0] !== "[") {
 						if (lines[lineIdx]) {
-							const result = parseLine(lines[lineIdx], parseLineOptions);
+							const result = parseLine(lines[lineIdx], localOptions);
 							if (isSocketError(result)) {
 								// Just ignore the missing card and add it to the list of errors
-								if (options?.ignoreUnknownCards) outIgnoredCards?.push(lines[lineIdx]);
+								if (localOptions?.ignoreUnknownCards) outIgnoredCards?.push(lines[lineIdx]);
 								else return result;
 							} else {
 								const { count, cardID, foil } = result;
