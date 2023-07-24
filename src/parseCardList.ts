@@ -15,11 +15,8 @@ export function parseLine(
 	line: string,
 	options: {
 		fallbackToCardName?: boolean;
-		customCards?: {
-			[cardID: string]: Card;
-		} | null;
-		customCardsNameCache?: Record<string, Card>;
-	} = { fallbackToCardName: false, customCards: null }
+		customCards?: { cards: Record<string, Card>; nameCache: Map<string, Card> };
+	} = { fallbackToCardName: false, customCards: undefined }
 ): SocketError | { count: number; cardID: CardID; foil: boolean } {
 	const trimedLine = line.trim();
 	const match = trimedLine.match(lineRegex);
@@ -37,12 +34,12 @@ export function parseLine(
 	if (!Number.isInteger(count)) count = 1;
 
 	// Override with custom cards if available
-	if (options?.customCards && options.customCardsNameCache) {
+	if (options?.customCards) {
 		if (set && number) {
 			const cid = genCustomCardID(name, set, number);
-			if (cid in options.customCards) return { count, cardID: cid, foil };
-		} else if (name in options.customCardsNameCache)
-			return { count, cardID: options.customCardsNameCache[name].id, foil };
+			if (cid in options.customCards.cards) return { count, cardID: cid, foil };
+		} else if (options.customCards.nameCache.has(name))
+			return { count, cardID: options.customCards.nameCache.get(name)!.id, foil };
 	}
 
 	if (set) {
@@ -380,19 +377,35 @@ function parseCustomCards(lines: string[], startIdx: number, txtcardlist: string
 	}
 
 	const customCards: Card[] = [];
-	const customCardsKeys: CardID[] = [];
+	const customCardsIDs: CardID[] = [];
+	const customCardsNames: string[] = [];
 	for (const c of parsedCustomCards) {
 		const cardOrError = validateCustomCard(c);
 		if (isSocketError(cardOrError)) return cardOrError;
-		customCardsKeys.push(cardOrError.id);
+		customCardsIDs.push(cardOrError.id);
+		customCardsNames.push(cardOrError.name);
 		// Validate related card references.
 		if (c.related_cards) {
 			for (const rc of c.related_cards) {
-				if (isString(rc) && !customCardsKeys.includes(rc) && !isValidCardID(rc)) {
-					return ackError({
-						title: `[CustomCards]`,
-						text: `'${rc}', referenced in '${c.name}' related cards, is not a valid custom card. Make sure it is defined first.`,
-					});
+				// We're dealing with a card name (with optional set/collector number), not a card object.
+				if (isString(rc)) {
+					const match = rc.trim().match(/(.*) \((.*)\) +(.*)/); // Try to extract set and collector number (if any)
+					if (match) {
+						const [name, set, number] = match;
+						if (name && set) {
+							if (!customCardsIDs.includes(genCustomCardID(name, set.toLowerCase(), number))) {
+								return ackError({
+									title: `[CustomCards]`,
+									text: `'${rc}', referenced in '${c.name}' related cards, is not a valid custom card. Make sure it is defined first.`,
+								});
+							}
+						}
+					} else if (!customCardsNames.includes(rc) && !isValidCardID(rc)) {
+						return ackError({
+							title: `[CustomCards]`,
+							text: `'${rc}', referenced in '${c.name}' related cards, is not a valid custom card. Make sure it is defined first.`,
+						});
+					}
 				}
 			}
 		}
@@ -463,8 +476,10 @@ export function parseCardList(
 		// List has to start with a header if it has custom slots
 		if (lines[lineIdx][0] === "[") {
 			const localOptions: typeof options & {
-				customCards?: Record<string, Card>;
-				customCardsNameCache?: Record<string, Card>; // Quick lookup using the name only as key
+				customCards?: {
+					cards: Record<string, Card>;
+					nameCache: Map<string, Card>; // Quick lookup using the name only as key
+				};
 			} = { ...options };
 			while (lineIdx < lines.length) {
 				if (!lines[lineIdx].startsWith("[") || !lines[lineIdx].endsWith("]")) {
@@ -486,6 +501,11 @@ export function parseCardList(
 					const cardsOrError = parseCustomCards(lines, lineIdx, txtcardlist);
 					if (isSocketError(cardsOrError)) return cardsOrError;
 					if (!cardList.customCards) cardList.customCards = {};
+
+					// Use localOptions to supply the custom cards to parseLine
+					if (!localOptions.customCards)
+						localOptions.customCards = { cards: cardList.customCards, nameCache: new Map() };
+
 					for (const customCard of cardsOrError.customCards) {
 						if (customCard.id in cardList.customCards)
 							return ackError({
@@ -493,12 +513,10 @@ export function parseCardList(
 								text: `Duplicate card '${customCard.name}' (Full id: ${customCard.id}).`,
 							});
 						cardList.customCards[customCard.id] = customCard;
+						if (!localOptions.customCards.nameCache.has(customCard.name))
+							// Set the first printing as the canonical one
+							localOptions.customCards.nameCache.set(customCard.name, customCard);
 					}
-					localOptions.customCards = cardList.customCards;
-					localOptions.customCardsNameCache = {};
-					for (const cid in localOptions.customCards)
-						localOptions.customCardsNameCache[localOptions.customCards[cid].name] =
-							localOptions.customCards[cid];
 					lineIdx += cardsOrError.advance;
 				} else if (lowerCaseHeader === "layouts") {
 					if (cardList.layouts) {

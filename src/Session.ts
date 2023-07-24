@@ -351,6 +351,20 @@ export class Session implements IIndexable {
 		const getCardFunc = this.getCustomGetCardFunction();
 		const boosters: UniqueCard[][] = [];
 		let booster: UniqueCard[] = [];
+		const parseOptions: {
+			fallbackToCardName: boolean;
+			customCards?: { cards: Record<CardID, Card>; nameCache: Map<string, Card> };
+		} = {
+			fallbackToCardName: false,
+		};
+		if (this.customCardList?.customCards) {
+			parseOptions.customCards = { cards: this.customCardList.customCards, nameCache: new Map() };
+			for (const cid in this.customCardList.customCards)
+				parseOptions.customCards.nameCache.set(
+					this.customCardList.customCards[cid].name,
+					this.customCardList.customCards[cid]
+				);
+		}
 		for (let line of text.split("\n")) {
 			line = line.trim();
 			if (!line || line === "") {
@@ -360,10 +374,7 @@ export class Session implements IIndexable {
 					booster = [];
 				}
 			} else {
-				const result = parseLine(line, {
-					fallbackToCardName: false,
-					customCards: this.customCardList?.customCards,
-				});
+				const result = parseLine(line, parseOptions);
 				if (isSocketError(result)) return result;
 				for (let i = 0; i < result.count; ++i) {
 					const card = getUnique(result.cardID, {
