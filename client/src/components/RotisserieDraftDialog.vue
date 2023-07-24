@@ -63,7 +63,7 @@
 		</template>
 		<template v-slot:footer>
 			<div class="actions">
-				<button class="confirm" @click="start">Start</button>
+				<button class="confirm" @click="start">Start Rotisserie Draft</button>
 				<button class="cancel" @click="cancel">Cancel</button>
 			</div>
 		</template>
