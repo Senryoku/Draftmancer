@@ -16,13 +16,12 @@
 			:displayCardText="displayCardText"
 			ref="image"
 		/>
-		<div v-if="notes || notedColors || slotName" class="additional-notes">
+		<div v-if="notes || notedColors" class="additional-notes">
 			{{ notes }}
 
 			<div v-if="notedColors" class="noted-colors">
 				<img v-for="c in notedColors" :key="c" class="mana-icon" :src="`img/mana/${c}.svg`" />
 			</div>
-			<div v-if="slotName">{{ slotName }}</div>
 		</div>
 		<slot></slot>
 	</div>
@@ -83,9 +82,6 @@ export default defineComponent({
 		},
 		notedColors() {
 			return (this.card.state?.colors?.length ?? 0) > 0 ? this.card.state?.colors : undefined;
-		},
-		slotName() {
-			return this.card?.slot;
 		},
 	},
 	methods: {

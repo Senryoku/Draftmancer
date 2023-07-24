@@ -1,11 +1,12 @@
 <template>
-	<card
+	<Card
 		:card="card"
 		:language="language"
 		:class="{ selected: selected, burned: burned, 'bot-picked': botpicked }"
 		class="booster-card"
 		:style="`--booster-card-scale: ${scale}`"
 	>
+		<div v-if="slotName" class="slot-name">{{ slotName }}</div>
 		<div
 			v-if="wildcardneeded"
 			class="collection-status"
@@ -31,7 +32,7 @@
 				<font-awesome-icon icon="fa-solid fa-ban" size="2x"></font-awesome-icon>
 			</div>
 		</template>
-	</card>
+	</Card>
 </template>
 
 <script lang="ts">
@@ -72,6 +73,9 @@ export default defineComponent({
 			if (!this.botscore) return null;
 			if (this.botscore < 0) return null;
 			return this.botscore.toFixed(1);
+		},
+		slotName() {
+			return this.card.slot;
 		},
 	},
 });
@@ -139,6 +143,18 @@ export default defineComponent({
 	width: 2em;
 	height: 2em;
 	line-height: 2em;
+}
+
+.slot-name {
+	position: absolute;
+	top: -1.3em;
+	left: 50%;
+	transform: translateX(-50%);
+	background-color: #333;
+	border-radius: 0.5em;
+	padding: 0.08em 0.5em 0.5em 0.5em;
+	z-index: -1;
+	font-size: 0.8em;
 }
 </style>
 
