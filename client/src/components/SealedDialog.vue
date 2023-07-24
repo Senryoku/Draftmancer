@@ -82,8 +82,8 @@
 		</template>
 		<template v-slot:footer>
 			<div class="actions">
-				<button class="cancel" @click="cancel">Cancel</button>
 				<button class="confirm" @click="distribute">Distribute Boosters</button>
+				<button class="cancel" @click="cancel">Cancel</button>
 			</div>
 		</template>
 	</modal>
