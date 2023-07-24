@@ -31,21 +31,23 @@
 						</div>
 					</div>
 					<div>
-						<h3>
-							How many boosters for each {{ teamSealed ? "team " : "player" }} (default is
-							{{ teamSealed ? "12" : "6" }})?
-						</h3>
+						<h3>How many boosters for each {{ teamSealed ? "team" : "player" }}?</h3>
 						<input
 							type="number"
 							min="4"
 							max="24"
 							step="1"
 							id="input-boostersPerPlayer"
-							class="swal2-input"
-							style="display: block; margin: auto"
-							:placeholder="`Boosters per ${teamSealed ? 'team ' : 'player'}`"
+							:placeholder="`Boosters per ${teamSealed ? 'team' : 'player'}`"
 							v-model.number="boostersPerPlayer"
 						/>
+						<font-awesome-icon
+							icon="fa-solid fa-undo-alt"
+							class="clickable"
+							style="padding: 0.4em; vertical-align: middle"
+							@click="boostersPerPlayer = teamSealed ? 12 : 6"
+							v-tooltip.right="`Reset to default value (${teamSealed ? 12 : 6})`"
+						></font-awesome-icon>
 					</div>
 					<div>
 						<h3>
