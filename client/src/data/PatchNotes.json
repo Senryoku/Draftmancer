@@ -2,6 +2,7 @@
 	{
 		"date": "24/07/2023",
 		"notes": [
+			"(Experimental) Select and drag multiple cards at once using ctrl+click/shift+click.",
 			"Added 'Show Slots' setting for custom card list. Thanks @Susucre for the idea and first implementation."
 		]
 	},
