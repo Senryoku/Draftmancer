@@ -559,7 +559,11 @@ export class Session implements IIndexable {
 
 		if (this.useCustomCardList) {
 			const cclOptions = Object.assign(
-				{ colorBalance: this.colorBalance, withReplacement: this.customCardListWithReplacement, playerCount },
+				{
+					colorBalance: this.colorBalance,
+					withReplacement: this.customCardListWithReplacement,
+					playerCount,
+				},
 				options
 			);
 			return generateBoosterFromCustomCardList(this.customCardList, boosterQuantity, cclOptions);

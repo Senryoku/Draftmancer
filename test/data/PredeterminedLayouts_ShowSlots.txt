@@ -1,0 +1,32 @@
+[Settings]
+{
+	"predeterminedLayouts": ["SheetA", "SheetB", "SheetC"],
+	"showSlots": true,
+	"withReplacement": true,
+	"layouts": {
+		"SheetA" : {
+			"weight": 1,
+			"slots": {
+				"SheetA"   : 1
+			}
+		},
+		"SheetB": {
+			"weight": 1,
+			"slots": {
+				"SheetB"   : 1
+			}
+		},
+		"SheetC": {
+			"weight": 1,
+			"slots": {
+				"SheetC"   : 1
+			}
+		}
+	}
+}
+[SheetA]
+999 Adventure Awaits
+[SheetB]
+999 Akoum Hellhound
+[SheetC]
+999 Angelheart Protector

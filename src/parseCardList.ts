@@ -240,6 +240,16 @@ function parseSettings(
 		settings.withReplacement = parsedSettings.withReplacement;
 	}
 
+	if ("showSlots" in parsedSettings) {
+		if (!isBoolean(parsedSettings.showSlots)) {
+			return ackError({
+				title: `[Settings]`,
+				text: `'showSlots' must be a boolean.`,
+			});
+		}
+		settings.showSlots = parsedSettings.showSlots;
+	}
+
 	if ("predeterminedLayouts" in parsedSettings) {
 		if (isArrayOf(isString)(parsedSettings.predeterminedLayouts)) {
 			settings.predeterminedLayouts = parsedSettings.predeterminedLayouts.map((name) => {
