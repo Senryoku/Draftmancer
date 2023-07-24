@@ -162,4 +162,16 @@ describe("Custom Card List Parsing", function () {
 				);
 		});
 	});
+
+	describe("Custom Cards Multiple Printings", () => {
+		const session = new Session("sessionid", "clientid");
+		it(`should parse without error.`, () => {
+			const list = parseCardList(fs.readFileSync(`./test/data/CustomCards_MultiplePrintings.txt`, "utf8"), {});
+			if (isSocketError(list)) {
+				expect(isSocketError(list), `Got ${JSON.stringify((list as SocketError).error)}`).to.be.false;
+				return;
+			}
+			session.setCustomCardList(list);
+		});
+	});
 });

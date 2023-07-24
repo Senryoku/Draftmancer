@@ -398,8 +398,8 @@ function parseCustomCards(lines: string[], startIdx: number, txtcardlist: string
 		if (isSocketError(cardOrError)) return cardOrError;
 		if (cardOrError.id in customCardsIDs)
 			return ackError({
-				title: `[CustomCards]`,
-				text: `Duplicated card ID '${cardOrError.id}'.`,
+				title: `Duplicate Custom Card`,
+				text: `Duplicate card ID '${cardOrError.id}'. Each card must have a unique name. To define alternate printings of a card, specify a different set and/or collector number.`,
 			});
 		customCardsIDs[cardOrError.id] = cardOrError;
 		if (!inputsByName.has(cardOrError.name)) inputsByName.set(cardOrError.name, input);
