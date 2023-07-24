@@ -6,6 +6,7 @@ import { CCLSettings, CustomCardList, PackLayout } from "./CustomCardList.js";
 import { escapeHTML } from "./utils.js";
 import { ackError, isSocketError, SocketError } from "./Message.js";
 import { isAny, isArrayOf, isBoolean, isInteger, isObject, isRecord, isString, isUnknown } from "./TypeChecks.js";
+import { cp } from "fs";
 
 const lineRegex = /^(?:(\d+)\s+)?([^(\v\n]+)??(?:\s\((\w+)\)(?:\s+([^+\s]+))?)?(?:\s+\+?(F))?$/;
 
@@ -16,7 +17,7 @@ export function parseLine(
 	line: string,
 	options: {
 		fallbackToCardName?: boolean;
-		customCards?: { cards: Record<string, Card>; nameCache: Map<string, Card> };
+		customCards?: { cards: Record<CardID, Card>; nameCache: Map<string, Card> };
 	} = { fallbackToCardName: false, customCards: undefined }
 ): SocketError | { count: number; cardID: CardID; foil: boolean } {
 	const trimedLine = line.trim();
@@ -385,46 +386,42 @@ function parseCustomCards(lines: string[], startIdx: number, txtcardlist: string
 	}
 
 	const customCards: Card[] = [];
-	const customCardsIDs = new Map<CardID, Card>();
-	const customCardsNames = new Map<string, object>();
+	const customCardsIDs: Record<CardID, Card> = {};
+	const inputsByName = new Map<string, object>(); // Track declared card names to spot duplicates (and inherit properties between printings).
+	const customCardsNameCache = new Map<string, Card>();
 	for (const input of parsedCustomCards) {
 		// When a second printing of a card (with the same name) is detected, copies all information from the first one.
 		// This allows users to only specify a full card once and only update the related fields in other printings.
-		const c = customCardsNames.has(input.name)
-			? Object.assign({ ...customCardsNames.get(input.name) }, input)
-			: input;
+		const c = inputsByName.has(input.name) ? Object.assign({ ...inputsByName.get(input.name) }, input) : input;
 
 		const cardOrError = validateCustomCard(c);
 		if (isSocketError(cardOrError)) return cardOrError;
-		if (customCardsIDs.has(cardOrError.id))
+		if (cardOrError.id in customCardsIDs)
 			return ackError({
 				title: `[CustomCards]`,
 				text: `Duplicated card ID '${cardOrError.id}'.`,
 			});
-		customCardsIDs.set(cardOrError.id, cardOrError);
-		if (!customCardsNames.has(cardOrError.name)) customCardsNames.set(cardOrError.name, input);
+		customCardsIDs[cardOrError.id] = cardOrError;
+		if (!inputsByName.has(cardOrError.name)) inputsByName.set(cardOrError.name, input);
+		if (!customCardsNameCache.has(cardOrError.name)) customCardsNameCache.set(cardOrError.name, cardOrError);
 		// Validate related card references.
-		if (c.related_cards) {
-			for (const rc of c.related_cards) {
-				// We're dealing with a card name (with optional set/collector number), not a card object.
+		if (cardOrError.related_cards) {
+			for (let i = 0; i < cardOrError.related_cards.length; ++i) {
+				const rc = cardOrError.related_cards[i];
+				// We're dealing with a card name (with optional set/collector number), or a CardID, not a card object.
 				if (isString(rc)) {
-					const match = rc.trim().match(/(.*) \((.*)\) +(.*)/); // Try to extract set and collector number (if any)
-					if (match) {
-						const [, name, set, number] = match;
-						if (name && set) {
-							if (!customCardsIDs.has(genCustomCardID(name, set, number))) {
-								return ackError({
-									title: `[CustomCards]`,
-									text: `'${rc}', referenced in '${c.name}' related cards, is not a valid custom card. Make sure it is defined first.`,
-								});
-							}
-						}
-					} else if (!customCardsNames.has(rc) && !isValidCardID(rc)) {
+					// This is an 'official' CardID, we're good.
+					if (isValidCardID(rc)) continue;
+					// Check if it's a valid (potentially custom) card name and replace it with the corresponding Card ID.
+					const result = parseLine(rc, {
+						customCards: { cards: customCardsIDs, nameCache: customCardsNameCache },
+					});
+					if (isSocketError(result))
 						return ackError({
 							title: `[CustomCards]`,
-							text: `'${rc}', referenced in '${c.name}' related cards, is not a valid custom card. Make sure it is defined first.`,
+							text: `'${rc}', referenced in '${c.name}' related cards, is not a valid card. Make sure it is defined first if it is a custom card.`,
 						});
-					}
+					cardOrError.related_cards[i] = result.cardID;
 				}
 			}
 		}

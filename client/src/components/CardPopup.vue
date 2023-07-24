@@ -249,31 +249,15 @@ export default defineComponent({
 		},
 	},
 	computed: {
-		// FIXME: This cache should be available from anywhere in the app (just like the custom cards).
-		customCardsByName() {
-			const r = new Map<string, CardID>();
-			for (const [k, v] of Object.entries(this.customCards!)) if (!r.has(v.name)) r.set(v.name, k);
-			return r;
-		},
 		relatedCards() {
 			let r: CardCacheEntry[] = [];
 			if (!this.card) return r;
 			if (this.card.is_custom) {
-				if (this.customCards !== undefined && this.card.related_cards)
+				if (this.customCards && this.card.related_cards)
 					return [
 						...this.card.related_cards.map((c) => {
 							if (isString(c)) {
-								const match = c.trim().match(/(.*) \((.*)\) +(.*)/); // Try to extract set and collector number (if any)
-								if (match) {
-									const [, name, set, number] = match;
-									if (name && set) {
-										const cid = genCustomCardID(name, set, number);
-										if (this.customCards![cid])
-											return { status: "custom", ...this.customCards![cid] };
-									}
-								}
-								if (this.customCardsByName.has(c))
-									return { status: "custom", ...this.customCards![this.customCardsByName.get(c)] };
+								if (this.customCards![c]) return { status: "custom", ...this.customCards![c] };
 								else return this.$cardCache.get(c);
 							} else return { status: "custom", ...c };
 						}),
