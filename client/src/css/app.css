@@ -1685,3 +1685,14 @@ See: https://stackoverflow.com/questions/52937708/why-does-applying-a-css-filter
 	transition: transform 1s linear;
 	transform: rotate(calc(-360deg * min(var(--timer-max), var(--timer-current)) / var(--timer-max)));
 }
+
+.multi-drag-selected::before {
+	content: "";
+	position: absolute;
+	top: -10%;
+	left: -1.5%;
+	right: -1.5%;
+	bottom: -20%;
+	border-radius: 3.5%/28% 28% 24% 24%;
+	background-color: #518ae6d0;
+}

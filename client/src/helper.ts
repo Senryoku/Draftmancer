@@ -152,6 +152,18 @@ export function escapeHTML(str: string) {
 }
 
 export function sortableUpdate<T>(e: SortableEvent, arr: T[]) {
-	const el = arr.splice(e.oldIndex!, 1)[0];
-	arr.splice(Math.min(e.newIndex!, arr.length), 0, el);
+	const entries = [];
+	if (e.oldIndicies.length > 0) {
+		for (let i = 0; i < e.oldIndicies.length; ++i)
+			entries.push({
+				item: arr[e.oldIndicies[i].index],
+				oldIndex: e.oldIndicies[i].index,
+				newIndex: e.newIndicies[i].index,
+			});
+	} else entries.push({ item: arr[e.oldIndex!], oldIndex: e.oldIndex!, newIndex: e.newIndex! });
+
+	entries.sort((l, r) => r.oldIndex - l.oldIndex);
+	for (const { oldIndex } of entries) arr.splice(oldIndex, 1)[0];
+	entries.sort((l, r) => l.newIndex - r.newIndex);
+	for (const { item, newIndex } of entries) arr.splice(Math.min(newIndex, arr.length), 0, item);
 }

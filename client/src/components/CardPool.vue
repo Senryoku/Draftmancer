@@ -139,7 +139,14 @@
 					class="card-column drag-column"
 					:list="column"
 					item-key="uniqueID"
-					:options="{ group: group, animation: 200, ghostClass: 'ghost' }"
+					:options="{
+						group: group,
+						animation: 200,
+						ghostClass: 'ghost',
+						multiDrag: true,
+						selectedClass: 'multi-drag-selected',
+						multiDragKey: 'ctrl',
+					}"
 					@add="(evt) => addToColumn(evt, column)"
 					@remove="(evt) => removeFromColumn(evt, column)"
 					@update="sortableUpdate($event, column)"
@@ -148,9 +155,9 @@
 						<card
 							:card="element"
 							:language="language"
-							@click="$emit('cardClick', $event, element)"
+							@click.exact="$emit('cardClick', $event, element)"
 							@dblclick="$emit('cardDoubleClick', $event, element)"
-							@dragstart="$emit('cardDragStart', $event, element)"
+							@dragstart.exact="$emit('cardDragStart', $event, element)"
 							:conditionalClasses="cardConditionalClasses"
 						></card>
 					</template>
@@ -162,8 +169,8 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
-import { Sortable } from "sortablejs-vue3";
 import { SortableEvent } from "sortablejs";
+import { Sortable } from "sortablejs-vue3";
 import CardOrder, { ComparatorType } from "../cardorder";
 import Card from "./Card.vue";
 import Dropdown from "./Dropdown.vue";
@@ -181,7 +188,7 @@ export default defineComponent({
 		language: { type: String as PropType<Language>, required: true },
 		group: { type: String },
 		cardConditionalClasses: { type: Function },
-		/* This only serves as a mean to declare intentions and make sure the drag events are correctly bound when necessary. 
+		/* This only serves as a mean to declare intentions and make sure the drag events are correctly bound when necessary.
 		   By design this will not prevent the user to move cards within the pool. */
 		readOnly: {
 			type: Boolean,
@@ -315,23 +322,16 @@ export default defineComponent({
 				}
 		},
 		addToColumn(e: SortableEvent, column: UniqueCard[]) {
-			// Remove the previous DOM element: rendering will be handled by vue once the state is correctly updated.
-			e.item.remove();
-
-			if (!e.item.dataset.uniqueid) return console.error("Error in CardPool::addToColumn: Invalid item.", e);
-			const cardUniqueID = parseInt(e.item.dataset.uniqueid);
+			const entries =
+				e.newIndicies.length > 0 ? e.newIndicies : [{ multiDragElement: e.item, index: e.newIndex! }];
+			entries.sort((l, r) => l.index - r.index); // Insert lower indices first as they are given in relation to the new array.
 
 			// Event is just a movement within the card pool.
-			if (
+			const inner =
 				(this.$refs.cardcolumns as HTMLElement).contains(e.from) &&
-				(this.$refs.cardcolumns as HTMLElement).contains(e.to)
-			) {
-				const idx = this.cards.findIndex((c) => c.uniqueID === cardUniqueID);
-				if (idx >= 0) column.splice(e.newIndex!, 0, this.cards[idx]);
-				return;
-			}
+				(this.$refs.cardcolumns as HTMLElement).contains(e.to);
 
-			if (!this.readOnly && !("onCardDragAdd" in this.$attrs)) {
+			if (!inner && !this.readOnly && !("onCardDragAdd" in this.$attrs)) {
 				console.warn(
 					"CardPool: Not declared as readOnly, but has no 'cardDragAdd' event handler.",
 					"Make sure to bind the cardDragAdd event to handle these modifications or this will cause a desync between the prop and the displayed content, or mark the card pool as readOnly if it does not share its group with any other draggables."
@@ -339,25 +339,40 @@ export default defineComponent({
 				console.warn(e);
 			}
 
-			// Parent is responsible for updating this.cards prop by reacting to this event.
-			this.$emit("cardDragAdd", cardUniqueID);
+			for (const entry of entries) {
+				const item = entry.multiDragElement;
+				const index = entry.index;
+				// Remove the previous DOM element: rendering will be handled by vue once the state is correctly updated.
+				item.remove();
 
-			this.$nextTick(() => {
-				const idx = this.cards.findIndex((c) => c.uniqueID === cardUniqueID);
-				if (idx >= 0) column.splice(e.newIndex!, 0, this.cards[idx]);
-			});
+				if (!item.dataset.uniqueid) return console.error("Error in CardPool::addToColumn: Invalid item.", e);
+				const cardUniqueID = parseInt(item.dataset.uniqueid!);
+
+				if (inner) {
+					const idx = this.cards.findIndex((c) => c.uniqueID === cardUniqueID);
+					if (idx >= 0) column.splice(index, 0, this.cards[idx]);
+				} else {
+					// Parent is responsible for updating this.cards prop by reacting to this event.
+					this.$emit("cardDragAdd", cardUniqueID);
+
+					this.$nextTick(() => {
+						const idx = this.cards.findIndex((c) => c.uniqueID === cardUniqueID);
+						if (idx >= 0) column.splice(index, 0, this.cards[idx]);
+					});
+				}
+			}
 		},
 		removeFromColumn(e: SortableEvent, column: UniqueCard[]) {
-			column.splice(e.oldIndex!, 1);
+			const entries =
+				e.oldIndicies.length > 0 ? e.oldIndicies : [{ multiDragElement: e.item, index: e.oldIndex! }];
+			entries.sort((l, r) => r.index - l.index); // Remove higher indices first to preverse order.
 
 			// Event is just a movement within the card pool, don't broadcast it.
-			if (
+			const inner =
 				(this.$refs.cardcolumns as HTMLElement).contains(e.from) &&
-				(this.$refs.cardcolumns as HTMLElement).contains(e.to)
-			)
-				return;
+				(this.$refs.cardcolumns as HTMLElement).contains(e.to);
 
-			if (!this.readOnly && !("onCardDragRemove" in this.$attrs)) {
+			if (!inner && !this.readOnly && !("onCardDragRemove" in this.$attrs)) {
 				console.warn(
 					"CardPool: Not declared as readOnly, but has no 'cardDragRemove' event handler.",
 					"Make sure to bind the cardDragRemove event to handle these modifications or this will cause a desync between the prop and the displayed content, or mark the card pool as readOnly if it does not share its group with any other draggables."
@@ -365,9 +380,19 @@ export default defineComponent({
 				console.warn(e);
 			}
 
-			if (!e.item.dataset.uniqueid) return console.error("Error in CardPool::removeFromColumn: Invalid item.", e);
-			const cardUniqueID = parseInt(e.item.dataset.uniqueid);
-			this.$emit("cardDragRemove", cardUniqueID);
+			for (const entry of entries) {
+				const item = entry.multiDragElement;
+				const index = entry.index;
+
+				column.splice(index, 1);
+
+				if (!inner) {
+					if (!item.dataset.uniqueid)
+						return console.error("Error in CardPool::removeFromColumn: Invalid item.", e);
+					const cardUniqueID = parseInt(item.dataset.uniqueid);
+					this.$emit("cardDragRemove", cardUniqueID);
+				}
+			}
 		},
 		addColumn() {
 			for (let row of this.rows) {

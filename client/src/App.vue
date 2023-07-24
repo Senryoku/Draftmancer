@@ -1604,6 +1604,9 @@
 										group: 'deck',
 										animation: '200',
 										ghostClass: 'ghost',
+										multiDrag: true,
+										selectedClass: 'multi-drag-selected',
+										multiDragKey: 'ctrl',
 									}"
 									@add="onCollapsedSideDragAdd"
 									@remove="onCollapsedSideDragRemove"
@@ -1613,7 +1616,7 @@
 										<card
 											:card="element"
 											:language="language"
-											@click="sideboardToDeck($event, element)"
+											@click.exact="sideboardToDeck($event, element)"
 											:cardConditionalClasses="cardConditionalClasses"
 										></card>
 									</template>
