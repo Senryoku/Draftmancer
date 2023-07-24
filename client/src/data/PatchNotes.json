@@ -1,4 +1,10 @@
 [
+	{
+		"date": "24/07/2023",
+		"notes": [
+			"Added 'Show Slots' setting for custom card list. Thanks @Susucre for the idea and first implementation."
+		]
+	},
 	{ "date": "23/07/2023", "notes": ["Commander Masters experimental support."] },
 	{ "date": "26/06/2023", "notes": ["Jumpstart 2022 support."] },
 	{
