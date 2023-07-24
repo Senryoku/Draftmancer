@@ -1626,7 +1626,7 @@ function deleteSession(sessionID: SessionID) {
 
 // Remove user from previous session and cleanup if empty
 function removeUserFromSession(userID: UserID) {
-	const sessionID = Connections[userID].sessionID;
+	const sessionID = Connections[userID]?.sessionID;
 	if (sessionID && sessionID in Sessions) {
 		const sess = Sessions[sessionID];
 		if (sess.users.has(userID)) {
