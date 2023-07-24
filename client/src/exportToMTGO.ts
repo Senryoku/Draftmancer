@@ -55,10 +55,11 @@ export async function exportToMTGO(
 
 	const cardsLines: string[] = [];
 	const addCard = (mtgo_id: number, name: string, count = 1, sideboard = false) => {
+		const fixedName = name.replaceAll("&", "and"); // Basically only for "Minsc & Boo, Timeless Heroes".
 		cardsLines.push(
 			`  <Cards CatID="${mtgo_id}" Quantity="${count ?? 1}" Sideboard="${
 				sideboard ? "true" : "false"
-			}" Name="${name}" Annotation="0"/>`
+			}" Name="${fixedName}" Annotation="0"/>`
 		);
 	};
 
