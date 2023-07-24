@@ -76,7 +76,7 @@ export async function exportToMTGO(
 		if (!scryfall_card.mtgo_id) {
 			try {
 				const allPrintings = await axios.get(
-					`https://api.scryfall.com/cards/search?q=!"${card.name}"&unique=prints`,
+					`https://api.scryfall.com/cards/search?q=!"${encodeURIComponent(card.name)}"&unique=prints`,
 					{ timeout: 5000 }
 				);
 				if (allPrintings.status === 200 && allPrintings.data.object === "list") {
