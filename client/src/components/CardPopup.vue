@@ -91,6 +91,7 @@ import axios from "axios";
 import CardText from "./CardText.vue";
 import CardImage from "./CardImage.vue";
 import { isString } from "../../../src/TypeChecks";
+import { genCustomCardID } from "../../../src/CustomCardID";
 import { Card, CardFace, CardID } from "@/CardTypes";
 import { ScryfallCard, isReady, CardCacheEntry } from "../vueCardCache";
 
@@ -248,6 +249,12 @@ export default defineComponent({
 		},
 	},
 	computed: {
+		// FIXME: This cache should be available from anywhere in the app (just like the custom cards).
+		customCardsByName() {
+			const r = new Map<string, CardID>();
+			for (const [k, v] of Object.entries(this.customCards!)) if (!r.has(v.name)) r.set(v.name, k);
+			return r;
+		},
 		relatedCards() {
 			let r: CardCacheEntry[] = [];
 			if (!this.card) return r;
@@ -256,7 +263,17 @@ export default defineComponent({
 					return [
 						...this.card.related_cards.map((c) => {
 							if (isString(c)) {
-								if (this.customCards![c]) return { status: "custom", ...this.customCards![c] };
+								const match = c.trim().match(/(.*) \((.*)\) +(.*)/); // Try to extract set and collector number (if any)
+								if (match) {
+									const [, name, set, number] = match;
+									if (name && set) {
+										const cid = genCustomCardID(name, set, number);
+										if (this.customCards![cid])
+											return { status: "custom", ...this.customCards![cid] };
+									}
+								}
+								if (this.customCardsByName.has(c))
+									return { status: "custom", ...this.customCards![this.customCardsByName.get(c)] };
 								else return this.$cardCache.get(c);
 							} else return { status: "custom", ...c };
 						}),

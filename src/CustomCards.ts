@@ -4,6 +4,7 @@ import { Card, CardColor, CardFace } from "./CardTypes.js";
 import { ackError, isMessageError, isSocketError, SocketAck, SocketError } from "./Message.js";
 import { isCard, isDraftEffect } from "./CardTypeCheck.js";
 import { hasProperty, isArrayOf, isObject, isRecord, isString } from "./TypeChecks.js";
+import { genCustomCardID } from "./CustomCardID.js";
 
 function errorWithJSON(title: string, msg: string, json: unknown) {
 	return ackError({
@@ -56,10 +57,6 @@ export function validateCustomCardFace(face: unknown): SocketError | CardFace {
 	};
 }
 
-export function genCustomCardID(name: string, set: string, collector_number: string): string {
-	return `${name}_${set}_${collector_number}`;
-}
-
 export function validateCustomCard(inputCard: any): SocketError | Card {
 	// Check mandatory fields
 	const missing =
@@ -104,7 +101,7 @@ export function validateCustomCard(inputCard: any): SocketError | Card {
 		if (!Array.isArray(inputCard.colors) || inputCard.colors.some((c: CardColor) => !"WUBRG".includes(c))) {
 			return ackError({
 				title: `Invalid Property`,
-				html: `Invalid mandatory property 'colors' in custom card, 'colors' should be an Array of inputCard colors (W, U, B, R or G). Leave blank to let it be automatically infered from the mana cost. <pre>${JSON.stringify(
+				html: `Invalid optional property 'colors' in custom card, 'colors' should be an Array of inputCard colors (W, U, B, R or G). Leave blank to let it be automatically infered from the mana cost. <pre>${JSON.stringify(
 					inputCard,
 					null,
 					2
