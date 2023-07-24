@@ -59,8 +59,8 @@
 		</template>
 		<template v-slot:footer>
 			<div class="actions">
-				<button class="cancel" @click="cancel">Cancel</button>
 				<button class="confirm" @click="start">Start Solomon Draft</button>
+				<button class="cancel" @click="cancel">Cancel</button>
 			</div>
 		</template>
 	</modal>
