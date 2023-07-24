@@ -74,19 +74,28 @@ export async function exportToMTGO(
 
 		// Exact match doesn't have an associated MTGO id, check other printings.
 		if (!scryfall_card.mtgo_id) {
-			const allPrintings = await axios.get(
-				`https://api.scryfall.com/cards/search?q=!"${card.name}"&unique=prints`,
-				{ timeout: 5000 }
-			);
-			if (allPrintings.status === 200 && allPrintings.data.object === "list") {
-				for (const candidate of allPrintings.data.data)
-					if (candidate.mtgo_id) {
-						scryfall_card = candidate as ScryfallCard;
-						break;
-					}
-			} else {
-				console.error(`exportToMTGO: Unexpected response from Scryfall API for card '${card.name}'. Response:`);
-				console.error(allPrintings);
+			try {
+				const allPrintings = await axios.get(
+					`https://api.scryfall.com/cards/search?q=!"${card.name}"&unique=prints`,
+					{ timeout: 5000 }
+				);
+				if (allPrintings.status === 200 && allPrintings.data.object === "list") {
+					for (const candidate of allPrintings.data.data)
+						if (candidate.mtgo_id) {
+							scryfall_card = candidate as ScryfallCard;
+							break;
+						}
+				} else {
+					console.error(
+						`exportToMTGO: Unexpected response from Scryfall API for card '${card.name}'. Response:`,
+						allPrintings
+					);
+				}
+			} catch (e) {
+				console.error(
+					`exportToMTGO: Error getting all printings from Scryfall API for card '${card.name}': `,
+					e
+				);
 			}
 		}
 
