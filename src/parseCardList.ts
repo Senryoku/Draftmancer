@@ -404,10 +404,14 @@ function parseCustomCards(lines: string[], startIdx: number, txtcardlist: string
 		customCardsIDs[cardOrError.id] = cardOrError;
 		if (!inputsByName.has(cardOrError.name)) inputsByName.set(cardOrError.name, input);
 		if (!customCardsNameCache.has(cardOrError.name)) customCardsNameCache.set(cardOrError.name, cardOrError);
-		// Validate related card references.
-		if (cardOrError.related_cards) {
-			for (let i = 0; i < cardOrError.related_cards.length; ++i) {
-				const rc = cardOrError.related_cards[i];
+		customCards.push(cardOrError);
+	}
+
+	// Validate related card references.
+	for (const card of customCards) {
+		if (card.related_cards) {
+			for (let i = 0; i < card.related_cards.length; ++i) {
+				const rc = card.related_cards[i];
 				// We're dealing with a card name (with optional set/collector number), or a CardID, not a card object.
 				if (isString(rc)) {
 					// This is an 'official' CardID, we're good.
@@ -419,14 +423,14 @@ function parseCustomCards(lines: string[], startIdx: number, txtcardlist: string
 					if (isSocketError(result))
 						return ackError({
 							title: `[CustomCards]`,
-							text: `'${rc}', referenced in '${c.name}' related cards, is not a valid card. Make sure it is defined first if it is a custom card.`,
+							text: `'${rc}', referenced in '${card.name}' related cards, is not a valid card.`,
 						});
-					cardOrError.related_cards[i] = result.cardID;
+					card.related_cards[i] = result.cardID;
 				}
 			}
 		}
-		customCards.push(cardOrError);
 	}
+
 	return {
 		advance: (customCardsStr.match(/\r?\n/g)?.length ?? 0) + 1, // Skip this section's lines
 		customCards: customCards,
