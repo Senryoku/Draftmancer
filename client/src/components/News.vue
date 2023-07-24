@@ -11,9 +11,7 @@
 					Available from the <font-awesome-icon icon="fa-solid fa-ellipsis-v"></font-awesome-icon> More
 					sets... menu.
 				</li>
-				<li>
-					Use 'Picked cards per booster' set to 2 with 'First pick only' enabled to draft the set as intended!
-				</li>
+				<li>Use 'Picked cards per booster' set to 2 to draft the set as intended!</li>
 			</ul>
 		</div>
 		<div class="news">
