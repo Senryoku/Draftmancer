@@ -24,7 +24,7 @@ import Constants, { CubeDescription, EnglishBasicLandNames } from "../../src/Con
 import { CardColor, OptionalOnPickDraftEffect, UsableDraftEffect } from "../../src/CardTypes";
 
 import io, { Socket } from "socket.io-client";
-import { toRaw, defineComponent, defineAsyncComponent } from "vue";
+import { toRaw, defineComponent, defineAsyncComponent, Component } from "vue";
 import { Sortable } from "sortablejs-vue3";
 import Swal, { SweetAlertIcon, SweetAlertOptions, SweetAlertResult } from "sweetalert2";
 import { SortableEvent } from "sortablejs";
@@ -1259,9 +1259,7 @@ export default defineComponent({
 
 			this.socket.on("askColor", (userName, card, ack) => {
 				const el = document.createElement("div");
-				el.id = "ask-color-dialog";
 				this.$el.appendChild(el);
-
 				const instance = createCommonApp(ChooseColorComponent, {
 					userName: userName,
 					card: card,
@@ -1273,14 +1271,12 @@ export default defineComponent({
 						instance.unmount();
 					},
 				});
-				instance.mount("#ask-color-dialog");
+				instance.mount(el);
 			});
 
 			this.socket.on("choosePlayer", (reason, users, ack) => {
 				const el = document.createElement("div");
-				el.id = "choose-player-dialog";
 				this.$el.appendChild(el);
-
 				const instance = createCommonApp(ChoosePlayerComponent, {
 					sessionUsers: this.sessionUsers,
 					reason: reason,
@@ -1293,7 +1289,7 @@ export default defineComponent({
 						instance.unmount();
 					},
 				});
-				instance.mount("#choose-player-dialog");
+				instance.mount(el);
 			});
 		},
 		loadPreviousDeck() {
@@ -1795,6 +1791,21 @@ export default defineComponent({
 				body: `This is your turn to pick.`,
 			});
 		},
+		spawnModal(rootComponent: Component, props: object) {
+			const el = document.createElement("div");
+			this.$el.appendChild(el);
+			const instance = createCommonApp(rootComponent, {
+				...props,
+				unmounted: () => {
+					this.$el.removeChild(el);
+				},
+				onCancel() {
+					instance.unmount();
+				},
+			});
+			instance.mount(el);
+			return instance;
+		},
 		setWinstonDraftState(state: WinstonDraftSyncData) {
 			this.winstonDraftState = state;
 		},
@@ -1911,36 +1922,7 @@ export default defineComponent({
 		startHousmanDraft: async function () {
 			if (this.userID !== this.sessionOwner || this.drafting) return;
 
-			const start = (
-				handSize: number,
-				revealedCardsCount: number,
-				exchangeCount: number,
-				roundCount: number,
-				removeBasicLands: boolean
-			) => {
-				this.socket.emit(
-					"startHousmanDraft",
-					handSize,
-					revealedCardsCount,
-					exchangeCount,
-					roundCount,
-					removeBasicLands,
-					(answer: SocketAck) => {
-						if (answer.code !== 0 && answer.error) Alert.fire(answer.error);
-					}
-				);
-			};
-
-			const el = document.createElement("div");
-			el.id = "housman-dialog";
-			this.$el.appendChild(el);
-			const instance = createCommonApp(HousmanDialog, {
-				unmounted: () => {
-					this.$el.removeChild(el);
-				},
-				onCancel() {
-					instance.unmount();
-				},
+			const instance = this.spawnModal(HousmanDialog, {
 				onStart: (
 					handSize: number,
 					revealedCardsCount: number,
@@ -1948,11 +1930,35 @@ export default defineComponent({
 					roundCount: number,
 					removeBasicLands: boolean
 				) => {
-					this.deckWarning(start, handSize, revealedCardsCount, exchangeCount, roundCount, removeBasicLands);
+					this.deckWarning(
+						(
+							handSize: number,
+							revealedCardsCount: number,
+							exchangeCount: number,
+							roundCount: number,
+							removeBasicLands: boolean
+						) => {
+							this.socket.emit(
+								"startHousmanDraft",
+								handSize,
+								revealedCardsCount,
+								exchangeCount,
+								roundCount,
+								removeBasicLands,
+								(answer: SocketAck) => {
+									if (answer.code !== 0 && answer.error) Alert.fire(answer.error);
+								}
+							);
+						},
+						handSize,
+						revealedCardsCount,
+						exchangeCount,
+						roundCount,
+						removeBasicLands
+					);
 					instance.unmount();
 				},
 			});
-			instance.mount("#housman-dialog");
 		},
 		housmanDraftEnd() {
 			this.drafting = false;
@@ -1969,22 +1975,12 @@ export default defineComponent({
 				});
 			};
 
-			const el = document.createElement("div");
-			el.id = "solomon-dialog";
-			this.$el.appendChild(el);
-			const instance = createCommonApp(SolomonDialog, {
-				unmounted: () => {
-					this.$el.removeChild(el);
-				},
-				onCancel() {
-					instance.unmount();
-				},
+			const instance = this.spawnModal(SolomonDialog, {
 				onStart: (cardCount: number, roundCount: number, removeBasicLands: boolean) => {
 					this.deckWarning(start, cardCount, roundCount, removeBasicLands);
 					instance.unmount();
 				},
 			});
-			instance.mount("#solomon-dialog");
 		},
 		solomonDraftEnd() {
 			this.drafting = false;
@@ -2079,17 +2075,8 @@ export default defineComponent({
 				});
 				return;
 			}
-			const el = document.createElement("div");
-			el.id = "rotisserie-draft-dialog";
-			this.$el.appendChild(el);
-			const instance = createCommonApp(RotisserieDraftDialog, {
+			const instance = this.spawnModal(RotisserieDraftDialog, {
 				defaultBoostersPerPlayer: this.boostersPerPlayer,
-				unmounted: () => {
-					this.$el.removeChild(el);
-				},
-				onCancel() {
-					instance.unmount();
-				},
 				onStart: (options: RotisserieDraftStartOptions) => {
 					this.deckWarning((options) => {
 						this.socket.emit("startRotisserieDraft", options, (r) => {
@@ -2099,7 +2086,6 @@ export default defineComponent({
 					instance.unmount();
 				},
 			});
-			instance.mount("#rotisserie-draft-dialog");
 		},
 		rotisserieDraftPick(
 			uniqueCardID: UniqueCardID,
@@ -2137,36 +2123,7 @@ export default defineComponent({
 		startMinesweeperDraft() {
 			if (this.userID !== this.sessionOwner || this.drafting) return;
 
-			const start = (settings: {
-				gridCount: number;
-				gridWidth: number;
-				gridHeight: number;
-				picksPerPlayerPerGrid: number;
-				revealBorders: boolean;
-			}) => {
-				this.socket.emit(
-					"startMinesweeperDraft",
-					settings.gridCount,
-					settings.gridWidth,
-					settings.gridHeight,
-					this.sessionUsers.length * settings.picksPerPlayerPerGrid,
-					settings.revealBorders,
-					(response: SocketAck) => {
-						if (response?.error) Alert.fire(response.error);
-					}
-				);
-			};
-
-			const el = document.createElement("div");
-			el.id = "minesweeper-dialog";
-			this.$el.appendChild(el);
-			const instance = createCommonApp(MinesweeperDialog, {
-				unmounted: () => {
-					this.$el.removeChild(el);
-				},
-				onCancel() {
-					instance.unmount();
-				},
+			const instance = this.spawnModal(MinesweeperDialog, {
 				onStart: (
 					gridCount: number,
 					gridWidth: number,
@@ -2174,11 +2131,35 @@ export default defineComponent({
 					picksPerPlayerPerGrid: number,
 					revealBorders: boolean
 				) => {
-					this.deckWarning(start, { gridCount, gridWidth, gridHeight, picksPerPlayerPerGrid, revealBorders });
+					this.deckWarning(
+						(
+							gridCount: number,
+							gridWidth: number,
+							gridHeight: number,
+							picksPerPlayerPerGrid: number,
+							revealBorders: boolean
+						) => {
+							this.socket.emit(
+								"startMinesweeperDraft",
+								gridCount,
+								gridWidth,
+								gridHeight,
+								this.sessionUsers.length * picksPerPlayerPerGrid,
+								revealBorders,
+								(response: SocketAck) => {
+									if (response?.error) Alert.fire(response.error);
+								}
+							);
+						},
+						gridCount,
+						gridWidth,
+						gridHeight,
+						picksPerPlayerPerGrid,
+						revealBorders
+					);
 					instance.unmount();
 				},
 			});
-			instance.mount("#minesweeper-dialog");
 		},
 		minesweeperDraftPick(row: number, col: number) {
 			if (!this.minesweeperDraftState) return;
@@ -2815,18 +2796,9 @@ export default defineComponent({
 		async sealedDialog(teamSealed = false) {
 			if (this.userID != this.sessionOwner) return;
 
-			const el = document.createElement("div");
-			el.id = "sealed-dialog";
-			this.$el.appendChild(el);
-			const instance = createCommonApp(SealedDialog, {
+			const instance = this.spawnModal(SealedDialog, {
 				users: this.sessionUsers,
 				teamSealed: teamSealed,
-				unmounted: () => {
-					this.$el.removeChild(el);
-				},
-				onCancel() {
-					instance.unmount();
-				},
 				onDistribute: (boostersPerPlayer: number, customBoosters: SetCode[], teams: UserID[][]) => {
 					this.deckWarning(
 						teamSealed ? this.startTeamSealed : this.distributeSealed,
@@ -2837,7 +2809,6 @@ export default defineComponent({
 					instance.unmount();
 				},
 			});
-			instance.mount("#sealed-dialog");
 		},
 		deckWarning<T extends unknown[]>(call: (...args: T) => void, ...options: T) {
 			if (this.deck.length > 0) {
