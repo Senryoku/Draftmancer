@@ -270,16 +270,18 @@ function dumpToDisk(exitOnCompletion = false) {
 		let firstSession = true;
 		// Keep inactive Rotisserie sessions alive, as they can be ran asynchronously over a longer period
 		for (const sessionID in InactiveSessions) {
-			if (!firstSession) fs.writeSync(sessionsFile, ",\n");
-			else firstSession = false;
-			if (InactiveSessions[sessionID].draftState?.type === "rotisserie")
+			if (InactiveSessions[sessionID].draftState?.type === "rotisserie") {
+				if (!firstSession) fs.writeSync(sessionsFile, ",\n");
+				else firstSession = false;
 				fs.writeSync(sessionsFile, JSON.stringify(InactiveSessions[sessionID]));
+			}
 		}
 		for (const sessionID in Sessions) {
-			if (!firstSession) fs.writeSync(sessionsFile, ",\n");
-			else firstSession = false;
 			try {
-				fs.writeSync(sessionsFile, JSON.stringify(getPoDSession(Sessions[sessionID])));
+				const serialized = JSON.stringify(getPoDSession(Sessions[sessionID]));
+				if (!firstSession) fs.writeSync(sessionsFile, ",\n");
+				else firstSession = false;
+				fs.writeSync(sessionsFile, serialized);
 			} catch (e) {
 				console.error(`Error while saving session '${sessionID}': `, e);
 			}
