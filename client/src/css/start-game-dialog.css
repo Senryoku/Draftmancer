@@ -1,6 +1,7 @@
 .dialog {
 	text-align: center;
-	max-width: max(700px, 50vw);
+	font-size: 1.125em;
+	max-width: min(700px, 100vw);
 }
 
 .dialog p {

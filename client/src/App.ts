@@ -3,7 +3,7 @@ import type { UserID } from "@/IDTypes";
 import type { SetCode, IIndexable, Language } from "@/Types";
 import { DistributionMode, DraftLogRecipients, ReadyState, UserData, UsersData } from "../../src/Session/SessionTypes";
 import { ArenaID, Card, CardID, DeckList, PlainCollection, UniqueCard, UniqueCardID } from "@/CardTypes";
-import type { DraftLog, DraftLogUserData } from "@/DraftLog";
+import type { DraftLog } from "@/DraftLog";
 import type { BotScores } from "@/Bot";
 import type { WinstonDraftSyncData } from "@/WinstonDraft";
 import type { WinchesterDraftSyncData } from "@/WinchesterDraft";
@@ -24,7 +24,7 @@ import Constants, { CubeDescription, EnglishBasicLandNames } from "../../src/Con
 import { CardColor, OptionalOnPickDraftEffect, UsableDraftEffect } from "../../src/CardTypes";
 
 import io, { Socket } from "socket.io-client";
-import { toRaw, defineComponent, defineAsyncComponent, Component } from "vue";
+import { toRaw, defineComponent, defineAsyncComponent, Component, createApp } from "vue";
 import { Sortable } from "sortablejs-vue3";
 import Swal, { SweetAlertIcon, SweetAlertOptions, SweetAlertResult } from "sweetalert2";
 import { SortableEvent } from "sortablejs";
@@ -61,6 +61,7 @@ import SetSelect from "./components/SetSelect.vue";
 import SealedDialog from "./components/SealedDialog.vue";
 import HousmanDialog from "./components/HousmanDialog.vue";
 import MinesweeperDialog from "./components/MinesweeperDraftDialog.vue";
+import WinstonDialog from "./components/WinstonDraftDialog.vue";
 import SolomonDialog from "./components/SolomonDialog.vue";
 import ScaleSlider from "./components/ScaleSlider.vue";
 import RotisserieDraftDialog from "./components/RotisserieDraftDialog.vue";
@@ -1791,7 +1792,7 @@ export default defineComponent({
 				body: `This is your turn to pick.`,
 			});
 		},
-		spawnModal(rootComponent: Component, props: object) {
+		spawnDialog<T extends Component>(rootComponent: T, props: object) {
 			const el = document.createElement("div");
 			this.$el.appendChild(el);
 			const instance = createCommonApp(rootComponent, {
@@ -1809,39 +1810,22 @@ export default defineComponent({
 		setWinstonDraftState(state: WinstonDraftSyncData) {
 			this.winstonDraftState = state;
 		},
-		startWinstonDraft: async function () {
+		startWinstonDraft() {
 			if (this.userID != this.sessionOwner || this.drafting) return;
-
 			if (!this.ownerIsPlayer) {
 				Alert.fire({
 					icon: "error",
 					title: "Owner has to play",
-					text: "Non-playing owner is not supported in Winston Draft for now. The 'Session owner is playing' option needs to be active.",
+					text: "Non-playing owner is not supported in Winston Draft. The 'Session owner is playing' option needs to be active.",
 				});
-				return;
-			}
-
-			let { value: boostersPerPlayer } = await Alert.fire({
-				title: "Winston Draft",
-				html: `<p>Winston Draft is a draft variant designed for two players, but playable with more participants. Players takes turns choosing between 3 growing piles of cards, or drawing a random one. <a href="https://mtg.gamepedia.com/Winston_Draft" target="_blank" rel="noopener nofollow">More information here</a>.</p>How many boosters per player for the main stack (default is 3)?`,
-				inputPlaceholder: "Boosters per player",
-				input: "number",
-				inputAttributes: {
-					min: "1",
-					max: "12",
-					step: "1",
-				},
-				inputValue: 3,
-				showCancelButton: true,
-				confirmButtonColor: ButtonColor.Safe,
-				cancelButtonColor: ButtonColor.Critical,
-				confirmButtonText: "Start Winston Draft",
-			});
-
-			if (boostersPerPlayer) {
-				if (typeof boostersPerPlayer !== "number") boostersPerPlayer = parseInt(boostersPerPlayer);
-				this.socket.emit("startWinstonDraft", boostersPerPlayer, true, (answer: SocketAck) => {
-					if (answer.code !== 0 && answer.error) Alert.fire(answer.error);
+			} else {
+				const instance = this.spawnDialog(WinstonDialog, {
+					onStart: (boostersPerPlayer: number) => {
+						this.socket.emit("startWinstonDraft", boostersPerPlayer, true, (answer: SocketAck) => {
+							if (answer.code !== 0 && answer.error) Alert.fire(answer.error);
+						});
+						instance.unmount();
+					},
 				});
 			}
 		},
@@ -1922,7 +1906,7 @@ export default defineComponent({
 		startHousmanDraft: async function () {
 			if (this.userID !== this.sessionOwner || this.drafting) return;
 
-			const instance = this.spawnModal(HousmanDialog, {
+			const instance = this.spawnDialog(HousmanDialog, {
 				onStart: (
 					handSize: number,
 					revealedCardsCount: number,
@@ -1975,7 +1959,7 @@ export default defineComponent({
 				});
 			};
 
-			const instance = this.spawnModal(SolomonDialog, {
+			const instance = this.spawnDialog(SolomonDialog, {
 				onStart: (cardCount: number, roundCount: number, removeBasicLands: boolean) => {
 					this.deckWarning(start, cardCount, roundCount, removeBasicLands);
 					instance.unmount();
@@ -2075,7 +2059,7 @@ export default defineComponent({
 				});
 				return;
 			}
-			const instance = this.spawnModal(RotisserieDraftDialog, {
+			const instance = this.spawnDialog(RotisserieDraftDialog, {
 				defaultBoostersPerPlayer: this.boostersPerPlayer,
 				onStart: (options: RotisserieDraftStartOptions) => {
 					this.deckWarning((options) => {
@@ -2123,7 +2107,7 @@ export default defineComponent({
 		startMinesweeperDraft() {
 			if (this.userID !== this.sessionOwner || this.drafting) return;
 
-			const instance = this.spawnModal(MinesweeperDialog, {
+			const instance = this.spawnDialog(MinesweeperDialog, {
 				onStart: (
 					gridCount: number,
 					gridWidth: number,
@@ -2796,7 +2780,7 @@ export default defineComponent({
 		async sealedDialog(teamSealed = false) {
 			if (this.userID != this.sessionOwner) return;
 
-			const instance = this.spawnModal(SealedDialog, {
+			const instance = this.spawnDialog(SealedDialog, {
 				users: this.sessionUsers,
 				teamSealed: teamSealed,
 				onDistribute: (boostersPerPlayer: number, customBoosters: SetCode[], teams: UserID[][]) => {
