@@ -2160,22 +2160,22 @@ export default defineComponent({
 			Alert.fire({
 				title: "Minesweeper Draft",
 				html: `
-					<p>Minesweeper Draft is a draft variant where players alternatively pick cards from a partially revealed card grid, discovering neighboring cards after each pick.</p>
-					<div style="display: table; border-spacing: 0.5em; margin: auto;">
+					<p style="max-width: min(650px, 90vw);">Minesweeper Draft is a draft variant where players alternatively pick cards from a partially revealed card grid, discovering neighboring cards after each pick.</p>
+					<div style="display: table; border-spacing: 0.5em; margin: auto; min-width: 300px;">
 						<div style="display: table-row">
-							<div style="display: table-cell; text-align: right;">Grid Count:</div>
+							<div style="display: table-cell; text-align: right; vertical-align: middle;">Grid Count:</div>
 							<div style="display: table-cell; text-align: left;"><input type="number" value="${gridCount}" min="1" max="99" step="1" id="input-gridCount" class="swal2-input" placeholder="Grid Count" style="max-width: 4em; margin: 0 auto;"></div>
 						</div> 
 						<div style="display: table-row">
-							<div style="display: table-cell; text-align: right;">Grid Size:</div> 
-							<div style="display: table-cell; text-align: left;"><input type="number" value="${gridWidth}" min="1" max="40" step="1" id="input-gridWidth" class="swal2-input" placeholder="Grid Width" style="max-width: 4em; margin: 0 auto;"> x <input type="number" value="${gridHeight}" min="1" max="40" step="1" id="input-gridHeight" class="swal2-input" placeholder="Grid Height" style="max-width: 4em; margin: 0 auto;"></div> 
+							<div style="display: table-cell; text-align: right; vertical-align: middle;">Grid Size:</div> 
+							<div style="display: table-cell; text-align: left; white-space: nowrap"><input type="number" value="${gridWidth}" min="1" max="40" step="1" id="input-gridWidth" class="swal2-input" placeholder="Grid Width" style="max-width: 4em; margin: 0 auto;"> x <input type="number" value="${gridHeight}" min="1" max="40" step="1" id="input-gridHeight" class="swal2-input" placeholder="Grid Height" style="max-width: 4em; margin: 0 auto;"></div> 
 						</div> 
 						<div style="display: table-row">
-							<div style="display: table-cell; text-align: right;">Picks per Player, per Grid:</div> 
+							<div style="display: table-cell; text-align: right; vertical-align: middle;">Picks per Player, per Grid:</div> 
 							<div style="display: table-cell; text-align: left;"><input type="number" value="${picksPerPlayerPerGrid}" min="1" max="40*40" step="1" id="input-picksPerPlayerPerGrid" class="swal2-input" placeholder="Picks per Player, per Grid" style="max-width: 4em; margin: 0 auto;"></div> 
 						</div> 
 						<div style="display: table-row">
-							<div style="display: table-cell; text-align: right;">Reveal borders:</div>
+							<div style="display: table-cell; text-align: right; vertical-align: middle;">Reveal borders:</div>
 							<div style="display: table-cell; text-align: left;"><input type="checkbox" ${
 								revealBorders ? "checked" : ""
 							} id="input-revealBorders" placeholder="Reveal Borders"></div>
@@ -2186,7 +2186,7 @@ export default defineComponent({
 				confirmButtonColor: ButtonColor.Safe,
 				cancelButtonColor: ButtonColor.Critical,
 				confirmButtonText: "Start Minesweeper Draft",
-				width: "40vw",
+				width: "fit-content",
 				preConfirm: () => {
 					return {
 						gridCount: (document.getElementById("input-gridCount") as HTMLInputElement).valueAsNumber,
