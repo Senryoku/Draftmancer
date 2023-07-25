@@ -28,6 +28,7 @@
 								placeholder="Hand Size"
 								v-model.number="handSize"
 							/>
+							<ResetButton v-model="handSize" :default-value="5" />
 						</div>
 					</div>
 					<div>
@@ -43,6 +44,7 @@
 								placeholder="Revealed Cards"
 								v-model.number="revealedCardsCount"
 							/>
+							<ResetButton v-model="revealedCardsCount" :default-value="9" />
 						</div>
 					</div>
 					<div>
@@ -58,6 +60,7 @@
 								placeholder="Exchanges"
 								v-model.number="exchangeCount"
 							/>
+							<ResetButton v-model="exchangeCount" :default-value="3" />
 						</div>
 					</div>
 					<div>
@@ -73,6 +76,7 @@
 								placeholder="Rounds"
 								v-model.number="roundCount"
 							/>
+							<ResetButton v-model="roundCount" :default-value="9" />
 						</div>
 					</div>
 					<div>
@@ -101,6 +105,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import Modal from "./Modal.vue";
+import ResetButton from "./ResetButton.vue";
 
 const handSize = ref(5);
 const revealedCardsCount = ref(9);
@@ -158,7 +163,7 @@ const start = () =>
 }
 
 .housman-dialog-settings input {
-	display: block;
+	display: inline-block;
 	margin: auto;
 }
 </style>

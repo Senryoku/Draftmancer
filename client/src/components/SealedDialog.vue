@@ -41,13 +41,7 @@
 							:placeholder="`Boosters per ${teamSealed ? 'team' : 'player'}`"
 							v-model.number="boostersPerPlayer"
 						/>
-						<font-awesome-icon
-							icon="fa-solid fa-undo-alt"
-							class="clickable"
-							style="padding: 0.4em; vertical-align: middle"
-							@click="boostersPerPlayer = teamSealed ? 12 : 6"
-							v-tooltip.right="`Reset to default value (${teamSealed ? 12 : 6})`"
-						></font-awesome-icon>
+						<ResetButton v-model="boostersPerPlayer" :default-value="teamSealed ? 12 : 6" />
 					</div>
 					<div>
 						<h3>
@@ -100,6 +94,7 @@ import SetsInfos from "../SetInfos";
 import { SetCode } from "../../../src/Types";
 import { SortableEvent } from "sortablejs";
 import { sortableUpdate } from "../helper";
+import ResetButton from "./ResetButton.vue";
 
 const props = withDefaults(
 	defineProps<{

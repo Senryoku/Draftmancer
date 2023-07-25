@@ -33,6 +33,7 @@
 							placeholder="Cards per Player"
 							v-model.number="cardsPerPlayer"
 						/>
+						<ResetButton v-model="cardsPerPlayer" :default-value="45" />
 					</div>
 					<div v-if="collationType === 'singleton'">
 						<label for="exact-card-count">
@@ -57,6 +58,7 @@
 							placeholder="Boosters per Player"
 							v-model.number="boostersPerPlayer"
 						/>
+						<ResetButton v-model="boostersPerPlayer" :default-value="defaultBoostersPerPlayer" />
 					</div>
 				</div>
 			</div>
@@ -74,6 +76,7 @@
 import { ref, toRefs } from "vue";
 import { RotisserieDraftStartOptions } from "@/RotisserieDraft";
 import Modal from "./Modal.vue";
+import ResetButton from "./ResetButton.vue";
 
 const props = withDefaults(
 	defineProps<{

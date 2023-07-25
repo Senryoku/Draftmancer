@@ -26,6 +26,7 @@
 								placeholder="Card Count"
 								v-model.number="cardCount"
 							/>
+							<ResetButton v-model="cardCount" :default-value="8" />
 						</div>
 					</div>
 					<div>
@@ -41,6 +42,7 @@
 								placeholder="Rounds"
 								v-model.number="roundCount"
 							/>
+							<ResetButton v-model="roundCount" :default-value="10" />
 						</div>
 					</div>
 					<div>
@@ -69,6 +71,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import Modal from "./Modal.vue";
+import ResetButton from "./ResetButton.vue";
 
 const cardCount = ref(8);
 const roundCount = ref(10);
@@ -109,7 +112,7 @@ const start = () => emit("start", cardCount.value, roundCount.value, removeBasic
 }
 
 .solomon-dialog-settings input {
-	display: block;
+	display: inline-block;
 	margin: auto;
 }
 </style>
