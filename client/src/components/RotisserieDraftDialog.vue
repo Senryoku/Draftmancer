@@ -113,3 +113,9 @@ const start = () => {
 </script>
 
 <style scoped src="../css/start-game-dialog.css" />
+
+<style scoped>
+.dialog {
+	max-width: min(760px, 100vw);
+}
+</style>

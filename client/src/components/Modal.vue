@@ -154,6 +154,7 @@ export default defineComponent({
 <style>
 .modal-header h2 {
 	margin-top: 0;
+	margin-bottom: 0.25em;
 }
 
 /* Overrides for buttons in footer */
