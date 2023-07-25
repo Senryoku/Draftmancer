@@ -22,6 +22,7 @@
 							max="24"
 							step="1"
 							placeholder="Card Count"
+							class="small-number-input"
 							v-model.number="cardCount"
 						/>
 						<ResetButton v-model="cardCount" :default-value="8" />
@@ -36,6 +37,7 @@
 							max="24"
 							step="1"
 							placeholder="Rounds"
+							class="small-number-input"
 							v-model.number="roundCount"
 						/>
 						<ResetButton v-model="roundCount" :default-value="10" />

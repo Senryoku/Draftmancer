@@ -2137,26 +2137,6 @@ export default defineComponent({
 		startMinesweeperDraft() {
 			if (this.userID !== this.sessionOwner || this.drafting) return;
 
-			let gridCount = 4;
-			let gridWidth = 10;
-			let gridHeight = 9;
-			let picksPerPlayerPerGrid = 9;
-			let revealBorders = true;
-
-			const savedValues = localStorage.getItem("draftmancer-minesweeper");
-			if (savedValues) {
-				try {
-					const values = JSON.parse(savedValues);
-					gridCount = values.gridCount;
-					gridWidth = values.gridWidth;
-					gridHeight = values.gridHeight;
-					picksPerPlayerPerGrid = values.picksPerPlayerPerGrid;
-					revealBorders = values.revealBorders;
-				} catch (err) {
-					console.error("Error parsing saved values for Minesweeper Draft: ", err);
-				}
-			}
-
 			const start = (settings: {
 				gridCount: number;
 				gridWidth: number;
@@ -2164,7 +2144,6 @@ export default defineComponent({
 				picksPerPlayerPerGrid: number;
 				revealBorders: boolean;
 			}) => {
-				localStorage.setItem("draftmancer-minesweeper", JSON.stringify(settings));
 				this.socket.emit(
 					"startMinesweeperDraft",
 					settings.gridCount,
@@ -2173,9 +2152,7 @@ export default defineComponent({
 					this.sessionUsers.length * settings.picksPerPlayerPerGrid,
 					settings.revealBorders,
 					(response: SocketAck) => {
-						if (response?.error) {
-							Alert.fire(response.error);
-						}
+						if (response?.error) Alert.fire(response.error);
 					}
 				);
 			};
@@ -2184,7 +2161,6 @@ export default defineComponent({
 			el.id = "minesweeper-dialog";
 			this.$el.appendChild(el);
 			const instance = createCommonApp(MinesweeperDialog, {
-				defaults: { gridCount, gridWidth, gridHeight, picksPerPlayerPerGrid, revealBorders },
 				unmounted: () => {
 					this.$el.removeChild(el);
 				},

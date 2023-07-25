@@ -27,6 +27,7 @@
 								step="1"
 								id="cards-per-player"
 								placeholder="Cards per Player"
+								class="small-number-input"
 								v-model.number="cardsPerPlayer"
 							/>
 							<ResetButton v-model="cardsPerPlayer" :default-value="45" />
@@ -48,6 +49,7 @@
 								step="1"
 								id="boosters-per-player"
 								placeholder="Boosters per Player"
+								class="small-number-input"
 								v-model.number="boostersPerPlayer"
 							/>
 							<ResetButton v-model="boostersPerPlayer" :default-value="defaultBoostersPerPlayer" />

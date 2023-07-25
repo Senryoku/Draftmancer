@@ -24,6 +24,7 @@
 							max="24"
 							step="1"
 							placeholder="Hand Size"
+							class="small-number-input"
 							v-model.number="handSize"
 						/>
 						<ResetButton v-model="handSize" :default-value="5" />
@@ -37,6 +38,7 @@
 							max="24"
 							step="1"
 							placeholder="Revealed Cards"
+							class="small-number-input"
 							v-model.number="revealedCardsCount"
 						/>
 						<ResetButton v-model="revealedCardsCount" :default-value="9" />
@@ -50,6 +52,7 @@
 							max="24"
 							step="1"
 							placeholder="Exchanges"
+							class="small-number-input"
 							v-model.number="exchangeCount"
 						/>
 						<ResetButton v-model="exchangeCount" :default-value="3" />
@@ -63,6 +66,7 @@
 							max="24"
 							step="1"
 							placeholder="Rounds"
+							class="small-number-input"
 							v-model.number="roundCount"
 						/>
 						<ResetButton v-model="roundCount" :default-value="9" />

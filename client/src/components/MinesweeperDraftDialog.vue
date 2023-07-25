@@ -19,6 +19,7 @@
 							max="99"
 							step="1"
 							placeholder="Grid Count"
+							class="small-number-input"
 							v-model.number="gridCount"
 						/>
 						<ResetButton v-model="gridCount" :default-value="defaults.gridCount" />
@@ -64,6 +65,7 @@
 							:max="40 * 40"
 							step="1"
 							placeholder="Picks"
+							class="small-number-input"
 							v-model.number="picksPerPlayerPerGrid"
 						/>
 						<ResetButton v-model="picksPerPlayerPerGrid" :default-value="defaults.picksPerPlayerPerGrid" />
@@ -87,21 +89,33 @@ import { ref } from "vue";
 import Modal from "./Modal.vue";
 import ResetButton from "./ResetButton.vue";
 
-const props = defineProps<{
-	defaults: {
-		gridCount: number;
-		gridWidth: number;
-		gridHeight: number;
-		picksPerPlayerPerGrid: number;
-		revealBorders: boolean;
-	};
-}>();
+const defaults = {
+	gridCount: 4,
+	gridWidth: 10,
+	gridHeight: 9,
+	picksPerPlayerPerGrid: 9,
+	revealBorders: true,
+};
 
-const gridCount = ref(props.defaults.gridCount);
-const gridWidth = ref(props.defaults.gridWidth);
-const gridHeight = ref(props.defaults.gridHeight);
-const picksPerPlayerPerGrid = ref(props.defaults.picksPerPlayerPerGrid);
-const revealBorders = ref(props.defaults.revealBorders);
+const gridCount = ref(defaults.gridCount);
+const gridWidth = ref(defaults.gridWidth);
+const gridHeight = ref(defaults.gridHeight);
+const picksPerPlayerPerGrid = ref(defaults.picksPerPlayerPerGrid);
+const revealBorders = ref(defaults.revealBorders);
+
+const savedValues = localStorage.getItem("draftmancer-minesweeper");
+if (savedValues) {
+	try {
+		const values = JSON.parse(savedValues);
+		gridCount.value = values.gridCount;
+		gridWidth.value = values.gridWidth;
+		gridHeight.value = values.gridHeight;
+		picksPerPlayerPerGrid.value = values.picksPerPlayerPerGrid;
+		revealBorders.value = values.revealBorders;
+	} catch (err) {
+		console.error("Error parsing saved values for Minesweeper Draft: ", err);
+	}
+}
 
 const emit = defineEmits<{
 	(e: "cancel"): void;
@@ -116,8 +130,19 @@ const emit = defineEmits<{
 }>();
 
 const cancel = () => emit("cancel");
-const start = () =>
+const start = () => {
+	localStorage.setItem(
+		"draftmancer-minesweeper",
+		JSON.stringify({
+			gridCount: gridCount.value,
+			gridWidth: gridWidth.value,
+			gridHeight: gridHeight.value,
+			picksPerPlayerPerGrid: picksPerPlayerPerGrid.value,
+			revealBorders: revealBorders.value,
+		})
+	);
 	emit("start", gridCount.value, gridWidth.value, gridHeight.value, picksPerPlayerPerGrid.value, revealBorders.value);
+};
 </script>
 
 <style scoped src="../css/start-game-dialog.css" />
