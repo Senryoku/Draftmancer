@@ -4,7 +4,7 @@
 			<h2>Start Solomon Draft</h2>
 		</template>
 		<template v-slot:body>
-			<div class="solomon-dialog">
+			<div class="dialog">
 				<p>Solomon Draft is a draft variant for two players that will appeal to 'Fact or Fiction' enjoyers!</p>
 				<p>
 					In this game mode, a player splits an <strong>{{ cardCount }}</strong
@@ -12,50 +12,43 @@
 					then selects one of the two piles to add to their deck, while the player who made the split keeps
 					the remaining pile.
 				</p>
-				<div class="solomon-dialog-settings">
+				<div class="dialog-settings">
+					<label for="card-input">Card Count</label>
 					<div>
-						<div><label for="card-input">Card Count</label></div>
-						<div>
-							<input
-								id="card-input"
-								type="number"
-								min="1"
-								max="24"
-								step="1"
-								class="swal2-input"
-								placeholder="Card Count"
-								v-model.number="cardCount"
-							/>
-							<ResetButton v-model="cardCount" :default-value="8" />
-						</div>
-					</div>
-					<div>
-						<div><label for="rounds-input">Rounds</label></div>
-						<div>
-							<input
-								id="rounds-input"
-								type="number"
-								min="1"
-								max="24"
-								step="1"
-								class="swal2-input"
-								placeholder="Rounds"
-								v-model.number="roundCount"
-							/>
-							<ResetButton v-model="roundCount" :default-value="10" />
-						</div>
-					</div>
-					<div>
-						<div>
-							<label for="remove-basic-lands-input"> Remove Basic Lands? </label>
-						</div>
 						<input
-							type="checkbox"
-							id="remove-basic-lands-input"
+							id="card-input"
+							type="number"
+							min="1"
+							max="24"
+							step="1"
 							class="swal2-input"
-							v-model.number="removeBasicLands"
+							placeholder="Card Count"
+							v-model.number="cardCount"
 						/>
+						<ResetButton v-model="cardCount" :default-value="8" />
 					</div>
+
+					<label for="rounds-input">Rounds</label>
+					<div>
+						<input
+							id="rounds-input"
+							type="number"
+							min="1"
+							max="24"
+							step="1"
+							class="swal2-input"
+							placeholder="Rounds"
+							v-model.number="roundCount"
+						/>
+						<ResetButton v-model="roundCount" :default-value="10" />
+					</div>
+					<label for="remove-basic-lands-input">Remove Basic Lands?</label>
+					<input
+						type="checkbox"
+						id="remove-basic-lands-input"
+						class="swal2-input"
+						v-model.number="removeBasicLands"
+					/>
 				</div>
 			</div>
 		</template>
@@ -86,33 +79,4 @@ const cancel = () => emit("cancel");
 const start = () => emit("start", cardCount.value, roundCount.value, removeBasicLands.value);
 </script>
 
-<style scoped>
-.solomon-dialog {
-	text-align: center;
-	width: min(60em, 90vw);
-}
-
-.solomon-dialog-settings {
-	display: table;
-	margin: auto;
-}
-
-.solomon-dialog-settings > div {
-	display: table-row;
-}
-
-.solomon-dialog-settings > div > div {
-	display: table-cell;
-	text-align: center;
-	vertical-align: middle;
-}
-
-.solomon-dialog-settings label {
-	font-size: 1.5em;
-}
-
-.solomon-dialog-settings input {
-	display: inline-block;
-	margin: auto;
-}
-</style>
+<style scoped src="../css/start-game-dialog.css" />

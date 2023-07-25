@@ -1,0 +1,17 @@
+.dialog {
+	text-align: center;
+	max-width: max(700px, 50vw);
+}
+
+.dialog-settings {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	align-items: center;
+	justify-items: start;
+	margin: auto;
+}
+
+.dialog-settings > label {
+	justify-self: end;
+	text-align: end;
+}

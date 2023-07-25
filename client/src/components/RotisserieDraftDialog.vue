@@ -5,37 +5,35 @@
 		</template>
 		<template v-slot:body>
 			<div class="dialog">
-				<p style="max-width: max(400px, 40vw)">
-					Rotisserie is a draft variant where each player chooses cards from a common pool.
-				</p>
-				<p style="max-width: max(400px, 40vw)">
+				<p>Rotisserie is a draft variant where each player chooses cards from a common pool.</p>
+				<p>
 					Traditionally the card pool is composed of a single copy of each card from one or multiple sets
 					('singleton' mode), but a 'standard' collation it also available where the final card pool is
 					gathered from regular packs.<br />
 					In both cases most session settings still apply.
 				</p>
 				<div class="dialog-settings">
-					<div>
-						<label for="collation-type">Collation Type</label>
-						<select class="swal2-input" v-model="collationType">
-							<option value="singleton">Singleton</option>
-							<option value="standard">Standard</option>
-						</select>
-					</div>
-					<div v-if="collationType === 'singleton'">
+					<label for="collation-type">Collation Type</label>
+					<select class="swal2-input" v-model="collationType">
+						<option value="singleton">Singleton</option>
+						<option value="standard">Standard</option>
+					</select>
+					<template v-if="collationType === 'singleton'">
 						<label for="cards-per-player">Cards per Player</label>
-						<input
-							type="number"
-							min="1"
-							step="1"
-							id="cards-per-player"
-							class="swal2-input"
-							placeholder="Cards per Player"
-							v-model.number="cardsPerPlayer"
-						/>
-						<ResetButton v-model="cardsPerPlayer" :default-value="45" />
-					</div>
-					<div v-if="collationType === 'singleton'">
+						<div>
+							<input
+								type="number"
+								min="1"
+								step="1"
+								id="cards-per-player"
+								class="swal2-input"
+								placeholder="Cards per Player"
+								v-model.number="cardsPerPlayer"
+							/>
+							<ResetButton v-model="cardsPerPlayer" :default-value="45" />
+						</div>
+					</template>
+					<template v-if="collationType === 'singleton'">
 						<label for="exact-card-count">
 							Distribute only the necessary number of cards<br />
 							<small> ({{ cardsPerPlayer }} cards per player, as opposed to the whole card pool) </small>
@@ -46,20 +44,22 @@
 							class="swal2-input"
 							v-model.number="exactCardCount"
 						/>
-					</div>
-					<div v-if="collationType === 'standard'">
+					</template>
+					<template v-if="collationType === 'standard'">
 						<label for="boosters-per-player">Boosters per Player</label>
-						<input
-							type="number"
-							min="1"
-							step="1"
-							id="boosters-per-player"
-							class="swal2-input"
-							placeholder="Boosters per Player"
-							v-model.number="boostersPerPlayer"
-						/>
-						<ResetButton v-model="boostersPerPlayer" :default-value="defaultBoostersPerPlayer" />
-					</div>
+						<div>
+							<input
+								type="number"
+								min="1"
+								step="1"
+								id="boosters-per-player"
+								class="swal2-input"
+								placeholder="Boosters per Player"
+								v-model.number="boostersPerPlayer"
+							/>
+							<ResetButton v-model="boostersPerPlayer" :default-value="defaultBoostersPerPlayer" />
+						</div>
+					</template>
 				</div>
 			</div>
 		</template>
@@ -117,30 +117,4 @@ const start = () => {
 };
 </script>
 
-<style scoped>
-.dialog {
-	text-align: center;
-}
-
-.dialog-settings {
-	display: table;
-	margin: auto;
-	border-spacing: 1em;
-}
-.dialog-settings > div {
-	display: table-row;
-}
-.dialog-settings > div > * {
-	display: table-cell;
-	text-align: left;
-	vertical-align: middle;
-}
-.dialog-settings > div > *:nth-child(1) {
-	width: 15em;
-	max-width: inherit;
-}
-.dialog-settings > div > *:nth-child(2) {
-	width: 200px;
-	max-width: inherit;
-}
-</style>
+<style scoped src="../css/start-game-dialog.css" />
