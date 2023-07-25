@@ -2929,17 +2929,17 @@ export default defineComponent({
 						(c) => `<img src="img/mana/${c}.svg" class="mana-icon" style="vertical-align: text-top;"></img>`
 					)
 					.join(" ");
-				boostersDisplay += `<div class="pack-button clickable" style="text-align: center"><img src="${b.image}" style="display:block; min-width: 250px; min-height: 354px; max-width: 250px; max-height: 60vh; border-radius: 3%; margin:auto;" /><h2>${colors}<br />${b.name}</h2></div>`;
+				boostersDisplay += `<div class="pack-button clickable" style="text-align: center"><img src="${b.image}" style="display:block; min-width: 250px; min-height: 354px; max-width: 250px; max-height: 60vh; border-radius: 3%; margin: auto;" /><h2>${colors}<br />${b.name}</h2></div>`;
 			}
 			let choice = -1;
 			await Alert.fire({
 				title: `Select your Jumpstart Packs (${currentPack + 1}/${packCount})`,
-				html: `<div style="display:flex; justify-content: space-around; width: 100%">${boostersDisplay}</div>`,
+				html: `<div style="display: flex; gap: 1em;">${boostersDisplay}</div>`,
 				showCancelButton: false,
 				showConfirmButton: false,
 				allowEscapeKey: false,
 				allowOutsideClick: false,
-				width: "50vw",
+				width: "fit-content",
 				didOpen: (el) => {
 					const packButtons = el.querySelectorAll(".pack-button");
 					for (let i = 0; i < packButtons.length; ++i) {
