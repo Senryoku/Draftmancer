@@ -196,21 +196,21 @@ describe("Conspiracy", function () {
 		});
 
 		it(`Left Player should be asked a color.`, async function () {
-			const dialog = await pages[0].waitForSelector("#ask-color-dialog");
+			const dialog = await pages[0].waitForSelector(".side-popup");
 			const choices = await dialog!.$$(".choice");
 			await getRandom(choices).click();
 			await new Promise((resolve) => setTimeout(resolve, 1000));
 		});
 
 		it(`Center Player should be asked a color.`, async function () {
-			const dialog = await pages[1].waitForSelector("#ask-color-dialog");
+			const dialog = await pages[1].waitForSelector(".side-popup");
 			const choices = await dialog!.$$(".choice");
 			await getRandom(choices).click();
 			await new Promise((resolve) => setTimeout(resolve, 1000));
 		});
 
 		it(`Right Player should be asked a color.`, async function () {
-			const dialog = await pages[2].waitForSelector("#ask-color-dialog");
+			const dialog = await pages[2].waitForSelector(".side-popup");
 			const choices = await dialog!.$$(".choice");
 			await getRandom(choices).click();
 			await new Promise((resolve) => setTimeout(resolve, 1000));
