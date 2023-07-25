@@ -62,6 +62,7 @@ import SealedDialog from "./components/SealedDialog.vue";
 import HousmanDialog from "./components/HousmanDialog.vue";
 import MinesweeperDialog from "./components/MinesweeperDraftDialog.vue";
 import WinstonDialog from "./components/WinstonDraftDialog.vue";
+import WinchesterDialog from "./components/WinchesterDraftDialog.vue";
 import SolomonDialog from "./components/SolomonDialog.vue";
 import ScaleSlider from "./components/ScaleSlider.vue";
 import RotisserieDraftDialog from "./components/RotisserieDraftDialog.vue";
@@ -1815,8 +1816,8 @@ export default defineComponent({
 			if (!this.ownerIsPlayer) {
 				Alert.fire({
 					icon: "error",
-					title: "Owner has to play",
-					text: "Non-playing owner is not supported in Winston Draft. The 'Session owner is playing' option needs to be active.",
+					title: "Spectator mode not supported",
+					text: "Non-playing owner is not supported in Winston Draft. The 'Spectate as Session Owner' option must be disabled.",
 				});
 			} else {
 				const instance = this.spawnDialog(WinstonDialog, {
@@ -1846,37 +1847,20 @@ export default defineComponent({
 		},
 		startWinchesterDraft: async function () {
 			if (this.userID !== this.sessionOwner || this.drafting) return;
-
 			if (!this.ownerIsPlayer) {
 				Alert.fire({
 					icon: "error",
-					title: "Owner has to play",
-					text: "Non-playing owner is not supported in Winchester Draft for now. The 'Session owner is playing' option needs to be active.",
+					title: "Spectator mode not supported",
+					text: "Non-playing owner is not supported in Winchester Draft. The 'Spectate as Session Owner' option must be disabled.",
 				});
-				return;
-			}
-
-			let { value: boosterPerPlayer } = await Alert.fire({
-				title: "Winchester Draft",
-				html: `<p>Winchester Draft is a draft variant for two players (extensible to more players) similar to Winston and Rochester draft where players alternatively pick one of 4 face-up piles of cards, then add one card to each pile.</p>How many boosters per player for the main stack (default is 3)?`,
-				inputPlaceholder: "Boosters per Player",
-				input: "number",
-				inputAttributes: {
-					min: "1",
-					max: "12",
-					step: "1",
-				},
-				inputValue: 3,
-				showCancelButton: true,
-				confirmButtonColor: ButtonColor.Safe,
-				cancelButtonColor: ButtonColor.Critical,
-				confirmButtonText: "Start Winchester Draft",
-			});
-
-			if (boosterPerPlayer) {
-				if (typeof boosterPerPlayer !== "number") boosterPerPlayer = parseInt(boosterPerPlayer);
-				this.socket.emit("startWinchesterDraft", boosterPerPlayer, true, (answer: SocketAck) => {
-					if (answer.code !== 0 && answer.error) Alert.fire(answer.error);
+			} else {
+				const instance = this.spawnDialog(WinchesterDialog, {
+					onStart: (boostersPerPlayer: number) => {
+						this.socket.emit("startWinchesterDraft", boostersPerPlayer, true, (answer: SocketAck) => {
+							if (answer.code !== 0 && answer.error) Alert.fire(answer.error);
+						});
+						instance.unmount();
+					},
 				});
 			}
 		},
