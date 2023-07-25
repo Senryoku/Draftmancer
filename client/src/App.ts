@@ -60,6 +60,7 @@ import Modal from "./components/Modal.vue";
 import SetSelect from "./components/SetSelect.vue";
 import SealedDialog from "./components/SealedDialog.vue";
 import HousmanDialog from "./components/HousmanDialog.vue";
+import MinesweeperDialog from "./components/MinesweeperDraftDialog.vue";
 import SolomonDialog from "./components/SolomonDialog.vue";
 import ScaleSlider from "./components/ScaleSlider.vue";
 import RotisserieDraftDialog from "./components/RotisserieDraftDialog.vue";
@@ -2133,8 +2134,7 @@ export default defineComponent({
 				this.notifyTurn();
 			}
 		},
-		// This is just a shortcut to set burnedCardsPerTurn and boostersPerPlayers to suitable values.
-		startMinesweeperDraft: async function () {
+		startMinesweeperDraft() {
 			if (this.userID !== this.sessionOwner || this.drafting) return;
 
 			let gridCount = 4;
@@ -2157,65 +2157,52 @@ export default defineComponent({
 				}
 			}
 
-			Alert.fire({
-				title: "Minesweeper Draft",
-				html: `
-					<p style="max-width: min(650px, 90vw);">Minesweeper Draft is a draft variant where players alternatively pick cards from a partially revealed card grid, discovering neighboring cards after each pick.</p>
-					<div style="display: table; border-spacing: 0.5em; margin: auto; min-width: 300px;">
-						<div style="display: table-row">
-							<div style="display: table-cell; text-align: right; vertical-align: middle;">Grid Count:</div>
-							<div style="display: table-cell; text-align: left;"><input type="number" value="${gridCount}" min="1" max="99" step="1" id="input-gridCount" class="swal2-input" placeholder="Grid Count" style="max-width: 4em; margin: 0 auto;"></div>
-						</div> 
-						<div style="display: table-row">
-							<div style="display: table-cell; text-align: right; vertical-align: middle;">Grid Size:</div> 
-							<div style="display: table-cell; text-align: left; white-space: nowrap"><input type="number" value="${gridWidth}" min="1" max="40" step="1" id="input-gridWidth" class="swal2-input" placeholder="Grid Width" style="max-width: 4em; margin: 0 auto;"> x <input type="number" value="${gridHeight}" min="1" max="40" step="1" id="input-gridHeight" class="swal2-input" placeholder="Grid Height" style="max-width: 4em; margin: 0 auto;"></div> 
-						</div> 
-						<div style="display: table-row">
-							<div style="display: table-cell; text-align: right; vertical-align: middle;">Picks per Player, per Grid:</div> 
-							<div style="display: table-cell; text-align: left;"><input type="number" value="${picksPerPlayerPerGrid}" min="1" max="40*40" step="1" id="input-picksPerPlayerPerGrid" class="swal2-input" placeholder="Picks per Player, per Grid" style="max-width: 4em; margin: 0 auto;"></div> 
-						</div> 
-						<div style="display: table-row">
-							<div style="display: table-cell; text-align: right; vertical-align: middle;">Reveal borders:</div>
-							<div style="display: table-cell; text-align: left;"><input type="checkbox" ${
-								revealBorders ? "checked" : ""
-							} id="input-revealBorders" placeholder="Reveal Borders"></div>
-						</div>
-					</div>
-				`,
-				showCancelButton: true,
-				confirmButtonColor: ButtonColor.Safe,
-				cancelButtonColor: ButtonColor.Critical,
-				confirmButtonText: "Start Minesweeper Draft",
-				width: "fit-content",
-				preConfirm: () => {
-					return {
-						gridCount: (document.getElementById("input-gridCount") as HTMLInputElement).valueAsNumber,
-						gridWidth: (document.getElementById("input-gridWidth") as HTMLInputElement).valueAsNumber,
-						gridHeight: (document.getElementById("input-gridHeight") as HTMLInputElement).valueAsNumber,
-						picksPerPlayerPerGrid: (
-							document.getElementById("input-picksPerPlayerPerGrid") as HTMLInputElement
-						).valueAsNumber,
-						revealBorders: (document.getElementById("input-revealBorders") as HTMLInputElement).checked,
-					};
-				},
-			}).then((r) => {
-				if (r.isConfirmed && r.value) {
-					localStorage.setItem("draftmancer-minesweeper", JSON.stringify(r.value));
-					this.socket.emit(
-						"startMinesweeperDraft",
-						r.value.gridCount,
-						r.value.gridWidth,
-						r.value.gridHeight,
-						this.sessionUsers.length * r.value.picksPerPlayerPerGrid,
-						r.value.revealBorders,
-						(response: SocketAck) => {
-							if (response?.error) {
-								Alert.fire(response.error);
-							}
+			const start = (settings: {
+				gridCount: number;
+				gridWidth: number;
+				gridHeight: number;
+				picksPerPlayerPerGrid: number;
+				revealBorders: boolean;
+			}) => {
+				localStorage.setItem("draftmancer-minesweeper", JSON.stringify(settings));
+				this.socket.emit(
+					"startMinesweeperDraft",
+					settings.gridCount,
+					settings.gridWidth,
+					settings.gridHeight,
+					this.sessionUsers.length * settings.picksPerPlayerPerGrid,
+					settings.revealBorders,
+					(response: SocketAck) => {
+						if (response?.error) {
+							Alert.fire(response.error);
 						}
-					);
-				}
+					}
+				);
+			};
+
+			const el = document.createElement("div");
+			el.id = "minesweeper-dialog";
+			this.$el.appendChild(el);
+			const instance = createCommonApp(MinesweeperDialog, {
+				defaults: { gridCount, gridWidth, gridHeight, picksPerPlayerPerGrid, revealBorders },
+				unmounted: () => {
+					this.$el.removeChild(el);
+				},
+				onCancel() {
+					instance.unmount();
+				},
+				onStart: (
+					gridCount: number,
+					gridWidth: number,
+					gridHeight: number,
+					picksPerPlayerPerGrid: number,
+					revealBorders: boolean
+				) => {
+					this.deckWarning(start, { gridCount, gridWidth, gridHeight, picksPerPlayerPerGrid, revealBorders });
+					instance.unmount();
+				},
 			});
+			instance.mount("#minesweeper-dialog");
 		},
 		minesweeperDraftPick(row: number, col: number) {
 			if (!this.minesweeperDraftState) return;

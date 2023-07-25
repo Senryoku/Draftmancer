@@ -1,7 +1,7 @@
 <template>
 	<modal @close="cancel">
 		<template v-slot:header>
-			<h2>Start Rotisserie Draft</h2>
+			<h2>Rotisserie Draft</h2>
 		</template>
 		<template v-slot:body>
 			<div class="dialog">
@@ -26,7 +26,6 @@
 								min="1"
 								step="1"
 								id="cards-per-player"
-								class="swal2-input"
 								placeholder="Cards per Player"
 								v-model.number="cardsPerPlayer"
 							/>
@@ -38,12 +37,7 @@
 							Distribute only the necessary number of cards<br />
 							<small> ({{ cardsPerPlayer }} cards per player, as opposed to the whole card pool) </small>
 						</label>
-						<input
-							type="checkbox"
-							id="exact-card-count"
-							class="swal2-input"
-							v-model.number="exactCardCount"
-						/>
+						<input type="checkbox" id="exact-card-count" v-model.number="exactCardCount" />
 					</template>
 					<template v-if="collationType === 'standard'">
 						<label for="boosters-per-player">Boosters per Player</label>
@@ -53,7 +47,6 @@
 								min="1"
 								step="1"
 								id="boosters-per-player"
-								class="swal2-input"
 								placeholder="Boosters per Player"
 								v-model.number="boostersPerPlayer"
 							/>

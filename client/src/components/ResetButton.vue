@@ -1,8 +1,7 @@
 <template>
 	<font-awesome-icon
 		icon="fa-solid fa-undo-alt"
-		class="clickable"
-		style="padding: 0.4em; vertical-align: middle"
+		class="clickable reset-button"
 		@click="reset"
 		v-tooltip.right="`Reset to default value (${defaultValue})`"
 	></font-awesome-icon>
@@ -17,3 +16,10 @@ const reset = () => {
 	emits("update:modelValue", props.defaultValue);
 };
 </script>
+
+<style scoped>
+.reset-button {
+	padding: 0.4em;
+	vertical-align: middle;
+}
+</style>

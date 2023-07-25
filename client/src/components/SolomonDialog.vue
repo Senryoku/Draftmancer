@@ -1,7 +1,7 @@
 <template>
 	<modal @close="cancel">
 		<template v-slot:header>
-			<h2>Start Solomon Draft</h2>
+			<h2>Solomon Draft</h2>
 		</template>
 		<template v-slot:body>
 			<div class="dialog">
@@ -21,7 +21,6 @@
 							min="1"
 							max="24"
 							step="1"
-							class="swal2-input"
 							placeholder="Card Count"
 							v-model.number="cardCount"
 						/>
@@ -36,19 +35,13 @@
 							min="1"
 							max="24"
 							step="1"
-							class="swal2-input"
 							placeholder="Rounds"
 							v-model.number="roundCount"
 						/>
 						<ResetButton v-model="roundCount" :default-value="10" />
 					</div>
 					<label for="remove-basic-lands-input">Remove Basic Lands?</label>
-					<input
-						type="checkbox"
-						id="remove-basic-lands-input"
-						class="swal2-input"
-						v-model.number="removeBasicLands"
-					/>
+					<input type="checkbox" id="remove-basic-lands-input" v-model.number="removeBasicLands" />
 				</div>
 			</div>
 		</template>

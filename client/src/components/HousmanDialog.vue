@@ -1,7 +1,7 @@
 <template>
 	<modal @close="cancel">
 		<template v-slot:header>
-			<h2>Start Housman Draft</h2>
+			<h2>Housman Draft</h2>
 		</template>
 		<template v-slot:body>
 			<div class="dialog">
@@ -23,7 +23,6 @@
 							min="1"
 							max="24"
 							step="1"
-							class="swal2-input"
 							placeholder="Hand Size"
 							v-model.number="handSize"
 						/>
@@ -37,7 +36,6 @@
 							min="1"
 							max="24"
 							step="1"
-							class="swal2-input"
 							placeholder="Revealed Cards"
 							v-model.number="revealedCardsCount"
 						/>
@@ -51,7 +49,6 @@
 							min="1"
 							max="24"
 							step="1"
-							class="swal2-input"
 							placeholder="Exchanges"
 							v-model.number="exchangeCount"
 						/>
@@ -65,19 +62,13 @@
 							min="1"
 							max="24"
 							step="1"
-							class="swal2-input"
 							placeholder="Rounds"
 							v-model.number="roundCount"
 						/>
 						<ResetButton v-model="roundCount" :default-value="9" />
 					</div>
 					<label for="remove-basic-lands-input"> Remove Basic Lands? </label>
-					<input
-						type="checkbox"
-						id="remove-basic-lands-input"
-						class="swal2-input"
-						v-model.number="removeBasicLands"
-					/>
+					<input type="checkbox" id="remove-basic-lands-input" v-model="removeBasicLands" />
 				</div>
 			</div>
 		</template>

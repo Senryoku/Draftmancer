@@ -3,6 +3,10 @@
 	max-width: max(700px, 50vw);
 }
 
+.dialog p {
+	margin-top: 0;
+}
+
 .dialog-settings {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
