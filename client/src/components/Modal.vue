@@ -99,6 +99,7 @@ export default defineComponent({
 .modal-header {
 	position: relative;
 	text-align: center;
+	padding-left: 2em;
 	padding-right: 2em;
 	flex-shrink: 0;
 }

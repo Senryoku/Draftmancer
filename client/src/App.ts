@@ -58,6 +58,7 @@ import Dropdown from "./components/Dropdown.vue";
 import ExportDropdown from "./components/ExportDropdown.vue";
 import Modal from "./components/Modal.vue";
 import SetSelect from "./components/SetSelect.vue";
+import GlimpseDialog from "./components/GlimpseDraftDialog.vue";
 import GridDialog from "./components/GridDraftDialog.vue";
 import HousmanDialog from "./components/HousmanDialog.vue";
 import MinesweeperDialog from "./components/MinesweeperDraftDialog.vue";
@@ -1442,7 +1443,7 @@ export default defineComponent({
 			};
 
 			if (this.deck.length > 0) {
-				Alert.fire({
+				const ret = await Alert.fire({
 					title: "Are you sure?",
 					text: "Launching a new draft will reset everyones cards/deck!",
 					icon: "warning",
@@ -1450,9 +1451,11 @@ export default defineComponent({
 					confirmButtonColor: ButtonColor.Critical,
 					cancelButtonColor: ButtonColor.Safe,
 					confirmButtonText: "Launch draft!",
-				}).then((result) => {
-					if (result.value) this.socket.emit("startDraft", ack);
 				});
+				if (ret.isConfirmed) {
+					this.socket.emit("startDraft", ack);
+					return true;
+				} else return false;
 			} else {
 				this.socket.emit("startDraft", ack);
 				return true;
@@ -2145,40 +2148,22 @@ export default defineComponent({
 			let burnedCardsPerRound = 2;
 			if (this.burnedCardsPerRound > 0) burnedCardsPerRound = this.burnedCardsPerRound;
 
-			Alert.fire({
-				title: "Glimpse Draft",
-				html: `
-					<p>Glimpse Draft (or Burn Draft) is a draft variant where players remove cards from the draft (typically 2) alongside each pick. It's mostly used for small and medium sized groups where a regular draft makes not much sense.</p>
-					<p>How many boosters per player (default is 9)?
-					<input type="number" value="${boostersPerPlayer}" min="3" step="1" id="input-boostersPerPlayer" class="swal2-input" placeholder="Boosters per Player"></p>
-					<p>How many burned cards per pick (default is 2)?
-					<input type="number" value="${burnedCardsPerRound}" min="1" max="13" step="1" id="input-burnedCardsPerRound" class="swal2-input" placeholder="Burned Cards"></p>`,
-				inputValue: 6,
-				showCancelButton: true,
-				confirmButtonColor: ButtonColor.Safe,
-				cancelButtonColor: ButtonColor.Critical,
-				confirmButtonText: "Start Glimpse Draft",
-				preConfirm() {
-					return {
-						boostersPerPlayer: (document.getElementById("input-boostersPerPlayer") as HTMLInputElement)
-							.valueAsNumber,
-						burnedCardsPerRound: (document.getElementById("input-burnedCardsPerRound") as HTMLInputElement)
-							.valueAsNumber,
-					};
-				},
-			}).then((r) => {
-				if (r.isConfirmed && r.value) {
+			const instance = this.spawnDialog(GlimpseDialog, {
+				defaultBoostersPerPlayer: boostersPerPlayer,
+				defaultBurnedCardsPerRound: burnedCardsPerRound,
+				onStart: (boostersPerPlayer: number, burnedCardsPerRound: number) => {
 					const prev = [this.boostersPerPlayer, this.burnedCardsPerRound];
-					this.boostersPerPlayer = r.value.boostersPerPlayer;
-					this.burnedCardsPerRound = r.value.burnedCardsPerRound;
+					this.boostersPerPlayer = boostersPerPlayer;
+					this.burnedCardsPerRound = burnedCardsPerRound;
 					// Wait to make sure reactive values are correctly propagated to the server
-					this.$nextTick(() => {
+					this.$nextTick(async () => {
 						// Draft didn't start, restore previous values.
-						if (!this.startDraft()) {
+						if (!(await this.startDraft())) {
 							[this.boostersPerPlayer, this.burnedCardsPerRound] = prev;
 						}
 					});
-				}
+					instance.unmount();
+				},
 			});
 		},
 		// Collection management
