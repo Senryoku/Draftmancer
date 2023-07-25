@@ -58,14 +58,15 @@ import Dropdown from "./components/Dropdown.vue";
 import ExportDropdown from "./components/ExportDropdown.vue";
 import Modal from "./components/Modal.vue";
 import SetSelect from "./components/SetSelect.vue";
-import SealedDialog from "./components/SealedDialog.vue";
+import GridDialog from "./components/GridDraftDialog.vue";
 import HousmanDialog from "./components/HousmanDialog.vue";
 import MinesweeperDialog from "./components/MinesweeperDraftDialog.vue";
-import WinstonDialog from "./components/WinstonDraftDialog.vue";
-import WinchesterDialog from "./components/WinchesterDraftDialog.vue";
-import SolomonDialog from "./components/SolomonDialog.vue";
-import ScaleSlider from "./components/ScaleSlider.vue";
 import RotisserieDraftDialog from "./components/RotisserieDraftDialog.vue";
+import SealedDialog from "./components/SealedDialog.vue";
+import SolomonDialog from "./components/SolomonDialog.vue";
+import WinchesterDialog from "./components/WinchesterDraftDialog.vue";
+import WinstonDialog from "./components/WinstonDraftDialog.vue";
+import ScaleSlider from "./components/ScaleSlider.vue";
 
 // Preload Carback
 import CardBack from /* webpackPrefetch: true */ "./assets/img/cardback.webp";
@@ -1965,30 +1966,14 @@ export default defineComponent({
 					title: "Owner has to play",
 					text: "Non-playing owner is not supported in Grid Draft for now. The 'Session owner is playing' option needs to be active.",
 				});
-				return;
-			}
-
-			let { value: boosterCount } = await Alert.fire({
-				title: "Grid Draft",
-				html: `<p>Grid Draft is a draft variant for two or three players mostly used for drafting cubes. 9-cards boosters are presented one by one in a 3x3 grid and players alternatively chooses a row or a column of each booster, resulting in 2 or 3 cards being picked from each booster. The remaining cards are discarded.</p>How many boosters (default is 18)?`,
-				inputPlaceholder: "Booster count",
-				input: "number",
-				inputAttributes: {
-					min: "6",
-					max: "32",
-					step: "1",
-				},
-				inputValue: 18,
-				showCancelButton: true,
-				confirmButtonColor: ButtonColor.Safe,
-				cancelButtonColor: ButtonColor.Critical,
-				confirmButtonText: "Start Grid Draft",
-			});
-
-			if (boosterCount) {
-				if (typeof boosterCount !== "number") boosterCount = parseInt(boosterCount);
-				this.socket.emit("startGridDraft", parseInt(boosterCount), (answer) => {
-					if (answer.code !== 0 && answer.error) Alert.fire(answer.error);
+			} else {
+				const instance = this.spawnDialog(GridDialog, {
+					onStart: (boosterCount: number) => {
+						this.socket.emit("startGridDraft", boosterCount, (answer: SocketAck) => {
+							if (answer.code !== 0 && answer.error) Alert.fire(answer.error);
+						});
+						instance.unmount();
+					},
 				});
 			}
 		},
