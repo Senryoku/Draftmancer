@@ -1,5 +1,14 @@
 [
-	{ "date": "25/07/2023", "notes": ["Lore Seeker will try not to introduce duplicates in singleton cube anymore."] },
+	{
+		"date": "25/07/2023",
+		"notes": [
+			"Added Commander Masters draft queue.",
+			"Lore Seeker will try not to introduce duplicates in singleton cube anymore.",
+			"You can now declare multiple printings of a custom cards (same name but different art, for example). Declare another custom card with the same name, it will inherit all properties from the first declaration, and change its set/collector number and any other property.",
+			"This also means that you can refer to custom cards in cube file using the full 'CardName (SET) Number' syntax. Simply using 'CardName' will still only mean the first declared version of the card.",
+			"Various tweaks and fixes"
+		]
+	},
 	{
 		"date": "24/07/2023",
 		"notes": [
