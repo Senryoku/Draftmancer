@@ -273,8 +273,9 @@ export class Session implements IIndexable {
 		this.useCustomCardList = true;
 		this.customCardList = cardList;
 
-		if (cardList.settings?.withReplacement) this.customCardListWithReplacement = true;
-		if (cardList.settings?.boostersPerPlayer) this.boostersPerPlayer = cardList.settings?.boostersPerPlayer;
+		if (cardList.settings?.withReplacement !== undefined)
+			this.customCardListWithReplacement = cardList.settings.withReplacement;
+		if (cardList.settings?.boostersPerPlayer) this.boostersPerPlayer = cardList.settings.boostersPerPlayer;
 
 		this.forUsers((uid: UserID) =>
 			Connections[uid]?.socket.emit("sessionOptions", {
@@ -537,6 +538,7 @@ export class Session implements IIndexable {
 			cardsPerBooster?: number;
 			customBoosters?: SetCode[];
 			cardsPerPlayer?: number;
+			removeFromCardPool?: CardID[]; // Use by LoreSeeker draft effect
 		} = {}
 	): UniqueCard[][] | MessageError {
 		if (!options.cardsPerBooster) options.cardsPerBooster = this.cardsPerBooster;
@@ -563,6 +565,7 @@ export class Session implements IIndexable {
 					colorBalance: this.colorBalance,
 					withReplacement: this.customCardListWithReplacement,
 					playerCount,
+					removeFromCardPool: options?.removeFromCardPool,
 				},
 				options
 			);
@@ -1979,19 +1982,27 @@ export class Session implements IIndexable {
 						return reportError("You must pick Lore Seeker to use its effect.");
 					const additionalBooster = this.generateBoosters(1, {
 						useCustomBoosters: true,
+						removeFromCardPool: this.draftLog?.boosters.flat(),
 					});
 					if (isMessageError(additionalBooster))
 						Connections[userID].socket?.emit(
 							"message",
 							new MessageError(
 								"Could not generate additional booster, Lore Seeker effect ignored.",
-								`Original Error: ${additionalBooster.title} ${additionalBooster.text}`
+								`Original Error: ${additionalBooster.title} - ${additionalBooster.text}`
 							)
 						);
-					else
+					else {
 						applyDraftEffects.push(() => {
+							if (this.draftLog) {
+								this.draftLog.boosters.push(additionalBooster[0].map((c) => c.id));
+								const getCard = this.getCustomGetCardFunction();
+								for (const card of additionalBooster[0])
+									this.draftLog.carddata[card.id] = getCard(card.id);
+							}
 							s.players[userID].boosters.unshift(additionalBooster[0]);
 						});
+					}
 					break;
 				}
 			}

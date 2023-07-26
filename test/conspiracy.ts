@@ -4,7 +4,8 @@ import chai from "chai";
 const expect = chai.expect;
 import { Sessions } from "../src/Session.js";
 import { makeClients, waitForClientDisconnects, enableLogs, disableLogs, ackNoError, getUID } from "./src/common.js";
-import { OptionalOnPickDraftEffect, UniqueCard, UniqueCardID, UsableDraftEffect } from "../src/CardTypes.js";
+import { CardID, OptionalOnPickDraftEffect, UniqueCard, UniqueCardID, UsableDraftEffect } from "../src/CardTypes.js";
+import { DraftState } from "../src/DraftState";
 
 const CogworkLibrarianOracleID = "ec0d964e-ca2c-4252-8551-cf1916576653";
 
@@ -309,6 +310,97 @@ describe("Conspiracy Draft Matters Cards", () => {
 					ackNoError
 				);
 			}
+		});
+	});
+
+	describe("Lore Seeker - Singleton", () => {
+		const loreSeekers: UniqueCardID[] = [0, 0];
+		const seenCards: Record<UniqueCardID, CardID> = {};
+		before(loadCubeAndStart("LoreSeeker_Singleton"));
+		after(stopDraft);
+
+		it("Each player picks a Lore Seeker, using its abilty", (done) => {
+			for (const s of states) expect(s.booster.filter((c) => c.name === "Lore Seeker")).to.have.length(1);
+			let eventReceived = 0;
+			let messageReceived = 0;
+			const checkDone = () => {
+				if (messageReceived === clients.length && eventReceived === clients.length) {
+					for (const c of clients) c.off("draftState");
+					done();
+				}
+			};
+			for (let i = 0; i < clients.length; ++i) {
+				clients[i].once("message", (msg) => {
+					expect(msg).to.exist;
+					++messageReceived;
+					checkDone();
+				});
+				clients[i].on("draftState", (state) => {
+					for (const card of states[i].booster)
+						if (card.name !== "Lore Seeker") seenCards[card.uniqueID] = card.id;
+					const s = state as {
+						booster: UniqueCard[];
+						boosterCount: number;
+						boosterNumber: number;
+						pickNumber: number;
+					};
+					if (s.pickNumber > 0 && s.boosterCount > 0) {
+						++eventReceived;
+						states[i] = s;
+						// This should be a new pack
+						expect(states[i].booster).to.have.length(2);
+						expect(
+							states[i].booster.filter((c) => c.name === "Lore Seeker"),
+							"New booster should have a Lore Seeker"
+						).to.have.length(1);
+						expect(loreSeekers, "should be a new lore seeker").not.to.include(
+							states[i].booster.filter((c) => c.name === "Lore Seeker")[0].uniqueID
+						);
+						checkDone();
+					}
+				});
+				const idx = states[i].booster.findIndex((c) => c.name === "Lore Seeker");
+				loreSeekers[i] = states[i].booster[idx].uniqueID;
+				clients[i].emit(
+					"pickCard",
+					{
+						pickedCards: [idx],
+						burnedCards: [],
+						optionalOnPickDraftEffect: {
+							effect: OptionalOnPickDraftEffect.LoreSeeker,
+							cardID: loreSeekers[i],
+						},
+					},
+					ackNoError
+				);
+			}
+		});
+
+		it("Ends draft", (done) => {
+			let endReceived = 0;
+			for (let i = 0; i < clients.length; ++i) {
+				clients[i].once("endDraft", function () {
+					clients[i].removeListener("draftState");
+					++endReceived;
+					if (endReceived === clients.length) done();
+				});
+				clients[i].on("draftState", function (_s) {
+					const s = _s as ReturnType<DraftState["syncData"]>;
+					if (s.pickNumber !== states[i].pickNumber && s.boosterCount > 0) {
+						states[i] = s;
+						for (const card of states[i].booster)
+							if (card.name !== "Lore Seeker") seenCards[card.uniqueID] = card.id;
+						clients[i].emit("pickCard", { pickedCards: [0], burnedCards: [] }, ackNoError);
+					}
+				});
+				clients[i].emit("pickCard", { pickedCards: [0], burnedCards: [] }, ackNoError);
+			}
+		});
+
+		it("Packs should have no duplicates (ignoring the Lore Seekers)", () => {
+			expect([...Object.values(seenCards)].length, "Cube should still be singleton.").to.equal(
+				[...new Set(Object.values(seenCards))].length
+			);
 		});
 	});
 

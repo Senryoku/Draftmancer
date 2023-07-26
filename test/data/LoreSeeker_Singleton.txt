@@ -1,0 +1,24 @@
+[Settings]
+{
+	"withReplacement": false,
+	"layouts": {
+		"normal": {
+			"weight": 1,
+			"slots": {
+				"LoreSeeker": 1,
+				"Others": 1
+			}
+		}
+	}
+}
+[LoreSeeker]
+8 Lore Seeker
+[Others]
+Plains
+Island
+Forest
+Mountain
+Swamp
+Wastes
+Llanowar Elves
+Kozilek, the Great Distortion

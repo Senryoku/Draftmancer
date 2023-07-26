@@ -1073,7 +1073,7 @@ function setCustomCardListWithReplacement(
 	customCardListWithReplacement: boolean
 ) {
 	if (!SessionsSettingsProps.customCardListWithReplacement(customCardListWithReplacement)) return;
-	if (customCardListWithReplacement == Sessions[sessionID].customCardListWithReplacement) return;
+	if (customCardListWithReplacement === Sessions[sessionID].customCardListWithReplacement) return;
 
 	Sessions[sessionID].customCardListWithReplacement = customCardListWithReplacement;
 	Sessions[sessionID].emitToConnectedNonOwners("sessionOptions", { customCardListWithReplacement });

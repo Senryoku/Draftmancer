@@ -1,4 +1,5 @@
 [
+	{ "date": "25/07/2023", "notes": ["Lore Seeker will try not to introduce duplicates in singleton cube anymore."] },
 	{
 		"date": "24/07/2023",
 		"notes": [

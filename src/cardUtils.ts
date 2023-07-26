@@ -2,7 +2,7 @@
 
 import { CardID, Card, CardPool } from "./CardTypes.js";
 import { getUnique } from "./Cards.js";
-import { getRandomMapKey, Options, random } from "./utils.js";
+import { getRandomMapKey, random } from "./utils.js";
 
 export function removeCardFromCardPool(cid: CardID, dict: CardPool) {
 	if (!dict.has(cid)) {
@@ -10,8 +10,9 @@ export function removeCardFromCardPool(cid: CardID, dict: CardPool) {
 		console.trace();
 		throw `Called removeCardFromCardPool on a non-existing card (${cid}).`;
 	}
-	dict.set(cid, (dict.get(cid) as number) - 1);
-	if (dict.get(cid) == 0) dict.delete(cid);
+	const newValue = dict.get(cid)! - 1;
+	if (newValue > 0) dict.set(cid, newValue);
+	else dict.delete(cid);
 }
 
 // Returns a random card from the pool, choosen uniformly across ALL cards (not UNIQUE ones),
