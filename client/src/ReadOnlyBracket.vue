@@ -12,12 +12,12 @@
 						<template v-else>Single Elimination</template>)
 					</span>
 				</h1>
-				<bracket
+				<Bracket
 					:bracket="bracket"
 					:displayControls="false"
 					:draftlog="draftlog"
 					:language="language"
-				></bracket>
+				></Bracket>
 			</div>
 			<div class="error" v-else>
 				<h1>Error</h1>

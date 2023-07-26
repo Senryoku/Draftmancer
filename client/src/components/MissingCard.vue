@@ -1,8 +1,8 @@
 <template>
-	<card :card="uniqueCard" :language="language" :lazyLoad="true">
+	<Card :card="uniqueCard" :language="language" :lazyLoad="true">
 		<div class="not-booster" v-if="!card.in_booster">Can't be obtained in boosters.</div>
 		<div class="card-count" v-if="card.count < 4">x{{ 4 - card.count }}</div>
-	</card>
+	</Card>
 </template>
 
 <script lang="ts">
