@@ -116,7 +116,7 @@ import { Sounds } from "../App.vue";
 
 const Queues: (QueueDescription & { image: string })[] = [];
 // eslint-disable-next-line no-undef
-for (const q of AvailableQueues) Queues.push({ ...q, image: require(`../assets/img/queues/${q.id}.jpg`) });
+for (const q of AvailableQueues) Queues.push({ ...q, image: require(`../assets/img/queues/${q.id}.webp`) });
 
 const { emitter } = useEmitter();
 
