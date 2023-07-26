@@ -99,6 +99,10 @@ function launchSession(queueID: QueueID, users: UserID[]) {
 		return;
 	}
 
+	if (queue.description.settings) {
+		if (queue.description.settings.pickedCardsPerRound)
+			session.pickedCardsPerRound = queue.description.settings.pickedCardsPerRound;
+	}
 	session.setRestriction = [queue.description.setCode];
 	session.maxTimer = 70;
 	for (const uid of users) {

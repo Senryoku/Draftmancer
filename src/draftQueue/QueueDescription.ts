@@ -8,4 +8,5 @@ export type QueueDescription = {
 	playerCount: number;
 	description?: string;
 	setCode: SetCode;
+	settings?: { pickedCardsPerRound?: number };
 };
