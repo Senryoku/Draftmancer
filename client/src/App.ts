@@ -2807,7 +2807,7 @@ export default defineComponent({
 			await Alert.fire({
 				title: `Select your Jumpstart Packs (${currentPack + 1}/${packCount})`,
 				html: `<div style="display: flex; gap: 1em;">${boostersDisplay}</div>`,
-				showCancelButton: false,
+				showCancelButton: true,
 				showConfirmButton: false,
 				allowEscapeKey: false,
 				allowOutsideClick: false,
@@ -2830,8 +2830,10 @@ export default defineComponent({
 			ack: (user: UserID, cards: CardID[]) => void
 		) {
 			this.clearState();
-			this.draftingState = DraftState.Brewing;
 			const choice = await this.displayPackChoice(choices[0], 0, choices.length);
+			// User canceled
+			if (choice < 0) return ack?.(this.userID, []);
+			this.draftingState = DraftState.Brewing;
 			await this.displayPackChoice(choices[1][choice], 1, choices.length);
 			ack?.(
 				this.userID,
