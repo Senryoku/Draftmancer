@@ -47,7 +47,7 @@ export function generateBoosterFromCustomCardList(
 		withReplacement?: boolean;
 		playerCount?: number; // Allow correct ordering of boosters when using predetermined layouts
 		removeFromCardPool?: CardID[]; // Used by LoreSeeker draft effect
-	}
+	} = {}
 ): MessageError | Array<UniqueCard>[] {
 	if (
 		!customCardList.slots ||
@@ -56,12 +56,13 @@ export function generateBoosterFromCustomCardList(
 		return new MessageError("Error generating boosters", "No custom card list provided.");
 	}
 
+	if (options.colorBalance === undefined) options.colorBalance = false;
+	if (options.withReplacement === undefined) options.withReplacement = false;
 	const pickOptions: Options = {
 		uniformAll: true,
-		withReplacement: options?.withReplacement,
+		withReplacement: options.withReplacement,
+		getCard: generateCustomGetCardFunction(customCardList),
 	};
-
-	pickOptions.getCard = generateCustomGetCardFunction(customCardList);
 
 	// List is using custom layouts
 	if (customCardList.layouts && !isEmpty(customCardList.layouts)) {
@@ -76,7 +77,7 @@ export function generateBoosterFromCustomCardList(
 		}
 
 		// Workaround to handle the LoreSeeker draft effect with a limited number of cards
-		if (options.withReplacement !== true && options.removeFromCardPool) {
+		if (!options.withReplacement && options.removeFromCardPool) {
 			// We don't know from which slot the cards were picked, so we might remove them multiple times if they're shared between multiple slots,
 			// however I don't have a better solution for now.
 			for (const slotName in cardsBySlot)
@@ -214,14 +215,14 @@ export function generateBoosterFromCustomCardList(
 		const cardsPerBooster = options.cardsPerBooster ?? 15;
 
 		const cardTarget = cardsPerBooster * boosterQuantity;
-		if (options?.withReplacement !== true && cardCount < cardTarget) {
+		if (!options.withReplacement && cardCount < cardTarget) {
 			return new MessageError(
 				"Error generating boosters",
 				`Not enough cards (${cardCount}/${cardTarget}) in custom list.`
 			);
 		}
 		// Workaround to handle the LoreSeeker draft effect with a limited number of cards
-		if (options.withReplacement !== true && options.removeFromCardPool) {
+		if (!options.withReplacement && options.removeFromCardPool) {
 			for (const cardId of options.removeFromCardPool)
 				if (localCollection.has(cardId)) removeCardFromCardPool(cardId, localCollection);
 		}
