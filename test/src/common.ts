@@ -42,6 +42,7 @@ export const InvalidCubes: { [name: string]: string } = {
 	InvalidSettings_WrongSlotType: fs.readFileSync(`./test/data/InvalidSettings_WrongSlotType.txt`, "utf8"),
 	CustomCards_RelatedCards_Invalid: fs.readFileSync(`./test/data/CustomCards_RelatedCards_Invalid.txt`, "utf8"),
 	CustomCards_DraftEffects_Invalid: fs.readFileSync(`./test/data/CustomCards_DraftEffects_Invalid.txt`, "utf8"),
+	CustomCards_DuplicatePrinting: fs.readFileSync(`./test/data/CustomCards_DuplicatePrinting.txt`, "utf8"),
 };
 
 const NODE_PORT = process.env.PORT ?? 3000;

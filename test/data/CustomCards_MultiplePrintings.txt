@@ -1,0 +1,54 @@
+[Settings]
+{ "withReplacement": true } 
+[CustomCards]
+[
+	{
+		"name": "Nazgûl",
+		"rarity": "uncommon",
+		"mana_cost": "2B",
+		"set": "ltr",
+		"collector_number": "100", 
+		"type": "Creature",
+		"image_uris": {
+			"en": "https://cards.scryfall.io/large/front/8/3/833936c6-9381-4c0b-a81c-4a938be95040.jpg?1686968640"
+		}
+	},
+	{
+		"name": "Nazgûl",
+		"collector_number": "332",
+		"image_uris": {
+			"en": "https://cards.scryfall.io/large/front/c/e/ce65226a-12cd-416a-bb60-12e9b35f609b.jpg?1686971256"
+		}
+	},
+	{
+		"name": "Nazgûl",
+		"collector_number": "333",
+		"image_uris": {
+			"en": "https://cards.scryfall.io/large/front/6/9/69b32f90-b32f-41a6-af0c-1c967ec49b73.jpg?1686971268"
+		},
+		"related_cards": [
+			"Nazgûl"
+		]	
+	},
+	{
+		"name": "Card related to Nazgûl somehow",
+		"rarity": "uncommon",
+		"mana_cost": "",
+		"type": "Emblem",
+		"image_uris": {
+			"en": "https://cards.scryfall.io/large/front/7/2/7215460e-8c06-47d0-94e5-d1832d0218af.jpg?1688215133"
+		},
+		"related_cards": [
+			"Nazgûl",
+			"Nazgûl (LTR) 100",
+			"Nazgûl (LTR) 332",
+			"Nazgûl (LTR) 333"
+		]
+	}
+]
+[DefaultSlot]
+Nazgûl
+Nazgûl (LTR) 100
+Nazgûl (LTR) 332
+Nazgûl (LTR) 333
+Card related to Nazgûl somehow

@@ -91,6 +91,7 @@ import axios from "axios";
 import CardText from "./CardText.vue";
 import CardImage from "./CardImage.vue";
 import { isString } from "../../../src/TypeChecks";
+import { genCustomCardID } from "../../../src/CustomCardID";
 import { Card, CardFace, CardID } from "@/CardTypes";
 import { ScryfallCard, isReady, CardCacheEntry } from "../vueCardCache";
 
@@ -252,7 +253,7 @@ export default defineComponent({
 			let r: CardCacheEntry[] = [];
 			if (!this.card) return r;
 			if (this.card.is_custom) {
-				if (this.customCards !== undefined && this.card.related_cards)
+				if (this.customCards && this.card.related_cards)
 					return [
 						...this.card.related_cards.map((c) => {
 							if (isString(c)) {

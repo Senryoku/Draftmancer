@@ -408,7 +408,68 @@ Card Name 6
 4 My 1st Custom Card
 4 My 2nd Custom Card
 <note>... Standard Card List ...</note></pre>
-				Full Card specification ('?' denotes an optional field):
+				<p>
+					You can define multiple printings of the same card by varying the set and/or the collector number while keeping the name. Referring to these cards by name only
+					(without specifying a set and a collector number) will always mean the first occurence. Duplicate cards by name will inherit all the properties of the first
+					occurence, meaning that besides the name you only have specify the properties that are actually modified in the other printings. In the following example, only
+					the first 'Nazgûl' has all the properties, the other ones will be completed automatically. Note how you can now refer to individual printings using the
+					'CardName (SET) Number' syntax.
+				</p>
+				<pre>
+[Settings]
+{ "withReplacement": true } 
+[CustomCards]
+[
+	{
+		"name": "Nazgûl",
+		"rarity": "uncommon",
+		"mana_cost": "2B",
+		"set": "ltr",
+		"collector_number": "100", 
+		"type": "Creature",
+		"image_uris": {
+			"en": "https://cards.scryfall.io/large/front/8/3/833936c6-9381-4c0b-a81c-4a938be95040.jpg?1686968640"
+		}
+	},
+	{
+		"name": "Nazgûl",
+		"collector_number": "332",
+		"image_uris": {
+			"en": "https://cards.scryfall.io/large/front/c/e/ce65226a-12cd-416a-bb60-12e9b35f609b.jpg?1686971256"
+		}
+	},
+	{
+		"name": "Nazgûl",
+		"collector_number": "333",
+		"image_uris": {
+			"en": "https://cards.scryfall.io/large/front/6/9/69b32f90-b32f-41a6-af0c-1c967ec49b73.jpg?1686971268"
+		},
+	},
+	{
+		"name": "Card related to Nazgûl somehow",
+		"rarity": "uncommon",
+		"mana_cost": "",
+		"type": "Emblem",
+		"image_uris": {
+			"en": "https://cards.scryfall.io/large/front/7/2/7215460e-8c06-47d0-94e5-d1832d0218af.jpg?1688215133"
+		},
+		"related_cards": [
+			"Nazgûl",
+			"Nazgûl (LTR) 100",
+			"Nazgûl (LTR) 332",
+			"Nazgûl (LTR) 333"
+		]
+	}
+]
+[DefaultSlot]
+Nazgûl
+Nazgûl (LTR) 100
+Nazgûl (LTR) 332
+Nazgûl (LTR) 333
+Card related to Nazgûl somehow
+</pre
+				>
+				<p>Full Card specification ('?' denotes an optional field):</p>
 				<pre>
 CardFace {
 	name: string;

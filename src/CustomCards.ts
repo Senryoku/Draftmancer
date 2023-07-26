@@ -4,6 +4,7 @@ import { Card, CardColor, CardFace } from "./CardTypes.js";
 import { ackError, isMessageError, isSocketError, SocketAck, SocketError } from "./Message.js";
 import { isCard, isDraftEffect } from "./CardTypeCheck.js";
 import { hasProperty, isArrayOf, isObject, isRecord, isString } from "./TypeChecks.js";
+import { genCustomCardID } from "./CustomCardID.js";
 
 function errorWithJSON(title: string, msg: string, json: unknown) {
 	return ackError({
@@ -34,8 +35,6 @@ function checkPropertyIsArrayOrUndefined(card: Record<string, unknown>, prop: st
 		return errorWithJSON(`Invalid Property`, `Invalid property '${prop}' in custom card, must be an Array`, card);
 	return null;
 }
-
-let CustomCardAutoCollectorNumber = 0;
 
 export function validateCustomCardFace(face: unknown): SocketError | CardFace {
 	if (!isObject(face)) return errorWithJSON(`Invalid Face`, `Should be an object`, face);
@@ -76,7 +75,8 @@ export function validateCustomCard(inputCard: any): SocketError | Card {
 		checkPropertyTypeOrUndefined(inputCard, "rating", "number") ??
 		checkPropertyTypeOrUndefined(inputCard, "in_booster", "boolean") ??
 		checkPropertyTypeOrUndefined(inputCard, "layout", "string") ??
-		checkPropertyTypeOrUndefined(inputCard, "printed_names", "object");
+		checkPropertyTypeOrUndefined(inputCard, "printed_names", "object") ??
+		checkPropertyTypeOrUndefined(inputCard, "collector_number", "string");
 	if (typeError) return typeError;
 	if (Object.keys(inputCard["image_uris"]).length === 0)
 		return ackError({
@@ -101,7 +101,7 @@ export function validateCustomCard(inputCard: any): SocketError | Card {
 		if (!Array.isArray(inputCard.colors) || inputCard.colors.some((c: CardColor) => !"WUBRG".includes(c))) {
 			return ackError({
 				title: `Invalid Property`,
-				html: `Invalid mandatory property 'colors' in custom card, 'colors' should be an Array of inputCard colors (W, U, B, R or G). Leave blank to let it be automatically infered from the mana cost. <pre>${JSON.stringify(
+				html: `Invalid optional property 'colors' in custom card, 'colors' should be an Array of inputCard colors (W, U, B, R or G). Leave blank to let it be automatically infered from the mana cost. <pre>${JSON.stringify(
 					inputCard,
 					null,
 					2
@@ -127,15 +127,16 @@ export function validateCustomCard(inputCard: any): SocketError | Card {
 	// Assign default value to missing optional fields
 	const card = new Card();
 	card.is_custom = true;
-	card.name = card.id = card.oracle_id = inputCard.name;
+	card.name = card.oracle_id = inputCard.name;
+	card.set = inputCard.set ?? "custom";
+	card.collector_number = inputCard.collector_number ?? "";
+	card.id = genCustomCardID(card.name, card.set, card.collector_number);
 	const ret = parseCost(inputCard.mana_cost);
 	if (isMessageError(ret)) return new SocketAck(ret);
 	const { cmc, colors, normalizedCost } = ret;
 	card.mana_cost = normalizedCost;
 	card.cmc = cmc;
 	card.colors = inputCard.colors ?? colors;
-	card.set = inputCard.set ?? "custom";
-	card.collector_number = inputCard.collector_number ?? `${++CustomCardAutoCollectorNumber}`;
 	card.rarity = inputCard.rarity ?? "rare";
 	card.type = inputCard.type;
 	card.subtypes = inputCard.subtypes ?? [];

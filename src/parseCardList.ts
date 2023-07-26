@@ -1,10 +1,12 @@
+import { genCustomCardID } from "./CustomCardID.js";
 import { validateCustomCard } from "./CustomCards.js";
 import { Card, CardID } from "./CardTypes.js";
 import { CardsByName, CardVersionsByName, getCard, isValidCardID } from "./Cards.js";
 import { CCLSettings, CustomCardList, PackLayout } from "./CustomCardList.js";
 import { escapeHTML } from "./utils.js";
 import { ackError, isSocketError, SocketError } from "./Message.js";
-import { isArrayOf, isBoolean, isInteger, isRecord, isString, isUnknown } from "./TypeChecks.js";
+import { isAny, isArrayOf, isBoolean, isInteger, isObject, isRecord, isString, isUnknown } from "./TypeChecks.js";
+import { cp } from "fs";
 
 const lineRegex = /^(?:(\d+)\s+)?([^(\v\n]+)??(?:\s\((\w+)\)(?:\s+([^+\s]+))?)?(?:\s+\+?(F))?$/;
 
@@ -15,10 +17,8 @@ export function parseLine(
 	line: string,
 	options: {
 		fallbackToCardName?: boolean;
-		customCards?: {
-			[cardID: string]: Card;
-		} | null;
-	} = { fallbackToCardName: false, customCards: null }
+		customCards?: { cards: Record<CardID, Card>; nameCache: Map<string, Card> };
+	} = { fallbackToCardName: false, customCards: undefined }
 ): SocketError | { count: number; cardID: CardID; foil: boolean } {
 	const trimedLine = line.trim();
 	const match = trimedLine.match(lineRegex);
@@ -37,8 +37,11 @@ export function parseLine(
 
 	// Override with custom cards if available
 	if (options?.customCards) {
-		// FIXME: This assumes cardID and name are the same.
-		if (name in options.customCards) return { count, cardID: name, foil };
+		if (set && number) {
+			const cid = genCustomCardID(name, set, number);
+			if (cid in options.customCards.cards) return { count, cardID: cid, foil };
+		} else if (options.customCards.nameCache.has(name))
+			return { count, cardID: options.customCards.nameCache.get(name)!.id, foil };
 	}
 
 	if (set) {
@@ -375,25 +378,59 @@ function parseCustomCards(lines: string[], startIdx: number, txtcardlist: string
 		});
 	}
 
+	if (!isArrayOf(isRecord(isString, isAny))(parsedCustomCards)) {
+		return ackError({
+			title: `[CustomCards]`,
+			html: `Custom cards must be an array of card objects. Refer to <a href="https://draftmancer.com/cubeformat.html">the documentation</a> for more information.`,
+		});
+	}
+
 	const customCards: Card[] = [];
-	const customCardsKeys: CardID[] = [];
-	for (const c of parsedCustomCards) {
+	const customCardsIDs: Record<CardID, Card> = {};
+	const inputsByName = new Map<string, object>(); // Track declared card names to spot duplicates (and inherit properties between printings).
+	const customCardsNameCache = new Map<string, Card>();
+	for (const input of parsedCustomCards) {
+		// When a second printing of a card (with the same name) is detected, copies all information from the first one.
+		// This allows users to only specify a full card once and only update the related fields in other printings.
+		const c = inputsByName.has(input.name) ? Object.assign({ ...inputsByName.get(input.name) }, input) : input;
+
 		const cardOrError = validateCustomCard(c);
 		if (isSocketError(cardOrError)) return cardOrError;
-		customCardsKeys.push(cardOrError.id);
-		// Validate related card references.
-		if (c.related_cards) {
-			for (const rc of c.related_cards) {
-				if (isString(rc) && !customCardsKeys.includes(rc) && !isValidCardID(rc)) {
-					return ackError({
-						title: `[CustomCards]`,
-						text: `'${rc}', referenced in '${c.name}' related cards, is not a valid custom card. Make sure it is defined first.`,
+		if (cardOrError.id in customCardsIDs)
+			return ackError({
+				title: `Duplicate Custom Card`,
+				text: `Duplicate card ID '${cardOrError.id}'. Each card must have a unique name. To define alternate printings of a card, specify a different set and/or collector number.`,
+			});
+		customCardsIDs[cardOrError.id] = cardOrError;
+		if (!inputsByName.has(cardOrError.name)) inputsByName.set(cardOrError.name, input);
+		if (!customCardsNameCache.has(cardOrError.name)) customCardsNameCache.set(cardOrError.name, cardOrError);
+		customCards.push(cardOrError);
+	}
+
+	// Validate related card references.
+	for (const card of customCards) {
+		if (card.related_cards) {
+			for (let i = 0; i < card.related_cards.length; ++i) {
+				const rc = card.related_cards[i];
+				// We're dealing with a card name (with optional set/collector number), or a CardID, not a card object.
+				if (isString(rc)) {
+					// This is an 'official' CardID, we're good.
+					if (isValidCardID(rc)) continue;
+					// Check if it's a valid (potentially custom) card name and replace it with the corresponding Card ID.
+					const result = parseLine(rc, {
+						customCards: { cards: customCardsIDs, nameCache: customCardsNameCache },
 					});
+					if (isSocketError(result))
+						return ackError({
+							title: `[CustomCards]`,
+							text: `'${rc}', referenced in '${card.name}' related cards, is not a valid card.`,
+						});
+					card.related_cards[i] = result.cardID;
 				}
 			}
 		}
-		customCards.push(cardOrError);
 	}
+
 	return {
 		advance: (customCardsStr.match(/\r?\n/g)?.length ?? 0) + 1, // Skip this section's lines
 		customCards: customCards,
@@ -458,6 +495,12 @@ export function parseCardList(
 		while (lines[lineIdx] === "") ++lineIdx; // Skip heading empty lines
 		// List has to start with a header if it has custom slots
 		if (lines[lineIdx][0] === "[") {
+			const localOptions: typeof options & {
+				customCards?: {
+					cards: Record<string, Card>;
+					nameCache: Map<string, Card>; // Quick lookup using the name only as key
+				};
+			} = { ...options };
 			while (lineIdx < lines.length) {
 				if (!lines[lineIdx].startsWith("[") || !lines[lineIdx].endsWith("]")) {
 					return ackError({
@@ -478,13 +521,21 @@ export function parseCardList(
 					const cardsOrError = parseCustomCards(lines, lineIdx, txtcardlist);
 					if (isSocketError(cardsOrError)) return cardsOrError;
 					if (!cardList.customCards) cardList.customCards = {};
+
+					// Use localOptions to supply the custom cards to parseLine
+					if (!localOptions.customCards)
+						localOptions.customCards = { cards: cardList.customCards, nameCache: new Map() };
+
 					for (const customCard of cardsOrError.customCards) {
-						if (customCard.name in cardList.customCards)
+						if (customCard.id in cardList.customCards)
 							return ackError({
 								title: `[CustomCards]`,
-								text: `Duplicate card '${customCard.name}'.`,
+								text: `Duplicate card '${customCard.name}' (Full id: ${customCard.id}).`,
 							});
-						cardList.customCards[customCard.name] = customCard;
+						cardList.customCards[customCard.id] = customCard;
+						if (!localOptions.customCards.nameCache.has(customCard.name))
+							// Set the first printing as the canonical one
+							localOptions.customCards.nameCache.set(customCard.name, customCard);
 					}
 					lineIdx += cardsOrError.advance;
 				} else if (lowerCaseHeader === "layouts") {
@@ -515,13 +566,12 @@ export function parseCardList(
 						cardList.layouts["default"].slots[slotName] = parseInt(match[2]);
 					}
 					cardList.slots[slotName] = {};
-					const parseLineOptions = Object.assign({ customCards: cardList.customCards }, options);
 					while (lineIdx < lines.length && lines[lineIdx][0] !== "[") {
 						if (lines[lineIdx]) {
-							const result = parseLine(lines[lineIdx], parseLineOptions);
+							const result = parseLine(lines[lineIdx], localOptions);
 							if (isSocketError(result)) {
 								// Just ignore the missing card and add it to the list of errors
-								if (options?.ignoreUnknownCards) outIgnoredCards?.push(lines[lineIdx]);
+								if (localOptions?.ignoreUnknownCards) outIgnoredCards?.push(lines[lineIdx]);
 								else return result;
 							} else {
 								const { count, cardID, foil } = result;

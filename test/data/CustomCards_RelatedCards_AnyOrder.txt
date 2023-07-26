@@ -1,0 +1,35 @@
+[Settings]
+{ "withReplacement": true } 
+[CustomCards]
+[    
+	{
+		"name": "Aedryd, Spectral Liege",
+		"rarity": "uncommon",
+		"mana_cost": "3WW",
+		"type": "Legendary Creature",
+		"subtypes": ["Spirit", "Knight"],
+		"image_uris": {
+			"en": "http://mse-modern.com/msem2/images/SWR/1.jpg"
+		},
+		"related_cards": [
+			"Alleviate", 
+			"Aedryd, Spectral Liege"
+		]
+	},
+	{
+		"name": "Alleviate",
+		"rarity": "common",
+		"mana_cost": "W",
+		"type": "Instant",
+		"image_uris": {
+			"en": "http://mse-modern.com/msem2/images/SWR/2.jpg"
+		},
+		"related_cards": [
+			"Aedryd, Spectral Liege",
+			"Alleviate"
+		]
+	}
+]
+[DefaultSlot]
+Alleviate
+Aedryd, Spectral Liege
