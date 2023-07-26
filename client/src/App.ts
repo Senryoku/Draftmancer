@@ -1263,16 +1263,19 @@ export default defineComponent({
 
 			this.socket.on("askColor", (userName, card, ack) => {
 				const el = document.createElement("div");
+				el.style.position = "absolute";
 				this.$el.appendChild(el);
 				const instance = createCommonApp(ChooseColorComponent, {
 					userName: userName,
 					card: card,
-					unmounted: () => {
-						this.$el.removeChild(el);
+					onTImeout: () => {
+						instance.unmount();
+						el.parentNode?.removeChild(el);
 					},
 					onSelectColor: (color: CardColor) => {
 						ack(color);
 						instance.unmount();
+						el.parentNode?.removeChild(el);
 					},
 				});
 				instance.mount(el);
@@ -1280,17 +1283,20 @@ export default defineComponent({
 
 			this.socket.on("choosePlayer", (reason, users, ack) => {
 				const el = document.createElement("div");
+				el.style.position = "absolute";
 				this.$el.appendChild(el);
 				const instance = createCommonApp(ChoosePlayerComponent, {
 					sessionUsers: this.sessionUsers,
 					reason: reason,
 					users: users,
-					unmounted: () => {
-						this.$el.removeChild(el);
+					onTImeout: () => {
+						instance.unmount();
+						el.parentNode?.removeChild(el);
 					},
 					onChoose: (uid: UserID) => {
 						ack(uid);
 						instance.unmount();
+						el.parentNode?.removeChild(el);
 					},
 				});
 				instance.mount(el);
@@ -1799,14 +1805,13 @@ export default defineComponent({
 		},
 		spawnDialog<T extends Component>(rootComponent: T, props: object) {
 			const el = document.createElement("div");
+			el.style.position = "absolute";
 			this.$el.appendChild(el);
 			const instance = createCommonApp(rootComponent, {
 				...props,
-				unmounted: () => {
-					this.$el.removeChild(el);
-				},
-				onCancel() {
+				onClose: () => {
 					instance.unmount();
+					el.parentNode?.removeChild(el);
 				},
 			});
 			instance.mount(el);
@@ -1824,12 +1829,11 @@ export default defineComponent({
 					text: "Non-playing owner is not supported in Winston Draft. The 'Spectate as Session Owner' option must be disabled.",
 				});
 			} else {
-				const instance = this.spawnDialog(WinstonDialog, {
+				this.spawnDialog(WinstonDialog, {
 					onStart: (boostersPerPlayer: number) => {
 						this.socket.emit("startWinstonDraft", boostersPerPlayer, true, (answer: SocketAck) => {
 							if (answer.code !== 0 && answer.error) Alert.fire(answer.error);
 						});
-						instance.unmount();
 					},
 				});
 			}
@@ -1858,12 +1862,11 @@ export default defineComponent({
 					text: "Non-playing owner is not supported in Winchester Draft. The 'Spectate as Session Owner' option must be disabled.",
 				});
 			} else {
-				const instance = this.spawnDialog(WinchesterDialog, {
+				this.spawnDialog(WinchesterDialog, {
 					onStart: (boostersPerPlayer: number) => {
 						this.socket.emit("startWinchesterDraft", boostersPerPlayer, true, (answer: SocketAck) => {
 							if (answer.code !== 0 && answer.error) Alert.fire(answer.error);
 						});
-						instance.unmount();
 					},
 				});
 			}
@@ -1894,7 +1897,7 @@ export default defineComponent({
 		startHousmanDraft: async function () {
 			if (this.userID !== this.sessionOwner || this.drafting) return;
 
-			const instance = this.spawnDialog(HousmanDialog, {
+			this.spawnDialog(HousmanDialog, {
 				onStart: (
 					handSize: number,
 					revealedCardsCount: number,
@@ -1928,7 +1931,6 @@ export default defineComponent({
 						roundCount,
 						removeBasicLands
 					);
-					instance.unmount();
 				},
 			});
 		},
@@ -1947,10 +1949,9 @@ export default defineComponent({
 				});
 			};
 
-			const instance = this.spawnDialog(SolomonDialog, {
+			this.spawnDialog(SolomonDialog, {
 				onStart: (cardCount: number, roundCount: number, removeBasicLands: boolean) => {
 					this.deckWarning(start, cardCount, roundCount, removeBasicLands);
-					instance.unmount();
 				},
 			});
 		},
@@ -1970,12 +1971,11 @@ export default defineComponent({
 					text: "Non-playing owner is not supported in Grid Draft for now. The 'Session owner is playing' option needs to be active.",
 				});
 			} else {
-				const instance = this.spawnDialog(GridDialog, {
+				this.spawnDialog(GridDialog, {
 					onStart: (boosterCount: number) => {
 						this.socket.emit("startGridDraft", boosterCount, (answer: SocketAck) => {
 							if (answer.code !== 0 && answer.error) Alert.fire(answer.error);
 						});
-						instance.unmount();
 					},
 				});
 			}
@@ -2031,7 +2031,7 @@ export default defineComponent({
 				});
 				return;
 			}
-			const instance = this.spawnDialog(RotisserieDraftDialog, {
+			this.spawnDialog(RotisserieDraftDialog, {
 				defaultBoostersPerPlayer: this.boostersPerPlayer,
 				onStart: (options: RotisserieDraftStartOptions) => {
 					this.deckWarning((options) => {
@@ -2039,7 +2039,6 @@ export default defineComponent({
 							if (r.code !== 0 && r.error) Alert.fire(r.error);
 						});
 					}, options);
-					instance.unmount();
 				},
 			});
 		},
@@ -2079,7 +2078,7 @@ export default defineComponent({
 		startMinesweeperDraft() {
 			if (this.userID !== this.sessionOwner || this.drafting) return;
 
-			const instance = this.spawnDialog(MinesweeperDialog, {
+			this.spawnDialog(MinesweeperDialog, {
 				onStart: (
 					gridCount: number,
 					gridWidth: number,
@@ -2113,7 +2112,6 @@ export default defineComponent({
 						picksPerPlayerPerGrid,
 						revealBorders
 					);
-					instance.unmount();
 				},
 			});
 		},
@@ -2148,7 +2146,7 @@ export default defineComponent({
 			let burnedCardsPerRound = 2;
 			if (this.burnedCardsPerRound > 0) burnedCardsPerRound = this.burnedCardsPerRound;
 
-			const instance = this.spawnDialog(GlimpseDialog, {
+			this.spawnDialog(GlimpseDialog, {
 				defaultBoostersPerPlayer: boostersPerPlayer,
 				defaultBurnedCardsPerRound: burnedCardsPerRound,
 				onStart: (boostersPerPlayer: number, burnedCardsPerRound: number) => {
@@ -2162,7 +2160,6 @@ export default defineComponent({
 							[this.boostersPerPlayer, this.burnedCardsPerRound] = prev;
 						}
 					});
-					instance.unmount();
 				},
 			});
 		},
@@ -2744,7 +2741,6 @@ export default defineComponent({
 						customBoosters,
 						teams
 					);
-					instance.unmount();
 				},
 			});
 		},

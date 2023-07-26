@@ -97,7 +97,7 @@ const roundCount = ref(9);
 const removeBasicLands = ref(true);
 
 const emit = defineEmits<{
-	(e: "cancel"): void;
+	(e: "close"): void;
 	(
 		e: "start",
 		handSize: number,
@@ -108,8 +108,8 @@ const emit = defineEmits<{
 	): void;
 }>();
 
-const cancel = () => emit("cancel");
-const start = () =>
+const cancel = () => emit("close");
+const start = () => {
 	emit(
 		"start",
 		handSize.value,
@@ -118,6 +118,8 @@ const start = () =>
 		roundCount.value,
 		removeBasicLands.value
 	);
+	emit("close");
+};
 </script>
 
 <style scoped src="../css/start-game-dialog.css" />

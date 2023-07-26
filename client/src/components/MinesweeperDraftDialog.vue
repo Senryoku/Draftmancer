@@ -118,7 +118,7 @@ if (savedValues) {
 }
 
 const emit = defineEmits<{
-	(e: "cancel"): void;
+	(e: "close"): void;
 	(
 		e: "start",
 		gridCount: number,
@@ -129,7 +129,7 @@ const emit = defineEmits<{
 	): void;
 }>();
 
-const cancel = () => emit("cancel");
+const cancel = () => emit("close");
 const start = () => {
 	localStorage.setItem(
 		"draftmancer-minesweeper",
@@ -142,6 +142,7 @@ const start = () => {
 		})
 	);
 	emit("start", gridCount.value, gridWidth.value, gridHeight.value, picksPerPlayerPerGrid.value, revealBorders.value);
+	emit("close");
 };
 </script>
 

@@ -124,7 +124,7 @@ const MTGASets = Constant.MTGASets.slice()
 	});
 
 const emit = defineEmits<{
-	(e: "cancel"): void;
+	(e: "close"): void;
 	(e: "distribute", boostersPerPlayer: number, customBoosters: SetCode[], teams: UserID[][]): void;
 }>();
 
@@ -137,14 +137,16 @@ const teamAdd = (evt: SortableEvent, team: UserID[]) => {
 const teamRemove = (evt: SortableEvent, team: UserID[]) => {
 	team.splice(evt.oldIndex!, 1);
 };
-const cancel = () => emit("cancel");
-const distribute = () =>
+const cancel = () => emit("close");
+const distribute = () => {
 	emit(
 		"distribute",
 		boostersPerPlayer.value,
 		useCustomizedBoosters.value ? customBoosters.value : customBoostersDefaultValue,
 		teams.value
 	);
+	emit("close");
+};
 
 // Watch
 watch(boostersPerPlayer, () => {

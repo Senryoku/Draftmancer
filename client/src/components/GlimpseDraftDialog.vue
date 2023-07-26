@@ -63,12 +63,15 @@ const boostersPerPlayer = ref(props.defaultBoostersPerPlayer);
 const burnedCardsPerRound = ref(props.defaultBurnedCardsPerRound);
 
 const emit = defineEmits<{
-	(e: "cancel"): void;
+	(e: "close"): void;
 	(e: "start", boostersPerPlayer: number, burnedCardsPerRound: number): void;
 }>();
 
-const cancel = () => emit("cancel");
-const start = () => emit("start", boostersPerPlayer.value, burnedCardsPerRound.value);
+const cancel = () => emit("close");
+const start = () => {
+	emit("start", boostersPerPlayer.value, burnedCardsPerRound.value);
+	emit("close");
+};
 </script>
 
 <style scoped src="../css/start-game-dialog.css" />

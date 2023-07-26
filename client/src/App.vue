@@ -2315,7 +2315,7 @@
 									:step="1"
 									:delay="0.1"
 									v-model.number="boostersPerPlayer"
-									:validate="(v:number) => Math.max(1, Math.min(v, 25))"
+									:validate="(v: number) => Math.max(1, Math.min(v, 25))"
 								/>
 							</div>
 						</div>

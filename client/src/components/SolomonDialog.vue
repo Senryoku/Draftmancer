@@ -66,12 +66,15 @@ const roundCount = ref(10);
 const removeBasicLands = ref(true);
 
 const emit = defineEmits<{
-	(e: "cancel"): void;
+	(e: "close"): void;
 	(e: "start", cardCount: number, roundCount: number, removeBasicLands: boolean): void;
 }>();
 
-const cancel = () => emit("cancel");
-const start = () => emit("start", cardCount.value, roundCount.value, removeBasicLands.value);
+const cancel = () => emit("close");
+const start = () => {
+	emit("start", cardCount.value, roundCount.value, removeBasicLands.value);
+	emit("close");
+};
 </script>
 
 <style scoped src="../css/start-game-dialog.css" />

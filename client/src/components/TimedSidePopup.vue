@@ -52,7 +52,9 @@ onMounted(() => {
 
 	background-color: #282828;
 	border-radius: 0 0 0 50px;
-	box-shadow: 0 0 12px 1px black, inset 0 0 8px #383838;
+	box-shadow:
+		0 0 12px 1px black,
+		inset 0 0 8px #383838;
 	padding: 0.75em;
 	padding-right: 2em;
 	text-align: center;

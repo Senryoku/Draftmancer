@@ -16,7 +16,7 @@ import TimedSidePopup from "./TimedSidePopup.vue";
 import { UserData } from "@/Session/SessionTypes";
 import { UserID } from "@/IDTypes";
 
-const props = defineProps<{ sessionUsers: UserData[]; reason: string; users: UserID[] }>();
+defineProps<{ sessionUsers: UserData[]; reason: string; users: UserID[] }>();
 const emit = defineEmits<{ (e: "choose", uid: UserID | undefined): void }>();
 
 const popup = ref<typeof TimedSidePopup | null>(null);

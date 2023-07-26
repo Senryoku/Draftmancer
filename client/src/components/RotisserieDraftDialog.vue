@@ -92,12 +92,12 @@ const exactCardCount = ref(false);
 const boostersPerPlayer = ref(defaultBoostersPerPlayer.value ?? 3);
 
 const emit = defineEmits<{
-	(e: "cancel"): void;
+	(e: "close"): void;
 	(e: "start", options: RotisserieDraftStartOptions): void;
 }>();
 
 // Methods
-const cancel = () => emit("cancel");
+const cancel = () => emit("close");
 const start = () => {
 	let options;
 	switch (collationType.value) {
@@ -109,6 +109,7 @@ const start = () => {
 			break;
 	}
 	emit("start", options);
+	emit("close");
 };
 </script>
 

@@ -45,12 +45,15 @@ import ResetButton from "./ResetButton.vue";
 const boostersPerPlayer = ref(3);
 
 const emit = defineEmits<{
-	(e: "cancel"): void;
+	(e: "close"): void;
 	(e: "start", boostersPerPlayer: number): void;
 }>();
 
-const cancel = () => emit("cancel");
-const start = () => emit("start", boostersPerPlayer.value);
+const cancel = () => emit("close");
+const start = () => {
+	emit("start", boostersPerPlayer.value);
+	emit("close");
+};
 </script>
 
 <style scoped src="../css/start-game-dialog.css" />
