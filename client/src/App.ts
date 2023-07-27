@@ -233,7 +233,13 @@ export default defineComponent({
 
 		// Socket Setup
 		const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io({
+			transports: ["websocket", "polling"], // Immediately try websocket connection instead of polling first.
 			query,
+		});
+
+		socket.on("connect_error", () => {
+			// revert to classic upgrade
+			socket.io.opts.transports = ["polling", "websocket"];
 		});
 
 		return {
