@@ -9,7 +9,7 @@ const port = process.env.PORT || 3000;
 import fs from "fs";
 import axios, { AxiosResponse } from "axios";
 import compression from "compression";
-import express, { json as ExpressJSON, text as ExpressText } from "express";
+import express, { json as ExpressJSON, text as ExpressText, static as ExpressStatic } from "express";
 import http from "http";
 import { Server, Socket } from "socket.io";
 import cookieParser from "cookie-parser";
@@ -66,13 +66,22 @@ import { isRotisserieDraftState, RotisserieDraftStartOptions } from "./Rotisseri
 import { BracketPlayer } from "./Brackets.js";
 import { getQueueStatus, registerPlayer, unregisterPlayer } from "./draftQueue/DraftQueue.js";
 
+import expressStaticGzip from "express-static-gzip";
+
 const app = express();
 const httpServer = new http.Server(app);
 const io = new Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>(httpServer, {
 	maxHttpBufferSize: 1e7, // Increase max. message size to 10MB to accomodate larger custom card lists.
 });
 
+// Serve pre-compressed files from the dist directory
+app.use("/", expressStaticGzip("./client/dist/", {}));
+
 app.use(compression());
+
+app.use("/bracket", ExpressStatic("./client/dist/bracket.html"));
+app.use("/draftqueue", ExpressStatic("./client/dist/index.html"));
+
 app.use(cookieParser());
 app.use(ExpressJSON());
 app.use(ExpressText({ type: "text/*" }));
@@ -1883,11 +1892,6 @@ app.get("/getSessions/:key", requireAPIKey, (req, res) => {
 app.get("/api/getDraftQueueStatus", (req, res) => {
 	return res.json(getQueueStatus());
 });
-
-// Serve files in the public directory
-app.use("/bracket", express.static("./client/dist/bracket.html"));
-app.use("/draftqueue", express.static("./client/dist/index.html"));
-app.use(express.static("./client/dist/"));
 
 Promise.all([InactiveConnections, InactiveSessions]).then(() => {
 	httpServer.listen(port, () => {
