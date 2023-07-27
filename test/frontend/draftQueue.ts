@@ -1,11 +1,7 @@
-import { ElementHandle } from "puppeteer";
-import chai from "chai";
-const expect = chai.expect;
 import {
 	pickCard,
 	PickResult,
 	startBrowsers,
-	browsers,
 	pages,
 	setBrowsersAndPages,
 	waitAndClickSelector,
@@ -27,7 +23,8 @@ describe("Draft Queue", function () {
 		});
 
 		it(`All join the same queue`, async function () {
-			await Promise.all(pages.map((page) => waitAndClickSelector(page, ".set-card")));
+			// Avoid the CMM queue and its 2 cards per pick for testing purpose.
+			await Promise.all(pages.map((page) => waitAndClickSelector(page, ".set-card:nth-child(2)")));
 			await Promise.all(pages.map((page) => page.waitForSelector(".ready-check")));
 		});
 
@@ -125,7 +122,8 @@ describe("Draft Queue", function () {
 		});
 
 		it(`All join the same queue`, async function () {
-			await Promise.all(pages.map((page) => waitAndClickSelector(page, ".set-card")));
+			// Avoid the CMM queue and its 2 cards per pick for testing purpose.
+			await Promise.all(pages.map((page) => waitAndClickSelector(page, ".set-card:nth-child(2)")));
 			await Promise.all(pages.map((page) => page.waitForSelector(".ready-check")));
 		});
 
