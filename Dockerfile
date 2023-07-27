@@ -6,11 +6,14 @@ WORKDIR /app
 ENV PUPPETEER_SKIP_DOWNLOAD true
 ENV NODE_ENV production
 
-COPY . .
-
+COPY package*.json ./
 # --production=false to force NPM to install all devDependencies as some are needed for building. We could also re-organize them.
 RUN npm ci --production=false
-RUN npm run build-server 
+COPY data data
+COPY tsconfig.json .
+COPY src src
+RUN npm run build-server
+COPY client client
 RUN npm run build-client
 
 FROM node:18-alpine
