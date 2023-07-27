@@ -75,7 +75,7 @@ const io = new Server<ClientToServerEvents, ServerToClientEvents, InterServerEve
 });
 
 // Serve pre-compressed files from the dist directory
-app.use("/", expressStaticGzip("./client/dist/", {}));
+app.use("/", expressStaticGzip("./client/dist/", { enableBrotli: true, orderPreference: ["br", "gz"] }));
 
 app.use(compression());
 
