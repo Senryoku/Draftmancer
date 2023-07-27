@@ -47,7 +47,7 @@ describe("Grid Draft", () => {
 
 		it(`Launch Draft`, async () => {
 			await launchMode("Grid");
-			await waitAndClickSelector(pages[0], "button.swal2-confirm");
+			await waitAndClickXpath(pages[0], "//button[contains(., 'Start Grid Draft')]");
 
 			await Promise.all(
 				pages.map((page) => page.waitForXPath("//h2[contains(., 'Grid Draft')]", { timeout: 3000 }))
@@ -86,7 +86,7 @@ describe("Grid Draft", () => {
 
 		it(`Launch Draft`, async () => {
 			await launchMode("Grid");
-			await waitAndClickSelector(pages[0], "button.swal2-confirm");
+			await waitAndClickXpath(pages[0], "//button[contains(., 'Start Grid Draft')]");
 
 			const promises = [];
 			for (const page of pages)
