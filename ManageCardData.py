@@ -187,6 +187,7 @@ if not os.path.isfile(BulkDataPath) or ForceDownload:
 
 if not os.path.isfile(ScryfallSets) or ForceDownload:
     urllib.request.urlretrieve("https://api.scryfall.com/sets", ScryfallSets)
+    os.system(f"npx prettier --write {ScryfallSets}")
 SetsInfos = json.load(open(ScryfallSets, 'r', encoding="utf8"))['data']
 PrimarySets = [s['code'] for s in SetsInfos if s['set_type']
                in ['core', 'expansion', 'masters', 'draft_innovation']]
