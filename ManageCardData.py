@@ -421,7 +421,7 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
         if c['set'] == "ltr":
             # Workaround: Remove alternate printings and Jumpstart cards from LTR draft boosters (and the 20 basics)
             selection['in_booster'] = int(c['collector_number']) > 0 and int(c['collector_number']) <= 261
-            if "Ring tempts you" in c['oracle_text']:
+            if "Ring tempts you" in c['oracle_text'] and ("all_parts" not in c or next((x for x in c["all_parts"] if x["id"] == "7215460e-8c06-47d0-94e5-d1832d0218af"), None) == None):
                 if "related_cards" not in selection:
                     selection["related_cards"] = []
                 selection["related_cards"].append("7215460e-8c06-47d0-94e5-d1832d0218af")
