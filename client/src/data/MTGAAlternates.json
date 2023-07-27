@@ -72,6 +72,7 @@
         83679,
         79727,
         79119,
+        87658,
         66517,
         70055,
         36812,
@@ -83,6 +84,7 @@
         82320,
         36812,
         80427,
+        87648,
         70778,
         67019,
         70057,
@@ -193,6 +195,7 @@
         77465,
         75897,
         80415,
+        87656,
         82318,
         7065,
         74128,
@@ -270,6 +273,7 @@
         12053,
         73126,
         82763,
+        87650,
         72566,
         73137,
         65369,
@@ -281,6 +285,7 @@
         75866,
         67616,
         70507,
+        87649,
         36818,
         68218,
         82391,
@@ -475,12 +480,14 @@
         75556,
         70046,
         72560,
+        87655,
         75021,
         79734,
         70397,
         82770,
         82771,
         81179,
+        87657,
         69702,
         87588,
         77463,
@@ -518,6 +525,7 @@
         51789,
         70398,
         73511,
+        87654,
         73136,
         68206,
         62115,
@@ -605,6 +613,7 @@
         74119,
         75903,
         74117,
+        87652,
         82477,
         86353,
         82328,
@@ -621,6 +630,7 @@
         68240,
         75863,
         66535,
+        87659,
         87596,
         70062,
         70065,
@@ -909,6 +919,7 @@
         69446,
         75899,
         73495,
+        87653,
         72584,
         70059,
         82777,
@@ -936,6 +947,7 @@
         70412,
         74137,
         78641,
+        87651,
         80419,
         76691,
         36788,
@@ -1729,6 +1741,9 @@
         68044,
         72462
     ],
+    "Frost Titan": [
+        37354
+    ],
     "Captive Audience": [
         69288
     ],
@@ -1860,6 +1875,9 @@
     "Skittering Heartstopper": [
         66209
     ],
+    "Voice of Resurgence": [
+        53741
+    ],
     "Rogue Class": [
         77335
     ],
@@ -1955,6 +1973,9 @@
     ],
     "Thieving Otter": [
         71136
+    ],
+    "Tribal Flames": [
+        57217
     ],
     "Rescue": [
         67230
@@ -2336,6 +2357,9 @@
     "Calix, Guided by Fate": [
         85082
     ],
+    "Chord of Calling": [
+        57743
+    ],
     "Piper of the Swarm": [
         70247
     ],
@@ -2377,6 +2401,9 @@
     ],
     "Crawling Infestation": [
         79003
+    ],
+    "Waterlogged Grove": [
+        71590
     ],
     "Go-Shintai of Shared Purpose": [
         79434
@@ -2900,6 +2927,9 @@
         80146,
         71592
     ],
+    "Sunken Hollow": [
+        62113
+    ],
     "Intangible Virtue": [
         42684,
         42684
@@ -3214,6 +3244,9 @@
     ],
     "Weathered Runestone": [
         75294
+    ],
+    "Judge's Familiar": [
+        51725
     ],
     "Air Elemental": [
         66051,
@@ -5006,6 +5039,9 @@
     "Kami of Bamboo Groves": [
         81103
     ],
+    "Izzet Charm": [
+        51633
+    ],
     "Chandra, Heart of Fire": [
         74656,
         76876,
@@ -5334,6 +5370,9 @@
         68732,
         68733
     ],
+    "Cyclonic Rift": [
+        51359
+    ],
     "Dread Rider": [
         75128
     ],
@@ -5578,6 +5617,9 @@
     ],
     "Kick in the Door": [
         77258
+    ],
+    "Worn Powerstone": [
+        12089
     ],
     "Ancient Lumberknot": [
         79048
@@ -6215,6 +6257,9 @@
     ],
     "Stormfist Crusader": [
         70350
+    ],
+    "Nurturing Peatland": [
+        71584
     ],
     "Clear Shot": [
         78533,
@@ -7583,6 +7628,9 @@
     "Sand Strangler": [
         73953
     ],
+    "Xenagos, God of Revels": [
+        55133
+    ],
     "Psychic Symbiont": [
         68124
     ],
@@ -8180,6 +8228,9 @@
     ],
     "Boneyard Parley": [
         66153
+    ],
+    "Smoldering Marsh": [
+        62109
     ],
     "Merfolk Trickster": [
         67216
@@ -9596,6 +9647,9 @@
     "Giant Opportunity": [
         70306
     ],
+    "Tooth and Nail": [
+        57281
+    ],
     "Prismite": [
         69693,
         70020,
@@ -10607,6 +10661,9 @@
     "Kill-Zone Acrobat": [
         82590
     ],
+    "Golgari Charm": [
+        51617
+    ],
     "Dragonfly Suit": [
         79427
     ],
@@ -11037,6 +11094,9 @@
     "Fortified Village": [
         86328
     ],
+    "Obzedat, Ghost Council": [
+        53379
+    ],
     "Finale of Glory": [
         69463
     ],
@@ -11206,6 +11266,9 @@
     "Sanctuary Warden": [
         80181,
         80467
+    ],
+    "Giver of Runes": [
+        71354
     ],
     "Ignite the Beacon": [
         69469
@@ -11988,6 +12051,9 @@
     "Enthusiastic Study": [
         76492
     ],
+    "Worldspine Wurm": [
+        51569
+    ],
     "Call the Bloodline": [
         86144
     ],
@@ -12586,6 +12652,9 @@
     "Reassembling Skeleton": [
         80870,
         67912
+    ],
+    "Omnath, Locus of Rage": [
+        62049
     ],
     "Spikewheel Acrobat": [
         69246
@@ -13370,6 +13439,9 @@
     "Flow of Knowledge": [
         82533
     ],
+    "Wild Nacatl": [
+        31061
+    ],
     "Fearful Villager // Fearsome Werewolf": [
         78960
     ],
@@ -13513,6 +13585,9 @@
     ],
     "Pestilent Spirit": [
         69209
+    ],
+    "Grave Titan": [
+        37374
     ],
     "Blood Crypt": [
         69393
@@ -15486,6 +15561,9 @@
     "Elven Ambush": [
         75359
     ],
+    "Deathrite Shaman": [
+        51715
+    ],
     "Captive Weird // Compleated Conjurer": [
         84305
     ],
@@ -15816,6 +15894,9 @@
     ],
     "Fiend Binder": [
         86064
+    ],
+    "Bloodghast": [
+        88694
     ],
     "Marauding Blight-Priest": [
         73310
@@ -18765,6 +18846,9 @@
         76242,
         76242
     ],
+    "Orzhov Charm": [
+        53385
+    ],
     "Grand Master of Flowers": [
         77122,
         77395
@@ -18895,6 +18979,9 @@
     "Watchers of the Dead": [
         74105
     ],
+    "Eidolon of Blossoms": [
+        55395
+    ],
     "Swirling Torrent": [
         69184
     ],
@@ -18993,6 +19080,10 @@
     ],
     "Undying Malice": [
         78934
+    ],
+    "Sword of Fire and Ice": [
+        20535,
+        57373
     ],
     "Saruman's Trickery": [
         84760
@@ -19366,6 +19457,9 @@
     ],
     "Mage Duel": [
         76530
+    ],
+    "Gruul Charm": [
+        53353
     ],
     "Mystic Forge": [
         70018,
@@ -19831,6 +19925,9 @@
     "Remorseful Cleric": [
         67746
     ],
+    "Prairie Stream": [
+        62097
+    ],
     "Plague Wight": [
         69210
     ],
@@ -20007,6 +20104,9 @@
     ],
     "A-Case the Joint": [
         84098
+    ],
+    "Simic Charm": [
+        53405
     ],
     "Thing from the Deep": [
         38970
@@ -20367,6 +20467,9 @@
     "Secrets of the Key": [
         78410
     ],
+    "Wayfarer's Bauble": [
+        88511
+    ],
     "Blade Instructor": [
         68462
     ],
@@ -20531,6 +20634,9 @@
     ],
     "Lone Rider // It That Rides as One": [
         86071
+    ],
+    "Repeal": [
+        88682
     ],
     "Anointed Chorister": [
         71786
@@ -21267,6 +21373,9 @@
         76018,
         76018
     ],
+    "Canopy Vista": [
+        62083
+    ],
     "Conclave Mentor": [
         71998
     ],
@@ -21345,6 +21454,9 @@
     ],
     "Nimbus Swimmer": [
         79350
+    ],
+    "Fiery Islet": [
+        71579
     ],
     "Kumena, Tyrant of Orazca": [
         66945
@@ -22219,6 +22331,9 @@
     "Enthusiastic Mechanaut": [
         79656
     ],
+    "Silent Clearing": [
+        71587
+    ],
     "Ram Through": [
         71237
     ],
@@ -22452,6 +22567,9 @@
     ],
     "Radha's Firebrand": [
         82193
+    ],
+    "Acidic Slime": [
+        41185
     ],
     "Historian of Zhalfir": [
         72047
@@ -22792,6 +22910,9 @@
     ],
     "Firecannon Blast": [
         66255
+    ],
+    "Unearth": [
+        87760
     ],
     "Kambal, Consul of Allocation": [
         75776
@@ -23312,6 +23433,9 @@
     ],
     "Wizard's Spellbook": [
         77187
+    ],
+    "Thespian's Stage": [
+        53511
     ],
     "Rootbound Crag": [
         66491
@@ -24572,6 +24696,9 @@
     "Flood of Tears": [
         69844
     ],
+    "Sunbaked Canyon": [
+        71588
+    ],
     "Ulder Ravengard, Marshal": [
         81287
     ],
@@ -24787,6 +24914,9 @@
     ],
     "Curiosity": [
         72209
+    ],
+    "Accorder's Shield": [
+        54233
     ],
     "Battlefield Scavenger": [
         73917
@@ -25282,6 +25412,9 @@
     "Collective Effort": [
         86621
     ],
+    "Abbot of Keral Keep": [
+        61321
+    ],
     "Slaughter Specialist": [
         78468
     ],
@@ -25445,6 +25578,9 @@
     ],
     "Entish Restoration": [
         84855
+    ],
+    "Vendilion Clique": [
+        88094
     ],
     "A-Stimulus Package": [
         84142
@@ -25672,6 +25808,9 @@
     "Grinning Ignus": [
         76497
     ],
+    "Cinder Glade": [
+        62085
+    ],
     "Botanical Sanctum": [
         75859
     ],
@@ -25840,6 +25979,9 @@
     ],
     "Venerated Rotpriest": [
         83892
+    ],
+    "Sylvan Scrying": [
+        61999
     ],
     "Verdurous Gearhulk": [
         75763
@@ -26499,6 +26641,9 @@
     ],
     "Champion of Lambholt": [
         72445
+    ],
+    "Sun Titan": [
+        37406
     ],
     "Dragonlord's Servant": [
         72373
@@ -27161,9 +27306,6 @@
     "Lantern Flare": [
         78803
     ],
-    "Sword of Fire and Ice": [
-        57373
-    ],
     "Heroes of the Revel": [
         70649
     ],
@@ -27208,6 +27350,9 @@
     ],
     "Expansion // Explosion": [
         68691
+    ],
+    "Shrapnel Blast": [
+        57721
     ],
     "Halo Hopper": [
         84567
@@ -27426,6 +27571,9 @@
     ],
     "Riveteers Initiate": [
         80271
+    ],
+    "Bloodbraid Elf": [
+        87848
     ],
     "Crashing Tide": [
         66685
@@ -28744,6 +28892,9 @@
     "Twinblade Geist // Twinblade Invocation": [
         78822
     ],
+    "Inferno Titan": [
+        37428
+    ],
     "Chandra's Outburst": [
         67656
     ],
@@ -29432,6 +29583,9 @@
     "Animal Sanctuary": [
         72024
     ],
+    "Echoing Decay": [
+        20367
+    ],
     "Ishkanah, Broodmother": [
         79958
     ],
@@ -29673,6 +29827,9 @@
     "Cathars' Crusade": [
         72157
     ],
+    "Mortarpod": [
+        39321
+    ],
     "Pitchburn Devils": [
         71938
     ],
@@ -29879,6 +30036,9 @@
     ],
     "Magmaquake": [
         72409
+    ],
+    "Primeval Titan": [
+        37400
     ],
     "Mesa Cavalier": [
         82078
