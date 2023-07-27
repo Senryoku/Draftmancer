@@ -1,1 +1,0 @@
-web: node --experimental-json-modules .
