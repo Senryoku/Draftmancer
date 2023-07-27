@@ -173,13 +173,14 @@ const checkDraftAction = function (userID: UserID, sess: Session, type: string, 
 // Personnal options
 function setUserName(userID: UserID, sessionID: SessionID, userName: string) {
 	Connections[userID].userName = userName;
-	Sessions[sessionID].forUsers((uid: UserID) =>
-		Connections[uid]?.socket.emit("updateUser", {
-			userID: userID,
-			updatedProperties: {
-				userName: userName,
-			},
-		})
+	Sessions[sessionID].forUsers(
+		(uid: UserID) =>
+			Connections[uid]?.socket.emit("updateUser", {
+				userID: userID,
+				updatedProperties: {
+					userName: userName,
+				},
+			})
 	);
 }
 function setCollection(
@@ -203,13 +204,14 @@ function setCollection(
 	ack?.({ collection: processedCollection });
 
 	const hasCollection = processedCollection.size > 0;
-	Sessions[sessionID].forUsers((user) =>
-		Connections[user]?.socket.emit("updateUser", {
-			userID: userID,
-			updatedProperties: {
-				collection: hasCollection,
-			},
-		})
+	Sessions[sessionID].forUsers(
+		(user) =>
+			Connections[user]?.socket.emit("updateUser", {
+				userID: userID,
+				updatedProperties: {
+					collection: hasCollection,
+				},
+			})
 	);
 }
 
@@ -270,13 +272,14 @@ function useCollection(userID: UserID, sessionID: SessionID, useCollection: bool
 	if (!isBoolean(useCollection) || useCollection === Connections[userID].useCollection) return;
 
 	Connections[userID].useCollection = useCollection;
-	Sessions[sessionID].forUsers((user) =>
-		Connections[user]?.socket.emit("updateUser", {
-			userID: userID,
-			updatedProperties: {
-				useCollection: useCollection,
-			},
-		})
+	Sessions[sessionID].forUsers(
+		(user) =>
+			Connections[user]?.socket.emit("updateUser", {
+				userID: userID,
+				updatedProperties: {
+					useCollection: useCollection,
+				},
+			})
 	);
 }
 
@@ -716,12 +719,13 @@ function setSessionOwner(userID: UserID, sessionID: SessionID, newOwnerID: UserI
 	} else {
 		sess.owner = newOwnerID;
 	}
-	sess.forUsers((user) =>
-		Connections[user]?.socket.emit(
-			"sessionOwner",
-			sess.owner,
-			sess.owner && sess.owner in Connections ? Connections[sess.owner].userName : null
-		)
+	sess.forUsers(
+		(user) =>
+			Connections[user]?.socket.emit(
+				"sessionOwner",
+				sess.owner,
+				sess.owner && sess.owner in Connections ? Connections[sess.owner].userName : null
+			)
 	);
 }
 
@@ -873,14 +877,15 @@ function importCube(userID: UserID, sessionID: SessionID, data: unknown, ack: (r
 				if (validateResponse(response, data, ack))
 					parseCustomCardList(Sessions[sessionID], response.data, {}, ack);
 			})
-			.catch((err) =>
-				ack?.(
-					new SocketError(
-						"Error retrieving cube.",
-						`Couldn't retrieve the card list from ${data.service}.`,
-						`Full error: ${err}`
+			.catch(
+				(err) =>
+					ack?.(
+						new SocketError(
+							"Error retrieving cube.",
+							`Couldn't retrieve the card list from ${data.service}.`,
+							`Full error: ${err}`
+						)
 					)
-				)
 			);
 	};
 
@@ -902,14 +907,15 @@ function importCube(userID: UserID, sessionID: SessionID, data: unknown, ack: (r
 					else parseCustomCardList(Sessions[sessionID], converted, { fallbackToCardName: true }, ack);
 				}
 			})
-			.catch((err) =>
-				ack?.(
-					new SocketError(
-						"Error retrieving cube",
-						`Couldn't retrieve the card list from ${data.service}.`,
-						`Full error: ${err}`
+			.catch(
+				(err) =>
+					ack?.(
+						new SocketError(
+							"Error retrieving cube",
+							`Couldn't retrieve the card list from ${data.service}.`,
+							`Full error: ${err}`
+						)
 					)
-				)
 			);
 	}
 }
@@ -1643,11 +1649,14 @@ function removeUserFromSession(userID: UserID) {
 					InactiveSessions[sessionID] = getPoDSession(sess);
 					// Keep Rotisserie Draft around since they're typically played over long period of time.
 					if (!isRotisserieDraftState(sess.draftState))
-						InactiveSessions[sessionID].deleteTimeout = setTimeout(() => {
-							process.nextTick(() => {
-								if (InactiveSessions[sessionID]) delete InactiveSessions[sessionID];
-							});
-						}, 10 * 60 * 1000); // 10min should be plenty enough.
+						InactiveSessions[sessionID].deleteTimeout = setTimeout(
+							() => {
+								process.nextTick(() => {
+									if (InactiveSessions[sessionID]) delete InactiveSessions[sessionID];
+								});
+							},
+							10 * 60 * 1000
+						); // 10min should be plenty enough.
 				}
 				deleteSession(sessionID);
 			} else sess.notifyUserChange();
@@ -1661,15 +1670,7 @@ function removeUserFromSession(userID: UserID) {
 ///////////////////////////////////////////////////////////////////////////////
 // Express server setup
 
-// Serve files in the public directory
-app.use(express.static("./client/dist/"));
-app.use("/bracket", express.static("./client/dist/bracket.html"));
-
-app.use("/draftqueue", express.static("./client/dist/index.html"));
-
-///////////////////////////////////////////////////////////////////////////////
-// Endpoints
-// (TODO: Should be cleaned up)
+// Endpoints (TODO: Should be cleaned up)
 
 app.get("/healthCheck", (req, res) => {
 	res.sendStatus(200);
@@ -1882,6 +1883,11 @@ app.get("/getSessions/:key", requireAPIKey, (req, res) => {
 app.get("/api/getDraftQueueStatus", (req, res) => {
 	return res.json(getQueueStatus());
 });
+
+// Serve files in the public directory
+app.use("/bracket", express.static("./client/dist/bracket.html"));
+app.use("/draftqueue", express.static("./client/dist/index.html"));
+app.use(express.static("./client/dist/"));
 
 Promise.all([InactiveConnections, InactiveSessions]).then(() => {
 	httpServer.listen(port, () => {

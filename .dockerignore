@@ -3,5 +3,6 @@ Dockerfile
 .dockerignore
 node_modules
 .git
+tmp
 
 data/scryfall-all-cards.json
