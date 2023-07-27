@@ -74,8 +74,10 @@ const io = new Server<ClientToServerEvents, ServerToClientEvents, InterServerEve
 	maxHttpBufferSize: 1e7, // Increase max. message size to 10MB to accomodate larger custom card lists.
 });
 
-// Serve pre-compressed files from the dist directory
-app.use("/", expressStaticGzip("./client/dist/", { enableBrotli: true, orderPreference: ["br", "gz"] }));
+// Serve pre-compressed files from the dist directory in production
+if (process.env.NODE_ENV === "production")
+	app.use("/", expressStaticGzip("./client/dist/", { enableBrotli: true, orderPreference: ["br", "gz"] }));
+else app.use("/", ExpressStatic("./client/dist/")); // Otherwise serve them directly (avoid issue with caching compressed assets, and speedup webpack dev build)
 
 app.use(compression());
 

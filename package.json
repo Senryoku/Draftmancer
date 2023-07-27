@@ -10,13 +10,13 @@
 	"scripts": {
 		"start": "node --experimental-json-modules .",
 		"start-dev": "nodemon --signal SIGINT --experimental-json-modules --watch dist/src .",
-		"build": "concurrently \"tsc\" \"npx webpack --config client/webpack.config.cjs --mode=production\"",
+		"build": "concurrently \"tsc\" \"npx webpack --config client/webpack.config.prod.cjs --mode=production\"",
 		"build-server": "tsc",
 		"build-server-dev": "tsc --watch",
-		"build-client": "webpack --config client/webpack.config.cjs --mode=production",
+		"build-client": "webpack --config client/webpack.config.prod.cjs --mode=production",
 		"build-client-dev": "npx webpack --config client/webpack.config.cjs --mode=development --watch --progress",
 		"dev-front": "concurrently --kill-others --raw \"npm run start\" \"npm run build-dev\"",
-		"dev": "concurrently --kill-others --raw \"npm run build-ts-dev\" \"npm run start-dev\" \"npm run build-dev\"",
+		"dev": "concurrently --kill-others --raw \"npm run build-server-dev\" \"npm run start-dev\" \"npm run build-client-dev\"",
 		"test": "cross-env PORT=3001 mocha dist/test --exit --experimental-json-modules",
 		"test-bail": "cross-env PORT=3001 mocha dist/test --exit --experimental-json-modules -bail",
 		"manualtest": "cross-env PORT=3001 mocha dist/test/manual --exit --experimental-json-modules",
@@ -109,6 +109,7 @@
 		"webpack": "^5.88.1",
 		"webpack-bundle-analyzer": "^4.8.0",
 		"webpack-cli": "^5.1.4",
+		"webpack-merge": "^5.9.0",
 		"worker-loader": "^3.0.8"
 	},
 	"optionalDependencies": {
