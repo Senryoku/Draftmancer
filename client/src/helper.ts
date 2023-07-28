@@ -167,3 +167,28 @@ export function sortableUpdate<T>(e: SortableEvent, arr: T[]) {
 	entries.sort((l, r) => l.newIndex - r.newIndex);
 	for (const { item, newIndex } of entries) arr.splice(Math.min(newIndex, arr.length), 0, item);
 }
+
+export function checkOverflow(el: HTMLElement) {
+	const curOverflow = el.style.overflow;
+	if (!curOverflow || curOverflow === "visible") el.style.overflow = "hidden";
+	const isOverflowing = el.clientWidth < el.scrollWidth || el.clientHeight < el.scrollHeight;
+	el.style.overflow = curOverflow;
+	return isOverflowing;
+}
+
+export function fitFontSize(
+	target: HTMLElement,
+	container: HTMLElement | undefined = undefined,
+	initial_size = 1,
+	unit = "em"
+) {
+	if (!container) container = target;
+	target.classList.add("fitting");
+	let curr_font_size = initial_size;
+	target.style.fontSize = curr_font_size + unit;
+	while (checkOverflow(container) && curr_font_size > 0.1) {
+		curr_font_size *= 0.9;
+		target.style.fontSize = curr_font_size + unit;
+	}
+	target.classList.remove("fitting");
+}

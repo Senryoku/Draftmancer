@@ -13,7 +13,7 @@
 		</div>
 		<div style="position: relative">
 			<div class="community-carousel">
-				<div class="scroller">
+				<div class="scroller" ref="communitiesEl">
 					<div
 						v-for="c in communities"
 						:key="c.name"
@@ -22,19 +22,25 @@
 					>
 						<div class="icon"></div>
 						<h2 class="name">{{ c.name }}</h2>
-						<div class="description" :style="`font-size: ${c.fontSize ?? '1em'}`" v-html="c.brief"></div>
+						<div class="description" v-html="c.brief"></div>
 						<div class="links">
 							<a v-if="c.links.discord" :href="c.links.discord" target="_blank">
-								<font-awesome-icon :icon="['brands', 'discord']" /> Discord server
+								<font-awesome-icon :icon="['brands', 'discord']" /><span class="link-label">
+									Discord server</span
+								>
 							</a>
 							<a v-if="c.links.youtube" :href="c.links.twitter" target="_blank">
-								<font-awesome-icon :icon="['brands', 'twitter']" /> Twitter
+								<font-awesome-icon :icon="['brands', 'twitter']" /><span class="link-label">
+									Twitter</span
+								>
 							</a>
 							<a v-if="c.links.youtube" :href="c.links.youtube" target="_blank">
-								<font-awesome-icon :icon="['brands', 'youtube']" /> Youtube
+								<font-awesome-icon :icon="['brands', 'youtube']" /><span class="link-label">
+									Youtube</span
+								>
 							</a>
 							<a v-if="c.links.website" :href="c.links.website" target="_blank">
-								<font-awesome-icon :icon="['fas', 'globe']" /> Website
+								<font-awesome-icon :icon="['fas', 'globe']" /><span class="link-label"> Website</span>
 							</a>
 						</div>
 						<div class="tags">
@@ -69,8 +75,10 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted } from "vue";
 import { Alert } from "../alerts";
 import { ref } from "vue";
+import { fitFontSize } from "../helper";
 
 function shuffleArray<T>(array: Array<T>, start = 0, end = array.length) {
 	for (let i = end - 1; i > start; i--) {
@@ -78,6 +86,13 @@ function shuffleArray<T>(array: Array<T>, start = 0, end = array.length) {
 		[array[i], array[j]] = [array[j], array[i]];
 	}
 }
+
+const communitiesEl = ref();
+onMounted(() => {
+	communitiesEl.value.querySelectorAll(".community").forEach((c: HTMLElement) => {
+		fitFontSize(c.querySelector(".description")!, c);
+	});
+});
 
 const communities = [
 	{
@@ -106,7 +121,6 @@ const communities = [
 	{
 		name: "XMage Draft Historical Society",
 		brief: 'Come experience the history of Limited Magic with the XDHS!<br />We host seven drafts each week, open to all, with a chronological progression plus bonus formats. Sundays (1:50pm EDT / 7:50pm CEST) are custom "remastered" sets designed by members of our community which we draft on Draftmancer. Matches are played on XMage with a full rules engine, all for free!',
-		fontSize: "0.95em",
 		description:
 			'Come experience the history of Limited Magic with the XDHS! Draftmancer makes it possible for us to run events where we draft custom "remastered" sets designed by members of our community. These are basically cubes with rarities, either refining an existing format or mixing together ideas from across different sets. We also offer a chronological progression where we draft almost every historical format in order. Remastered sets are Sundays at 1:50pm EDT / 7:50pm CEST, with other events offered each day to accommodate most timezones. After the draft, we play out the matches as a 3-round Swiss tourney on XMage with a full rules engine, all for free. No matter your experience level, we\'d love to have you play with us!',
 		icon: "xdhs.webp",
@@ -340,6 +354,12 @@ h2 {
 
 	.name {
 		text-align: center;
+	}
+}
+
+@media (max-width: 500px) {
+	.link-label {
+		display: none;
 	}
 }
 </style>

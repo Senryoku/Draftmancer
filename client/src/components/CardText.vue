@@ -37,14 +37,7 @@ import { ScryfallCard, isScryfallCard, ScryfallCardFace, CardCacheEntry, isScryf
 import { defineComponent, PropType } from "vue";
 import { replaceManaSymbols } from "../ManaSymbols";
 import { Card, CardFace } from "@/CardTypes";
-
-function checkOverflow(el: HTMLElement) {
-	const curOverflow = el.style.overflow;
-	if (!curOverflow || curOverflow === "visible") el.style.overflow = "hidden";
-	const isOverflowing = el.clientWidth < el.scrollWidth || el.clientHeight < el.scrollHeight;
-	el.style.overflow = curOverflow;
-	return isOverflowing;
-}
+import { fitFontSize } from "../helper";
 
 // Displays a card using Scryfall card data instead of its image.
 export default defineComponent({
@@ -62,20 +55,10 @@ export default defineComponent({
 	methods: {
 		fitAll() {
 			this.$nextTick(() => {
-				this.$el.querySelectorAll(".card-text .font-size-fit").forEach((div: Element) => {
-					this.fitFontSize(div as HTMLElement);
+				this.$el.querySelectorAll(".card-text .font-size-fit").forEach((div: HTMLElement) => {
+					fitFontSize(div, div, 2.5, "vh");
 				});
 			});
-		},
-		fitFontSize(el: HTMLElement, initial_size = 2.5) {
-			el.classList.add("fitting");
-			let curr_font_size = initial_size;
-			el.style.fontSize = curr_font_size + "vh";
-			while (checkOverflow(el) && curr_font_size > 0.1) {
-				curr_font_size *= 0.9;
-				el.style.fontSize = curr_font_size + "vh";
-			}
-			el.classList.remove("fitting");
 		},
 		parseOracle(str: string) {
 			str = replaceManaSymbols(str);
@@ -133,11 +116,14 @@ export default defineComponent({
 }
 @font-face {
 	font-family: "MPlantin";
-	src: url("../assets/fonts/mplantin.eot") format("eot"), url("../assets/fonts/mplantin.woff") format("woff");
+	src:
+		url("../assets/fonts/mplantin.eot") format("eot"),
+		url("../assets/fonts/mplantin.woff") format("woff");
 }
 @font-face {
 	font-family: "MPlantin-Italic";
-	src: url("../assets/fonts/MPlantin-Italic.woff") format("woff"),
+	src:
+		url("../assets/fonts/MPlantin-Italic.woff") format("woff"),
 		url("../assets/fonts/MPlantin-Italic.woff2") format("woff2");
 	font-style: italic;
 }
