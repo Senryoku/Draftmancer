@@ -162,7 +162,7 @@
 						}"
 						alt="Bot Recommendations Button"
 					>
-						<img src="./assets/img/bot-score.svg" />
+						<img src="./assets/img/bot-score.svg" width="20" height="20" alt="Bot Recommendations Button" />
 					</div>
 				</div>
 				<div style="min-width: 20px">

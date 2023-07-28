@@ -7,7 +7,7 @@
 						class="set-icon"
 						style="padding-left: 4px; padding-right: 4px"
 						:src="SetsInfos[modelValue[0]].icon"
-						alt=""
+						:alt="SetsInfos[modelValue[0]].code"
 					/>
 					<span class="selected-set-name">{{ SetsInfos[modelValue[0]].fullName }}</span>
 				</span>
@@ -38,7 +38,13 @@
 			>
 				<slot name="option" :option="option">
 					<span class="set-option">
-						<img class="set-icon padded-icon" :src="SetsInfos[option].icon" alt="" />
+						<img
+							class="set-icon padded-icon"
+							:src="SetsInfos[option].icon"
+							:alt="SetsInfos[option].code"
+							height="16"
+							width="48"
+						/>
 						<span class="set-option-name">
 							{{ SetsInfos[option].fullName }}
 						</span>
