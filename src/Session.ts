@@ -195,11 +195,12 @@ export class Session implements IIndexable {
 		const disconnectedUsersData: { [uid: string]: { userName: string } } = {};
 		for (const uid in this.disconnectedUsers)
 			disconnectedUsersData[uid] = { userName: this.disconnectedUsers[uid].userName };
-		this.forUsers((u) =>
-			Connections[u]?.socket.emit("userDisconnected", {
-				owner: this.owner,
-				disconnectedUsers: disconnectedUsersData,
-			})
+		this.forUsers(
+			(u) =>
+				Connections[u]?.socket.emit("userDisconnected", {
+					owner: this.owner,
+					disconnectedUsers: disconnectedUsersData,
+				})
 		);
 	}
 
@@ -242,16 +243,17 @@ export class Session implements IIndexable {
 			while (this.customBoosters.length < boostersPerPlayer) this.customBoosters.push("");
 			while (this.customBoosters.length > boostersPerPlayer) this.customBoosters.pop();
 
-			this.forUsers((uid: UserID) =>
-				Connections[uid]?.socket.emit(
-					"sessionOptions",
-					userID === uid // Don't send boostersPerPlayer back to the user who changed the setting, avoiding possible loops
-						? { customBoosters: this.customBoosters }
-						: {
-								boostersPerPlayer: this.boostersPerPlayer,
-								customBoosters: this.customBoosters,
-						  }
-				)
+			this.forUsers(
+				(uid: UserID) =>
+					Connections[uid]?.socket.emit(
+						"sessionOptions",
+						userID === uid // Don't send boostersPerPlayer back to the user who changed the setting, avoiding possible loops
+							? { customBoosters: this.customBoosters }
+							: {
+									boostersPerPlayer: this.boostersPerPlayer,
+									customBoosters: this.customBoosters,
+							  }
+					)
 			);
 		}
 	}
@@ -277,13 +279,14 @@ export class Session implements IIndexable {
 			this.customCardListWithReplacement = cardList.settings.withReplacement;
 		if (cardList.settings?.boostersPerPlayer) this.boostersPerPlayer = cardList.settings.boostersPerPlayer;
 
-		this.forUsers((uid: UserID) =>
-			Connections[uid]?.socket.emit("sessionOptions", {
-				useCustomCardList: this.useCustomCardList,
-				customCardList: this.customCardList,
-				customCardListWithReplacement: this.customCardListWithReplacement,
-				boostersPerPlayer: this.boostersPerPlayer,
-			})
+		this.forUsers(
+			(uid: UserID) =>
+				Connections[uid]?.socket.emit("sessionOptions", {
+					useCustomCardList: this.useCustomCardList,
+					customCardList: this.customCardList,
+					customCardListWithReplacement: this.customCardListWithReplacement,
+					boostersPerPlayer: this.boostersPerPlayer,
+				})
 		);
 	}
 
@@ -297,12 +300,13 @@ export class Session implements IIndexable {
 				this.maxPlayers = 8;
 			}
 
-			this.forUsers((u) =>
-				Connections[u]?.socket.emit("sessionOptions", {
-					teamDraft: this.teamDraft,
-					maxPlayers: this.maxPlayers,
-					bots: this.bots,
-				})
+			this.forUsers(
+				(u) =>
+					Connections[u]?.socket.emit("sessionOptions", {
+						teamDraft: this.teamDraft,
+						maxPlayers: this.maxPlayers,
+						bots: this.bots,
+					})
 			);
 		}
 	}
@@ -310,10 +314,11 @@ export class Session implements IIndexable {
 	setDisableBotSuggestions(disableBotSuggestions: boolean) {
 		if (this.disableBotSuggestions !== disableBotSuggestions) {
 			this.disableBotSuggestions = disableBotSuggestions;
-			this.forUsers((u) =>
-				Connections[u]?.socket.emit("sessionOptions", {
-					disableBotSuggestions: this.disableBotSuggestions,
-				})
+			this.forUsers(
+				(u) =>
+					Connections[u]?.socket.emit("sessionOptions", {
+						disableBotSuggestions: this.disableBotSuggestions,
+					})
 			);
 		}
 	}
@@ -321,10 +326,11 @@ export class Session implements IIndexable {
 	setRandomizeSeatingOrder(randomizeSeatingOrder: boolean) {
 		if (this.randomizeSeatingOrder !== randomizeSeatingOrder) {
 			this.randomizeSeatingOrder = randomizeSeatingOrder;
-			this.forUsers((u) =>
-				Connections[u]?.socket.emit("sessionOptions", {
-					randomizeSeatingOrder: this.randomizeSeatingOrder,
-				})
+			this.forUsers(
+				(u) =>
+					Connections[u]?.socket.emit("sessionOptions", {
+						randomizeSeatingOrder: this.randomizeSeatingOrder,
+					})
 			);
 		}
 	}
@@ -1687,6 +1693,7 @@ export class Session implements IIndexable {
 				)
 			)
 				botParameters.model_type = this.setRestriction[0] as MTGDraftBotsSetSpecializedModels;
+			botParameters.desired_model = this.setRestriction[0];
 		}
 
 		// There is a very slim possibility that everyone disconnects during the asynchronous call to fallbackToSimpleBots,
@@ -1748,8 +1755,8 @@ export class Session implements IIndexable {
 					s.players[to].boosters.length === 1,
 					"Error: Randomly picking player shouldn't have boosters in waiting."
 				);
-				this.randomPick(to).then((picks) =>
-					Connections[to]?.socket.emit("addCards", "You randomly picked:", picks)
+				this.randomPick(to).then(
+					(picks) => Connections[to]?.socket.emit("addCards", "You randomly picked:", picks)
 				);
 				return;
 			}
@@ -1769,10 +1776,11 @@ export class Session implements IIndexable {
 
 		// Update player states
 		const virtualPlayersData = this.getSortedVirtualPlayerData();
-		this.forUsers((uid) =>
-			Connections[uid]?.socket.emit("sessionOptions", {
-				virtualPlayersData: virtualPlayersData,
-			})
+		this.forUsers(
+			(uid) =>
+				Connections[uid]?.socket.emit("sessionOptions", {
+					virtualPlayersData: virtualPlayersData,
+				})
 		);
 	}
 
@@ -2458,10 +2466,11 @@ export class Session implements IIndexable {
 
 		console.warn(`resumeOnReconnection(): Restarting draft for session ${this.id}.`);
 
-		this.forUsers((user) =>
-			Connections[user]?.socket.emit("sessionOptions", {
-				virtualPlayersData: this.getSortedVirtualPlayerData(),
-			})
+		this.forUsers(
+			(user) =>
+				Connections[user]?.socket.emit("sessionOptions", {
+					virtualPlayersData: this.getSortedVirtualPlayerData(),
+				})
 		);
 
 		if (isDraftState(this.draftState)) {
@@ -3035,10 +3044,11 @@ export class Session implements IIndexable {
 			this.startBotPickChain(uid);
 		}
 		const virtualPlayers = this.getSortedVirtualPlayerData();
-		this.forUsers((uid) =>
-			Connections[uid]?.socket.emit("sessionOptions", {
-				virtualPlayersData: virtualPlayers,
-			})
+		this.forUsers(
+			(uid) =>
+				Connections[uid]?.socket.emit("sessionOptions", {
+					virtualPlayersData: virtualPlayers,
+				})
 		);
 		this.resumeOnReconnection({
 			title: "Resuming draft",
@@ -3202,13 +3212,14 @@ export class Session implements IIndexable {
 	}
 
 	emitMessage(title: string, text: string = "", showConfirmButton = true, timer = 1500) {
-		this.forUsers((uid) =>
-			Connections[uid]?.socket.emit("message", {
-				title: title,
-				text: text,
-				showConfirmButton: showConfirmButton,
-				timer: timer,
-			} as Message)
+		this.forUsers(
+			(uid) =>
+				Connections[uid]?.socket.emit("message", {
+					title: title,
+					text: text,
+					showConfirmButton: showConfirmButton,
+					timer: timer,
+				} as Message)
 		);
 	}
 
@@ -3290,11 +3301,12 @@ export class Session implements IIndexable {
 					if (this.draftLog.delayed) {
 						// Complete log has not been shared yet, send only hashes to non-owners, unless its their own and personalLogs is enabled.
 						if (this.owner) Connections[this.owner]?.socket.emit("shareDecklist", shareData);
-						this.forNonOwners((uid) =>
-							Connections[uid]?.socket.emit(
-								"shareDecklist",
-								this.personalLogs && userID === uid ? shareData : hashesOnly
-							)
+						this.forNonOwners(
+							(uid) =>
+								Connections[uid]?.socket.emit(
+									"shareDecklist",
+									this.personalLogs && userID === uid ? shareData : hashesOnly
+								)
 						);
 						break;
 					}
@@ -3307,20 +3319,22 @@ export class Session implements IIndexable {
 					break;
 				case "owner":
 					if (this.owner) Connections[this.owner]?.socket.emit("shareDecklist", shareData);
-					this.forNonOwners((uid) =>
-						Connections[uid]?.socket.emit(
-							"shareDecklist",
-							this.personalLogs && userID === uid ? shareData : hashesOnly
-						)
+					this.forNonOwners(
+						(uid) =>
+							Connections[uid]?.socket.emit(
+								"shareDecklist",
+								this.personalLogs && userID === uid ? shareData : hashesOnly
+							)
 					);
 					break;
 				case "none":
 					if (this.owner) Connections[this.owner]?.socket.emit("shareDecklist", hashesOnly);
-					this.forNonOwners((uid) =>
-						Connections[uid]?.socket.emit(
-							"shareDecklist",
-							this.personalLogs && userID === uid ? shareData : hashesOnly
-						)
+					this.forNonOwners(
+						(uid) =>
+							Connections[uid]?.socket.emit(
+								"shareDecklist",
+								this.personalLogs && userID === uid ? shareData : hashesOnly
+							)
 					);
 					break;
 			}
