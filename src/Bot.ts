@@ -11,13 +11,17 @@ import { Card, OracleID } from "./CardTypes.js";
 import { isArrayOf, isNumber } from "./TypeChecks.js";
 
 const MTGDraftBotsAPITimeout = 10000;
-const MTGDraftBotsAPIURLs: { url: string; weight: number }[] = [];
+const MTGDraftBotsAPIURLs: { url: string; weight: number; models?: string[] }[] = [];
 async function addMTGDraftBotsInstance(domain: string, authToken: string, weight: number) {
 	// Make sure the instance is accessible
 	try {
 		const response = await axios.get(`${domain}/version`, { timeout: 5000 });
 		if (response.status === 200) {
-			MTGDraftBotsAPIURLs.push({ url: `${domain}/draft?auth_token=${authToken}`, weight: weight });
+			MTGDraftBotsAPIURLs.push({
+				url: `${domain}/draft?auth_token=${authToken}`,
+				weight: weight,
+				models: response.data.models,
+			});
 			console.log(`[+] MTGDraftBots instance '${domain}' added.`);
 		} else console.error(`MTGDraftBots instance '${domain}' returned an error: ${response.statusText}.`);
 	} catch (error: any) {
@@ -34,15 +38,10 @@ if (process.env.MTGDRAFTBOTS_AUTHTOKEN)
 		process.env.MTGDRAFTBOTS_AUTHTOKEN,
 		process.env.NODE_ENV === "production" ? 1 : 0 // Do not use in development, unless it's the only instance available
 	);
-/* Temporarily disabled while we get the update working on ARM.
+
+const altBots = "http://127.0.0.1:8080/"; // process.env.MTGDRAFTBOTS_ALT_INSTANCE ?? "http://127.0.0.1:8080";
 // Allow an alternative instance of the mtgdraftbots server
-if (process.env.MTGDRAFTBOTS_ALT_INSTANCE)
-	addMTGDraftBotsInstance(
-		process.env.MTGDRAFTBOTS_ALT_INSTANCE,
-		process.env.MTGDRAFTBOTS_ALT_INSTANCE_AUTHTOKEN ?? "testing",
-		1
-	);
-*/
+if (altBots) addMTGDraftBotsInstance(altBots, process.env.MTGDRAFTBOTS_ALT_INSTANCE_AUTHTOKEN ?? "testing", 1);
 
 export enum MTGDraftBotsSetSpecializedModels {
 	neo = "neo",
@@ -54,11 +53,14 @@ export enum MTGDraftBotsSetSpecializedModels {
 
 export type MTGDraftBotParameters = {
 	model_type: "prod" | MTGDraftBotsSetSpecializedModels;
+	desired_model?: string;
 };
 
 // Returns a random instance of the mtgdraftbots server for each request (load balancing the stupid way :D).
 const MTGDraftBotsAPIURLsTotalWeight = MTGDraftBotsAPIURLs.reduce((acc, curr) => acc + curr.weight, 0);
 function getMTGDraftBotsURL(parameters: MTGDraftBotParameters): string {
+	for (const candidate of MTGDraftBotsAPIURLs)
+		if (parameters.desired_model && candidate.models?.includes(parameters.desired_model)) return candidate.url;
 	return (
 		MTGDraftBotsAPIURLs[weightedRandomIdx(MTGDraftBotsAPIURLs, MTGDraftBotsAPIURLsTotalWeight)].url +
 		`&model_type=${parameters.model_type}`
@@ -66,6 +68,8 @@ function getMTGDraftBotsURL(parameters: MTGDraftBotParameters): string {
 }
 
 export async function fallbackToSimpleBots(oracleIds: Array<OracleID>): Promise<boolean> {
+	return false; // TEMP FIXME
+
 	// No mtgdraftbots servers available
 	if (MTGDraftBotsAPIURLs.length === 0) return true;
 
@@ -250,7 +254,7 @@ export class Bot implements IBot {
 		try {
 			const response = await axios.post(
 				getMTGDraftBotsURL(this.parameters),
-				{ drafterState },
+				{ drafterState, model: this.parameters.desired_model },
 				{ timeout: MTGDraftBotsAPITimeout }
 			);
 			if (response.status === 200 && response.data.success) {
