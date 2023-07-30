@@ -2819,7 +2819,6 @@ export default defineComponent({
 					for (let i = 0; i < packButtons.length; ++i) {
 						packButtons[i].addEventListener("click", () => {
 							choice = i;
-							for (const c of boosters[i].cards) this.addToDeck(c);
 							Alert.clickConfirm();
 						});
 					}
@@ -2831,12 +2830,16 @@ export default defineComponent({
 			choices: [JHHBooster[], JHHBooster[][]],
 			ack: (user: UserID, cards: CardID[]) => void
 		) {
-			this.clearState();
 			const choice = await this.displayPackChoice(choices[0], 0, choices.length);
-			// User canceled
-			if (choice < 0) return ack?.(this.userID, []);
+			if (choice < 0) return ack?.(this.userID, []); // User canceled
+			const secondChoice = await this.displayPackChoice(choices[1][choice], 1, choices.length);
+			if (secondChoice < 0) return ack?.(this.userID, []);
+
+			this.clearState();
+			for (const c of choices[0][choice].cards) this.addToDeck(c);
+			for (const c of choices[1][choice][secondChoice].cards) this.addToDeck(c);
 			this.draftingState = DraftState.Brewing;
-			await this.displayPackChoice(choices[1][choice], 1, choices.length);
+
 			ack?.(
 				this.userID,
 				this.deck.map((card) => card.id)
