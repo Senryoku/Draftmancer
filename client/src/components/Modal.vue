@@ -185,7 +185,6 @@ export default defineComponent({
 	border-radius: 0.25em;
 	color: #fff;
 	font-size: 1em;
-	font-family: "MS Shell Dlg 2";
 	text-transform: none;
 	letter-spacing: initial;
 }
