@@ -1693,6 +1693,7 @@ export class Session implements IIndexable {
 				)
 			)
 				botParameters.model_type = this.setRestriction[0] as MTGDraftBotsSetSpecializedModels;
+			botParameters.desired_model = this.setRestriction[0];
 		}
 
 		// There is a very slim possibility that everyone disconnects during the asynchronous call to fallbackToSimpleBots,
