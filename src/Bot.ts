@@ -8,6 +8,7 @@ if (process.env.NODE_ENV !== "production") {
 
 import { shuffleArray, weightedRandomIdx } from "./utils.js";
 import { Card, OracleID } from "./CardTypes.js";
+import { isArrayOf, isNumber } from "./TypeChecks.js";
 
 const MTGDraftBotsAPITimeout = 10000;
 const MTGDraftBotsAPIURLs: { url: string; weight: number }[] = [];
@@ -243,18 +244,21 @@ export class Bot implements IBot {
 				{ timeout: MTGDraftBotsAPITimeout }
 			);
 			if (response.status === 200 && response.data.success) {
+				const scores = response.data.scores;
+				if (!isArrayOf(isNumber)(scores)) throw Error("Unexpected type for scores in mtgdraftbots response.");
+				if (scores.length === 0) throw Error("Empty scores in mtgdraftbots response.");
+				if (scores.length !== booster.length)
+					console.warn(
+						`Warning (Bot.getScores): mtgdraftbots returned an incorrect number of scores (expected ${booster.length}, got ${response.data.scores.length})`
+					);
 				let chosenOption = 0;
-				for (let i = 0; i < response.data.scores.length; ++i) {
+				for (let i = 0; i < Math.min(scores.length, booster.length); ++i) {
 					// Non-recognized cards will return a score of 0; Use the card rating as fallback if available (mostly useful for custom cards).
-					if (response.data.scores[i] === 0 && baseRatings[i])
-						response.data.scores[i] = 1.5 + (7.0 / 5.0) * baseRatings[i]; // Remap 0-5 to 1.5-8.5, totally arbitrary and only there to avoid bots completely ignoring custom cards.
+					if (scores[i] === 0 && baseRatings[i]) scores[i] = 1.5 + (7.0 / 5.0) * baseRatings[i]; // Remap 0-5 to 1.5-8.5, totally arbitrary and only there to avoid bots completely ignoring custom cards.
 
-					if (response.data.scores[i] > response.data.scores[chosenOption]) chosenOption = i;
+					if (scores[i] > scores[chosenOption]) chosenOption = i;
 				}
-				this.lastScores = {
-					chosenOption: chosenOption,
-					scores: response.data.scores,
-				};
+				this.lastScores = { chosenOption, scores };
 				return this.lastScores;
 			} else {
 				console.error("Error requesting mtgdraftbots scores, full response:");
@@ -262,7 +266,7 @@ export class Bot implements IBot {
 				return await this.getScoresFallback(booster, boosterNum, numBoosters, pickNum, numPicks);
 			}
 		} catch (e: any) {
-			if (e.code == "ECONNABORTED")
+			if (e.code === "ECONNABORTED")
 				console.warn(`ECONNABORTED requesting mtgdraftbots scores (${e.url}): `, e.message);
 			else console.error(`Error requesting mtgdraftbots scores: (${e.url})`, e.message);
 			return await this.getScoresFallback(booster, boosterNum, numBoosters, pickNum, numPicks);
