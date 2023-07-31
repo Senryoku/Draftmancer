@@ -92,7 +92,7 @@
 		"eslint-import-resolver-typescript": "^3.5.5",
 		"eslint-plugin-import": "^2.27.5",
 		"eslint-plugin-prettier": "^5.0.0",
-		"eslint-plugin-vue": "^9.15.1",
+		"eslint-plugin-vue": "^9.16.1",
 		"file-loader": "^6.2.0",
 		"html-webpack-plugin": "^5.5.0",
 		"husky": "^8.0.3",
