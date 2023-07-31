@@ -78,7 +78,7 @@ import { InProduction, TestingOnly } from "./Context.js";
 // Tournament timer depending on the number of remaining cards in a pack.
 const TournamentTimer = [
 	0,
-	5, // 1 card remaining. Should be immediate
+	5, // 1 card remaining. Should be immediate per the rules, but give it some time for a better user experience.
 	5,
 	5,
 	5,
