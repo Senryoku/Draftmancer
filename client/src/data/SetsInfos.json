@@ -3067,11 +3067,11 @@
     "p30a": {
         "code": "p30a",
         "fullName": "30th Anniversary Play Promos",
-        "cardCount": 27,
+        "cardCount": 23,
         "isPrimary": false,
         "icon": "img/sets/p30a.svg",
         "mythicCount": 1,
-        "rareCount": 26
+        "rareCount": 22
     },
     "p30h": {
         "code": "p30h",
@@ -3080,6 +3080,14 @@
         "isPrimary": false,
         "icon": "img/sets/p30h.svg",
         "rareCount": 10
+    },
+    "p30m": {
+        "code": "p30m",
+        "fullName": "30th Anniversary Misc Promos",
+        "cardCount": 4,
+        "isPrimary": false,
+        "icon": "img/sets/p30m.svg",
+        "rareCount": 4
     },
     "p30t": {
         "code": "p30t",
@@ -5067,10 +5075,10 @@
     "sch": {
         "code": "sch",
         "fullName": "Store Championships",
-        "cardCount": 14,
+        "cardCount": 15,
         "isPrimary": false,
         "icon": "img/sets/sch.svg",
-        "mythicCount": 2,
+        "mythicCount": 3,
         "rareCount": 12
     },
     "shm": {
@@ -5131,8 +5139,8 @@
         "icon": "img/sets/sld.svg",
         "commonCount": 42,
         "mythicCount": 174,
-        "rareCount": 733,
-        "uncommonCount": 23
+        "rareCount": 735,
+        "uncommonCount": 21
     },
     "slp": {
         "code": "slp",
@@ -5615,6 +5623,13 @@
         "icon": "img/sets/tunf.svg",
         "commonCount": 1
     },
+    "twho": {
+        "code": "twho",
+        "fullName": "Doctor Who Tokens",
+        "cardCount": 1,
+        "isPrimary": false,
+        "commonCount": 1
+    },
     "uds": {
         "code": "uds",
         "fullName": "Urza's Destiny",
@@ -5967,13 +5982,13 @@
     "who": {
         "code": "who",
         "fullName": "Doctor Who",
-        "cardCount": 16,
+        "cardCount": 59,
         "isPrimary": false,
         "icon": "img/sets/who.svg",
         "commonCount": 10,
-        "mythicCount": 2,
-        "rareCount": 1,
-        "uncommonCount": 3
+        "mythicCount": 15,
+        "rareCount": 30,
+        "uncommonCount": 4
     },
     "wmc": {
         "code": "wmc",
@@ -5983,6 +5998,26 @@
         "icon": "img/sets/wmc.svg",
         "mythicCount": 2,
         "rareCount": 3
+    },
+    "woe": {
+        "code": "woe",
+        "fullName": "Wilds of Eldraine",
+        "cardCount": 18,
+        "isPrimary": true,
+        "commonCount": 7,
+        "mythicCount": 6,
+        "rareCount": 4,
+        "uncommonCount": 1
+    },
+    "wot": {
+        "code": "wot",
+        "fullName": "Wilds of Eldraine: Enchanting Tales",
+        "cardCount": 15,
+        "isPrimary": false,
+        "icon": "img/sets/wot.svg",
+        "mythicCount": 11,
+        "rareCount": 3,
+        "uncommonCount": 1
     },
     "wth": {
         "code": "wth",

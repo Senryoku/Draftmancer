@@ -7,7 +7,7 @@ export type SetInfo = {
 	cardCount: number;
 	isPrimary: boolean;
 	block?: string;
-	icon: string;
+	icon?: string;
 	commonCount?: number;
 	rareCount?: number;
 	uncommonCount?: number;
