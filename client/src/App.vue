@@ -2483,7 +2483,7 @@
 							v-tooltip.right="{
 								popperClass: 'option-tooltip',
 								content:
-									'<p>Controls the duration of the review phase between booster. This is generally used in conjonction with the \'Hide Picks\' settings. A value of 0 disables the review phase.</p>',
+									'<p>Controls the initial duration of the review phase between booster, it will increase by 50% after each pack, up to 2 times the initial duration. This is generally used in conjonction with the \'Hide Picks\' settings. A value of 0 disables the review phase.</p>',
 								html: true,
 							}"
 						>
