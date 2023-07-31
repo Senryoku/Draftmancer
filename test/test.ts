@@ -58,6 +58,7 @@ const CustomCards_MultipleDefaultSlots_Invalid = fs.readFileSync(
 );
 const WithReplacement = fs.readFileSync(`./test/data/ReplacementTest.txt`, "utf8");
 const WithReplacementLayouts = fs.readFileSync(`./test/data/ReplacementTest_Layouts.txt`, "utf8");
+const DuplicationProtectionCube = fs.readFileSync(`./test/data/DuplicationProtection.txt`, "utf8");
 
 describe("Inter client communication", function () {
 	const sessionID = "sessionID";
@@ -1585,6 +1586,25 @@ describe("Single Draft (Two Players)", function () {
 		startDraft(checkDuplicates);
 		endDraft(checkDuplicates);
 		expectCardCount(3 * 15);
+		disconnect();
+	});
+
+	describe("Duplication protection test using a cube with layouts", function () {
+		connect();
+		it("Clients should receive the updated useCustomCardList.", function (done) {
+			clients[nonOwnerIdx].once("sessionOptions", function (val) {
+				expect(val.useCustomCardList).to.equal(true);
+				done();
+			});
+			clients[ownerIdx].emit("setUseCustomCardList", true);
+		});
+		it("Clients should receive the updated customCardList.", function (done) {
+			clients[nonOwnerIdx].once("sessionOptions", () => done());
+			clients[ownerIdx].emit("parseCustomCardList", DuplicationProtectionCube, ackNoError);
+		});
+		startDraft(checkDuplicates);
+		endDraft(checkDuplicates);
+		expectCardCount(3 * 18);
 		disconnect();
 	});
 

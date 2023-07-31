@@ -1,0 +1,37 @@
+[Settings]
+{
+	"name": "Dup Bug",
+	"withReplacement": true,
+	"showSlots": true,
+	"layouts": {
+		"Rare": {
+			"weight": 1,
+			"slots": {
+  				"Common": 7,
+  				"Uncommon": 6,
+  				"Rare": 5
+			}
+		}
+	}
+}
+[Common]
+1 Kitesail Cleric (ZNR) 20
+1 Hada Freeblade (WWK) 7
+1 Ondu Cleric (ZEN) 30
+1 Fledgling Griffin (WWK) 5
+1 Kor Skyfisher (ZEN) 23
+1 Wall of Omens (ROE) 53
+1 Angelheart Protector (ZNR) 3
+[Uncommon]
+1 Kor Duelist (ZEN) 19
+1 Ruin Ghost (WWK) 19
+1 Kazandu Blademaster (ZEN) 16
+1 Shepherd of the Lost (ZEN) 34
+1 Soulbound Guardians (ROE) 45
+1 Totem-Guide Hartebeest (ROE) 50
+[Rare]
+1 Admonition Angel (WWK) 1
+1 Deathless Angel (ROE) 17
+1 Maul of the Skyclaves (ZNR) 27
+1 Gideon Jura (ROE) 21
+1 Sphinx of Jwar Isle (ZEN) 68
