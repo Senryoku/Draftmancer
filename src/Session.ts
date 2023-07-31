@@ -2442,7 +2442,9 @@ export class Session implements IIndexable {
 		};
 
 		if (this.reviewTimer > 0 && s.boosterNumber > 0) {
-			const roundReviewTimer = (1 + 0.5 * Math.max(0, Math.min(s.boosterNumber - 1, 2))) * this.reviewTimer;
+			const roundReviewTimer = Math.round(
+				(1 + 0.5 * Math.max(0, Math.min(s.boosterNumber - 1, 2))) * this.reviewTimer
+			);
 			this.forUsers((uid) => Connections[uid]?.socket.emit("startReviewPhase", roundReviewTimer));
 			// FIXME: Using this method, if everyone disconnects during the review phase (not impossible, especially with a single player), the draft will be completely stuck.
 			//        This is currently handled by a workaround in resumeOnReconnection, but we can probably do better.
