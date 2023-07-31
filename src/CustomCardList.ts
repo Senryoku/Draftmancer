@@ -165,7 +165,7 @@ export function generateBoosterFromCustomCardList(
 					if (useColorBalance)
 						pickedCards = colorBalancedSlotGenerators[slotName].generate(
 							pickedLayout.slots[slotName],
-							[],
+							booster,
 							pickOptions
 						);
 					else

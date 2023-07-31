@@ -97,11 +97,16 @@ export class ColorBalancedSlot {
 	}
 
 	// Returns cardCount color balanced cards picked from cardPool.
-	// pickedCards can contain pre-selected cards for this slot.
-	generate(cardCount: number, pickedCards: Array<UniqueCard> = [], options: Options = {}) {
+	// duplicateProtection can contain pre-selected cards to avoid duplicates.
+	generate(
+		cardCount: number,
+		duplicateProtection: Array<UniqueCard> = [],
+		options: Parameters<typeof pickCard>[2] = {}
+	) {
+		const pickedCards: UniqueCard[] = [];
 		for (const c of "WUBRG") {
 			if (this.cache.byColor[c] && this.cache.byColor[c].size > 0) {
-				const pickedCard = pickCard(this.cache.byColor[c], pickedCards, options);
+				const pickedCard = pickCard(this.cache.byColor[c], pickedCards.concat(duplicateProtection), options);
 				pickedCards.push(pickedCard);
 
 				if (options?.withReplacement !== true) {
@@ -134,7 +139,11 @@ export class ColorBalancedSlot {
 		const x = (c * remainingCards - a * seededMonocolors) / (remainingCards * (c + a));
 		for (let i = pickedCards.length; i < cardCount; ++i) {
 			const type = (random.bool(x) && this.cache.monocoloredCount !== 0) || this.cache.othersCount === 0;
-			const pickedCard = pickCard(type ? this.cache.monocolored : this.cache.others, pickedCards, options);
+			const pickedCard = pickCard(
+				type ? this.cache.monocolored : this.cache.others,
+				pickedCards.concat(duplicateProtection),
+				options
+			);
 			pickedCards.push(pickedCard);
 
 			if (options?.withReplacement !== true) {
@@ -224,7 +233,7 @@ export class BoosterFactory implements IBoosterFactory {
 		// Color balance the booster by adding one common of each color if possible
 		let pickedCommons = [];
 		if (this.options.colorBalance && this.colorBalancedSlot && targets["common"] - addedFoils >= 5) {
-			pickedCommons = this.colorBalancedSlot.generate(targets["common"] - addedFoils);
+			pickedCommons = this.colorBalancedSlot.generate(targets["common"] - addedFoils, booster);
 		} else {
 			for (let i = pickedCommons.length; i < targets["common"] - addedFoils; ++i) {
 				const pickedCard = pickCard(this.cardPool["common"], pickedCommons);
