@@ -492,7 +492,7 @@ describe("Single Draft (Two Players)", function () {
 		});
 	}
 
-	function startDraft() {
+	function startDraft(boosterValidation?: (booster: UniqueCard[]) => void) {
 		it("When session owner launches draft, everyone should receive a startDraft event", function (done) {
 			let connectedClients = 0;
 			let receivedBoosters = 0;
@@ -505,6 +505,7 @@ describe("Single Draft (Two Players)", function () {
 				c.once("draftState", (state) => {
 					const s = state as ReturnType<DraftState["syncData"]>;
 					expect(s.booster).to.exist;
+					boosterValidation?.(s.booster);
 					clientStates[getUID(c)] = { state: s, pickedCards: [] };
 					receivedBoosters += 1;
 					if (connectedClients === clients.length && receivedBoosters === clients.length) done();
@@ -1565,6 +1566,25 @@ describe("Single Draft (Two Players)", function () {
 				done();
 			});
 		});
+		disconnect();
+	});
+
+	describe("Using user cube with layouts", function () {
+		connect();
+		it("Clients should receive the updated useCustomCardList.", function (done) {
+			clients[nonOwnerIdx].once("sessionOptions", function (val) {
+				expect(val.useCustomCardList).to.equal(true);
+				done();
+			});
+			clients[ownerIdx].emit("setUseCustomCardList", true);
+		});
+		it("Clients should receive the updated customCardList.", function (done) {
+			clients[nonOwnerIdx].once("sessionOptions", () => done());
+			clients[ownerIdx].emit("parseCustomCardList", ValidCubes["ZRWK"], ackNoError);
+		});
+		startDraft(checkDuplicates);
+		endDraft(checkDuplicates);
+		expectCardCount(3 * 15);
 		disconnect();
 	});
 

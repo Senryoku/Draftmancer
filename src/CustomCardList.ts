@@ -160,7 +160,7 @@ export function generateBoosterFromCustomCardList(
 					colorBalancedSlotGenerators[slotName];
 				// Checking the card count beforehand is tricky, we'll rely on pickCard throwing an exception if we run out of cards to pick.
 				try {
-					let pickedCards = [];
+					let pickedCards: UniqueCard[] = [];
 
 					if (useColorBalance)
 						pickedCards = colorBalancedSlotGenerators[slotName].generate(
@@ -170,7 +170,7 @@ export function generateBoosterFromCustomCardList(
 						);
 					else
 						for (let i = 0; i < pickedLayout.slots[slotName]; ++i)
-							pickedCards.push(pickCard(cardsBySlot[slotName], booster, pickOptions));
+							pickedCards.push(pickCard(cardsBySlot[slotName], booster.concat(pickedCards), pickOptions));
 
 					if (customCardList.settings?.showSlots) for (const card of pickedCards) card.slot = slotName;
 

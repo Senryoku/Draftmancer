@@ -1,0 +1,337 @@
+[Settings]
+{
+	"name": "Zendikar Reawoken",
+	"withReplacement": true,
+	"showSlots": true,
+	"layouts": {
+		"Rare": {
+			"weight": 6,
+			"slots": {
+  				"Common": 10,
+  				"Uncommon": 3,
+  				"Rare": 1,
+  				"Special": 1
+			}
+		},
+		"Mythic": {
+			"weight": 1,
+			"slots": {
+  				"Common": 10,
+  				"Uncommon": 3,
+  				"Mythic": 1,
+  				"Special": 1
+			}
+		}
+	}
+}
+[Common]
+1 Kitesail Cleric (ZNR) 20
+1 Hada Freeblade (WWK) 7
+1 Ondu Cleric (ZEN) 30
+1 Fledgling Griffin (WWK) 5
+1 Kor Skyfisher (ZEN) 23
+1 Wall of Omens (ROE) 53
+1 Angelheart Protector (ZNR) 3
+1 Kor Hookmaster (ZEN) 20
+1 Kor Sanctifiers (ZEN) 22
+1 Makindi Shieldmate (ZEN) 26
+1 Kor Cartographer (ZEN) 18
+1 Prowling Felidar (ZNR) 34
+1 Makindi Ox (ZNR) 25
+1 Hyena Umbra (ROE) 26
+1 Guard Duty (ROE) 23
+1 Veteran's Reflexes (WWK) 23
+1 Journey to Nowhere (ZEN) 14
+1 Dauntless Unity (ZNR) 9
+1 Puncturing Light (ROE) 41
+1 Zulaport Duelist (ZNR) 88
+1 Skyclave Squid (ZNR) 82
+1 Halimar Excavator (WWK) 29
+1 Tazeem Roilmage (ZNR) 84
+1 Cunning Geysermage (ZNR) 55
+1 Calcite Snapper (WWK) 25
+1 Risen Riptide (ZNR) 73
+1 Umara Raptor (ZEN) 75
+1 Merfolk Skyscout (ROE) 77
+1 Sky Ruin Drake (ZEN) 66
+1 Bubble Snare (ZNR) 47
+1 Treasure Hunt (WWK) 42
+1 Deprive (ROE) 59
+1 Anticognition (ZNR) 45
+1 Eel Umbra (ROE) 65
+1 Tightening Coils (BFZ) 86
+1 Aether Tradewinds (WWK) 24
+1 Glacial Grasp (ZNR) 59
+1 Mysteries of the Deep (WWK) 33
+1 Vampire Lacerator (ZEN) 115
+1 Ruthless Cullblade (WWK) 65
+1 Surrakar Marauder (ZEN) 113
+1 Ghastly Gloomhunter (ZNR) 103
+1 Guul Draz Mucklord (ZNR) 104
+1 Nimana Skydancer (ZNR) 117
+1 Hagra Constrictor (ZNR) 105
+1 Bloodrite Invoker (ROE) 97
+1 Heartstabber Mosquito (ZEN) 97
+1 Crypt Ripper (ZEN) 85
+1 Nimana Sell-Sword (ZEN) 106
+1 Dreadwurm (ZNR) 100
+1 Blood Beckoning (ZNR) 92
+1 Feed the Swarm (ZNR) 102
+1 Subtle Strike (ZNR) 128
+1 Tomb Hex (WWK) 69
+1 Dead Reckoning (WWK) 56
+1 Blood Price (ZNR) 93
+1 Desecrated Earth (ZEN) 86
+1 Akoum Hellhound (ZNR) 133
+1 Goblin Tunneler (ROE) 148
+1 Ogre Sentry (ROE) 159
+1 Goblin Shortcutter (ZEN) 128
+1 Akoum Battlesinger (WWK) 71
+1 Tunneling Geopede (BFZ) 158
+1 Molten Ravager (ZEN) 138
+1 Torch Slinger (ZEN) 151
+1 Bladetusk Boar (ZEN) 118
+1 Scorch Rider (ZNR) 158
+1 Vent Sentinel (ROE) 171
+1 Geyser Glider (ZEN) 124
+1 Burst Lightning (ZEN) 119
+1 Heat Ray (ROE) 150
+1 Cleansing Wildfire (ZNR) 137
+1 Scavenged Blade (ZNR) 157
+1 Inordinate Rage (ZNR) 144
+1 Magma Rift (ZEN) 136
+1 Demolish (ZEN) 121
+1 Tajuru Blightblade (ZNR) 208
+1 Oran-Rief Survivalist (ZEN) 174
+1 Overgrown Battlement (ROE) 203
+1 Gnarlid Colony (ZNR) 185
+1 Territorial Scythecat (ZNR) 213
+1 Sporecap Spider (ROE) 209
+1 Aura Gnarlid (ROE) 175
+1 Grazing Gladehart (ZEN) 163
+1 Mold Shambler (ZEN) 169
+1 Wildheart Invoker (ROE) 213
+1 Joraga Bard (ZEN) 166
+1 Territorial Baloth (ZEN) 188
+1 Kazandu Stomper (ZNR) 191
+1 Groundswell (WWK) 104
+1 Rabid Bite (ZNR) 199
+1 Broken Wings (ZNR) 181
+1 Roiling Regrowth (ZNR) 201
+1 Scale the Heights (ZNR) 202
+1 Snake Umbra (ROE) 207
+1 Hedron Scrabbler (ZEN) 204
+1 Hedron Crawler (OGW) 164
+1 Pilgrim's Eye (WWK) 128
+1 Stonework Puma (ZEN) 207
+1 Skyclave Sentinel (ZNR) 253
+1 Hedron Rover (WWK) 125
+1 Adventuring Gear (ZEN) 195
+1 Spare Supplies (ZNR) 254
+1 Warmonger's Chariot (ROE) 226
+1 Seer's Lantern (OGW) 165
+[Uncommon]
+1 Kor Duelist (ZEN) 19
+1 Ruin Ghost (WWK) 19
+1 Kazandu Blademaster (ZEN) 16
+1 Shepherd of the Lost (ZEN) 34
+1 Soulbound Guardians (ROE) 45
+1 Totem-Guide Hartebeest (ROE) 50
+1 Sejiri Shelter (ZNR) 37
+1 Dazzling Reflection (OGW) 17
+1 Narrow Escape (ZEN) 27
+1 Guardian Zendikon (WWK) 6
+1 Join the Ranks (WWK) 9
+1 Makindi Stampede (ZNR) 26
+1 Mammoth Umbra (ROE) 37
+1 Ruin Crab (ZNR) 75
+1 Merfolk Windrobber (ZNR) 70
+1 Tideforce Elemental (WWK) 41
+1 Guard Gomazoa (ROE) 70
+1 Horizon Drake (WWK) 30
+1 Reckless Scholar (ZEN) 60
+1 Living Tsunami (ZEN) 52
+1 Gift of Tusks (OGW) 55
+1 Wind Zendikon (WWK) 46
+1 Beyeen Veil (ZNR) 46
+1 Jwari Disruption (ZNR) 64
+1 Summoner's Bane (ZEN) 71
+1 Roiling Waters (OGW) 62
+1 Guul Draz Vampire (ZEN) 93
+1 Gatekeeper of Malakir (ZEN) 89
+1 Vampire Hexmage (ZEN) 114
+1 Arrogant Bloodlord (ROE) 94
+1 Null Caller (OGW) 88
+1 Skyclave Shadowcat (ZNR) 126
+1 Bala Ged Scorpion (ROE) 95
+1 Caustic Crawler (WWK) 54
+1 Scion of the Swarm (ZNR) 121
+1 Malakir Rebirth (ZNR) 111
+1 Corrupted Zendikon (WWK) 55
+1 Hideous End (ZEN) 98
+1 Pelakka Predation (ZNR) 120
+1 Fireblade Charger (ZNR) 139
+1 Plated Geopede (ZEN) 141
+1 Highland Berserker (ZEN) 132
+1 Grotag Siege-Runner (ROE) 149
+1 Hellfire Mongrel (ZEN) 130
+1 Skyclave Geopede (ZNR) 163
+1 Battle-Rattle Shaman (ROE) 136
+1 Valakut Fireboar (ROE) 170
+1 Murasa Pyromancer (ZEN) 139
+1 Kazuul's Fury (ZNR) 146
+1 Crusher Zendikon (WWK) 78
+1 Song-Mad Treachery (ZNR) 165
+1 Spire Barrage (ZEN) 150
+1 Jaddi Offshoot (BFZ) 176
+1 Lotus Cobra (ZNR) 193
+1 Rot Shambler (BFZ) 187
+1 Frontier Guide (ZEN) 161
+1 Leatherback Baloth (WWK) 107
+1 Springmantle Cleric (ZNR) 205
+1 Baloth Woodcrasher (ZEN) 157
+1 Pelakka Wurm (ROE) 204
+1 Vastwood Fortification (ZNR) 216
+1 Tanglesap (ZEN) 186
+1 Khalni Ambush (ZNR) 192
+1 Bestial Menace (WWK) 97
+1 Vastwood Zendikon (WWK) 117
+1 Darkbore Pathway (KHM) 254
+1 Barkchannel Pathway (KHM) 251
+1 Blightstep Pathway (KHM) 252
+1 Branchloft Pathway (ZNR) 258
+1 Brightclimb Pathway (ZNR) 259
+1 Clearwater Pathway (ZNR) 260
+1 Cragcrown Pathway (ZNR) 261
+1 Hengegate Pathway (KHM) 260
+1 Needleverge Pathway (ZNR) 263
+1 Riverglide Pathway (ZNR) 264
+1 Relic Golem (ZNR) 249
+1 Expedition Map (ZEN) 201
+1 Explorer's Scope (ZEN) 202
+1 Kitesail (WWK) 126
+1 Prophetic Prism (ROE) 222
+[Rare]
+1 Armament Master (ZEN) 1
+1 Stoneforge Mystic (WWK) 20
+1 Kor Spiritdancer (ROE) 31
+1 Kabira Evangel (ZEN) 15
+1 Emeria Angel (ZEN) 11
+1 Talus Paladin (WWK) 21
+1 General Tazri (OGW) 19
+1 Felidar Sovereign (ZEN) 12
+1 Emeria Shepherd (BFZ) 22
+1 Day of Judgment (ZEN) 9
+1 Windborne Charge (ZEN) 38
+1 Retreat to Emeria (BFZ) 44
+1 Conqueror's Pledge (ZEN) 8
+1 Thieving Skydiver (ZNR) 85
+1 Renegade Doppelganger (ROE) 84
+1 Jwari Shapeshifter (WWK) 32
+1 Surrakar Spellblade (ROE) 90
+1 Coralhelm Chronicler (ZNR) 54
+1 Charix, the Raging Isle (ZNR) 49
+1 Guardian of Tazeem (BFZ) 78
+1 Sea Gate Loremaster (ZEN) 63
+1 Goliath Sphinx (WWK) 28
+1 Lorthos, the Tidemaker (ZEN) 53
+1 Rite of Replication (ZEN) 61
+1 Vapor Snare (WWK) 44
+1 Gravitational Shift (ROE) 69
+1 Death's Shadow (WWK) 57
+1 Bloodghast (ZEN) 83
+1 Kalastria Highborn (WWK) 59
+1 Vampire Nighthawk (ZEN) 116
+1 Agadeem Occultist (WWK) 48
+1 Bala Ged Thief (ZEN) 79
+1 Anowon, the Ruin Sage (WWK) 49
+1 Guul Draz Overseer (BFZ) 112
+1 Butcher of Malakir (WWK) 53
+1 Suffer the Past (ROE) 128
+1 Urge to Feed (WWK) 70
+1 Marsh Casualties (ZEN) 101
+1 Mind Sludge (ZEN) 102
+1 Cunning Sparkmage (WWK) 79
+1 Rage Nimbus (ROE) 160
+1 Tuktuk Scrapper (WWK) 94
+1 Magmaw (ROE) 158
+1 Kazuul, Tyrant of the Cliffs (WWK) 84
+1 Kazuul Warlord (ZEN) 134
+1 Akoum Hellkite (BFZ) 139
+1 Conquering Manticore (ROE) 139
+1 Mordant Dragon (WWK) 85
+1 Cinderclasm (ZNR) 136
+1 Lust for War (ROE) 157
+1 Chain Reaction (WWK) 74
+1 Splinter Twin (ROE) 165
+1 Swarm Shambler (ZNR) 207
+1 Harabaz Druid (WWK) 105
+1 Murasa Sproutling (ZNR) 196
+1 Turntimber Basilisk (ZEN) 190
+1 Oran-Rief Ooze (ZNR) 198
+1 Vastwood Animist (WWK) 116
+1 Oracle of Mul Daya (ZEN) 172
+1 Turntimber Ranger (ZEN) 191
+1 Ancient Greenwarden (ZNR) 178
+1 Oran-Rief Hydra (BFZ) 181
+1 Terra Stomper (ZEN) 187
+1 Avenger of Zendikar (WWK) 96
+1 Bear Umbra (ROE) 177
+1 Lodestone Golem (WWK) 127
+1 Trusty Machete (ZEN) 209
+1 Stoneforge Masterwork (OGW) 166
+1 Seer's Sundial (WWK) 130
+1 Grappling Hook (ZEN) 203
+[Mythic]
+1 Admonition Angel (WWK) 1
+1 Deathless Angel (ROE) 17
+1 Maul of the Skyclaves (ZNR) 27
+1 Gideon Jura (ROE) 21
+1 Sphinx of Jwar Isle (ZEN) 68
+1 Roil Elemental (ZEN) 62
+1 Sphinx of Magosi (ROE) 89
+1 Jace, the Mind Sculptor (WWK) 31
+1 Guul Draz Specter (ZEN) 92
+1 Ob Nixilis, the Fallen (ZEN) 107
+1 Kalitas, Bloodchief of Ghet (ZEN) 99
+1 Sorin Markov (ZEN) 111
+1 Akoum Firebird (BFZ) 138
+1 Obsidian Fireheart (ZEN) 140
+1 Moraug, Fury of Akoum (ZNR) 150
+1 Chandra Ablaze (ZEN) 120
+1 Scute Mob (ZEN) 182
+1 Undergrowth Champion (BFZ) 197
+1 Rampaging Baloths (ZEN) 178
+1 Nissa, Voice of Zendikar (OGW) 138
+1 Basilisk Collar (WWK) 122
+1 Blade of the Bloodchief (ZEN) 196
+1 Lithoform Engine (ZNR) 245
+1 Eldrazi Monument (ZEN) 199
+1 Eternity Vessel (ZEN) 200
+[Special]
+1 Sejiri Steppe (WWK) 142
+1 Kabira Crossroads (ZEN) 216
+1 Skyline Cascade (BFZ) 246
+1 Soaring Seacliff (ZEN) 225
+1 Mortuary Mire (BFZ) 240
+1 Piranha Marsh (ZEN) 222
+1 Smoldering Spires (WWK) 143
+1 Teetering Peaks (ZEN) 226
+1 Turntimber Grove (ZEN) 227
+1 Khalni Garden (WWK) 138
+1 Shambling Vent (BFZ) 244
+1 Celestial Colonnade (WWK) 133
+1 Creeping Tar Pit (WWK) 134
+1 Hissing Quagmire (OGW) 171
+1 Lavaclaw Reaches (WWK) 139
+1 Lumbering Falls (BFZ) 239
+1 Needle Spires (OGW) 175
+1 Raging Ravine (WWK) 141
+1 Stirring Wildwood (WWK) 144
+1 Wandering Fumarole (OGW) 182
+1 Crumbling Vestige (OGW) 170
+1 Dread Statuary (WWK) 135
+1 Evolving Wilds (BFZ) 236
+1 Quicksand (WWK) 140
+1 Tectonic Edge (WWK) 145
+
