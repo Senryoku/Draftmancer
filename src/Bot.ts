@@ -229,7 +229,7 @@ export class Bot implements IBot {
 	async getScores(booster: Card[], boosterNum: number, numBoosters: number, pickNum: number, numPicks: number) {
 		const packOracleIds: OracleID[] = booster.map((c: Card) => c.oracle_id);
 		// getScores might be called multiple times for the same booster (multiple picks). Only add to the seen list once.
-		if(this.seen.length === 0 || this.seen[this.seen.length - 1].packNum !== boosterNum || this.seen[this.seen.length - 1].numPicks !== numPicks)
+		if(this.seen.length === 0 || this.seen[this.seen.length - 1].packNum !== boosterNum || this.seen[this.seen.length - 1].pickNum !== pickNum)
 			this.seen.push({ packNum: boosterNum, pickNum, numPicks, pack: packOracleIds });
 		const drafterState = {
 			basics: [], // FIXME: Should not be necessary anymore.
