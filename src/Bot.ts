@@ -302,16 +302,7 @@ export class Bot implements IBot {
 	}
 
 	async burn(booster: Card[], boosterNum: number, numBoosters: number, pickNum: number, numPicks: number) {
-		let worstPick = 0;
-		let worstScore = 2;
-		const result = await this.getScores(booster, boosterNum, numBoosters, pickNum, numPicks);
-		for (let i = 0; i < result.scores.length; i++) {
-			if (result.scores[i] < worstScore) {
-				worstPick = i;
-				worstScore = result.scores[i];
-			}
-		}
-		return worstPick;
+		return 0;
 	}
 
 	addCard(card: Card) {
