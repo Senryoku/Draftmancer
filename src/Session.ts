@@ -2381,7 +2381,7 @@ export class Session implements IIndexable {
 		if (!isDraftState(s)) return;
 		const p = s.players[userID];
 		// Asyncronously ask for bot recommendations, and send then when available
-		if (!this.disableBotSuggestions && p.botInstance && p.boosters.length > 0) {
+		if (!this.disableBotSuggestions && p.botInstance && p.boosters.length > 0 && !p.botPickInFlight) {
 			(() => {
 				const localData = {
 					booster: p.boosters[0],
@@ -2390,6 +2390,7 @@ export class Session implements IIndexable {
 					pickNumber: p.pickNumber,
 					numPicks: s.numPicks,
 				};
+				p.botPickInFlight = true;
 				return p.botInstance
 					.getScores(
 						localData.booster,
@@ -2399,12 +2400,14 @@ export class Session implements IIndexable {
 						localData.numPicks
 					)
 					.then((value) => {
+						p.botPickInFlight = false;
 						Connections[userID]?.socket.emit("botRecommandations", {
 							pickNumber: localData.pickNumber,
 							scores: value,
 						});
 					})
 					.catch((error) => {
+						p.botPickInFlight = false;
 						console.error("Error in bot recommendation promise:");
 						console.error(error);
 					});

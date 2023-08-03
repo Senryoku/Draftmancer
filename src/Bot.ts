@@ -224,6 +224,10 @@ export class Bot implements IBot {
 
 	async getScores(booster: Card[], boosterNum: number, numBoosters: number, pickNum: number, numPicks: number) {
 		const packOracleIds: OracleID[] = booster.map((c: Card) => c.oracle_id);
+		if(this.seen.length > 0 && this.seen[this.seen.length - 1].packNum == pickNum && this.seen[this.seen.length - 1].numPicks == numPicks) {
+			console.warn(`Warning: Duplicate call to Bot.getScores (boosterNum: ${boosterNum}, pickNum: ${pickNum}`);
+			return this.lastScores;
+		}
 		this.seen.push({ packNum: boosterNum, pickNum, numPicks, pack: packOracleIds });
 		const drafterState = {
 			basics: [], // FIXME: Should not be necessary anymore.
