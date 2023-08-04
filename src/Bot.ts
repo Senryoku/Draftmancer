@@ -126,6 +126,9 @@ export interface IBot {
 	pick(booster: Card[], boosterNum: number, numBoosters: number, pickNum: number, numPicks: number): Promise<number>;
 	burn(booster: Card[], boosterNum: number, numBoosters: number, pickNum: number, numPicks: number): Promise<number>;
 
+	// Add a card to the bot's pool, while maintaining its state of the draft if necessary. 
+	forcePick(index: number, booster: Card[], boosterNum: number, numBoosters: number, pickNum: number, numPicks: number): void;
+
 	getScores(
 		booster: Card[],
 		boosterNum: number,
@@ -134,6 +137,7 @@ export interface IBot {
 		numPicks: number
 	): Promise<BotScores>;
 
+	// Add a card to the bot's pool without context. Don't use this outside of bot implementations, see forcePick.
 	addCard(card: Card): void;
 }
 
@@ -199,6 +203,10 @@ export class SimpleBot implements IBot {
 	addCard(card: Card) {
 		for (const color of card.colors) ++this.pickedColors[color];
 		this.cards.push(card);
+	}
+
+	forcePick(index: number, booster: Card[], boosterNum: number, numBoosters: number, pickNum: number, numPicks: number) {
+		this.addCard(booster[index]);
 	}
 }
 
@@ -301,6 +309,14 @@ export class Bot implements IBot {
 
 	async burn(booster: Card[], boosterNum: number, numBoosters: number, pickNum: number, numPicks: number) {
 		return 0;
+	}
+
+	forcePick(index: number, booster: Card[], boosterNum: number, numBoosters: number, pickNum: number, numPicks: number) {
+		this.addCard(booster[index]);
+		if(this.seen.length === 0 || this.seen[this.seen.length - 1].packNum !== boosterNum || this.seen[this.seen.length - 1].pickNum !== pickNum) {
+			const packOracleIds: OracleID[] = booster.map((c: Card) => c.oracle_id);
+			this.seen.push({ packNum: boosterNum, pickNum, numPicks, pack: packOracleIds });
+		}
 	}
 
 	addCard(card: Card) {

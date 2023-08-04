@@ -2075,7 +2075,7 @@ export class Session implements IIndexable {
 
 		for (const idx of pickedCards) {
 			Connections[userID].pickedCards.main.push(booster[idx]);
-			s.players[userID].botInstance.addCard(booster[idx]);
+			s.players[userID].botInstance.forcePick(idx, booster, s.boosterNumber, this.boostersPerPlayer, s.players[userID].pickNumber, s.numPicks);
 		}
 
 		const pickData: DraftPick = {
@@ -2295,7 +2295,12 @@ export class Session implements IIndexable {
 			if (picksThisRound >= booster.length) {
 				for (let i = 0; i < booster.length; i++) {
 					pickedIndices.push(i);
-					s.players[userID].botInstance.addCard(booster[i]);
+					s.players[userID].botInstance.forcePick(i,
+						booster,
+						boosterNumber,
+						this.boostersPerPlayer,
+						pickNumber,
+						numPicks);
 				}
 			} else {
 				const boosterCopy = [...booster]; // Working copy for multiple picks
