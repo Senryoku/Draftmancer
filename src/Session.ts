@@ -2075,7 +2075,14 @@ export class Session implements IIndexable {
 
 		for (const idx of pickedCards) {
 			Connections[userID].pickedCards.main.push(booster[idx]);
-			s.players[userID].botInstance.forcePick(idx, booster, s.boosterNumber, this.boostersPerPlayer, s.players[userID].pickNumber, s.numPicks);
+			s.players[userID].botInstance.forcePick(
+				idx,
+				booster,
+				s.boosterNumber,
+				this.boostersPerPlayer,
+				s.players[userID].pickNumber,
+				s.numPicks
+			);
 		}
 
 		const pickData: DraftPick = {
@@ -2227,12 +2234,17 @@ export class Session implements IIndexable {
 		}
 		if (!s.players[userID].botPickInFlight && s.players[userID].boosters.length > 0) {
 			s.players[userID].botPickInFlight = true;
-			this.doBotPick(userID).catch((error) => {
-				console.error(
-					`Session.startBotPickChain (sessionID: ${this.id}, userID: ${userID}): doBotPick errored:`
-				);
-				console.error(error);
-				console.error("Associated Player:", s.players[userID]);
+			// Delayed to the end of the event loop to avoid a very fringe scenario where the bot picks before others boosters
+			// are distributed (but already removed from the pool), ending the draft early. This has the added benefit of prioritizing
+			// sending packs to actual players.
+			process.nextTick(() => {
+				this.doBotPick(userID).catch((error) => {
+					console.error(
+						`Session.startBotPickChain (sessionID: ${this.id}, userID: ${userID}): doBotPick errored:`
+					);
+					console.error(error);
+					console.error("Associated Player:", s.players[userID]);
+				});
 			});
 		} // else: This bot is already picking, do nothing.
 	}
@@ -2295,12 +2307,14 @@ export class Session implements IIndexable {
 			if (picksThisRound >= booster.length) {
 				for (let i = 0; i < booster.length; i++) {
 					pickedIndices.push(i);
-					s.players[userID].botInstance.forcePick(i,
+					s.players[userID].botInstance.forcePick(
+						i,
 						booster,
 						boosterNumber,
 						this.boostersPerPlayer,
 						pickNumber,
-						numPicks);
+						numPicks
+					);
 				}
 			} else {
 				const boosterCopy = [...booster]; // Working copy for multiple picks
