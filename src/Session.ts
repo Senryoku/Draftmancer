@@ -3288,6 +3288,8 @@ export class Session implements IIndexable {
 
 	updateDecklistInLog(userID: UserID) {
 		if (!this.draftLog?.users[userID] || !Connections[userID]) return;
+		if (Connections[userID].pickedCards.main.length === 0 && Connections[userID].pickedCards.side.length === 0)
+			return;
 		if (!this.draftLog.users[userID].decklist) this.draftLog.users[userID].decklist = { main: [], side: [] };
 		this.draftLog.users[userID].decklist!.main = Connections[userID].pickedCards.main.map((c) => c.id);
 		this.draftLog.users[userID].decklist!.side = Connections[userID].pickedCards.side.map((c) => c.id);
