@@ -1626,6 +1626,8 @@ export default defineComponent({
 				const burningCards = this.burningCards;
 				const toSideboard = options?.toSideboard;
 
+				const boosterBackup = structuredClone(toRaw(this.booster));
+
 				const onSuccess: (() => void)[] = [];
 
 				onSuccess.push(() => {
@@ -1639,8 +1641,8 @@ export default defineComponent({
 						// Restore cardPool and booster state
 						this.deck = this.deck.filter((c) => !selectedCards.includes(c));
 						this.sideboard = this.sideboard.filter((c) => !selectedCards.includes(c));
-						this.booster.push(...selectedCards);
-						this.booster.push(...burningCards);
+						this.booster = boosterBackup;
+						this.selectedUsableDraftEffect = undefined; // Reset effects since it's probably an effect that triggered the error in the first place.
 						this.draftingState = DraftState.Picking;
 						Alert.fire(answer.error as SweetAlertOptions);
 					} else {
