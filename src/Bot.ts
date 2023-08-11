@@ -7,8 +7,11 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 import { shuffleArray, weightedRandomIdx } from "./utils.js";
-import { Card, OracleID } from "./CardTypes.js";
+import { Card, DeckList, OracleID } from "./CardTypes.js";
 import { isArrayOf, isNumber } from "./TypeChecks.js";
+import { computeHashes } from "./DeckHashes.js";
+import { InTesting } from "./Context.js";
+import { getCard } from "./Cards.js";
 
 const MTGDraftBotsAPITimeout = 10000;
 const MTGDraftBotsAPIURLs: { url: string; weight: number }[] = [];
@@ -361,4 +364,76 @@ export class Bot implements IBot {
 
 export function isBot(obj: unknown): obj is IBot {
 	return obj instanceof Bot || obj instanceof SimpleBot;
+}
+
+export async function requestDeckbuilding(cardPool: Card[]): Promise<DeckList | null> {
+	if (!process.env.MTGDRAFTBOTS_AUTHTOKEN) return null;
+	if (InTesting) return null;
+
+	const basics = [
+		"56719f6a-1a6c-4c0a-8d21-18f7d7350b68", // Swamp
+		"b2c6aa39-2d2a-459c-a555-fb48ba993373", // Island
+		"bc71ebf6-2056-41f7-be35-b2e5c34afa99", // Plains
+		"b34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6", // Forest
+		"a3fb7228-e76b-4e96-a40e-20b5fed75685", // Mountain
+	];
+	try {
+		const postData = {
+			deckState: { pool: cardPool.map((c) => c.oracle_id), basics: basics },
+		};
+		const r = await axios.post(
+			`https://mtgml.cubeartisan.net/deck?auth_token=${process.env.MTGDRAFTBOTS_AUTHTOKEN}`,
+			postData
+		);
+		// TEMP Debug (TODO: REMOVE)
+		console.log("Request: ", postData);
+		console.log("Response: ", r.data);
+		console.log(cardPool.map((c) => c.oracle_id));
+		/*
+		console.log(
+			r.data.main
+				.map((t: [string, number]) => t[0])
+				.filter((oid: string) => !basics.includes(oid))
+				.map((oid: string) => [oid, cardPool.find((c) => c.oracle_id === oid)])
+		);
+		console.log(
+			r.data.side
+				.map((t: [string, number]) => t[0])
+				.filter((oid: string) => !basics.includes(oid))
+				.map((oid: string) => [oid, cardPool.find((c) => c.oracle_id === oid)])
+		);
+		*/
+		if (r.status === 200 && r.data) {
+			const basicLands = r.data.main
+				.map((t: [string, number]) => t[0])
+				.filter((oid: string) => basics.includes(oid));
+			const landCounts = {
+				W: basicLands.filter((oid: string) => oid === "bc71ebf6-2056-41f7-be35-b2e5c34afa99").length,
+				U: basicLands.filter((oid: string) => oid === "b2c6aa39-2d2a-459c-a555-fb48ba993373").length,
+				B: basicLands.filter((oid: string) => oid === "56719f6a-1a6c-4c0a-8d21-18f7d7350b68").length,
+				R: basicLands.filter((oid: string) => oid === "a3fb7228-e76b-4e96-a40e-20b5fed75685").length,
+				G: basicLands.filter((oid: string) => oid === "b34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6").length,
+			};
+			const decklist: DeckList = {
+				main: r.data.main
+					.map((t: [string, number]) => t[0])
+					.filter((oid: string) => !basics.includes(oid))
+					.map((oid: string) => cardPool.find((c) => c.oracle_id === oid))
+					.filter((c: Card) => c !== undefined)
+					.map((c: Card) => c.id),
+				side: r.data.side
+					.map((t: [string, number]) => t[0])
+					.filter((oid: string) => !basics.includes(oid))
+					.map((oid: string) => cardPool.find((c) => c.oracle_id === oid))
+					.filter((c: Card) => c !== undefined)
+					.map((c: Card) => c.id),
+				lands: landCounts,
+			};
+			computeHashes(decklist, { getCard: getCard });
+			return decklist;
+		} else return null;
+	} catch (e) {
+		console.error(e);
+		return null;
+	}
 }

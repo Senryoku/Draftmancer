@@ -18,7 +18,13 @@ import {
 	UniqueCardState,
 } from "./CardTypes.js";
 import { Cards, getUnique, BoosterCardsBySet, CardsBySet, MTGACardIDs, getCard } from "./Cards.js";
-import { fallbackToSimpleBots, isBot, MTGDraftBotParameters, MTGDraftBotsSetSpecializedModels } from "./Bot.js";
+import {
+	fallbackToSimpleBots,
+	isBot,
+	MTGDraftBotParameters,
+	MTGDraftBotsSetSpecializedModels,
+	requestDeckbuilding,
+} from "./Bot.js";
 import { computeHashes } from "./DeckHashes.js";
 import { SpecialLandSlots } from "./LandSlot.js";
 import {
@@ -2536,10 +2542,22 @@ export class Session implements IIndexable {
 				try {
 					// Bots are not handled by finalizeLogs()
 					for (const userID in s.players)
-						if (s.players[userID].isBot)
+						if (s.players[userID].isBot) {
 							this.draftLog.users[userID].cards = s.players[userID].botInstance.cards.map(
 								(c: Card) => c.id
 							);
+							// AI Deckbuilding
+							requestDeckbuilding(s.players[userID].botInstance.cards)
+								.then((deck: DeckList | null) => {
+									if (deck && this.draftLog?.users[userID]) {
+										this.draftLog.users[userID].decklist = deck;
+										this.updateDecklist(userID); // Send it to users.
+									}
+								})
+								.catch((e) => {
+									console.error(`Error requesting deckbuild in endDraft for session ${this.id}:`, e);
+								});
+						}
 					this.finalizeLogs();
 					this.sendLogs();
 					this.initSendDecklogTimeout();
@@ -3287,7 +3305,7 @@ export class Session implements IIndexable {
 	}
 
 	updateDecklistInLog(userID: UserID) {
-		if (!this.draftLog?.users[userID] || !Connections[userID]) return;
+		if (!this.draftLog?.users[userID] || this.draftLog?.users[userID].isBot || !Connections[userID]) return;
 		if (Connections[userID].pickedCards.main.length === 0 && Connections[userID].pickedCards.side.length === 0)
 			return;
 		if (!this.draftLog.users[userID].decklist) this.draftLog.users[userID].decklist = { main: [], side: [] };
