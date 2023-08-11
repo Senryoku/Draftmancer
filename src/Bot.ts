@@ -27,6 +27,7 @@ async function addMTGDraftBotsInstance(domain: string, authToken: string, weight
 		} else console.error(`MTGDraftBots instance '${domain}' could not be reached: ${error}.`);
 	}
 }
+
 // Official Instance
 if (process.env.MTGDRAFTBOTS_AUTHTOKEN)
 	addMTGDraftBotsInstance(
@@ -50,6 +51,9 @@ export enum MTGDraftBotsSetSpecializedModels {
 	dmu = "dmu",
 	bro = "bro",
 	one = "one",
+	sir = "sir",
+	mom = "mom",
+	ltr = "ltr",
 }
 
 export type MTGDraftBotParameters = {
@@ -126,8 +130,15 @@ export interface IBot {
 	pick(booster: Card[], boosterNum: number, numBoosters: number, pickNum: number, numPicks: number): Promise<number>;
 	burn(booster: Card[], boosterNum: number, numBoosters: number, pickNum: number, numPicks: number): Promise<number>;
 
-	// Add a card to the bot's pool, while maintaining its state of the draft if necessary. 
-	forcePick(index: number, booster: Card[], boosterNum: number, numBoosters: number, pickNum: number, numPicks: number): void;
+	// Add a card to the bot's pool, while maintaining its state of the draft if necessary.
+	forcePick(
+		index: number,
+		booster: Card[],
+		boosterNum: number,
+		numBoosters: number,
+		pickNum: number,
+		numPicks: number
+	): void;
 
 	getScores(
 		booster: Card[],
@@ -205,7 +216,14 @@ export class SimpleBot implements IBot {
 		this.cards.push(card);
 	}
 
-	forcePick(index: number, booster: Card[], boosterNum: number, numBoosters: number, pickNum: number, numPicks: number) {
+	forcePick(
+		index: number,
+		booster: Card[],
+		boosterNum: number,
+		numBoosters: number,
+		pickNum: number,
+		numPicks: number
+	) {
 		this.addCard(booster[index]);
 	}
 }
@@ -233,7 +251,11 @@ export class Bot implements IBot {
 	async getScores(booster: Card[], boosterNum: number, numBoosters: number, pickNum: number, numPicks: number) {
 		const packOracleIds: OracleID[] = booster.map((c: Card) => c.oracle_id);
 		// getScores might be called multiple times for the same booster (multiple picks). Only add to the seen list once.
-		if(this.seen.length === 0 || this.seen[this.seen.length - 1].packNum !== boosterNum || this.seen[this.seen.length - 1].pickNum !== pickNum)
+		if (
+			this.seen.length === 0 ||
+			this.seen[this.seen.length - 1].packNum !== boosterNum ||
+			this.seen[this.seen.length - 1].pickNum !== pickNum
+		)
 			this.seen.push({ packNum: boosterNum, pickNum, numPicks, pack: packOracleIds });
 		const drafterState = {
 			basics: [], // FIXME: Should not be necessary anymore.
@@ -311,9 +333,20 @@ export class Bot implements IBot {
 		return 0;
 	}
 
-	forcePick(index: number, booster: Card[], boosterNum: number, numBoosters: number, pickNum: number, numPicks: number) {
+	forcePick(
+		index: number,
+		booster: Card[],
+		boosterNum: number,
+		numBoosters: number,
+		pickNum: number,
+		numPicks: number
+	) {
 		this.addCard(booster[index]);
-		if(this.seen.length === 0 || this.seen[this.seen.length - 1].packNum !== boosterNum || this.seen[this.seen.length - 1].pickNum !== pickNum) {
+		if (
+			this.seen.length === 0 ||
+			this.seen[this.seen.length - 1].packNum !== boosterNum ||
+			this.seen[this.seen.length - 1].pickNum !== pickNum
+		) {
 			const packOracleIds: OracleID[] = booster.map((c: Card) => c.oracle_id);
 			this.seen.push({ packNum: boosterNum, pickNum, numPicks, pack: packOracleIds });
 		}
