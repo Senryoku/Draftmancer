@@ -139,6 +139,7 @@ const defaultSettings = {
 	sideboardBasics: 0,
 	preferredBasics: "",
 	boosterCardScale: 1,
+	autoLand: true,
 };
 const storedSettings = JSON.parse(localStorage.getItem(localStorageSettingsKey) ?? "{}");
 const initialSettings: typeof defaultSettings = Object.assign({ ...defaultSettings }, storedSettings);
@@ -392,7 +393,7 @@ export default defineComponent({
 			sideboard: [] as UniqueCard[],
 			deckFilter: "",
 			collapseSideboard: initialSettings.collapseSideboard,
-			autoLand: true,
+			autoLand: initialSettings.autoLand,
 			lands: { W: 0, U: 0, B: 0, R: 0, G: 0 } as { [c in CardColor]: number },
 			targetDeckSize: initialSettings.targetDeckSize,
 			sideboardBasics: initialSettings.sideboardBasics,
@@ -3705,6 +3706,7 @@ export default defineComponent({
 		},
 		autoLand() {
 			this.updateAutoLands();
+			this.storeSettings();
 		},
 		lands: {
 			deep: true,
