@@ -178,4 +178,6 @@ describe("Grid Draft", function () {
 		startDraft();
 		endDraft();
 	});
+
+	// TODO: Add test with 'Two Picks per Grid' enabled.
 });
