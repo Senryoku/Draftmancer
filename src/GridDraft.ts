@@ -15,15 +15,16 @@ export type GridDraftSyncData = {
 
 export class GridDraftState extends IDraftState implements TurnBased {
 	round = 0;
-	boosters: Array<Array<UniqueCard | null>> = []; // Array of [3x3 Grid, Row-Major order]
-	players: Array<UserID>;
+	boosters: (UniqueCard | null)[][] = []; // Array of [3x3 Grid, Row-Major order]
+	players: UserID[];
 	error?: MessageError;
+	twoPicksPerGrid: boolean;
 	boosterCount: number;
 	lastPicks: PickSummary[] = [];
-	constructor(players: Array<UserID>, boosters: Array<Array<UniqueCard>>) {
+	constructor(players: UserID[], boosters: UniqueCard[][], twoPicksPerGrid: boolean) {
 		super("grid");
 		this.players = players;
-		const cardsPerBooster = this.players.length === 3 ? 12 : 9;
+		const cardsPerBooster = this.players.length > 2 || twoPicksPerGrid ? 12 : 9;
 		for (const booster of boosters) {
 			if (booster.length > cardsPerBooster) booster.length = cardsPerBooster;
 			if (booster.length < cardsPerBooster)
@@ -35,11 +36,33 @@ export class GridDraftState extends IDraftState implements TurnBased {
 			this.boosters.push(booster);
 		}
 		this.boosterCount = this.boosters.length;
+		this.twoPicksPerGrid = twoPicksPerGrid;
 	}
 
 	currentPlayer() {
+		if (this.players.length === 4)
+			return this.players[
+				[
+					[0, 1, 2, 3],
+					[1, 2, 3, 0],
+					[2, 3, 0, 1],
+					[3, 0, 1, 2],
+					[0, 3, 2, 1],
+					[3, 2, 1, 0],
+					[2, 1, 0, 3],
+					[1, 0, 3, 2],
+				][Math.floor(this.round / 4) % 8][this.round % 4]
+			];
 		if (this.players.length === 3)
 			return this.players[[0, 1, 2, 1, 2, 0, 2, 0, 1, 0, 2, 1, 2, 1, 0, 1, 0, 2][this.round % (3 * 3 * 2)]];
+		if (this.twoPicksPerGrid)
+			return this.players[
+				[
+					[0, 1, 0, 1],
+					[1, 0, 1, 0],
+				][Math.floor(this.round / 4) % 2][this.round % 4]
+			];
+
 		return this.players[[0, 1, 1, 0][this.round % 4]];
 	}
 

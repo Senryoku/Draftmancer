@@ -1083,19 +1083,21 @@ export class Session implements IIndexable {
 	}
 
 	///////////////////// Grid Draft //////////////////////
-	startGridDraft(boosterCount: number): SocketAck {
+	startGridDraft(boosterCount: number, twoPicksPerGrid: boolean): SocketAck {
 		if (this.drafting) return new SocketError("Already drafting.");
-		if (this.users.size !== 2 && this.users.size !== 3)
-			return new SocketError("Invalid Number of Players", "Grid draft is only available for 2 or 3 players.");
+		if (this.users.size < 2 || this.users.size > 4)
+			return new SocketError("Invalid Number of Players", "Grid draft is only available for 2 to 4 players.");
+		if (twoPicksPerGrid && this.users.size !== 2)
+			return new SocketError("Invalid Setting", "'Two picks per grid' is only available for 2 players.");
 		this.drafting = true;
 		// When using a custom card list with custom slots, boosters will be truncated to 9 cards by GridDraftState
 		// Use boosterContent setting only if it is valid (adds up to 9 cards)
 		const targetCardsPerBooster = Object.values(this.getBoosterContent()).reduce((val, acc) => val + acc, 0);
 
-		// Add 3 cards to each boosters when there are 3 players: Booster will be refilled to 9 cards after the first pick.
-		const cardsPerBooster = this.users.size === 3 ? 12 : 9;
+		// Add 3 cards to each boosters when there are more than 2 players, or two picks per players: Booster will be refilled to 9 cards after the first pick.
+		const cardsPerBooster = this.users.size > 2 || twoPicksPerGrid ? 12 : 9;
 		const defaultTargets =
-			this.users.size === 3 ? { rare: 1, uncommon: 3, common: 8 } : { rare: 1, uncommon: 3, common: 5 };
+			cardsPerBooster === 12 ? { rare: 1, uncommon: 3, common: 8 } : { rare: 1, uncommon: 3, common: 5 };
 
 		const boosters = this.generateBoosters(boosterCount, {
 			targets: targetCardsPerBooster === cardsPerBooster ? this.getBoosterContent() : defaultTargets,
@@ -1109,7 +1111,7 @@ export class Session implements IIndexable {
 		}
 
 		this.disconnectedUsers = {};
-		this.draftState = new GridDraftState(this.getSortedHumanPlayersIDs(), boosters);
+		this.draftState = new GridDraftState(this.getSortedHumanPlayersIDs(), boosters, twoPicksPerGrid);
 		const s = this.draftState as GridDraftState;
 		if (isMessageError(s.error)) {
 			this.cleanDraftState();
@@ -1142,8 +1144,9 @@ export class Session implements IIndexable {
 		if (!this.drafting || !isGridDraftState(s)) return;
 
 		++s.round;
-		// Refill Booster after the first pick at 3 players
-		if (s.players.length === 3 && s.round % 3 === 1) {
+		const gridPick = s.round % (s.twoPicksPerGrid ? 2 * s.players.length : s.players.length);
+		// Refill Booster after the first pick at 3-4 players, or if two picks per grid is enabled.
+		if (s.boosters[0].length === 12 && gridPick === 1) {
 			// Send the current state before re-filling for animation purposes.
 			const syncData = s.syncData();
 			syncData.currentPlayer = null; // Set current player to null as a flag to delay the display update
@@ -1154,7 +1157,7 @@ export class Session implements IIndexable {
 			for (let idx = 0; idx < s.boosters[0].length; ++idx)
 				if (s.boosters[0][idx] === null) s.boosters[0][idx] = additionalCards.pop()!;
 		}
-		if (s.round % s.players.length === 0) {
+		if (gridPick === 0) {
 			// Share the last pick before advancing to the next booster.
 			const syncData = s.syncData();
 			syncData.currentPlayer = null; // Set current player to null as a flag to delay the display update

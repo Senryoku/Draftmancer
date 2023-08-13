@@ -74,7 +74,7 @@ describe("Grid Draft", function () {
 					if (connectedClients === clients.length) done();
 				});
 			}
-			clients[ownerIdx].emit("startGridDraft", boosterCount, ackNoError);
+			clients[ownerIdx].emit("startGridDraft", boosterCount, false, ackNoError);
 		});
 	};
 
@@ -152,6 +152,25 @@ describe("Grid Draft", function () {
 
 			client.once("connect", function () {
 				expect(Object.keys(Connections).length).to.equal(3);
+				done();
+			});
+		});
+
+		startDraft();
+		endDraft();
+	});
+
+	describe("4 Players", function () {
+		it("Fourth player connects.", function (done) {
+			const client = connectClient({
+				userID: "id4",
+				sessionID: sessionID,
+				userName: "Client4",
+			});
+			clients.push(client);
+
+			client.once("connect", function () {
+				expect(Object.keys(Connections).length).to.equal(4);
 				done();
 			});
 		});
