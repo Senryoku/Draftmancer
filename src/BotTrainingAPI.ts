@@ -36,8 +36,8 @@ export function sendLog(type: string, session: Session) {
 			UsableDraftEffect.LeovoldsOperative,
 		];
 		if (
-			Object.values(session.draftLog.carddata).some((c) =>
-				c.draft_effects?.some((effect) => excludedEffects.includes(effect))
+			Object.values(session.draftLog.carddata).some(
+				(c) => c.draft_effects?.some((effect) => excludedEffects.includes(effect))
 			)
 		)
 			return;
@@ -111,7 +111,7 @@ export function sendDecks(log: DraftLog) {
 			const decklist = log.users[uid].decklist;
 			if (!log.users[uid].isBot && decklist) {
 				const addedLands = decklist.lands ? Object.values(decklist.lands!).reduce((a, b) => a + b, 0) : 0;
-				if (decklist.main.length + addedLands !== 40) continue;
+				if (decklist.main.length < 20 || decklist.main.length + addedLands !== 40) continue;
 				const data = {
 					apiKey: MTGDraftbotsAPIKey,
 					main: decklist.main.map((cid) => getCard(cid).oracle_id),
