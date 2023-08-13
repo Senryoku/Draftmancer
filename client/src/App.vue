@@ -431,10 +431,10 @@
 								</div>
 								<div
 									v-tooltip.left="
-										'Starts a Grid Draft. This is a draft variant for two or three players.'
+										'Starts a Grid Draft. This is a draft variant for two to four players.'
 									"
 								>
-									<button @click="startGridDraft()">Grid (2/3p.)</button>
+									<button @click="startGridDraft()">Grid (2-4p.)</button>
 								</div>
 								<div
 									v-tooltip.left="

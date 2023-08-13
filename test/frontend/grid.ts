@@ -10,6 +10,7 @@ import {
 	setupBrowsers,
 	pages,
 	launchMode,
+	replaceInput,
 } from "./src/common.js";
 import { getRandom } from "../../src/utils.js";
 
@@ -80,9 +81,83 @@ describe("Grid Draft", () => {
 		});
 	});
 
+	describe("Grid Draft - 2 Players with Two Picks per Grid", function () {
+		this.timeout(20000);
+		setupBrowsers(2);
+
+		it(`Launch Draft`, async () => {
+			await launchMode("Grid");
+			await waitAndClickSelector(pages[0], "#two-picks-input");
+			await waitAndClickXpath(pages[0], "//button[contains(., 'Start Grid Draft')]");
+
+			await Promise.all(
+				pages.map((page) => page.waitForXPath("//h2[contains(., 'Grid Draft')]", { timeout: 3000 }))
+			);
+			const promises = [];
+			for (const page of pages) {
+				if ((await page.$x("//div[contains(., 'Draft Started!')]")).length > 0)
+					promises.push(
+						page.waitForXPath("//div[contains(., 'Draft Started!')]", {
+							hidden: true,
+							timeout: 10000,
+						})
+					);
+			}
+			await Promise.all(promises);
+		});
+
+		it("Each player picks a card", async function () {
+			this.timeout(50000);
+			const done = Array(pages.length).fill(false);
+			while (done.some((d) => !d)) {
+				const promises = [];
+				for (let i = 0; i < pages.length; i++) {
+					if (done[i]) promises.push(true);
+					else promises.push(pickCard(pages[i]));
+				}
+				await Promise.all(promises);
+				for (let i = 0; i < pages.length; i++) done[i] = done[i] || (await promises[i]);
+			}
+		});
+	});
+
 	describe("Grid Draft - 3 Players", function () {
 		this.timeout(10000);
-		setupBrowsers(2);
+		setupBrowsers(3);
+
+		it(`Launch Draft`, async () => {
+			await launchMode("Grid");
+			await waitAndClickXpath(pages[0], "//button[contains(., 'Start Grid Draft')]");
+
+			const promises = [];
+			for (const page of pages)
+				promises.push(
+					page.waitForXPath("//div[contains(., 'Draft Started!')]", {
+						hidden: true,
+						timeout: 10000,
+					})
+				);
+			await Promise.all(promises);
+		});
+
+		it("Each player picks a card", async function () {
+			this.timeout(100000);
+			const done: boolean[] = Array(pages.length).fill(false);
+			while (done.some((d) => !d)) {
+				const promises = [];
+				for (let i = 0; i < pages.length; i++) {
+					if (done[i]) promises.push(true);
+					else promises.push(pickCard(pages[i]));
+				}
+				await Promise.all(promises);
+				for (let i = 0; i < pages.length; i++) done[i] = done[i] || (await promises[i]);
+			}
+		});
+	});
+
+	describe("Grid Draft - 4 Players", function () {
+		this.timeout(10000);
+		setupBrowsers(4);
 
 		it(`Launch Draft`, async () => {
 			await launchMode("Grid");
