@@ -63,7 +63,7 @@ describe("Grid Draft", function () {
 		done();
 	});
 
-	const startDraft = (boosterCount: number = 18) => {
+	const startDraft = (boosterCount: number = 18, twoPicksPerGrid: boolean = false) => {
 		it("When session owner launch Grid draft, everyone should receive a startGridDraft event", function (done) {
 			ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
 			nonOwnerIdx = 1 - ownerIdx;
@@ -74,7 +74,7 @@ describe("Grid Draft", function () {
 					if (connectedClients === clients.length) done();
 				});
 			}
-			clients[ownerIdx].emit("startGridDraft", boosterCount, false, ackNoError);
+			clients[ownerIdx].emit("startGridDraft", boosterCount, twoPicksPerGrid, ackNoError);
 		});
 	};
 
@@ -119,12 +119,17 @@ describe("Grid Draft", function () {
 		});
 
 		it("Non-owner reconnects, draft restarts.", function (done) {
-			clients[nonOwnerIdx].once("rejoinGridDraft", function (state) {
+			clients[nonOwnerIdx].once("rejoinGridDraft", function () {
 				done();
 			});
 			clients[nonOwnerIdx].connect();
 		});
 
+		endDraft();
+	});
+
+	describe("2 Players, 2 picks per grid", function () {
+		startDraft(12, true);
 		endDraft();
 	});
 
@@ -178,6 +183,4 @@ describe("Grid Draft", function () {
 		startDraft();
 		endDraft();
 	});
-
-	// TODO: Add test with 'Two Picks per Grid' enabled.
 });
