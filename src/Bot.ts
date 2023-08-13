@@ -52,7 +52,7 @@ export enum MTGDraftBotsSetSpecializedModels {
 	bro = "bro",
 	one = "one",
 	sir = "sir",
-	mom = "mom",
+	//mom = "mom", // Disabled as it's unstable right now.
 	ltr = "ltr",
 }
 
