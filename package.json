@@ -84,15 +84,15 @@
 		"compression-webpack-plugin": "^10.0.0",
 		"concurrently": "^8.1.0",
 		"copy-webpack-plugin": "^11.0.0",
-		"core-js": "^3.31.1",
+		"core-js": "^3.32.0",
 		"cross-env": "^7.0.3",
 		"css-loader": "^6.8.1",
-		"eslint": "^8.39.0",
+		"eslint": "^8.46.0",
 		"eslint-config-prettier": "^8.8.0",
 		"eslint-import-resolver-typescript": "^3.5.5",
-		"eslint-plugin-import": "^2.27.5",
+		"eslint-plugin-import": "^2.28.0",
 		"eslint-plugin-prettier": "^5.0.0",
-		"eslint-plugin-vue": "^9.15.1",
+		"eslint-plugin-vue": "^9.16.1",
 		"file-loader": "^6.2.0",
 		"html-webpack-plugin": "^5.5.0",
 		"husky": "^8.0.3",
@@ -114,6 +114,6 @@
 	},
 	"optionalDependencies": {
 		"bufferutil": "^4.0.7",
-		"utf-8-validate": "^5.0.10"
+		"utf-8-validate": "^6.0.3"
 	}
 }
