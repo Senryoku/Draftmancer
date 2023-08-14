@@ -3404,7 +3404,18 @@ export default defineComponent({
 						: PassingOrder.Left;
 				if (this.sessionUsers.length === 3)
 					return Math.floor(this.gridDraftState.round / 9) % 2 === 0 ? PassingOrder.Right : PassingOrder.Left;
-				// FIXME: Will be wrong if Two Picks per Grid is enabled.
+				// Assumes 2 players
+				if (this.gridDraftState.twoPicksPerGrid)
+					return [
+						PassingOrder.Right,
+						PassingOrder.Left,
+						PassingOrder.Right,
+						PassingOrder.Repeat,
+						PassingOrder.Left,
+						PassingOrder.Right,
+						PassingOrder.Left,
+						PassingOrder.Repeat,
+					][this.gridDraftState.round % 8];
 				return [PassingOrder.Right, PassingOrder.Repeat, PassingOrder.Left, PassingOrder.Repeat][
 					this.gridDraftState.round % 4
 				];

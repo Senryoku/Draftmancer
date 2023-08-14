@@ -11,6 +11,7 @@ export type GridDraftSyncData = {
 	booster: (UniqueCard | null)[];
 	boosterCount: number;
 	lastPicks: PickSummary[];
+	twoPicksPerGrid: boolean;
 };
 
 export class GridDraftState extends IDraftState implements TurnBased {
@@ -73,6 +74,7 @@ export class GridDraftState extends IDraftState implements TurnBased {
 			booster: this.boosters[0].length > 0 ? this.boosters[0].slice(0, 9) : this.boosters[0],
 			boosterCount: this.boosterCount,
 			lastPicks: this.lastPicks,
+			twoPicksPerGrid: this.twoPicksPerGrid,
 		};
 	}
 }
