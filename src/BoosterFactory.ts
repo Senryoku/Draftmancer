@@ -1618,6 +1618,62 @@ class CMMBoosterFactory extends BoosterFactory {
 	}
 }
 
+// Wilds of Eldraine - One 'Enchanting Tale' per pack
+class WOEBoosterFactory extends BoosterFactory {
+	static readonly MaxWOTCollectorNumber = 63; // WOT Cards with a higher collector number are special variations not available in draft boosters.
+
+	wotPool: SlotedCardPool = { uncommon: new Map(), rare: new Map(), mythic: new Map() };
+
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
+		super(cardPool, landSlot, options);
+		if (options.session && !options.session.unrestrictedCardPool()) {
+			const WOTCards: CardPool = options.session.restrictedCollection(["wot"]);
+			for (const cid of WOTCards.keys()) {
+				const card = getCard(cid);
+				if (parseInt(card.collector_number) <= WOEBoosterFactory.MaxWOTCollectorNumber)
+					this.wotPool[card.rarity].set(
+						cid,
+						Math.min(options.maxDuplicates?.[card.rarity] ?? 99, WOTCards.get(cid) as number)
+					);
+			}
+		} else {
+			for (const cid of CardsBySet["wot"]) {
+				const card = getCard(cid);
+				if (parseInt(card.collector_number) <= WOEBoosterFactory.MaxWOTCollectorNumber)
+					this.wotPool[card.rarity].set(cid, options.maxDuplicates?.[card.rarity] ?? 99);
+			}
+		}
+	}
+
+	generateBooster(targets: Targets) {
+		if (isEmpty(this.wotPool)) {
+			return super.generateBooster(targets);
+		} else {
+			const updatedTargets = structuredClone(targets);
+			const wotCards: UniqueCard[] = [];
+			for (let i = 0; i < targets.bonus; ++i) {
+				updatedTargets.common = Math.max(0, updatedTargets.common - 1);
+				const wotCounts = countBySlot(this.wotPool);
+				if (wotCounts.uncommon === 0 && wotCounts.rare === 0 && wotCounts.mythic === 0)
+					return new MessageError("Not enough Enchanting Tales cards.");
+				// Rates from Multiverse Legends in MOM
+				const wotRarityRoll = random.real(0, 1);
+				const wotRarity =
+					this.options?.mythicPromotion && wotCounts.mythic > 0 && wotRarityRoll <= 1.0 / 15.0
+						? "mythic"
+						: wotCounts.rare > 0 && wotRarityRoll <= 5.0 / 15.0
+						? "rare"
+						: "uncommon";
+				wotCards.push(pickCard(this.wotPool[wotRarity]));
+			}
+			const booster = super.generateBooster(targets);
+			if (isMessageError(booster)) return booster;
+			booster.unshift(...wotCards);
+			return booster;
+		}
+	}
+}
+
 // Set specific rules.
 // Neither DOM, WAR or ZNR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
 export const SetSpecificFactories: {
@@ -1654,6 +1710,7 @@ export const SetSpecificFactories: {
 	mom: MOMBoosterFactory,
 	mat: MATBoosterFactory,
 	cmm: CMMBoosterFactory,
+	woe: WOEBoosterFactory,
 };
 
 export const getBoosterFactory = function (
