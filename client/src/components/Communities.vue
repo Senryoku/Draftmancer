@@ -145,6 +145,15 @@ const communities = [
 			twitter: "https://twitter.com/JankDiverGaming",
 		},
 	},
+	{
+		name: "Limited Perspective",
+		brief: "Join for Limited Magic using Draftmancer and Tabletop Simulator, stay for the friendly banter and unforgettable moments. Hosting drafts every Saturday night at 6:30 EST.",
+		icon: "limited_perspective.webp",
+		tags: ["Draft", "Cube", "Progression Series", "TTS"],
+		links: {
+			discord: "https://discord.gg/f5UYPauRQz",
+		},
+	},
 ];
 shuffleArray(communities);
 
