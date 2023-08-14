@@ -2348,23 +2348,23 @@
     "ltc": {
         "code": "ltc",
         "fullName": "Tales of Middle-earth Commander",
-        "cardCount": 410,
+        "cardCount": 413,
         "isPrimary": false,
         "block": "Commander",
         "icon": "img/sets/ltc.svg",
         "commonCount": 38,
-        "mythicCount": 86,
+        "mythicCount": 89,
         "rareCount": 237,
         "uncommonCount": 49
     },
     "ltr": {
         "code": "ltr",
         "fullName": "The Lord of the Rings: Tales of Middle-earth",
-        "cardCount": 462,
+        "cardCount": 463,
         "isPrimary": true,
         "icon": "img/sets/ltr.svg",
         "commonCount": 132,
-        "mythicCount": 54,
+        "mythicCount": 55,
         "rareCount": 163,
         "uncommonCount": 113
     },
@@ -3084,9 +3084,10 @@
     "p30m": {
         "code": "p30m",
         "fullName": "30th Anniversary Misc Promos",
-        "cardCount": 4,
+        "cardCount": 5,
         "isPrimary": false,
         "icon": "img/sets/p30m.svg",
+        "mythicCount": 1,
         "rareCount": 4
     },
     "p30t": {
@@ -3687,10 +3688,10 @@
     "pf23": {
         "code": "pf23",
         "fullName": "MagicFest 2023",
-        "cardCount": 2,
+        "cardCount": 3,
         "isPrimary": false,
         "icon": "img/sets/pf23.svg",
-        "rareCount": 2
+        "rareCount": 3
     },
     "pfrf": {
         "code": "pfrf",
@@ -4028,11 +4029,11 @@
     "plist": {
         "code": "plist",
         "fullName": "The List",
-        "cardCount": 1164,
+        "cardCount": 1163,
         "isPrimary": true,
         "icon": "img/sets/plist.svg",
         "commonCount": 152,
-        "mythicCount": 146,
+        "mythicCount": 145,
         "rareCount": 539,
         "specialCount": 4,
         "uncommonCount": 323
@@ -4163,6 +4164,14 @@
         "icon": "img/sets/pmbs.svg",
         "mythicCount": 2,
         "rareCount": 2
+    },
+    "pmda": {
+        "code": "pmda",
+        "fullName": "Magic × Duel Masters Promos",
+        "cardCount": 4,
+        "isPrimary": false,
+        "icon": "img/sets/pmda.svg",
+        "rareCount": 4
     },
     "pmei": {
         "code": "pmei",
@@ -5022,6 +5031,14 @@
         "rareCount": 53,
         "uncommonCount": 80
     },
+    "rvr": {
+        "code": "rvr",
+        "fullName": "Ravnica Remastered",
+        "cardCount": 3,
+        "isPrimary": true,
+        "icon": "img/sets/rvr.svg",
+        "rareCount": 3
+    },
     "s00": {
         "code": "s00",
         "fullName": "Starter 2000",
@@ -5134,13 +5151,13 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 972,
+        "cardCount": 982,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
         "commonCount": 42,
-        "mythicCount": 174,
-        "rareCount": 735,
-        "uncommonCount": 21
+        "mythicCount": 179,
+        "rareCount": 741,
+        "uncommonCount": 20
     },
     "slp": {
         "code": "slp",
@@ -5385,14 +5402,6 @@
         "icon": "img/sets/tcma.svg",
         "commonCount": 1
     },
-    "tcmm": {
-        "code": "tcmm",
-        "fullName": "Commander Masters Tokens",
-        "cardCount": 1,
-        "isPrimary": false,
-        "icon": "img/sets/tcmm.svg",
-        "commonCount": 1
-    },
     "td0": {
         "code": "td0",
         "fullName": "Magic Online Theme Decks",
@@ -5499,14 +5508,6 @@
         "icon": "img/sets/tmbs.svg",
         "commonCount": 1
     },
-    "tmoc": {
-        "code": "tmoc",
-        "fullName": "March of the Machine Commander Tokens",
-        "cardCount": 1,
-        "isPrimary": false,
-        "icon": "img/sets/tmoc.svg",
-        "commonCount": 1
-    },
     "tmp": {
         "code": "tmp",
         "fullName": "Tempest",
@@ -5556,15 +5557,6 @@
         "mythicCount": 15,
         "rareCount": 53,
         "uncommonCount": 80
-    },
-    "trix": {
-        "code": "trix",
-        "fullName": "Rivals of Ixalan Tokens",
-        "cardCount": 1,
-        "isPrimary": false,
-        "block": "Ixalan",
-        "icon": "img/sets/trix.svg",
-        "commonCount": 1
     },
     "tsb": {
         "code": "tsb",
@@ -5628,6 +5620,7 @@
         "fullName": "Doctor Who Tokens",
         "cardCount": 1,
         "isPrimary": false,
+        "icon": "img/sets/twho.svg",
         "commonCount": 1
     },
     "uds": {
@@ -6004,6 +5997,7 @@
         "fullName": "Wilds of Eldraine",
         "cardCount": 18,
         "isPrimary": true,
+        "icon": "img/sets/woe.svg",
         "commonCount": 7,
         "mythicCount": 6,
         "rareCount": 4,
