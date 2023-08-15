@@ -1971,7 +1971,7 @@ export default defineComponent({
 			fireToast("success", "Done drafting!");
 		},
 		startGridDraft: async function () {
-			if (this.userID != this.sessionOwner || this.drafting) return;
+			if (this.userID !== this.sessionOwner || this.drafting) return;
 
 			if (!this.ownerIsPlayer) {
 				Alert.fire({
@@ -1981,8 +1981,8 @@ export default defineComponent({
 				});
 			} else {
 				this.spawnDialog(GridDialog, {
-					onStart: (boosterCount: number) => {
-						this.socket.emit("startGridDraft", boosterCount, (answer: SocketAck) => {
+					onStart: (boosterCount: number, twoPicksPerGrid: boolean) => {
+						this.socket.emit("startGridDraft", boosterCount, twoPicksPerGrid, (answer: SocketAck) => {
 							if (answer.code !== 0 && answer.error) Alert.fire(answer.error);
 						});
 					},
@@ -3398,8 +3398,24 @@ export default defineComponent({
 		},
 		passingOrder(): PassingOrder {
 			if (this.gridDraftState) {
+				if (this.sessionUsers.length === 4)
+					return Math.floor(this.gridDraftState.round / 16) % 2 === 0
+						? PassingOrder.Right
+						: PassingOrder.Left;
 				if (this.sessionUsers.length === 3)
 					return Math.floor(this.gridDraftState.round / 9) % 2 === 0 ? PassingOrder.Right : PassingOrder.Left;
+				// Assumes 2 players
+				if (this.gridDraftState.twoPicksPerGrid)
+					return [
+						PassingOrder.Right,
+						PassingOrder.Left,
+						PassingOrder.Right,
+						PassingOrder.Repeat,
+						PassingOrder.Left,
+						PassingOrder.Right,
+						PassingOrder.Left,
+						PassingOrder.Repeat,
+					][this.gridDraftState.round % 8];
 				return [PassingOrder.Right, PassingOrder.Repeat, PassingOrder.Left, PassingOrder.Repeat][
 					this.gridDraftState.round % 4
 				];

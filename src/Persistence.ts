@@ -145,7 +145,7 @@ export function restoreSession(s: any, owner: UserID) {
 				return r;
 			}
 			case "grid": {
-				r.draftState = new GridDraftState([], []);
+				r.draftState = new GridDraftState([], [], false);
 				copyPODProps(s.draftState, r.draftState);
 				return r;
 			}
