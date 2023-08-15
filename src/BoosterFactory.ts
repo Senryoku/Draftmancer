@@ -1173,14 +1173,20 @@ class BROBoosterFactory extends BoosterFactory {
 
 		if (options.session && !options.session.unrestrictedCardPool()) {
 			const BRRCards: CardPool = options.session.restrictedCollection(["brr"]);
-			for (const cid of BRRCards.keys())
-				this.retroArtifacts[getCard(cid).rarity].set(
-					cid,
-					Math.min(options.maxDuplicates?.[getCard(cid).rarity] ?? 99, BRRCards.get(cid) as number)
-				);
+			for (const cid of BRRCards.keys()) {
+				const card = getCard(cid);
+				if (parseInt(card.collector_number) <= 63)
+					this.retroArtifacts[card.rarity].set(
+						cid,
+						Math.min(options.maxDuplicates?.[card.rarity] ?? 99, BRRCards.get(cid) as number)
+					);
+			}
 		} else {
-			for (const cid of CardsBySet["brr"])
-				this.retroArtifacts[getCard(cid).rarity].set(cid, options.maxDuplicates?.[getCard(cid).rarity] ?? 99);
+			for (const cid of CardsBySet["brr"]) {
+				const card = getCard(cid);
+				if (parseInt(card.collector_number) <= 63)
+					this.retroArtifacts[card.rarity].set(cid, options.maxDuplicates?.[card.rarity] ?? 99);
+			}
 		}
 	}
 
