@@ -1007,6 +1007,7 @@
 							name="booster-cards"
 							class="booster card-container"
 							:class="{ 'booster-waiting': draftingState === DraftState.Waiting, skipped: skipPick }"
+							:style="`--booster-card-scale: ${boosterCardScale};`"
 						>
 							<div class="wait" key="wait" v-if="draftingState === DraftState.Waiting">
 								<font-awesome-icon
