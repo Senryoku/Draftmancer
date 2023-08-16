@@ -1795,13 +1795,13 @@
     "gpt": {
         "code": "gpt",
         "fullName": "Guildpact",
-        "cardCount": 166,
+        "cardCount": 167,
         "isPrimary": true,
         "block": "Ravnica",
         "icon": "img/sets/gpt.svg",
         "commonCount": 55,
         "rareCount": 55,
-        "uncommonCount": 56
+        "uncommonCount": 57
     },
     "grn": {
         "code": "grn",
@@ -4165,14 +4165,6 @@
         "mythicCount": 2,
         "rareCount": 2
     },
-    "pmda": {
-        "code": "pmda",
-        "fullName": "Magic × Duel Masters Promos",
-        "cardCount": 4,
-        "isPrimary": false,
-        "icon": "img/sets/pmda.svg",
-        "rareCount": 4
-    },
     "pmei": {
         "code": "pmei",
         "fullName": "Media Inserts",
@@ -5623,6 +5615,14 @@
         "icon": "img/sets/twho.svg",
         "commonCount": 1
     },
+    "twoe": {
+        "code": "twoe",
+        "fullName": "Wilds of Eldraine Tokens",
+        "cardCount": 3,
+        "isPrimary": false,
+        "icon": "img/sets/twoe.svg",
+        "commonCount": 3
+    },
     "uds": {
         "code": "uds",
         "fullName": "Urza's Destiny",
@@ -5992,26 +5992,35 @@
         "mythicCount": 2,
         "rareCount": 3
     },
+    "woc": {
+        "code": "woc",
+        "fullName": "Wilds of Eldraine Commander",
+        "cardCount": 10,
+        "isPrimary": false,
+        "block": "Commander",
+        "icon": "img/sets/woc.svg",
+        "mythicCount": 10
+    },
     "woe": {
         "code": "woe",
         "fullName": "Wilds of Eldraine",
-        "cardCount": 18,
+        "cardCount": 112,
         "isPrimary": true,
         "icon": "img/sets/woe.svg",
-        "commonCount": 7,
-        "mythicCount": 6,
-        "rareCount": 4,
-        "uncommonCount": 1
+        "commonCount": 24,
+        "mythicCount": 30,
+        "rareCount": 31,
+        "uncommonCount": 27
     },
     "wot": {
         "code": "wot",
         "fullName": "Wilds of Eldraine: Enchanting Tales",
-        "cardCount": 15,
+        "cardCount": 53,
         "isPrimary": false,
         "icon": "img/sets/wot.svg",
-        "mythicCount": 11,
-        "rareCount": 3,
-        "uncommonCount": 1
+        "mythicCount": 33,
+        "rareCount": 16,
+        "uncommonCount": 4
     },
     "wth": {
         "code": "wth",
