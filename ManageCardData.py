@@ -762,6 +762,11 @@ setinfos["mb1_convention_2021"].update({"code": "mb1_convention_2021",
                                      })
 PrimarySets.append("mb1_convention_2021")
 
+# Add Portal sets as draftable (They're not meant to be drafted, but some users want to try anyway!) 
+PrimarySets.append("por")
+PrimarySets.append("p02")
+PrimarySets.append("ptk")
+
 # Create fake primary sets for each version of the Shadows over Innistrad Remastered bonus sheet, so users can choose rather than rely on the auto rotation.
 with open("src/data/shadow_of_the_past.json", "r") as bonusSheetsFile:
     bonusSheets = json.loads(bonusSheetsFile.read())
