@@ -10,9 +10,20 @@ import { DraftLog } from "../src/DraftLog.js";
 import { RochesterDraftSyncData } from "../src/RochesterDraft.js";
 import { UniqueCard } from "../src/CardTypes.js";
 import { PickSummary } from "../src/PickSummary.js";
+import { ArrayElement } from "../src/TypeChecks.js";
 
-describe("Draft Logs", function () {
-	let clients: ReturnType<typeof makeClients> = [];
+describe.only("Draft Logs", function () {
+	let clients: Array<
+		ArrayElement<ReturnType<typeof makeClients>> & {
+			state?: {
+				booster: UniqueCard[];
+				boosterCount: number;
+				boosterNumber: number;
+				pickNumber: number;
+				skipPick: boolean;
+			};
+		}
+	> = [];
 	const sessionID = "sessionID";
 	let ownerIdx = 0;
 
@@ -80,6 +91,23 @@ describe("Draft Logs", function () {
 		done();
 	});
 
+	function setSettings(draftLogRecipients: DraftLogRecipients, personalLogs: boolean) {
+		return (done: Mocha.Done) => {
+			const nonOwnerIdx = (ownerIdx + 1) % clients.length;
+			clients[nonOwnerIdx].on("sessionOptions", function () {
+				if (
+					Sessions[sessionID].personalLogs === personalLogs &&
+					Sessions[sessionID].draftLogRecipients === draftLogRecipients
+				) {
+					clients[nonOwnerIdx].removeListener("sessionOptions");
+					done();
+				}
+			});
+			clients[ownerIdx].emit("setDraftLogRecipients", draftLogRecipients);
+			clients[ownerIdx].emit("setPersonalLogs", personalLogs);
+		};
+	}
+
 	function test(
 		gameMode: string,
 		gameStartFunc: () => void,
@@ -95,23 +123,6 @@ describe("Draft Logs", function () {
 				gameStartFunc();
 				it("Every player should receive a valid draft log.", gameEndFunc(validate));
 			});
-		}
-
-		function setSettings(draftLogRecipients: DraftLogRecipients, personalLogs: boolean) {
-			return (done: Mocha.Done) => {
-				const nonOwnerIdx = (ownerIdx + 1) % clients.length;
-				clients[nonOwnerIdx].on("sessionOptions", function () {
-					if (
-						Sessions[sessionID].personalLogs === personalLogs &&
-						Sessions[sessionID].draftLogRecipients === draftLogRecipients
-					) {
-						clients[nonOwnerIdx].removeListener("sessionOptions");
-						done();
-					}
-				});
-				clients[ownerIdx].emit("setDraftLogRecipients", draftLogRecipients);
-				clients[ownerIdx].emit("setPersonalLogs", personalLogs);
-			};
 		}
 
 		checklogs(
@@ -198,7 +209,14 @@ describe("Draft Logs", function () {
 				(() => {
 					clients[c].once("draftState", (state) => {
 						receivedBoosters += 1;
-						(clients[c] as any).state = state;
+						const s = state as {
+							booster: UniqueCard[];
+							boosterCount: number;
+							boosterNumber: number;
+							pickNumber: 0;
+							skipPick: boolean;
+						};
+						clients[c].state = s;
 						if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 					});
 				})();
@@ -215,9 +233,10 @@ describe("Draft Logs", function () {
 					boosterCount: number;
 					boosterNumber: number;
 					pickNumber: 0;
+					skipPick: boolean;
 				};
-				if (s.pickNumber !== (clients[c] as any).state.pickNumber && s.boosterCount > 0) {
-					(clients[c] as any).state = s;
+				if (s.pickNumber !== clients[c].state?.pickNumber && s.boosterCount > 0) {
+					clients[c].state = s;
 					clients[c].emit("pickCard", { pickedCards: [0], burnedCards: [] }, () => {});
 				}
 			});
@@ -233,6 +252,54 @@ describe("Draft Logs", function () {
 		}
 	};
 	test("Draft", startDraft, endDraft);
+
+	describe("Draft - Delayed, no personal logs, automatic unlock.", function () {
+		it("Emit settings", (done) => {
+			clients[ownerIdx].emit("setDraftLogUnlockTimer", 60); // Note: Value doesn't matter here, the server will override it with a small value for testing purposes
+			setSettings("delayed", false)(done);
+		});
+		startDraft();
+		it("Automatically unlocks", (done) => {
+			let unlockedLogReceived = 0;
+			for (let c = 0; c < clients.length; ++c) {
+				clients[c].on("draftState", function (state) {
+					const s = state as {
+						booster: UniqueCard[];
+						boosterCount: number;
+						boosterNumber: number;
+						pickNumber: 0;
+						skipPick: boolean;
+					};
+					if (s.pickNumber !== clients[c].state?.pickNumber && s.boosterCount > 0) {
+						clients[c].state = s;
+						clients[c].emit("pickCard", { pickedCards: [0], burnedCards: [] }, () => {});
+					}
+				});
+				clients[c].once("draftLog", function (initialDraftLog) {
+					expect(initialDraftLog.delayed).to.be.true; // Should initally be locked
+					if (c === ownerIdx)
+						for (let i = 0; i < clients.length; ++i)
+							expect(initialDraftLog.users[getUID(clients[i])].cards).to.be.not.empty;
+					else
+						for (let i = 0; i < clients.length; ++i)
+							expect(initialDraftLog.users[getUID(clients[i])].cards).to.be.empty;
+					clients[c].on("draftLog", function (log) {
+						// Then automatically unlock
+						if (!log.delayed) {
+							for (let i = 0; i < clients.length; ++i)
+								expect(log.users[getUID(clients[i])].cards).to.be.not.empty;
+							unlockedLogReceived += 1;
+							clients[c].removeListener("draftLog");
+							if (unlockedLogReceived == clients.length) done();
+						}
+					});
+				});
+			}
+			for (let c = 0; c < clients.length; ++c) {
+				clients[c].emit("pickCard", { pickedCards: [0], burnedCards: [] }, () => {});
+			}
+		});
+	});
 
 	let rochesterDraftState: RochesterDraftSyncData | null = null;
 	const startRochesterDraft = () => {

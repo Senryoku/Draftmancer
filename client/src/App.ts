@@ -313,6 +313,7 @@ export default defineComponent({
 			pickTimer: 75,
 			personalLogs: true,
 			draftLogRecipients: "everyone" as DraftLogRecipients,
+			draftLogUnlockTimer: 0,
 			bracketLocked: false,
 			//
 			draftLogs: [] as DraftLog[],
@@ -3902,6 +3903,11 @@ export default defineComponent({
 			if (this.userID !== this.sessionOwner || !this.socket) return;
 			this.socket.emit("setDraftLogRecipients", this.draftLogRecipients);
 			this.updateStoredSessionSettings({ draftLogRecipients: this.draftLogRecipients });
+		},
+		draftLogUnlockTimer() {
+			if (this.userID !== this.sessionOwner || !this.socket) return;
+			this.socket.emit("setDraftLogUnlockTimer", this.draftLogUnlockTimer);
+			this.updateStoredSessionSettings({ draftLogUnlockTimer: this.draftLogUnlockTimer });
 		},
 		sessionUsers: {
 			deep: true,

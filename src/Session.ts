@@ -73,7 +73,7 @@ import { HousmanDraftState, isHousmanDraftState } from "./HousmanDraft.js";
 import { SolomonDraftState, isSolomonDraftState } from "./SolomonDraft.js";
 import { isSomeEnum } from "./TypeChecks.js";
 import { askColors, choosePlayer } from "./Conspiracy.js";
-import { InProduction, TestingOnly } from "./Context.js";
+import { InProduction, InTesting, TestingOnly } from "./Context.js";
 
 // Tournament timer depending on the number of remaining cards in a pack.
 const TournamentTimer = [
@@ -142,6 +142,7 @@ export class Session implements IIndexable {
 	discardRemainingCardsAt: number = 0;
 	personalLogs: boolean = true;
 	draftLogRecipients: DraftLogRecipients = "everyone";
+	draftLogUnlockTimer: number = 0; // In minutes; Zero to disable.
 	bracketLocked: boolean = false; // If set, only the owner can edit the results.
 	bracket?: Bracket = undefined;
 
@@ -2679,7 +2680,7 @@ export class Session implements IIndexable {
 
 	// Makes sure DraftLog's cards and decklists are up-to-date for each player
 	finalizeLogs() {
-		if (this.draftLog)
+		if (this.draftLog) {
 			for (const uid in this.draftLog.users) {
 				if (!this.draftLog.users[uid].isBot) {
 					const p = this.isDisconnected(uid) ? this.disconnectedUsers[uid] : Connections[uid]; // FIXME: This should not be necessary, I don't know why Connections[uid] can be undefined here (if the user isn't disconnected).
@@ -2689,6 +2690,8 @@ export class Session implements IIndexable {
 					}
 				}
 			}
+			this.draftLog.lastUpdated = Date.now();
+		}
 	}
 
 	// Sends the current draft log to all users according to the specified recipient(s).
@@ -2706,6 +2709,15 @@ export class Session implements IIndexable {
 			default:
 			case "delayed":
 				this.draftLog.delayed = true;
+				if (this.draftLogUnlockTimer > 0) {
+					const sessionID = this.id;
+					setTimeout(
+						() => {
+							Sessions[sessionID]?.unlockLogs();
+						},
+						InTesting ? 1 : this.draftLogUnlockTimer * 60 * 1000
+					);
+				}
 			// Fallthrough
 			case "owner":
 				if (this.owner) Connections[this.owner].socket.emit("draftLog", this.draftLog);
@@ -2720,6 +2732,13 @@ export class Session implements IIndexable {
 				this.forUsers((uid) => Connections[uid]?.socket.emit("draftLog", this.draftLog!));
 				break;
 		}
+	}
+
+	unlockLogs() {
+		if (!this.draftLog || !this.draftLog.delayed) return;
+		this.draftLog.delayed = false;
+		this.draftLog.lastUpdated = Date.now();
+		this.emitToConnectedUsers("draftLog", this.draftLog);
 	}
 
 	// Send decklogs to CubeArtisan after 5min of inactivity (or when the session is closed).
@@ -3295,6 +3314,7 @@ export class Session implements IIndexable {
 			getCard: this.getCustomGetCardFunction(),
 		});
 		this.rescheduleSendDecklogTimeout();
+		this.draftLog.lastUpdated = Date.now();
 	}
 
 	updateDecklist(userID: UserID) {
@@ -3382,6 +3402,13 @@ export class Session implements IIndexable {
 	}
 	forNonOwners(fn: (uid: UserID) => void) {
 		for (const uid of this.users) if (uid !== this.owner) fn(uid);
+	}
+
+	emitToConnectedUsers<T extends keyof ServerToClientEvents>(
+		eventKey: T,
+		...args: Parameters<ServerToClientEvents[T]>
+	) {
+		for (const uid of this.users) if (uid in Connections) Connections[uid].socket.emit(eventKey, ...args);
 	}
 
 	emitToConnectedNonOwners<T extends keyof ServerToClientEvents>(

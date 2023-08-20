@@ -51,6 +51,7 @@ export class DraftLog {
 	users: DraftLogUsersData = {};
 	sessionID: SessionID;
 	time: number;
+	lastUpdated?: number; // Used to check if a new version of the draft log is available on reconnection. Not updated during the draft (as the logs are not shared with users at this time anyway); only after.
 	setRestriction: string[];
 	useCustomBoosters: boolean;
 	customBoosters: string[] = [];
