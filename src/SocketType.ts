@@ -262,6 +262,7 @@ export interface ClientToServerEvents {
 	updateDeckLands: (lands: DeckBasicLands) => void;
 	moveCard: (uniqueID: UniqueCardID, destStr: string) => void;
 	removeBasicsFromDeck: () => void;
+	retrieveUpdatedDraftLogs: (logSessionID: SessionID, timestamp: number, lastUpdated: number | undefined) => void;
 
 	// Draft Queue
 	draftQueueSetReadyState: (status: ReadyState) => void;

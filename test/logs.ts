@@ -91,13 +91,14 @@ describe.only("Draft Logs", function () {
 		done();
 	});
 
-	function setSettings(draftLogRecipients: DraftLogRecipients, personalLogs: boolean) {
+	function setSettings(draftLogRecipients: DraftLogRecipients, personalLogs: boolean, unlockTimer: number = 0) {
 		return (done: Mocha.Done) => {
 			const nonOwnerIdx = (ownerIdx + 1) % clients.length;
 			clients[nonOwnerIdx].on("sessionOptions", function () {
 				if (
 					Sessions[sessionID].personalLogs === personalLogs &&
-					Sessions[sessionID].draftLogRecipients === draftLogRecipients
+					Sessions[sessionID].draftLogRecipients === draftLogRecipients &&
+					Sessions[sessionID].draftLogUnlockTimer === unlockTimer
 				) {
 					clients[nonOwnerIdx].removeListener("sessionOptions");
 					done();
@@ -105,6 +106,7 @@ describe.only("Draft Logs", function () {
 			});
 			clients[ownerIdx].emit("setDraftLogRecipients", draftLogRecipients);
 			clients[ownerIdx].emit("setPersonalLogs", personalLogs);
+			clients[ownerIdx].emit("setDraftLogUnlockTimer", unlockTimer); // Note: Exact value doesn't matter here, the server will override any non-zero with a small value for testing purposes
 		};
 	}
 
@@ -255,8 +257,7 @@ describe.only("Draft Logs", function () {
 
 	describe("Draft - Delayed, no personal logs, automatic unlock.", function () {
 		it("Emit settings", (done) => {
-			clients[ownerIdx].emit("setDraftLogUnlockTimer", 60); // Note: Value doesn't matter here, the server will override it with a small value for testing purposes
-			setSettings("delayed", false)(done);
+			setSettings("delayed", false, 60)(done);
 		});
 		startDraft();
 		it("Automatically unlocks", (done) => {
@@ -298,6 +299,103 @@ describe.only("Draft Logs", function () {
 			for (let c = 0; c < clients.length; ++c) {
 				clients[c].emit("pickCard", { pickedCards: [0], burnedCards: [] }, () => {});
 			}
+		});
+	});
+
+	describe("Draft - Delayed, with disconnect.", function () {
+		let firstDisconnected = 0;
+		let secondDisconnected = 0;
+		const receivedLogs: { [idx: number]: DraftLog } = {};
+
+		it("Emit settings", (done) => {
+			setSettings("delayed", false)(done);
+		});
+
+		startDraft();
+
+		it("Two clients disconnect", (done) => {
+			firstDisconnected = (ownerIdx + 1) % clients.length;
+			secondDisconnected = (ownerIdx + 2) % clients.length;
+			clients[firstDisconnected].disconnect();
+			clients[secondDisconnected].disconnect();
+			clients[ownerIdx].once("resumeOnReconnection", () => done());
+			clients[ownerIdx].emit("replaceDisconnectedPlayers");
+		});
+
+		it("Draft until the end", (done) => {
+			let draftEnded = 0;
+			for (let c = 0; c < clients.length; ++c) {
+				if (c === firstDisconnected || c === secondDisconnected) continue;
+				clients[c].on("draftState", function (state) {
+					const s = state as {
+						booster: UniqueCard[];
+						boosterCount: number;
+						boosterNumber: number;
+						pickNumber: 0;
+						skipPick: boolean;
+					};
+					if (s.pickNumber !== clients[c].state?.pickNumber && s.boosterCount > 0) {
+						clients[c].state = s;
+						clients[c].emit("pickCard", { pickedCards: [0], burnedCards: [] }, () => {});
+					}
+				});
+				clients[c].once("draftLog", function (draftLog) {
+					draftEnded += 1;
+					receivedLogs[c] = draftLog;
+					clients[c].removeListener("draftState");
+					if (draftEnded === clients.length - 2) done();
+				});
+			}
+			for (let c = 0; c < clients.length; ++c) {
+				if (c === firstDisconnected || c === secondDisconnected) continue;
+				clients[c].emit("pickCard", { pickedCards: [0], burnedCards: [] }, () => {});
+			}
+		});
+
+		it("First disconnected user reconnects and asks for the draft log", (done) => {
+			clients[firstDisconnected].connect();
+			clients[firstDisconnected].once("draftLog", function (draftLog) {
+				expect(draftLog.delayed).to.be.true;
+				expect(draftLog.sessionID).to.equal(receivedLogs[ownerIdx].sessionID);
+				expect(draftLog.time).to.equal(receivedLogs[ownerIdx].time);
+				done();
+			});
+			clients[firstDisconnected].emit(
+				"retrieveUpdatedDraftLogs",
+				receivedLogs[ownerIdx].sessionID,
+				receivedLogs[ownerIdx].time,
+				undefined
+			);
+		});
+
+		it("Owner unlock the logs, connected users should received it immediately.", (done) => {
+			clients[firstDisconnected].once("draftLog", function (draftLog) {
+				expect(draftLog.delayed).to.be.false;
+				expect(draftLog.sessionID).to.equal(receivedLogs[ownerIdx].sessionID);
+				expect(draftLog.time).to.equal(receivedLogs[ownerIdx].time);
+				for (let i = 0; i < clients.length; ++i)
+					expect(draftLog.users[getUID(clients[i])].cards).to.be.not.empty;
+				done();
+			});
+			clients[ownerIdx].emit("shareDraftLog", receivedLogs[ownerIdx]);
+		});
+
+		it("Second disconnected user reconnects and asks for the draft log", (done) => {
+			clients[secondDisconnected].connect();
+			clients[secondDisconnected].once("draftLog", function (draftLog) {
+				expect(draftLog.delayed).to.be.false;
+				expect(draftLog.sessionID).to.equal(receivedLogs[ownerIdx].sessionID);
+				expect(draftLog.time).to.equal(receivedLogs[ownerIdx].time);
+				for (let i = 0; i < clients.length; ++i)
+					expect(draftLog.users[getUID(clients[i])].cards).to.be.not.empty;
+				done();
+			});
+			clients[secondDisconnected].emit(
+				"retrieveUpdatedDraftLogs",
+				receivedLogs[ownerIdx].sessionID,
+				receivedLogs[ownerIdx].time,
+				undefined
+			);
 		});
 	});
 

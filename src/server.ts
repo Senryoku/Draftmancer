@@ -1272,7 +1272,29 @@ function shareDraftLog(userID: UserID, sessionID: SessionID, draftLog: DraftLog)
 	// Restore logs from sent copy if we don't have it anymore.
 	if (!sess.draftLog && sess.id === draftLog.sessionID) sess.draftLog = draftLog;
 
-	sess.unlockLogs();
+	sess.unlockLogs(draftLog.time);
+}
+
+// Used on reconnection to ask for an updated version of the draft log
+function retrieveUpdatedDraftLogs(
+	userID: UserID,
+	sessionID: SessionID,
+	logSessionID: SessionID,
+	timestamp: unknown,
+	lastUpdate: unknown | undefined | null
+) {
+	if (!isNumber(timestamp)) return;
+	if (!isNumber(lastUpdate) && lastUpdate !== undefined && lastUpdate !== null) return;
+	const sess = Sessions[sessionID];
+	if (
+		sess.draftLog &&
+		sess.draftLog.sessionID === logSessionID &&
+		sess.draftLog.time === timestamp && // Current draft log corresponds to the requested game
+		(lastUpdate === undefined ||
+			lastUpdate === null ||
+			(sess.draftLog.lastUpdated && sess.draftLog.lastUpdated > lastUpdate)) // And is newer
+	)
+		sess.sendLogsTo(userID);
 }
 
 function distributeSealed(
@@ -1442,6 +1464,7 @@ io.on("connection", async function (socket) {
 	socket.on("updateDeckLands", prepareSocketCallback(updateDeckLands));
 	socket.on("moveCard", prepareSocketCallback(moveCard));
 	socket.on("removeBasicsFromDeck", prepareSocketCallback(removeBasicsFromDeck));
+	socket.on("retrieveUpdatedDraftLogs", prepareSocketCallback(retrieveUpdatedDraftLogs));
 
 	if (query.sessionID) {
 		socket.on("setSession", function (this: typeof socket, sessionID: SessionID, sessionSettings: Options) {
