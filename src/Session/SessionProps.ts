@@ -95,6 +95,10 @@ export const SessionsSettingsProps: { [propName: string]: (val: unknown) => bool
 		if (!isString(val)) return false;
 		return ["everyone", "delayed", "owner", "none"].includes(val);
 	},
+	draftLogUnlockTimer(val: unknown) {
+		if (!isInteger(val)) return false;
+		return val >= 0;
+	},
 	bracketLocked: isBoolean,
 	draftPaused: isBoolean,
 };

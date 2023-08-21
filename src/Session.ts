@@ -46,7 +46,7 @@ import {
 	SocketError,
 	ToastMessage,
 } from "./Message.js";
-import { logSession } from "./Persistence.js";
+import { InactiveSessions, logSession } from "./Persistence.js";
 import { sendDecks } from "./BotTrainingAPI.js";
 import { Bracket, TeamBracket, SwissBracket, DoubleBracket, BracketPlayer } from "./Brackets.js";
 import { CustomCardList, generateBoosterFromCustomCardList, generateCustomGetCardFunction } from "./CustomCardList.js";
@@ -73,7 +73,7 @@ import { HousmanDraftState, isHousmanDraftState } from "./HousmanDraft.js";
 import { SolomonDraftState, isSolomonDraftState } from "./SolomonDraft.js";
 import { isSomeEnum } from "./TypeChecks.js";
 import { askColors, choosePlayer } from "./Conspiracy.js";
-import { InProduction, TestingOnly } from "./Context.js";
+import { InProduction, InTesting, TestingOnly } from "./Context.js";
 
 // Tournament timer depending on the number of remaining cards in a pack.
 const TournamentTimer = [
@@ -142,6 +142,7 @@ export class Session implements IIndexable {
 	discardRemainingCardsAt: number = 0;
 	personalLogs: boolean = true;
 	draftLogRecipients: DraftLogRecipients = "everyone";
+	draftLogUnlockTimer: number = 0; // In minutes; Zero to disable.
 	bracketLocked: boolean = false; // If set, only the owner can edit the results.
 	bracket?: Bracket = undefined;
 
@@ -2679,7 +2680,7 @@ export class Session implements IIndexable {
 
 	// Makes sure DraftLog's cards and decklists are up-to-date for each player
 	finalizeLogs() {
-		if (this.draftLog)
+		if (this.draftLog) {
 			for (const uid in this.draftLog.users) {
 				if (!this.draftLog.users[uid].isBot) {
 					const p = this.isDisconnected(uid) ? this.disconnectedUsers[uid] : Connections[uid]; // FIXME: This should not be necessary, I don't know why Connections[uid] can be undefined here (if the user isn't disconnected).
@@ -2689,6 +2690,8 @@ export class Session implements IIndexable {
 					}
 				}
 			}
+			this.draftLog.lastUpdated = Date.now();
+		}
 	}
 
 	// Sends the current draft log to all users according to the specified recipient(s).
@@ -2706,9 +2709,27 @@ export class Session implements IIndexable {
 			default:
 			case "delayed":
 				this.draftLog.delayed = true;
+				if (this.draftLogUnlockTimer > 0) {
+					const sessionID = this.id;
+					const logTimestamp = this.draftLog.time;
+					setTimeout(
+						() => {
+							if (Sessions[sessionID]) {
+								Sessions[sessionID]?.unlockLogs(logTimestamp);
+							} else if (
+								InactiveSessions[sessionID] &&
+								InactiveSessions[sessionID].draftLog?.time === logTimestamp
+							) {
+								InactiveSessions[sessionID].draftLog.delayed = false;
+								InactiveSessions[sessionID].draftLog.lastUpdated = Date.now();
+							}
+						},
+						InTesting ? 1 : this.draftLogUnlockTimer * 60 * 1000
+					);
+				}
 			// Fallthrough
 			case "owner":
-				if (this.owner) Connections[this.owner].socket.emit("draftLog", this.draftLog);
+				if (this.owner) Connections[this.owner]?.socket.emit("draftLog", this.draftLog);
 				if (this.personalLogs)
 					this.forNonOwners((uid) => Connections[uid]?.socket.emit("draftLog", this.getStrippedLog(uid)!));
 				else {
@@ -2720,6 +2741,135 @@ export class Session implements IIndexable {
 				this.forUsers((uid) => Connections[uid]?.socket.emit("draftLog", this.draftLog!));
 				break;
 		}
+	}
+
+	sendLogsTo(uid: UserID) {
+		if (!this.draftLog) return;
+		// Note: this.draftLogRecipients might have changed...
+		const logs =
+			this.draftLogRecipients === "everyone" ||
+			(this.draftLogRecipients === "delayed" && !this.draftLog.delayed) || // Log was unlocked
+			(this.draftLogRecipients !== "none" && uid === this.owner)
+				? this.draftLog
+				: this.getStrippedLog(this.personalLogs ? uid : undefined);
+		Connections[uid]?.socket.emit("draftLog", logs!);
+	}
+
+	unlockLogs(logTimestamp: number) {
+		if (!this.draftLog || !this.draftLog.delayed || this.draftLog.time !== logTimestamp) return;
+		this.draftLog.delayed = false;
+		this.draftLog.lastUpdated = Date.now();
+		this.emitToConnectedUsers("draftLog", this.draftLog);
+	}
+
+	updateDeckLands(userID: UserID, lands: DeckBasicLands) {
+		if (!this.draftLog?.users[userID]) return;
+		if (!this.draftLog.users[userID].decklist) this.draftLog.users[userID].decklist = { main: [], side: [] };
+		(this.draftLog.users[userID].decklist as DeckList).lands = lands;
+		this.updateDecklist(userID);
+	}
+
+	removeBasicsFromDeck(userID: UserID) {
+		if (!this.draftLog?.users[userID]?.decklist) return;
+		Connections[userID].pickedCards.main = Connections[userID].pickedCards.main.filter(
+			(c) => !EnglishBasicLandNames.includes(c.name)
+		);
+		Connections[userID].pickedCards.side = Connections[userID].pickedCards.side.filter(
+			(c) => !EnglishBasicLandNames.includes(c.name)
+		);
+		this.updateDecklistInLog(userID);
+	}
+
+	updateDecklistInLog(userID: UserID) {
+		if (!this.draftLog?.users[userID] || !Connections[userID]) return;
+		if (Connections[userID].pickedCards.main.length === 0 && Connections[userID].pickedCards.side.length === 0)
+			return;
+		if (!this.draftLog.users[userID].decklist) this.draftLog.users[userID].decklist = { main: [], side: [] };
+		this.draftLog.users[userID].decklist!.main = Connections[userID].pickedCards.main.map((c) => c.id);
+		this.draftLog.users[userID].decklist!.side = Connections[userID].pickedCards.side.map((c) => c.id);
+		this.draftLog.users[userID].decklist = computeHashes(this.draftLog.users[userID].decklist!, {
+			getCard: this.getCustomGetCardFunction(),
+		});
+		this.rescheduleSendDecklogTimeout();
+		this.draftLog.lastUpdated = Date.now();
+	}
+
+	updateDecklist(userID: UserID) {
+		if (!this.draftLog?.users[userID]) return;
+		this.updateDecklistInLog(userID);
+
+		// Update clients
+		const shareData = {
+			sessionID: this.id,
+			time: this.draftLog?.time,
+			userID: userID,
+			decklist: this.draftLog.users[userID].decklist,
+		};
+		const hashesOnly = {
+			sessionID: this.id,
+			time: this.draftLog?.time,
+			userID: userID,
+			decklist: { hashes: this.draftLog.users[userID].decklist?.hashes },
+		};
+
+		if (this.owner && this.shouldSendLiveUpdates()) Connections[this.owner]?.socket.emit("draftLogLive", shareData);
+
+		if (!this.drafting) {
+			// Note: The session setting draftLogRecipients may have changed since the game ended.
+			switch (this.draftLogRecipients) {
+				default:
+				case "delayed":
+					if (this.draftLog.delayed) {
+						// Complete log has not been shared yet, send only hashes to non-owners, unless its their own and personalLogs is enabled.
+						if (this.owner) Connections[this.owner]?.socket.emit("shareDecklist", shareData);
+						this.forNonOwners(
+							(uid) =>
+								Connections[uid]?.socket.emit(
+									"shareDecklist",
+									this.personalLogs && userID === uid ? shareData : hashesOnly
+								)
+						);
+						break;
+					}
+				// Else, fall through to "everyone"
+				case "everyone":
+					// Also send the update to the organizer separately if they're not playing
+					if (this.owner && !this.ownerIsPlayer)
+						Connections[this.owner]?.socket.emit("shareDecklist", shareData);
+					this.forUsers((uid) => Connections[uid]?.socket.emit("shareDecklist", shareData));
+					break;
+				case "owner":
+					if (this.owner) Connections[this.owner]?.socket.emit("shareDecklist", shareData);
+					this.forNonOwners(
+						(uid) =>
+							Connections[uid]?.socket.emit(
+								"shareDecklist",
+								this.personalLogs && userID === uid ? shareData : hashesOnly
+							)
+					);
+					break;
+				case "none":
+					if (this.owner) Connections[this.owner]?.socket.emit("shareDecklist", hashesOnly);
+					this.forNonOwners(
+						(uid) =>
+							Connections[uid]?.socket.emit(
+								"shareDecklist",
+								this.personalLogs && userID === uid ? shareData : hashesOnly
+							)
+					);
+					break;
+			}
+		}
+	}
+
+	// Indicates if the DraftLogLive feature is in use
+	shouldSendLiveUpdates() {
+		return (
+			!this.ownerIsPlayer &&
+			["owner", "delayed", "everyone"].includes(this.draftLogRecipients) &&
+			this.owner &&
+			this.owner in Connections
+		);
 	}
 
 	// Send decklogs to CubeArtisan after 5min of inactivity (or when the session is closed).
@@ -3266,115 +3416,6 @@ export class Session implements IIndexable {
 		this.forUsers((u) => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
 	}
 
-	updateDeckLands(userID: UserID, lands: DeckBasicLands) {
-		if (!this.draftLog?.users[userID]) return;
-		if (!this.draftLog.users[userID].decklist) this.draftLog.users[userID].decklist = { main: [], side: [] };
-		(this.draftLog.users[userID].decklist as DeckList).lands = lands;
-		this.updateDecklist(userID);
-	}
-
-	removeBasicsFromDeck(userID: UserID) {
-		if (!this.draftLog?.users[userID]?.decklist) return;
-		Connections[userID].pickedCards.main = Connections[userID].pickedCards.main.filter(
-			(c) => !EnglishBasicLandNames.includes(c.name)
-		);
-		Connections[userID].pickedCards.side = Connections[userID].pickedCards.side.filter(
-			(c) => !EnglishBasicLandNames.includes(c.name)
-		);
-		this.updateDecklistInLog(userID);
-	}
-
-	updateDecklistInLog(userID: UserID) {
-		if (!this.draftLog?.users[userID] || !Connections[userID]) return;
-		if (Connections[userID].pickedCards.main.length === 0 && Connections[userID].pickedCards.side.length === 0)
-			return;
-		if (!this.draftLog.users[userID].decklist) this.draftLog.users[userID].decklist = { main: [], side: [] };
-		this.draftLog.users[userID].decklist!.main = Connections[userID].pickedCards.main.map((c) => c.id);
-		this.draftLog.users[userID].decklist!.side = Connections[userID].pickedCards.side.map((c) => c.id);
-		this.draftLog.users[userID].decklist = computeHashes(this.draftLog.users[userID].decklist!, {
-			getCard: this.getCustomGetCardFunction(),
-		});
-		this.rescheduleSendDecklogTimeout();
-	}
-
-	updateDecklist(userID: UserID) {
-		if (!this.draftLog?.users[userID]) return;
-		this.updateDecklistInLog(userID);
-
-		// Update clients
-		const shareData = {
-			sessionID: this.id,
-			time: this.draftLog?.time,
-			userID: userID,
-			decklist: this.draftLog.users[userID].decklist,
-		};
-		const hashesOnly = {
-			sessionID: this.id,
-			time: this.draftLog?.time,
-			userID: userID,
-			decklist: { hashes: this.draftLog.users[userID].decklist?.hashes },
-		};
-
-		if (this.owner && this.shouldSendLiveUpdates()) Connections[this.owner]?.socket.emit("draftLogLive", shareData);
-
-		if (!this.drafting) {
-			// Note: The session setting draftLogRecipients may have changed since the game ended.
-			switch (this.draftLogRecipients) {
-				default:
-				case "delayed":
-					if (this.draftLog.delayed) {
-						// Complete log has not been shared yet, send only hashes to non-owners, unless its their own and personalLogs is enabled.
-						if (this.owner) Connections[this.owner]?.socket.emit("shareDecklist", shareData);
-						this.forNonOwners(
-							(uid) =>
-								Connections[uid]?.socket.emit(
-									"shareDecklist",
-									this.personalLogs && userID === uid ? shareData : hashesOnly
-								)
-						);
-						break;
-					}
-				// Else, fall through to "everyone"
-				case "everyone":
-					// Also send the update to the organiser separately if they're not playing
-					if (this.owner && !this.ownerIsPlayer)
-						Connections[this.owner]?.socket.emit("shareDecklist", shareData);
-					this.forUsers((uid) => Connections[uid]?.socket.emit("shareDecklist", shareData));
-					break;
-				case "owner":
-					if (this.owner) Connections[this.owner]?.socket.emit("shareDecklist", shareData);
-					this.forNonOwners(
-						(uid) =>
-							Connections[uid]?.socket.emit(
-								"shareDecklist",
-								this.personalLogs && userID === uid ? shareData : hashesOnly
-							)
-					);
-					break;
-				case "none":
-					if (this.owner) Connections[this.owner]?.socket.emit("shareDecklist", hashesOnly);
-					this.forNonOwners(
-						(uid) =>
-							Connections[uid]?.socket.emit(
-								"shareDecklist",
-								this.personalLogs && userID === uid ? shareData : hashesOnly
-							)
-					);
-					break;
-			}
-		}
-	}
-
-	// Indicates if the DraftLogLive feature is in use
-	shouldSendLiveUpdates() {
-		return (
-			!this.ownerIsPlayer &&
-			["owner", "delayed", "everyone"].includes(this.draftLogRecipients) &&
-			this.owner &&
-			this.owner in Connections
-		);
-	}
-
 	// Execute fn for each user. Owner included even if they're not playing.
 	forUsers(fn: (uid: UserID) => void) {
 		if (!this.ownerIsPlayer && this.owner && this.owner in Connections) fn(this.owner);
@@ -3382,6 +3423,13 @@ export class Session implements IIndexable {
 	}
 	forNonOwners(fn: (uid: UserID) => void) {
 		for (const uid of this.users) if (uid !== this.owner) fn(uid);
+	}
+
+	emitToConnectedUsers<T extends keyof ServerToClientEvents>(
+		eventKey: T,
+		...args: Parameters<ServerToClientEvents[T]>
+	) {
+		for (const uid of this.users) if (uid in Connections) Connections[uid].socket.emit(eventKey, ...args);
 	}
 
 	emitToConnectedNonOwners<T extends keyof ServerToClientEvents>(

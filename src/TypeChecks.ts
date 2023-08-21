@@ -10,6 +10,10 @@ export const isObject = (x: unknown): x is object => typeof x === "object" && x 
 
 export const isInteger = (x: unknown): x is number => typeof x === "number" && Number.isInteger(x);
 
+export type ArrayElement<ArrayType extends readonly unknown[]> = ArrayType extends readonly (infer ElementType)[]
+	? ElementType
+	: never;
+
 type Guard<T = unknown> = (x: unknown) => x is T;
 
 type KeyGuard = Guard<string | number | symbol>;

@@ -1011,7 +1011,11 @@ function setBoosterContent(
 	boosterContent: { common: number; uncommon: number; rare: number }
 ) {
 	if (!SessionsSettingsProps.boosterContent(boosterContent)) return;
-	if (Object.keys(boosterContent).every((r) => (boosterContent as any)[r] === Sessions[sessionID].boosterContent[r]))
+	if (
+		Object.keys(boosterContent).every(
+			(r) => (boosterContent as { [r: string]: number })[r] === Sessions[sessionID].boosterContent[r]
+		)
+	)
 		return;
 
 	Sessions[sessionID].boosterContent = boosterContent;
@@ -1049,6 +1053,12 @@ function setDraftLogRecipients(userID: UserID, sessionID: SessionID, draftLogRec
 	if (!SessionsSettingsProps.draftLogRecipients(draftLogRecipients)) return;
 	Sessions[sessionID].draftLogRecipients = draftLogRecipients;
 	Sessions[sessionID].emitToConnectedNonOwners("sessionOptions", { draftLogRecipients });
+}
+
+function setDraftLogUnlockTimer(userID: UserID, sessionID: SessionID, draftLogUnlockTimer: unknown /* minutes */) {
+	if (!isInteger(draftLogUnlockTimer) || draftLogUnlockTimer < 0) return;
+	Sessions[sessionID].draftLogUnlockTimer = draftLogUnlockTimer;
+	Sessions[sessionID].emitToConnectedNonOwners("sessionOptions", { draftLogUnlockTimer: draftLogUnlockTimer });
 }
 
 function setMaxDuplicates(
@@ -1251,14 +1261,40 @@ function shareDraftLog(userID: UserID, sessionID: SessionID, draftLog: DraftLog)
 	const sess = Sessions[sessionID];
 	if (!draftLog) return;
 
-	// Update local copy to be public
-	if (!sess.draftLog && sess.id === draftLog.sessionID) sess.draftLog = draftLog;
-	else if (sess.draftLog?.sessionID === draftLog.sessionID && sess.draftLog.time === draftLog.time)
-		sess.draftLog.delayed = false;
+	// If the draft log doesn't come for this session, or we currently hold a newer draft log, don't overwrite it. Instead simply manually send it to everyone and they'll decide what they want to do with it.
+	if (draftLog.sessionID !== sessionID || (sess.draftLog && sess.draftLog.time !== draftLog.time)) {
+		draftLog.delayed = false;
+		draftLog.lastUpdated = Date.now();
+		sess.emitToConnectedUsers("draftLog", draftLog);
+		return;
+	}
 
-	// Send the full copy to everyone
-	draftLog.delayed = false;
-	sess.emitToConnectedNonOwners("draftLog", draftLog);
+	// Restore logs from sent copy if we don't have it anymore.
+	if (!sess.draftLog && sess.id === draftLog.sessionID) sess.draftLog = draftLog;
+
+	sess.unlockLogs(draftLog.time);
+}
+
+// Used on reconnection to ask for an updated version of the draft log
+function retrieveUpdatedDraftLogs(
+	userID: UserID,
+	sessionID: SessionID,
+	logSessionID: SessionID,
+	timestamp: unknown,
+	lastUpdate: unknown | undefined | null
+) {
+	if (!isNumber(timestamp)) return;
+	if (!isNumber(lastUpdate) && lastUpdate !== undefined && lastUpdate !== null) return;
+	const sess = Sessions[sessionID];
+	if (
+		sess.draftLog &&
+		sess.draftLog.sessionID === logSessionID &&
+		sess.draftLog.time === timestamp && // Current draft log corresponds to the requested game
+		(lastUpdate === undefined ||
+			lastUpdate === null ||
+			(sess.draftLog.lastUpdated && sess.draftLog.lastUpdated > lastUpdate)) // And is newer
+	)
+		sess.sendLogsTo(userID);
 }
 
 function distributeSealed(
@@ -1275,7 +1311,7 @@ function distributeSealed(
 	ack?.(r);
 }
 
-const prepareSocketCallback = <T extends Array<any>>(
+const prepareSocketCallback = <T extends Array<unknown>>(
 	callback: (userID: UserID, sessionID: SessionID, ...args: T) => void,
 	ownerOnly = false
 ) => {
@@ -1284,7 +1320,8 @@ const prepareSocketCallback = <T extends Array<any>>(
 		...args: T
 	): Promise<void> {
 		// Last argument is assumed to be an acknowledgement function if it is a function.
-		const ack = args.length > 0 && args[args.length - 1] instanceof Function ? args[args.length - 1] : null;
+		const lastArg = args.length > 0 ? args[args.length - 1] : null;
+		const ack = lastArg instanceof Function ? lastArg : null;
 		const userID = this.data.userID;
 		if (!userID) {
 			ack?.({ code: 1, error: "Internal error. UserID is undefined." });
@@ -1427,6 +1464,7 @@ io.on("connection", async function (socket) {
 	socket.on("updateDeckLands", prepareSocketCallback(updateDeckLands));
 	socket.on("moveCard", prepareSocketCallback(moveCard));
 	socket.on("removeBasicsFromDeck", prepareSocketCallback(removeBasicsFromDeck));
+	socket.on("retrieveUpdatedDraftLogs", prepareSocketCallback(retrieveUpdatedDraftLogs));
 
 	if (query.sessionID) {
 		socket.on("setSession", function (this: typeof socket, sessionID: SessionID, sessionSettings: Options) {
@@ -1495,6 +1533,7 @@ io.on("connection", async function (socket) {
 		socket.on("shuffleBoosters", prepareSocketCallback(shuffleBoosters, true));
 		socket.on("setPersonalLogs", prepareSocketCallback(setPersonalLogs, true));
 		socket.on("setDraftLogRecipients", prepareSocketCallback(setDraftLogRecipients, true));
+		socket.on("setDraftLogUnlockTimer", prepareSocketCallback(setDraftLogUnlockTimer, true));
 		socket.on("setMaxDuplicates", prepareSocketCallback(setMaxDuplicates, true));
 		socket.on("setColorBalance", prepareSocketCallback(setColorBalance, true));
 		socket.on("setFoil", prepareSocketCallback(setFoil, true));
@@ -1666,18 +1705,21 @@ function removeUserFromSession(userID: UserID) {
 			if (sess.users.size === 0 && (sess.ownerIsPlayer || !(sess.owner && sess.owner in Connections))) {
 				// If a game was going, we'll keep the session around for a while in case a player reconnects
 				// (mostly useful in case of disconnection during a single player game)
-				if (sess.drafting && !sess.managed) {
+				// Also keep it around if draft logs weren't unlocked, and scheduled to be automatically unlocked.
+				if ((sess.drafting || (sess.draftLog?.delayed && sess.draftLogUnlockTimer > 0)) && !sess.managed) {
 					InactiveSessions[sessionID] = getPoDSession(sess);
 					// Keep Rotisserie Draft around since they're typically played over long period of time.
-					if (!isRotisserieDraftState(sess.draftState))
-						InactiveSessions[sessionID].deleteTimeout = setTimeout(
-							() => {
-								process.nextTick(() => {
-									if (InactiveSessions[sessionID]) delete InactiveSessions[sessionID];
-								});
-							},
-							10 * 60 * 1000
-						); // 10min should be plenty enough.
+					if (!isRotisserieDraftState(sess.draftState)) {
+						let delay = 10 * 60 * 1000; // 10min should be plenty enough as a base.
+						// Increase it if we're keeping it for draft log sharing reasons.
+						if (sess.draftLog?.delayed && sess.draftLogUnlockTimer > 0)
+							delay += sess.draftLogUnlockTimer * 60 * 100;
+						InactiveSessions[sessionID].deleteTimeout = setTimeout(() => {
+							process.nextTick(() => {
+								if (InactiveSessions[sessionID]) delete InactiveSessions[sessionID];
+							});
+						}, delay);
+					}
 				}
 				deleteSession(sessionID);
 			} else sess.notifyUserChange();
@@ -1719,7 +1761,7 @@ app.get("/getCollection/:sessionID", (req, res) => {
 	getCollection(res, req.params.sessionID);
 });
 
-function returnCollectionPlainText(res: any, sid: SessionID) {
+function returnCollectionPlainText(res: express.Response, sid: SessionID) {
 	if (!sid) {
 		res.sendStatus(400);
 	} else if (sid in Sessions) {
@@ -1836,7 +1878,7 @@ function requireAPIKey(req: express.Request, res: express.Response, next: expres
 
 const getCircularReplacer = () => {
 	const seen = new WeakSet();
-	return (key: string, value: any) => {
+	return (key: string, value: unknown) => {
 		// Handle Sets (Notably Session.users)
 		if (typeof value === "object" && value instanceof Set) return [...value];
 		if (typeof value === "object" && value !== null) {
@@ -1848,7 +1890,7 @@ const getCircularReplacer = () => {
 };
 
 // Ignore circular references in data when converting to JSON
-function returnCircularJSON(res: express.Response, data: any) {
+function returnCircularJSON(res: express.Response, data: unknown) {
 	res.setHeader("Content-Type", "application/json");
 	return res.send(JSON.stringify(data, getCircularReplacer()));
 }
@@ -1883,7 +1925,7 @@ app.get("/getStatus/:key", requireAPIKey, (req, res) => {
 
 // Used by Discord Bot
 app.get("/getSessions/:key", requireAPIKey, (req, res) => {
-	const localSess: { [sid: string]: any } = {};
+	const localSess: { [sid: string]: unknown } = {};
 	for (const sid in Sessions)
 		localSess[sid] = {
 			id: sid,

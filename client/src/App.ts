@@ -313,6 +313,7 @@ export default defineComponent({
 			pickTimer: 75,
 			personalLogs: true,
 			draftLogRecipients: "everyone" as DraftLogRecipients,
+			draftLogUnlockTimer: 0,
 			bracketLocked: false,
 			//
 			draftLogs: [] as DraftLog[],
@@ -2891,7 +2892,7 @@ export default defineComponent({
 				if (storedDraftLog.sessionID !== this.sessionID) {
 					Alert.fire({
 						title: "Wrong Session ID",
-						text: `Can't share logs: The session ID of your saved draft log ('${storedDraftLog.sessionID}') doesn't match the id of yout current session ('${this.sessionID}').`,
+						text: `Can't share logs: The session ID of your saved draft log ('${storedDraftLog.sessionID}') doesn't match the id of your current session ('${this.sessionID}').`,
 						icon: "error",
 					});
 					return;
@@ -3621,8 +3622,14 @@ export default defineComponent({
 			if (storedLogs) {
 				const worker = new Worker(new URL("./logstore.worker.ts", import.meta.url));
 				worker.onmessage = (e) => {
-					this.draftLogs = e.data;
+					this.draftLogs = e.data as DraftLog[];
 					console.log(`Loaded ${this.draftLogs.length} saved draft logs.`);
+					// Asks the server if the last log was updated while we were offline.
+					const logsForThisSession = this.draftLogs.filter((l) => l.sessionID === this.sessionID);
+					if (logsForThisSession.length > 0) {
+						const log = logsForThisSession.reduce((prev, curr) => (prev.time > curr.time ? prev : curr)); // Get the latest log
+						this.socket?.emit("retrieveUpdatedDraftLogs", log.sessionID, log.time, log.lastUpdated);
+					}
 				};
 				worker.postMessage(["decompress", storedLogs]);
 			}
@@ -3902,6 +3909,11 @@ export default defineComponent({
 			if (this.userID !== this.sessionOwner || !this.socket) return;
 			this.socket.emit("setDraftLogRecipients", this.draftLogRecipients);
 			this.updateStoredSessionSettings({ draftLogRecipients: this.draftLogRecipients });
+		},
+		draftLogUnlockTimer() {
+			if (this.userID !== this.sessionOwner || !this.socket) return;
+			this.socket.emit("setDraftLogUnlockTimer", this.draftLogUnlockTimer);
+			this.updateStoredSessionSettings({ draftLogUnlockTimer: this.draftLogUnlockTimer });
 		},
 		sessionUsers: {
 			deep: true,

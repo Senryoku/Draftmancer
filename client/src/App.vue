@@ -2280,6 +2280,26 @@
 								</select>
 							</div>
 						</div>
+						<div
+							class="line"
+							:class="{ disabled: draftLogRecipients !== 'delayed' }"
+							v-tooltip.left="{
+								popperClass: 'option-tooltip',
+								content:
+									'<p>Automatically unlocks the draft logs for the entire session once the specified delay has elapsed. This feature is particularly useful for owners who may occasionally forget to unlock the logs :)</p><p>Note: Please remain connected to the session to ensure that you receive the logs. If the session remains inactive for an extended period, the server might drop the logs. At that point, only the owner will be able to share the logs.</p>',
+								html: true,
+							}"
+						>
+							<label for="draft-log-unlock-timer">Automatic Logs Unlock Timer</label>
+							<div class="right">
+								<select v-model="draftLogUnlockTimer" id="draft-log-unlock-timer">
+									<option :value="0">Never</option>
+									<option :value="60">1h</option>
+									<option :value="120">2h</option>
+									<option :value="180">3h</option>
+								</select>
+							</div>
+						</div>
 					</div>
 					<div class="option-column option-column-right">
 						<h4>Draft Specific Settings</h4>
