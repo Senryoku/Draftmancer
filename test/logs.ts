@@ -12,7 +12,7 @@ import { UniqueCard } from "../src/CardTypes.js";
 import { PickSummary } from "../src/PickSummary.js";
 import { ArrayElement } from "../src/TypeChecks.js";
 
-describe.only("Draft Logs", function () {
+describe("Draft Logs", function () {
 	let clients: Array<
 		ArrayElement<ReturnType<typeof makeClients>> & {
 			state?: {
