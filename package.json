@@ -58,7 +58,7 @@
 		"mixpanel": "^0.17.0",
 		"pico-emitter": "^1.2.1",
 		"random-js": "^2.1.0",
-		"socket.io": "^4.7.1",
+		"socket.io": "^4.7.2",
 		"socket.io-client": "^4.7.0",
 		"sortablejs": "^1.15.0",
 		"sortablejs-vue3": "^1.2.8",
