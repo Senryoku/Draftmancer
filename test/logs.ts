@@ -246,7 +246,7 @@ describe("Draft Logs", function () {
 				draftEnded += 1;
 				validate(c, draftLog);
 				clients[c].removeListener("draftState");
-				if (draftEnded == clients.length) done();
+				if (draftEnded === clients.length) done();
 			});
 		}
 		for (let c = 0; c < clients.length; ++c) {
@@ -278,6 +278,7 @@ describe("Draft Logs", function () {
 				});
 				clients[c].once("draftLog", function (initialDraftLog) {
 					expect(initialDraftLog.delayed).to.be.true; // Should initally be locked
+					clients[c].removeListener("draftState");
 					if (c === ownerIdx)
 						for (let i = 0; i < clients.length; ++i)
 							expect(initialDraftLog.users[getUID(clients[i])].cards).to.be.not.empty;
