@@ -6005,23 +6005,23 @@
     "woe": {
         "code": "woe",
         "fullName": "Wilds of Eldraine",
-        "cardCount": 207,
+        "cardCount": 305,
         "isPrimary": true,
         "icon": "img/sets/woe.svg",
-        "commonCount": 38,
+        "commonCount": 62,
         "mythicCount": 37,
-        "rareCount": 72,
-        "uncommonCount": 60
+        "rareCount": 119,
+        "uncommonCount": 87
     },
     "wot": {
         "code": "wot",
         "fullName": "Wilds of Eldraine: Enchanting Tales",
-        "cardCount": 84,
+        "cardCount": 90,
         "isPrimary": false,
         "icon": "img/sets/wot.svg",
         "mythicCount": 45,
-        "rareCount": 28,
-        "uncommonCount": 11
+        "rareCount": 32,
+        "uncommonCount": 13
     },
     "wth": {
         "code": "wth",
