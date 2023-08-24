@@ -259,6 +259,7 @@ describe("Sets content", function () {
 		sir: { common: 94, uncommon: 93, rare: 66, mythic: 23 },
 		mom: { common: 116, uncommon: 80, rare: 60, mythic: 20 },
 		ltr: { common: 101, uncommon: 80, rare: 60, mythic: 20 },
+		woe: { common: 101, uncommon: 80, rare: 60, mythic: 20 },
 	};
 
 	beforeEach(function (done) {
@@ -693,7 +694,8 @@ describe("Single Draft (Two Players)", function () {
 							(set === "bro" && c.set === "brr") ||
 							(set === "one" && ["neo", "dmu", "snc", "khm"].includes(c.set)) || // Praetors
 							(set === "mom" && c.set === "mul") ||
-							(set === "mat" && (c.set === "mul" || c.set === "mom"))
+							(set === "mat" && (c.set === "mul" || c.set === "mom")) ||
+							(set === "woe" && c.set === "wot")
 					),
 					`All cards in booster should be of the desired set, got [${[...new Set(b.map((c) => c.set))]}].`
 				).to.be.true;
@@ -702,7 +704,7 @@ describe("Single Draft (Two Players)", function () {
 		});
 	}
 
-	const latestSetCardPerBooster: number = 14;
+	const latestSetCardPerBooster: number = 15;
 
 	describe(`Drafting without set restriction`, function () {
 		connect();

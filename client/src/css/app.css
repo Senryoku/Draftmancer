@@ -134,7 +134,8 @@ select.swal2-input option {
 	transform: translateY(1px);
 }
 
-#main-container button.flat {
+#main-container button.flat,
+#main-container button.flat:active {
 	box-shadow: initial;
 	background-color: #383838;
 }
@@ -158,18 +159,19 @@ select.swal2-input option {
 #main-container .check-button + label {
 	display: inline-block;
 	height: 28px;
-	padding: 0 15px;
+	padding: 7.5px 15px;
 	text-align: center;
 	font-size: 11px;
 	font-weight: 600;
-	line-height: 28px;
 	letter-spacing: 0.1rem;
 	text-transform: uppercase;
 	text-decoration: none;
 	white-space: nowrap;
-	background-color: transparent;
+	background-color: #444;
 	cursor: pointer;
 	box-sizing: border-box;
+	will-change: transform;
+	line-height: 1;
 }
 
 #main-container .controls button,
@@ -327,6 +329,12 @@ select.swal2-input option {
 	cursor: pointer;
 	height: 0;
 	width: 0;
+}
+
+@media only screen and (min-width: 1000px) {
+	.reload-deck-button {
+		float: right;
+	}
 }
 
 /* ** Session Options ** */

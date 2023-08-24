@@ -74,7 +74,8 @@
         "sir",
         "mom",
         "mat",
-        "ltr"
+        "ltr",
+        "woe"
     ],
     "AlchemySets": [
         "hbg",
@@ -90,7 +91,8 @@
         "bro",
         "one",
         "mom",
-        "mat"
+        "mat",
+        "woe"
     ],
     "BasicLandNames": {
         "en": {
@@ -289,6 +291,7 @@
         }
     ],
     "PrimarySets": [
+        "woe",
         "cmm",
         "ltr",
         "mat",
