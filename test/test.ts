@@ -694,7 +694,8 @@ describe("Single Draft (Two Players)", function () {
 							(set === "bro" && c.set === "brr") ||
 							(set === "one" && ["neo", "dmu", "snc", "khm"].includes(c.set)) || // Praetors
 							(set === "mom" && c.set === "mul") ||
-							(set === "mat" && (c.set === "mul" || c.set === "mom"))
+							(set === "mat" && (c.set === "mul" || c.set === "mom")) ||
+							(set === "woe" && c.set === "wot")
 					),
 					`All cards in booster should be of the desired set, got [${[...new Set(b.map((c) => c.set))]}].`
 				).to.be.true;
@@ -703,7 +704,7 @@ describe("Single Draft (Two Players)", function () {
 		});
 	}
 
-	const latestSetCardPerBooster: number = 14;
+	const latestSetCardPerBooster: number = 15;
 
 	describe(`Drafting without set restriction`, function () {
 		connect();
