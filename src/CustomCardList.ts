@@ -19,6 +19,7 @@ export type CCLSettings = {
 	predeterminedLayouts?: { name: LayoutName; weight: number }[][];
 	layoutWithReplacement?: boolean;
 	boostersPerPlayer?: number;
+	duplicateProtection?: boolean;
 };
 
 export type CustomCardList = {
@@ -56,12 +57,14 @@ export function generateBoosterFromCustomCardList(
 		return new MessageError("Error generating boosters", "No custom card list provided.");
 	}
 
+	const duplicateProtection = customCardList.settings?.duplicateProtection ?? true;
 	if (options.colorBalance === undefined) options.colorBalance = false;
 	if (options.withReplacement === undefined) options.withReplacement = false;
 	const pickOptions: Options = {
 		uniformAll: true,
 		withReplacement: options.withReplacement,
 		getCard: generateCustomGetCardFunction(customCardList),
+		duplicateProtection: duplicateProtection,
 	};
 
 	// List is using custom layouts

@@ -31,7 +31,13 @@ function getRandomCardFromCardPool(cardPool: CardPool): CardID {
 export function pickCard(
 	cardPool: CardPool,
 	booster: Array<Card> = [],
-	options?: { withReplacement?: boolean; uniformAll?: boolean; foil?: boolean; getCard?: (cid: CardID) => Card }
+	options?: {
+		withReplacement?: boolean;
+		uniformAll?: boolean;
+		foil?: boolean;
+		duplicateProtection?: boolean;
+		getCard?: (cid: CardID) => Card;
+	}
 ) {
 	if (cardPool.size === 0) {
 		console.trace(`Called pickCard on an empty card pool.`);
@@ -42,7 +48,7 @@ export function pickCard(
 	// if it is true, distribution will be uniform across ALL cards (for a given card ID, more copies means a higher chance to be picked).
 	const randomFunc = options?.uniformAll ? getRandomCardFromCardPool : getRandomMapKey;
 	let cid = randomFunc(cardPool);
-	if (booster) {
+	if (booster && options?.duplicateProtection !== false) {
 		let prevention_attempts = 0;
 		while (booster.findIndex((card) => cid === card.id) !== -1 && prevention_attempts < 3) {
 			cid = randomFunc(cardPool);

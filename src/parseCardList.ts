@@ -5,8 +5,7 @@ import { CardsByName, CardVersionsByName, getCard, isValidCardID } from "./Cards
 import { CCLSettings, CustomCardList, PackLayout } from "./CustomCardList.js";
 import { escapeHTML } from "./utils.js";
 import { ackError, isSocketError, SocketError } from "./Message.js";
-import { isAny, isArrayOf, isBoolean, isInteger, isObject, isRecord, isString, isUnknown } from "./TypeChecks.js";
-import { cp } from "fs";
+import { isAny, isArrayOf, isBoolean, isInteger, isRecord, isString, isUnknown } from "./TypeChecks.js";
 
 const lineRegex = /^(?:(\d+)\s+)?([^(\v\n]+)??(?:\s\((\w+)\)(?:\s+([^+\s]+))?)?(?:\s+\+?(F))?$/;
 
@@ -311,6 +310,16 @@ function parseSettings(
 			});
 		}
 		settings.boostersPerPlayer = parsedSettings.boostersPerPlayer;
+	}
+
+	if ("duplicateProtection" in parsedSettings) {
+		if (!isBoolean(parsedSettings.duplicateProtection)) {
+			return ackError({
+				title: `[Settings]`,
+				text: `'duplicateProtection' must be a boolean.`,
+			});
+		}
+		settings.duplicateProtection = parsedSettings.duplicateProtection;
 	}
 
 	if (settings.predeterminedLayouts) {
