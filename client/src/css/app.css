@@ -159,7 +159,7 @@ select.swal2-input option {
 #main-container .check-button + label {
 	display: inline-block;
 	height: 28px;
-	padding: 7px 15px;
+	padding: 7.5px 15px;
 	text-align: center;
 	font-size: 11px;
 	font-weight: 600;
@@ -171,6 +171,7 @@ select.swal2-input option {
 	cursor: pointer;
 	box-sizing: border-box;
 	will-change: transform;
+	line-height: 1;
 }
 
 #main-container .controls button,
