@@ -1,39 +1,41 @@
 body {
 	margin: 0;
 	margin-left: 0;
-	background-color: rgb(32, 32, 32);
 	color: #ddd;
 	font-family: "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
 	position: relative;
 	min-height: calc(100vh);
 }
 
+#main-container {
+	background: url("../assets/img/background.webp");
+	background-color: rgb(32, 32, 32);
+	background-position: 100% 0;
+	background-repeat: no-repeat;
+	background-attachment: local;
+}
+
 @media (max-width: 1600px) {
 	body {
 		overflow-x: hidden;
-		background-position: 90% 5em;
 	}
 }
 
-.backgound-image {
-	position: absolute;
-	right: 2em;
-	top: 7em;
-	background: radial-gradient(closest-side, rgba(32, 32, 32, 0.5), rgba(32, 32, 32, 0.5) 50%, rgb(32, 32, 32)),
-		url("../assets/img/one_sma_fb_1000x1000_en.webp");
-	background-position: center, center 22%;
-	background-size: 100%;
-	background-repeat: no-repeat;
-	z-index: -1;
-	width: 70em;
-	height: 45em;
+@media (max-width: 1000px) {
+	#main-container {
+		background-position: 50% 4em;
+	}
 }
 
-@media (max-width: 1200px) {
-	.backgound-image {
-		top: 12em;
-		right: 50%;
-		transform: translateX(50%);
+@media (max-width: 650px) {
+	#main-container {
+		background-position: 50% 10em;
+	}
+}
+
+@media (max-width: 500px) {
+	#main-container {
+		background-position: 50% 12em;
 	}
 }
 
@@ -76,7 +78,9 @@ label {
 
 .clickable {
 	cursor: pointer;
-	transition: opacity 0.25s, color 0.25s;
+	transition:
+		opacity 0.25s,
+		color 0.25s;
 }
 
 .clickable:hover {

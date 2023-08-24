@@ -121,16 +121,21 @@ select.swal2-input option {
 
 #main-container input[type="button"],
 #main-container button {
-	box-shadow: inset 2px 2px 8px -3px #888, inset -2px -2px 8px -3px #000;
+	box-shadow:
+		inset 2px 2px 8px -3px #888,
+		inset -2px -2px 8px -3px #000;
 }
 
 #main-container input[type="button"]:active:not(:disabled),
 #main-container button:active:not(:disabled) {
-	box-shadow: inset 2px 2px 8px -3px #000, inset -2px -2px 8px -3px #888;
+	box-shadow:
+		inset 2px 2px 8px -3px #000,
+		inset -2px -2px 8px -3px #888;
 	transform: translateY(1px);
 }
 
-#main-container button.flat {
+#main-container button.flat,
+#main-container button.flat:active {
 	box-shadow: initial;
 	background-color: #383838;
 }
@@ -154,18 +159,18 @@ select.swal2-input option {
 #main-container .check-button + label {
 	display: inline-block;
 	height: 28px;
-	padding: 0 15px;
+	padding: 7px 15px;
 	text-align: center;
 	font-size: 11px;
 	font-weight: 600;
-	line-height: 28px;
 	letter-spacing: 0.1rem;
 	text-transform: uppercase;
 	text-decoration: none;
 	white-space: nowrap;
-	background-color: transparent;
+	background-color: #444;
 	cursor: pointer;
 	box-sizing: border-box;
+	will-change: transform;
 }
 
 #main-container .controls button,
@@ -296,7 +301,9 @@ select.swal2-input option {
 	cursor: pointer;
 
 	height: 25px;
-	box-shadow: inset 1px 1px 4px 0 #bbb, inset -1px -1px 4px 0 #222;
+	box-shadow:
+		inset 1px 1px 4px 0 #bbb,
+		inset -1px -1px 4px 0 #222;
 }
 
 .checkbox-button:hover {
@@ -304,7 +311,10 @@ select.swal2-input option {
 }
 
 .checkbox-button[data-checked="true"] {
-	box-shadow: 0px 0px 3px 2px #ccc, inset 1px 1px 4px 0 #222, inset -1px -1px 4px 0 #bbb;
+	box-shadow:
+		0px 0px 3px 2px #ccc,
+		inset 1px 1px 4px 0 #222,
+		inset -1px -1px 4px 0 #bbb;
 }
 
 .checkbox-button label {
@@ -318,6 +328,12 @@ select.swal2-input option {
 	cursor: pointer;
 	height: 0;
 	width: 0;
+}
+
+@media only screen and (min-width: 1000px) {
+	.reload-deck-button {
+		float: right;
+	}
 }
 
 /* ** Session Options ** */
@@ -530,7 +546,8 @@ select.swal2-input option {
 
 .welcome-sections .section-title {
 	--outline-size: 1px;
-	text-shadow: calc(-1 * var(--outline-size)) calc(-1 * var(--outline-size)) 10px rgb(32, 32, 32),
+	text-shadow:
+		calc(-1 * var(--outline-size)) calc(-1 * var(--outline-size)) 10px rgb(32, 32, 32),
 		var(--outline-size) calc(-1 * var(--outline-size)) 10px rgb(32, 32, 32),
 		calc(-1 * var(--outline-size)) var(--outline-size) 10px rgb(32, 32, 32),
 		var(--outline-size) var(--outline-size) 10px rgb(32, 32, 32);
@@ -871,7 +888,9 @@ ul.player-list {
 .player-list li.self.current-player,
 .player-table li.self.current-player,
 .player-list-log li.self.current-player {
-	box-shadow: inset 0 0 5px 0px rgba(255, 255, 255, 0.3), 0px 0px 10px 1px rgba(255, 255, 255, 0.5);
+	box-shadow:
+		inset 0 0 5px 0px rgba(255, 255, 255, 0.3),
+		0px 0px 10px 1px rgba(255, 255, 255, 0.5);
 }
 
 .player-list li.draggable {
@@ -882,7 +901,9 @@ ul.player-list {
 	box-shadow: 3px 3px 5px 0 rgba(0, 0, 0, 0.75);
 }
 .player-list li.draggable.self:hover {
-	box-shadow: inset 0 0 5px 0px rgba(255, 255, 255, 0.3), 3px 3px 5px 0 rgba(0, 0, 0, 0.75);
+	box-shadow:
+		inset 0 0 5px 0px rgba(255, 255, 255, 0.3),
+		3px 3px 5px 0 rgba(0, 0, 0, 0.75);
 }
 
 .player-list li.bot {
@@ -1321,7 +1342,9 @@ ul.player-list {
 	background-color: rgba(0, 0, 0, 0.1);
 	border-radius: 6px;
 
-	transition: box-shadow 0.1s ease-in-out, background-color 0.1s ease-in-out;
+	transition:
+		box-shadow 0.1s ease-in-out,
+		background-color 0.1s ease-in-out;
 }
 
 .drag-column[drop-active="true"] {
@@ -1364,13 +1387,23 @@ ul.player-list {
 	-o-animation: spinner 1500ms infinite linear;
 	animation: spinner 1500ms infinite linear;
 	border-radius: 0.5rem;
-	-webkit-box-shadow: var(--spinner-color) 1.5rem 0 0 0, var(--spinner-color) 1.1rem 1.1rem 0 0,
-		var(--spinner-color) 0 1.5rem 0 0, var(--spinner-color) -1.1rem 1.1rem 0 0, rgba(0, 0, 0, 0.5) -1.5rem 0 0 0,
-		rgba(0, 0, 0, 0.5) -1.1rem -1.1rem 0 0, var(--spinner-color) 0 -1.5rem 0 0,
+	-webkit-box-shadow:
+		var(--spinner-color) 1.5rem 0 0 0,
+		var(--spinner-color) 1.1rem 1.1rem 0 0,
+		var(--spinner-color) 0 1.5rem 0 0,
+		var(--spinner-color) -1.1rem 1.1rem 0 0,
+		rgba(0, 0, 0, 0.5) -1.5rem 0 0 0,
+		rgba(0, 0, 0, 0.5) -1.1rem -1.1rem 0 0,
+		var(--spinner-color) 0 -1.5rem 0 0,
 		var(--spinner-color) 1.1rem -1.1rem 0 0;
-	box-shadow: var(--spinner-color) 1.5rem 0 0 0, var(--spinner-color) 1.1rem 1.1rem 0 0,
-		var(--spinner-color) 0 1.5rem 0 0, var(--spinner-color) -1.1rem 1.1rem 0 0, var(--spinner-color) -1.5rem 0 0 0,
-		var(--spinner-color) -1.1rem -1.1rem 0 0, var(--spinner-color) 0 -1.5rem 0 0,
+	box-shadow:
+		var(--spinner-color) 1.5rem 0 0 0,
+		var(--spinner-color) 1.1rem 1.1rem 0 0,
+		var(--spinner-color) 0 1.5rem 0 0,
+		var(--spinner-color) -1.1rem 1.1rem 0 0,
+		var(--spinner-color) -1.5rem 0 0 0,
+		var(--spinner-color) -1.1rem -1.1rem 0 0,
+		var(--spinner-color) 0 -1.5rem 0 0,
 		var(--spinner-color) 1.1rem -1.1rem 0 0;
 }
 
@@ -1432,12 +1465,24 @@ ul.player-list {
 	-o-animation: spinner 1500ms infinite linear;
 	animation: spinner 1500ms infinite linear;
 	border-radius: 0.5em;
-	-webkit-box-shadow: var(--spinner-color) 1.5em 0 0 0, var(--spinner-color) 1.1em 1.1em 0 0,
-		var(--spinner-color) 0 1.5em 0 0, var(--spinner-color) -1.1em 1.1em 0 0, rgba(0, 0, 0, 0.5) -1.5em 0 0 0,
-		rgba(0, 0, 0, 0.5) -1.1em -1.1em 0 0, var(--spinner-color) 0 -1.5em 0 0, var(--spinner-color) 1.1em -1.1em 0 0;
-	box-shadow: var(--spinner-color) 1.5em 0 0 0, var(--spinner-color) 1.1em 1.1em 0 0, var(--spinner-color) 0 1.5em 0 0,
-		var(--spinner-color) -1.1em 1.1em 0 0, var(--spinner-color) -1.5em 0 0 0, var(--spinner-color) -1.1em -1.1em 0 0,
-		var(--spinner-color) 0 -1.5em 0 0, var(--spinner-color) 1.1em -1.1em 0 0;
+	-webkit-box-shadow:
+		var(--spinner-color) 1.5em 0 0 0,
+		var(--spinner-color) 1.1em 1.1em 0 0,
+		var(--spinner-color) 0 1.5em 0 0,
+		var(--spinner-color) -1.1em 1.1em 0 0,
+		rgba(0, 0, 0, 0.5) -1.5em 0 0 0,
+		rgba(0, 0, 0, 0.5) -1.1em -1.1em 0 0,
+		var(--spinner-color) 0 -1.5em 0 0,
+		var(--spinner-color) 1.1em -1.1em 0 0;
+	box-shadow:
+		var(--spinner-color) 1.5em 0 0 0,
+		var(--spinner-color) 1.1em 1.1em 0 0,
+		var(--spinner-color) 0 1.5em 0 0,
+		var(--spinner-color) -1.1em 1.1em 0 0,
+		var(--spinner-color) -1.5em 0 0 0,
+		var(--spinner-color) -1.1em -1.1em 0 0,
+		var(--spinner-color) 0 -1.5em 0 0,
+		var(--spinner-color) 1.1em -1.1em 0 0;
 }
 
 /* Animation */

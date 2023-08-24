@@ -4,7 +4,6 @@
 		:style="`height: ${displayFixedDeck ? fixedDeckState.mainHeight : '100vh'}`"
 		:class="{ 'using-fixed-deck': displayFixedDeck }"
 	>
-		<div class="backgound-image"></div>
 		<!-- Personal Options -->
 		<div id="view-controls" class="main-controls">
 			<span>
@@ -1674,7 +1673,7 @@
 					<button
 						v-if="previousDeck"
 						@click="loadPreviousDeck"
-						style="float: right"
+						class="reload-deck-button"
 						v-tooltip="`Reload deck of the last played session from your game logs.`"
 					>
 						<font-awesome-icon :icon="['fas', 'rotate-left']" /> Reload last deck
