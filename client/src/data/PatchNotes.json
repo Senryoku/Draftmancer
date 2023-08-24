@@ -1,5 +1,15 @@
 [
 	{
+		"date": "24/08/2023",
+		"notes": [
+			"Wilds of Eldraine support.",
+			"Two new Grid Draft variants: Two players with two picks per grid and four players.",
+			"New session setting 'Automatic Logs Unlock Timer'.",
+			"Duplicate protection setting in cube files.",
+			"Usual tweaks and fixes."
+		]
+	},
+	{
 		"date": "25/07/2023",
 		"notes": [
 			"Added Commander Masters draft queue.",
