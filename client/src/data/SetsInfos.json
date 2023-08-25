@@ -5619,10 +5619,10 @@
     "twoc": {
         "code": "twoc",
         "fullName": "Wilds of Eldraine Commander Tokens",
-        "cardCount": 2,
+        "cardCount": 3,
         "isPrimary": false,
         "icon": "img/sets/twoc.svg",
-        "commonCount": 2
+        "commonCount": 3
     },
     "twoe": {
         "code": "twoe",
@@ -6004,12 +6004,14 @@
     "woc": {
         "code": "woc",
         "fullName": "Wilds of Eldraine Commander",
-        "cardCount": 43,
+        "cardCount": 173,
         "isPrimary": false,
         "block": "Commander",
         "icon": "img/sets/woc.svg",
-        "mythicCount": 14,
-        "rareCount": 29
+        "commonCount": 26,
+        "mythicCount": 18,
+        "rareCount": 98,
+        "uncommonCount": 31
     },
     "woe": {
         "code": "woe",
@@ -6025,11 +6027,11 @@
     "wot": {
         "code": "wot",
         "fullName": "Wilds of Eldraine: Enchanting Tales",
-        "cardCount": 102,
+        "cardCount": 103,
         "isPrimary": false,
         "icon": "img/sets/wot.svg",
         "mythicCount": 45,
-        "rareCount": 39,
+        "rareCount": 40,
         "uncommonCount": 18
     },
     "wth": {
