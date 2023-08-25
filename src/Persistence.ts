@@ -7,6 +7,7 @@ if (process.env.NODE_ENV !== "production") dotenvConfig();
 import crypto from "crypto";
 import fs from "fs";
 import path from "path";
+import JSONStream from "JSONStream";
 import { Connections, clearConnections, getPODConnection } from "./Connection.js";
 import { Session, Sessions, clearSessions } from "./Session.js";
 import { TeamSealedState } from "./TeamSealed.js";
@@ -69,29 +70,39 @@ function restoreBot(bot: any): IBot | undefined {
 	return undefined;
 }
 
-function loadSavedConnections() {
+async function loadSavedConnections() {
 	const InactiveConnections: Record<UserID, ReturnType<typeof getPODConnection>> = {};
 
 	if (fs.existsSync(LocalConnectionsFile)) {
-		const connections = JSON.parse(fs.readFileSync(LocalConnectionsFile, "utf8"));
-		if (connections && connections.length > 0) {
-			for (const c of connections) InactiveConnections[c.userID] = c;
-			console.log(`[+] Restored ${connections.length} saved connections.`);
-		}
+		const promise = new Promise((resolve) => {
+			const stream = JSONStream.parse("$*");
+			stream.on("data", function (entry) {
+				InactiveConnections[entry.value.userID] = entry.value;
+			});
+			stream.on("end", resolve);
+			fs.createReadStream(LocalConnectionsFile).pipe(stream);
+		});
+		await promise;
+		console.log(`[+] Restored ${Object.keys(InactiveConnections).length} saved connections.`);
 	}
 
 	return InactiveConnections;
 }
 
-function loadSavedSessions() {
+async function loadSavedSessions() {
 	const InactiveSessions: Record<SessionID, any> = {};
 
 	if (fs.existsSync(LocalSessionsFile)) {
-		const sessions = JSON.parse(fs.readFileSync(LocalSessionsFile, "utf8"));
-		if (sessions && sessions.length > 0) {
-			for (const s of sessions) InactiveSessions[s.id] = s;
-			console.log(`[+] Restored ${sessions.length} saved sessions.`);
-		}
+		const promise = new Promise((resolve) => {
+			const stream = JSONStream.parse("$*");
+			stream.on("data", function (entry) {
+				InactiveSessions[entry.value.id] = entry.value;
+			});
+			stream.on("end", resolve);
+			fs.createReadStream(LocalSessionsFile).pipe(stream);
+		});
+		await promise;
+		console.log(`[+] Restored ${Object.keys(InactiveSessions).length} saved sessions.`);
 	}
 
 	return InactiveSessions;
@@ -358,12 +369,12 @@ export function logSession(type: string, session: Session) {
 }
 
 // Dumps and reloads inactive sessions, ONLY for testing purposes.
-export const simulateRestart = TestingOnly(() => {
+export const simulateRestart = TestingOnly(async () => {
 	dumpToDisk();
 	clearConnections();
 	clearSessions();
-	InactiveConnections = loadSavedConnections();
-	InactiveSessions = loadSavedSessions();
+	InactiveConnections = await loadSavedConnections();
+	InactiveSessions = await loadSavedSessions();
 });
 
 if (!DisablePersistence) {
@@ -410,6 +421,6 @@ if (!DisablePersistence) {
 		dumpToDisk(true);
 	});
 
-	InactiveConnections = loadSavedConnections();
-	InactiveSessions = loadSavedSessions();
+	InactiveConnections = await loadSavedConnections();
+	InactiveSessions = await loadSavedSessions();
 }
