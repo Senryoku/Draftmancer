@@ -1672,7 +1672,7 @@ class WOEBoosterFactory extends BoosterFactory {
 						: "uncommon";
 				wotCards.push(pickCard(this.wotPool[wotRarity]));
 			}
-			const booster = super.generateBooster(targets);
+			const booster = super.generateBooster(updatedTargets);
 			if (isMessageError(booster)) return booster;
 			booster.unshift(...wotCards);
 			return booster;

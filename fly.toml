@@ -17,7 +17,7 @@ kill_timeout = "5s"
 
 [env]
   NODE_ENV = "production"
-  NODE_OPTIONS = "--max-old-space-size=700"
+  NODE_OPTIONS = "--max-old-space-size=800"
   PORT = "8080"
   PERSISTENCE_LOCAL_PATH = "/persistence/"
   # SWAP = "true"
