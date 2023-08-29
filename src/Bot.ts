@@ -382,7 +382,8 @@ export async function requestDeckbuilding(cardPool: Card[]): Promise<DeckList | 
 			deckState: { pool: cardPool.map((c) => c.oracle_id), basics: basics },
 		};
 		const r = await axios.post(
-			`https://mtgml.cubeartisan.net/deck?auth_token=${process.env.MTGDRAFTBOTS_AUTHTOKEN}`,
+			//`https://mtgml.cubeartisan.net/deck?auth_token=${process.env.MTGDRAFTBOTS_AUTHTOKEN}`,
+			`http://127.0.0.1:5184/deck?auth_token=testing&model_type=mom`, // TEMP TEST! (can't really populate model_type correctly right now)
 			postData
 		);
 		// TEMP Debug (TODO: REMOVE)
