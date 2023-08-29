@@ -57,25 +57,34 @@ const DraftmancerAI = {
 	authToken: process.env.DRAFTMANCER_AI_AUTH_TOKEN ?? "testing",
 	models: [] as string[],
 };
-// Check if DraftmancerAI server is available
-axios
-	.get(`${DraftmancerAI.domain}/version`, { timeout: 5000 })
-	.then((response) => {
-		if (response.status === 200) {
-			DraftmancerAI.available = true;
-			DraftmancerAI.models = response.data.models;
-			console.log(`[+] DraftmancerAI instance '${DraftmancerAI.domain}' added.`);
-		} else
-			console.error(
-				`DraftmancerAI instance '${DraftmancerAI.domain}' returned an error: ${response.statusText}.`
-			);
-	})
-	.catch((error) => {
-		if (error.isAxiosError) {
-			const e = error as AxiosError;
-			console.error(`DraftmancerAI instance '${DraftmancerAI.domain}' could not be reached: ${e.message}.`);
-		} else console.error(`DraftmancerAI instance '${DraftmancerAI.domain}' could not be reached: ${error}.`);
-	});
+// Check if DraftmancerAI server is online and update the list of available models
+function checkDraftmancerAIAvailability() {
+	axios
+		.get(`${DraftmancerAI.domain}/version`, { timeout: 5000 })
+		.then((response) => {
+			if (response.status === 200) {
+				DraftmancerAI.available = true;
+				DraftmancerAI.models = response.data.models;
+				console.log(`[+] DraftmancerAI instance '${DraftmancerAI.domain}' added.`);
+				console.log(`    Available models: ${DraftmancerAI.models}`);
+			} else {
+				DraftmancerAI.available = false;
+				console.error(
+					`DraftmancerAI instance '${DraftmancerAI.domain}' returned an error: ${response.statusText}.`
+				);
+			}
+		})
+		.catch((error) => {
+			DraftmancerAI.available = false;
+			if (error.isAxiosError) {
+				const e = error as AxiosError;
+				console.error(`DraftmancerAI instance '${DraftmancerAI.domain}' could not be reached: ${e.message}.`);
+			} else console.error(`DraftmancerAI instance '${DraftmancerAI.domain}' could not be reached: ${error}.`);
+		});
+}
+checkDraftmancerAIAvailability();
+// Verify every 30 minutes (for availability and potential new models)
+setInterval(checkDraftmancerAIAvailability, 30 * 60 * 1000);
 
 const MTGDraftBotsAPIURLsTotalWeight = MTGDraftBotsAPIURLs.reduce((acc, curr) => acc + curr.weight, 0);
 function getMTGDraftBotsURL(parameters: MTGDraftBotParameters): string {
