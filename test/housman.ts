@@ -203,15 +203,10 @@ for (const settings of [
 					expect(currentPlayer).to.exist;
 					states[getUID(clients[c])].revealedCards[index] = card;
 					states[getUID(clients[c])].currentPlayer = currentPlayer;
-					// Gives a chance to receive and process the "housmanDraftEnd" event
-					nextTick(() => {
-						nextTick(() => {
-							if (nextExchange === clients.length && draftEnded === 0) {
-								nextExchange = 0;
-								randomPick(getCurrentPlayer(), states[getUID(getCurrentPlayer())]);
-							}
-						});
-					});
+					if (nextExchange === clients.length && draftEnded === 0) {
+						nextExchange = 0;
+						randomPick(getCurrentPlayer(), states[getUID(getCurrentPlayer())]);
+					}
 				});
 				clients[c].on("housmanDraftRoundEnd", () => {});
 				clients[c].once("housmanDraftEnd", function () {
