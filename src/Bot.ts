@@ -345,10 +345,17 @@ export class Bot implements IBot {
 				console.error(response);
 				return await this.getScoresFallback(booster, boosterNum, numBoosters, pickNum, numPicks);
 			}
-		} catch (e: any) {
-			if (e.code === "ECONNABORTED")
-				console.warn(`ECONNABORTED requesting mtgdraftbots scores (${e.url}): `, e.message);
-			else console.error(`Error requesting mtgdraftbots scores: (${e.url})`, e.message);
+		} catch (e) {
+			if (axios.isAxiosError(e)) {
+				console.error(
+					`Error '${e.code}' requesting mtgdraftbots scores (url: '${e.response?.config?.url
+						?.replaceAll(process.env.MTGDRAFTBOTS_AUTHTOKEN ?? "testing", "xxx")
+						.replaceAll(DraftmancerAI.authToken, "xxx")}):`,
+					e.message
+				);
+			} else {
+				console.error("Non-axios error requesting mtgdraftbots scores:", e);
+			}
 			return await this.getScoresFallback(booster, boosterNum, numBoosters, pickNum, numPicks);
 		}
 	}
