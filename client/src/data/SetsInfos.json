@@ -2,13 +2,13 @@
     "10e": {
         "code": "10e",
         "fullName": "Tenth Edition",
-        "cardCount": 509,
+        "cardCount": 508,
         "isPrimary": true,
         "block": "Core Set",
         "icon": "img/sets/10e.svg",
         "commonCount": 187,
         "rareCount": 161,
-        "uncommonCount": 161
+        "uncommonCount": 160
     },
     "2ed": {
         "code": "2ed",
@@ -2846,13 +2846,13 @@
     "ody": {
         "code": "ody",
         "fullName": "Odyssey",
-        "cardCount": 353,
+        "cardCount": 352,
         "isPrimary": true,
         "block": "Odyssey",
         "icon": "img/sets/ody.svg",
         "commonCount": 132,
         "rareCount": 110,
-        "uncommonCount": 111
+        "uncommonCount": 110
     },
     "ogw": {
         "code": "ogw",
@@ -3144,6 +3144,18 @@
         "icon": "img/sets/pafr.svg",
         "mythicCount": 60,
         "rareCount": 180
+    },
+    "pagl": {
+        "code": "pagl",
+        "fullName": "Angels: They're Just Like Us but Cooler and with Wings",
+        "cardCount": 59,
+        "isPrimary": false,
+        "block": "Commander",
+        "icon": "img/sets/pagl.svg",
+        "commonCount": 5,
+        "mythicCount": 6,
+        "rareCount": 32,
+        "uncommonCount": 16
     },
     "pakh": {
         "code": "pakh",
@@ -4029,14 +4041,14 @@
     "plist": {
         "code": "plist",
         "fullName": "The List",
-        "cardCount": 1163,
+        "cardCount": 1288,
         "isPrimary": true,
         "icon": "img/sets/plist.svg",
-        "commonCount": 152,
-        "mythicCount": 145,
-        "rareCount": 539,
+        "commonCount": 170,
+        "mythicCount": 155,
+        "rareCount": 597,
         "specialCount": 4,
-        "uncommonCount": 323
+        "uncommonCount": 362
     },
     "plrw": {
         "code": "plrw",
@@ -5144,12 +5156,12 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 994,
+        "cardCount": 1025,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
         "commonCount": 46,
-        "mythicCount": 180,
-        "rareCount": 748,
+        "mythicCount": 193,
+        "rareCount": 766,
         "uncommonCount": 20
     },
     "slp": {
