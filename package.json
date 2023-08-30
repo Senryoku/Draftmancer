@@ -84,7 +84,7 @@
 		"compression-webpack-plugin": "^10.0.0",
 		"concurrently": "^8.1.0",
 		"copy-webpack-plugin": "^11.0.0",
-		"core-js": "^3.32.0",
+		"core-js": "^3.32.1",
 		"cross-env": "^7.0.3",
 		"css-loader": "^6.8.1",
 		"eslint": "^8.48.0",
