@@ -185,4 +185,14 @@ describe("Custom Card List Parsing", function () {
 			}
 		});
 	});
+
+	describe("Trailing commas in settings and custom cards.", () => {
+		it(`should parse without error.`, () => {
+			const list = parseCardList(fs.readFileSync(`./test/data/TrailingCommas.txt`, "utf8"), {});
+			if (isSocketError(list)) {
+				expect(isSocketError(list), `Got ${JSON.stringify((list as SocketError).error)}`).to.be.false;
+				return;
+			}
+		});
+	});
 });

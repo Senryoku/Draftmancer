@@ -9,6 +9,12 @@ import { isAny, isArrayOf, isBoolean, isInteger, isRecord, isString, isUnknown }
 
 const lineRegex = /^(?:(\d+)\s+)?([^(\v\n]+)??(?:\s\((\w+)\)(?:\s+([^+\s]+))?)?(?:\s+\+?(F))?$/;
 
+const trailingCommasRegex = /(?<=(true|false|null|["\d}\]])\s*),(?=\s*[\]}])/g;
+
+function removeJSONTrailingCommas(str: string): string {
+	return str.replaceAll(trailingCommasRegex, "");
+}
+
 // Possible options:
 //  - fallbackToCardName: Allow fallback to only a matching card name if exact set and/or collector number cannot be found.
 //  - customCards: Dictionary of additional custom cards to try to match first.
@@ -168,7 +174,7 @@ function parseSettings(
 			text: `Expected '}', got end-of-file.`,
 		});
 	let parsedSettings = {};
-	const settingsStr = txtcardlist.substring(start, end + 1);
+	const settingsStr = removeJSONTrailingCommas(txtcardlist.substring(start, end + 1));
 	try {
 		parsedSettings = JSON.parse(settingsStr);
 	} catch (e: any) {
@@ -377,7 +383,7 @@ function parseCustomCards(lines: string[], startIdx: number, txtcardlist: string
 			text: `Expected ']', got end-of-file.`,
 		});
 	let parsedCustomCards = [];
-	const customCardsStr = txtcardlist.substring(start, end + 1);
+	const customCardsStr = removeJSONTrailingCommas(txtcardlist.substring(start, end + 1));
 	try {
 		parsedCustomCards = JSON.parse(customCardsStr);
 	} catch (e: any) {
