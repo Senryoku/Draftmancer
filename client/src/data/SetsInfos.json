@@ -2360,11 +2360,11 @@
     "ltr": {
         "code": "ltr",
         "fullName": "The Lord of the Rings: Tales of Middle-earth",
-        "cardCount": 463,
+        "cardCount": 464,
         "isPrimary": true,
         "icon": "img/sets/ltr.svg",
         "commonCount": 132,
-        "mythicCount": 55,
+        "mythicCount": 56,
         "rareCount": 163,
         "uncommonCount": 113
     },
@@ -5996,12 +5996,12 @@
     "who": {
         "code": "who",
         "fullName": "Doctor Who",
-        "cardCount": 59,
+        "cardCount": 63,
         "isPrimary": false,
         "icon": "img/sets/who.svg",
         "commonCount": 10,
         "mythicCount": 15,
-        "rareCount": 30,
+        "rareCount": 34,
         "uncommonCount": 4
     },
     "wmc": {
