@@ -348,11 +348,12 @@ export class Bot implements IBot {
 		} catch (e) {
 			if (axios.isAxiosError(e)) {
 				console.error(
-					`Error '${e.code}' requesting mtgdraftbots scores (url: '${e.response?.config?.url
+					`Error '${e.code}' requesting bots scores (url: '${e.response?.config?.url
 						?.replaceAll(process.env.MTGDRAFTBOTS_AUTHTOKEN ?? "testing", "xxx")
-						.replaceAll(DraftmancerAI.authToken, "xxx")}):`,
-					e.message
+						.replaceAll(DraftmancerAI.authToken, "xxx")}): ${e.message}`
 				);
+				if (e.response?.config?.url?.startsWith(DraftmancerAI.domain))
+					console.error("  Error from DraftmancerAI: ", e.response?.data);
 			} else {
 				console.error("Non-axios error requesting mtgdraftbots scores:", e);
 			}
