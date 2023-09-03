@@ -1037,16 +1037,16 @@ ul.player-list {
 
 .booster-cards-leave-active.selected {
 	transition: all 0.5s;
-	width: 200px;
+	width: calc(var(--booster-card-scale) * 200px);
 	overflow: visible;
 }
 
 .booster-cards-leave-active.selected .card-image {
-	width: 200px;
+	width: calc(var(--booster-card-scale) * 200px);
 }
 
 .booster-cards-leave-to.selected {
-	transform: translateY(250px) translateX(-100px); /* translateX compensates for width change */
+	transform: translateY(250px) translateX(calc(var(--booster-card-scale) * -100px)); /* translateX compensates for width change */
 	z-index: 2;
 	opacity: 0;
 	width: 0;

@@ -102,7 +102,9 @@ export default defineComponent({
 
 .fade-enter-active.card,
 .fade-leave-active.card {
-	transition: transform 0.5s ease, opacity 0.5s ease;
+	transition:
+		transform 0.5s ease,
+		opacity 0.5s ease;
 }
 
 .burn-card,
@@ -110,7 +112,9 @@ export default defineComponent({
 	position: absolute;
 	left: 0;
 	bottom: 0;
-	text-shadow: 0 0 3px black, 0 0 4px white;
+	text-shadow:
+		0 0 3px black,
+		0 0 4px white;
 }
 
 .collection-status {
