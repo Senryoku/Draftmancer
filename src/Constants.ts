@@ -8,6 +8,7 @@ export type CubeDescription = {
 	description: string;
 	cubeCobraID?: string;
 	cubeArtisanID?: string;
+	matchVersions?: boolean;
 };
 
 export const Constants = _constants as {
