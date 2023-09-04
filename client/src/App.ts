@@ -3345,6 +3345,7 @@ export default defineComponent({
 			if (this.housmanDraftState) return "Housman Draft";
 			if (this.solomonDraftState) return "Solomon Draft";
 			if (this.gridDraftState) return "Grid Draft";
+			if (this.minesweeperDraftState) return "Minesweeper Draft";
 			if (this.useCustomCardList) return "Cube Draft";
 			if (this.burnedCardsPerRound > 0) return "Glimpse Draft";
 			return "Draft";
