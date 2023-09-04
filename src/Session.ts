@@ -1406,7 +1406,9 @@ export class Session implements IIndexable {
 		gridWidth: number,
 		gridHeight: number,
 		picksPerGrid: number,
-		options: { revealBorders?: boolean } = {}
+		revealCenter: boolean,
+		revealCorners: boolean,
+		revealBorders: boolean
 	): SocketAck {
 		if (this.users.size <= 1)
 			return new SocketError(
@@ -1447,7 +1449,9 @@ export class Session implements IIndexable {
 			gridWidth,
 			gridHeight,
 			picksPerGrid,
-			options
+			revealCenter,
+			revealCorners,
+			revealBorders
 		);
 		for (const user of this.users) {
 			Connections[user].pickedCards = { main: [], side: [] };

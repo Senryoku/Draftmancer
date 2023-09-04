@@ -294,6 +294,8 @@ export interface ClientToServerEvents {
 		gridWidth: number,
 		gridHeight: number,
 		picksPerGrid: number,
+		revealCenter: boolean,
+		revealCorners: boolean,
 		revealBorders: boolean,
 		ack: (result: SocketAck) => void
 	) => void;

@@ -41,7 +41,14 @@ export class MinesweeperCell {
 export class MinesweeperGrid {
 	state: Array<Array<MinesweeperCell>> = []; // Row-Major order
 
-	constructor(cards: Array<UniqueCard>, width: number, height: number, options: { revealBorders?: boolean } = {}) {
+	constructor(
+		cards: Array<UniqueCard>,
+		width: number,
+		height: number,
+		revealCenter: boolean = true,
+		revealCorners: boolean = false,
+		revealBorders: boolean = false
+	) {
 		if (cards.length === 0 || width <= 0 || height <= 0) return;
 
 		for (let i = 0; i < height; i++) {
@@ -50,34 +57,42 @@ export class MinesweeperGrid {
 				this.state[i].push(new MinesweeperCell(cards.pop()!));
 			}
 		}
-		if (options.revealBorders) {
-			for (let j = 0; j < width; j++) {
+		// Reveal the middle card(s)
+		if (revealCenter) {
+			let rowStart = Math.floor(height / 2);
+			const rowEnd = rowStart + 1;
+			if (height % 2 === 0) --rowStart;
+			let colStart = Math.floor(width / 2);
+			const colEnd = colStart + 1;
+			if (width % 2 === 0) --colStart;
+
+			for (let i = rowStart; i < rowEnd; i++) {
+				for (let j = colStart; j < colEnd; j++) {
+					this.state[i][j].reveal();
+				}
+			}
+			if (height % 2 === 1 && width % 2 === 1) {
+				this.get(rowStart - 1, colStart)?.reveal();
+				this.get(rowStart + 1, colStart)?.reveal();
+				this.get(rowStart, colStart - 1)?.reveal();
+				this.get(rowStart, colStart + 1)?.reveal();
+			}
+		}
+		if (revealCorners) {
+			this.state[0][0].reveal();
+			this.state[height - 1][0].reveal();
+			this.state[height - 1][width - 1].reveal();
+			this.state[0][width - 1].reveal();
+		}
+		if (revealBorders) {
+			for (let j = 1; j < width - 1; j++) {
 				this.state[0][j].reveal();
 				this.state[height - 1][j].reveal();
 			}
-			for (let i = 0; i < height; i++) {
+			for (let i = 1; i < height - 1; i++) {
 				this.state[i][0].reveal();
 				this.state[i][width - 1].reveal();
 			}
-		}
-		// Reveal the middle card(s)
-		let rowStart = Math.floor(height / 2);
-		const rowEnd = rowStart + 1;
-		if (height % 2 === 0) --rowStart;
-		let colStart = Math.floor(width / 2);
-		const colEnd = colStart + 1;
-		if (width % 2 === 0) --colStart;
-
-		for (let i = rowStart; i < rowEnd; i++) {
-			for (let j = colStart; j < colEnd; j++) {
-				this.state[i][j].reveal();
-			}
-		}
-		if (height % 2 === 1 && width % 2 === 1) {
-			this.get(rowStart - 1, colStart)?.reveal();
-			this.get(rowStart + 1, colStart)?.reveal();
-			this.get(rowStart, colStart - 1)?.reveal();
-			this.get(rowStart, colStart + 1)?.reveal();
 		}
 	}
 
@@ -147,14 +162,17 @@ export class MinesweeperDraftState extends IDraftState implements TurnBased {
 		gridWidth: number,
 		gridHeight: number,
 		picksPerGrid: number,
-		options: { revealBorders?: boolean } = {}
+		revealCenter: boolean = true,
+		revealCorners: boolean = false,
+		revealBorders: boolean = false
 	) {
 		super("minesweeper");
 		this.players = players;
 		this.gridWidth = gridWidth;
 		this.gridHeight = gridHeight;
 		this.picksPerGrid = picksPerGrid;
-		for (const p of packs) this.grids.push(new MinesweeperGrid(p, gridWidth, gridHeight, options));
+		for (const p of packs)
+			this.grids.push(new MinesweeperGrid(p, gridWidth, gridHeight, revealCenter, revealCorners, revealBorders));
 	}
 
 	grid() {

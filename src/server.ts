@@ -655,6 +655,8 @@ function startMinesweeperDraft(
 	unsafeGridWidth: unknown,
 	unsafeGridHeight: unknown,
 	unsafePicksPerGrid: unknown,
+	unsafeRevealCenter: unknown,
+	unsafeRevealCorners: unknown,
 	unsafeRevealBorders: unknown,
 	ack: (result: SocketAck) => void
 ) {
@@ -663,6 +665,8 @@ function startMinesweeperDraft(
 	const gridWidth = !isNumber(unsafeGridWidth) ? parseInt(unsafeGridWidth as string) : unsafeGridWidth;
 	const gridHeight = !isNumber(unsafeGridHeight) ? parseInt(unsafeGridHeight as string) : unsafeGridHeight;
 	const picksPerGrid = !isNumber(unsafePicksPerGrid) ? parseInt(unsafePicksPerGrid as string) : unsafePicksPerGrid;
+	const revealCenter = !isBoolean(unsafeRevealCenter) ? false : unsafeRevealCenter;
+	const revealCorners = !isBoolean(unsafeRevealCorners) ? false : unsafeRevealCorners;
 	const revealBorders = !isBoolean(unsafeRevealBorders) ? false : unsafeRevealBorders;
 	if (
 		!isNumber(gridCount) ||
@@ -674,19 +678,35 @@ function startMinesweeperDraft(
 		!isNumber(picksPerGrid) ||
 		picksPerGrid <= 0 ||
 		picksPerGrid > gridWidth * gridHeight ||
+		!isBoolean(revealCenter) ||
+		!isBoolean(revealCorners) ||
 		!isBoolean(revealBorders)
 	) {
 		return ack?.(
 			new SocketError(
 				`Invalid parameters`,
 				`Grid parameters are invalid. Please check your settings.`,
-				`Values: gridCount: ${gridCount}, gridWidth: ${gridWidth}, gridHeight: ${gridHeight}, picksPerGrid: ${picksPerGrid}, revealBorders: ${revealBorders}`
+				`Values: gridCount: ${gridCount}, gridWidth: ${gridWidth}, gridHeight: ${gridHeight}, picksPerGrid: ${picksPerGrid}, revealCenter: ${revealCenter}, revealCorners: ${revealCorners}, revealBorders: ${revealBorders}`
 			)
 		);
 	}
-	const ret = sess.startMinesweeperDraft(gridCount, gridWidth, gridHeight, picksPerGrid, {
-		revealBorders: revealBorders,
-	});
+	if (!revealCenter && !revealCorners && !revealBorders)
+		return ack?.(
+			new SocketError(
+				`Invalid parameters`,
+				`At least one of revealCenter, revealCorners, or revealBorders must be true.`,
+				`Values: gridCount: ${gridCount}, gridWidth: ${gridWidth}, gridHeight: ${gridHeight}, picksPerGrid: ${picksPerGrid}, revealCenter: ${revealCenter}, revealCorners: ${revealCorners}, revealBorders: ${revealBorders}`
+			)
+		);
+	const ret = sess.startMinesweeperDraft(
+		gridCount,
+		gridWidth,
+		gridHeight,
+		picksPerGrid,
+		revealCenter,
+		revealCorners,
+		revealBorders
+	);
 	if (isSocketError(ret)) return ack?.(ret);
 
 	startPublicSession(sess);

@@ -24,7 +24,7 @@ import Constants, { CubeDescription, EnglishBasicLandNames } from "../../src/Con
 import { CardColor, OptionalOnPickDraftEffect, UsableDraftEffect } from "../../src/CardTypes";
 
 import io, { Socket } from "socket.io-client";
-import { toRaw, defineComponent, defineAsyncComponent, Component, createApp } from "vue";
+import { toRaw, defineComponent, defineAsyncComponent, Component } from "vue";
 import { Sortable } from "sortablejs-vue3";
 import Swal, { SweetAlertIcon, SweetAlertOptions, SweetAlertResult } from "sweetalert2";
 import { SortableEvent } from "sortablejs";
@@ -2094,6 +2094,8 @@ export default defineComponent({
 					gridWidth: number,
 					gridHeight: number,
 					picksPerPlayerPerGrid: number,
+					revealCenter: boolean,
+					revealCorners: boolean,
 					revealBorders: boolean
 				) => {
 					this.deckWarning(
@@ -2102,6 +2104,8 @@ export default defineComponent({
 							gridWidth: number,
 							gridHeight: number,
 							picksPerPlayerPerGrid: number,
+							revealCenter: boolean,
+							revealCorners: boolean,
 							revealBorders: boolean
 						) => {
 							this.socket.emit(
@@ -2110,6 +2114,8 @@ export default defineComponent({
 								gridWidth,
 								gridHeight,
 								this.sessionUsers.length * picksPerPlayerPerGrid,
+								revealCenter,
+								revealCorners,
 								revealBorders,
 								(response: SocketAck) => {
 									if (response?.error) Alert.fire(response.error);
@@ -2120,6 +2126,8 @@ export default defineComponent({
 						gridWidth,
 						gridHeight,
 						picksPerPlayerPerGrid,
+						revealCenter,
+						revealCorners,
 						revealBorders
 					);
 				},
@@ -2742,7 +2750,7 @@ export default defineComponent({
 		async sealedDialog(teamSealed = false) {
 			if (this.userID != this.sessionOwner) return;
 
-			const instance = this.spawnDialog(SealedDialog, {
+			this.spawnDialog(SealedDialog, {
 				users: this.sessionUsers,
 				teamSealed: teamSealed,
 				onDistribute: (boostersPerPlayer: number, customBoosters: SetCode[], teams: UserID[][]) => {

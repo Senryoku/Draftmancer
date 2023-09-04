@@ -89,8 +89,16 @@ describe("Minesweeper Draft", function () {
 		});
 	};
 
-	const startDraft = (gridCount = 4, gridWidth = 10, gridHeight = 9, picksPerGrid = -1, revealBorders = true) => {
-		it(`Start Minesweeper draft (Parameters: gridCount = ${gridCount}, gridWidth = ${gridWidth}, gridHeight = ${gridHeight}, picksPerGrid = ${picksPerGrid}, revealBorders: ${revealBorders})`, function (done) {
+	const startDraft = (
+		gridCount = 4,
+		gridWidth = 10,
+		gridHeight = 9,
+		picksPerGrid = -1,
+		revealCenter = true,
+		revealCorners = true,
+		revealBorders = false
+	) => {
+		it(`Start Minesweeper draft (Parameters: gridCount = ${gridCount}, gridWidth = ${gridWidth}, gridHeight = ${gridHeight}, picksPerGrid = ${picksPerGrid}, revealCenter = ${revealCenter}, revealCorners = ${revealCorners}, revealBorders: ${revealBorders})`, function (done) {
 			let connectedClients = 0;
 			for (const c of clients) {
 				c.once("startMinesweeperDraft", function (state) {
@@ -109,6 +117,8 @@ describe("Minesweeper Draft", function () {
 				gridWidth,
 				gridHeight,
 				picksPerGrid,
+				revealCenter,
+				revealCorners,
 				revealBorders,
 				(response: SocketAck) => {
 					expect(response?.error).to.be.undefined;
@@ -240,7 +250,9 @@ describe("Minesweeper Draft", function () {
 		gridWidth = 10,
 		gridHeight = 9,
 		picksPerGrid = -1,
-		revealBorders = true
+		revealCenter = true,
+		revealCorners = true,
+		revealBorders = false
 	) => {
 		if (picksPerGrid === -1) picksPerGrid = clients.length * 3 + 1;
 		clients[ownerIdx].emit(
@@ -249,6 +261,8 @@ describe("Minesweeper Draft", function () {
 			gridWidth,
 			gridHeight,
 			picksPerGrid,
+			revealCenter,
+			revealCorners,
 			revealBorders,
 			(r: SocketAck) => {
 				//console.error("Response:", r);
@@ -277,6 +291,9 @@ describe("Minesweeper Draft", function () {
 		});
 		it("Error on invalid picksPerGrid", function (done) {
 			startDraftWithError(done, 3, 10, 9, 10 * 9 + 1);
+		});
+		it("Error when no cards are revealed by default", function (done) {
+			startDraftWithError(done, 3, 10, 9, -1, false, false, false);
 		});
 	});
 
@@ -434,6 +451,19 @@ describe("Minesweeper Draft", function () {
 			[1, 10, 9, -1],
 		]) {
 			startDraft(gridCount, gridWidth, gridHeight, picksPerGrid);
+			endDraft();
+		}
+
+		for (const [revealCenter, revealCorners, revealBorders] of [
+			[true, false, false],
+			[false, true, false],
+			[true, true, false],
+			[false, false, true],
+			[true, false, true],
+			[false, true, true],
+			[true, true, true],
+		]) {
+			startDraft(3, 10, 9, -1, revealCenter, revealCorners, revealBorders);
 			endDraft();
 		}
 

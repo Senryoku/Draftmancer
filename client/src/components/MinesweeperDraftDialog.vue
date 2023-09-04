@@ -70,7 +70,11 @@
 						/>
 						<ResetButton v-model="picksPerPlayerPerGrid" :default-value="defaults.picksPerPlayerPerGrid" />
 					</div>
-					<label for="reveal-border-input">Reveal borders</label>
+					<label for="reveal-center-input">Reveal center</label>
+					<input type="checkbox" id="reveal-center-input" v-model="revealCenter" />
+					<label for="reveal-corners-input">Reveal corners</label>
+					<input type="checkbox" id="reveal-corners-input" v-model="revealCorners" />
+					<label for="reveal-border-input">Reveal borders (expect corners)</label>
 					<input type="checkbox" id="reveal-border-input" v-model="revealBorders" />
 				</div>
 			</div>
@@ -94,24 +98,30 @@ const defaults = {
 	gridWidth: 10,
 	gridHeight: 9,
 	picksPerPlayerPerGrid: 9,
-	revealBorders: true,
+	revealCenter: true,
+	revealCorners: true,
+	revealBorders: false,
 };
 
 const gridCount = ref(defaults.gridCount);
 const gridWidth = ref(defaults.gridWidth);
 const gridHeight = ref(defaults.gridHeight);
 const picksPerPlayerPerGrid = ref(defaults.picksPerPlayerPerGrid);
+const revealCenter = ref(defaults.revealCenter);
+const revealCorners = ref(defaults.revealCorners);
 const revealBorders = ref(defaults.revealBorders);
 
 const savedValues = localStorage.getItem("draftmancer-minesweeper");
 if (savedValues) {
 	try {
 		const values = JSON.parse(savedValues);
-		gridCount.value = values.gridCount;
-		gridWidth.value = values.gridWidth;
-		gridHeight.value = values.gridHeight;
-		picksPerPlayerPerGrid.value = values.picksPerPlayerPerGrid;
-		revealBorders.value = values.revealBorders;
+		gridCount.value = values.gridCount ?? defaults.gridCount;
+		gridWidth.value = values.gridWidth ?? defaults.gridWidth;
+		gridHeight.value = values.gridHeight ?? defaults.gridHeight;
+		picksPerPlayerPerGrid.value = values.picksPerPlayerPerGrid ?? defaults.picksPerPlayerPerGrid;
+		revealCenter.value = values.revealCenter ?? defaults.revealCenter;
+		revealCorners.value = values.revealCorners ?? defaults.revealCorners;
+		revealBorders.value = values.revealBorders ?? defaults.revealBorders;
 	} catch (err) {
 		console.error("Error parsing saved values for Minesweeper Draft: ", err);
 	}
@@ -122,10 +132,12 @@ const emit = defineEmits<{
 	(
 		e: "start",
 		gridCount: number,
-		revealedCardsCount: number,
-		exchangeCount: number,
-		roundCount: number,
-		removeBasicLands: boolean
+		gridWidth: number,
+		gridHeight: number,
+		picksPerPlayerPerGrid: number,
+		revealCenter: boolean,
+		revealCorners: boolean,
+		revealBorders: boolean
 	): void;
 }>();
 
@@ -138,10 +150,21 @@ const start = () => {
 			gridWidth: gridWidth.value,
 			gridHeight: gridHeight.value,
 			picksPerPlayerPerGrid: picksPerPlayerPerGrid.value,
+			revealCenter: revealCenter.value,
+			revealCorners: revealCorners.value,
 			revealBorders: revealBorders.value,
 		})
 	);
-	emit("start", gridCount.value, gridWidth.value, gridHeight.value, picksPerPlayerPerGrid.value, revealBorders.value);
+	emit(
+		"start",
+		gridCount.value,
+		gridWidth.value,
+		gridHeight.value,
+		picksPerPlayerPerGrid.value,
+		revealCenter.value,
+		revealCorners.value,
+		revealBorders.value
+	);
 	emit("close");
 };
 </script>
