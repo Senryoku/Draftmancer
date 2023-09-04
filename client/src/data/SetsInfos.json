@@ -4426,10 +4426,11 @@
     "pres": {
         "code": "pres",
         "fullName": "Resale Promos",
-        "cardCount": 35,
+        "cardCount": 37,
         "isPrimary": false,
         "icon": "img/sets/pres.svg",
-        "rareCount": 35
+        "mythicCount": 1,
+        "rareCount": 36
     },
     "prix": {
         "code": "prix",
