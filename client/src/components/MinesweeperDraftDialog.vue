@@ -74,7 +74,7 @@
 					<input type="checkbox" id="reveal-center-input" v-model="revealCenter" />
 					<label for="reveal-corners-input">Reveal corners</label>
 					<input type="checkbox" id="reveal-corners-input" v-model="revealCorners" />
-					<label for="reveal-border-input">Reveal borders (expect corners)</label>
+					<label for="reveal-border-input">Reveal borders (except corners)</label>
 					<input type="checkbox" id="reveal-border-input" v-model="revealBorders" />
 				</div>
 			</div>
