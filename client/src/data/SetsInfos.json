@@ -1956,13 +1956,13 @@
     "hbg": {
         "code": "hbg",
         "fullName": "Alchemy Horizons: Baldur's Gate",
-        "cardCount": 438,
+        "cardCount": 436,
         "isPrimary": true,
         "block": "Alchemy 2022",
         "icon": "img/sets/hbg.svg",
         "commonCount": 143,
         "mythicCount": 36,
-        "rareCount": 108,
+        "rareCount": 106,
         "uncommonCount": 151
     },
     "hho": {
@@ -2797,13 +2797,13 @@
     "neo": {
         "code": "neo",
         "fullName": "Kamigawa: Neon Dynasty",
-        "cardCount": 532,
+        "cardCount": 531,
         "isPrimary": true,
         "icon": "img/sets/neo.svg",
         "commonCount": 161,
         "mythicCount": 67,
         "rareCount": 189,
-        "uncommonCount": 115
+        "uncommonCount": 114
     },
     "nph": {
         "code": "nph",
@@ -3263,9 +3263,9 @@
         "cardCount": 78,
         "isPrimary": false,
         "icon": "img/sets/pana.svg",
-        "commonCount": 58,
+        "commonCount": 57,
         "mythicCount": 4,
-        "rareCount": 16
+        "rareCount": 17
     },
     "parb": {
         "code": "parb",
@@ -4447,12 +4447,12 @@
     "prm": {
         "code": "prm",
         "fullName": "Magic Online Promos",
-        "cardCount": 3054,
+        "cardCount": 3059,
         "isPrimary": false,
         "icon": "img/sets/prm.svg",
         "commonCount": 392,
-        "mythicCount": 449,
-        "rareCount": 1687,
+        "mythicCount": 450,
+        "rareCount": 1691,
         "specialCount": 1,
         "uncommonCount": 525
     },
@@ -4857,8 +4857,7 @@
         "cardCount": 6,
         "isPrimary": false,
         "icon": "img/sets/pw23.svg",
-        "rareCount": 5,
-        "uncommonCount": 1
+        "rareCount": 6
     },
     "pwar": {
         "code": "pwar",
@@ -5873,13 +5872,13 @@
     "vow": {
         "code": "vow",
         "fullName": "Innistrad: Crimson Vow",
-        "cardCount": 424,
+        "cardCount": 423,
         "isPrimary": true,
         "block": "Innistrad: Double Feature",
         "icon": "img/sets/vow.svg",
         "commonCount": 130,
         "mythicCount": 46,
-        "rareCount": 142,
+        "rareCount": 141,
         "uncommonCount": 106
     },
     "w16": {

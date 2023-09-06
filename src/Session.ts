@@ -2769,7 +2769,7 @@ export class Session implements IIndexable {
 	updateDeckLands(userID: UserID, lands: DeckBasicLands) {
 		if (!this.draftLog?.users[userID]) return;
 		if (!this.draftLog.users[userID].decklist) this.draftLog.users[userID].decklist = { main: [], side: [] };
-		(this.draftLog.users[userID].decklist as DeckList).lands = lands;
+		this.draftLog.users[userID].decklist!.lands = lands;
 		this.updateDecklist(userID);
 	}
 
