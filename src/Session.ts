@@ -11,7 +11,6 @@ import {
 	UniqueCard,
 	UniqueCardID,
 	DeckBasicLands,
-	DeckList,
 	OnPickDraftEffect,
 	UsableDraftEffect,
 	OptionalOnPickDraftEffect,
@@ -1655,7 +1654,7 @@ export class Session implements IIndexable {
 	}
 
 	///////////////////// Traditional Draft Methods //////////////////////
-	async startDraft(): Promise<SocketAck> {
+	startDraft(): SocketAck {
 		if (this.drafting) return new SocketError("Already drafting.");
 		if (this.teamDraft && this.users.size !== 6) {
 			const verb = this.users.size < 6 ? "add" : "remove";
@@ -1696,26 +1695,18 @@ export class Session implements IIndexable {
 			botParameters.wantedModel = this.setRestriction[0];
 
 		const oracleIds = boosters.flat().map((card) => card.oracle_id);
-		const simpleBots = await fallbackToSimpleBots([...new Set(oracleIds)], botParameters.wantedModel);
+		const simpleBots = fallbackToSimpleBots([...new Set(oracleIds)], botParameters.wantedModel);
 
-		// There is a very slim possibility that everyone disconnects during the asynchronous call to fallbackToSimpleBots,
-		// raising an exception and leaving the session in an invalid state. I hope this will catch all possible failure cases.
-		try {
-			this.draftState = new DraftState(boosters, this.getSortedHumanPlayersIDs(), {
-				pickedCardsPerRound: this.pickedCardsPerRound,
-				burnedCardsPerRound: this.burnedCardsPerRound,
-				doubleMastersMode: this.doubleMastersMode,
-				simpleBots: simpleBots,
-				botCount: this.bots,
-				botParameters,
-			});
-			this.disconnectedUsers = {};
-			this.drafting = true;
-		} catch (e) {
-			console.error("Exception raised while constructing the DraftState: ", e);
-			this.cleanDraftState();
-			return new SocketError("Internal server error");
-		}
+		this.draftState = new DraftState(boosters, this.getSortedHumanPlayersIDs(), {
+			pickedCardsPerRound: this.pickedCardsPerRound,
+			burnedCardsPerRound: this.burnedCardsPerRound,
+			doubleMastersMode: this.doubleMastersMode,
+			simpleBots: simpleBots,
+			botCount: this.bots,
+			botParameters,
+		});
+		this.disconnectedUsers = {};
+		this.drafting = true;
 
 		this.initLogs("Draft", boosters);
 

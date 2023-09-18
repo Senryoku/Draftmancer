@@ -1,55 +1,65 @@
-"use strict";
+import { config as dotenvConfig } from "dotenv";
+if (process.env.NODE_ENV !== "production") {
+	dotenvConfig();
+}
 
 import axios, { AxiosError } from "axios";
-import dotenv from "dotenv";
-if (process.env.NODE_ENV !== "production") {
-	dotenv.config();
-}
 
-import { shuffleArray, weightedRandomIdx } from "./utils.js";
+import { arrayIntersect } from "./utils.js";
 import { Card, OracleID } from "./CardTypes.js";
-import { isArrayOf, isNumber } from "./TypeChecks.js";
-
-const MTGDraftBotsAPITimeout = 10000;
-const MTGDraftBotsAPIURLs: { url: string; weight: number }[] = [];
-async function addMTGDraftBotsInstance(domain: string, authToken: string, weight: number) {
-	// Make sure the instance is accessible
-	try {
-		const response = await axios.get(`${domain}/version`, { timeout: 5000 });
-		if (response.status === 200) {
-			MTGDraftBotsAPIURLs.push({ url: `${domain}/draft?auth_token=${authToken}`, weight: weight });
-			console.log(`[+] MTGDraftBots instance '${domain}' added.`);
-		} else console.error(`MTGDraftBots instance '${domain}' returned an error: ${response.statusText}.`);
-	} catch (error: any) {
-		if (error.isAxiosError) {
-			const e = error as AxiosError;
-			console.error(`MTGDraftBots instance '${domain}' could not be reached: ${e.message}.`);
-		} else console.error(`MTGDraftBots instance '${domain}' could not be reached: ${error}.`);
-	}
-}
-
-// Official Instance
-if (process.env.MTGDRAFTBOTS_AUTHTOKEN)
-	addMTGDraftBotsInstance(
-		"https://mtgml.cubeartisan.net/",
-		process.env.MTGDRAFTBOTS_AUTHTOKEN,
-		process.env.NODE_ENV === "production" ? 1 : 0 // Do not use in development, unless it's the only instance available
-	);
-
-const MTGDraftBotsSetSpecializedModels = [
-	"neo",
-	"snc",
-	"dmu",
-	"bro",
-	"one",
-	"sir",
-	//  "mom", // Disabled as it's unstable right now.
-	"ltr",
-];
+import { isArrayOf, isNumber, isString } from "./TypeChecks.js";
 
 export type MTGDraftBotParameters = {
 	wantedModel: string;
 };
+
+const MTGDraftBotsAPITimeout = 10000;
+const MTGDraftBotsAPI = {
+	available: false,
+	domain: process.env.MTGDRAFTBOTS_API_DOMAIN ?? "https://mtgml.cubeartisan.net/",
+	authToken: process.env.MTGDRAFTBOTS_AUTHTOKEN ?? "testing",
+	models: [] as string[],
+	modelKnownOracles: {} as Record<string, OracleID[]>,
+};
+async function checkMTGDraftBotsAPIAvailability() {
+	// Make sure the instance is accessible
+	try {
+		const response = await axios.get(`${MTGDraftBotsAPI.domain}/version`, { timeout: 5000 });
+		if (response.status === 200) {
+			const models = isArrayOf(isString)(response.data.models) ? response.data.models : [];
+			const modelKnownOracles: Record<string, OracleID[]> = {};
+			// Requesting supported cards for each model (only really used for the prod model right now).
+			for (const model of models) {
+				const oracles = await axios.get(
+					`${MTGDraftBotsAPI.domain}/oracle-ids?auth_token=${MTGDraftBotsAPI.authToken}&model_type=${model}`,
+					{ timeout: 2000 }
+				);
+				if (isArrayOf(isString)(oracles.data.oracleIds)) modelKnownOracles[model] = oracles.data.oracleIds;
+			}
+			MTGDraftBotsAPI.available = true;
+			MTGDraftBotsAPI.models = models;
+			MTGDraftBotsAPI.modelKnownOracles = modelKnownOracles;
+			console.log(`[+] MTGDraftBots instance '${MTGDraftBotsAPI.domain}' added.`);
+			const modelList = models
+				.map((m: string) => `${m}${modelKnownOracles[m] ? ` (${modelKnownOracles[m].length})` : ""}`)
+				.join(", ");
+			console.log(`    Available models (${models.length}): ${modelList}`);
+		} else {
+			MTGDraftBotsAPI.available = false;
+			console.error(
+				`MTGDraftBots instance '${MTGDraftBotsAPI.domain}' returned an error: ${response.statusText}.`
+			);
+		}
+	} catch (error: unknown) {
+		MTGDraftBotsAPI.available = false;
+		if (error instanceof AxiosError) {
+			const e = error;
+			console.error(`MTGDraftBots instance '${MTGDraftBotsAPI.domain}' could not be reached: ${e.message}.`);
+		} else console.error(`MTGDraftBots instance '${MTGDraftBotsAPI.domain}' could not be reached: ${error}.`);
+	}
+}
+checkMTGDraftBotsAPIAvailability();
+setInterval(checkMTGDraftBotsAPIAvailability, 30 * 60 * 1000);
 
 const DraftmancerAI = {
 	available: false,
@@ -86,31 +96,31 @@ checkDraftmancerAIAvailability();
 // Verify every 30 minutes (for availability and potential new models)
 setInterval(checkDraftmancerAIAvailability, 30 * 60 * 1000);
 
-const MTGDraftBotsAPIURLsTotalWeight = MTGDraftBotsAPIURLs.reduce((acc, curr) => acc + curr.weight, 0);
+// Assumes that at least one suitable bot server is available (i.e. fallbackToSimpleBots returned false)
 function getMTGDraftBotsURL(parameters: MTGDraftBotParameters): string {
 	if (
 		DraftmancerAI.available &&
 		DraftmancerAI.models.includes(parameters.wantedModel) &&
-		(MTGDraftBotsAPIURLs.length === 0 || !MTGDraftBotsSetSpecializedModels.includes(parameters.wantedModel)) // Prefer MTGDraftBots set model if available.
+		(!MTGDraftBotsAPI.available || !MTGDraftBotsAPI.models.includes(parameters.wantedModel)) // Prefer MTGDraftBots set model if available.
 	)
 		return `${DraftmancerAI.domain}/draft?auth_token=${DraftmancerAI.authToken}&model_type=${parameters.wantedModel}`;
 
 	let model = parameters.wantedModel;
-	if (!MTGDraftBotsSetSpecializedModels.includes(model)) model = "prod";
-
-	// Returns a random instance of the mtgdraftbots server for each request (load balancing the stupid way :D).
-	return `${
-		MTGDraftBotsAPIURLs[weightedRandomIdx(MTGDraftBotsAPIURLs, MTGDraftBotsAPIURLsTotalWeight)].url
-	}&model_type=${model}`;
+	if (!MTGDraftBotsAPI.models.includes(model)) model = "prod";
+	return `${MTGDraftBotsAPI.domain}/draft?auth_token=${MTGDraftBotsAPI.authToken}&model_type=${model}`;
 }
 
-export async function fallbackToSimpleBots(oracleIds: Array<OracleID>, wantedModel?: string): Promise<boolean> {
+export function fallbackToSimpleBots(oracleIds: Array<OracleID>, wantedModel?: string): boolean {
 	// No bot servers available
-	if (MTGDraftBotsAPIURLs.length === 0 && !DraftmancerAI.available) return true;
+	if (!MTGDraftBotsAPI.available && !DraftmancerAI.available) return true;
 
 	// Querying the mtgdraftbots API is too slow for the test suite, always fallback to simple bots while testing. FIXME: This feels hackish.
 	// FORCE_MTGDRAFTBOTS will force them on for specific tests.
-	if (typeof (global as any).it === "function" && !(global as any).FORCE_MTGDRAFTBOTS) return true;
+	if (
+		typeof (global as { it?: unknown }).it === "function" && // Check for the presence of mocha's 'it' function.
+		!(global as { FORCE_MTGDRAFTBOTS?: boolean }).FORCE_MTGDRAFTBOTS
+	)
+		return true;
 
 	// In order of preference:
 	//  - MTGDraftBots set model
@@ -118,52 +128,18 @@ export async function fallbackToSimpleBots(oracleIds: Array<OracleID>, wantedMod
 	//  - MTGDraftBots prod model
 	//  - Fallback to simple bots
 
-	if (wantedModel) {
-		if (MTGDraftBotsAPIURLs.length > 0 && MTGDraftBotsSetSpecializedModels.includes(wantedModel)) return false;
+	if (wantedModel && wantedModel !== "prod") {
+		if (MTGDraftBotsAPI.available && MTGDraftBotsAPI.models.includes(wantedModel)) return false;
 		if (DraftmancerAI.available && DraftmancerAI.models.includes(wantedModel)) return false;
 	}
 
-	if (MTGDraftBotsAPIURLs.length === 0) return true;
-
-	// Send a dummy request to make sure the API is up and running that most cards in oracleIds are recognized.
-
-	// The API will only return a maximum of 16 non-zero scores, so instead of sending oracleIds.length / 16 requests to check all cards,
-	// we'll just take a random sample (of 15 cards, just because) and test these.
-	let chosenOracleIds = [...oracleIds];
-	shuffleArray(chosenOracleIds);
-	chosenOracleIds = oracleIds.slice(0, 15);
-
-	const drafterState = {
-		basics: [], // FIXME: Should not be necessary anymore.
-		cardsInPack: chosenOracleIds,
-		picked: [],
-		seen: [{ packNum: 0, pickNum: 0, numPicks: 1, pack: chosenOracleIds }],
-		packNum: 0,
-		numPacks: 1,
-		pickNum: 0,
-		numPicks: chosenOracleIds.length,
-		seed: Math.floor(Math.random() * 65536),
-	};
-	try {
-		const response = await axios.post(
-			getMTGDraftBotsURL({ wantedModel: "prod" }),
-			{ drafterState },
-			{ timeout: MTGDraftBotsAPITimeout }
-		);
-		if (
-			response.status !== 200 ||
-			!response.data.success ||
-			response.data.scores.filter((s: number) => s === 0).length > 0.8 * response.data.scores.length // A score of 0 means the card was not recognized (probably :)).
-		) {
-			return true;
-		}
-	} catch (e: any) {
-		if (e.code == "ECONNABORTED") console.warn("ECONNABORTED requesting mtgdraftbots scores: ", e.message);
-		else console.error("Error requesting testing the mtgdraftbots API: ", e);
-		return true;
+	if (MTGDraftBotsAPI.available) {
+		// At this point only the MTGDraftBots prod model is suitable, make sure it knows most of the requested cards.
+		const intersection = arrayIntersect([oracleIds, MTGDraftBotsAPI.modelKnownOracles["prod"] ?? []]);
+		if (intersection.length / oracleIds.length > 0.9) return false;
 	}
 
-	return false;
+	return true;
 }
 
 export type BotScores = { chosenOption: number; scores: number[] };
@@ -286,7 +262,7 @@ export class Bot implements IBot {
 	lastScores: BotScores = { chosenOption: 0, scores: [] };
 
 	seen: { packNum: number; pickNum: number; numPicks: number; pack: OracleID[] }[] = [];
-	picked: OracleID[] = []; // Array of oracleIds
+	picked: OracleID[] = [];
 
 	fallbackBot: SimpleBot | null = null;
 
