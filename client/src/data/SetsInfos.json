@@ -2718,7 +2718,7 @@
         "isPrimary": false,
         "block": "Amonkhet",
         "icon": "img/sets/mp2.svg",
-        "mythicCount": 54
+        "specialCount": 54
     },
     "mpr": {
         "code": "mpr",
@@ -2736,7 +2736,7 @@
         "isPrimary": false,
         "block": "Kaladesh",
         "icon": "img/sets/mps.svg",
-        "mythicCount": 54
+        "specialCount": 54
     },
     "mrd": {
         "code": "mrd",
@@ -2997,10 +2997,11 @@
     "p09": {
         "code": "p09",
         "fullName": "Magic Player Rewards 2009",
-        "cardCount": 9,
+        "cardCount": 10,
         "isPrimary": false,
         "block": "Magic Player Rewards",
         "icon": "img/sets/p09.svg",
+        "mythicCount": 1,
         "rareCount": 9
     },
     "p10": {
@@ -3700,10 +3701,10 @@
     "pf23": {
         "code": "pf23",
         "fullName": "MagicFest 2023",
-        "cardCount": 3,
+        "cardCount": 4,
         "isPrimary": false,
         "icon": "img/sets/pf23.svg",
-        "rareCount": 3
+        "rareCount": 4
     },
     "pfrf": {
         "code": "pfrf",
@@ -4180,10 +4181,11 @@
     "pmei": {
         "code": "pmei",
         "fullName": "Media Inserts",
-        "cardCount": 8,
+        "cardCount": 9,
         "isPrimary": false,
         "icon": "img/sets/pmei.svg",
         "commonCount": 7,
+        "rareCount": 1,
         "uncommonCount": 1
     },
     "pmh1": {
@@ -4447,12 +4449,12 @@
     "prm": {
         "code": "prm",
         "fullName": "Magic Online Promos",
-        "cardCount": 3059,
+        "cardCount": 3061,
         "isPrimary": false,
         "icon": "img/sets/prm.svg",
         "commonCount": 392,
         "mythicCount": 450,
-        "rareCount": 1691,
+        "rareCount": 1693,
         "specialCount": 1,
         "uncommonCount": 525
     },
@@ -4869,6 +4871,15 @@
         "rareCount": 94,
         "uncommonCount": 24
     },
+    "pwoe": {
+        "code": "pwoe",
+        "fullName": "Wilds of Eldraine Promos",
+        "cardCount": 160,
+        "isPrimary": false,
+        "icon": "img/sets/pwoe.svg",
+        "mythicCount": 40,
+        "rareCount": 120
+    },
     "pwor": {
         "code": "pwor",
         "fullName": "World Championship Promos",
@@ -5156,22 +5167,22 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 1025,
+        "cardCount": 1041,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
         "commonCount": 46,
-        "mythicCount": 193,
-        "rareCount": 766,
+        "mythicCount": 202,
+        "rareCount": 773,
         "uncommonCount": 20
     },
     "slp": {
         "code": "slp",
         "fullName": "Secret Lair Showdown",
-        "cardCount": 10,
+        "cardCount": 11,
         "isPrimary": false,
         "icon": "img/sets/slp.svg",
         "mythicCount": 3,
-        "rareCount": 7
+        "rareCount": 8
     },
     "slu": {
         "code": "slu",
