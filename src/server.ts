@@ -72,6 +72,8 @@ const app = express();
 const httpServer = new http.Server(app);
 const io = new Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>(httpServer, {
 	maxHttpBufferSize: 1e7, // Increase max. message size to 10MB to accomodate larger custom card lists.
+	httpCompression: true,
+	perMessageDeflate: true,
 });
 
 // Serve pre-compressed files from the dist directory in production
