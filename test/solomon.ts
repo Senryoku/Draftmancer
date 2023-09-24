@@ -127,7 +127,7 @@ for (const settings of [
 
 		const getCurrentPlayer = () => {
 			const currentPlayerID = getState().currentPlayer;
-			const currentPlayerIdx = clients.findIndex((c) => (c as any).query.userID === currentPlayerID);
+			const currentPlayerIdx = clients.findIndex((c) => getUID(c) === currentPlayerID);
 			return clients[currentPlayerIdx];
 		};
 
@@ -248,15 +248,18 @@ for (const settings of [
 			it("Current player picks randomly.", function (done) {
 				expect(getState().step).to.be.eql("picking");
 				let pickReceived = 0;
+				let statesReceived = 0;
 				for (let c = 0; c < clients.length; ++c) {
 					clients[c].once("solomonDraftState", (s) => {
 						expect(s.step).to.be.eql("dividing");
 						state = s;
+						++statesReceived;
+						if (pickReceived === clients.length && statesReceived === clients.length) done();
 					});
 					clients[c].once("solomonDraftPicked", (pileIdx) => {
 						expect(pileIdx, "pileIdx should be 0 or 1").to.be.oneOf([0, 1]);
 						++pickReceived;
-						if (pickReceived === clients.length) done();
+						if (pickReceived === clients.length && statesReceived === clients.length) done();
 					});
 				}
 				randomPick();
@@ -270,7 +273,7 @@ for (const settings of [
 
 		oneRound();
 
-		it("should not be able to pick when is the divising step.", function (done) {
+		it("should not be able to pick when in the divising step.", function (done) {
 			expect(getState().step).to.equal("dividing");
 			getCurrentPlayer().emit("solomonDraftPick", 0, (r: SocketAck) => {
 				expect(r.code !== 0);
