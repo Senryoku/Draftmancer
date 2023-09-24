@@ -15,7 +15,6 @@ import {
 } from "./src/common.js";
 import { HousmanDraftSyncData } from "../src/HousmanDraft.js";
 import { random } from "../src/utils.js";
-import { nextTick } from "process";
 
 for (const settings of [
 	{ playerCount: 2, handSize: 9, revealedCardsCount: 9, exchangeCount: 3, roundCount: 9, removeBasicLands: true },
@@ -194,21 +193,33 @@ for (const settings of [
 			this.timeout(2000);
 			let draftEnded = 0;
 
-			let nextExchange = 0;
+			let updatedClients = 0;
 			for (let c = 0; c < clients.length; ++c) {
-				clients[c].on("housmanDraftExchange", function (index, card, currentPlayer) {
-					++nextExchange;
+				clients[c].on("housmanDraftExchange", function (index, card, currentPlayer, exchangeNum) {
+					++updatedClients;
 					expect(index).to.exist;
 					expect(card).to.exist;
 					expect(currentPlayer).to.exist;
 					states[getUID(clients[c])].revealedCards[index] = card;
 					states[getUID(clients[c])].currentPlayer = currentPlayer;
-					if (nextExchange === clients.length && draftEnded === 0) {
-						nextExchange = 0;
+					states[getUID(clients[c])].exchangeNum = exchangeNum;
+					if (updatedClients === clients.length && exchangeNum < settings.exchangeCount * clients.length) {
+						updatedClients = 0;
 						randomPick(getCurrentPlayer(), states[getUID(getCurrentPlayer())]);
 					}
 				});
-				clients[c].on("housmanDraftRoundEnd", () => {});
+				clients[c].on("housmanDraftRoundEnd", () => {
+					updatedClients = 0;
+
+					clients[c].once("housmanDraftSync", function (state) {
+						++updatedClients;
+						states[getUID(clients[c])] = state;
+						if (updatedClients === clients.length) {
+							updatedClients = 0;
+							randomPick(getCurrentPlayer(), states[getUID(getCurrentPlayer())]);
+						}
+					});
+				});
 				clients[c].once("housmanDraftEnd", function () {
 					draftEnded += 1;
 					clients[c].removeListener("housmanDraftExchange");
