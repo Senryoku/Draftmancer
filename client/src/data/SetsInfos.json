@@ -2291,6 +2291,24 @@
         "rareCount": 53,
         "uncommonCount": 80
     },
+    "lcc": {
+        "code": "lcc",
+        "fullName": "Lost Caverns of Ixalan Commander",
+        "cardCount": 1,
+        "isPrimary": false,
+        "icon": "img/sets/lcc.svg",
+        "mythicCount": 1
+    },
+    "lci": {
+        "code": "lci",
+        "fullName": "Lost Caverns of Ixalan",
+        "cardCount": 23,
+        "isPrimary": true,
+        "icon": "img/sets/lci.svg",
+        "commonCount": 5,
+        "mythicCount": 15,
+        "rareCount": 3
+    },
     "lea": {
         "code": "lea",
         "fullName": "Limited Edition Alpha",
@@ -2348,25 +2366,25 @@
     "ltc": {
         "code": "ltc",
         "fullName": "Tales of Middle-earth Commander",
-        "cardCount": 413,
+        "cardCount": 562,
         "isPrimary": false,
         "block": "Commander",
         "icon": "img/sets/ltc.svg",
         "commonCount": 38,
-        "mythicCount": 89,
-        "rareCount": 237,
-        "uncommonCount": 49
+        "mythicCount": 111,
+        "rareCount": 359,
+        "uncommonCount": 54
     },
     "ltr": {
         "code": "ltr",
         "fullName": "The Lord of the Rings: Tales of Middle-earth",
-        "cardCount": 464,
+        "cardCount": 834,
         "isPrimary": true,
         "icon": "img/sets/ltr.svg",
-        "commonCount": 132,
-        "mythicCount": 56,
-        "rareCount": 163,
-        "uncommonCount": 113
+        "commonCount": 243,
+        "mythicCount": 109,
+        "rareCount": 272,
+        "uncommonCount": 210
     },
     "m10": {
         "code": "m10",
@@ -4856,10 +4874,10 @@
     "pw23": {
         "code": "pw23",
         "fullName": "Wizards Play Network 2023",
-        "cardCount": 6,
+        "cardCount": 7,
         "isPrimary": false,
         "icon": "img/sets/pw23.svg",
-        "rareCount": 6
+        "rareCount": 7
     },
     "pwar": {
         "code": "pwar",
@@ -4989,6 +5007,14 @@
         "rareCount": 88,
         "uncommonCount": 88
     },
+    "rex": {
+        "code": "rex",
+        "fullName": "Jurassic World Collection",
+        "cardCount": 3,
+        "isPrimary": false,
+        "icon": "img/sets/rex.svg",
+        "rareCount": 3
+    },
     "rix": {
         "code": "rix",
         "fullName": "Rivals of Ixalan",
@@ -5050,10 +5076,11 @@
     "rvr": {
         "code": "rvr",
         "fullName": "Ravnica Remastered",
-        "cardCount": 3,
+        "cardCount": 48,
         "isPrimary": true,
         "icon": "img/sets/rvr.svg",
-        "rareCount": 3
+        "mythicCount": 2,
+        "rareCount": 46
     },
     "s00": {
         "code": "s00",
@@ -5167,12 +5194,12 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 1041,
+        "cardCount": 1095,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
         "commonCount": 46,
-        "mythicCount": 202,
-        "rareCount": 773,
+        "mythicCount": 217,
+        "rareCount": 812,
         "uncommonCount": 20
     },
     "slp": {
@@ -5271,6 +5298,15 @@
         "mythicCount": 15,
         "rareCount": 53,
         "uncommonCount": 60
+    },
+    "spg": {
+        "code": "spg",
+        "fullName": "Special Guests",
+        "cardCount": 8,
+        "isPrimary": false,
+        "icon": "img/sets/spg.svg",
+        "mythicCount": 7,
+        "rareCount": 1
     },
     "ss1": {
         "code": "ss1",
@@ -5631,14 +5667,6 @@
         "icon": "img/sets/tunf.svg",
         "commonCount": 1
     },
-    "twho": {
-        "code": "twho",
-        "fullName": "Doctor Who Tokens",
-        "cardCount": 1,
-        "isPrimary": false,
-        "icon": "img/sets/twho.svg",
-        "commonCount": 1
-    },
     "twoc": {
         "code": "twoc",
         "fullName": "Wilds of Eldraine Commander Tokens",
@@ -5724,10 +5752,10 @@
     "unf": {
         "code": "unf",
         "fullName": "Unfinity",
-        "cardCount": 638,
+        "cardCount": 639,
         "isPrimary": true,
         "icon": "img/sets/unf.svg",
-        "commonCount": 232,
+        "commonCount": 233,
         "mythicCount": 52,
         "rareCount": 156,
         "uncommonCount": 198
@@ -6007,10 +6035,10 @@
     "who": {
         "code": "who",
         "fullName": "Doctor Who",
-        "cardCount": 63,
+        "cardCount": 59,
         "isPrimary": false,
         "icon": "img/sets/who.svg",
-        "commonCount": 10,
+        "commonCount": 6,
         "mythicCount": 15,
         "rareCount": 34,
         "uncommonCount": 4
