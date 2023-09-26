@@ -221,6 +221,8 @@ export interface ServerToClientEvents {
 
 	askColor: (userName: string, card: UniqueCard, callback: (color: CardColor) => void) => void;
 	choosePlayer: (reason: string, users: UserID[], callback: (user: UserID) => void) => void;
+
+	takeoverVote: (userName: string, callback: (response: boolean | null) => void) => void;
 }
 
 export interface ClientToServerEvents {
@@ -374,6 +376,8 @@ export interface ClientToServerEvents {
 		customBoosters: Array<string>,
 		ack: (result: SocketAck) => void
 	) => void;
+
+	requestTakeover: (ack: (result: SocketAck) => void) => void;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface

@@ -1333,6 +1333,11 @@ function distributeSealed(
 	ack?.(r);
 }
 
+async function requestTakeover(userID: UserID, sessionID: SessionID, ack: (result: SocketAck) => void) {
+	const r = await Sessions[sessionID].voteForTakeover(userID);
+	ack?.(r);
+}
+
 const prepareSocketCallback = <T extends Array<unknown>>(
 	callback: (userID: UserID, sessionID: SessionID, ...args: T) => void,
 	ownerOnly = false
@@ -1487,6 +1492,7 @@ io.on("connection", async function (socket) {
 	socket.on("moveCard", prepareSocketCallback(moveCard));
 	socket.on("removeBasicsFromDeck", prepareSocketCallback(removeBasicsFromDeck));
 	socket.on("retrieveUpdatedDraftLogs", prepareSocketCallback(retrieveUpdatedDraftLogs));
+	socket.on("requestTakeover", prepareSocketCallback(requestTakeover));
 
 	if (query.sessionID) {
 		socket.on("setSession", function (this: typeof socket, sessionID: SessionID, sessionSettings: Options) {

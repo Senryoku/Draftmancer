@@ -73,6 +73,7 @@ import { SolomonDraftState, isSolomonDraftState } from "./SolomonDraft.js";
 import { isSomeEnum } from "./TypeChecks.js";
 import { askColors, choosePlayer } from "./Conspiracy.js";
 import { InProduction, InTesting, TestingOnly } from "./Context.js";
+import { resolve } from "path";
 
 // Tournament timer depending on the number of remaining cards in a pack.
 const TournamentTimer = [
@@ -154,6 +155,8 @@ export class Session implements IIndexable {
 
 	sendDecklogTimeout?: NodeJS.Timeout = undefined; // Timeout for sending deck logs to cube artisan.
 
+	lastTakeOverRequest: number = 0;
+
 	constructor(id: SessionID, owner: UserID | undefined, options: Options = {}) {
 		this.id = id;
 		this.owner = owner;
@@ -184,6 +187,44 @@ export class Session implements IIndexable {
 		this.syncSessionOptions(userID);
 	}
 
+	async voteForTakeover(userID: UserID): Promise<SocketAck> {
+		if (this.managed || !this.owner) return new SocketError("Unavailable for managed sessions.");
+		if (userID === this.owner) return new SocketError("You're already the owner.");
+		if (this.users.size < 5) return new SocketError("Takeover request are only available for 5 players and more.");
+		if (!this.users.has(userID)) return new SocketError("Invalid UserID not found.");
+		const cooldownInMinutes = 5;
+		if (Date.now() - this.lastTakeOverRequest < cooldownInMinutes * 60 * 1000)
+			return new SocketError(
+				`You can request a takeover every ${cooldownInMinutes} minutes. Please wait ${
+					cooldownInMinutes * 60 - (Date.now() - this.lastTakeOverRequest) / 1000
+				} seconds.`
+			);
+		this.lastTakeOverRequest = Date.now();
+		const userName = Connections[userID].userName;
+		const users = [...this.users].filter((uid) => uid !== userID && uid !== this.owner);
+		const promises: Promise<boolean | null>[] = [];
+		for (const uid of users)
+			promises.push(
+				new Promise((resolve) =>
+					Connections[uid].socket.timeout(30 * 1000).emit("takeoverVote", userName, (err, r) => {
+						if (err) resolve(null);
+						else {
+							console.error(uid, ":", r);
+							resolve(r);
+						}
+					})
+				)
+			);
+		const responses = await Promise.all(promises);
+		console.error(responses);
+		if (responses.some((r) => r === false)) return new SocketError("Request refused.");
+
+		const previousOwner = this.owner;
+		this.owner = userID;
+		this.remUser(previousOwner);
+		return new SocketAck();
+	}
+
 	getDisconnectedUserData(userID: UserID) {
 		return {
 			userName: Connections[userID].userName,
@@ -211,7 +252,7 @@ export class Session implements IIndexable {
 		this.users.delete(userID);
 
 		// User was the owner of the session, transfer ownership to the first available users.
-		if (this.owner == userID) this.owner = this.users.values().next().value;
+		if (this.owner === userID) this.owner = this.users.values().next().value;
 
 		if (this.drafting) {
 			if (this.draftState instanceof DraftState && !this.managed) this.stopCountdowns();
