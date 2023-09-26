@@ -2463,7 +2463,7 @@ describe("Jumpstart: Super Jump!", function () {
 	});
 });
 
-describe.only("Takeover request", function () {
+describe("Takeover request", function () {
 	let clients: ReturnType<typeof makeClients> = [];
 	const sessionID = "Takeover";
 
@@ -2502,6 +2502,7 @@ describe.only("Takeover request", function () {
 		clients[nonOwnerIdx].emit("requestTakeover", (response) => {
 			ackNoError(response);
 			expect(Sessions[sessionID].owner).to.equal(getUID(clients[nonOwnerIdx]));
+			expect(Sessions[sessionID].users.has(getUID(clients[ownerIdx]))).to.be.false;
 			done();
 		});
 	});
@@ -2544,6 +2545,17 @@ describe.only("Takeover request", function () {
 		clients[nonOwnerIdx].emit("requestTakeover", (r) => {
 			expect(r.code).to.equal(-1);
 			expect(Sessions[sessionID].owner).to.equal(initialOwner);
+			done();
+		});
+	});
+
+	it(`Owner should not be able to initiate a takeover request.`, function (done) {
+		const ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
+		const owner = clients[ownerIdx];
+		expect(Sessions[sessionID].owner).to.equal(getUID(owner));
+		clients[ownerIdx].emit("requestTakeover", (r) => {
+			expect(r.code).to.equal(-1);
+			expect(Sessions[sessionID].owner).to.equal(getUID(owner));
 			done();
 		});
 	});

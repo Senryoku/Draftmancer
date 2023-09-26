@@ -642,6 +642,17 @@
 										class="subtle-gold"
 										v-tooltip="`${userByID[element].userName} is the session owner.`"
 									></font-awesome-icon>
+									<font-awesome-icon
+										v-if="
+											element === sessionOwner && element !== userID && sessionUsers.length >= 5
+										"
+										icon="fa-solid fa-user-slash"
+										class="clickable red takeover"
+										v-tooltip="
+											`Vote to remove ${userByID[element].userName} from the session and take ownership.`
+										"
+										@click="requestTakeover"
+									></font-awesome-icon>
 									<template v-if="userID === sessionOwner && element != sessionOwner">
 										<img
 											src="./assets/img/pass_ownership.svg"

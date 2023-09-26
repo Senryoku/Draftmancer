@@ -749,27 +749,7 @@ function startTeamSealed(
 
 // Session Settings
 function setSessionOwner(userID: UserID, sessionID: SessionID, newOwnerID: UserID) {
-	const sess = Sessions[sessionID];
-	if (newOwnerID === sess.owner || !sess.users.has(newOwnerID)) return;
-
-	if (!sess.ownerIsPlayer) {
-		// Prevent changing owner during drafting if owner is not playing
-		if (sess.drafting) return;
-
-		sess.users.delete(newOwnerID);
-		sess.owner = newOwnerID;
-		sess.addUser(userID);
-	} else {
-		sess.owner = newOwnerID;
-	}
-	sess.forUsers(
-		(user) =>
-			Connections[user]?.socket.emit(
-				"sessionOwner",
-				sess.owner,
-				sess.owner && sess.owner in Connections ? Connections[sess.owner].userName : null
-			)
-	);
+	Sessions[sessionID]?.setSessionOwner(newOwnerID);
 }
 
 function removePlayer(userID: UserID, sessionID: SessionID, userToRemove: UserID) {
@@ -1334,7 +1314,12 @@ function distributeSealed(
 }
 
 async function requestTakeover(userID: UserID, sessionID: SessionID, ack: (result: SocketAck) => void) {
+	const previousOwner = Sessions[sessionID].owner;
+	if (!previousOwner) return ack?.(new SocketError("Invalid request."));
 	const r = await Sessions[sessionID].voteForTakeover(userID);
+	if (!isSocketError(r)) {
+		removePlayer(userID, sessionID, previousOwner);
+	}
 	ack?.(r);
 }
 

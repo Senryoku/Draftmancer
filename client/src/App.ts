@@ -543,6 +543,19 @@ export default defineComponent({
 				this.pickTimer = timer;
 			});
 
+			this.socket.on("takeoverVote", async (userName, callback) => {
+				const r = await Alert.fire({
+					title: `${userName} wants to remove the current owner and take the session ownership`,
+					text: "Do you want to accept?",
+					showConfirmButton: true,
+					showDenyButton: true,
+					confirmButtonText: "Yes",
+					denyButtonText: "No",
+					timer: 30 * 1000,
+				});
+				callback(r.isConfirmed ? true : r.isDenied ? false : null);
+			});
+
 			this.socket.on("message", (data) => {
 				if (data.icon === undefined) data.icon = "info";
 				if (data.title === undefined) data.title = "[Missing Title]";
@@ -3324,6 +3337,12 @@ export default defineComponent({
 					`/?session=${encodeURIComponent(this.sessionID)}`
 				);
 			}
+		},
+		requestTakeover() {
+			this.socket.emit("requestTakeover", (r) => {
+				if (r.error) Alert.fire(r.error);
+				else fireToast("success", "Takeover request succeeded!");
+			});
 		},
 	},
 	computed: {
