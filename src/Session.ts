@@ -73,7 +73,6 @@ import { SolomonDraftState, isSolomonDraftState } from "./SolomonDraft.js";
 import { isSomeEnum } from "./TypeChecks.js";
 import { askColors, choosePlayer } from "./Conspiracy.js";
 import { InProduction, InTesting, TestingOnly } from "./Context.js";
-import { resolve } from "path";
 
 // Tournament timer depending on the number of remaining cards in a pack.
 const TournamentTimer = [

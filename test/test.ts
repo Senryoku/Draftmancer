@@ -126,7 +126,7 @@ describe("Inter client communication", function () {
 
 		it("Sender status should be dispatched to other users.", function (done) {
 			clients[nonOwnerIdx].once("setReady", (userID, status) => {
-				expect(userID).to.equal((clients[ownerIdx] as any).query.userID);
+				expect(userID).to.equal(getUID(clients[ownerIdx]));
 				expect(status).to.equal("Ready");
 				done();
 			});
@@ -135,7 +135,7 @@ describe("Inter client communication", function () {
 
 		it("Receiver status should be dispatched to other users.", function (done) {
 			clients[ownerIdx].once("setReady", (userID, status) => {
-				expect(userID).to.equal((clients[nonOwnerIdx] as any).query.userID);
+				expect(userID).to.equal(getUID(clients[nonOwnerIdx]));
 				expect(status).to.equal("Ready");
 				done();
 			});
@@ -146,7 +146,7 @@ describe("Inter client communication", function () {
 	describe("Personal options updates", function () {
 		it("Clients should receive the updated userName when a user changes it.", function (done) {
 			clients[nonOwnerIdx].once("updateUser", function (data) {
-				expect(data.userID).to.equal((clients[ownerIdx] as any).query.userID);
+				expect(data.userID).to.equal(getUID(clients[ownerIdx]));
 				expect(data.updatedProperties.userName).to.equal("senderUpdatedUserName");
 				done();
 			});
@@ -154,7 +154,7 @@ describe("Inter client communication", function () {
 		});
 		it("Clients should receive the updated useCollection status.", function (done) {
 			clients[nonOwnerIdx].once("updateUser", function (data) {
-				expect(data.userID).to.equal((clients[ownerIdx] as any).query.userID);
+				expect(data.userID).to.equal(getUID(clients[ownerIdx]));
 				expect(data.updatedProperties.useCollection).to.equal(false);
 				done();
 			});
@@ -173,7 +173,7 @@ describe("Inter client communication", function () {
 		});
 		it("Clients should receive the updated useCollection status.", function (done) {
 			clients[nonOwnerIdx].once("updateUser", function (data) {
-				expect(data.userID).to.equal((clients[ownerIdx] as any).query.userID);
+				expect(data.userID).to.equal(getUID(clients[ownerIdx]));
 				expect(data.updatedProperties.useCollection).to.equal(true);
 				done();
 			});
@@ -181,7 +181,7 @@ describe("Inter client communication", function () {
 		});
 		it("Clients should receive the updated userName.", function (done) {
 			clients[nonOwnerIdx].once("updateUser", function (data) {
-				expect(data.userID).to.equal((clients[ownerIdx] as any).query.userID);
+				expect(data.userID).to.equal(getUID(clients[ownerIdx]));
 				expect(data.updatedProperties.userName).to.equal("Sender New UserName");
 				done();
 			});
@@ -216,11 +216,11 @@ describe("Inter client communication", function () {
 		it("Removing non-owner.", function (done) {
 			clients[nonOwnerIdx].once("setSession", function (newID) {
 				expect(Sessions[sessionID].users.size).to.equal(1);
-				expect(Sessions[sessionID].users).to.not.include((clients[nonOwnerIdx] as any).query.userID);
+				expect(Sessions[sessionID].users).to.not.include(getUID(clients[nonOwnerIdx]));
 				expect(newID).to.not.equal(sessionID);
 				done();
 			});
-			clients[ownerIdx].emit("removePlayer", (clients[nonOwnerIdx] as any).query.userID);
+			clients[ownerIdx].emit("removePlayer", getUID(clients[nonOwnerIdx]));
 		});
 	});
 });
@@ -1091,7 +1091,7 @@ describe("Single Draft (Two Players)", function () {
 		let lastPickedCardUID: number;
 
 		it("Player makes a single pick.", function (done) {
-			const clientState = clientStates[(clients[nonOwnerIdx] as any).query.userID];
+			const clientState = clientStates[getUID(clients[nonOwnerIdx])];
 			clients[nonOwnerIdx].on("draftState", function (state) {
 				const s = state as ReturnType<DraftState["syncData"]>;
 				if (s.pickNumber !== clientState.state.pickNumber && s.boosterCount > 0) {
@@ -1956,7 +1956,7 @@ describe("Single Draft (Two Players)", function () {
 			nonOwnerIdx = 1 - ownerIdx;
 			clients[nonOwnerIdx].once("sessionOptions", function (data) {
 				expect(data.bots).to.equal(2);
-				(global as any).FORCE_MTGDRAFTBOTS = true;
+				(global as unknown as { FORCE_MTGDRAFTBOTS: boolean }).FORCE_MTGDRAFTBOTS = true;
 				done();
 			});
 			clients[ownerIdx].emit("setRestriction", ["one"]);
@@ -1965,7 +1965,7 @@ describe("Single Draft (Two Players)", function () {
 		startDraft();
 		endDraft();
 		disconnect(() => {
-			(global as any).FORCE_MTGDRAFTBOTS = false;
+			(global as unknown as { FORCE_MTGDRAFTBOTS: boolean }).FORCE_MTGDRAFTBOTS = false;
 		});
 	});
 });
@@ -2206,8 +2206,6 @@ import { DraftState } from "../src/DraftState.js";
 import { ClientToServerEvents, ServerToClientEvents } from "../src/SocketType.js";
 import { Socket } from "socket.io-client";
 import { JHHBooster } from "../src/JumpstartHistoricHorizons.js";
-import { response } from "express";
-import { ackError } from "../src/Message.js";
 
 describe("Jumpstart", function () {
 	let clients: ReturnType<typeof makeClients> = [];
