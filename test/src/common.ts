@@ -113,7 +113,7 @@ export function makeClients(queries: any[], done: Mocha.Done) {
 	for (const s of sockets) {
 		s.once("connect", function () {
 			connectedClientCount += 1;
-			if (connectedClientCount == sockets.length) {
+			if (connectedClientCount === sockets.length) {
 				enableLogs(false);
 				expect(Object.keys(Connections).length).to.equal(sockets.length);
 				done();

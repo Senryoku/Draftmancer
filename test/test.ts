@@ -126,7 +126,7 @@ describe("Inter client communication", function () {
 
 		it("Sender status should be dispatched to other users.", function (done) {
 			clients[nonOwnerIdx].once("setReady", (userID, status) => {
-				expect(userID).to.equal((clients[ownerIdx] as any).query.userID);
+				expect(userID).to.equal(getUID(clients[ownerIdx]));
 				expect(status).to.equal("Ready");
 				done();
 			});
@@ -135,7 +135,7 @@ describe("Inter client communication", function () {
 
 		it("Receiver status should be dispatched to other users.", function (done) {
 			clients[ownerIdx].once("setReady", (userID, status) => {
-				expect(userID).to.equal((clients[nonOwnerIdx] as any).query.userID);
+				expect(userID).to.equal(getUID(clients[nonOwnerIdx]));
 				expect(status).to.equal("Ready");
 				done();
 			});
@@ -146,7 +146,7 @@ describe("Inter client communication", function () {
 	describe("Personal options updates", function () {
 		it("Clients should receive the updated userName when a user changes it.", function (done) {
 			clients[nonOwnerIdx].once("updateUser", function (data) {
-				expect(data.userID).to.equal((clients[ownerIdx] as any).query.userID);
+				expect(data.userID).to.equal(getUID(clients[ownerIdx]));
 				expect(data.updatedProperties.userName).to.equal("senderUpdatedUserName");
 				done();
 			});
@@ -154,7 +154,7 @@ describe("Inter client communication", function () {
 		});
 		it("Clients should receive the updated useCollection status.", function (done) {
 			clients[nonOwnerIdx].once("updateUser", function (data) {
-				expect(data.userID).to.equal((clients[ownerIdx] as any).query.userID);
+				expect(data.userID).to.equal(getUID(clients[ownerIdx]));
 				expect(data.updatedProperties.useCollection).to.equal(false);
 				done();
 			});
@@ -173,7 +173,7 @@ describe("Inter client communication", function () {
 		});
 		it("Clients should receive the updated useCollection status.", function (done) {
 			clients[nonOwnerIdx].once("updateUser", function (data) {
-				expect(data.userID).to.equal((clients[ownerIdx] as any).query.userID);
+				expect(data.userID).to.equal(getUID(clients[ownerIdx]));
 				expect(data.updatedProperties.useCollection).to.equal(true);
 				done();
 			});
@@ -181,7 +181,7 @@ describe("Inter client communication", function () {
 		});
 		it("Clients should receive the updated userName.", function (done) {
 			clients[nonOwnerIdx].once("updateUser", function (data) {
-				expect(data.userID).to.equal((clients[ownerIdx] as any).query.userID);
+				expect(data.userID).to.equal(getUID(clients[ownerIdx]));
 				expect(data.updatedProperties.userName).to.equal("Sender New UserName");
 				done();
 			});
@@ -216,11 +216,11 @@ describe("Inter client communication", function () {
 		it("Removing non-owner.", function (done) {
 			clients[nonOwnerIdx].once("setSession", function (newID) {
 				expect(Sessions[sessionID].users.size).to.equal(1);
-				expect(Sessions[sessionID].users).to.not.include((clients[nonOwnerIdx] as any).query.userID);
+				expect(Sessions[sessionID].users).to.not.include(getUID(clients[nonOwnerIdx]));
 				expect(newID).to.not.equal(sessionID);
 				done();
 			});
-			clients[ownerIdx].emit("removePlayer", (clients[nonOwnerIdx] as any).query.userID);
+			clients[ownerIdx].emit("removePlayer", getUID(clients[nonOwnerIdx]));
 		});
 	});
 });
@@ -1091,7 +1091,7 @@ describe("Single Draft (Two Players)", function () {
 		let lastPickedCardUID: number;
 
 		it("Player makes a single pick.", function (done) {
-			const clientState = clientStates[(clients[nonOwnerIdx] as any).query.userID];
+			const clientState = clientStates[getUID(clients[nonOwnerIdx])];
 			clients[nonOwnerIdx].on("draftState", function (state) {
 				const s = state as ReturnType<DraftState["syncData"]>;
 				if (s.pickNumber !== clientState.state.pickNumber && s.boosterCount > 0) {
@@ -1956,7 +1956,7 @@ describe("Single Draft (Two Players)", function () {
 			nonOwnerIdx = 1 - ownerIdx;
 			clients[nonOwnerIdx].once("sessionOptions", function (data) {
 				expect(data.bots).to.equal(2);
-				(global as any).FORCE_MTGDRAFTBOTS = true;
+				(global as unknown as { FORCE_MTGDRAFTBOTS: boolean }).FORCE_MTGDRAFTBOTS = true;
 				done();
 			});
 			clients[ownerIdx].emit("setRestriction", ["one"]);
@@ -1965,7 +1965,7 @@ describe("Single Draft (Two Players)", function () {
 		startDraft();
 		endDraft();
 		disconnect(() => {
-			(global as any).FORCE_MTGDRAFTBOTS = false;
+			(global as unknown as { FORCE_MTGDRAFTBOTS: boolean }).FORCE_MTGDRAFTBOTS = false;
 		});
 	});
 });
@@ -2458,5 +2458,126 @@ describe("Jumpstart: Super Jump!", function () {
 			cards.concat(userData[client.id].packChoices[1][0][1].cards.map((card) => card.id));
 			userData[client.id].ack(getUID(client), cards);
 		}
+	});
+});
+
+describe("Takeover request", function () {
+	let clients: ReturnType<typeof makeClients> = [];
+	const sessionID = "Takeover";
+
+	beforeEach(function (done) {
+		disableLogs();
+		const queries = [];
+		for (let i = 0; i < 8; ++i)
+			queries.push({
+				sessionID: sessionID,
+				userName: "DontCare",
+			});
+		clients = makeClients(queries, () => {
+			disableLogs();
+			done();
+		});
+	});
+
+	afterEach(function (done) {
+		disableLogs();
+		for (const c of clients) c.disconnect();
+		waitForClientDisconnects(done);
+	});
+
+	it(`Non-owner asks for takeover, everyone accepts and ownership is transferred.`, function (done) {
+		const ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
+		const nonOwnerIdx = (ownerIdx + 1) % clients.length;
+
+		expect(Sessions[sessionID].owner).to.not.equal(getUID(clients[nonOwnerIdx]));
+
+		for (let i = 0; i < clients.length; ++i)
+			if (i !== nonOwnerIdx && i !== ownerIdx)
+				clients[i].once("takeoverVote", (userName, callback) => {
+					callback(true);
+				});
+
+		clients[nonOwnerIdx].emit("requestTakeover", (response) => {
+			ackNoError(response);
+			expect(Sessions[sessionID].owner).to.equal(getUID(clients[nonOwnerIdx]));
+			expect(Sessions[sessionID].users.has(getUID(clients[ownerIdx]))).to.be.false;
+			done();
+		});
+	});
+
+	it(`Non-owner asks for takeover, everyone refuses and ownership is NOT transferred.`, function (done) {
+		const initialOwner = Sessions[sessionID].owner;
+		const ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
+		const nonOwnerIdx = (ownerIdx + 1) % clients.length;
+
+		expect(Sessions[sessionID].owner).to.not.equal(getUID(clients[nonOwnerIdx]));
+
+		for (let i = 0; i < clients.length; ++i)
+			if (i !== nonOwnerIdx && i !== ownerIdx)
+				clients[i].once("takeoverVote", (userName, callback) => {
+					callback(false);
+				});
+
+		clients[nonOwnerIdx].emit("requestTakeover", (r) => {
+			expect(r.code).to.equal(-1);
+			expect(Sessions[sessionID].owner).to.equal(initialOwner);
+			done();
+		});
+	});
+
+	it(`Non-owner asks for takeover, a single player refuses and ownership is NOT transferred.`, function (done) {
+		const initialOwner = Sessions[sessionID].owner;
+		const ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
+		const nonOwnerIdx = (ownerIdx + 1) % clients.length;
+
+		expect(Sessions[sessionID].owner).to.not.equal(getUID(clients[nonOwnerIdx]));
+
+		let response = false;
+		for (let i = 0; i < clients.length; ++i)
+			if (i !== nonOwnerIdx && i !== ownerIdx)
+				clients[i].once("takeoverVote", (userName, callback) => {
+					callback(response);
+					if (!response) response = true;
+				});
+
+		clients[nonOwnerIdx].emit("requestTakeover", (r) => {
+			expect(r.code).to.equal(-1);
+			expect(Sessions[sessionID].owner).to.equal(initialOwner);
+			done();
+		});
+	});
+
+	it(`Owner should not be able to initiate a takeover request.`, function (done) {
+		const ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
+		const owner = clients[ownerIdx];
+		expect(Sessions[sessionID].owner).to.equal(getUID(owner));
+		clients[ownerIdx].emit("requestTakeover", (r) => {
+			expect(r.code).to.equal(-1);
+			expect(Sessions[sessionID].owner).to.equal(getUID(owner));
+			done();
+		});
+	});
+
+	it(`Takeover should have a cooldown period.`, function (done) {
+		const ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
+		const nonOwnerIdx = (ownerIdx + 1) % clients.length;
+		const nonOwnerIdx2 = (ownerIdx + 2) % clients.length;
+		const nonOwner = clients[nonOwnerIdx];
+		const nonOwner2 = clients[nonOwnerIdx2];
+		expect(Sessions[sessionID].owner).to.not.equal(getUID(nonOwner));
+		expect(Sessions[sessionID].owner).to.not.equal(getUID(nonOwner2));
+		for (let i = 0; i < clients.length; ++i)
+			if (i !== nonOwnerIdx && i !== ownerIdx)
+				clients[i].once("takeoverVote", (userName, callback) => {
+					callback(false);
+				});
+		nonOwner.emit("requestTakeover", (response) => {
+			ackNoError(response);
+			expect(Sessions[sessionID].owner).to.equal(getUID(nonOwner));
+		});
+		nonOwner2.emit("requestTakeover", (r) => {
+			expect(r.code).to.equal(-1);
+			done();
+		});
 	});
 });
