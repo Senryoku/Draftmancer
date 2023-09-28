@@ -99,7 +99,7 @@
 		"lint-staged": "^14.0.0",
 		"mocha": "^10.2.0",
 		"prettier": "^3.0.3",
-		"puppeteer": "^20.8.2",
+		"puppeteer": "^21.3.6",
 		"source-map-support": "^0.5.21",
 		"ts-loader": "^9.4.4",
 		"typescript": "^5.0.2",

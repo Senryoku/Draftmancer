@@ -46,7 +46,7 @@ export async function waitAndClickSelector(page: Page, selector: string) {
 		visible: true,
 	});
 	expect(element).to.exist;
-	await element!.asElement().click();
+	await element!.click();
 }
 
 export function disableAnimations(page: Page) {
