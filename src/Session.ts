@@ -213,6 +213,7 @@ export class Session implements IIndexable {
 
 	async voteForTakeover(userID: UserID): Promise<SocketAck> {
 		if (this.managed || !this.owner) return new SocketError("Unavailable for managed sessions.");
+		if (this.drafting) return new SocketError("Can't request a takeover during drafting.");
 		if (userID === this.owner) return new SocketError("Invalid UserID", "You're already the owner.");
 		if (this.users.size < 5)
 			return new SocketError("Not enough players", "Takeover request are only available for 5 players and more.");
