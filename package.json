@@ -65,7 +65,7 @@
 		"sweetalert2": "^11.7.22",
 		"threads": "^1.7",
 		"uuid": "^9.0.0",
-		"vue": "^3.2.47",
+		"vue": "^3.3.4",
 		"vue-chartjs": "^5.2.0"
 	},
 	"devDependencies": {
