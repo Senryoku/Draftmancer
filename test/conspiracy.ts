@@ -344,7 +344,7 @@ describe("Conspiracy Draft Matters Cards", () => {
 						boosterNumber: number;
 						pickNumber: number;
 					};
-					if (s.pickNumber > 0 && s.boosterCount > 0) {
+					if (s.pickNumber > 0 && s.boosterCount > 0 && s.pickNumber !== states[i].pickNumber) {
 						++eventReceived;
 						states[i] = s;
 						// This should be a new pack
