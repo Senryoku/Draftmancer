@@ -753,7 +753,12 @@ function setSessionOwner(userID: UserID, sessionID: SessionID, newOwnerID: UserI
 }
 
 function removePlayer(userID: UserID, sessionID: SessionID, userToRemove: UserID) {
-	if (userToRemove === Sessions[sessionID].owner || !Sessions[sessionID].users.has(userToRemove)) return;
+	if (
+		!Sessions[sessionID] ||
+		userToRemove === Sessions[sessionID].owner ||
+		!Sessions[sessionID].users.has(userToRemove)
+	)
+		return;
 
 	removeUserFromSession(userToRemove);
 	Sessions[sessionID].replaceDisconnectedPlayers();
@@ -1317,7 +1322,8 @@ async function requestTakeover(userID: UserID, sessionID: SessionID, ack: (resul
 	const previousOwner = Sessions[sessionID].owner;
 	if (!previousOwner) return ack?.(new SocketError("Invalid request."));
 	const r = await Sessions[sessionID].voteForTakeover(userID);
-	if (!isSocketError(r)) {
+	// Session might have been deleted while we were awaiting, double check.
+	if (!isSocketError(r) && sessionID in Sessions) {
 		removePlayer(userID, sessionID, previousOwner);
 	}
 	ack?.(r);
