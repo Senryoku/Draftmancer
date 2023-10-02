@@ -74,7 +74,7 @@
 		"@types/compression": "^1.7.2",
 		"@types/cookie-parser": "^1.4.3",
 		"@types/mocha": "^10.0.1",
-		"@types/node": "^20.5.7",
+		"@types/node": "^20.8.0",
 		"@types/sortablejs": "^1.15.1",
 		"@types/uuid": "^9.0.0",
 		"@typescript-eslint/eslint-plugin": "^6.3.0",
