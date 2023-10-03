@@ -2206,6 +2206,8 @@ import { DraftState } from "../src/DraftState.js";
 import { ClientToServerEvents, ServerToClientEvents } from "../src/SocketType.js";
 import { Socket } from "socket.io-client";
 import { JHHBooster } from "../src/JumpstartHistoricHorizons.js";
+import { parseLine } from "../src/parseCardList.js";
+import { SocketError, isSocketError } from "../src/Message.js";
 
 describe("Jumpstart", function () {
 	let clients: ReturnType<typeof makeClients> = [];
@@ -2580,4 +2582,130 @@ describe("Takeover request", function () {
 			done();
 		});
 	});
+});
+
+describe("Card line parsing", function () {
+	function checkParsedCard(
+		r: ReturnType<typeof parseLine>,
+		props: Partial<Card>,
+		count: number = 1,
+		foil: boolean = false
+	) {
+		expect(
+			isSocketError(r),
+			`parseLine returned an error:\n\t\t${(r as SocketError).error?.title}\n\t\t${(r as SocketError).error
+				?.text}\n\t`
+		).to.be.false;
+		if (!isSocketError(r)) {
+			expect(r.count).to.equal(count);
+			expect(r.foil).to.equal(foil);
+			const card = getCard(r.cardID) as unknown as Record<string, string>;
+			for (const [key, value] of Object.entries(props)) expect(card[key]).to.equal(value);
+		}
+	}
+
+	it("single card name", function () {
+		const r = parseLine("Island");
+		checkParsedCard(r, { name: "Island" });
+	});
+
+	it("count and card name", function () {
+		const r = parseLine("14 Island");
+		checkParsedCard(r, { name: "Island" }, 14);
+	});
+
+	it("card name and set", function () {
+		const r = parseLine("Island (ZNR)");
+		checkParsedCard(r, { name: "Island", set: "znr" });
+	});
+
+	it("Foil card name and set", function () {
+		const r = parseLine("Island (ZNR) +F");
+		checkParsedCard(r, { name: "Island", set: "znr" }, 1, true);
+	});
+
+	it("card name, set and collector number", function () {
+		checkParsedCard(parseLine("Island (ZNR) 271"), { name: "Island", set: "znr", collector_number: "271" });
+		checkParsedCard(parseLine("Island (ZNR) 381"), { name: "Island", set: "znr", collector_number: "381" });
+	});
+
+	it("count, card name, set and collector number", function () {
+		const r = parseLine("12 Island (ZNR) 271");
+		checkParsedCard(r, { name: "Island", set: "znr", collector_number: "271" }, 12);
+	});
+
+	it("Foil, count, card name, set and collector number", function () {
+		const r = parseLine("12 Island (ZNR) 271 +F");
+		checkParsedCard(r, { name: "Island", set: "znr", collector_number: "271" }, 12, true);
+	});
+
+	it("should handle card names with parenthesis", function () {
+		const r = parseLine("B.O.B. (Bevy of Beebles)");
+		checkParsedCard(r, { name: "B.O.B. (Bevy of Beebles)" });
+	});
+
+	it("should handle card names with parenthesis, even when specifying a set", function () {
+		const r = parseLine("B.O.B. (Bevy of Beebles) (UND)");
+		checkParsedCard(r, { name: "B.O.B. (Bevy of Beebles)", set: "und" });
+	});
+
+	it("should handle card names with parenthesis, even when specifying a set and a collector number", function () {
+		const r = parseLine("B.O.B. (Bevy of Beebles) (UND) 18");
+		checkParsedCard(r, { name: "B.O.B. (Bevy of Beebles)", set: "und", collector_number: "18" });
+	});
+
+	it("should handle card names with parenthesis, even if the word in parenthesis resembles a set", function () {
+		const r = parseLine("2 Hazmat Suit (Used)");
+		checkParsedCard(r, { name: "Hazmat Suit (Used)" }, 2);
+	});
+
+	it("should handle card names with parenthesis, even if the word in parenthesis resembles a set, and a set is specified", function () {
+		const r = parseLine("2 Hazmat Suit (Used) (UST)");
+		checkParsedCard(r, { name: "Hazmat Suit (Used)", set: "ust" }, 2);
+	});
+
+	it("should handle card names with parenthesis, even if the word in parenthesis resembles a set, and set/collector number are specified", function () {
+		const r = parseLine("2 Hazmat Suit (Used) (UST) 57");
+		checkParsedCard(r, { name: "Hazmat Suit (Used)", set: "ust", collector_number: "57" }, 2);
+	});
+
+	it("2 Hazmat Suit (Used) F", function () {
+		const r = parseLine("2 Hazmat Suit (Used) F");
+		checkParsedCard(r, { name: "Hazmat Suit (Used)" }, 2, true);
+	});
+
+	it("2 Hazmat Suit (Used) +F", function () {
+		const r = parseLine("2 Hazmat Suit (Used) +F");
+		checkParsedCard(r, { name: "Hazmat Suit (Used)" }, 2, true);
+	});
+
+	it("2 Hazmat Suit (Used) (UST) +F", function () {
+		const r = parseLine("2 Hazmat Suit (Used) (UST) +F");
+		checkParsedCard(r, { name: "Hazmat Suit (Used)", set: "ust" }, 2, true);
+	});
+
+	it("2 Hazmat Suit (Used) (UST) 57 F", function () {
+		const r = parseLine("2 Hazmat Suit (Used) (UST) 57 F");
+		checkParsedCard(r, { name: "Hazmat Suit (Used)", set: "ust", collector_number: "57" }, 2, true);
+	});
+
+	it("2 Hazmat Suit (Used) (UST) 57 +F", function () {
+		const r = parseLine("2 Hazmat Suit (Used) (UST) 57 +F");
+		checkParsedCard(r, { name: "Hazmat Suit (Used)", set: "ust", collector_number: "57" }, 2, true);
+	});
+
+	/*
+	describe("Check every single available card.", function () {
+		for (const [, c] of Cards.entries()) {
+			it(`1 ${c.name} (${c.set}) ${c.collector_number}`, function () {
+				const r = parseLine(this.test!.title);
+				checkParsedCard(r, { name: c.name, set: c.set, collector_number: c.collector_number }, 1, false);
+			});
+			it(`1 ${c.name} (${c.set}) ${c.collector_number} +F`, function () {
+				const r = parseLine(this.test!.title);
+				checkParsedCard(r, { name: c.name, set: c.set, collector_number: c.collector_number }, 1, true);
+			});
+		}
+	});
+	*/
 });

@@ -7,7 +7,8 @@ import { escapeHTML } from "./utils.js";
 import { ackError, isSocketError, SocketError } from "./Message.js";
 import { isAny, isArrayOf, isBoolean, isInteger, isRecord, isString, isUnknown } from "./TypeChecks.js";
 
-const lineRegex = /^(?:(\d+)\s+)?([^(\v\n]+)??(?:\s\((\w+)\)(?:\s+([^+\s]+))?)?(?:\s+\+?(F))?$/;
+const lineRegex =
+	/^(?:(?<count>\d+)\s+)?(?<name>[^\v\n]+?)(?:\s\((?<set>\w+)\)(?:\s+(?<number>[^+\s()]+))?)?(?:\s+\+?(F))?$/;
 
 const trailingCommasRegex = /(?<=(true|false|null|["\d}\]])\s*),(?=\s*[\]}])/g;
 
@@ -90,6 +91,24 @@ export function parseLine(
 			foil: !!foil,
 		};
 	} else if (options?.fallbackToCardName && name in CardsByName) return { count, cardID: CardsByName[name], foil };
+
+	// No match found
+
+	/*
+	 * If the card name contains parentheses (and no set was specified by the user), it may have been confused with a set. For example:
+	 * 2 Hazmat Suit (Used) (UST)   // Should be handled correctly, but
+	 * 2 Hazmat Suit (Used)         // will consider (Used) as a set specifier.
+	 * Try again while considering everything after an optional count as the card name:
+	 */
+	if (line.indexOf("(") > -1) {
+		const simpleMatch = trimedLine.match(/^(?:(?<count>\d+)\s+)?(?<name>.+?)(?:\s+\+?(F))?$/);
+		if (simpleMatch) {
+			const [, , altName, altFoil] = simpleMatch;
+			if (options?.customCards && options.customCards.nameCache.has(altName))
+				return { count, cardID: options.customCards.nameCache.get(altName)!.id, foil: !!altFoil };
+			if (altName in CardsByName) return { count, cardID: CardsByName[altName], foil: !!altFoil };
+		}
+	}
 
 	const message =
 		(name in CardsByName
