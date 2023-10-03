@@ -1321,7 +1321,7 @@ ul.player-list {
 .card-column > .column-card-container:last-child,
 .card-column > .column-card-container:last-child > .card,
 .card-column > .card:last-child {
-	margin-bottom: 142.5%;
+	margin-bottom: calc(142.5% - 13.5%);
 }
 
 /* Only use this hover rule on desktop (hover capabilities and a mouse or equivalent device) */
