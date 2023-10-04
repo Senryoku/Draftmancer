@@ -115,6 +115,7 @@ export const Sounds: { [name: string]: HTMLAudioElement } = {
 
 const localStorageSettingsKey = "draftmancer-settings";
 const localStorageSessionSettingsKey = "draftmancer-session-settings";
+const sessionStorageWindowSpecificDataKey = "draftmancer-window-specific-data";
 
 const defaultUserName = `Player_${randomStr4()}`;
 // Backwards compatility: these used to be stored in cookies.
@@ -206,31 +207,50 @@ export default defineComponent({
 		const validPages = ["", "draftqueue"];
 		const page = validPages.includes(path[0]) ? path[0] : "";
 
-		let userID: UserID = guid();
-		const storedUserID = getCookie("userID");
-		if (storedUserID !== "") {
-			userID = storedUserID;
-			// Server will handle the reconnect attempt if draft is still ongoing
-			console.log("storedUserID: " + storedUserID);
-		} else setCookie("userID", userID);
+		// We'll first generate default User and Session IDs, then try to load previously used
+		// ones from cookies (kept across browser launch), and finally from sessionStorage (tab specific).
+
+		// This allows long-term storage of userID and sessionID across browser restarts for a single instance using cookies,
+		// while providing short-term reconnection capability for multiple tabs using sessionStorage.
+
+		// Server will handle the reconnect attempt if a draft is still ongoing.
+
+		let userID: UserID = getCookie("userID", guid());
+		setCookie("userID", userID);
 
 		const urlParamSession = getUrlVars()["session"];
 		let sessionID: string | undefined = urlParamSession
 			? decodeURIComponent(urlParamSession)
 			: getCookie("sessionID", shortguid());
 
-		if (page === "draftqueue") sessionID = undefined;
+		let userName = initialSettings.userName;
 
-		const userName = initialSettings.userName;
+		// Restore game state from window-specific data (Each tab save its own data to allow multiple tabs to play and reconnect at the same time)
+		const windowSpecificDataStr = sessionStorage.getItem(sessionStorageWindowSpecificDataKey);
+		if (windowSpecificDataStr) {
+			try {
+				const windowSpecificData = JSON.parse(windowSpecificDataStr);
+				if (windowSpecificData.userName && windowSpecificData.userID && windowSpecificData.sessionID) {
+					userName = windowSpecificData.userName;
+					userID = windowSpecificData.userID;
+					sessionID = windowSpecificData.sessionID;
+					console.log("Restored state for this tab:", windowSpecificData);
+				}
+			} catch (e) {
+				console.error("Error retrieving window-specific data:", e);
+			}
+		}
+
+		if (page === "draftqueue") sessionID = undefined;
 
 		const storedSessionSettings = localStorage.getItem(localStorageSessionSettingsKey) ?? "{}";
 
-		const query: any = {
+		const query = {
 			userID: userID,
 			userName: userName,
 			sessionSettings: storedSessionSettings,
+			sessionID: sessionID,
 		};
-		if (sessionID) query.sessionID = sessionID;
 
 		// Socket Setup
 		const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io({
@@ -447,7 +467,7 @@ export default defineComponent({
 					const r = await Alert.fire({
 						icon: "warning",
 						title: "Already connected!",
-						html: "<p>Draftmancer appears to already be open in another tab or window. Certain features, especially reconnection, may not function correctly in this scenario.</p><p>If this is intended, it is recommended to use private browsing, or a different browser entirely, for one of the pages.</p>",
+						html: "<p>Draftmancer appears to already be open in another tab or window. Reconnection isn't fully supported in this scenario.</p><p>If this is intended, do not close tabs after launching a draft: <strong>You won't be able to reconnect!</strong></p><p><em>Refreshing</em> is still safe.</p>",
 						showConfirmButton: true,
 						confirmButtonText: "Got it!",
 						input: "checkbox",
@@ -455,7 +475,12 @@ export default defineComponent({
 						allowOutsideClick: false,
 					});
 					if (r.value) localStorage.setItem(doNotShowAgainKey, "true");
-				} else fireToast("warning", "Duplicate UserID: A new UserID as been affected to this instance.");
+				} else
+					fireToast(
+						"warning",
+						"Multiple tabs open",
+						"Closing this tab after launching a draft will prevent you from reconnecting."
+					);
 			});
 
 			this.socket.on("stillAlive", (ack) => {
@@ -1056,6 +1081,12 @@ export default defineComponent({
 			const startDraftSetup = (name = "draft", msg = "Draft Started!") => {
 				// Save user ID in case of disconnect
 				setCookie("userID", this.userID);
+
+				sessionStorage.setItem(
+					sessionStorageWindowSpecificDataKey,
+					JSON.stringify({ userName: this.userName, userID: this.userID, sessionID: this.sessionID })
+				);
+
 				if (this.sessionID) setCookie("sessionID", this.sessionID);
 				this.updateURLQuery();
 
