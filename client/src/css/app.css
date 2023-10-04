@@ -72,6 +72,11 @@ select.swal2-input option {
 	tab-size: 4;
 }
 
+div:where(.swal2-container) .swal2-radio,
+div:where(.swal2-container) .swal2-checkbox {
+	background: initial;
+}
+
 .disconnected-user-popup-container {
 	position: absolute;
 	user-select: none;

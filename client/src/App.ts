@@ -212,7 +212,7 @@ export default defineComponent({
 			userID = storedUserID;
 			// Server will handle the reconnect attempt if draft is still ongoing
 			console.log("storedUserID: " + storedUserID);
-		}
+		} else setCookie("userID", userID);
 
 		const urlParamSession = getUrlVars()["session"];
 		let sessionID: string | undefined = urlParamSession
@@ -438,10 +438,24 @@ export default defineComponent({
 				fireToast("success", "Reconnected!");
 			});
 
-			this.socket.on("alreadyConnected", (newID) => {
+			this.socket.on("alreadyConnected", async (newID) => {
 				this.userID = newID;
 				this.socket.io.opts.query!.userID = newID;
-				fireToast("warning", "Duplicate UserID: A new UserID as been affected to this instance.");
+				const doNotShowAgainKey = "alreadyConnectedWarning-doNotShowAgain";
+				const doNotShowAgain = localStorage.getItem(doNotShowAgainKey) === "true" ?? false;
+				if (!doNotShowAgain) {
+					const r = await Alert.fire({
+						icon: "warning",
+						title: "Already connected!",
+						html: "<p>Draftmancer appears to already be open in another tab or window. Certain features, especially reconnection, may not function correctly in this scenario.</p><p>If this is intended, it is recommended to use private browsing, or a different browser entirely, for one of the pages.</p>",
+						showConfirmButton: true,
+						confirmButtonText: "Got it!",
+						input: "checkbox",
+						inputPlaceholder: "Do not show again",
+						allowOutsideClick: false,
+					});
+					if (r.value) localStorage.setItem(doNotShowAgainKey, "true");
+				} else fireToast("warning", "Duplicate UserID: A new UserID as been affected to this instance.");
 			});
 
 			this.socket.on("stillAlive", (ack) => {
