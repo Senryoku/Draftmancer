@@ -1,5 +1,14 @@
 [
 	{
+		"date": "04/10/2023",
+		"notes": [
+			"Better support for parentheses in card names.",
+			"Improved reconnection reliability when multiple tabs are open.",
+			"Players can now start a vote to take ownership of a session (4 players or more).",
+			"Usual tweaks and fixes."
+		]
+	},
+	{
 		"date": "24/08/2023",
 		"notes": [
 			"Wilds of Eldraine support.",

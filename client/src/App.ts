@@ -2756,7 +2756,7 @@ export default defineComponent({
 			else this.setRestriction.push(code);
 		},
 		setSessionOwner(newOwnerID: UserID) {
-			if (this.userID != this.sessionOwner) return;
+			if (this.userID !== this.sessionOwner) return;
 			const user = this.sessionUsers.find((u) => u.userID === newOwnerID);
 			if (!user) return;
 			Alert.fire({
@@ -2774,7 +2774,7 @@ export default defineComponent({
 			});
 		},
 		removePlayer(userID: UserID) {
-			if (this.userID != this.sessionOwner) return;
+			if (this.userID !== this.sessionOwner) return;
 			const user = this.sessionUsers.find((u) => u.userID === userID);
 			if (!user) return;
 			Alert.fire({
@@ -2792,7 +2792,7 @@ export default defineComponent({
 			});
 		},
 		movePlayer(idx: number, dir: -1 | 1) {
-			if (this.userID != this.sessionOwner) return;
+			if (this.userID !== this.sessionOwner) return;
 
 			const negMod = (m: number, n: number) => ((m % n) + n) % n;
 			const other = negMod(idx + dir, this.userOrder.length);
