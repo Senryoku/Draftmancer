@@ -4879,6 +4879,15 @@
         "icon": "img/sets/pw23.svg",
         "rareCount": 7
     },
+    "pw24": {
+        "code": "pw24",
+        "fullName": "Wizards Play Network 2024",
+        "cardCount": 5,
+        "isPrimary": false,
+        "icon": "img/sets/pw24.svg",
+        "rareCount": 4,
+        "specialCount": 1
+    },
     "pwar": {
         "code": "pwar",
         "fullName": "War of the Spark Promos",
@@ -5076,10 +5085,10 @@
     "rvr": {
         "code": "rvr",
         "fullName": "Ravnica Remastered",
-        "cardCount": 48,
+        "cardCount": 49,
         "isPrimary": true,
         "icon": "img/sets/rvr.svg",
-        "mythicCount": 2,
+        "mythicCount": 3,
         "rareCount": 46
     },
     "s00": {
@@ -6035,13 +6044,13 @@
     "who": {
         "code": "who",
         "fullName": "Doctor Who",
-        "cardCount": 59,
+        "cardCount": 623,
         "isPrimary": false,
         "icon": "img/sets/who.svg",
-        "commonCount": 6,
-        "mythicCount": 15,
-        "rareCount": 34,
-        "uncommonCount": 4
+        "commonCount": 61,
+        "mythicCount": 35,
+        "rareCount": 454,
+        "uncommonCount": 73
     },
     "wmc": {
         "code": "wmc",
