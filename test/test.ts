@@ -1107,13 +1107,18 @@ describe("Single Draft (Two Players)", function () {
 		});
 
 		it("Non-owner moves a card to the side board, spectator receives an update.", function (done) {
-			clients[ownerIdx].once("draftLogLive", function (data) {
-				expect(data.userID).to.equal(getUID(clients[nonOwnerIdx]));
-				expect((data.decklist as DeckList).main.length).to.equal(0);
-				expect((data.decklist as DeckList).side.length).to.equal(1);
-				done();
-			});
-			clients[nonOwnerIdx].emit("moveCard", lastPickedCardUID, "side");
+			// Hackish: Previous test might generate some events, wait a bit to avoid having to deal with them.
+			setTimeout(() => {
+				clients[ownerIdx].on("draftLogLive", function (data) {
+					if (!data.decklist) return; // Ignore bot picks notifications
+					expect(data.userID).to.equal(getUID(clients[nonOwnerIdx]));
+					expect((data.decklist as DeckList).main.length).to.equal(0);
+					expect((data.decklist as DeckList).side.length).to.equal(1);
+					clients[ownerIdx].removeListener("draftLogLive");
+					done();
+				});
+				clients[nonOwnerIdx].emit("moveCard", lastPickedCardUID, "side");
+			}, 10);
 		});
 
 		it("Non-owner disconnects, Owner receives updated user infos.", function (done) {
