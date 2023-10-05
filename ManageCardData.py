@@ -66,6 +66,8 @@ MTGACardDBFiles = glob.glob(f"{MTGADataFolder}Raw_CardDatabase_*.mtga")
 
 CardsCollectorNumberAndSet = {}
 CardNameToArenaIDForJumpstart = {}
+AKRCards = {}
+KLRCards = {}
 J21MTGACollectorNumbers = {}
 
 # Links oracle_ids to draft effects
@@ -92,11 +94,20 @@ for path in MTGACardDBFiles:
             if setCode == 'dar':
                 setCode = 'dom'
             collectorNumber = o['CollectorNumber'] if "CollectorNumber" in o else o['CollectorNumber']
-
-            # Jumpstart introduced duplicate (CollectorNumbet, Set), thanks Wizard! :D
-            # Adding name to disambiguate.
-            CardsCollectorNumberAndSet[(
-                fixed_name, collectorNumber, setCode)] = o['GrpId']
+            # Process AKR cards separately (except basics)
+            if setCode == "akr":
+                if o['Rarity'] != 1:
+                    AKRCards[fixed_name] = (
+                        o['GrpId'], collectorNumber, ArenaRarity[o['Rarity']])
+            if setCode == "klr":
+                if o['Rarity'] != 1:
+                    KLRCards[fixed_name] = (
+                        o['GrpId'], collectorNumber, ArenaRarity[o['Rarity']])
+            else:
+                # Jumpstart introduced duplicate (CollectorNumbet, Set), thanks Wizard! :D
+                # Adding name to disambiguate.
+                CardsCollectorNumberAndSet[(
+                    fixed_name, collectorNumber, setCode)] = o['GrpId']
 
             # Also look of the Arena only version (ajmp) of the card on Scryfall
             if setCode == 'jmp':
@@ -115,6 +126,9 @@ for path in MTGACardDBFiles:
             #        (Also for secondary cards as there's some created cards in this set.)
             if setCode == 'j21':
                 J21MTGACollectorNumbers[fixed_name] = collectorNumber
+
+print("AKRCards length: {}".format(len(AKRCards.keys())))
+print("KLRCards length: {}".format(len(KLRCards.keys())))
 
 opener = urllib.request.build_opener()
 opener.addheaders = [('User-agent', 'Mozilla/5.0'), ('Accept', '*/*')]
@@ -254,6 +268,8 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
         # ScryfallCards = (o for o in objects if not(o['oversized'] or o['layout'] in ["token", "double_faced_token", "emblem", "art_series"]))
         ScryfallCards = json.load(file)
 
+        akr_candidates = {}
+        klr_candidates = {}
         sys.stdout.write("PreProcessing... ")
         sys.stdout.flush()
         copied = 0
@@ -263,6 +279,20 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
 
             if c['oversized'] or c['layout'] in ["token", "double_faced_token", "emblem", "art_series"]:
                 continue
+
+            # Tag this card as a candidate for AKR card images (to avoid using MTGA images)
+            if c['name'] in AKRCards:
+                if c["name"] not in akr_candidates:
+                    akr_candidates[c["name"]] = {}
+                # Prioritize version of cards from Amonkhet (AKH) or Hour of Devastation (HOU)
+                if (c['set'].lower() in ['akh', 'hou']) or c['lang'] not in akr_candidates[c['name']] or (akr_candidates[c['name']][c['lang']]['set'] not in ['akh', 'hou'] and (c['released_at'] > akr_candidates[c["name"]][c['lang']]['released_at'] or (c['frame'] == "2015" and akr_candidates[c["name"]][c['lang']]['frame'] == "1997"))):
+                    akr_candidates[c["name"]][c["lang"]] = c
+            if c['name'] in KLRCards:
+                if c["name"] not in klr_candidates:
+                    klr_candidates[c["name"]] = {}
+                # Prioritize version of cards from Kaladesh (KLD) or Aether Revolt (AER)
+                if (c['set'].lower() in ['kld', 'aer']) or c['lang'] not in klr_candidates[c['name']] or (klr_candidates[c['name']][c['lang']]['set'] not in ['kld', 'aer'] and (c['released_at'] > klr_candidates[c["name"]][c['lang']]['released_at'] or (c['frame'] == "2015" and klr_candidates[c["name"]][c['lang']]['frame'] == "1997"))):
+                    klr_candidates[c["name"]][c["lang"]] = c
 
             frontName = c['name']
             if ' //' in frontName:
@@ -295,6 +325,26 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
         sys.stdout.write("\b" * 100)
         sys.stdout.write(
             f"PreProcessing done! {copied}/{handled} cards added.\n")
+
+        sys.stdout.write("Fixing AKR images...")
+        MissingAKRCards = AKRCards.copy()
+        for name in akr_candidates:
+            del MissingAKRCards[name]
+        if len(MissingAKRCards) > 0:
+            print("MissingAKRCards: ", MissingAKRCards)
+        MissingKLRCards = KLRCards.copy()
+        for name in klr_candidates:
+            del MissingKLRCards[name]
+        if len(MissingKLRCards) > 0:
+            print("MissingKLRCards: ", MissingKLRCards)
+
+        for c in all_cards:
+            if c['set'] == 'akr' and c['name'] in akr_candidates and c['lang'] in akr_candidates[c['name']]:
+                c['image_uris']['border_crop'] = akr_candidates[c['name']
+                                                                ][c['lang']]['image_uris']['border_crop']
+            if c['set'] == 'klr' and c['name'] in klr_candidates and c['lang'] in klr_candidates[c['name']]:
+                c['image_uris']['border_crop'] = klr_candidates[c['name']
+                                                                ][c['lang']]['image_uris']['border_crop']
 
         sys.stdout.write(" Done!\n")
     cards = {}
