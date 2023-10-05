@@ -45,7 +45,7 @@
 		"@fortawesome/free-solid-svg-icons": "^6.3.0",
 		"@fortawesome/vue-fontawesome": "^3.0.3",
 		"axios": "^1.5.1",
-		"chart.js": "^4.3.3",
+		"chart.js": "^4.4.0",
 		"compression": "^1.7.4",
 		"cookie-parser": "^1.4.6",
 		"dotenv": "^16.1.4",
