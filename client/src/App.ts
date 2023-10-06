@@ -2562,6 +2562,7 @@ export default defineComponent({
 		// Returns a Blob to be consumed by a FileReader
 		uploadFile(e: Event, callback: (file: File, options?: Options) => void, options?: Options) {
 			const file = (e.target as HTMLInputElement)?.files?.[0];
+			if (e.target instanceof HTMLInputElement) e.target.value = ""; // Reset input: Without this, Chrome doesn't retrigger events when you try to upload the same file again.
 			if (!file) {
 				fireToast("error", "An error occured while uploading the file.");
 				return false;
@@ -2569,7 +2570,7 @@ export default defineComponent({
 			return callback(file, options);
 		},
 		// Returns a Blob to be consumed by a FileReader
-		fetchFile: async function (url: string, callback: (blob: Blob, options: Options) => void, options: Options) {
+		async fetchFile(url: string, callback: (blob: Blob, options: Options) => void, options: Options) {
 			const response = await fetch(url);
 			if (!response.ok) {
 				fireToast("error", `Could not fetch ${url}.`);
