@@ -55,7 +55,7 @@ export function parseMTGOLog(userID: UserID, txt: string): SocketError | DraftLo
 
 		for (let i = 0; i < lines.length; ++i) {
 			if (lines[i].startsWith("Event #:")) {
-				session.id = lines[i].substring("Event #: ".length, lines[i].length);
+				session.id = "MTGO " + lines[i].substring("Event #: ".length, lines[i].length);
 			} else if (lines[i].startsWith("Time:")) {
 				try {
 					time = Date.parse(lines[i].substring("Time: ".length, lines[i].length));
