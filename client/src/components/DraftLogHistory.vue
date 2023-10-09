@@ -1,9 +1,25 @@
 <template>
 	<div class="draft-log-history">
-		<input type="file" id="log-input" @change="importLog" style="display: none" accept=".txt" />
+		<input
+			type="file"
+			id="log-input"
+			@change="importLog($event, importDraftmancerLog)"
+			style="display: none"
+			accept=".txt"
+		/>
+		<input
+			type="file"
+			id="mtgo-log-input"
+			@change="importLog($event, importMTGOLog)"
+			style="display: none"
+			accept=".txt"
+		/>
 		<div class="controls">
 			<button onclick="document.querySelector('#log-input').click()" v-tooltip="'Import a saved game log.'">
 				Import Game Log
+			</button>
+			<button onclick="document.querySelector('#mtgo-log-input').click()" v-tooltip="'Import a MTGO draft log.'">
+				Import MTGO Log
 			</button>
 			<span>({{ draftLogs.length }} / 25 logs)</span>
 			<span v-if="draftLogs.length >= 25"
@@ -210,7 +226,15 @@ export default defineComponent({
 				}
 			});
 		},
-		importLog: function (e: Event) {
+		displayParsingError(e: string) {
+			Alert.fire({
+				icon: "error",
+				title: "Parsing Error",
+				text: "An error occurred during parsing. Please make sure that you selected the correct file.",
+				footer: `Full error: ${helper.escapeHTML(e)}`,
+			});
+		},
+		importLog(e: Event, callback: (str: string) => void) {
 			if (this.draftLogs.length >= 25) {
 				Alert.fire({
 					icon: "error",
@@ -220,31 +244,29 @@ export default defineComponent({
 				return;
 			}
 			let file = (e.target as HTMLInputElement)?.files?.[0];
+			if (e.target instanceof HTMLInputElement) e.target.value = "";
 			if (!file) return;
 			const reader = new FileReader();
-			const displayError = (e: string) => {
-				Alert.fire({
-					icon: "error",
-					title: "Parsing Error",
-					text: "An error occurred during parsing. Please make sure that you selected the correct file.",
-					footer: `Full error: ${helper.escapeHTML(e)}`,
-				});
-			};
 			reader.onload = (e) => {
 				try {
-					let contents = e.target?.result as string;
-					let json = JSON.parse(contents);
-					if (json.users) {
-						this.draftLogs.push(json);
-						this.expandedLogs = {};
-						this.expandedLogs[this.orderedLogs.findIndex((e) => e === json)] = !this.expandedLogs[json];
-						this.$emit("storelogs");
-					} else displayError("Missing required data.");
+					callback(e.target?.result as string);
 				} catch (e) {
-					displayError(e as string);
+					this.displayParsingError(e as string);
 				}
 			};
 			reader.readAsText(file);
+		},
+		importDraftmancerLog(contents: string) {
+			let json = JSON.parse(contents);
+			if (json.users) {
+				this.draftLogs.push(json);
+				this.expandedLogs = {};
+				this.expandedLogs[this.orderedLogs.findIndex((e) => e === json)] = !this.expandedLogs[json];
+				this.$emit("storelogs");
+			} else this.displayParsingError("Missing required data.");
+		},
+		importMTGOLog(contents: string) {
+			this.$emit("importMTGOLog", contents);
 		},
 		toggle(idx: number) {
 			this.expandedLogs[idx] = !this.expandedLogs[idx];

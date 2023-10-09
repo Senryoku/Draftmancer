@@ -1,7 +1,7 @@
 import { GridDraftSyncData } from "./GridDraft";
 import { WinstonDraftSyncData } from "./WinstonDraft";
 import { SessionID, UserID } from "./IDTypes";
-import { Message, SocketAck } from "./Message";
+import { Message, SocketAck, SocketError } from "./Message";
 import { DistributionMode, DraftLogRecipients, ReadyState, UsersData } from "./Session/SessionTypes";
 import { Options } from "./utils";
 import { SetCode } from "./Types";
@@ -378,6 +378,8 @@ export interface ClientToServerEvents {
 	) => void;
 
 	requestTakeover: (ack: (result: SocketAck) => void) => void;
+
+	convertMTGOLog: (str: string, callback: (response: SocketError | DraftLog) => void) => void;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface

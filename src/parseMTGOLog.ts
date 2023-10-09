@@ -50,6 +50,7 @@ export function parseMTGOLog(userID: UserID, txt: string): SocketError | DraftLo
 		let playerName = "Player";
 		let setHint: string | undefined = undefined;
 		const picks: DraftPick[] = [];
+		const cards: CardID[] = [];
 
 		for (let i = 0; i < lines.length; ++i) {
 			if (lines[i].startsWith("Event #:")) {
@@ -70,6 +71,7 @@ export function parseMTGOLog(userID: UserID, txt: string): SocketError | DraftLo
 				if (!setHint) {
 					const m = lines[i].match(/------ Pack 1: (?<set>[\w ]+) ------/);
 					if (m) {
+						// FIXME: We have to match full set name to set codes.
 						const set = m.groups?.set.toLowerCase();
 						if (set && set in Constants.PrimarySets) setHint = set;
 					}
@@ -90,6 +92,7 @@ export function parseMTGOLog(userID: UserID, txt: string): SocketError | DraftLo
 						burn: [],
 						booster: r.values.map((cardName) => searchMTGOCard(cardName, setHint)),
 					});
+					cards.push(picks[picks.length - 1].booster[r.pickIndex]);
 					i = r.lineIndex;
 				}
 			}
@@ -112,6 +115,7 @@ export function parseMTGOLog(userID: UserID, txt: string): SocketError | DraftLo
 		draftLog.lastUpdated = time;
 
 		draftLog.users[userID].picks = picks;
+		draftLog.users[userID].cards = cards;
 
 		return draftLog;
 	} catch (e: unknown) {
