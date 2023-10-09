@@ -454,7 +454,7 @@ describe("Draft Logs", function () {
 	// Note: Other game mode aren't tested yet.
 });
 
-describe.only("MTGO log parsing", () => {
+describe("MTGO log parsing", () => {
 	const logFiles = [
 		"MTGO_LOG-2023.9.28-7671-27275695-WOEWOEWOE.txt",
 		"MTGO_LOG-2023.10.4-7723-27320475-C03C03C03.txt",
@@ -464,7 +464,6 @@ describe.only("MTGO log parsing", () => {
 		it(`File '${logFile}' should parse correctly`, (done) => {
 			const r = parseMTGOLog("fakeUID", fs.readFileSync("./test/data/MTGO_logs/" + logFile, "utf-8"));
 			expect(isSocketError(r)).to.be.false;
-			console.error(r);
 			done();
 		});
 });
