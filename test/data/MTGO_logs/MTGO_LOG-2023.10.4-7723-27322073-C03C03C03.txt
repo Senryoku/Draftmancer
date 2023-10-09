@@ -1,0 +1,582 @@
+Event #: 7723
+Time:    10/4/2023 8:25:19 PM
+Players:
+    Player0
+    Player1
+    Player2
+    Player3
+    Player4
+    Player5
+    Player6
+--> Player7
+
+------ Pack 1: Holiday 2013 Cube ------ 
+
+Pack 1 pick 1:
+    Ancient Tomb
+    Parallax Wave
+    Talisman of Dominance
+    Blood Crypt
+    Damnation
+    Jace, the Mind Sculptor
+    Pia and Kiran Nalaar
+--> Mind Twist
+    Dire Fleet Daredevil
+    Tamiyo, Collector of Tales
+    Omnath, Locus of Creation
+    Subtlety
+    Soulherder
+    Nissa, Ascended Animist
+    Troll of Khazad-dûm
+
+Picked: Mind Twist
+
+------ Pack 1: Holiday 2013 Cube ------ 
+
+Pack 1 pick 2:
+    Lightning Greaves
+    Volcanic Island
+    Mana Confluence
+--> Hymn to Tourach
+    High Tide
+    Kolaghan's Command
+    Runaway Steam-Kin
+    Uro, Titan of Nature's Wrath
+    Trinket Mage
+    Elvish Mystic
+    Intrepid Adversary
+    Touch the Spirit Realm
+    Otharri, Suns' Glory
+    Palantír of Orthanc
+
+Picked: Hymn to Tourach
+
+------ Pack 1: Holiday 2013 Cube ------ 
+
+Pack 1 pick 2:
+    Survival of the Fittest
+--> Flooded Strand
+    Desperate Ritual
+    Overgrown Tomb
+    Kitchen Finks
+    Woodfall Primus
+    Creeping Tar Pit
+    Hellrider
+    Robber of the Rich
+    Zagoth Triome
+    Eternal Witness
+    Solitude
+    Hullbreaker Horror
+
+Picked: Flooded Strand
+
+------ Pack 1: Holiday 2013 Cube ------ 
+
+Pack 1 pick 2:
+    Mind's Desire
+    Breeding Pool
+    Scrubland
+    Ophiomancer
+    Smuggler's Copter
+    Wishclaw Talisman
+    Underworld Breach
+    Kroxa, Titan of Death's Hunger
+    Courser of Kruphix
+--> Minsc & Boo, Timeless Heroes
+    Serra Paragon
+    Scrapwork Mutt
+
+Picked: Minsc & Boo, Timeless Heroes
+
+------ Pack 1: Holiday 2013 Cube ------ 
+
+Pack 1 pick 2:
+    Mindslaver
+    Devoted Druid
+    Splinter Twin
+    Blackcleave Cliffs
+    Phyrexian Metamorph
+    Adanto Vanguard
+    Showdown of the Skalds
+--> Fury
+    Skullclamp
+    Force of Will
+    Lórien Revealed
+
+Picked: Fury
+
+------ Pack 1: Holiday 2013 Cube ------ 
+
+Pack 1 pick 2:
+    Tendrils of Agony
+    Arc Trail
+    Elspeth, Knight-Errant
+--> Daretti, Ingenious Iconoclast
+    Embereth Shieldbreaker
+    Magda, Brazen Outlaw
+    Triplicate Titan
+    Steel Seraph
+    Glimmer Lens
+    Sail into the West
+
+Picked: Daretti, Ingenious Iconoclast
+
+------ Pack 1: Holiday 2013 Cube ------ 
+
+Pack 1 pick 2:
+    Mana Flare
+    Mystical Tutor
+--> Dark Ritual
+    Vindicate
+    Windswept Heath
+    Deceiver Exarch
+    Nurturing Peatland
+    Squee, Dubious Monarch
+    Nahiri's Warcrafting
+
+Picked: Dark Ritual
+
+------ Pack 1: Holiday 2013 Cube ------ 
+
+Pack 1 pick 2:
+    Umezawa's Jitte
+    Orcish Lumberjack
+    Spellseeker
+    Murderous Rider
+--> Bonecrusher Giant
+    Tidehollow Sculler
+    Outland Liberator
+    Tenacious Underdog
+
+Picked: Bonecrusher Giant
+
+------ Pack 1: Holiday 2013 Cube ------ 
+
+Pack 1 pick 2:
+    Parallax Wave
+--> Blood Crypt
+    Damnation
+    Pia and Kiran Nalaar
+    Dire Fleet Daredevil
+    Omnath, Locus of Creation
+    Soulherder
+
+Picked: Blood Crypt
+
+------ Pack 1: Holiday 2013 Cube ------ 
+
+Pack 1 pick 3:
+    Lightning Greaves
+--> Mana Confluence
+    Runaway Steam-Kin
+    Uro, Titan of Nature's Wrath
+    Intrepid Adversary
+    Touch the Spirit Realm
+
+Picked: Mana Confluence
+
+------ Pack 1: Holiday 2013 Cube ------ 
+
+Pack 1 pick 3:
+    Survival of the Fittest
+    Desperate Ritual
+    Hellrider
+--> Robber of the Rich
+    Eternal Witness
+
+Picked: Robber of the Rich
+
+------ Pack 1: Holiday 2013 Cube ------ 
+
+Pack 1 pick 3:
+    Breeding Pool
+    Ophiomancer
+    Wishclaw Talisman
+--> Underworld Breach
+
+Picked: Underworld Breach
+
+------ Pack 1: Holiday 2013 Cube ------ 
+
+Pack 1 pick 3:
+--> Phyrexian Metamorph
+    Adanto Vanguard
+    Showdown of the Skalds
+
+Picked: Phyrexian Metamorph
+
+------ Pack 1: Holiday 2013 Cube ------ 
+
+Pack 1 pick 3:
+--> Tendrils of Agony
+    Elspeth, Knight-Errant
+
+Picked: Tendrils of Agony
+
+------ Pack 1: Holiday 2013 Cube ------ 
+
+Pack 1 pick 3:
+--> Nahiri's Warcrafting
+
+Picked: Nahiri's Warcrafting
+
+Pack 2 pick 1:
+    Corpse Dance
+    Brainstorm
+    Daze
+    Upheaval
+    Dark Depths
+    Ashen Rider
+--> Library of Alexandria
+    Tireless Tracker
+    Glorybringer
+    Skyclave Apparition
+    Fire Covenant
+    Force of Vigor
+    Ziatora's Proving Ground
+    Kogla and Yidaro
+    Andúril, Flame of the West
+
+Picked: Library of Alexandria
+
+Pack 2 pick 2:
+    Helm of Awakening
+    Goblin Welder
+    Hallowed Fountain
+    Inferno Titan
+    Hornet Queen
+    Mana Drain
+    Mishra's Workshop
+    Indatha Triome
+    Graveyard Trespasser
+--> Fable of the Mirror-Breaker
+    Expressive Iteration
+    Rampaging Raptor
+    Reprieve
+    Call of the Ring
+
+Picked: Fable of the Mirror-Breaker
+
+Pack 2 pick 2:
+    Lotus Petal
+    Night's Whisper
+    Dark Confidant
+    Watery Grave
+    Stomping Ground
+    Daretti, Scrap Savant
+--> Grist, the Hunger Tide
+    Damn
+    Boseiju, Who Endures
+    Jetmir's Garden
+    Preordain
+    Green Sun's Zenith
+    Enlightened Tutor
+
+Picked: Grist, the Hunger Tide
+
+Pack 2 pick 2:
+    Duress
+--> Sneak Attack
+    Life/Death
+    Brain Freeze
+    Celestial Colonnade
+    Pyretic Ritual
+    Crucible of Worlds
+    Fiery Islet
+    Escape to the Wilds
+    Knight of the Reliquary
+    Infernal Grasp
+    Deeproot Wayfinder
+
+Picked: Sneak Attack
+
+Pack 2 pick 2:
+    Oath of Druids
+    Mutavault
+    Oust
+    Sylvan Caryatid
+    Toxic Deluge
+    Inspiring Vantage
+    Inspired Ultimatum
+    Regrowth
+    Dig Through Time
+    Evolved Sleeper
+--> Fiery Confluence
+
+Picked: Fiery Confluence
+
+Pack 2 pick 2:
+    Shallow Grave
+    Time Warp
+    Yawgmoth's Will
+    Weathered Wayfarer
+    Cryptic Command
+    Chain Lightning
+    Mystic Forge
+    Bloodchief's Thirst
+    Boon-Bringer Valkyrie
+--> Oliphaunt
+
+Picked: Oliphaunt
+
+Pack 2 pick 2:
+    Fireblast
+    Bitterblossom
+    Joraga Treespeaker
+    Unexpectedly Absent
+    Bazaar of Baghdad
+    Light Up the Stage
+    The Wandering Emperor
+--> Titan of Industry
+    Aetherflux Reservoir
+
+Picked: Titan of Industry
+
+Pack 2 pick 2:
+    Seal of Removal
+    Sulfuric Vortex
+--> Graven Cairns
+    Spectral Procession
+    Goblin Rabblemaster
+    Kinnan, Bonder Prodigy
+    Mine Collapse
+    Workshop Warchief
+
+Picked: Graven Cairns
+
+Pack 2 pick 2:
+    Ashen Rider
+    Glorybringer
+    Fire Covenant
+    Force of Vigor
+--> Ziatora's Proving Ground
+    Kogla and Yidaro
+    Andúril, Flame of the West
+
+Picked: Ziatora's Proving Ground
+
+Pack 2 pick 3:
+    Helm of Awakening
+--> Inferno Titan
+    Indatha Triome
+    Expressive Iteration
+    Rampaging Raptor
+    Call of the Ring
+
+Picked: Inferno Titan
+
+Pack 2 pick 3:
+    Dark Confidant
+--> Stomping Ground
+    Daretti, Scrap Savant
+    Damn
+    Enlightened Tutor
+
+Picked: Stomping Ground
+
+Pack 2 pick 3:
+--> Duress
+    Escape to the Wilds
+    Infernal Grasp
+    Deeproot Wayfinder
+
+Picked: Duress
+
+Pack 2 pick 3:
+--> Oath of Druids
+    Regrowth
+    Evolved Sleeper
+
+Picked: Oath of Druids
+
+Pack 2 pick 3:
+    Yawgmoth's Will
+--> Bloodchief's Thirst
+
+Picked: Bloodchief's Thirst
+
+Pack 2 pick 3:
+--> Fireblast
+
+Picked: Fireblast
+
+Pack 3 pick 1:
+    Mox Diamond
+    Badlands
+    Plateau
+    Wheel of Fortune
+    Ramunap Excavator
+    Thief of Sanity
+    Narset, Parter of Veils
+    Containment Priest
+    Usher of the Fallen
+    Laelia, the Blade Reforged
+    Pest Infestation
+    Dauthi Voidwalker
+    Otawara, Soaring City
+--> Atraxa, Grand Unifier
+    Mishra's Factory
+
+Picked: Atraxa, Grand Unifier
+
+Pack 3 pick 2:
+    City of Traitors
+    Time Spiral
+    Talisman of Indulgence
+    Godless Shrine
+    Birthing Pod
+    Batterskull
+    Life from the Loam
+    Palace Jailer
+--> Dismember
+    Ulvenwald Oddity
+    Kumano Faces Kakkazan
+    Mizzium Mortars
+    Bolas's Citadel
+    Faerie Mastermind
+
+Picked: Dismember
+
+Pack 3 pick 2:
+    Miscalculation
+    Seachrome Coast
+    Snapcaster Mage
+    Taiga
+    Noble Hierarch
+--> Chandra, Torch of Defiance
+    Kitesail Freebooter
+    Elvish Reclaimer
+    Field of the Dead
+    Baral, Chief of Compliance
+    Solemn Simulacrum
+    Svyelun of Sea and Sky
+    Adeline, Resplendent Cathar
+
+Picked: Chandra, Torch of Defiance
+
+Pack 3 pick 2:
+    Darkslick Shores
+    Thalia, Guardian of Thraben
+    Channel
+    Silent Clearing
+    Everflowing Chalice
+    Esika's Chariot
+--> Prismatic Vista
+    Rabbit Battery
+    Goblin Guide
+    Phyrexian Revoker
+    Misery's Shadow
+    Phyrexian Fleshgorger
+
+Picked: Prismatic Vista
+
+Pack 3 pick 2:
+    Karmic Guide
+    Cabal Ritual
+    Phantasmal Image
+    Karakas
+    Wrenn and Six
+    Restoration Angel
+--> Misty Rainforest
+    Xander's Lounge
+    Bitter Reunion
+    Rona, Herald of Invasion
+    Invasion of Ikoria
+
+Picked: Misty Rainforest
+
+Pack 3 pick 2:
+    Birds of Paradise
+--> Through the Breach
+    Garruk Wildspeaker
+    Manamorphose
+    Blade Splicer
+    Botanical Sanctum
+    Mirage Mirror
+    Baleful Mastery
+    Bone Shards
+    Thirst for Discovery
+
+Picked: Through the Breach
+
+Pack 3 pick 2:
+    Char
+    Sower of Temptation
+    Voice of Resurgence
+    The Scarab God
+--> Ketria Triome
+    Lingering Souls
+    Yawgmoth, Thran Physician
+    Monastery Swiftspear
+    Elite Spellbinder
+
+Picked: Ketria Triome
+
+Pack 3 pick 2:
+    Firebolt
+    Oona's Prowler
+    Sun Titan
+    Thespian's Stage
+    Iona, Shield of Emeria
+--> Leovold, Emissary of Trest
+    Thraben Inspector
+    Concealing Curtains
+
+Picked: Leovold, Emissary of Trest
+
+Pack 3 pick 2:
+    Wheel of Fortune
+    Thief of Sanity
+    Containment Priest
+    Usher of the Fallen
+--> Laelia, the Blade Reforged
+    Pest Infestation
+    Dauthi Voidwalker
+
+Picked: Laelia, the Blade Reforged
+
+Pack 3 pick 3:
+    City of Traitors
+--> Godless Shrine
+    Birthing Pod
+    Batterskull
+    Life from the Loam
+    Bolas's Citadel
+
+Picked: Godless Shrine
+
+Pack 3 pick 3:
+--> Taiga
+    Elvish Reclaimer
+    Field of the Dead
+    Svyelun of Sea and Sky
+    Adeline, Resplendent Cathar
+
+Picked: Taiga
+
+Pack 3 pick 3:
+--> Channel
+    Silent Clearing
+    Rabbit Battery
+    Goblin Guide
+
+Picked: Channel
+
+Pack 3 pick 3:
+    Karmic Guide
+--> Cabal Ritual
+    Restoration Angel
+
+Picked: Cabal Ritual
+
+Pack 3 pick 3:
+    Mirage Mirror
+--> Baleful Mastery
+
+Picked: Baleful Mastery
+
+Pack 3 pick 3:
+--> Monastery Swiftspear
+
+Picked: Monastery Swiftspear
+

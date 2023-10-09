@@ -1,4 +1,4 @@
-"use strict";
+import fs from "fs";
 import { before, after, beforeEach, afterEach, describe, it } from "mocha";
 import chai from "chai";
 const expect = chai.expect;
@@ -11,6 +11,8 @@ import { RochesterDraftSyncData } from "../src/RochesterDraft.js";
 import { UniqueCard } from "../src/CardTypes.js";
 import { PickSummary } from "../src/PickSummary.js";
 import { ArrayElement } from "../src/TypeChecks.js";
+import { parseMTGOLog } from "../src/parseMTGOLog.js";
+import { isSocketError } from "../src/Message.js";
 
 describe("Draft Logs", function () {
 	let clients: Array<
@@ -450,4 +452,19 @@ describe("Draft Logs", function () {
 	test("Rochester Draft", startRochesterDraft, endRochesterDraft);
 
 	// Note: Other game mode aren't tested yet.
+});
+
+describe.only("MTGO log parsing", () => {
+	const logFiles = [
+		"MTGO_LOG-2023.9.28-7671-27275695-WOEWOEWOE.txt",
+		"MTGO_LOG-2023.10.4-7723-27320475-C03C03C03.txt",
+		"MTGO_LOG-2023.10.4-7723-27322073-C03C03C03.txt",
+	];
+	for (const logFile of logFiles)
+		it(`File '${logFile}' should parse correctly`, (done) => {
+			const r = parseMTGOLog("fakeUID", fs.readFileSync("./test/data/MTGO_logs/" + logFile, "utf-8"));
+			expect(isSocketError(r)).to.be.false;
+			console.error(r);
+			done();
+		});
 });
