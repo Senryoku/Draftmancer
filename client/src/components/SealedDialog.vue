@@ -90,7 +90,7 @@ import { Sortable } from "sortablejs-vue3";
 import { UserID } from "@/IDTypes";
 import { UserData } from "@/Session/SessionTypes";
 import Constant from "../../../src/data/constants.json";
-import SetsInfos from "../SetInfos";
+import SetsInfos from "../../../src/SetInfos";
 import { SetCode } from "../../../src/Types";
 import { SortableEvent } from "sortablejs";
 import { sortableUpdate } from "../helper";
@@ -235,3 +235,4 @@ watch(boostersPerPlayer, () => {
 	padding: 0;
 }
 </style>
+../../../src/SetInfos

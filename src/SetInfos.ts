@@ -1,4 +1,4 @@
-import { SetCode } from "@/Types";
+import { SetCode } from "./Types";
 import _setsInfos from "./data/SetsInfos.json" assert { type: "json" };
 
 export type SetInfo = {

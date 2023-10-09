@@ -30,7 +30,7 @@ import Swal, { SweetAlertIcon, SweetAlertOptions, SweetAlertResult } from "sweet
 import { SortableEvent } from "sortablejs";
 import { createCommonApp } from "./appCommon";
 
-import SetsInfos, { SetInfo } from "./SetInfos";
+import SetsInfos, { SetInfo } from "../../src/SetInfos";
 import {
 	isEmpty,
 	randomStr4,

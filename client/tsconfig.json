@@ -1,5 +1,5 @@
 {
-	"include": ["**/*", "../src/Types.ts", "../src/Types.ts"],
+	"include": ["**/*", "../src/Types.ts", "../src/Types.ts", "../src/SetInfos.ts"],
 	"compilerOptions": {
 		"allowJs": false,
 		"baseUrl": ".",

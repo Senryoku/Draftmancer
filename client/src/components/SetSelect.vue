@@ -58,7 +58,7 @@
 
 <script setup lang="ts">
 import { SetCode } from "@/Types";
-import SetsInfos from "../SetInfos";
+import SetsInfos from "../../../src/SetInfos";
 import { ref, onMounted, onUnmounted } from "vue";
 
 const props = defineProps<{
@@ -324,3 +324,4 @@ onUnmounted(() => {
 	padding-left: 0;
 }
 </style>
+../../../src/SetInfos

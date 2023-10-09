@@ -6,6 +6,7 @@ import { DraftLog, DraftPick } from "./DraftLog.js";
 import { matchCardVersion } from "./parseCardList.js";
 import { getCard } from "./Cards.js";
 import { SocketError } from "./Message.js";
+import { SetsInfos } from "./SetInfos.js";
 
 function parseListWithPick(lines: string[], lineIndex: number) {
 	let i = lineIndex;
@@ -71,9 +72,9 @@ export function parseMTGOLog(userID: UserID, txt: string): SocketError | DraftLo
 				if (!setHint) {
 					const m = lines[i].match(/------ Pack 1: (?<set>[\w ]+) ------/);
 					if (m) {
-						// FIXME: We have to match full set name to set codes.
-						const set = m.groups?.set.toLowerCase();
-						if (set && set in Constants.PrimarySets) setHint = set;
+						const setName = m.groups?.set;
+						const setCode = Object.values(SetsInfos).find((setInfo) => setInfo.fullName === setName)?.code;
+						if (setCode && setCode in Constants.PrimarySets) setHint = setCode;
 					}
 				}
 			} else if (lines[i].startsWith("Pack ")) {
