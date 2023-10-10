@@ -15,13 +15,16 @@
 			<button type="button" @click="exportDeckMTGO()" v-tooltip.right="'Export for MTGO (.dek)'">
 				<img class="set-icon" src="../assets/img/mtgo-icon.webp" /> MTGO .dek
 			</button>
+			<button type="button" @click="exportDeckToFaBrary()" v-tooltip.right="'Export directly to FaBrary'">
+				<font-awesome-icon icon="fa-solid fa-external-link-alt"></font-awesome-icon> to FaBrary
+			</button>
 		</template>
 	</dropdown>
 </template>
 
 <script lang="ts">
 import { PropType, defineComponent } from "vue";
-import { UniqueCard } from "@/CardTypes";
+import { Card, UniqueCard } from "@/CardTypes";
 
 import { exportToMTGA } from "../exportToMTGA";
 import { exportToMTGO } from "../exportToMTGO";
@@ -56,6 +59,24 @@ export default defineComponent({
 		},
 		exportDeckMTGO() {
 			exportToMTGO(this.deck, this.sideboard, this.options);
+		},
+		faBraryCardExport(card: Card) {
+			if (card.collector_number !== "" && card.collector_number.match(/[A-Z]{3}\d{3}/))
+				return card.collector_number;
+			if (
+				card.set !== "" &&
+				card.set.match(/[A-Z]{3}/) &&
+				card.collector_number !== "" &&
+				card.collector_number.match(/\d{3}/)
+			)
+				return card.set + card.collector_number;
+			return encodeURIComponent(card.name.replace(/ /g, "-").replace(/[()]/g, "").toLowerCase());
+		},
+		exportDeckToFaBrary() {
+			let url = "https://fabrary.net/decks?tab=import&format=draft";
+			for (const card of this.deck) url += `&cards=${this.faBraryCardExport(card)}`;
+			for (const card of this.sideboard) url += `&cards=${this.faBraryCardExport(card)}`;
+			window.open(url);
 		},
 	},
 });
