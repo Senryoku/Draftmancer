@@ -91,7 +91,6 @@ import axios from "axios";
 import CardText from "./CardText.vue";
 import CardImage from "./CardImage.vue";
 import { isString } from "../../../src/TypeChecks";
-import { genCustomCardID } from "../../../src/CustomCardID";
 import { Card, CardFace, CardID } from "@/CardTypes";
 import { ScryfallCard, isReady, CardCacheEntry } from "../vueCardCache";
 

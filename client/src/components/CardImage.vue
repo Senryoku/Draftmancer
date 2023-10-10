@@ -90,7 +90,7 @@
 			'layout-split-left': card.layout === 'split-left',
 		}"
 	>
-		<div class="card-individual-image">
+		<div class="card-individual-image" :class="{ 'battle-front': card.type.includes('Battle') }">
 			<img :src="imageURI" />
 			<CardText class="alt-card-text" v-if="displayCardText" :card="cardFrontAdditionalData" />
 		</div>
@@ -165,7 +165,7 @@ export default defineComponent({
 .card-image,
 .card-individual-image {
 	position: relative;
-	width: 100%;
+	width: auto;
 	height: 100%;
 	background-color: transparent;
 	perspective: 1000px;
@@ -250,7 +250,9 @@ img {
 }
 
 .vertical-flip-icon {
-	transition: transform 0.2s, text-shadow 0.2s;
+	transition:
+		transform 0.2s,
+		text-shadow 0.2s;
 	color: white;
 }
 
@@ -269,7 +271,9 @@ img {
 
 .split-icon,
 .split-left-icon {
-	transition: transform 0.2s, text-shadow 0.2s;
+	transition:
+		transform 0.2s,
+		text-shadow 0.2s;
 	width: 1em;
 	color: white;
 }
@@ -333,6 +337,18 @@ img {
 	background-size: cover;
 }
 
+.battle-front {
+	width: var(--image-height);
+}
+
+.battle-front img {
+	transform: translateX(21%) rotate(90deg);
+}
+
+.card-popup.right .battle-front img {
+	transform: translateX(-21%) rotate(90deg);
+}
+
 .alt-card-text {
 	position: absolute;
 	top: 0;
@@ -341,6 +357,13 @@ img {
 	height: auto;
 	aspect-ratio: 100/140;
 	z-index: 10;
+}
+
+.battle-front .alt-card-text {
+	top: 0;
+	left: 14.5%;
+	right: auto;
+	bottom: 0;
 }
 
 .pending-alt-card-text {
