@@ -15,7 +15,11 @@
 			<button type="button" @click="exportDeckMTGO()" v-tooltip.right="'Export for MTGO (.dek)'">
 				<img class="set-icon button-icon" src="../assets/img/mtgo-icon.webp" /> MTGO .dek
 			</button>
-			<button type="button" @click="exportDeckToFaBrary()" v-tooltip.right="'Export directly to FaBrary'">
+			<button
+				type="button"
+				@click="exportDeckToFaBrary()"
+				v-tooltip.right="'Export directly to FaBrary, the Flesh and Blood library.'"
+			>
 				<font-awesome-icon icon="fa-solid fa-external-link-alt" class="button-icon"></font-awesome-icon>to
 				FaBrary
 			</button>
