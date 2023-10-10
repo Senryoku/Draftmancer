@@ -34,6 +34,11 @@ import { copyToClipboard } from "../helper";
 import Dropdown from "./Dropdown.vue";
 import { Language } from "@/Types";
 
+// Some always available cards, such as a default hero, available equipement, set unique mechanics, ...etc
+const FaBAlwaysAvailableCards = {
+	EVO: ["EVO008", "EVO003", "EVO006", "EVO009", "EVO022", "EVO023", "EVO024", "EVO025"],
+};
+
 export default defineComponent({
 	components: { Dropdown },
 	props: {
@@ -75,8 +80,18 @@ export default defineComponent({
 		},
 		exportDeckToFaBrary() {
 			let url = "https://fabrary.net/decks?tab=import&format=draft";
-			for (const card of this.deck) url += `&cards=${this.faBraryCardExport(card)}`;
-			for (const card of this.sideboard) url += `&cards=${this.faBraryCardExport(card)}`;
+
+			const cardIDs = this.deck.map(this.faBraryCardExport);
+			cardIDs.push(...this.sideboard.map(this.faBraryCardExport));
+
+			// Check if all cards are from the same set (assuming we're exporting using set/numbers, not card names).
+			const set = [...new Set(cardIDs.map((str) => str.substring(0, 3)))];
+			// Add always available cards for convenience.
+			if (set.length === 1 && set[0] in FaBAlwaysAvailableCards)
+				cardIDs.push(...FaBAlwaysAvailableCards[set[0] as keyof typeof FaBAlwaysAvailableCards]);
+
+			for (const cardID of cardIDs) url += `&cards=${cardID}`;
+
 			window.open(url);
 		},
 	},
