@@ -109,7 +109,7 @@ import { defineComponent, PropType } from "vue";
 import { Card, PlainCollection } from "@/CardTypes";
 import MTGACards from "../MTGACards";
 import Constants from "../../../src/Constants";
-import SetsInfos from "../SetInfos";
+import SetsInfos from "../../../src/SetInfos";
 import MissingCard from "./MissingCard.vue";
 
 type CardWithCount = Card & { count: number };
@@ -263,3 +263,4 @@ export default defineComponent({
 	margin: 0.1em;
 }
 </style>
+../../../src/SetInfos

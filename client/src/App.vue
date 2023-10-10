@@ -1978,6 +1978,7 @@
 					@sharelog="shareSavedDraftLog"
 					@storelogs="storeDraftLogs"
 					@loadDeck="loadDeckFromLogs"
+					@importMTGOLog="importMTGOLog"
 				></draft-log-history>
 			</template>
 		</modal>

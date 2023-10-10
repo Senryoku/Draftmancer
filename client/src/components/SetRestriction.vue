@@ -78,7 +78,7 @@
 import { PropType, defineComponent } from "vue";
 
 import constants from "../../../src/Constants";
-import { SetInfo, SetsInfos } from "../SetInfos";
+import { SetInfo, SetsInfos } from "../../../src/SetInfos";
 import { SetCode } from "@/Types";
 
 export default defineComponent({
@@ -233,3 +233,4 @@ export default defineComponent({
 	box-shadow: 0 0 5px 2px green;
 }
 </style>
+../../../src/SetInfos

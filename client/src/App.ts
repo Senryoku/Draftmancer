@@ -30,7 +30,7 @@ import Swal, { SweetAlertIcon, SweetAlertOptions, SweetAlertResult } from "sweet
 import { SortableEvent } from "sortablejs";
 import { createCommonApp } from "./appCommon";
 
-import SetsInfos, { SetInfo } from "./SetInfos";
+import SetsInfos, { SetInfo } from "../../src/SetInfos";
 import {
 	isEmpty,
 	randomStr4,
@@ -2253,6 +2253,7 @@ export default defineComponent({
 		// Workaround for collection import: Collections are not available in logs anymore, accept standard card lists as collections.
 		uploadCardListAsCollection(event: Event) {
 			const file = (event.target as HTMLInputElement)?.files?.[0];
+			if (event.target instanceof HTMLInputElement) event.target.value = "";
 			if (!file) return;
 			const reader = new FileReader();
 			reader.onload = async (e) => {
@@ -2407,6 +2408,7 @@ export default defineComponent({
 		},
 		parseMTGALog(event: Event) {
 			const file = (event.target as HTMLInputElement)?.files?.[0];
+			if (event.target instanceof HTMLInputElement) event.target.value = "";
 			if (!file) return;
 			const reader = new FileReader();
 			reader.onload = async (e) => {
@@ -2725,6 +2727,17 @@ export default defineComponent({
 			} else {
 				fireToast("error", "Error importing deck.");
 			}
+		},
+		importMTGOLog(contents: string) {
+			this.socket.emit("convertMTGOLog", contents, (response) => {
+				if ("error" in response) {
+					Alert.fire(response.error!);
+				} else {
+					this.draftLogs.push(response as DraftLog);
+					this.storeDraftLogs();
+					fireToast("success", "Successfully imported MTGO log!");
+				}
+			});
 		},
 		uploadBoosters() {
 			if (this.sessionOwner !== this.userID) return;

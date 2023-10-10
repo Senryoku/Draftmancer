@@ -16,6 +16,38 @@ function removeJSONTrailingCommas(str: string): string {
 	return str.replaceAll(trailingCommasRegex, "");
 }
 
+export function matchCardVersion(
+	name: string,
+	set?: string,
+	collector_number?: string,
+	fallbackToCardName = false
+): CardID | null {
+	// Only the name is supplied, get the preferred version of the card
+	if (!set && !collector_number && name in CardsByName) return CardsByName[name];
+
+	let candidates: Card[] = (
+		name in CardVersionsByName
+			? CardVersionsByName[name]
+			: name.split(" //")[0] in CardVersionsByName // If not found, try double faced cards before giving up!
+			? CardVersionsByName[name.split(" //")[0]]
+			: []
+	).map((cid) => getCard(cid));
+
+	candidates = candidates.filter(
+		(c) => (!set || c.set === set) && (!collector_number || c.collector_number === collector_number)
+	);
+
+	if (candidates.length > 0)
+		return candidates.reduce((best, c) => {
+			if (parseInt(c.collector_number) < parseInt(best.collector_number)) return c;
+			return best;
+		}, candidates[0]).id;
+
+	if (fallbackToCardName && name in CardsByName) return CardsByName[name];
+
+	return null;
+}
+
 // Possible options:
 //  - fallbackToCardName: Allow fallback to only a matching card name if exact set and/or collector number cannot be found.
 //  - customCards: Dictionary of additional custom cards to try to match first.
@@ -64,33 +96,9 @@ export function parseLine(
 		);
 	}
 
-	// Only the name is supplied, get the preferred version of the card
-	if (!set && !number && name in CardsByName) return { count, cardID: CardsByName[name], foil };
+	const cardID = matchCardVersion(name, set, number, options?.fallbackToCardName);
 
-	// Search for the correct set and collector number
-	let candidates: CardID[] = [];
-
-	if (name in CardVersionsByName) {
-		candidates = CardVersionsByName[name];
-	} else if (name.split(" //")[0] in CardVersionsByName) {
-		// If not found, try double faced cards before giving up!
-		candidates = CardVersionsByName[name.split(" //")[0]];
-	}
-
-	const cardIDs = candidates.filter(
-		(cid) => (!set || getCard(cid).set === set) && (!number || getCard(cid).collector_number === number)
-	);
-
-	if (cardIDs.length > 0) {
-		return {
-			count,
-			cardID: cardIDs.reduce((best, cid) => {
-				if (parseInt(getCard(cid).collector_number) < parseInt(getCard(best).collector_number)) return cid;
-				return best;
-			}, cardIDs[0]),
-			foil: !!foil,
-		};
-	} else if (options?.fallbackToCardName && name in CardsByName) return { count, cardID: CardsByName[name], foil };
+	if (cardID) return { count, cardID, foil };
 
 	// No match found
 

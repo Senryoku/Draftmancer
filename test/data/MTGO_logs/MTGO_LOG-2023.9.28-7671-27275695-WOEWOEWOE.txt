@@ -1,0 +1,582 @@
+Event #: 7671
+Time:    9/28/2023 12:13:27 AM
+Players:
+    Player0
+    Player1
+    Player2
+    Player3
+    Player4
+    Player5
+    Player6
+--> Player7
+
+------ Pack 1: Wilds of Eldraine ------ 
+
+Pack 1 pick 1:
+    Dark Tutelage
+    Break the Spell
+    Cheeky House-Mouse
+    Johann's Stopgap
+    Picklock Prankster
+    Barrow Naughty
+    Ego Drain
+    Flick a Coin
+    Redcap Thief
+    Brave the Wilds
+    Verdant Outrider
+--> Mosswood Dreadknight
+    Candy Trail
+    Gingerbrute
+    Plains
+
+Picked: Mosswood Dreadknight
+
+------ Pack 1: Wilds of Eldraine ------ 
+
+Pack 1 pick 2:
+    Kellan's Lightblades
+    Aquatic Alchemist
+    Merfolk Coralsmith
+    Ashiok's Reaper
+--> Lord Skitter's Butcher
+    Scream Puff
+    Bellowing Bruiser
+    Edgewall Pack
+    Ratcatcher Trainee
+    Unruly Catapult
+    Troublemaker Ouphe
+    Callous Sell-Sword
+    Restless Fortress
+    Mountain
+
+Picked: Lord Skitter's Butcher
+
+------ Pack 1: Wilds of Eldraine ------ 
+
+Pack 1 pick 2:
+    Smothering Tithe
+    Besotted Knight
+    Hopeful Vigil
+    Merfolk Coralsmith
+    Sleight of Hand
+    Snaremaster Sprite
+    Lich-Knights' Conquest
+    Voracious Vermin
+    Kindled Heroism
+    Two-Headed Hunter
+    Beanstalk Wurm
+--> Curse of the Werefox
+    Plains
+
+Picked: Curse of the Werefox
+
+------ Pack 1: Wilds of Eldraine ------ 
+
+Pack 1 pick 2:
+    Copy Enchantment
+    Rimefur Reindeer
+    Picklock Prankster
+    Sleight of Hand
+    Cut In
+    Commune with Nature
+--> Rootrider Faun
+    Eriette's Tempting Apple
+    Crystal Grotto
+    Edgewall Inn
+    Evolving Wilds
+    Island
+
+Picked: Rootrider Faun
+
+------ Pack 1: Wilds of Eldraine ------ 
+
+Pack 1 pick 2:
+--> Utopia Sprawl
+    Protective Parents
+    Stockpiling Celebrant
+    Ice Out
+    Wicked Visitor
+    Flick a Coin
+    Bestial Bloodline
+    Night of the Sweets' Revenge
+    Prophetic Prism
+    Edgewall Inn
+    Mountain
+
+Picked: Utopia Sprawl
+
+------ Pack 1: Wilds of Eldraine ------ 
+
+Pack 1 pick 2:
+    Greater Auramancy
+    Armory Mice
+    Sugar Rush
+--> Sweettooth Witch
+    Warehouse Tabby
+    Harried Spearguard
+    Leaping Ambush
+    Troublemaker Ouphe
+    Gingerbrute
+    Mountain
+
+Picked: Sweettooth Witch
+
+------ Pack 1: Wilds of Eldraine ------ 
+
+Pack 1 pick 2:
+    Leyline of Lightning
+    Return Triumphant
+    Diminisher Witch
+    Freeze in Place
+    Wicked Visitor
+--> Bellowing Bruiser
+    Skewer Slinger
+    Spider Food
+    Forest
+
+Picked: Bellowing Bruiser
+
+------ Pack 1: Wilds of Eldraine ------ 
+
+Pack 1 pick 2:
+    Besotted Knight
+    Eerie Interference
+--> Hopeful Vigil
+    Misleading Motes
+    Water Wings
+    Wicked Visitor
+    Kindled Heroism
+    Island
+
+Picked: Hopeful Vigil
+
+------ Pack 1: Wilds of Eldraine ------ 
+
+Pack 1 pick 2:
+    Break the Spell
+    Picklock Prankster
+    Ego Drain
+    Flick a Coin
+    Candy Trail
+--> Gingerbrute
+    Plains
+
+Picked: Gingerbrute
+
+------ Pack 1: Wilds of Eldraine ------ 
+
+Pack 1 pick 3:
+    Merfolk Coralsmith
+--> Scream Puff
+    Bellowing Bruiser
+    Unruly Catapult
+    Troublemaker Ouphe
+    Mountain
+
+Picked: Scream Puff
+
+------ Pack 1: Wilds of Eldraine ------ 
+
+Pack 1 pick 3:
+    Merfolk Coralsmith
+--> Sleight of Hand
+    Snaremaster Sprite
+    Kindled Heroism
+    Plains
+
+Picked: Sleight of Hand
+
+------ Pack 1: Wilds of Eldraine ------ 
+
+Pack 1 pick 3:
+--> Picklock Prankster
+    Sleight of Hand
+    Commune with Nature
+    Island
+
+Picked: Picklock Prankster
+
+------ Pack 1: Wilds of Eldraine ------ 
+
+Pack 1 pick 3:
+    Protective Parents
+--> Night of the Sweets' Revenge
+    Mountain
+
+Picked: Night of the Sweets' Revenge
+
+------ Pack 1: Wilds of Eldraine ------ 
+
+Pack 1 pick 3:
+--> Sugar Rush
+    Mountain
+
+Picked: Sugar Rush
+
+------ Pack 1: Wilds of Eldraine ------ 
+
+Pack 1 pick 3:
+--> Forest
+
+Picked: Forest
+
+Pack 2 pick 1:
+    Curiosity
+    Besotted Knight
+    Beluna's Gatekeeper
+    Picklock Prankster
+    Eriette's Whisper
+    Wicked Visitor
+    Boundary Lands Ranger
+    Edgewall Pack
+    Kindled Heroism
+    Unruly Catapult
+    Beanstalk Wurm
+    Neva, Stalked by Nightmares
+    Evolving Wilds
+--> Restless Vinestalk
+    Forest
+
+Picked: Restless Vinestalk
+
+Pack 2 pick 2:
+    Leyline of Abundance
+    Break the Spell
+    Living Lectern
+--> Lord Skitter's Butcher
+    Sugar Rush
+    Sweettooth Witch
+    Voracious Vermin
+    Bellowing Bruiser
+    Grabby Giant
+    Troublemaker Ouphe
+    The Irencrag
+    Soul-Guide Lantern
+    Evolving Wilds
+    Forest
+
+Picked: Lord Skitter's Butcher
+
+Pack 2 pick 2:
+    Impact Tremors
+    Archon's Glory
+    Cursed Courtier
+    Beluna's Gatekeeper
+    Vantress Transmuter
+    Eriette's Whisper
+--> Torch the Tower
+    Witch's Mark
+    Beanstalk Wurm
+    Ruby, Daring Tracker
+    Prophetic Prism
+    Mountain
+    Mountain
+
+Picked: Torch the Tower
+
+Pack 2 pick 2:
+    Shared Animosity
+    Discerning Financier
+    Return Triumphant
+    Spell Stutter
+    Conceited Witch
+    Shatter the Oath
+    Voracious Vermin
+    Minecart Daredevil
+    Leaping Ambush
+    Threadbind Clique
+--> Evolving Wilds
+    Mountain
+
+Picked: Evolving Wilds
+
+Pack 2 pick 2:
+    Fraying Sanity
+    Tuinvale Guide
+    Diminisher Witch
+    Conceited Witch
+    Ego Drain
+    Harried Spearguard
+    Kindled Heroism
+    Twisted Fealty
+    Territorial Witchstalker
+--> Crystal Grotto
+    Plains
+
+Picked: Crystal Grotto
+
+Pack 2 pick 2:
+    Vampiric Rites
+    Savior of the Sleeping
+    Tuinvale Guide
+    Aquatic Alchemist
+    Picklock Prankster
+    Ego Drain
+--> Fell Horseman
+    Rowan's Grim Search
+    Shatter the Oath
+    Island
+
+Picked: Fell Horseman
+
+Pack 2 pick 2:
+    Archon's Glory
+    Tuinvale Guide
+--> Disdainful Stroke
+    Misleading Motes
+    Sleight of Hand
+    Vantress Transmuter
+    Grand Ball Guest
+    Skybeast Tracker
+    Plains
+
+Picked: Disdainful Stroke
+
+Pack 2 pick 2:
+    Raid Bombardment
+    Return Triumphant
+    Archive Dragon
+    Dream Spoilers
+    Mintstrosity
+    Unruly Catapult
+--> Scarecrow Guide
+    Mountain
+
+Picked: Scarecrow Guide
+
+Pack 2 pick 2:
+    Besotted Knight
+    Beluna's Gatekeeper
+    Wicked Visitor
+--> Edgewall Pack
+    Kindled Heroism
+    Unruly Catapult
+    Forest
+
+Picked: Edgewall Pack
+
+Pack 2 pick 3:
+    Break the Spell
+    Sugar Rush
+--> Bellowing Bruiser
+    Troublemaker Ouphe
+    Soul-Guide Lantern
+    Forest
+
+Picked: Bellowing Bruiser
+
+Pack 2 pick 3:
+    Impact Tremors
+    Eriette's Whisper
+--> Beanstalk Wurm
+    Mountain
+    Mountain
+
+Picked: Beanstalk Wurm
+
+Pack 2 pick 3:
+    Shared Animosity
+    Return Triumphant
+--> Leaping Ambush
+    Mountain
+
+Picked: Leaping Ambush
+
+Pack 2 pick 3:
+--> Fraying Sanity
+    Ego Drain
+    Plains
+
+Picked: Fraying Sanity
+
+Pack 2 pick 3:
+--> Savior of the Sleeping
+    Island
+
+Picked: Savior of the Sleeping
+
+Pack 2 pick 3:
+--> Plains
+
+Picked: Plains
+
+Pack 3 pick 1:
+    Grave Pact
+    Discerning Financier
+    Gallant Pie-Wielder
+    Return Triumphant
+    Bitter Chill
+    Water Wings
+    Feed the Cauldron
+    Rowan's Grim Search
+    Sweettooth Witch
+    Grabby Giant
+    Tattered Ratter
+    Ferocious Werefox
+    Titanic Growth
+--> Devouring Sugarmaw
+    Forest
+
+Picked: Devouring Sugarmaw
+
+Pack 3 pick 2:
+    Mana Flare
+    Aquatic Alchemist
+    Johann's Stopgap
+    Misleading Motes
+    Splashy Spellcaster
+--> Sweettooth Witch
+    Bellowing Bruiser
+    Embereth Veteran
+    Food Fight
+    Gnawing Crescendo
+    Skewer Slinger
+    Commune with Nature
+    Frolicking Familiar
+    Forest
+
+Picked: Sweettooth Witch
+
+Pack 3 pick 2:
+    Intangible Virtue
+    Besotted Knight
+    Moment of Valor
+    Aquatic Alchemist
+    Freeze in Place
+    Sleight of Hand
+    Fell Horseman
+--> Twisted Sewer-Witch
+    Redcap Thief
+    Curse of the Werefox
+    Verdant Outrider
+    Neva, Stalked by Nightmares
+    Island
+
+Picked: Twisted Sewer-Witch
+
+Pack 3 pick 2:
+    Ground Seal
+    Break the Spell
+    Knight of Doves
+    Moment of Valor
+    Archive Dragon
+    Mocking Sprite
+    Picklock Prankster
+    Not Dead After All
+--> Grand Ball Guest
+    Harried Spearguard
+    Minecart Daredevil
+    Swamp
+
+Picked: Grand Ball Guest
+
+Pack 3 pick 2:
+    Impact Tremors
+    Knight of Doves
+    Rimefur Reindeer
+    Chancellor of Tales
+    Freeze in Place
+    Quick Study
+    Barrow Naughty
+    Brave the Wilds
+    Ash, Party Crasher
+--> Gingerbrute
+    Swamp
+
+Picked: Gingerbrute
+
+Pack 3 pick 2:
+    Leyline of the Void
+    Break the Spell
+    Cheeky House-Mouse
+    Hopeful Vigil
+    Moment of Valor
+    Snaremaster Sprite
+    Rowan's Grim Search
+    Witch's Mark
+--> Howling Galefang
+    Swamp
+
+Picked: Howling Galefang
+
+Pack 3 pick 2:
+    Archon's Glory
+    Rimefur Reindeer
+    Solitary Sanctuary
+    Living Lectern
+    Redcap Thief
+    Bestial Bloodline
+    Candy Trail
+--> Candy Trail
+    Swamp
+
+Picked: Candy Trail
+
+Pack 3 pick 2:
+    Gallant Pie-Wielder
+    Rimefur Reindeer
+    Savior of the Sleeping
+    Unassuming Sage
+    Water Wings
+--> Eriette's Whisper
+    Skybeast Tracker
+    Forest
+
+Picked: Eriette's Whisper
+
+Pack 3 pick 2:
+    Gallant Pie-Wielder
+    Return Triumphant
+    Water Wings
+    Rowan's Grim Search
+--> Sweettooth Witch
+    Titanic Growth
+    Forest
+
+Picked: Sweettooth Witch
+
+Pack 3 pick 3:
+    Aquatic Alchemist
+    Misleading Motes
+    Splashy Spellcaster
+    Bellowing Bruiser
+--> Food Fight
+    Forest
+
+Picked: Food Fight
+
+Pack 3 pick 3:
+    Besotted Knight
+    Moment of Valor
+    Sleight of Hand
+--> Redcap Thief
+    Island
+
+Picked: Redcap Thief
+
+Pack 3 pick 3:
+    Break the Spell
+    Knight of Doves
+--> Picklock Prankster
+    Swamp
+
+Picked: Picklock Prankster
+
+Pack 3 pick 3:
+--> Rimefur Reindeer
+    Freeze in Place
+    Swamp
+
+Picked: Rimefur Reindeer
+
+Pack 3 pick 3:
+--> Break the Spell
+    Swamp
+
+Picked: Break the Spell
+
+Pack 3 pick 3:
+--> Swamp
+
+Picked: Swamp
+

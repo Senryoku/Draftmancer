@@ -64,7 +64,15 @@ export class DraftLog {
 
 	constructor(
 		type: string,
-		session: Session,
+		session:
+			| Session
+			| {
+					id: string;
+					setRestriction: string[];
+					customBoosters: string[];
+					personalLogs: boolean;
+					teamDraft: boolean;
+			  },
 		carddata: { [cid: string]: Card },
 		boosters: CardID[][],
 		virtualPlayers: UsersData

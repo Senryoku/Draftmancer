@@ -67,6 +67,7 @@ import { BracketPlayer } from "./Brackets.js";
 import { getQueueStatus, registerPlayer, unregisterPlayer } from "./draftQueue/DraftQueue.js";
 
 import expressStaticGzip from "express-static-gzip";
+import { parseMTGOLog } from "./parseMTGOLog.js";
 
 const app = express();
 const httpServer = new http.Server(app);
@@ -1329,6 +1330,15 @@ async function requestTakeover(userID: UserID, sessionID: SessionID, ack: (resul
 	ack?.(r);
 }
 
+async function convertMTGOLog(
+	userID: UserID,
+	sessionID: SessionID,
+	str: string,
+	ack: (result: SocketError | DraftLog) => void
+) {
+	ack(parseMTGOLog(userID, str));
+}
+
 const prepareSocketCallback = <T extends Array<unknown>>(
 	callback: (userID: UserID, sessionID: SessionID, ...args: T) => void,
 	ownerOnly = false
@@ -1484,6 +1494,7 @@ io.on("connection", async function (socket) {
 	socket.on("removeBasicsFromDeck", prepareSocketCallback(removeBasicsFromDeck));
 	socket.on("retrieveUpdatedDraftLogs", prepareSocketCallback(retrieveUpdatedDraftLogs));
 	socket.on("requestTakeover", prepareSocketCallback(requestTakeover));
+	socket.on("convertMTGOLog", prepareSocketCallback(convertMTGOLog));
 
 	if (query.sessionID) {
 		socket.on("setSession", function (this: typeof socket, sessionID: SessionID, sessionSettings: Options) {
