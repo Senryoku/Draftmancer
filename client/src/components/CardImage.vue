@@ -342,11 +342,11 @@ img {
 }
 
 .battle-front img {
-	transform: translateX(21%) rotate(90deg);
+	transform: translateX(20.5%) rotate(90deg);
 }
 
 .card-popup.right .battle-front img {
-	transform: translateX(-21%) rotate(90deg);
+	transform: translateX(-20.5%) rotate(90deg);
 }
 
 .alt-card-text {
