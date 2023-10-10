@@ -137,10 +137,12 @@ const props = defineProps<{
 const { autoland, lands, targetDeckSize, sideboardBasics, preferredBasics, otherbasics } = toRefs(props);
 
 const emit = defineEmits<{
+	(e: "update:autoland", value: boolean): void;
 	(e: "update:lands", color: CardColor, value: number): void;
 	(e: "update:targetDeckSize", value: number): void;
 	(e: "update:sideboardBasics", value: number): void;
 	(e: "update:preferredBasics", set: string): void;
+	(e: "removebasics"): void;
 }>();
 
 // Methods;
