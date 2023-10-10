@@ -7,16 +7,17 @@
 				@click="exportDeck($event, true)"
 				v-tooltip.right="'Export deck and sideboard for Arena'"
 			>
-				<img class="set-icon" src="../assets/img/mtga-icon.png" /> MTGA
+				<img class="set-icon button-icon" src="../assets/img/mtga-icon.png" />MTGA
 			</button>
 			<button type="button" @click="exportDeck($event, false)" v-tooltip.right="'Export without set information'">
-				<font-awesome-icon icon="fa-solid fa-clipboard"></font-awesome-icon> Card Names
+				<font-awesome-icon icon="fa-solid fa-clipboard" class="button-icon"></font-awesome-icon>Card Names
 			</button>
 			<button type="button" @click="exportDeckMTGO()" v-tooltip.right="'Export for MTGO (.dek)'">
-				<img class="set-icon" src="../assets/img/mtgo-icon.webp" /> MTGO .dek
+				<img class="set-icon button-icon" src="../assets/img/mtgo-icon.webp" /> MTGO .dek
 			</button>
 			<button type="button" @click="exportDeckToFaBrary()" v-tooltip.right="'Export directly to FaBrary'">
-				<font-awesome-icon icon="fa-solid fa-external-link-alt"></font-awesome-icon> to FaBrary
+				<font-awesome-icon icon="fa-solid fa-external-link-alt" class="button-icon"></font-awesome-icon>to
+				FaBrary
 			</button>
 		</template>
 	</dropdown>
