@@ -269,6 +269,13 @@ div:where(.swal2-container) .swal2-checkbox {
 	color: green;
 }
 
+.button-icon {
+	position: absolute;
+	left: 1.4em;
+	top: 50%;
+	transform: translate(-50%, -50%);
+}
+
 .set-icon {
 	display: inline-block;
 	height: 1em;
