@@ -1,5 +1,14 @@
 [
 	{
+		"date": "11/10/2023",
+		"notes": [
+			"MTGO Draft logs import into Game Logs.",
+			"Export to FaBrary, the Flesh and Blood library, feature.",
+			"Fixed zoomed in Battle orientation.",
+			"Usual tweaks, fixes and maintenance."
+		]
+	},
+	{
 		"date": "04/10/2023",
 		"notes": [
 			"Better support for parentheses in card names.",

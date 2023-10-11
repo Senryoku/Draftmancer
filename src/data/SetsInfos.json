@@ -2301,7 +2301,7 @@
     },
     "lci": {
         "code": "lci",
-        "fullName": "Lost Caverns of Ixalan",
+        "fullName": "The Lost Caverns of Ixalan",
         "cardCount": 23,
         "isPrimary": true,
         "icon": "img/sets/lci.svg",
@@ -4885,8 +4885,7 @@
         "cardCount": 5,
         "isPrimary": false,
         "icon": "img/sets/pw24.svg",
-        "rareCount": 4,
-        "specialCount": 1
+        "rareCount": 5
     },
     "pwar": {
         "code": "pwar",
@@ -5676,6 +5675,14 @@
         "icon": "img/sets/tunf.svg",
         "commonCount": 1
     },
+    "twho": {
+        "code": "twho",
+        "fullName": "Doctor Who Tokens",
+        "cardCount": 1,
+        "isPrimary": false,
+        "icon": "img/sets/twho.svg",
+        "commonCount": 1
+    },
     "twoc": {
         "code": "twoc",
         "fullName": "Wilds of Eldraine Commander Tokens",
@@ -6044,13 +6051,13 @@
     "who": {
         "code": "who",
         "fullName": "Doctor Who",
-        "cardCount": 623,
+        "cardCount": 1128,
         "isPrimary": false,
         "icon": "img/sets/who.svg",
-        "commonCount": 61,
+        "commonCount": 72,
         "mythicCount": 35,
-        "rareCount": 454,
-        "uncommonCount": 73
+        "rareCount": 885,
+        "uncommonCount": 136
     },
     "wmc": {
         "code": "wmc",
@@ -6202,6 +6209,17 @@
         "isPrimary": false,
         "block": "Alchemy 2022",
         "icon": "img/sets/ysnc.svg",
+        "mythicCount": 5,
+        "rareCount": 15,
+        "uncommonCount": 10
+    },
+    "ywoe": {
+        "code": "ywoe",
+        "fullName": "Alchemy: Wilds of Eldraine",
+        "cardCount": 30,
+        "isPrimary": false,
+        "block": "Alchemy 2023",
+        "icon": "img/sets/ywoe.svg",
         "mythicCount": 5,
         "rareCount": 15,
         "uncommonCount": 10
