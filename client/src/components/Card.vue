@@ -14,6 +14,7 @@
 			:language="language"
 			:lazyLoad="lazyLoad"
 			:displayCardText="displayCardText"
+			:showBackside="showBackside"
 			ref="image"
 		/>
 		<div v-if="notes || notedColors" class="additional-notes">
@@ -42,6 +43,7 @@ export default defineComponent({
 		card: { type: Object as PropType<UniqueCard>, required: true },
 		language: { type: String as PropType<Language>, default: "en" },
 		lazyLoad: { type: Boolean, default: false },
+		showBackside: { type: Boolean, default: false },
 		conditionalClasses: { type: Function },
 	},
 	data() {
@@ -188,7 +190,9 @@ export default defineComponent({
 
 .fade-enter-active.card,
 .fade-leave-active.card {
-	transition: transform 0.25s ease, opacity 0.5s;
+	transition:
+		transform 0.25s ease,
+		opacity 0.5s;
 }
 
 .foil .card-image {
