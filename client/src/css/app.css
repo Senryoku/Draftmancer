@@ -1123,7 +1123,7 @@ ul.player-list {
 	margin: 0 2em;
 }
 
-.booster-waiting .wait .passing-order.fa-angle-double-right {
+.booster-waiting .wait .booster-wait-passing-order-right {
 	animation: passing-order-right 3s infinite;
 }
 
@@ -1146,7 +1146,7 @@ ul.player-list {
 	}
 }
 
-.booster-waiting .wait .passing-order.fa-angle-double-left {
+.booster-waiting .wait .booster-wait-passing-order-left {
 	animation: passing-order-left 3s infinite;
 }
 

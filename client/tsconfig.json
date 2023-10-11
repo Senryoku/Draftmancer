@@ -5,6 +5,7 @@
 		"baseUrl": ".",
 		"module": "ESNext",
 		"moduleResolution": "node",
+		"lib": ["es2022", "dom", "dom.iterable"],
 		"paths": {
 			"@/*": ["src/*", "../dist/types/src/*"]
 		},

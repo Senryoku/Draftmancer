@@ -1022,9 +1022,15 @@
 							<div class="wait" key="wait" v-if="draftingState === DraftState.Waiting">
 								<font-awesome-icon
 									class="passing-order"
+									:class="{
+										'booster-wait-passing-order-left': passingOrder === PassingOrder.Left,
+										'booster-wait-passing-order-right': passingOrder === PassingOrder.Right,
+									}"
 									:icon="
 										'fa-solid ' +
-										(boosterNumber % 2 === 1 ? 'fa-angle-double-left' : 'fa-angle-double-right')
+										(passingOrder === PassingOrder.Left
+											? 'fa-angle-double-left'
+											: 'fa-angle-double-right')
 									"
 									size="sm"
 									v-show="booster.length > 0"
@@ -1034,9 +1040,15 @@
 								</span>
 								<font-awesome-icon
 									class="passing-order"
+									:class="{
+										'booster-wait-passing-order-left': passingOrder === PassingOrder.Left,
+										'booster-wait-passing-order-right': passingOrder === PassingOrder.Right,
+									}"
 									:icon="
 										'fa-solid ' +
-										(boosterNumber % 2 === 1 ? 'fa-angle-double-left' : 'fa-angle-double-right')
+										(passingOrder === PassingOrder.Left
+											? 'fa-angle-double-left'
+											: 'fa-angle-double-right')
 									"
 									size="sm"
 									v-show="booster.length > 0"
