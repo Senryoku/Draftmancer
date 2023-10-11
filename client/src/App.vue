@@ -1035,9 +1035,7 @@
 									size="sm"
 									v-show="booster.length > 0"
 								></font-awesome-icon>
-								<span>
-									<div><div class="spinner"></div></div>
-								</span>
+								<font-awesome-icon icon="fa-solid fa-spinner" size="lg" spin></font-awesome-icon>
 								<font-awesome-icon
 									class="passing-order"
 									:class="{
