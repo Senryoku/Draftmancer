@@ -1016,6 +1016,118 @@ ul.player-list {
 	font-family: "Brush Script MT";
 }
 
+.booster-card {
+	--enter-delay-interval: 0.075s;
+	--enter-delay: calc((21 - 1) * var(--enter-delay-interval));
+}
+.booster-card:nth-last-child(1) {
+	--enter-delay: 0s;
+}
+.booster-card:nth-last-child(2) {
+	--enter-delay: calc((2 - 1) * var(--enter-delay-interval));
+}
+.booster-card:nth-last-child(3) {
+	--enter-delay: calc((3 - 1) * var(--enter-delay-interval));
+}
+.booster-card:nth-last-child(4) {
+	--enter-delay: calc((4 - 1) * var(--enter-delay-interval));
+}
+.booster-card:nth-last-child(5) {
+	--enter-delay: calc((5 - 1) * var(--enter-delay-interval));
+}
+.booster-card:nth-last-child(6) {
+	--enter-delay: calc((6 - 1) * var(--enter-delay-interval));
+}
+.booster-card:nth-last-child(7) {
+	--enter-delay: calc((7 - 1) * var(--enter-delay-interval));
+}
+.booster-card:nth-last-child(8) {
+	--enter-delay: calc((8 - 1) * var(--enter-delay-interval));
+}
+.booster-card:nth-last-child(9) {
+	--enter-delay: calc((9 - 1) * var(--enter-delay-interval));
+}
+.booster-card:nth-last-child(10) {
+	--enter-delay: calc((10 - 1) * var(--enter-delay-interval));
+}
+.booster-card:nth-last-child(11) {
+	--enter-delay: calc((11 - 1) * var(--enter-delay-interval));
+}
+.booster-card:nth-last-child(12) {
+	--enter-delay: calc((12 - 1) * var(--enter-delay-interval));
+}
+.booster-card:nth-last-child(13) {
+	--enter-delay: calc((13 - 1) * var(--enter-delay-interval));
+}
+.booster-card:nth-last-child(14) {
+	--enter-delay: calc((14 - 1) * var(--enter-delay-interval));
+}
+.booster-card:nth-last-child(15) {
+	--enter-delay: calc((15 - 1) * var(--enter-delay-interval));
+}
+.booster-card:nth-last-child(16) {
+	--enter-delay: calc((16 - 1) * var(--enter-delay-interval));
+}
+.booster-card:nth-last-child(17) {
+	--enter-delay: calc((17 - 1) * var(--enter-delay-interval));
+}
+.booster-card:nth-last-child(18) {
+	--enter-delay: calc((18 - 1) * var(--enter-delay-interval));
+}
+.booster-card:nth-last-child(19) {
+	--enter-delay: calc((19 - 1) * var(--enter-delay-interval));
+}
+.booster-card:nth-last-child(20) {
+	--enter-delay: calc((20 - 1) * var(--enter-delay-interval));
+}
+
+.booster-card .card-image .flip-containerqsd {
+	animation-duration: 0.4s;
+	animation-name: booster-card-enter;
+	animation-fill-mode: backwards;
+	animation-delay: var(--enter-delay);
+	animation-timing-function: ease-in-out;
+
+	perspective-origin: center center;
+	perspective: 1000px;
+
+	/* Necessary for the transform origin to be correct */
+	width: 100%;
+	height: 100%;
+
+	animation-iteration-count: infinite;
+}
+
+@keyframes booster-card-enter {
+	0% {
+		transform: scale(1) rotateY(-180deg);
+	}
+	50% {
+		transform: scale(1.15) rotateY(-90deg);
+	}
+	100% {
+		transform: scale(1) rotateY(0);
+	}
+}
+
+.booster-cards-open-enter-active .flip-container {
+	animation-duration: 0.5s;
+	animation-name: booster-card-enter;
+	animation-fill-mode: backwards;
+	animation-delay: var(--enter-delay);
+	animation-timing-function: ease-in-out;
+
+	perspective-origin: center center;
+	perspective: 1000px;
+
+	/* Necessary for the transform origin to be correct */
+	width: 100%;
+	height: 100%;
+}
+
+.booster-cards-open-enter-active {
+}
+
 /* Booster passing animation */
 
 .slide-fade-right-enter-active,
@@ -1038,6 +1150,7 @@ ul.player-list {
 }
 
 .booster-cards-enter-active,
+.booster-cards-open-leave-active,
 .booster-cards-leave-active {
 	pointer-events: none; /* Avoid picking cards during transition */
 	transition: all 0.5s;
@@ -1047,16 +1160,19 @@ ul.player-list {
 	opacity: 0;
 }
 
+.booster-cards-open-leave-active.selected,
 .booster-cards-leave-active.selected {
 	transition: all 0.5s;
 	width: calc(var(--booster-card-scale) * 200px);
 	overflow: visible;
 }
 
+.booster-cards-open-leave-active.selected .card-image,
 .booster-cards-leave-active.selected .card-image {
 	width: calc(var(--booster-card-scale) * 200px);
 }
 
+.booster-cards-open-leave-to.selected,
 .booster-cards-leave-to.selected {
 	transform: translateY(250px) translateX(calc(var(--booster-card-scale) * -100px)); /* translateX compensates for width change */
 	z-index: 2;
@@ -1065,10 +1181,12 @@ ul.player-list {
 	margin: 0;
 }
 
+.booster-cards-open-leave-active.burned,
 .booster-cards-leave-active.burned {
 	animation: card-burn 0.5s;
 }
 
+.booster-cards-open-leave-to.burned,
 .booster-cards-leave-to.burned {
 	margin: 0;
 }

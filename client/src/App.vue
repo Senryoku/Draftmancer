@@ -906,7 +906,10 @@
 		<div class="main-content">
 			<!-- Draft Controls -->
 			<div v-show="drafting || draftingState === DraftState.Watching" class="generic-container">
-				<transition :name="`slide-fade-${boosterNumber % 2 ? 'left' : 'right'}`" mode="out-in">
+				<transition
+					:name="pickNumber > 0 ? `slide-fade-${passingOrder === PassingOrder.Left ? 'left' : 'right'}` : ''"
+					mode="out-in"
+				>
 					<div v-if="draftingState === DraftState.Watching" key="draft-watching" class="draft-watching">
 						<div class="draft-watching-state">
 							<h1 v-if="!drafting">Draft Completed</h1>
@@ -1014,10 +1017,12 @@
 						</div>
 						<transition-group
 							tag="div"
-							name="booster-cards"
+							:name="pickNumber === 0 ? 'booster-cards-open' : 'booster-cards'"
 							class="booster card-container"
 							:class="{ 'booster-waiting': draftingState === DraftState.Waiting, skipped: skipPick }"
 							:style="`--booster-card-scale: ${boosterCardScale};`"
+							:duration="pickNumber === 0 ? 2500 : 0"
+							appear
 						>
 							<div class="wait" key="wait" v-if="draftingState === DraftState.Waiting">
 								<font-awesome-icon
@@ -1083,6 +1088,7 @@
 									idx === botScores.chosenOption
 								"
 								:scale="boosterCardScale"
+								:showBackside="pickNumber === 0"
 							></booster-card>
 						</transition-group>
 					</div>
