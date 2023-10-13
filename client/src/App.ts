@@ -230,7 +230,12 @@ export default defineComponent({
 		if (windowSpecificDataStr) {
 			try {
 				const windowSpecificData = JSON.parse(windowSpecificDataStr);
-				if (windowSpecificData.userName && windowSpecificData.userID && windowSpecificData.sessionID) {
+				if (
+					windowSpecificData.userName &&
+					windowSpecificData.userID &&
+					windowSpecificData.sessionID &&
+					(!urlParamSession || sessionID === windowSpecificData.sessionID) // Prioritize sessionID from URL if present
+				) {
 					userName = windowSpecificData.userName;
 					userID = windowSpecificData.userID;
 					sessionID = windowSpecificData.sessionID;
