@@ -54,7 +54,7 @@
 			}
 
 			.content {
-				margin: 5em;
+				margin: calc(min(5vw, 5em));
 				margin-top: 1em;
 			}
 
@@ -223,7 +223,7 @@ Card Name 6
 	"predeterminedLayouts": [["Set1_Rare", "Set1_Mythic"], ["Set2_Rare", "Set2_Mythic"]]
 	"predeterminedLayouts": [{"Set1_Rare": 7, "Set1_Mythic": 1}, {"Set2_Rare": 7, "Set2_Mythic": 1}]
 
-	<comment>// Specify if the layouts are randomly picked with or without replacement (default: true). Ignored if predeterminedLayouts is specified.</comment>
+	<comment>// Specify if the layouts are randomly picked with or without replacement (default: true).</comment>
 	layoutWithReplacement: boolean,     
 }
 </pre>

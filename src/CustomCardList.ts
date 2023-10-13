@@ -102,39 +102,53 @@ export function generateBoosterFromCustomCardList(
 			}
 		}
 
-		const nextLayout = customCardList.settings?.predeterminedLayouts
-			? // Predetermined layouts
-			  (index: number): string => {
-					const choices =
-						customCardList.settings!.predeterminedLayouts![
-							index % customCardList.settings!.predeterminedLayouts!.length
-						]!;
-					if (choices.length === 1) return choices[0].name;
-					return choices[
-						weightedRandomIdx(
-							choices,
-							choices.reduce((acc, curr) => acc + curr.weight, 0)
-						)
-					].name;
-			  }
+		const predeterminedLayouts = customCardList.settings?.predeterminedLayouts;
+
+		const nextLayout = predeterminedLayouts
+			? customCardList.settings?.layoutWithReplacement === false
+				? // Predetermined layouts, without replacement
+				  (() => {
+						const bags: string[][] = predeterminedLayouts.map(() => []);
+						const refill = (index: number) => {
+							const bag = [];
+							for (const layout of predeterminedLayouts[index])
+								for (let i = 0; i < layout.weight; ++i) bag.push(layout.name);
+							shuffleArray(bag);
+							bags[index] = bag;
+						};
+						return (index: number): string => {
+							if (bags[index % bags.length].length === 0) refill(index % bags.length);
+							return bags[index % bags.length].pop()!;
+						};
+				  })()
+				: // Predetermined layouts, with replacement
+				  (index: number): string => {
+						const choices = predeterminedLayouts[index % predeterminedLayouts.length]!;
+						if (choices.length === 1) return choices[0].name;
+						return choices[
+							weightedRandomIdx(
+								choices,
+								choices.reduce((acc, curr) => acc + curr.weight, 0)
+							)
+						].name;
+				  }
 			: customCardList.settings?.layoutWithReplacement === false
 			? // Random layouts without replacement (until we have no other choice)
 			  (() => {
 					let bag: string[] = [];
 					const refill = () => {
 						bag = [];
-						for (const layoutName in layouts) {
+						for (const layoutName in layouts)
 							for (let i = 0; i < layouts[layoutName].weight; ++i) bag.push(layoutName);
-						}
 						shuffleArray(bag);
 					};
-					return (index: number): string => {
+					return (/*index: number*/): string => {
 						if (bag.length === 0) refill();
 						return bag.pop()!;
 					};
 			  })()
 			: // Random layouts
-			  (index: number): string => {
+			  (/*index: number*/): string => {
 					let randomLayout = random.real(0, layoutsTotalWeights);
 					for (const layoutName in layouts) {
 						randomLayout -= layouts[layoutName].weight;

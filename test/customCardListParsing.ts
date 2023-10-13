@@ -132,6 +132,35 @@ describe("Custom Card List Parsing", function () {
 		}
 	});
 
+	it(`should respect the 'predeterminedLayouts' setting using objects, without replacement.`, () => {
+		const session = new Session("sessionid", "clientid");
+		const list = parseCardList(
+			fs.readFileSync(`./test/data/PredeterminedLayouts_Objects_WithoutReplacement.txt`, "utf8"),
+			{}
+		);
+		if (isSocketError(list)) {
+			expect(isSocketError(list), `Got ${JSON.stringify((list as SocketError).error)}`).to.be.false;
+			return;
+		}
+		session.setCustomCardList(list);
+		const boosters = session.generateBoosters(3 * 8, { playerCount: 8 });
+		if (isMessageError(boosters)) {
+			expect(isMessageError(boosters), `Got ${JSON.stringify(boosters)}`).to.be.false;
+			return;
+		}
+		const cardCounts: Record<string, number> = {};
+		for (const b of boosters) for (const c of b) cardCounts[c.name] = (cardCounts[c.name] ?? 0) + 1;
+		for (const cardName of [
+			"Adventure Awaits",
+			"Stomping Ground",
+			"Akoum Hellhound",
+			"Sulfur Falls",
+			"Angelheart Protector",
+			"Sulfurous Springs",
+		])
+			expect(cardCounts[cardName]).to.equal(4);
+	});
+
 	describe("layoutWithoutReplacement.txt", () => {
 		const session = new Session("sessionid", "clientid");
 		it(`should parse without error.`, () => {
