@@ -1017,115 +1017,144 @@ ul.player-list {
 }
 
 .booster-card {
-	--enter-delay-interval: 0.075s;
+	--animation-index: 0;
+	--enter-delay-interval: 0.06s;
 	--enter-delay: calc((21 - 1) * var(--enter-delay-interval));
 }
 .booster-card:nth-last-child(1) {
+	--animation-index: 1;
 	--enter-delay: 0s;
 }
 .booster-card:nth-last-child(2) {
+	--animation-index: 2;
 	--enter-delay: calc((2 - 1) * var(--enter-delay-interval));
 }
 .booster-card:nth-last-child(3) {
+	--animation-index: 3;
 	--enter-delay: calc((3 - 1) * var(--enter-delay-interval));
 }
 .booster-card:nth-last-child(4) {
+	--animation-index: 4;
 	--enter-delay: calc((4 - 1) * var(--enter-delay-interval));
 }
 .booster-card:nth-last-child(5) {
+	--animation-index: 5;
 	--enter-delay: calc((5 - 1) * var(--enter-delay-interval));
 }
 .booster-card:nth-last-child(6) {
+	--animation-index: 6;
 	--enter-delay: calc((6 - 1) * var(--enter-delay-interval));
 }
 .booster-card:nth-last-child(7) {
+	--animation-index: 7;
 	--enter-delay: calc((7 - 1) * var(--enter-delay-interval));
 }
 .booster-card:nth-last-child(8) {
+	--animation-index: 8;
 	--enter-delay: calc((8 - 1) * var(--enter-delay-interval));
 }
 .booster-card:nth-last-child(9) {
+	--animation-index: 9;
 	--enter-delay: calc((9 - 1) * var(--enter-delay-interval));
 }
 .booster-card:nth-last-child(10) {
+	--animation-index: 10;
 	--enter-delay: calc((10 - 1) * var(--enter-delay-interval));
 }
 .booster-card:nth-last-child(11) {
+	--animation-index: 11;
 	--enter-delay: calc((11 - 1) * var(--enter-delay-interval));
 }
 .booster-card:nth-last-child(12) {
+	--animation-index: 12;
 	--enter-delay: calc((12 - 1) * var(--enter-delay-interval));
 }
 .booster-card:nth-last-child(13) {
+	--animation-index: 13;
 	--enter-delay: calc((13 - 1) * var(--enter-delay-interval));
 }
 .booster-card:nth-last-child(14) {
+	--animation-index: 14;
 	--enter-delay: calc((14 - 1) * var(--enter-delay-interval));
 }
 .booster-card:nth-last-child(15) {
+	--animation-index: 15;
 	--enter-delay: calc((15 - 1) * var(--enter-delay-interval));
 }
 .booster-card:nth-last-child(16) {
+	--animation-index: 16;
 	--enter-delay: calc((16 - 1) * var(--enter-delay-interval));
 }
 .booster-card:nth-last-child(17) {
+	--animation-index: 17;
 	--enter-delay: calc((17 - 1) * var(--enter-delay-interval));
 }
 .booster-card:nth-last-child(18) {
+	--animation-index: 18;
 	--enter-delay: calc((18 - 1) * var(--enter-delay-interval));
 }
 .booster-card:nth-last-child(19) {
+	--animation-index: 19;
 	--enter-delay: calc((19 - 1) * var(--enter-delay-interval));
 }
 .booster-card:nth-last-child(20) {
+	--animation-index: 20;
 	--enter-delay: calc((20 - 1) * var(--enter-delay-interval));
 }
 
-.booster-card .card-image .flip-containerqsd {
-	animation-duration: 0.4s;
-	animation-name: booster-card-enter;
+.booster-cards-open-enter-active {
+	z-index: var(--animation-index);
+}
+
+.booster-cards-open-enter-active,
+.booster-cards-open-enter-active .flip-container {
 	animation-fill-mode: backwards;
+	animation-duration: 2s;
 	animation-delay: var(--enter-delay);
-	animation-timing-function: ease-in-out;
+}
 
-	perspective-origin: center center;
-	perspective: 1000px;
-
-	/* Necessary for the transform origin to be correct */
-	width: 100%;
-	height: 100%;
-
-	animation-iteration-count: infinite;
+.booster-cards-open-enter-active {
+	animation-name: booster-card-enter;
+	animation-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
 @keyframes booster-card-enter {
 	0% {
-		transform: scale(1) rotateY(-180deg);
+		transform: translate(var(--initial-translation-x), 0);
 	}
-	50% {
+	33% {
+		transform: translate(0, 0);
+	}
+	66% {
+		transform: translate(0, 0);
+	}
+	100% {
+		transform: translate(0, 0);
+	}
+}
+
+.booster-cards-open-enter-active .flip-container {
+	animation-name: booster-card-enter-flip;
+	animation-timing-function: linear;
+
+	/* Necessary for the transform origin to be correct */
+	width: 100%;
+	height: 100%;
+}
+
+@keyframes booster-card-enter-flip {
+	0% {
+		transform: scale(1) translate(0, var(--initial-translation-y)) rotateY(-180deg);
+	}
+	33% {
+		transform: scale(1) translate(0, 0) rotateY(-180deg);
+	}
+	66% {
 		transform: scale(1.15) rotateY(-90deg);
 	}
 	100% {
 		transform: scale(1) rotateY(0);
 	}
-}
-
-.booster-cards-open-enter-active .flip-container {
-	animation-duration: 0.5s;
-	animation-name: booster-card-enter;
-	animation-fill-mode: backwards;
-	animation-delay: var(--enter-delay);
-	animation-timing-function: ease-in-out;
-
-	perspective-origin: center center;
-	perspective: 1000px;
-
-	/* Necessary for the transform origin to be correct */
-	width: 100%;
-	height: 100%;
-}
-
-.booster-cards-open-enter-active {
 }
 
 /* Booster passing animation */

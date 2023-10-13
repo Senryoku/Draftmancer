@@ -3403,6 +3403,18 @@ export default defineComponent({
 				else fireToast("success", "Takeover request succeeded!");
 			});
 		},
+
+		onEnterBoosterCards(e: Element) {
+			const el = e as HTMLElement;
+			const p = el.parentElement;
+			if (p) {
+				const target = [p.offsetLeft + p.clientWidth / 2, p.offsetTop + p.clientHeight / 2];
+				const center = [el.offsetLeft + el.clientWidth / 2, el.offsetTop + el.clientHeight / 2];
+				const offset = [target[0] - center[0], target[1] - center[1]];
+				el.style.setProperty("--initial-translation-x", `${offset[0]}px`);
+				el.style.setProperty("--initial-translation-y", `${offset[1]}px`);
+			}
+		},
 	},
 	computed: {
 		deckDisplay(): typeof CardPool | null {
