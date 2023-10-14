@@ -1018,8 +1018,8 @@ ul.player-list {
 
 .booster-card {
 	--animation-index: 0;
-	--enter-delay-interval: 0.06s;
-	--enter-delay: calc((21 - 1) * var(--enter-delay-interval));
+	--enter-delay-interval: 0.08s;
+	--enter-delay: calc((var(--animation-index) - 1) * var(--enter-delay-interval));
 }
 .booster-card:nth-last-child(1) {
 	--animation-index: 1;
@@ -1027,105 +1027,111 @@ ul.player-list {
 }
 .booster-card:nth-last-child(2) {
 	--animation-index: 2;
-	--enter-delay: calc((2 - 1) * var(--enter-delay-interval));
 }
 .booster-card:nth-last-child(3) {
 	--animation-index: 3;
-	--enter-delay: calc((3 - 1) * var(--enter-delay-interval));
 }
 .booster-card:nth-last-child(4) {
 	--animation-index: 4;
-	--enter-delay: calc((4 - 1) * var(--enter-delay-interval));
 }
 .booster-card:nth-last-child(5) {
 	--animation-index: 5;
-	--enter-delay: calc((5 - 1) * var(--enter-delay-interval));
 }
 .booster-card:nth-last-child(6) {
 	--animation-index: 6;
-	--enter-delay: calc((6 - 1) * var(--enter-delay-interval));
 }
 .booster-card:nth-last-child(7) {
 	--animation-index: 7;
-	--enter-delay: calc((7 - 1) * var(--enter-delay-interval));
 }
 .booster-card:nth-last-child(8) {
 	--animation-index: 8;
-	--enter-delay: calc((8 - 1) * var(--enter-delay-interval));
 }
 .booster-card:nth-last-child(9) {
 	--animation-index: 9;
-	--enter-delay: calc((9 - 1) * var(--enter-delay-interval));
 }
 .booster-card:nth-last-child(10) {
 	--animation-index: 10;
-	--enter-delay: calc((10 - 1) * var(--enter-delay-interval));
 }
 .booster-card:nth-last-child(11) {
 	--animation-index: 11;
-	--enter-delay: calc((11 - 1) * var(--enter-delay-interval));
 }
 .booster-card:nth-last-child(12) {
 	--animation-index: 12;
-	--enter-delay: calc((12 - 1) * var(--enter-delay-interval));
 }
 .booster-card:nth-last-child(13) {
 	--animation-index: 13;
-	--enter-delay: calc((13 - 1) * var(--enter-delay-interval));
 }
 .booster-card:nth-last-child(14) {
 	--animation-index: 14;
-	--enter-delay: calc((14 - 1) * var(--enter-delay-interval));
 }
 .booster-card:nth-last-child(15) {
 	--animation-index: 15;
-	--enter-delay: calc((15 - 1) * var(--enter-delay-interval));
 }
 .booster-card:nth-last-child(16) {
 	--animation-index: 16;
-	--enter-delay: calc((16 - 1) * var(--enter-delay-interval));
 }
 .booster-card:nth-last-child(17) {
 	--animation-index: 17;
-	--enter-delay: calc((17 - 1) * var(--enter-delay-interval));
 }
 .booster-card:nth-last-child(18) {
 	--animation-index: 18;
-	--enter-delay: calc((18 - 1) * var(--enter-delay-interval));
 }
 .booster-card:nth-last-child(19) {
 	--animation-index: 19;
-	--enter-delay: calc((19 - 1) * var(--enter-delay-interval));
 }
 .booster-card:nth-last-child(20) {
 	--animation-index: 20;
-	--enter-delay: calc((20 - 1) * var(--enter-delay-interval));
 }
 
 .booster-cards-open-enter-active {
-	z-index: var(--animation-index);
 }
 
 .booster-cards-open-enter-active,
 .booster-cards-open-enter-active .flip-container {
+	--full-duration: 2s;
+	--intro-duration: 0.75s;
 	animation-fill-mode: backwards;
-	animation-duration: 2s;
-	animation-delay: var(--enter-delay);
+	animation-duration: var(--full-duration);
+	animation-delay: calc(var(--intro-duration) + var(--enter-delay));
 }
 
 .booster-cards-open-enter-active {
-	animation-name: booster-card-enter;
-	animation-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
+	/*
+	animation-name: booster-card-enter-together, booster-card-enter;
+	animation-timing-function: ease-out, cubic-bezier(0.075, 0.42, 0.165, 1);
+	animation-delay: 0, var(--enter-delay);
+	*/
+	animation:
+		booster-card-enter-together var(--intro-duration) ease 0s 1,
+		booster-card-enter calc(var(--full-duration) - var(--intro-duration)) cubic-bezier(0.34, 0, 0.3, 1)
+			calc(var(--intro-duration) + var(--enter-delay)) 1;
+	animation-fill-mode: forwards, forwards;
+	transform-origin: center 140%;
+}
+
+@keyframes booster-card-enter-together {
+	0% {
+		transform: translate(var(--initial-translation-x), 0) rotate(0);
+	}
+	60% {
+		transform: translate(var(--initial-translation-x), 0) rotate(var(--initial-rotation));
+	}
+	80% {
+		transform: translate(var(--initial-translation-x), -3px) rotate(var(--initial-rotation));
+	}
+	100% {
+		transform: translate(var(--initial-translation-x), 0) rotate(var(--initial-rotation));
+	}
 }
 
 @keyframes booster-card-enter {
 	0% {
-		transform: translate(var(--initial-translation-x), 0);
+		transform: translate(var(--initial-translation-x), 0) rotate(var(--initial-rotation));
 	}
-	33% {
+	35% {
 		transform: translate(0, 0);
 	}
-	66% {
+	75% {
 		transform: translate(0, 0);
 	}
 	100% {
@@ -1135,7 +1141,7 @@ ul.player-list {
 
 .booster-cards-open-enter-active .flip-container {
 	animation-name: booster-card-enter-flip;
-	animation-timing-function: linear;
+	animation-timing-function: ease-in-out;
 
 	/* Necessary for the transform origin to be correct */
 	width: 100%;
@@ -1146,10 +1152,10 @@ ul.player-list {
 	0% {
 		transform: scale(1) translate(0, var(--initial-translation-y)) rotateY(-180deg);
 	}
-	33% {
+	50% {
 		transform: scale(1) translate(0, 0) rotateY(-180deg);
 	}
-	66% {
+	75% {
 		transform: scale(1.15) rotateY(-90deg);
 	}
 	100% {
