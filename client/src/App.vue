@@ -1026,7 +1026,6 @@
 							@enter="onEnterBoosterCards"
 							appear
 						>
-							<!-- FIX DURATION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!-->
 							<div class="wait" key="wait" v-if="draftingState === DraftState.Waiting">
 								<font-awesome-icon
 									class="passing-order"

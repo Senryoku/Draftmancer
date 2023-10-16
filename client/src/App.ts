@@ -3418,18 +3418,6 @@ export default defineComponent({
 				const offset = [target[0] - center[0], target[1] - center[1]];
 				const index = Array.from(p.children).indexOf(el);
 				const rotation = index - p.children.length / 2;
-				console.log(
-					"Index:",
-					index,
-					"Target: ",
-					target,
-					" Center: ",
-					center,
-					" Offset: ",
-					offset,
-					" Rotation: ",
-					rotation
-				);
 				el.style.setProperty("--initial-translation-x", `${offset[0]}px`);
 				el.style.setProperty("--initial-translation-y", `${offset[1]}px`);
 				el.style.setProperty("--initial-rotation", `${rotation}deg`);
