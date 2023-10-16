@@ -1022,7 +1022,7 @@
 							class="booster card-container"
 							:class="{ 'booster-waiting': draftingState === DraftState.Waiting, skipped: skipPick }"
 							:style="`--booster-card-scale: ${boosterCardScale};`"
-							:duration="pickNumber === 0 ? 1000 + 500 + Math.min(20, booster.length) * 40 : 0"
+							:duration="pickNumber === 0 ? 500 + 500 + 400 + Math.min(20, booster.length) * 40 : 0"
 							@enter="onEnterBoosterCards"
 							appear
 						>

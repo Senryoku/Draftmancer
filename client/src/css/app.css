@@ -1022,7 +1022,7 @@ ul.player-list {
 	--flip-duration: 0.4s;
 	--enter-delay-interval: 0.04s;
 
-	--animation-index: 0;
+	--animation-index: 20;
 	--enter-delay: calc((var(--animation-index) - 1) * var(--enter-delay-interval));
 }
 .booster-card:nth-child(1) {
