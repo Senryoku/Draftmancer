@@ -34,14 +34,14 @@
 		<div v-if="card.layout === 'split-left'" class="split-left-button">
 			<img src="../assets/img/tap-icon.svg" class="split-left-icon" />
 		</div>
-		<div :class="{ 'flip-container': hasBack || showBackside }">
+		<div :class="{ 'flip-container': hasBack || renderCommonBackside }">
 			<clazy-load
 				:ratio="0"
 				margin="200px"
 				:src="imageURI"
 				loadingClass="card-loading"
 				:forceLoad="!lazyLoad"
-				:class="{ 'flip-front': hasBack || showBackside }"
+				:class="{ 'flip-front': hasBack || renderCommonBackside }"
 			>
 				<img class="front-image" :src="imageURI" />
 				<template v-slot:placeholder>
@@ -62,7 +62,7 @@
 					<card-placeholder :card="card.back"></card-placeholder>
 				</template>
 			</clazy-load>
-			<div class="flip-back" v-else-if="showBackside">
+			<div class="flip-back" v-else-if="renderCommonBackside">
 				<card-placeholder />
 			</div>
 
@@ -126,7 +126,7 @@ export default defineComponent({
 		lazyLoad: { type: Boolean, default: false },
 		fixedLayout: { type: Boolean, default: false },
 		displayCardText: { type: Boolean, default: false },
-		showBackside: { type: Boolean, default: true },
+		renderCommonBackside: { type: Boolean, default: true }, // Render standard card back, mostly for animation purposes.
 	},
 	computed: {
 		imageURI() {

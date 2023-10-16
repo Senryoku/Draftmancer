@@ -1090,7 +1090,7 @@
 									idx === botScores.chosenOption
 								"
 								:scale="boosterCardScale"
-								:showBackside="pickNumber === 0"
+								:renderCommonBackside="pickNumber === 0"
 							></booster-card>
 						</transition-group>
 					</div>

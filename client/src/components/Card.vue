@@ -14,7 +14,7 @@
 			:language="language"
 			:lazyLoad="lazyLoad"
 			:displayCardText="displayCardText"
-			:showBackside="showBackside"
+			:renderCommonBackside="renderCommonBackside"
 			ref="image"
 		/>
 		<div v-if="notes || notedColors" class="additional-notes">
@@ -43,7 +43,7 @@ export default defineComponent({
 		card: { type: Object as PropType<UniqueCard>, required: true },
 		language: { type: String as PropType<Language>, default: "en" },
 		lazyLoad: { type: Boolean, default: false },
-		showBackside: { type: Boolean, default: false },
+		renderCommonBackside: { type: Boolean, default: false },
 		conditionalClasses: { type: Function },
 	},
 	data() {
