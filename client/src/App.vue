@@ -1021,10 +1021,11 @@
 							class="booster card-container"
 							:class="{ 'booster-waiting': draftingState === DraftState.Waiting, skipped: skipPick }"
 							:style="`--booster-card-scale: ${boosterCardScale};`"
-							:duration="pickNumber === 0 ? 10000 : 0"
+							:duration="pickNumber === 0 ? 1000 + 500 + Math.min(20, booster.length) * 40 : 0"
 							@enter="onEnterBoosterCards"
 							appear
-							><!-- FIX DURATION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!-->
+						>
+							<!-- FIX DURATION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!-->
 							<div class="wait" key="wait" v-if="draftingState === DraftState.Waiting">
 								<font-awesome-icon
 									class="passing-order"
