@@ -1015,6 +1015,7 @@
 							</div>
 							<scale-slider v-model.number="boosterCardScale" style="float: right" />
 						</div>
+						<!-- Note: Duration for booster-cards-open can't be determined by Vue since it's composite. Be sure to keep that in sync :) -->
 						<transition-group
 							tag="div"
 							:name="pickNumber === 0 ? 'booster-cards-open' : 'booster-cards'"
@@ -1025,7 +1026,6 @@
 							@enter="onEnterBoosterCards"
 							appear
 						>
-							<!-- FIX DURATION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!-->
 							<div class="wait" key="wait" v-if="draftingState === DraftState.Waiting">
 								<font-awesome-icon
 									class="passing-order"
