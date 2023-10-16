@@ -1017,13 +1017,17 @@ ul.player-list {
 }
 
 .booster-card {
+	--intro-duration: 0.5s;
+	--translation-duration: 0.5s;
+	--flip-duration: 0.4s;
+	--enter-delay-interval: 0.04s;
+
 	--animation-index: 0;
-	--enter-delay-interval: 0.08s;
 	--enter-delay: calc((var(--animation-index) - 1) * var(--enter-delay-interval));
 }
+/*
 .booster-card:nth-last-child(1) {
 	--animation-index: 1;
-	--enter-delay: 0s;
 }
 .booster-card:nth-last-child(2) {
 	--animation-index: 2;
@@ -1082,17 +1086,73 @@ ul.player-list {
 .booster-card:nth-last-child(20) {
 	--animation-index: 20;
 }
+*/
+.booster-card:nth-child(1) {
+	--animation-index: 1;
+}
+.booster-card:nth-child(2) {
+	--animation-index: 2;
+}
+.booster-card:nth-child(3) {
+	--animation-index: 3;
+}
+.booster-card:nth-child(4) {
+	--animation-index: 4;
+}
+.booster-card:nth-child(5) {
+	--animation-index: 5;
+}
+.booster-card:nth-child(6) {
+	--animation-index: 6;
+}
+.booster-card:nth-child(7) {
+	--animation-index: 7;
+}
+.booster-card:nth-child(8) {
+	--animation-index: 8;
+}
+.booster-card:nth-child(9) {
+	--animation-index: 9;
+}
+.booster-card:nth-child(10) {
+	--animation-index: 10;
+}
+.booster-card:nth-child(11) {
+	--animation-index: 11;
+}
+.booster-card:nth-child(12) {
+	--animation-index: 12;
+}
+.booster-card:nth-child(13) {
+	--animation-index: 13;
+}
+.booster-card:nth-child(14) {
+	--animation-index: 14;
+}
+.booster-card:nth-child(15) {
+	--animation-index: 15;
+}
+.booster-card:nth-child(16) {
+	--animation-index: 16;
+}
+.booster-card:nth-child(17) {
+	--animation-index: 17;
+}
+.booster-card:nth-child(18) {
+	--animation-index: 18;
+}
+.booster-card:nth-child(19) {
+	--animation-index: 19;
+}
+.booster-card:nth-child(20) {
+	--animation-index: 20;
+}
 
 .booster-cards-open-enter-active {
 }
 
 .booster-cards-open-enter-active,
 .booster-cards-open-enter-active .flip-container {
-	--full-duration: 2s;
-	--intro-duration: 0.75s;
-	animation-fill-mode: backwards;
-	animation-duration: var(--full-duration);
-	animation-delay: calc(var(--intro-duration) + var(--enter-delay));
 }
 
 .booster-cards-open-enter-active {
@@ -1103,24 +1163,26 @@ ul.player-list {
 	*/
 	animation:
 		booster-card-enter-together var(--intro-duration) ease 0s 1,
-		booster-card-enter calc(var(--full-duration) - var(--intro-duration)) cubic-bezier(0.34, 0, 0.3, 1)
+		booster-card-enter var(--translation-duration) cubic-bezier(0.34, 0, 0.3, 1)
 			calc(var(--intro-duration) + var(--enter-delay)) 1;
 	animation-fill-mode: forwards, forwards;
 	transform-origin: center 140%;
 }
 
+/* Cards from the bottom row are more spaced out, I don't know why */
 @keyframes booster-card-enter-together {
 	0% {
-		transform: translate(var(--initial-translation-x), 0) rotate(0);
+		transform: translate(var(--initial-translation-x), var(--initial-translation-y)) rotate(0);
 	}
 	60% {
-		transform: translate(var(--initial-translation-x), 0) rotate(var(--initial-rotation));
+		transform: translate(var(--initial-translation-x), var(--initial-translation-y)) rotate(var(--initial-rotation));
 	}
 	80% {
-		transform: translate(var(--initial-translation-x), -3px) rotate(var(--initial-rotation));
+		transform: translate(var(--initial-translation-x), calc(var(--initial-translation-y) - 3px))
+			rotate(var(--initial-rotation));
 	}
 	100% {
-		transform: translate(var(--initial-translation-x), 0) rotate(var(--initial-rotation));
+		transform: translate(var(--initial-translation-x), var(--initial-translation-y)) rotate(var(--initial-rotation));
 	}
 }
 
@@ -1140,22 +1202,33 @@ ul.player-list {
 }
 
 .booster-cards-open-enter-active .flip-container {
-	animation-name: booster-card-enter-flip;
-	animation-timing-function: ease-in-out;
+	animation:
+		booster-card-enter-translate calc(var(--translation-duration)) ease
+			calc(var(--intro-duration) + var(--enter-delay)) 1,
+		booster-card-enter-flip var(--flip-duration) ease-in
+			calc(var(--intro-duration) + var(--translation-duration) + var(--enter-delay)) 1;
+	animation-fill-mode: none, forwards;
 
 	/* Necessary for the transform origin to be correct */
 	width: 100%;
 	height: 100%;
+	transform: scale(1) translate(0, 0) rotateY(-180deg);
+}
+
+@keyframes booster-card-enter-translate {
+	0% {
+		transform: scale(1) translate(0, var(--initial-translation-y)) rotateY(-180deg);
+	}
+	100% {
+		transform: scale(1) translate(0, 0) rotateY(-180deg);
+	}
 }
 
 @keyframes booster-card-enter-flip {
 	0% {
-		transform: scale(1) translate(0, var(--initial-translation-y)) rotateY(-180deg);
-	}
-	50% {
 		transform: scale(1) translate(0, 0) rotateY(-180deg);
 	}
-	75% {
+	50% {
 		transform: scale(1.15) rotateY(-90deg);
 	}
 	100% {

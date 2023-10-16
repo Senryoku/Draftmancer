@@ -3412,7 +3412,7 @@ export default defineComponent({
 				const center = [el.offsetLeft + el.clientWidth / 2, el.offsetTop + el.clientHeight / 2];
 				const offset = [target[0] - center[0], target[1] - center[1]];
 				const index = Array.from(p.children).indexOf(el);
-				const rotation = -(index - p.children.length / 2);
+				const rotation = index - p.children.length / 2;
 				console.log(
 					"Index:",
 					index,
