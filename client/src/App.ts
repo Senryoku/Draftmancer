@@ -252,12 +252,12 @@ export default defineComponent({
 
 		const storedSessionSettings = localStorage.getItem(localStorageSessionSettingsKey) ?? "{}";
 
-		const query = {
+		const query: Record<string, string> = {
 			userID: userID,
 			userName: userName,
 			sessionSettings: storedSessionSettings,
-			sessionID: sessionID,
 		};
+		if (sessionID) query.sessionID = sessionID; // Note: Setting sessionID to undefined will send it as the "undefined" string, and that's not what we want...
 
 		// Socket Setup
 		const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io({
