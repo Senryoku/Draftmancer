@@ -5,6 +5,7 @@
 		:class="{ selected: selected, burned: burned, 'bot-picked': botpicked }"
 		class="booster-card"
 		:style="`--booster-card-scale: ${scale}`"
+		:renderCommonBackside="renderCommonBackside"
 	>
 		<div v-if="slotName" class="slot-name">{{ slotName }}</div>
 		<div
@@ -55,6 +56,7 @@ export default defineComponent({
 		botscore: { type: Number, default: null },
 		botpicked: { type: Boolean, default: false },
 		scale: { type: Number, default: 1 },
+		renderCommonBackside: { type: Boolean, default: false },
 	},
 	methods: {
 		burnCard(e: Event) {

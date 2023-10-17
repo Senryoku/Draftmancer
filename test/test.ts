@@ -2168,7 +2168,7 @@ describe("Sealed", function () {
 		const ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
 		let receivedPools = 0;
 		for (const client of clients)
-			client.once("setCardSelection", (boosters) => {
+			client.once("sealedBoosters", (boosters) => {
 				expect(boosters.length).to.equal(boosterCount);
 				++receivedPools;
 				if (receivedPools === clients.length) done();
@@ -2191,7 +2191,7 @@ describe("Sealed", function () {
 		const ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
 		let receivedPools = 0;
 		for (const client of clients)
-			client.once("setCardSelection", (boosters) => {
+			client.once("sealedBoosters", (boosters) => {
 				expect(boosters.length).to.equal(boosterCount);
 				for (let idx = 0; idx < boosters.length; ++idx)
 					expect(boosters[idx].every((c) => c.set === CustomBoosters[idx]));
@@ -2257,13 +2257,12 @@ describe("Jumpstart", function () {
 		done();
 	});
 
-	it(`Owner launches a Jumpstart game, clients should receive their card selection (2*20 cards).`, function (done) {
+	it(`Owner launches a Jumpstart game, clients should receive their card selection (40 cards).`, function (done) {
 		const ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
 		let receivedPools = 0;
 		for (const client of clients) {
-			client.once("setCardSelection", function (boosters) {
-				expect(boosters.length).to.equal(2);
-				for (const b of boosters) expect(b.length).to.equal(20);
+			client.once("setCardPool", function (cards) {
+				expect(cards.length).to.equal(40);
 				++receivedPools;
 				if (receivedPools === clients.length) done();
 			});
@@ -2315,13 +2314,12 @@ describe("Jumpstart 2022", function () {
 		done();
 	});
 
-	it(`Owner launches a Jumpstart 2022 game, clients should receive their card selection (2*20 cards).`, function (done) {
+	it(`Owner launches a Jumpstart 2022 game, clients should receive their card selection (40 cards).`, function (done) {
 		const ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
 		let receivedPools = 0;
 		for (const client of clients) {
-			client.once("setCardSelection", function (boosters) {
-				expect(boosters.length).to.equal(2);
-				for (const b of boosters) expect(b.length).to.equal(20);
+			client.once("setCardPool", function (cards) {
+				expect(cards.length).to.equal(40);
 				++receivedPools;
 				if (receivedPools === clients.length) done();
 			});

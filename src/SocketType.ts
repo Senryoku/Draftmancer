@@ -96,7 +96,8 @@ export interface ServerToClientEvents {
 
 	resumeOnReconnection: (msg: Message) => void;
 
-	setCardSelection: (boosters: UniqueCard[][]) => void;
+	sealedBoosters: (boosters: UniqueCard[][]) => void;
+	setCardPool: (cards: UniqueCard[]) => void;
 	addCards: (message: string, cards: UniqueCard[]) => void;
 	updateCardState: (updates: { cardID: UniqueCardID; state: UniqueCardState }[]) => void;
 

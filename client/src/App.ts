@@ -40,6 +40,7 @@ import {
 	copyToClipboard,
 	escapeHTML,
 	sortableUpdate,
+	onEnterBoosterCards,
 } from "./helper";
 import { eraseCookie, getCookie, setCookie } from "./cookies";
 import { ButtonColor, Alert, fireToast } from "./alerts";
@@ -64,6 +65,7 @@ import HousmanDialog from "./components/HousmanDialog.vue";
 import MinesweeperDialog from "./components/MinesweeperDraftDialog.vue";
 import RotisserieDraftDialog from "./components/RotisserieDraftDialog.vue";
 import SealedDialog from "./components/SealedDialog.vue";
+import SealedPresentation from "./components/SealedPresentation.vue";
 import SolomonDialog from "./components/SolomonDialog.vue";
 import WinchesterDialog from "./components/WinchesterDraftDialog.vue";
 import WinstonDialog from "./components/WinstonDraftDialog.vue";
@@ -1292,19 +1294,18 @@ export default defineComponent({
 
 			this.socket.on("selectJumpstartPacks", this.selectJumpstartPacks);
 
-			this.socket.on("setCardSelection", (data) => {
-				if (!data) return;
-				const cards = data.reduce((acc, val) => acc.concat(val), []); // Flatten if necessary
-				if (cards.length === 0) return;
-				this.clearState();
-				// Let vue react to changes to card pools
-				this.$nextTick(() => {
-					this.addToDeck(cards);
-					this.draftingState = DraftState.Brewing;
-					fireToast("success", "Cards received!");
-					this.pushNotification("Cards received!");
+			this.socket.on("sealedBoosters", (boosters) => {
+				const cards = boosters.reduce((acc, val) => acc.concat(val), []);
+				this.spawnDialog(SealedPresentation, {
+					boosters: false // Note: SealedPresentation has the ability to present boosters one by one, we're not using it, yet.
+						? boosters
+						: [cards.filter((c) => c.rarity !== "common" && c.rarity !== "uncommon")],
+					title: "Sealed - Rares and Mythics",
 				});
+				this.setCardPool(cards);
 			});
+
+			this.socket.on("setCardPool", this.setCardPool);
 
 			this.socket.on("addCards", (message, cards) => {
 				fireToast("info", `${message} ${cards.map((c) => c.name).join(", ")}`);
@@ -1490,6 +1491,17 @@ export default defineComponent({
 				text: this.currentChatMessage,
 			});
 			this.currentChatMessage = "";
+		},
+		setCardPool(cards: UniqueCard[]) {
+			if (!cards || cards.length === 0) return;
+			this.clearState();
+			// Let vue react to changes to card pools
+			this.$nextTick(() => {
+				this.addToDeck(cards);
+				this.draftingState = DraftState.Brewing;
+				fireToast("success", "Cards received!");
+				this.pushNotification("Cards received!");
+			});
 		},
 		// Draft Methods
 		async startDraft() {
@@ -3408,6 +3420,8 @@ export default defineComponent({
 				else fireToast("success", "Takeover request succeeded!");
 			});
 		},
+
+		onEnterBoosterCards: onEnterBoosterCards,
 	},
 	computed: {
 		deckDisplay(): typeof CardPool | null {

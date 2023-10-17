@@ -195,11 +195,15 @@ export default /*#__PURE__*/ defineComponent({
 }
 
 .turnover-enter-active {
-	transition: transform 0.3s ease-out, scale 0.3s ease-in-out !important;
+	transition:
+		transform 0.3s ease-out,
+		scale 0.3s ease-in-out !important;
 }
 
 .turnover-leave-active {
-	transition: transform 0.3s ease-in, scale 0.3s ease-in-out !important;
+	transition:
+		transform 0.3s ease-in,
+		scale 0.3s ease-in-out !important;
 }
 
 .turnover-enter-from,

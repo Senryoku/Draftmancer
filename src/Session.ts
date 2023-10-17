@@ -2981,10 +2981,10 @@ export class Session implements IIndexable {
 				playersBoosters.push(boosters[currIdx]);
 				currIdx += this.users.size;
 			}
-			Connections[userID].socket.emit("setCardSelection", playersBoosters);
 			Connections[userID].pickedCards.main = playersBoosters.flat();
 			Connections[userID].pickedCards.side = [];
-			log.users[userID].cards = playersBoosters.flat().map((c) => c.id);
+			log.users[userID].cards = Connections[userID].pickedCards.main.flat().map((c) => c.id);
+			Connections[userID].socket.emit("sealedBoosters", playersBoosters);
 			++idx;
 		}
 
@@ -3175,12 +3175,12 @@ export class Session implements IIndexable {
 			const BoosterImage = { jmp: "/img/2JumpstartBoosters.webp", j22: "/img/2Jumpstart2022Boosters.webp" }[set];
 			for (const user of this.users) {
 				const boosters = [getRandom(JMPBoosters), getRandom(JMPBoosters)];
-				const cards = boosters.map((b) => b.cards.map((cid: CardID) => getUnique(cid)));
+				const cards = boosters.map((b) => b.cards.map((cid: CardID) => getUnique(cid))).flat();
 
-				log.users[user].cards = cards.flat().map((c: Card) => c.id);
+				log.users[user].cards = cards.map((c: Card) => c.id);
 				for (const cid of log.users[user].cards) log.carddata[cid] = getCard(cid);
 
-				Connections[user].socket.emit("setCardSelection", cards);
+				Connections[user].socket.emit("setCardPool", cards);
 				Connections[user].socket.emit("message", {
 					icon: "success",
 					imageUrl: BoosterImage,

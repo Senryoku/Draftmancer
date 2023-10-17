@@ -192,3 +192,19 @@ export function fitFontSize(
 	}
 	target.classList.remove("fitting");
 }
+
+// Should be called on enter for the booster-open transition
+export function onEnterBoosterCards(e: Element) {
+	const el = e as HTMLElement;
+	const p = el.parentElement;
+	if (p) {
+		const target = [p.offsetLeft + p.clientWidth / 2, p.offsetTop + p.clientHeight / 2];
+		const center = [el.offsetLeft + el.clientWidth / 2, el.offsetTop + el.clientHeight / 2];
+		const offset = [target[0] - center[0], target[1] - center[1]];
+		const index = Array.from(p.children).indexOf(el);
+		const rotation = index - p.children.length / 2;
+		el.style.setProperty("--initial-translation-x", `${offset[0]}px`);
+		el.style.setProperty("--initial-translation-y", `${offset[1]}px`);
+		el.style.setProperty("--initial-rotation", `${rotation}deg`);
+	}
+}

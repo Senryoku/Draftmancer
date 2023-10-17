@@ -1018,6 +1018,7 @@ ul.player-list {
 
 /* Booster passing animation */
 
+.booster-fade-in-enter-active,
 .slide-fade-right-enter-active,
 .slide-fade-right-leave-active,
 .slide-fade-left-enter-active,
@@ -1037,6 +1038,11 @@ ul.player-list {
 	opacity: 0;
 }
 
+.booster-fade-in-enter-from {
+	opacity: 0;
+}
+
+.booster-open-leave-active,
 .booster-cards-enter-active,
 .booster-cards-leave-active {
 	pointer-events: none; /* Avoid picking cards during transition */
@@ -1047,16 +1053,19 @@ ul.player-list {
 	opacity: 0;
 }
 
+.booster-open-leave-active.selected,
 .booster-cards-leave-active.selected {
 	transition: all 0.5s;
 	width: calc(var(--booster-card-scale) * 200px);
 	overflow: visible;
 }
 
+.booster-open-leave-active.selected .card-image,
 .booster-cards-leave-active.selected .card-image {
 	width: calc(var(--booster-card-scale) * 200px);
 }
 
+.booster-open-leave-to.selected,
 .booster-cards-leave-to.selected {
 	transform: translateY(250px) translateX(calc(var(--booster-card-scale) * -100px)); /* translateX compensates for width change */
 	z-index: 2;
@@ -1065,10 +1074,12 @@ ul.player-list {
 	margin: 0;
 }
 
+.booster-open-leave-active.burned,
 .booster-cards-leave-active.burned {
 	animation: card-burn 0.5s;
 }
 
+.booster-open-leave-to.burned,
 .booster-cards-leave-to.burned {
 	margin: 0;
 }

@@ -906,7 +906,14 @@
 		<div class="main-content">
 			<!-- Draft Controls -->
 			<div v-show="drafting || draftingState === DraftState.Watching" class="generic-container">
-				<transition :name="`slide-fade-${boosterNumber % 2 ? 'left' : 'right'}`" mode="out-in">
+				<transition
+					:name="
+						pickNumber > 0
+							? `slide-fade-${passingOrder === PassingOrder.Left ? 'left' : 'right'}`
+							: 'booster-fade-in'
+					"
+					mode="out-in"
+				>
 					<div v-if="draftingState === DraftState.Watching" key="draft-watching" class="draft-watching">
 						<div class="draft-watching-state">
 							<h1 v-if="!drafting">Draft Completed</h1>
@@ -1012,12 +1019,16 @@
 							</div>
 							<scale-slider v-model.number="boosterCardScale" style="float: right" />
 						</div>
+						<!-- Note: Duration for booster-open can't be determined by Vue since it's composite. Be sure to keep that in sync :) -->
 						<transition-group
 							tag="div"
-							name="booster-cards"
+							:name="pickNumber === 0 ? 'booster-open' : 'booster-cards'"
 							class="booster card-container"
 							:class="{ 'booster-waiting': draftingState === DraftState.Waiting, skipped: skipPick }"
 							:style="`--booster-card-scale: ${boosterCardScale};`"
+							:duration="pickNumber === 0 ? 500 + 500 + 400 + Math.min(20, booster.length) * 40 : 0"
+							@enter="onEnterBoosterCards"
+							appear
 						>
 							<div class="wait" key="wait" v-if="draftingState === DraftState.Waiting">
 								<font-awesome-icon
@@ -1083,6 +1094,7 @@
 									idx === botScores.chosenOption
 								"
 								:scale="boosterCardScale"
+								:renderCommonBackside="pickNumber === 0"
 							></booster-card>
 						</transition-group>
 					</div>
@@ -2893,6 +2905,7 @@
 <style src="./css/style.css"></style>
 <style src="./css/tooltip.css"></style>
 <style src="./css/app.css"></style>
+<style src="./css/booster-open.css"></style>
 <style src="./css/chat.css"></style>
 
 <style scoped>
