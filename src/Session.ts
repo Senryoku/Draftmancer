@@ -3121,8 +3121,18 @@ export class Session implements IIndexable {
 	}
 
 	distributeJumpstart(set: string): SocketAck {
-		const log = this.initLogs("Jumpstart", []);
-		log.carddata = {};
+		this.initLogs("Jumpstart", []);
+		this.draftLog!.carddata = {};
+
+		const updateLog = (uid: UserID, cardIDs: CardID[]) => {
+			if (!this.draftLog || !this.draftLog.users[uid]) return;
+			this.draftLog.users[uid].cards = cardIDs;
+			this.draftLog.users[uid].decklist = computeHashes(
+				{ main: cardIDs, side: [] },
+				{ getCard: this.getCustomGetCardFunction() }
+			);
+			for (const cid of cardIDs) if (!(cid in this.draftLog.carddata)) this.draftLog.carddata[cid] = getCard(cid);
+		};
 
 		// Jumpstart: Historic Horizons
 		if (set === "j21" || set === "super") {
@@ -3155,15 +3165,10 @@ export class Session implements IIndexable {
 					const secondChoice = getNDisctinctRandom(SuperJumpBoosters, 3).map(generateJHHBooster);
 					for (let i = 0; i < 3; ++i) choices[1].push(secondChoice);
 				}
-				Connections[user].socket.emit("selectJumpstartPacks", choices, (user: UserID, cards: CardID[]) => {
+				Connections[user].socket.emit("selectJumpstartPacks", choices, (user: UserID, cardIDs: CardID[]) => {
 					if (!this.draftLog) return;
-					this.draftLog.users[user].cards = cards;
-					for (const cid of this.draftLog.users[user].cards) this.draftLog.carddata[cid] = getCard(cid);
-					if (
-						Object.keys(this.draftLog.users).every(
-							(uid: UserID) => this.draftLog?.users[uid].cards !== null
-						)
-					) {
+					updateLog(user, cardIDs);
+					if (Object.values(this.draftLog.users).every((u) => u.cards?.length > 0)) {
 						this.sendLogs();
 						logSession("Jumpstart", this);
 					}
@@ -3176,10 +3181,10 @@ export class Session implements IIndexable {
 			for (const user of this.users) {
 				const boosters = [getRandom(JMPBoosters), getRandom(JMPBoosters)];
 				const cards = boosters.map((b) => b.cards.map((cid: CardID) => getUnique(cid))).flat();
-
-				log.users[user].cards = cards.map((c: Card) => c.id);
-				for (const cid of log.users[user].cards) log.carddata[cid] = getCard(cid);
-
+				updateLog(
+					user,
+					cards.map((c) => c.id)
+				);
 				Connections[user].socket.emit("setCardPool", cards);
 				Connections[user].socket.emit("message", {
 					icon: "success",
