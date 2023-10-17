@@ -7,7 +7,7 @@
 		<template v-slot:body>
 			<transition-group
 				tag="div"
-				name="booster-cards-open"
+				name="booster-open"
 				class="booster"
 				:duration="500 + 500 + 400 + Math.min(20, boosters[currentBooster].length) * 40"
 				@enter="onEnterBoosterCards"

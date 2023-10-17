@@ -907,7 +907,11 @@
 			<!-- Draft Controls -->
 			<div v-show="drafting || draftingState === DraftState.Watching" class="generic-container">
 				<transition
-					:name="pickNumber > 0 ? `slide-fade-${passingOrder === PassingOrder.Left ? 'left' : 'right'}` : ''"
+					:name="
+						pickNumber > 0
+							? `slide-fade-${passingOrder === PassingOrder.Left ? 'left' : 'right'}`
+							: 'booster-fade-in'
+					"
 					mode="out-in"
 				>
 					<div v-if="draftingState === DraftState.Watching" key="draft-watching" class="draft-watching">
@@ -1015,10 +1019,10 @@
 							</div>
 							<scale-slider v-model.number="boosterCardScale" style="float: right" />
 						</div>
-						<!-- Note: Duration for booster-cards-open can't be determined by Vue since it's composite. Be sure to keep that in sync :) -->
+						<!-- Note: Duration for booster-open can't be determined by Vue since it's composite. Be sure to keep that in sync :) -->
 						<transition-group
 							tag="div"
-							:name="pickNumber === 0 ? 'booster-cards-open' : 'booster-cards'"
+							:name="pickNumber === 0 ? 'booster-open' : 'booster-cards'"
 							class="booster card-container"
 							:class="{ 'booster-waiting': draftingState === DraftState.Waiting, skipped: skipPick }"
 							:style="`--booster-card-scale: ${boosterCardScale};`"
@@ -2901,6 +2905,7 @@
 <style src="./css/style.css"></style>
 <style src="./css/tooltip.css"></style>
 <style src="./css/app.css"></style>
+<style src="./css/booster-open.css"></style>
 <style src="./css/chat.css"></style>
 
 <style scoped>

@@ -1016,198 +1016,9 @@ ul.player-list {
 	font-family: "Brush Script MT";
 }
 
-.booster-cards-open-enter-active {
-	--intro-duration: 0.5s;
-	--translation-duration: 0.5s;
-	--flip-duration: 0.4s;
-	--enter-delay-interval: 0.04s;
-
-	--animation-index: 20;
-	--enter-delay: calc((var(--animation-index) - 1) * var(--enter-delay-interval));
-
-	animation:
-		booster-card-enter-together var(--intro-duration) ease 0s 1,
-		booster-card-enter var(--translation-duration) cubic-bezier(0.34, 0, 0.3, 1)
-			calc(var(--intro-duration) + var(--enter-delay)) 1;
-	animation-fill-mode: forwards, forwards;
-	transform-origin: center 140%;
-}
-
-.booster-cards-open-enter-active:nth-child(1) {
-	--animation-index: 1;
-}
-.booster-cards-open-enter-active:nth-child(2) {
-	--animation-index: 2;
-}
-.booster-cards-open-enter-active:nth-child(3) {
-	--animation-index: 3;
-}
-.booster-cards-open-enter-active:nth-child(4) {
-	--animation-index: 4;
-}
-.booster-cards-open-enter-active:nth-child(5) {
-	--animation-index: 5;
-}
-.booster-cards-open-enter-active:nth-child(6) {
-	--animation-index: 6;
-}
-.booster-cards-open-enter-active:nth-child(7) {
-	--animation-index: 7;
-}
-.booster-cards-open-enter-active:nth-child(8) {
-	--animation-index: 8;
-}
-.booster-cards-open-enter-active:nth-child(9) {
-	--animation-index: 9;
-}
-.booster-cards-open-enter-active:nth-child(10) {
-	--animation-index: 10;
-}
-.booster-cards-open-enter-active:nth-child(11) {
-	--animation-index: 11;
-}
-.booster-cards-open-enter-active:nth-child(12) {
-	--animation-index: 12;
-}
-.booster-cards-open-enter-active:nth-child(13) {
-	--animation-index: 13;
-}
-.booster-cards-open-enter-active:nth-child(14) {
-	--animation-index: 14;
-}
-.booster-cards-open-enter-active:nth-child(15) {
-	--animation-index: 15;
-}
-.booster-cards-open-enter-active:nth-child(16) {
-	--animation-index: 16;
-}
-.booster-cards-open-enter-active:nth-child(17) {
-	--animation-index: 17;
-}
-.booster-cards-open-enter-active:nth-child(18) {
-	--animation-index: 18;
-}
-.booster-cards-open-enter-active:nth-child(19) {
-	--animation-index: 19;
-}
-.booster-cards-open-enter-active:nth-child(20) {
-	--animation-index: 20;
-}
-
-/* Cards from the bottom row are more spaced out, I don't know why */
-@keyframes booster-card-enter-together {
-	0% {
-		transform: translate(var(--initial-translation-x), var(--initial-translation-y)) rotate(0) scale(0);
-	}
-	30% {
-		transform: translate(var(--initial-translation-x), var(--initial-translation-y)) rotate(0) scale(1.05);
-	}
-	90% {
-		transform: translate(var(--initial-translation-x), calc(var(--initial-translation-y)))
-			rotate(var(--initial-rotation)) scale(1);
-	}
-	100% {
-		transform: translate(var(--initial-translation-x), var(--initial-translation-y)) rotate(var(--initial-rotation));
-	}
-}
-
-@keyframes booster-card-enter {
-	0% {
-		transform: translate(var(--initial-translation-x), 0) rotate(var(--initial-rotation));
-	}
-	35% {
-		transform: translate(0, 0);
-	}
-	75% {
-		transform: translate(0, 0);
-	}
-	100% {
-		transform: translate(0, 0);
-	}
-}
-
-/* This won't work on Firefox right now since it doesn't have :has support yet, but that's ok. It's purely for aesthetic. */
-div:has(> .booster-cards-open-enter-active):not(:has(> .booster-cards-open-leave-active))::before {
-	content: "";
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	width: 440px;
-	height: 440px;
-	--beam-color: #ffffff80;
-	background-image: repeating-conic-gradient(#ffffffa0 0, #000 18deg, #ffffffa0 36deg);
-	background-size: cover;
-	background-position: center;
-	-webkit-mask: radial-gradient(circle at center, #fff 0%, transparent 70%);
-	mask: radial-gradient(circle at center, #fff 0%, transparent 70%);
-
-	opacity: 0;
-	transform-origin: center;
-	animation: booster-cards-background-animation 0.5s linear forwards;
-}
-
-@keyframes booster-cards-background-animation {
-	0% {
-		transform: translate(-50%, -50%) rotate(0deg) scale(0);
-		opacity: 0;
-	}
-	20% {
-		transform: translate(-50%, -50%) rotate(calc(0.2 * 90deg)) scale(1);
-		opacity: 1;
-	}
-	80% {
-		opacity: 1;
-	}
-	100% {
-		transform: translate(-50%, -50%) rotate(90deg);
-		opacity: 0;
-	}
-}
-
-.booster-cards-open-enter-active .flip-container {
-	animation:
-		booster-card-enter-translate calc(var(--translation-duration)) ease
-			calc(var(--intro-duration) + var(--enter-delay)) 1,
-		booster-card-enter-flip var(--flip-duration) ease-in
-			calc(var(--intro-duration) + var(--translation-duration) + var(--enter-delay)) 1;
-	animation-fill-mode: none, forwards;
-
-	/* Necessary for the transform origin to be correct */
-	width: 100%;
-	height: 100%;
-	transform: scale(1) translate(0, 0) rotateY(-180deg);
-}
-
-@keyframes booster-card-enter-translate {
-	0% {
-		transform: scale(1) translate(0, var(--initial-translation-y)) rotateY(-180deg);
-	}
-	100% {
-		transform: scale(1) translate(0, 0) rotateY(-180deg);
-	}
-}
-
-@keyframes booster-card-enter-flip {
-	0% {
-		transform: scale(1) translate(0, 0) rotateY(-180deg);
-	}
-	25% {
-		transform: scale(1.15) translate(0, 10px) rotateY(-180deg);
-	}
-	50% {
-		transform: scale(1.15) rotateY(-90deg);
-	}
-	75% {
-		transform: scale(1.15) translate(0, -10px) rotateY(0deg);
-	}
-	100% {
-		transform: scale(1) rotateY(0);
-	}
-}
-
 /* Booster passing animation */
 
+.booster-fade-in-enter-active,
 .slide-fade-right-enter-active,
 .slide-fade-right-leave-active,
 .slide-fade-left-enter-active,
@@ -1227,8 +1038,12 @@ div:has(> .booster-cards-open-enter-active):not(:has(> .booster-cards-open-leave
 	opacity: 0;
 }
 
+.booster-fade-in-enter-from {
+	opacity: 0;
+}
+
+.booster-open-leave-active,
 .booster-cards-enter-active,
-.booster-cards-open-leave-active,
 .booster-cards-leave-active {
 	pointer-events: none; /* Avoid picking cards during transition */
 	transition: all 0.5s;
@@ -1238,19 +1053,19 @@ div:has(> .booster-cards-open-enter-active):not(:has(> .booster-cards-open-leave
 	opacity: 0;
 }
 
-.booster-cards-open-leave-active.selected,
+.booster-open-leave-active.selected,
 .booster-cards-leave-active.selected {
 	transition: all 0.5s;
 	width: calc(var(--booster-card-scale) * 200px);
 	overflow: visible;
 }
 
-.booster-cards-open-leave-active.selected .card-image,
+.booster-open-leave-active.selected .card-image,
 .booster-cards-leave-active.selected .card-image {
 	width: calc(var(--booster-card-scale) * 200px);
 }
 
-.booster-cards-open-leave-to.selected,
+.booster-open-leave-to.selected,
 .booster-cards-leave-to.selected {
 	transform: translateY(250px) translateX(calc(var(--booster-card-scale) * -100px)); /* translateX compensates for width change */
 	z-index: 2;
@@ -1259,12 +1074,12 @@ div:has(> .booster-cards-open-enter-active):not(:has(> .booster-cards-open-leave
 	margin: 0;
 }
 
-.booster-cards-open-leave-active.burned,
+.booster-open-leave-active.burned,
 .booster-cards-leave-active.burned {
 	animation: card-burn 0.5s;
 }
 
-.booster-cards-open-leave-to.burned,
+.booster-open-leave-to.burned,
 .booster-cards-leave-to.burned {
 	margin: 0;
 }

@@ -193,7 +193,7 @@ export function fitFontSize(
 	target.classList.remove("fitting");
 }
 
-// Should be called on enter for the booster-cards-open transition
+// Should be called on enter for the booster-open transition
 export function onEnterBoosterCards(e: Element) {
 	const el = e as HTMLElement;
 	const p = el.parentElement;
