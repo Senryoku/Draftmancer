@@ -190,23 +190,22 @@ describe("Conspiracy", function () {
 
 		it(`Center player pick a ChooseColors card`, async function () {
 			const card = await pages[1].$(".card");
-			await card!.click();
-			await waitAndClickSelector(pages[1], 'input[value="Confirm Pick"]');
-			await new Promise((resolve) => setTimeout(resolve, 1000));
+			await card!.click({ count: 2 });
+			//await new Promise((resolve) => setTimeout(resolve, 1000));
 		});
 
 		it(`Left Player should be asked a color.`, async function () {
 			const dialog = await pages[0].waitForSelector(".side-popup");
 			const choices = await dialog!.$$(".choice");
 			await getRandom(choices).click();
-			await new Promise((resolve) => setTimeout(resolve, 1000));
+			//await new Promise((resolve) => setTimeout(resolve, 1000));
 		});
 
 		it(`Center Player should be asked a color.`, async function () {
 			const dialog = await pages[1].waitForSelector(".side-popup");
 			const choices = await dialog!.$$(".choice");
 			await getRandom(choices).click();
-			await new Promise((resolve) => setTimeout(resolve, 1000));
+			//await new Promise((resolve) => setTimeout(resolve, 1000));
 		});
 
 		it(`Right Player should be asked a color.`, async function () {
