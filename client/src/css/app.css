@@ -1016,7 +1016,7 @@ ul.player-list {
 	font-family: "Brush Script MT";
 }
 
-.booster-card {
+.booster-cards-open-enter-active {
 	--intro-duration: 0.5s;
 	--translation-duration: 0.5s;
 	--flip-duration: 0.4s;
@@ -1024,75 +1024,74 @@ ul.player-list {
 
 	--animation-index: 20;
 	--enter-delay: calc((var(--animation-index) - 1) * var(--enter-delay-interval));
-}
-.booster-card:nth-child(1) {
-	--animation-index: 1;
-}
-.booster-card:nth-child(2) {
-	--animation-index: 2;
-}
-.booster-card:nth-child(3) {
-	--animation-index: 3;
-}
-.booster-card:nth-child(4) {
-	--animation-index: 4;
-}
-.booster-card:nth-child(5) {
-	--animation-index: 5;
-}
-.booster-card:nth-child(6) {
-	--animation-index: 6;
-}
-.booster-card:nth-child(7) {
-	--animation-index: 7;
-}
-.booster-card:nth-child(8) {
-	--animation-index: 8;
-}
-.booster-card:nth-child(9) {
-	--animation-index: 9;
-}
-.booster-card:nth-child(10) {
-	--animation-index: 10;
-}
-.booster-card:nth-child(11) {
-	--animation-index: 11;
-}
-.booster-card:nth-child(12) {
-	--animation-index: 12;
-}
-.booster-card:nth-child(13) {
-	--animation-index: 13;
-}
-.booster-card:nth-child(14) {
-	--animation-index: 14;
-}
-.booster-card:nth-child(15) {
-	--animation-index: 15;
-}
-.booster-card:nth-child(16) {
-	--animation-index: 16;
-}
-.booster-card:nth-child(17) {
-	--animation-index: 17;
-}
-.booster-card:nth-child(18) {
-	--animation-index: 18;
-}
-.booster-card:nth-child(19) {
-	--animation-index: 19;
-}
-.booster-card:nth-child(20) {
-	--animation-index: 20;
-}
 
-.booster-cards-open-enter-active {
 	animation:
 		booster-card-enter-together var(--intro-duration) ease 0s 1,
 		booster-card-enter var(--translation-duration) cubic-bezier(0.34, 0, 0.3, 1)
 			calc(var(--intro-duration) + var(--enter-delay)) 1;
 	animation-fill-mode: forwards, forwards;
 	transform-origin: center 140%;
+}
+
+.booster-cards-open-enter-active:nth-child(1) {
+	--animation-index: 1;
+}
+.booster-cards-open-enter-active:nth-child(2) {
+	--animation-index: 2;
+}
+.booster-cards-open-enter-active:nth-child(3) {
+	--animation-index: 3;
+}
+.booster-cards-open-enter-active:nth-child(4) {
+	--animation-index: 4;
+}
+.booster-cards-open-enter-active:nth-child(5) {
+	--animation-index: 5;
+}
+.booster-cards-open-enter-active:nth-child(6) {
+	--animation-index: 6;
+}
+.booster-cards-open-enter-active:nth-child(7) {
+	--animation-index: 7;
+}
+.booster-cards-open-enter-active:nth-child(8) {
+	--animation-index: 8;
+}
+.booster-cards-open-enter-active:nth-child(9) {
+	--animation-index: 9;
+}
+.booster-cards-open-enter-active:nth-child(10) {
+	--animation-index: 10;
+}
+.booster-cards-open-enter-active:nth-child(11) {
+	--animation-index: 11;
+}
+.booster-cards-open-enter-active:nth-child(12) {
+	--animation-index: 12;
+}
+.booster-cards-open-enter-active:nth-child(13) {
+	--animation-index: 13;
+}
+.booster-cards-open-enter-active:nth-child(14) {
+	--animation-index: 14;
+}
+.booster-cards-open-enter-active:nth-child(15) {
+	--animation-index: 15;
+}
+.booster-cards-open-enter-active:nth-child(16) {
+	--animation-index: 16;
+}
+.booster-cards-open-enter-active:nth-child(17) {
+	--animation-index: 17;
+}
+.booster-cards-open-enter-active:nth-child(18) {
+	--animation-index: 18;
+}
+.booster-cards-open-enter-active:nth-child(19) {
+	--animation-index: 19;
+}
+.booster-cards-open-enter-active:nth-child(20) {
+	--animation-index: 20;
 }
 
 /* Cards from the bottom row are more spaced out, I don't know why */

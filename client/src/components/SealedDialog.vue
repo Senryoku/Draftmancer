@@ -235,4 +235,3 @@ watch(boostersPerPlayer, () => {
 	padding: 0;
 }
 </style>
-../../../src/SetInfos
