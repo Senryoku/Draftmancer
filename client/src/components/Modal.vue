@@ -1,5 +1,5 @@
 <template>
-	<transition name="modal">
+	<transition name="modal" appear>
 		<div class="modal-mask" v-if="displayed">
 			<div class="modal-wrapper" @click="close($event)">
 				<div class="modal-container">
