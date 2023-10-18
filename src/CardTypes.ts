@@ -82,7 +82,25 @@ export class Card {
 
 export type DeckBasicLands = { [key in CardColor]: number };
 
-export type CardPool = Map<string, number>;
+export class CardPool extends Map<CardID, number> {
+	private _count = 0;
+
+	constructor() {
+		super();
+	}
+
+	set(cid: CardID, count: number) {
+		if (super.has(cid)) this._count -= super.get(cid)!;
+		super.set(cid, count);
+		this._count += count;
+		return this;
+	}
+
+	count() {
+		return this._count;
+	}
+}
+
 export type SlotedCardPool = { [slot: string]: CardPool };
 export type DeckList = {
 	main: Array<CardID>;

@@ -18,7 +18,7 @@ if (isSocketError(ArenaCube)) {
 }
 
 const CustomSheetsTestFile = fs.readFileSync(`./test/data/CustomSheets.txt`, "utf8");
-import { CardID } from "../../src/CardTypes.js";
+import { CardID, CardPool } from "../../src/CardTypes.js";
 import { isNumber } from "../../src/TypeChecks.js";
 
 describe("Statistical color balancing tests", function () {

@@ -18,7 +18,15 @@ export function removeCardFromCardPool(cid: CardID, dict: CardPool) {
 // Returns a random card from the pool, choosen uniformly across ALL cards (not UNIQUE ones),
 // meaning cards present in multiple copies are more likely to be picked.
 function getRandomCardFromCardPool(cardPool: CardPool): CardID {
-	const idx = random.integer(0, countCards(cardPool) - 1);
+	const cardCount = cardPool.count();
+	const idx = random.integer(0, cardCount - 1);
+
+	if (cardPool.size === cardCount) {
+		const r = cardPool.keys();
+		for (let i = 0; i < idx; ++i) r.next();
+		return r.next().value;
+	}
+
 	let acc = 0;
 	for (const [cid, count] of cardPool) {
 		acc += count;

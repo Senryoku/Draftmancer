@@ -1,6 +1,6 @@
 "use strict";
 
-import { CardID, CardPool } from "./CardTypes";
+import { CardID, CardPool } from "./CardTypes.js";
 import { getUnique, getCard } from "./Cards.js";
 import { getRandomMapKey, getRandom } from "./utils.js";
 import { removeCardFromCardPool } from "./cardUtils.js";
