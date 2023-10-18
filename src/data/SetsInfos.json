@@ -5084,11 +5084,11 @@
     "rvr": {
         "code": "rvr",
         "fullName": "Ravnica Remastered",
-        "cardCount": 49,
+        "cardCount": 50,
         "isPrimary": true,
         "icon": "img/sets/rvr.svg",
         "mythicCount": 3,
-        "rareCount": 46
+        "rareCount": 47
     },
     "s00": {
         "code": "s00",
@@ -5202,22 +5202,22 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 1095,
+        "cardCount": 1105,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
         "commonCount": 46,
-        "mythicCount": 217,
-        "rareCount": 812,
+        "mythicCount": 225,
+        "rareCount": 814,
         "uncommonCount": 20
     },
     "slp": {
         "code": "slp",
         "fullName": "Secret Lair Showdown",
-        "cardCount": 11,
+        "cardCount": 17,
         "isPrimary": false,
         "icon": "img/sets/slp.svg",
         "mythicCount": 3,
-        "rareCount": 8
+        "rareCount": 14
     },
     "slu": {
         "code": "slu",
@@ -5675,14 +5675,6 @@
         "icon": "img/sets/tunf.svg",
         "commonCount": 1
     },
-    "twho": {
-        "code": "twho",
-        "fullName": "Doctor Who Tokens",
-        "cardCount": 1,
-        "isPrimary": false,
-        "icon": "img/sets/twho.svg",
-        "commonCount": 1
-    },
     "twoc": {
         "code": "twoc",
         "fullName": "Wilds of Eldraine Commander Tokens",
@@ -6051,12 +6043,12 @@
     "who": {
         "code": "who",
         "fullName": "Doctor Who",
-        "cardCount": 1128,
+        "cardCount": 1138,
         "isPrimary": false,
         "icon": "img/sets/who.svg",
         "commonCount": 72,
         "mythicCount": 35,
-        "rareCount": 885,
+        "rareCount": 895,
         "uncommonCount": 136
     },
     "wmc": {
