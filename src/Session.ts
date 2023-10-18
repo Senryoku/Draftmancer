@@ -507,7 +507,7 @@ export class Session implements IIndexable {
 	// Returns current card pool according to all session options (Collections, setRestrictions...)
 	cardPool() {
 		if (this.unrestrictedCardPool()) {
-			const cardPool: CardPool = new Map();
+			const cardPool: CardPool = new CardPool();
 			// Returns all cards if there's no set restriction
 			if (this.setRestriction.length === 0) {
 				for (const [cid, card] of Cards)
@@ -528,7 +528,7 @@ export class Session implements IIndexable {
 	restrictedCollection(sets: Array<string>) {
 		const cardPool = this.collection();
 
-		const restricted: CardPool = new Map();
+		const restricted: CardPool = new CardPool();
 		if (sets && sets.length > 0) {
 			for (const s of sets)
 				if (s in CardsBySet)
@@ -542,7 +542,7 @@ export class Session implements IIndexable {
 	// Compute user collections intersection (taking into account each user preferences)
 	collection(inBoosterOnly = true): CardPool {
 		const user_list = [...this.users];
-		const collection: CardPool = new Map();
+		const collection: CardPool = new CardPool();
 
 		const useCollection = [];
 		for (let i = 0; i < user_list.length; ++i)
@@ -576,15 +576,15 @@ export class Session implements IIndexable {
 	// Categorize card pool by rarity
 	cardPoolByRarity(): SlotedCardPool {
 		const cardPoolByRarity: SlotedCardPool = {
-			common: new Map(),
-			uncommon: new Map(),
-			rare: new Map(),
-			mythic: new Map(),
+			common: new CardPool(),
+			uncommon: new CardPool(),
+			rare: new CardPool(),
+			mythic: new CardPool(),
 		};
 		const cardPool = this.cardPool();
 		for (const [cid, count] of cardPool) {
 			const rarity = getCard(cid).rarity;
-			if (!(rarity in cardPoolByRarity)) cardPoolByRarity[rarity] = new Map();
+			if (!(rarity in cardPoolByRarity)) cardPoolByRarity[rarity] = new CardPool();
 			cardPoolByRarity[rarity].set(cid, Math.min(count, this.maxDuplicates?.[rarity] ?? 99));
 		}
 		return cardPoolByRarity;
@@ -593,14 +593,14 @@ export class Session implements IIndexable {
 	// Returns all cards from specified set categorized by rarity and set to maxDuplicates
 	setByRarity(set: string) {
 		const local: SlotedCardPool = {
-			common: new Map(),
-			uncommon: new Map(),
-			rare: new Map(),
-			mythic: new Map(),
+			common: new CardPool(),
+			uncommon: new CardPool(),
+			rare: new CardPool(),
+			mythic: new CardPool(),
 		};
 		for (const cid of BoosterCardsBySet[set]) {
 			const rarity = getCard(cid).rarity;
-			if (!(rarity in local)) local[rarity] = new Map();
+			if (!(rarity in local)) local[rarity] = new CardPool();
 			local[rarity].set(cid, this.maxDuplicates?.[rarity] ?? 99);
 		}
 		return local;

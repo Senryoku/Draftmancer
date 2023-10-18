@@ -22,7 +22,7 @@ export class BasicLandSlot {
 export class SpecialLandSlot extends BasicLandSlot {
 	commonLandsIds: Array<CardID>;
 	rate: number;
-	landsToDistribute: CardPool = new Map();
+	landsToDistribute: CardPool = new CardPool();
 
 	constructor(set: string, commonLandsIds: Array<CardID>, rate: number, basicLandsIds?: Array<CardID>) {
 		super(set);

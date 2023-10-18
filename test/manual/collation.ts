@@ -31,10 +31,10 @@ describe("Statistical color balancing tests", function () {
 			colorBalance: true,
 		};
 		const cardPoolByRarity = {
-			common: new Map<CardID, number>(),
-			uncommon: new Map<CardID, number>(),
-			rare: new Map<CardID, number>(),
-			mythic: new Map<CardID, number>(),
+			common: new CardPool(),
+			uncommon: new CardPool(),
+			rare: new CardPool(),
+			mythic: new CardPool(),
 		};
 		for (const [cid, card] of Cards) {
 			if (card.in_booster && card.set === "znr") {

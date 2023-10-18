@@ -13,7 +13,7 @@ export class Connection {
 	userName: string;
 
 	sessionID?: SessionID = undefined;
-	collection: CardPool = new Map();
+	collection: CardPool = new CardPool();
 	useCollection = true;
 
 	pickedCards: { main: Array<UniqueCard>; side: Array<UniqueCard> } = { main: [], side: [] };

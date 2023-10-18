@@ -74,7 +74,7 @@ export function generateBoosterFromCustomCardList(
 
 		const cardsBySlot: SlotedCardPool = {};
 		for (const slotName in customCardList.slots) {
-			cardsBySlot[slotName] = new Map();
+			cardsBySlot[slotName] = new CardPool();
 			for (const cardId in customCardList.slots[slotName])
 				cardsBySlot[slotName].set(cardId, customCardList.slots[slotName][cardId]);
 		}
@@ -222,7 +222,7 @@ export function generateBoosterFromCustomCardList(
 
 		// Generate fully random 15-cards booster for cube (not considering rarity)
 		// Getting custom card list
-		const localCollection: CardPool = new Map();
+		const localCollection: CardPool = new CardPool();
 
 		let cardCount = 0;
 		for (const cardId in defaultSlot) {

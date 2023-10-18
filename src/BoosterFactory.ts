@@ -52,18 +52,18 @@ class ColorBalancedSlotCache {
 		const localGetCard = options.getCard ?? getCard;
 		for (const cid of cardPool.keys()) {
 			if (!(localGetCard(cid).colors.join() in this.byColor))
-				this.byColor[localGetCard(cid).colors.join()] = new Map();
+				this.byColor[localGetCard(cid).colors.join()] = new CardPool();
 			this.byColor[localGetCard(cid).colors.join()].set(cid, cardPool.get(cid) as number);
 		}
 
-		this.monocolored = new Map();
+		this.monocolored = new CardPool();
 		for (const cardPool of Object.keys(this.byColor)
 			.filter((k) => k.length === 1)
 			.map((k) => this.byColor[k]))
 			for (const [cid, val] of cardPool.entries()) this.monocolored.set(cid, val);
 
 		this.monocoloredCount = countCards(this.monocolored);
-		this.others = new Map();
+		this.others = new CardPool();
 		for (const cardPool of Object.keys(this.byColor)
 			.filter((k) => k.length !== 1)
 			.map((k) => this.byColor[k]))
@@ -256,8 +256,8 @@ function filterCardPool(slotedCardPool: SlotedCardPool, predicate: (cid: CardID)
 	const specialCards: SlotedCardPool = {};
 	const filteredCardPool: SlotedCardPool = {};
 	for (const slot in slotedCardPool) {
-		specialCards[slot] = new Map();
-		filteredCardPool[slot] = new Map();
+		specialCards[slot] = new CardPool();
+		filteredCardPool[slot] = new CardPool();
 		for (const cid of slotedCardPool[slot].keys()) {
 			if (predicate(cid)) specialCards[slot].set(cid, slotedCardPool[slot].get(cid) as number);
 			else filteredCardPool[slot].set(cid, slotedCardPool[slot].get(cid) as number);
@@ -551,7 +551,7 @@ class STXBoosterFactory extends BoosterFactory {
 		super(filteredCardPool, landSlot, options);
 		this.lessonsByRarity = lessons;
 
-		this.mysticalArchiveByRarity = { uncommon: new Map(), rare: new Map(), mythic: new Map() };
+		this.mysticalArchiveByRarity = { uncommon: new CardPool(), rare: new CardPool(), mythic: new CardPool() };
 		// Filter STA cards according to session collections
 		if (options.session && !options.session.unrestrictedCardPool()) {
 			const STACards: CardPool = options.session.restrictedCollection(["sta"]);
@@ -1034,14 +1034,14 @@ class YDMUBoosterFactory extends BoosterFactory {
 		// Filter YDMU cards according to session collections
 		if (options.session && !options.session.unrestrictedCardPool()) {
 			const YDMUCards: CardPool = options.session.restrictedCollection(["ydmu"]);
-			this.alchemyCards = { uncommon: new Map(), rare: new Map(), mythic: new Map() };
+			this.alchemyCards = { uncommon: new CardPool(), rare: new CardPool(), mythic: new CardPool() };
 			for (const cid of YDMUCards.keys())
 				this.alchemyCards[getCard(cid).rarity].set(
 					cid,
 					Math.min(options.maxDuplicates?.[getCard(cid).rarity] ?? 99, YDMUCards.get(cid) as number)
 				);
 		} else {
-			this.alchemyCards = { uncommon: new Map(), rare: new Map(), mythic: new Map() };
+			this.alchemyCards = { uncommon: new CardPool(), rare: new CardPool(), mythic: new CardPool() };
 			for (const cid of BoosterCardsBySet["alchemy_dmu"])
 				this.alchemyCards[getCard(cid).rarity].set(cid, options.maxDuplicates?.[getCard(cid).rarity] ?? 99);
 		}
@@ -1166,7 +1166,7 @@ class BROBoosterFactory extends BoosterFactory {
 	readonly RetroMythicChance = 0.07;
 	readonly RetroRareChance = 0.27;
 
-	retroArtifacts: SlotedCardPool = { uncommon: new Map(), rare: new Map(), mythic: new Map() };
+	retroArtifacts: SlotedCardPool = { uncommon: new CardPool(), rare: new CardPool(), mythic: new CardPool() };
 
 	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
 		super(cardPool, landSlot, options);
@@ -1225,7 +1225,12 @@ class BROBoosterFactory extends BoosterFactory {
 class DMRBoosterFactory extends BoosterFactory {
 	readonly RetroRareChance = 0.25; // "Retro Rare or higher replaces a non-Retro Rare or higher in 25% of boosters"
 
-	retroCards: SlotedCardPool = { common: new Map(), uncommon: new Map(), rare: new Map(), mythic: new Map() };
+	retroCards: SlotedCardPool = {
+		common: new CardPool(),
+		uncommon: new CardPool(),
+		rare: new CardPool(),
+		mythic: new CardPool(),
+	};
 
 	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
 		const [retroCards, filteredCardPool] = filterCardPool(
@@ -1312,7 +1317,12 @@ class ONEBoosterFactory extends BoosterFactory {
 import ShadowOfThePastLists from "./data/shadow_of_the_past.json" assert { type: "json" };
 
 class SIRBoosterFactory extends BoosterFactory {
-	bonusSheet: SlotedCardPool = { common: new Map(), uncommon: new Map(), rare: new Map(), mythic: new Map() };
+	bonusSheet: SlotedCardPool = {
+		common: new CardPool(),
+		uncommon: new CardPool(),
+		rare: new CardPool(),
+		mythic: new CardPool(),
+	};
 
 	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
 		super(cardPool, landSlot, options);
@@ -1381,9 +1391,14 @@ class SIRBoosterFactoryBonusSheet3 extends SIRBoosterFactory {
 class MOMBoosterFactory extends BoosterFactory {
 	static readonly RareBattleChance = 0.25; // TODO: Check this rate
 
-	multiverseLegend: SlotedCardPool = { uncommon: new Map(), rare: new Map(), mythic: new Map() };
-	battleCards: SlotedCardPool = { uncommon: new Map(), rare: new Map(), mythic: new Map() };
-	doubleFacedCards: SlotedCardPool = { common: new Map(), uncommon: new Map(), rare: new Map(), mythic: new Map() };
+	multiverseLegend: SlotedCardPool = { uncommon: new CardPool(), rare: new CardPool(), mythic: new CardPool() };
+	battleCards: SlotedCardPool = { uncommon: new CardPool(), rare: new CardPool(), mythic: new CardPool() };
+	doubleFacedCards: SlotedCardPool = {
+		common: new CardPool(),
+		uncommon: new CardPool(),
+		rare: new CardPool(),
+		mythic: new CardPool(),
+	};
 
 	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
 		const [battleCards, filteredCardPool] = filterCardPool(
@@ -1628,7 +1643,7 @@ class CMMBoosterFactory extends BoosterFactory {
 class WOEBoosterFactory extends BoosterFactory {
 	static readonly MaxWOTCollectorNumber = 63; // WOT Cards with a higher collector number are special variations not available in draft boosters.
 
-	wotPool: SlotedCardPool = { uncommon: new Map(), rare: new Map(), mythic: new Map() };
+	wotPool: SlotedCardPool = { uncommon: new CardPool(), rare: new CardPool(), mythic: new CardPool() };
 
 	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
 		super(cardPool, landSlot, options);

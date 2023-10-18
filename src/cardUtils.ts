@@ -60,7 +60,7 @@ export function pickCard(
 				(cid) => booster.findIndex((card) => cid === card.id) === -1
 			);
 			if (candidates.length > 0) {
-				const tmpMap = new Map();
+				const tmpMap = new CardPool();
 				for (const cid of candidates) tmpMap.set(cid, cardPool.get(cid) as number);
 				cid = randomFunc(tmpMap);
 			}
