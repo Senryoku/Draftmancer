@@ -25,9 +25,8 @@ import {
 	DefaultBoosterTargets,
 	IBoosterFactory,
 	getBoosterFactory,
-	getPaperBoosterFactory,
-	isPaperBoosterFactoryAvailable,
 } from "./BoosterFactory.js";
+import { isPaperBoosterFactoryAvailable, getPaperBoosterFactory } from "./PaperBoosterFactory.js";
 import JumpstartBoosters from "./data/JumpstartBoosters.json" assert { type: "json" };
 import Jumpstart2022Boosters from "./data/Jumpstart2022Boosters.json" assert { type: "json" };
 import JumpstartHHBoosters from "./data/JumpstartHHBoosters.json" assert { type: "json" };
