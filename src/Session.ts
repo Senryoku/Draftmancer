@@ -532,7 +532,7 @@ export class Session implements IIndexable {
 			for (const s of sets)
 				if (s in CardsBySet)
 					for (const cid of CardsBySet[s].filter((cid) => cardPool.has(cid)))
-						restricted.set(cid, cardPool.get(cid) as number);
+						restricted.set(cid, cardPool.get(cid)!);
 				else console.error(`Session.restrictedCollection Error: '${s}' not in CardsBySet.`);
 			return restricted;
 		} else return cardPool;
@@ -561,13 +561,10 @@ export class Session implements IIndexable {
 
 		// Compute the minimum count of each remaining card
 		for (const c of intersection) {
-			collection.set(c, useCollection[0] ? (Connections[user_list[0]].collection.get(c) as number) : 4);
+			collection.set(c, useCollection[0] ? Connections[user_list[0]].collection.get(c)! : 4);
 			for (let i = 1; i < user_list.length; ++i)
 				if (useCollection[i])
-					collection.set(
-						c,
-						Math.min(collection.get(c) as number, Connections[user_list[i]].collection.get(c) as number)
-					);
+					collection.set(c, Math.min(collection.get(c)!, Connections[user_list[i]].collection.get(c)!));
 		}
 		return collection;
 	}
@@ -920,10 +917,10 @@ export class Session implements IIndexable {
 
 		// Add a new card to skipped pile. (Make sure there's enough cards for the player to draw if this is the last pile)
 		if (s.cardPool.length > 1 || (s.currentPile < 2 && s.cardPool.length > 0))
-			s.piles[s.currentPile].push(s.cardPool.pop() as UniqueCard);
+			s.piles[s.currentPile].push(s.cardPool.pop()!);
 		// Give a random card from the card pool if this was the last pile
 		if (s.currentPile === 2) {
-			const card = s.cardPool.pop() as UniqueCard;
+			const card = s.cardPool.pop()!;
 			Connections[s.currentPlayer()].pickedCards.main.push(card);
 			Connections[s.currentPlayer()].socket.emit("winstonDraftRandomCard", card);
 			this.draftLog?.users[s.currentPlayer()].picks.push({
@@ -948,7 +945,7 @@ export class Session implements IIndexable {
 			piles: [...s.piles.map((p, idx) => p.slice(0, idx < s.currentPile ? -1 : undefined).map((c) => c.id))],
 		});
 		Connections[s.currentPlayer()].pickedCards.main.push(...s.piles[s.currentPile]);
-		if (s.cardPool.length > 0) s.piles[s.currentPile] = [s.cardPool.pop() as UniqueCard];
+		if (s.cardPool.length > 0) s.piles[s.currentPile] = [s.cardPool.pop()!];
 		else s.piles[s.currentPile] = [];
 		this.winstonNextRound();
 		return true;
@@ -1250,8 +1247,8 @@ export class Session implements IIndexable {
 			//                       Column           Row
 			const idx = choice < 3 ? 3 * i + choice : 3 * (choice - 3) + i;
 			if (s.boosters[0][idx] !== null) {
-				Connections[s.currentPlayer()].pickedCards.main.push(s.boosters[0][idx] as UniqueCard);
-				pickedCards.push(s.boosters[0][idx] as UniqueCard);
+				Connections[s.currentPlayer()].pickedCards.main.push(s.boosters[0][idx]!);
+				pickedCards.push(s.boosters[0][idx]!);
 				log.pick.push(idx);
 				s.boosters[0][idx] = null;
 			}

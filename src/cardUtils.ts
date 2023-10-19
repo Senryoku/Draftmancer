@@ -58,7 +58,7 @@ export function pickCard(
 			);
 			if (candidates.length > 0) {
 				const tmpPool = new CardPool();
-				for (const cid of candidates) tmpPool.set(cid, cardPool.get(cid) as number);
+				for (const cid of candidates) tmpPool.set(cid, cardPool.get(cid)!);
 				cid = randomFunc(tmpPool);
 			}
 		}

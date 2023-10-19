@@ -48,10 +48,10 @@ class ColorBalancedSlotCache {
 
 	constructor(cardPool: CardPool, options: Options = {}) {
 		const localGetCard = options.getCard ?? getCard;
-		for (const cid of cardPool.keys()) {
+		for (const [cid, count] of cardPool) {
 			if (!(localGetCard(cid).colors.join() in this.byColor))
 				this.byColor[localGetCard(cid).colors.join()] = new CardPool();
-			this.byColor[localGetCard(cid).colors.join()].set(cid, cardPool.get(cid) as number);
+			this.byColor[localGetCard(cid).colors.join()].set(cid, count);
 		}
 
 		this.monocolored = new CardPool();
@@ -242,9 +242,9 @@ function filterCardPool(slotedCardPool: SlotedCardPool, predicate: (cid: CardID)
 	for (const slot in slotedCardPool) {
 		specialCards[slot] = new CardPool();
 		filteredCardPool[slot] = new CardPool();
-		for (const cid of slotedCardPool[slot].keys()) {
-			if (predicate(cid)) specialCards[slot].set(cid, slotedCardPool[slot].get(cid) as number);
-			else filteredCardPool[slot].set(cid, slotedCardPool[slot].get(cid) as number);
+		for (const [cid, count] of slotedCardPool[slot]) {
+			if (predicate(cid)) specialCards[slot].set(cid, count);
+			else filteredCardPool[slot].set(cid, count);
 		}
 	}
 	return [specialCards, filteredCardPool];
@@ -532,13 +532,13 @@ class STXBoosterFactory extends BoosterFactory {
 		// Filter STA cards according to session collections
 		if (options.session && !options.session.unrestrictedCardPool()) {
 			const STACards: CardPool = options.session.restrictedCollection(["sta"]);
-			for (const cid of STACards.keys()) {
+			for (const [cid, count] of STACards) {
 				const card = getCard(cid);
 				// Remove Japanese versions
 				if (parseInt(card.collector_number) <= 63)
 					this.mysticalArchiveByRarity[card.rarity].set(
 						cid,
-						Math.min(options.maxDuplicates?.[card.rarity] ?? 99, STACards.get(cid) as number)
+						Math.min(options.maxDuplicates?.[card.rarity] ?? 99, count)
 					);
 			}
 		} else {
@@ -1012,10 +1012,10 @@ class YDMUBoosterFactory extends BoosterFactory {
 		if (options.session && !options.session.unrestrictedCardPool()) {
 			const YDMUCards: CardPool = options.session.restrictedCollection(["ydmu"]);
 			this.alchemyCards = { uncommon: new CardPool(), rare: new CardPool(), mythic: new CardPool() };
-			for (const cid of YDMUCards.keys())
+			for (const [cid, count] of YDMUCards)
 				this.alchemyCards[getCard(cid).rarity].set(
 					cid,
-					Math.min(options.maxDuplicates?.[getCard(cid).rarity] ?? 99, YDMUCards.get(cid) as number)
+					Math.min(options.maxDuplicates?.[getCard(cid).rarity] ?? 99, count)
 				);
 		} else {
 			this.alchemyCards = { uncommon: new CardPool(), rare: new CardPool(), mythic: new CardPool() };
@@ -1150,12 +1150,12 @@ class BROBoosterFactory extends BoosterFactory {
 
 		if (options.session && !options.session.unrestrictedCardPool()) {
 			const BRRCards: CardPool = options.session.restrictedCollection(["brr"]);
-			for (const cid of BRRCards.keys()) {
+			for (const [cid, count] of BRRCards) {
 				const card = getCard(cid);
 				if (parseInt(card.collector_number) <= 63)
 					this.retroArtifacts[card.rarity].set(
 						cid,
-						Math.min(options.maxDuplicates?.[card.rarity] ?? 99, BRRCards.get(cid) as number)
+						Math.min(options.maxDuplicates?.[card.rarity] ?? 99, count)
 					);
 			}
 		} else {
@@ -1391,12 +1391,12 @@ class MOMBoosterFactory extends BoosterFactory {
 
 		if (options.session && !options.session.unrestrictedCardPool()) {
 			const MULCards: CardPool = options.session.restrictedCollection(["mul"]);
-			for (const cid of MULCards.keys()) {
+			for (const [cid, count] of MULCards) {
 				const card = getCard(cid);
 				if (parseInt(card.collector_number) <= 65)
 					this.multiverseLegend[card.rarity].set(
 						cid,
-						Math.min(options.maxDuplicates?.[card.rarity] ?? 99, MULCards.get(cid) as number)
+						Math.min(options.maxDuplicates?.[card.rarity] ?? 99, count)
 					);
 			}
 		} else {
@@ -1626,13 +1626,10 @@ class WOEBoosterFactory extends BoosterFactory {
 		super(cardPool, landSlot, options);
 		if (options.session && !options.session.unrestrictedCardPool()) {
 			const WOTCards: CardPool = options.session.restrictedCollection(["wot"]);
-			for (const cid of WOTCards.keys()) {
+			for (const [cid, count] of WOTCards) {
 				const card = getCard(cid);
 				if (parseInt(card.collector_number) <= WOEBoosterFactory.MaxWOTCollectorNumber)
-					this.wotPool[card.rarity].set(
-						cid,
-						Math.min(options.maxDuplicates?.[card.rarity] ?? 99, WOTCards.get(cid) as number)
-					);
+					this.wotPool[card.rarity].set(cid, Math.min(options.maxDuplicates?.[card.rarity] ?? 99, count));
 			}
 		} else {
 			for (const cid of CardsBySet["wot"]) {
