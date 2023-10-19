@@ -1,7 +1,7 @@
 import { ColorBalancedSlot } from "./BoosterFactory.js";
 import { CardID, Card, SlotedCardPool, UniqueCard, CardPool } from "./CardTypes.js";
 import { getCard } from "./Cards.js";
-import { pickCard, removeCardFromCardPool } from "./cardUtils.js";
+import { pickCard } from "./cardUtils.js";
 import { MessageError } from "./Message.js";
 import { isEmpty, Options, random, weightedRandomIdx, shuffleArray } from "./utils.js";
 
@@ -85,7 +85,7 @@ export function generateBoosterFromCustomCardList(
 			// however I don't have a better solution for now.
 			for (const slotName in cardsBySlot)
 				for (const cardId of options.removeFromCardPool)
-					if (cardsBySlot[slotName].has(cardId)) removeCardFromCardPool(cardId, cardsBySlot[slotName]);
+					if (cardsBySlot[slotName].has(cardId)) cardsBySlot[slotName].removeCard(cardId);
 		}
 
 		// Color balance the largest slot of each layout
@@ -241,7 +241,7 @@ export function generateBoosterFromCustomCardList(
 		// Workaround to handle the LoreSeeker draft effect with a limited number of cards
 		if (!options.withReplacement && options.removeFromCardPool) {
 			for (const cardId of options.removeFromCardPool)
-				if (localCollection.has(cardId)) removeCardFromCardPool(cardId, localCollection);
+				if (localCollection.has(cardId)) localCollection.removeCard(cardId);
 		}
 
 		const boosters = [];

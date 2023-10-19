@@ -1,6 +1,5 @@
 "use strict";
 import { UserID, SessionID } from "./IDTypes.js";
-import { countCards } from "./cardUtils.js";
 import { shuffleArray, getRandom, arrayIntersect, Options, getNDisctinctRandom, pickRandom } from "./utils.js";
 import { Connections, getPickedCardIds } from "./Connection.js";
 import {
@@ -701,16 +700,16 @@ export class Session implements IIndexable {
 				);
 				// Make sure we have enough cards
 				for (const slot of ["common", "uncommon", "rare"]) {
-					const card_count = countCards((defaultFactory as BoosterFactory).cardPool[slot]);
-					const card_target =
+					const cardCount = (defaultFactory as BoosterFactory).cardPool[slot].count();
+					const cardTarget =
 						targets[slot] *
 						(boosterSpecificRules
 							? boosterQuantity
 							: customBoosters.reduce((a, v) => (v === "" ? a + 1 : a), 0));
-					if (card_count < card_target)
+					if (cardCount < cardTarget)
 						return new MessageError(
 							"Error generating boosters",
-							`Not enough cards (${card_count}/${card_target} ${slot}s) in collection.`
+							`Not enough cards (${cardCount}/${cardTarget} ${slot}s) in collection.`
 						);
 				}
 			}
@@ -770,7 +769,7 @@ export class Session implements IIndexable {
 					const multiplier = customBoosters.reduce((a, v) => (v === boosterSet ? a + 1 : a), 0); // Note: This won't be accurate in the case of 'random' sets.
 					for (const slot of ["common", "uncommon", "rare"]) {
 						if (
-							countCards((usedSets[boosterSet] as BoosterFactory).cardPool[slot]) <
+							(usedSets[boosterSet] as BoosterFactory).cardPool[slot].count() <
 							multiplier * playerCount * targets[slot]
 						)
 							return new MessageError(

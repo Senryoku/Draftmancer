@@ -54,6 +54,15 @@ describe("Collection Restriction", function () {
 		waitForClientDisconnects(done);
 	});
 
+	it(`Disable ignoreCollections`, function (done) {
+		ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
+		clients[(ownerIdx + 1) % clients.length].once("ignoreCollections", (value) => {
+			expect(value).to.be.false;
+			done();
+		});
+		clients[ownerIdx].emit("ignoreCollections", false);
+	});
+
 	it(`Submit random collections.`, function (done) {
 		collections = Array(clients.length).fill({});
 		// Generate random collections

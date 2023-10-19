@@ -3,7 +3,7 @@
 import { CardID, Card, CardPool, SlotedCardPool, UniqueCard } from "./CardTypes.js";
 import { Cards, getUnique, BoosterCardsBySet, CardsBySet, getCard } from "./Cards.js";
 import { shuffleArray, randomInt, Options, random, getRandom, weightedRandomIdx } from "./utils.js";
-import { removeCardFromCardPool, pickCard, countCards } from "./cardUtils.js";
+import { pickCard } from "./cardUtils.js";
 import { BasicLandSlot } from "./LandSlot.js";
 import { Constants } from "./Constants.js";
 
@@ -44,9 +44,7 @@ function isEmpty(slotedCardPool: SlotedCardPool): boolean {
 class ColorBalancedSlotCache {
 	byColor: { [color: string]: CardPool } = {};
 	monocolored: CardPool;
-	monocoloredCount: number;
 	others: CardPool;
-	othersCount: number;
 
 	constructor(cardPool: CardPool, options: Options = {}) {
 		const localGetCard = options.getCard ?? getCard;
@@ -62,14 +60,11 @@ class ColorBalancedSlotCache {
 			.map((k) => this.byColor[k]))
 			for (const [cid, val] of cardPool.entries()) this.monocolored.set(cid, val);
 
-		this.monocoloredCount = countCards(this.monocolored);
 		this.others = new CardPool();
 		for (const cardPool of Object.keys(this.byColor)
 			.filter((k) => k.length !== 1)
 			.map((k) => this.byColor[k]))
 			for (const [cid, val] of cardPool.entries()) this.others.set(cid, val);
-
-		this.othersCount = countCards(this.others);
 	}
 }
 
@@ -85,15 +80,11 @@ export class ColorBalancedSlot {
 		this.cache = new ColorBalancedSlotCache(_cardPool, options);
 	}
 
+	// Signals the supplied card has been picked and has to be removed from the internal cache.
 	syncCache(pickedCard: Card) {
-		removeCardFromCardPool(pickedCard.id, this.cache.byColor[pickedCard.colors.join()]);
-		if (pickedCard.colors.length === 1) {
-			removeCardFromCardPool(pickedCard.id, this.cache.monocolored);
-			--this.cache.monocoloredCount;
-		} else {
-			removeCardFromCardPool(pickedCard.id, this.cache.others);
-			--this.cache.othersCount;
-		}
+		this.cache.byColor[pickedCard.colors.join()].removeCard(pickedCard.id);
+		if (pickedCard.colors.length === 1) this.cache.monocolored.removeCard(pickedCard.id);
+		else this.cache.others.removeCard(pickedCard.id);
 	}
 
 	// Returns cardCount color balanced cards picked from cardPool.
@@ -110,14 +101,9 @@ export class ColorBalancedSlot {
 				pickedCards.push(pickedCard);
 
 				if (options?.withReplacement !== true) {
-					removeCardFromCardPool(pickedCard.id, this.cardPool);
-					if (pickedCard.colors.length === 1) {
-						removeCardFromCardPool(pickedCard.id, this.cache.monocolored);
-						--this.cache.monocoloredCount;
-					} else {
-						removeCardFromCardPool(pickedCard.id, this.cache.others);
-						--this.cache.othersCount;
-					}
+					this.cardPool.removeCard(pickedCard.id);
+					if (pickedCard.colors.length === 1) this.cache.monocolored.removeCard(pickedCard.id);
+					else this.cache.others.removeCard(pickedCard.id);
 				}
 			}
 		}
@@ -133,12 +119,12 @@ export class ColorBalancedSlot {
 		// If cr < as, x = 0 is the best we can do.
 		// If c or a are small, we need to ignore x and use remaning cards. Negative x acts like 0.
 		const seededMonocolors = pickedCards.length; // s
-		const c = this.cache.monocoloredCount + seededMonocolors;
-		const a = this.cache.othersCount;
+		const c = this.cache.monocolored.count() + seededMonocolors;
+		const a = this.cache.others.count();
 		const remainingCards = cardCount - seededMonocolors; // r
 		const x = (c * remainingCards - a * seededMonocolors) / (remainingCards * (c + a));
 		for (let i = pickedCards.length; i < cardCount; ++i) {
-			const type = (random.bool(x) && this.cache.monocoloredCount !== 0) || this.cache.othersCount === 0;
+			const type = (random.bool(x) && this.cache.monocolored.count() !== 0) || this.cache.others.count() === 0;
 			const pickedCard = pickCard(
 				type ? this.cache.monocolored : this.cache.others,
 				pickedCards.concat(duplicateProtection),
@@ -147,10 +133,8 @@ export class ColorBalancedSlot {
 			pickedCards.push(pickedCard);
 
 			if (options?.withReplacement !== true) {
-				removeCardFromCardPool(pickedCard.id, this.cardPool);
-				removeCardFromCardPool(pickedCard.id, this.cache.byColor[pickedCard.colors.join()]);
-				if (type) --this.cache.monocoloredCount;
-				else --this.cache.othersCount;
+				this.cardPool.removeCard(pickedCard.id);
+				this.cache.byColor[pickedCard.colors.join()].removeCard(pickedCard.id);
 			}
 		}
 		// Shuffle to avoid obvious signals to other players
@@ -203,7 +187,7 @@ export class BoosterFactory implements IBoosterFactory {
 				if (rarityCheck <= foilRarityRates[r] && foilCardPool[r].size > 0) {
 					const pickedCard = pickCard(foilCardPool[r]);
 					// Synchronize color balancing dictionary
-					if (this.options.colorBalance && this.colorBalancedSlot && pickedCard.rarity == "common")
+					if (this.options.colorBalance && this.colorBalancedSlot && pickedCard.rarity === "common")
 						this.colorBalancedSlot.syncCache(pickedCard);
 					pickedCard.foil = true;
 					booster.push(pickedCard);
@@ -294,16 +278,9 @@ function rollSpecialCardRarity(
 	return pickedRarity;
 }
 
-function countMap<T>(map: Map<T, number>): number {
-	let acc = 0;
-	for (const v of map.values()) acc += v;
-	return acc;
-}
-
-function countBySlot(cardPool: SlotedCardPool) {
+function countBySlot(slotedCardPool: SlotedCardPool) {
 	const counts: { [slot: string]: number } = {};
-	for (const slot in cardPool)
-		counts[slot] = [...cardPool[slot].values()].reduce((acc: number, c: number): number => acc + c, 0);
+	for (const slot in slotedCardPool) counts[slot] = slotedCardPool[slot].count();
 	return counts;
 }
 
@@ -497,7 +474,7 @@ class CMRBoosterFactory extends BoosterFactory {
 				pickedRarities[1] = rollSpecialCardRarity(legendaryCounts, targets, this.options);
 			for (const pickedRarity of pickedRarities) {
 				const pickedCard = pickCard(this.legendaryCreatures[pickedRarity], booster);
-				removeCardFromCardPool(pickedCard.id, this.completeCardPool[pickedCard.rarity]);
+				this.completeCardPool[pickedCard.rarity].removeCard(pickedCard.id);
 				booster.unshift(pickedCard);
 			}
 
@@ -511,9 +488,9 @@ class CMRBoosterFactory extends BoosterFactory {
 				}
 			const pickedFoil = pickCard(this.completeCardPool[foilRarity], [], { foil: true });
 			if (this.cardPool[pickedFoil.rarity].has(pickedFoil.id))
-				removeCardFromCardPool(pickedFoil.id, this.cardPool[pickedFoil.rarity]);
+				this.cardPool[pickedFoil.rarity].removeCard(pickedFoil.id);
 			if (this.legendaryCreatures[pickedFoil.rarity].has(pickedFoil.id))
-				removeCardFromCardPool(pickedFoil.id, this.legendaryCreatures[pickedFoil.rarity]);
+				this.legendaryCreatures[pickedFoil.rarity].removeCard(pickedFoil.id);
 			booster.unshift(pickedFoil);
 
 			return booster;
@@ -886,7 +863,7 @@ class CLBBoosterFactory extends BoosterFactory {
 			if (legendaryRarityCheck < 0.31 / 8.0) legendaryRarity = "mythic";
 			else if (legendaryRarityCheck < 0.31) legendaryRarity = "rare";
 			const pickedLegend = pickCard(this.legendaryCreaturesAndPlaneswalkers[legendaryRarity], booster);
-			removeCardFromCardPool(pickedLegend.id, this.completeCardPool[pickedLegend.rarity]);
+			this.completeCardPool[pickedLegend.rarity].removeCard(pickedLegend.id);
 
 			let backgroundRarity = "common";
 			const backgroundRarityCheck = random.real(0, 1);
@@ -901,7 +878,7 @@ class CLBBoosterFactory extends BoosterFactory {
 			if (this.legendaryBackgrounds[backgroundRarity].size <= 0)
 				return new MessageError("Error generating boosters", `Not enough legendary backgrounds.`);
 			const pickedBackground = pickCard(this.legendaryBackgrounds[backgroundRarity], booster);
-			removeCardFromCardPool(pickedBackground.id, this.completeCardPool[pickedBackground.rarity]);
+			this.completeCardPool[pickedBackground.rarity].removeCard(pickedBackground.id);
 
 			booster.unshift(pickedBackground);
 			booster.unshift(pickedLegend);
@@ -916,9 +893,9 @@ class CLBBoosterFactory extends BoosterFactory {
 				}
 			const pickedFoil = pickCard(this.completeCardPool[foilRarity], [], { foil: true });
 			if (this.cardPool[pickedFoil.rarity].has(pickedFoil.id))
-				removeCardFromCardPool(pickedFoil.id, this.cardPool[pickedFoil.rarity]);
+				this.cardPool[pickedFoil.rarity].removeCard(pickedFoil.id);
 			if (this.legendaryCreaturesAndPlaneswalkers[pickedFoil.rarity].has(pickedFoil.id))
-				removeCardFromCardPool(pickedFoil.id, this.legendaryCreaturesAndPlaneswalkers[pickedFoil.rarity]);
+				this.legendaryCreaturesAndPlaneswalkers[pickedFoil.rarity].removeCard(pickedFoil.id);
 			booster.push(pickedFoil);
 
 			return booster;
@@ -1467,9 +1444,9 @@ class MOMBoosterFactory extends BoosterFactory {
 
 			const insertedCards: UniqueCard[] = [];
 			if (targets.rare > 0) {
-				const raresCount = countMap(this.cardPool.rare);
-				const battleRaresCount = countMap(this.battleCards.rare);
-				const dfcRaresCount = countMap(this.doubleFacedCards.rare);
+				const raresCount = this.cardPool.rare.count();
+				const battleRaresCount = this.battleCards.rare.count();
+				const dfcRaresCount = this.doubleFacedCards.rare.count();
 
 				const rareTypeRoll = random.real(0, raresCount + battleRaresCount + dfcRaresCount);
 
@@ -1630,9 +1607,9 @@ class CMMBoosterFactory extends BoosterFactory {
 			}
 		const pickedFoil = pickCard(this.completeCardPool[foilRarity], [], { foil: true });
 		if (this.cardPool[pickedFoil.rarity].has(pickedFoil.id))
-			removeCardFromCardPool(pickedFoil.id, this.cardPool[pickedFoil.rarity]);
+			this.cardPool[pickedFoil.rarity].removeCard(pickedFoil.id);
 		if (this.legendaryCards[pickedFoil.rarity].has(pickedFoil.id))
-			removeCardFromCardPool(pickedFoil.id, this.legendaryCards[pickedFoil.rarity]);
+			this.legendaryCards[pickedFoil.rarity].removeCard(pickedFoil.id);
 		booster.unshift(pickedFoil);
 
 		return booster;

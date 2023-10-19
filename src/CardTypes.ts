@@ -96,6 +96,19 @@ export class CardPool extends Map<CardID, number> {
 		return this;
 	}
 
+	// Remove a single copy of a card from the pool.
+	removeCard(cid: CardID) {
+		const oldValue = this.get(cid);
+		if (!oldValue) {
+			console.error(`Called removeCard on a non-existing card (${cid}).`);
+			console.trace();
+			throw `Called removeCard on a non-existing card (${cid}).`;
+		}
+		if (oldValue === 1) this.delete(cid);
+		else super.set(cid, oldValue - 1); // Purposefully bypassing our caching overload and calling super.set directly here.
+		--this._count;
+	}
+
 	count() {
 		return this._count;
 	}
