@@ -18,7 +18,7 @@ if (isSocketError(ArenaCube)) {
 }
 
 const CustomSheetsTestFile = fs.readFileSync(`./test/data/CustomSheets.txt`, "utf8");
-import { CardID } from "../../src/CardTypes.js";
+import { CardID, CardPool } from "../../src/CardTypes.js";
 import { isNumber } from "../../src/TypeChecks.js";
 
 describe("Statistical color balancing tests", function () {
@@ -31,10 +31,10 @@ describe("Statistical color balancing tests", function () {
 			colorBalance: true,
 		};
 		const cardPoolByRarity = {
-			common: new Map<CardID, number>(),
-			uncommon: new Map<CardID, number>(),
-			rare: new Map<CardID, number>(),
-			mythic: new Map<CardID, number>(),
+			common: new CardPool(),
+			uncommon: new CardPool(),
+			rare: new CardPool(),
+			mythic: new CardPool(),
 		};
 		for (const [cid, card] of Cards) {
 			if (card.in_booster && card.set === "znr") {

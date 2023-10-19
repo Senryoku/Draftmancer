@@ -54,6 +54,15 @@ describe("Collection Restriction", function () {
 		waitForClientDisconnects(done);
 	});
 
+	it(`Disable ignoreCollections`, function (done) {
+		ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
+		clients[(ownerIdx + 1) % clients.length].once("ignoreCollections", (value) => {
+			expect(value).to.be.false;
+			done();
+		});
+		clients[ownerIdx].emit("ignoreCollections", false);
+	});
+
 	it(`Submit random collections.`, function (done) {
 		collections = Array(clients.length).fill({});
 		// Generate random collections
@@ -75,7 +84,7 @@ describe("Collection Restriction", function () {
 
 	it(`All cards in Session collection should be in all user collections.`, function (done) {
 		const sessColl = Sessions[sessionID].collection();
-		for (const cid in sessColl) {
+		for (const [cid /*count*/] of sessColl) {
 			const arena_id = getCard(cid).arena_id!;
 			for (const col of collections) {
 				expect(col).to.have.own.property(arena_id.toString());
@@ -87,7 +96,7 @@ describe("Collection Restriction", function () {
 
 	it(`All cards in Session Card Pool (e.g. Session collection with applied set restrictions) should be in all user collections.`, function (done) {
 		const sessCardPool = Sessions[sessionID].cardPool();
-		for (const cid in sessCardPool) {
+		for (const [cid /*count*/] of sessCardPool) {
 			const arena_id = getCard(cid).arena_id!;
 			for (const col of collections) {
 				expect(col).to.have.own.property(arena_id.toString());

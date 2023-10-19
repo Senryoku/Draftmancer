@@ -82,7 +82,58 @@ export class Card {
 
 export type DeckBasicLands = { [key in CardColor]: number };
 
-export type CardPool = Map<string, number>;
+// Implements a MultiSet using a standard Map.
+export class CardPool extends Map<CardID, number> {
+	private _count = 0;
+
+	constructor() {
+		super();
+	}
+
+	// Set the number of copies of a card in the pool.
+	// Note: If count is <= 0, the card entry will be removed entirely.
+	set(cid: CardID, count: number) {
+		if (super.has(cid)) {
+			this._count -= super.get(cid)!;
+			if (count <= 0) super.delete(cid);
+		}
+		if (count > 0) {
+			super.set(cid, count);
+			this._count += count;
+		}
+		return this;
+	}
+
+	clear(): void {
+		super.clear();
+		this._count = 0;
+	}
+
+	delete(key: string): boolean {
+		const oldValue = super.get(key);
+		if (oldValue) this._count -= oldValue;
+		return super.delete(key);
+	}
+
+	// Remove a single copy of a card from the pool.
+	removeCard(cid: CardID) {
+		const oldValue = this.get(cid);
+		if (!oldValue) {
+			console.error(`Called removeCard on a non-existing card (${cid}).`);
+			console.trace();
+			throw `Called removeCard on a non-existing card (${cid}).`;
+		}
+		// Purposefully bypassing our caching overload and calling super.set() and super.delete() directly here.
+		if (oldValue === 1) super.delete(cid);
+		else super.set(cid, oldValue - 1);
+		--this._count;
+	}
+
+	count() {
+		return this._count;
+	}
+}
+
 export type SlotedCardPool = { [slot: string]: CardPool };
 export type DeckList = {
 	main: Array<CardID>;

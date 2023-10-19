@@ -1,6 +1,5 @@
 "use strict";
 import { UserID, SessionID } from "./IDTypes.js";
-import { countCards } from "./cardUtils.js";
 import { shuffleArray, getRandom, arrayIntersect, Options, getNDisctinctRandom, pickRandom } from "./utils.js";
 import { Connections, getPickedCardIds } from "./Connection.js";
 import {
@@ -507,7 +506,7 @@ export class Session implements IIndexable {
 	// Returns current card pool according to all session options (Collections, setRestrictions...)
 	cardPool() {
 		if (this.unrestrictedCardPool()) {
-			const cardPool: CardPool = new Map();
+			const cardPool: CardPool = new CardPool();
 			// Returns all cards if there's no set restriction
 			if (this.setRestriction.length === 0) {
 				for (const [cid, card] of Cards)
@@ -528,12 +527,12 @@ export class Session implements IIndexable {
 	restrictedCollection(sets: Array<string>) {
 		const cardPool = this.collection();
 
-		const restricted: CardPool = new Map();
+		const restricted: CardPool = new CardPool();
 		if (sets && sets.length > 0) {
 			for (const s of sets)
 				if (s in CardsBySet)
 					for (const cid of CardsBySet[s].filter((cid) => cardPool.has(cid)))
-						restricted.set(cid, cardPool.get(cid) as number);
+						restricted.set(cid, cardPool.get(cid)!);
 				else console.error(`Session.restrictedCollection Error: '${s}' not in CardsBySet.`);
 			return restricted;
 		} else return cardPool;
@@ -542,7 +541,7 @@ export class Session implements IIndexable {
 	// Compute user collections intersection (taking into account each user preferences)
 	collection(inBoosterOnly = true): CardPool {
 		const user_list = [...this.users];
-		const collection: CardPool = new Map();
+		const collection: CardPool = new CardPool();
 
 		const useCollection = [];
 		for (let i = 0; i < user_list.length; ++i)
@@ -562,13 +561,10 @@ export class Session implements IIndexable {
 
 		// Compute the minimum count of each remaining card
 		for (const c of intersection) {
-			collection.set(c, useCollection[0] ? (Connections[user_list[0]].collection.get(c) as number) : 4);
+			collection.set(c, useCollection[0] ? Connections[user_list[0]].collection.get(c)! : 4);
 			for (let i = 1; i < user_list.length; ++i)
 				if (useCollection[i])
-					collection.set(
-						c,
-						Math.min(collection.get(c) as number, Connections[user_list[i]].collection.get(c) as number)
-					);
+					collection.set(c, Math.min(collection.get(c)!, Connections[user_list[i]].collection.get(c)!));
 		}
 		return collection;
 	}
@@ -576,15 +572,15 @@ export class Session implements IIndexable {
 	// Categorize card pool by rarity
 	cardPoolByRarity(): SlotedCardPool {
 		const cardPoolByRarity: SlotedCardPool = {
-			common: new Map(),
-			uncommon: new Map(),
-			rare: new Map(),
-			mythic: new Map(),
+			common: new CardPool(),
+			uncommon: new CardPool(),
+			rare: new CardPool(),
+			mythic: new CardPool(),
 		};
 		const cardPool = this.cardPool();
 		for (const [cid, count] of cardPool) {
 			const rarity = getCard(cid).rarity;
-			if (!(rarity in cardPoolByRarity)) cardPoolByRarity[rarity] = new Map();
+			if (!(rarity in cardPoolByRarity)) cardPoolByRarity[rarity] = new CardPool();
 			cardPoolByRarity[rarity].set(cid, Math.min(count, this.maxDuplicates?.[rarity] ?? 99));
 		}
 		return cardPoolByRarity;
@@ -593,14 +589,14 @@ export class Session implements IIndexable {
 	// Returns all cards from specified set categorized by rarity and set to maxDuplicates
 	setByRarity(set: string) {
 		const local: SlotedCardPool = {
-			common: new Map(),
-			uncommon: new Map(),
-			rare: new Map(),
-			mythic: new Map(),
+			common: new CardPool(),
+			uncommon: new CardPool(),
+			rare: new CardPool(),
+			mythic: new CardPool(),
 		};
 		for (const cid of BoosterCardsBySet[set]) {
 			const rarity = getCard(cid).rarity;
-			if (!(rarity in local)) local[rarity] = new Map();
+			if (!(rarity in local)) local[rarity] = new CardPool();
 			local[rarity].set(cid, this.maxDuplicates?.[rarity] ?? 99);
 		}
 		return local;
@@ -701,16 +697,16 @@ export class Session implements IIndexable {
 				);
 				// Make sure we have enough cards
 				for (const slot of ["common", "uncommon", "rare"]) {
-					const card_count = countCards((defaultFactory as BoosterFactory).cardPool[slot]);
-					const card_target =
+					const cardCount = (defaultFactory as BoosterFactory).cardPool[slot].count();
+					const cardTarget =
 						targets[slot] *
 						(boosterSpecificRules
 							? boosterQuantity
 							: customBoosters.reduce((a, v) => (v === "" ? a + 1 : a), 0));
-					if (card_count < card_target)
+					if (cardCount < cardTarget)
 						return new MessageError(
 							"Error generating boosters",
-							`Not enough cards (${card_count}/${card_target} ${slot}s) in collection.`
+							`Not enough cards (${cardCount}/${cardTarget} ${slot}s) in collection.`
 						);
 				}
 			}
@@ -770,7 +766,7 @@ export class Session implements IIndexable {
 					const multiplier = customBoosters.reduce((a, v) => (v === boosterSet ? a + 1 : a), 0); // Note: This won't be accurate in the case of 'random' sets.
 					for (const slot of ["common", "uncommon", "rare"]) {
 						if (
-							countCards((usedSets[boosterSet] as BoosterFactory).cardPool[slot]) <
+							(usedSets[boosterSet] as BoosterFactory).cardPool[slot].count() <
 							multiplier * playerCount * targets[slot]
 						)
 							return new MessageError(
@@ -921,10 +917,10 @@ export class Session implements IIndexable {
 
 		// Add a new card to skipped pile. (Make sure there's enough cards for the player to draw if this is the last pile)
 		if (s.cardPool.length > 1 || (s.currentPile < 2 && s.cardPool.length > 0))
-			s.piles[s.currentPile].push(s.cardPool.pop() as UniqueCard);
+			s.piles[s.currentPile].push(s.cardPool.pop()!);
 		// Give a random card from the card pool if this was the last pile
 		if (s.currentPile === 2) {
-			const card = s.cardPool.pop() as UniqueCard;
+			const card = s.cardPool.pop()!;
 			Connections[s.currentPlayer()].pickedCards.main.push(card);
 			Connections[s.currentPlayer()].socket.emit("winstonDraftRandomCard", card);
 			this.draftLog?.users[s.currentPlayer()].picks.push({
@@ -949,7 +945,7 @@ export class Session implements IIndexable {
 			piles: [...s.piles.map((p, idx) => p.slice(0, idx < s.currentPile ? -1 : undefined).map((c) => c.id))],
 		});
 		Connections[s.currentPlayer()].pickedCards.main.push(...s.piles[s.currentPile]);
-		if (s.cardPool.length > 0) s.piles[s.currentPile] = [s.cardPool.pop() as UniqueCard];
+		if (s.cardPool.length > 0) s.piles[s.currentPile] = [s.cardPool.pop()!];
 		else s.piles[s.currentPile] = [];
 		this.winstonNextRound();
 		return true;
@@ -1251,8 +1247,8 @@ export class Session implements IIndexable {
 			//                       Column           Row
 			const idx = choice < 3 ? 3 * i + choice : 3 * (choice - 3) + i;
 			if (s.boosters[0][idx] !== null) {
-				Connections[s.currentPlayer()].pickedCards.main.push(s.boosters[0][idx] as UniqueCard);
-				pickedCards.push(s.boosters[0][idx] as UniqueCard);
+				Connections[s.currentPlayer()].pickedCards.main.push(s.boosters[0][idx]!);
+				pickedCards.push(s.boosters[0][idx]!);
 				log.pick.push(idx);
 				s.boosters[0][idx] = null;
 			}

@@ -1,9 +1,8 @@
 "use strict";
 
-import { CardID, CardPool } from "./CardTypes";
+import { CardID, CardPool } from "./CardTypes.js";
 import { getUnique, getCard } from "./Cards.js";
 import { getRandomMapKey, getRandom } from "./utils.js";
-import { removeCardFromCardPool } from "./cardUtils.js";
 import BasicLandIDs from "./data/BasicLandIDs.json" assert { type: "json" };
 
 export class BasicLandSlot {
@@ -22,7 +21,7 @@ export class BasicLandSlot {
 export class SpecialLandSlot extends BasicLandSlot {
 	commonLandsIds: Array<CardID>;
 	rate: number;
-	landsToDistribute: CardPool = new Map();
+	landsToDistribute: CardPool = new CardPool();
 
 	constructor(set: string, commonLandsIds: Array<CardID>, rate: number, basicLandsIds?: Array<CardID>) {
 		super(set);
@@ -43,7 +42,7 @@ export class SpecialLandSlot extends BasicLandSlot {
 	pick() {
 		if (Math.random() <= this.rate && this.landsToDistribute.size > 0) {
 			const c = getRandomMapKey(this.landsToDistribute);
-			removeCardFromCardPool(c, this.landsToDistribute);
+			this.landsToDistribute.removeCard(c);
 			return getUnique(c);
 		} else {
 			return getUnique(getRandom(this.basicLandsIds));

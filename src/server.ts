@@ -205,7 +205,7 @@ function setCollection(
 ) {
 	if (!isObject(collection) || collection === null) return;
 
-	const processedCollection: CardPool = new Map();
+	const processedCollection: CardPool = new CardPool();
 	// Remove unknown cards immediatly.
 	for (const aid in collection) {
 		if (aid in MTGACards) {

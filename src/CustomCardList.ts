@@ -1,7 +1,7 @@
 import { ColorBalancedSlot } from "./BoosterFactory.js";
 import { CardID, Card, SlotedCardPool, UniqueCard, CardPool } from "./CardTypes.js";
 import { getCard } from "./Cards.js";
-import { pickCard, removeCardFromCardPool } from "./cardUtils.js";
+import { pickCard } from "./cardUtils.js";
 import { MessageError } from "./Message.js";
 import { isEmpty, Options, random, weightedRandomIdx, shuffleArray } from "./utils.js";
 
@@ -74,7 +74,7 @@ export function generateBoosterFromCustomCardList(
 
 		const cardsBySlot: SlotedCardPool = {};
 		for (const slotName in customCardList.slots) {
-			cardsBySlot[slotName] = new Map();
+			cardsBySlot[slotName] = new CardPool();
 			for (const cardId in customCardList.slots[slotName])
 				cardsBySlot[slotName].set(cardId, customCardList.slots[slotName][cardId]);
 		}
@@ -85,7 +85,7 @@ export function generateBoosterFromCustomCardList(
 			// however I don't have a better solution for now.
 			for (const slotName in cardsBySlot)
 				for (const cardId of options.removeFromCardPool)
-					if (cardsBySlot[slotName].has(cardId)) removeCardFromCardPool(cardId, cardsBySlot[slotName]);
+					if (cardsBySlot[slotName].has(cardId)) cardsBySlot[slotName].removeCard(cardId);
 		}
 
 		// Color balance the largest slot of each layout
@@ -222,7 +222,7 @@ export function generateBoosterFromCustomCardList(
 
 		// Generate fully random 15-cards booster for cube (not considering rarity)
 		// Getting custom card list
-		const localCollection: CardPool = new Map();
+		const localCollection: CardPool = new CardPool();
 
 		let cardCount = 0;
 		for (const cardId in defaultSlot) {
@@ -241,7 +241,7 @@ export function generateBoosterFromCustomCardList(
 		// Workaround to handle the LoreSeeker draft effect with a limited number of cards
 		if (!options.withReplacement && options.removeFromCardPool) {
 			for (const cardId of options.removeFromCardPool)
-				if (localCollection.has(cardId)) removeCardFromCardPool(cardId, localCollection);
+				if (localCollection.has(cardId)) localCollection.removeCard(cardId);
 		}
 
 		const boosters = [];

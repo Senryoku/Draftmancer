@@ -4,21 +4,18 @@ import { CardID, Card, CardPool } from "./CardTypes.js";
 import { getUnique } from "./Cards.js";
 import { getRandomMapKey, random } from "./utils.js";
 
-export function removeCardFromCardPool(cid: CardID, dict: CardPool) {
-	if (!dict.has(cid)) {
-		console.error(`Called removeCardFromCardPool on a non-existing card (${cid}).`);
-		console.trace();
-		throw `Called removeCardFromCardPool on a non-existing card (${cid}).`;
-	}
-	const newValue = dict.get(cid)! - 1;
-	if (newValue > 0) dict.set(cid, newValue);
-	else dict.delete(cid);
-}
-
 // Returns a random card from the pool, choosen uniformly across ALL cards (not UNIQUE ones),
 // meaning cards present in multiple copies are more likely to be picked.
 function getRandomCardFromCardPool(cardPool: CardPool): CardID {
-	const idx = random.integer(0, countCards(cardPool) - 1);
+	const idx = random.integer(0, cardPool.count() - 1);
+
+	// Fast path (kinda, sadly we can't directly index into a map) for the singleton case.
+	if (cardPool.size === cardPool.count()) {
+		const r = cardPool.keys();
+		for (let i = 0; i < idx; ++i) r.next();
+		return r.next().value;
+	}
+
 	let acc = 0;
 	for (const [cid, count] of cardPool) {
 		acc += count;
@@ -60,18 +57,12 @@ export function pickCard(
 				(cid) => booster.findIndex((card) => cid === card.id) === -1
 			);
 			if (candidates.length > 0) {
-				const tmpMap = new Map();
-				for (const cid of candidates) tmpMap.set(cid, cardPool.get(cid) as number);
-				cid = randomFunc(tmpMap);
+				const tmpPool = new CardPool();
+				for (const cid of candidates) tmpPool.set(cid, cardPool.get(cid)!);
+				cid = randomFunc(tmpPool);
 			}
 		}
 	}
-	if (options?.withReplacement !== true) removeCardFromCardPool(cid, cardPool);
+	if (options?.withReplacement !== true) cardPool.removeCard(cid);
 	return getUnique(cid, options);
-}
-
-export function countCards(dict: CardPool): number {
-	let acc = 0;
-	for (const v of dict.values()) acc += v;
-	return acc;
 }
