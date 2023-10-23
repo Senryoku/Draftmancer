@@ -1108,7 +1108,7 @@ ul.player-list {
 
 /**** Draft ****/
 
-.booster-waiting {
+.booster {
 	position: relative;
 	min-height: calc(var(--booster-card-scale) * 282px + 2 * 0.75em);
 }

@@ -1,4 +1,4 @@
-.booster-open-enter-active {
+.booster-open-enter-active.card {
 	--intro-duration: 0.5s;
 	--translation-duration: 0.5s;
 	--flip-duration: 0.4s;
@@ -15,64 +15,64 @@
 	transform-origin: center 140%;
 }
 
-.booster-open-enter-active:nth-child(1) {
+.booster-open-enter-active.card:nth-of-type(1) {
 	--animation-index: 1;
 }
-.booster-open-enter-active:nth-child(2) {
+.booster-open-enter-active.card:nth-of-type(2) {
 	--animation-index: 2;
 }
-.booster-open-enter-active:nth-child(3) {
+.booster-open-enter-active.card:nth-of-type(3) {
 	--animation-index: 3;
 }
-.booster-open-enter-active:nth-child(4) {
+.booster-open-enter-active.card:nth-of-type(4) {
 	--animation-index: 4;
 }
-.booster-open-enter-active:nth-child(5) {
+.booster-open-enter-active.card:nth-of-type(5) {
 	--animation-index: 5;
 }
-.booster-open-enter-active:nth-child(6) {
+.booster-open-enter-active.card:nth-of-type(6) {
 	--animation-index: 6;
 }
-.booster-open-enter-active:nth-child(7) {
+.booster-open-enter-active.card:nth-of-type(7) {
 	--animation-index: 7;
 }
-.booster-open-enter-active:nth-child(8) {
+.booster-open-enter-active.card:nth-of-type(8) {
 	--animation-index: 8;
 }
-.booster-open-enter-active:nth-child(9) {
+.booster-open-enter-active.card:nth-of-type(9) {
 	--animation-index: 9;
 }
-.booster-open-enter-active:nth-child(10) {
+.booster-open-enter-active.card:nth-of-type(10) {
 	--animation-index: 10;
 }
-.booster-open-enter-active:nth-child(11) {
+.booster-open-enter-active.card:nth-of-type(11) {
 	--animation-index: 11;
 }
-.booster-open-enter-active:nth-child(12) {
+.booster-open-enter-active.card:nth-of-type(12) {
 	--animation-index: 12;
 }
-.booster-open-enter-active:nth-child(13) {
+.booster-open-enter-active.card:nth-of-type(13) {
 	--animation-index: 13;
 }
-.booster-open-enter-active:nth-child(14) {
+.booster-open-enter-active.card:nth-of-type(14) {
 	--animation-index: 14;
 }
-.booster-open-enter-active:nth-child(15) {
+.booster-open-enter-active.card:nth-of-type(15) {
 	--animation-index: 15;
 }
-.booster-open-enter-active:nth-child(16) {
+.booster-open-enter-active.card:nth-of-type(16) {
 	--animation-index: 16;
 }
-.booster-open-enter-active:nth-child(17) {
+.booster-open-enter-active.card:nth-of-type(17) {
 	--animation-index: 17;
 }
-.booster-open-enter-active:nth-child(18) {
+.booster-open-enter-active.card:nth-of-type(18) {
 	--animation-index: 18;
 }
-.booster-open-enter-active:nth-child(19) {
+.booster-open-enter-active.card:nth-of-type(19) {
 	--animation-index: 19;
 }
-.booster-open-enter-active:nth-child(20) {
+.booster-open-enter-active.card:nth-of-type(20) {
 	--animation-index: 20;
 }
 
