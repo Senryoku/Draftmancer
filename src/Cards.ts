@@ -7,6 +7,8 @@ import { memoryReport } from "./utils.js";
 
 import { ArenaID, Card, CardID, getNextCardID, UniqueCard } from "./CardTypes.js";
 
+export const DefaultMaxDuplicates = 999; // Supposed to be basically unlimited (i.e. with replacement, without explicitly enabling it)
+
 console.group("Cards.ts::Loading Cards...");
 console.time("Total");
 

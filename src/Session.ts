@@ -15,7 +15,15 @@ import {
 	OptionalOnPickDraftEffect,
 	UniqueCardState,
 } from "./CardTypes.js";
-import { Cards, getUnique, BoosterCardsBySet, CardsBySet, MTGACardIDs, getCard } from "./Cards.js";
+import {
+	Cards,
+	getUnique,
+	BoosterCardsBySet,
+	CardsBySet,
+	MTGACardIDs,
+	getCard,
+	DefaultMaxDuplicates,
+} from "./Cards.js";
 import { fallbackToSimpleBots, isBot, MTGDraftBotParameters } from "./Bot.js";
 import { computeHashes } from "./DeckHashes.js";
 import { SpecialLandSlots } from "./LandSlot.js";
@@ -509,12 +517,12 @@ export class Session implements IIndexable {
 			// Returns all cards if there's no set restriction
 			if (this.setRestriction.length === 0) {
 				for (const [cid, card] of Cards)
-					if (card.in_booster) cardPool.set(cid, this.maxDuplicates?.[card.rarity] ?? 99);
+					if (card.in_booster) cardPool.set(cid, this.maxDuplicates?.[card.rarity] ?? DefaultMaxDuplicates);
 			} else {
 				// Use cache otherwise
 				for (const set of this.setRestriction)
 					for (const cid of BoosterCardsBySet[set])
-						cardPool.set(cid, this.maxDuplicates?.[getCard(cid).rarity] ?? 99);
+						cardPool.set(cid, this.maxDuplicates?.[getCard(cid).rarity] ?? DefaultMaxDuplicates);
 			}
 			return cardPool;
 		}
@@ -580,7 +588,7 @@ export class Session implements IIndexable {
 		for (const [cid, count] of cardPool) {
 			const rarity = getCard(cid).rarity;
 			if (!(rarity in cardPoolByRarity)) cardPoolByRarity[rarity] = new CardPool();
-			cardPoolByRarity[rarity].set(cid, Math.min(count, this.maxDuplicates?.[rarity] ?? 99));
+			cardPoolByRarity[rarity].set(cid, Math.min(count, this.maxDuplicates?.[rarity] ?? DefaultMaxDuplicates));
 		}
 		return cardPoolByRarity;
 	}
@@ -596,7 +604,7 @@ export class Session implements IIndexable {
 		for (const cid of BoosterCardsBySet[set]) {
 			const rarity = getCard(cid).rarity;
 			if (!(rarity in local)) local[rarity] = new CardPool();
-			local[rarity].set(cid, this.maxDuplicates?.[rarity] ?? 99);
+			local[rarity].set(cid, this.maxDuplicates?.[rarity] ?? DefaultMaxDuplicates);
 		}
 		return local;
 	}

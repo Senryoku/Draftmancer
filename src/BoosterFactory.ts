@@ -1,5 +1,5 @@
 import { CardID, Card, CardPool, SlotedCardPool, UniqueCard } from "./CardTypes.js";
-import { getUnique, BoosterCardsBySet, CardsBySet, getCard } from "./Cards.js";
+import { getUnique, BoosterCardsBySet, CardsBySet, getCard, DefaultMaxDuplicates } from "./Cards.js";
 import { shuffleArray, randomInt, Options, random, getRandom } from "./utils.js";
 import { pickCard } from "./cardUtils.js";
 import { BasicLandSlot } from "./LandSlot.js";
@@ -531,7 +531,7 @@ class STXBoosterFactory extends BoosterFactory {
 				if (parseInt(card.collector_number) <= 63)
 					this.mysticalArchiveByRarity[card.rarity].set(
 						cid,
-						Math.min(options.maxDuplicates?.[card.rarity] ?? 99, count)
+						Math.min(options.maxDuplicates?.[card.rarity] ?? DefaultMaxDuplicates, count)
 					);
 			}
 		} else {
@@ -539,7 +539,10 @@ class STXBoosterFactory extends BoosterFactory {
 				const card = getCard(cid);
 				// Remove Japanese versions
 				if (parseInt(card.collector_number) <= 63)
-					this.mysticalArchiveByRarity[card.rarity].set(cid, options.maxDuplicates?.[card.rarity] ?? 99);
+					this.mysticalArchiveByRarity[card.rarity].set(
+						cid,
+						options.maxDuplicates?.[card.rarity] ?? DefaultMaxDuplicates
+					);
 			}
 		}
 	}
@@ -1008,12 +1011,15 @@ class YDMUBoosterFactory extends BoosterFactory {
 			for (const [cid, count] of YDMUCards)
 				this.alchemyCards[getCard(cid).rarity].set(
 					cid,
-					Math.min(options.maxDuplicates?.[getCard(cid).rarity] ?? 99, count)
+					Math.min(options.maxDuplicates?.[getCard(cid).rarity] ?? DefaultMaxDuplicates, count)
 				);
 		} else {
 			this.alchemyCards = { uncommon: new CardPool(), rare: new CardPool(), mythic: new CardPool() };
 			for (const cid of BoosterCardsBySet["alchemy_dmu"])
-				this.alchemyCards[getCard(cid).rarity].set(cid, options.maxDuplicates?.[getCard(cid).rarity] ?? 99);
+				this.alchemyCards[getCard(cid).rarity].set(
+					cid,
+					options.maxDuplicates?.[getCard(cid).rarity] ?? DefaultMaxDuplicates
+				);
 		}
 	}
 
@@ -1148,14 +1154,17 @@ class BROBoosterFactory extends BoosterFactory {
 				if (parseInt(card.collector_number) <= 63)
 					this.retroArtifacts[card.rarity].set(
 						cid,
-						Math.min(options.maxDuplicates?.[card.rarity] ?? 99, count)
+						Math.min(options.maxDuplicates?.[card.rarity] ?? DefaultMaxDuplicates, count)
 					);
 			}
 		} else {
 			for (const cid of CardsBySet["brr"]) {
 				const card = getCard(cid);
 				if (parseInt(card.collector_number) <= 63)
-					this.retroArtifacts[card.rarity].set(cid, options.maxDuplicates?.[card.rarity] ?? 99);
+					this.retroArtifacts[card.rarity].set(
+						cid,
+						options.maxDuplicates?.[card.rarity] ?? DefaultMaxDuplicates
+					);
 			}
 		}
 	}
@@ -1303,7 +1312,7 @@ class SIRBoosterFactory extends BoosterFactory {
 			Math.floor(new Date().getTime() / (1000 * 60 * 60 * 24 * 7)) % ShadowOfThePastLists.length;
 		for (const cid of ShadowOfThePastLists[currentSheet].card_ids) {
 			const card = getCard(cid);
-			this.bonusSheet[card.rarity].set(cid, options.maxDuplicates?.[card.rarity] ?? 99);
+			this.bonusSheet[card.rarity].set(cid, options.maxDuplicates?.[card.rarity] ?? DefaultMaxDuplicates);
 		}
 	}
 
@@ -1391,14 +1400,17 @@ class MOMBoosterFactory extends BoosterFactory {
 				if (parseInt(card.collector_number) <= 65)
 					this.multiverseLegend[card.rarity].set(
 						cid,
-						Math.min(options.maxDuplicates?.[card.rarity] ?? 99, count)
+						Math.min(options.maxDuplicates?.[card.rarity] ?? DefaultMaxDuplicates, count)
 					);
 			}
 		} else {
 			for (const cid of CardsBySet["mul"]) {
 				const card = getCard(cid);
 				if (parseInt(card.collector_number) <= 65)
-					this.multiverseLegend[card.rarity].set(cid, options.maxDuplicates?.[card.rarity] ?? 99);
+					this.multiverseLegend[card.rarity].set(
+						cid,
+						options.maxDuplicates?.[card.rarity] ?? DefaultMaxDuplicates
+					);
 			}
 		}
 
@@ -1624,13 +1636,16 @@ class WOEBoosterFactory extends BoosterFactory {
 			for (const [cid, count] of WOTCards) {
 				const card = getCard(cid);
 				if (parseInt(card.collector_number) <= WOEBoosterFactory.MaxWOTCollectorNumber)
-					this.wotPool[card.rarity].set(cid, Math.min(options.maxDuplicates?.[card.rarity] ?? 99, count));
+					this.wotPool[card.rarity].set(
+						cid,
+						Math.min(options.maxDuplicates?.[card.rarity] ?? DefaultMaxDuplicates, count)
+					);
 			}
 		} else {
 			for (const cid of CardsBySet["wot"]) {
 				const card = getCard(cid);
 				if (parseInt(card.collector_number) <= WOEBoosterFactory.MaxWOTCollectorNumber)
-					this.wotPool[card.rarity].set(cid, options.maxDuplicates?.[card.rarity] ?? 99);
+					this.wotPool[card.rarity].set(cid, options.maxDuplicates?.[card.rarity] ?? DefaultMaxDuplicates);
 			}
 		}
 	}

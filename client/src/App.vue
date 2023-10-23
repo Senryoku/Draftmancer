@@ -2365,11 +2365,11 @@
 									id="boosters-per-player"
 									class="small-number-input"
 									:min="1"
-									:max="25"
+									:max="99"
 									:step="1"
 									:delay="0.1"
 									v-model.number="boostersPerPlayer"
-									:validate="(v: number) => Math.max(1, Math.min(v, 25))"
+									:validate="(v: number) => Math.max(1, Math.min(v, 99))"
 								/>
 							</div>
 						</div>
@@ -2399,6 +2399,7 @@
 									<option value="shuffleBoosterPool">Shuffle Booster Pool</option>
 								</select>
 							</div>
+							<hr style="margin: 0.4em 1em; color: #555" />
 							<div
 								v-tooltip.right="{
 									popperClass: 'option-tooltip',
@@ -2406,6 +2407,7 @@
 										'<p>Specify the set of indiviual boosters handed to each player. Useful for classic Chaos Draft or Ixalan/Rivals of Ixalan draft for example.</p><p>Note: Collections are ignored for each booster with any other value than (Default).</p><p>\'Random Set from Card Pool\' will pick a different extension for each player, \'Random Set from Card Pool (Shared)\' means the randomly picked set will be the same for all players.</p>',
 									html: true,
 								}"
+								style="max-height: 10em; overflow-y: auto; margin: 0.2em; padding-bottom: 0.4em"
 							>
 								<div v-for="(value, index) in customBoosters" class="line" :key="index">
 									<label for="customized-booster">Booster #{{ index + 1 }}</label>
