@@ -1718,7 +1718,22 @@
 						with them, in pod!
 					</p>
 					<div class="welcome-top">
-						<div>
+						<a href="/draftqueue">
+							<div>
+								<img
+									style="
+										border-radius: 10px;
+										box-shadow:
+											0 4px 8px 0 rgba(0, 0, 0, 0.2),
+											0 6px 20px 0 rgba(0, 0, 0, 0.19);
+									"
+									src="./assets/img/lci.webp"
+									alt="Try The Lost Caverns of Ixalan with human players right now in the Draft Queue!"
+								/>
+							</div>
+						</a>
+						<!--
+							<div>
 							<div class="section-title">
 								<h2>Quick Start</h2>
 							</div>
@@ -1741,7 +1756,8 @@
 									<li>Tinker with the settings and organize your own events!</li>
 								</ul>
 							</div>
-						</div>
+							</div>
+						-->
 						<Communities />
 					</div>
 					<div class="welcome-sections">

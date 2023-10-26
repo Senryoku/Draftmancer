@@ -537,7 +537,8 @@ div:where(.swal2-container) .swal2-checkbox {
 .welcome-top {
 	display: flex;
 	justify-content: center;
-	gap: 1em;
+	align-items: center;
+	gap: 2vw;
 }
 
 @media (max-width: 1200px) {
