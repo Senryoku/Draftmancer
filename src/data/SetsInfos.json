@@ -2308,10 +2308,10 @@
         "cardCount": 144,
         "isPrimary": true,
         "icon": "img/sets/lci.svg",
-        "commonCount": 30,
+        "commonCount": 31,
         "mythicCount": 40,
         "rareCount": 43,
-        "uncommonCount": 31
+        "uncommonCount": 30
     },
     "lea": {
         "code": "lea",
