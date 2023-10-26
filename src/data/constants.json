@@ -75,7 +75,8 @@
         "mom",
         "mat",
         "ltr",
-        "woe"
+        "woe",
+        "lci"
     ],
     "AlchemySets": [
         "hbg",
@@ -92,7 +93,8 @@
         "one",
         "mom",
         "mat",
-        "woe"
+        "woe",
+        "lci"
     ],
     "BasicLandNames": {
         "en": {
@@ -301,6 +303,7 @@
         }
     ],
     "PrimarySets": [
+        "lci",
         "woe",
         "cmm",
         "ltr",
