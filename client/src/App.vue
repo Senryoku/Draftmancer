@@ -1719,17 +1719,15 @@
 					</p>
 					<div class="welcome-top">
 						<a href="/draftqueue">
-							<div>
+							<div class="lci-banner">
 								<img
-									style="
-										border-radius: 10px;
-										box-shadow:
-											0 4px 8px 0 rgba(0, 0, 0, 0.2),
-											0 6px 20px 0 rgba(0, 0, 0, 0.19);
-									"
 									src="./assets/img/lci.webp"
 									alt="Try The Lost Caverns of Ixalan with human players right now in the Draft Queue!"
 								/>
+								<div class="pointer">
+									<div class="pointer-arrow">🠲</div>
+									<div class="pointer-text">Draft Now!</div>
+								</div>
 							</div>
 						</a>
 						<!--

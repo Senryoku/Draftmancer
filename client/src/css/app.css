@@ -1725,3 +1725,52 @@ See: https://stackoverflow.com/questions/52937708/why-does-applying-a-css-filter
 	border-radius: 3.5%/28% 28% 24% 24%;
 	background-color: #518ae6d0;
 }
+
+/* Temp The Lost Caverns of Ixalan Banner */
+.lci-banner {
+	position: relative;
+	max-width: min(500px, 90wv);
+}
+
+.lci-banner img {
+	border-radius: 10px;
+	box-shadow:
+		0 4px 8px 0 rgba(0, 0, 0, 0.2),
+		0 6px 20px 0 rgba(0, 0, 0, 0.19);
+	width: 100%;
+}
+
+.lci-banner .pointer {
+	right: -8px;
+	bottom: -10px;
+	position: absolute;
+
+	color: white;
+	width: 155px;
+	height: 50px;
+	text-align: center;
+
+	border-radius: 25px 0 0 25px;
+
+	font-variant: small-caps;
+}
+
+.lci-banner .pointer-arrow {
+	position: absolute;
+	top: 0;
+	right: 0;
+	left: 0;
+	bottom: 0;
+	text-align: center;
+	font-size: 11.5em;
+	color: steelblue;
+	filter: drop-shadow(0 0 10px rgba(0, 0, 0, 128));
+	z-index: 0;
+	line-height: 25%;
+}
+
+.lci-banner .pointer-text {
+	z-index: 1;
+	line-height: 46px;
+	position: relative;
+}
