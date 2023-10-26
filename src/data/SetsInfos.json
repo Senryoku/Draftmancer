@@ -1129,11 +1129,11 @@
     "dom": {
         "code": "dom",
         "fullName": "Dominaria",
-        "cardCount": 280,
+        "cardCount": 281,
         "isPrimary": true,
         "icon": "img/sets/dom.svg",
         "commonCount": 125,
-        "mythicCount": 17,
+        "mythicCount": 18,
         "rareCount": 56,
         "uncommonCount": 82
     },
@@ -2294,20 +2294,24 @@
     "lcc": {
         "code": "lcc",
         "fullName": "Lost Caverns of Ixalan Commander",
-        "cardCount": 1,
+        "cardCount": 24,
         "isPrimary": false,
         "icon": "img/sets/lcc.svg",
-        "mythicCount": 1
+        "commonCount": 2,
+        "mythicCount": 19,
+        "rareCount": 1,
+        "uncommonCount": 2
     },
     "lci": {
         "code": "lci",
         "fullName": "The Lost Caverns of Ixalan",
-        "cardCount": 23,
+        "cardCount": 144,
         "isPrimary": true,
         "icon": "img/sets/lci.svg",
-        "commonCount": 5,
-        "mythicCount": 15,
-        "rareCount": 3
+        "commonCount": 30,
+        "mythicCount": 40,
+        "rareCount": 43,
+        "uncommonCount": 31
     },
     "lea": {
         "code": "lea",
@@ -3015,11 +3019,10 @@
     "p09": {
         "code": "p09",
         "fullName": "Magic Player Rewards 2009",
-        "cardCount": 10,
+        "cardCount": 9,
         "isPrimary": false,
         "block": "Magic Player Rewards",
         "icon": "img/sets/p09.svg",
-        "mythicCount": 1,
         "rareCount": 9
     },
     "p10": {
@@ -3902,6 +3905,17 @@
         "icon": "img/sets/piko.svg",
         "mythicCount": 30,
         "rareCount": 106
+    },
+    "pip": {
+        "code": "pip",
+        "fullName": "Fallout",
+        "cardCount": 50,
+        "isPrimary": false,
+        "icon": "img/sets/pip.svg",
+        "commonCount": 11,
+        "mythicCount": 16,
+        "rareCount": 16,
+        "uncommonCount": 7
     },
     "pisd": {
         "code": "pisd",
@@ -5018,10 +5032,11 @@
     "rex": {
         "code": "rex",
         "fullName": "Jurassic World Collection",
-        "cardCount": 3,
+        "cardCount": 20,
         "isPrimary": false,
         "icon": "img/sets/rex.svg",
-        "rareCount": 3
+        "commonCount": 1,
+        "rareCount": 19
     },
     "rix": {
         "code": "rix",
@@ -5213,11 +5228,11 @@
     "slp": {
         "code": "slp",
         "fullName": "Secret Lair Showdown",
-        "cardCount": 17,
+        "cardCount": 14,
         "isPrimary": false,
         "icon": "img/sets/slp.svg",
         "mythicCount": 3,
-        "rareCount": 14
+        "rareCount": 11
     },
     "slu": {
         "code": "slu",
@@ -5310,11 +5325,12 @@
     "spg": {
         "code": "spg",
         "fullName": "Special Guests",
-        "cardCount": 8,
+        "cardCount": 14,
         "isPrimary": false,
         "icon": "img/sets/spg.svg",
-        "mythicCount": 7,
-        "rareCount": 1
+        "mythicCount": 8,
+        "rareCount": 4,
+        "uncommonCount": 2
     },
     "ss1": {
         "code": "ss1",

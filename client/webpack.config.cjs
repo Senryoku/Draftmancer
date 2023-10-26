@@ -63,7 +63,7 @@ module.exports = {
 			template: "./client/template/index.html",
 			inject: "body",
 			chunks: ["index"],
-			title: "Draftmancer - Multiplayer MTG Limited Simulator",
+			title: "Draftmancer - Multiplayer MTG Draft Simulator",
 			hash: true,
 		}),
 		new HtmlWebpackPlugin({
