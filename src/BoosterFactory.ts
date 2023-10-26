@@ -247,7 +247,12 @@ function filterCardPool(slotedCardPool: SlotedCardPool, predicate: (cid: CardID)
 	return [specialCards, filteredCardPool];
 }
 
-function rollSpecialCardRarity(cardCounts: { [slot: string]: number }, targets: Targets, options: Options) {
+function rollSpecialCardRarity(
+	cardCounts: { [slot: string]: number },
+	targets: Targets,
+	options: { minRarity?: string; mythicPromotion?: boolean }
+) {
+	const mythicPromotion = options.mythicPromotion ?? true;
 	let pickedRarity = options.minRarity ?? "uncommon";
 
 	let total = targets.rare;
@@ -259,14 +264,11 @@ function rollSpecialCardRarity(cardCounts: { [slot: string]: number }, targets: 
 	else if (rand < targets.rare + targets.uncommon) pickedRarity = "uncommon";
 
 	if (pickedRarity === "rare") {
-		if (
-			cardCounts["rare"] === 0 ||
-			(cardCounts["mythic"] > 0 && options.mythicPromotion && random.bool(mythicRate))
-		)
+		if (cardCounts["rare"] === 0 || (cardCounts["mythic"] > 0 && mythicPromotion && random.bool(mythicRate)))
 			pickedRarity = "mythic";
 	}
 
-	if (cardCounts[pickedRarity] === 0) pickedRarity = Object.keys(cardCounts).find((v) => cardCounts[v] > 0);
+	if (cardCounts[pickedRarity] === 0) pickedRarity = Object.keys(cardCounts).find((v) => cardCounts[v] > 0)!;
 
 	return pickedRarity;
 }
@@ -1679,6 +1681,42 @@ class WOEBoosterFactory extends BoosterFactory {
 	}
 }
 
+// The Lost Caverns of Ixalan
+// Double-faced common or uncommon.
+class LCIBoosterFactory extends BoosterFactory {
+	dfcByRarity: SlotedCardPool;
+
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
+		const [dfcByRarity, filteredCardPool] = filterCardPool(cardPool, (cid: CardID) =>
+			getCard(cid).name.includes("//")
+		);
+		super(filteredCardPool, landSlot, options);
+		this.dfcByRarity = dfcByRarity;
+	}
+
+	generateBooster(targets: Targets) {
+		const dfcCounts = countBySlot(this.dfcByRarity);
+		// Ignore the rule if there's no dfc left
+		if (Object.values(dfcCounts).every((c) => c === 0)) {
+			return super.generateBooster(targets);
+		} else {
+			// Roll for MDFC rarity
+			const pickedRarity = random.bool(3 / 9) ? "uncommon" : "common"; // FIXME: We don't know the actual rate.
+			const pickedMDFC = pickCard(this.dfcByRarity[pickedRarity], []);
+
+			const updatedTargets = structuredClone(targets);
+			updatedTargets.common = Math.max(0, updatedTargets.common - 1); // Replace one common by a Double-faced card
+
+			const booster = super.generateBooster(updatedTargets);
+			if (isMessageError(booster)) return booster;
+
+			booster.splice(updatedTargets["rare"], 0, pickedMDFC);
+
+			return booster;
+		}
+	}
+}
+
 // Set specific rules.
 // Neither DOM, WAR or ZNR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
 export const SetSpecificFactories: {
@@ -1716,6 +1754,7 @@ export const SetSpecificFactories: {
 	mat: MATBoosterFactory,
 	cmm: CMMBoosterFactory,
 	woe: WOEBoosterFactory,
+	lci: LCIBoosterFactory,
 };
 
 export const getBoosterFactory = function (

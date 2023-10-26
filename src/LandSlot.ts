@@ -215,6 +215,24 @@ export const SpecialLandSlots: { [set: string]: SpecialLandSlot } = {
 		],
 		1 / 2
 	),
+	lci: new SpecialLandSlot(
+		"lci",
+		[
+			// Non-Basic common Caves
+			"2a51ebf6-a465-42e2-82b7-d2cb928ca632", // Cavernous Maw
+			"69f317fc-f603-45b5-9208-545be4dcbf36", // Hidden Cataract
+			"e19d5071-4ea1-4883-b067-a21e553f96e0", // Hidden Courtyard
+			"f67fd04f-05da-4418-97de-abeb7346cc69", // Hidden Necropolis
+			"9fa06aed-52c1-48f1-9906-362db12a3cf7", // Hidden Nursery
+			"a942939a-c06e-4b90-a404-ae5acfffcff9", // Hidden Volcano
+		],
+		0.7,
+		// "Travel Poster" basic lands.
+		BasicLandIDs["lci"].filter(
+			(cid: CardID) =>
+				parseInt(getCard(cid)["collector_number"]) >= 267 && parseInt(getCard(cid)["collector_number"]) <= 291
+		)
+	),
 };
 
 export const BasicLandSlots: { [set: string]: BasicLandSlot } = {};
