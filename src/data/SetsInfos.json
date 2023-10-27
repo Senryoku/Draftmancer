@@ -2305,13 +2305,13 @@
     "lci": {
         "code": "lci",
         "fullName": "The Lost Caverns of Ixalan",
-        "cardCount": 144,
+        "cardCount": 176,
         "isPrimary": true,
         "icon": "img/sets/lci.svg",
-        "commonCount": 31,
-        "mythicCount": 40,
-        "rareCount": 43,
-        "uncommonCount": 30
+        "commonCount": 32,
+        "mythicCount": 41,
+        "rareCount": 64,
+        "uncommonCount": 39
     },
     "lea": {
         "code": "lea",
