@@ -1724,10 +1724,6 @@
 									src="./assets/img/lci.webp"
 									alt="Try The Lost Caverns of Ixalan with human players right now in the Draft Queue!"
 								/>
-								<div class="pointer">
-									<div class="pointer-arrow">🠲</div>
-									<div class="pointer-text">Draft Now!</div>
-								</div>
 							</div>
 						</a>
 						<!--
