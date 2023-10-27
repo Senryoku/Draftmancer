@@ -154,6 +154,15 @@ const communities = [
 			discord: "https://discord.gg/f5UYPauRQz",
 		},
 	},
+	{
+		name: "The Cube Draft Gathering Place",
+		brief: "Community-focused server running Cubes Monday to Friday on Tabletop Simulator. We are open to cubes of any kind or type.",
+		icon: "cube_gathering.webp",
+		tags: ["Draft", "Cube", "Social", "TTS"],
+		links: {
+			discord: "https://discord.gg/wRXzJFeRtz",
+		},
+	},
 ];
 shuffleArray(communities);
 
