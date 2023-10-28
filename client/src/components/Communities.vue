@@ -28,6 +28,7 @@
 								<font-awesome-icon :icon="['brands', 'discord']" /><span class="link-label">
 									Discord server</span
 								>
+								<span v-if="c.discord_member_count"> ({{ c.discord_member_count }} members)</span>
 							</a>
 							<a v-if="c.links.youtube" :href="c.links.twitter" target="_blank">
 								<font-awesome-icon :icon="['brands', 'twitter']" /><span class="link-label">
@@ -94,13 +95,14 @@ onMounted(() => {
 	});
 });
 
-const communities = [
+const communities = ref([
 	{
 		name: "MTG Cube Talk",
 		brief: "A friendly server to discuss Cube design, organize online limited events, and talk with over 2,500 other Cube and Magic enthusiasts about the best game in the world!",
 		icon: "mtg_cube_talk.webp",
 		tags: ["Cube", "Cockatrice", "Design", "Discussion"],
 		links: { discord: "https://discord.gg/mtg-cube-talk-263828508126609420" },
+		discord_member_count: undefined,
 	},
 	{
 		name: "Arena Pod Draft",
@@ -163,17 +165,17 @@ const communities = [
 			discord: "https://discord.gg/wRXzJFeRtz",
 		},
 	},
-];
-shuffleArray(communities);
+]);
+shuffleArray(communities.value);
 
 const selected = ref(0);
 
 const next = () => {
-	selected.value = (selected.value + 1) % communities.length;
+	selected.value = (selected.value + 1) % communities.value.length;
 	resetTimeout();
 };
 const prev = () => {
-	selected.value = (communities.length + selected.value - 1) % communities.length;
+	selected.value = (communities.value.length + selected.value - 1) % communities.value.length;
 	resetTimeout();
 };
 
@@ -191,6 +193,21 @@ const select = (idx: number) => {
 	selected.value = idx;
 	resetTimeout();
 };
+
+for (const c of communities.value) {
+	if (c.links.discord) {
+		fetch(
+			`https://discord.com/api/v9/invites/${c.links.discord.substring(
+				"https://discord.gg/".length
+			)}?with_counts=true`
+		)
+			.then((r) => r.json())
+			.then((r) => {
+				if (r && r.approximate_member_count) c.discord_member_count = r.approximate_member_count;
+			})
+			.catch((r) => console.error("Failed to fetch discord stats", r));
+	}
+}
 
 const explain = () => {
 	Alert.fire({
