@@ -2294,24 +2294,24 @@
     "lcc": {
         "code": "lcc",
         "fullName": "Lost Caverns of Ixalan Commander",
-        "cardCount": 24,
+        "cardCount": 27,
         "isPrimary": false,
         "icon": "img/sets/lcc.svg",
         "commonCount": 2,
-        "mythicCount": 19,
+        "mythicCount": 20,
         "rareCount": 1,
-        "uncommonCount": 2
+        "uncommonCount": 4
     },
     "lci": {
         "code": "lci",
         "fullName": "The Lost Caverns of Ixalan",
-        "cardCount": 176,
+        "cardCount": 181,
         "isPrimary": true,
         "icon": "img/sets/lci.svg",
-        "commonCount": 32,
+        "commonCount": 33,
         "mythicCount": 41,
-        "rareCount": 64,
-        "uncommonCount": 39
+        "rareCount": 66,
+        "uncommonCount": 41
     },
     "lea": {
         "code": "lea",
