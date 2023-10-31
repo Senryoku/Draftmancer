@@ -1642,6 +1642,10 @@ export default defineComponent({
 			this.selectCard(null, card);
 		},
 		dropBoosterCard(e: DragEvent, options?: { toSideboard?: boolean }) {
+			this.$el.querySelectorAll(".card-column").forEach((column: HTMLElement) => {
+				column.removeAttribute("drop-active");
+			});
+
 			// Filter other events; Disable when we're not picking (probably useless buuuuut...)
 			if (
 				e.dataTransfer?.getData("isboostercard") === "true" &&
