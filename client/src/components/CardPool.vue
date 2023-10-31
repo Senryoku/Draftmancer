@@ -384,7 +384,20 @@ export default defineComponent({
 				const item = entry.multiDragElement;
 				const index = entry.index;
 
-				column.splice(index, 1);
+				// Make sure we're removing the intended card (source may have changed: see App.forcePick and #606)
+				if (item.dataset.uniqueid) {
+					const cardUniqueID = parseInt(item.dataset.uniqueid);
+					if (column[index].uniqueID !== cardUniqueID) {
+						const fixedIndex = column.findIndex((c) => c.uniqueID === cardUniqueID);
+						if (fixedIndex >= 0) {
+							column.splice(fixedIndex, 1);
+						} else
+							console.error(
+								`Error in CardPool::removeFromColumn: Invalid card UniqueID (${cardUniqueID}).`,
+								e
+							);
+					} else column.splice(index, 1);
+				} else column.splice(index, 1);
 
 				if (!inner) {
 					if (!item.dataset.uniqueid)
