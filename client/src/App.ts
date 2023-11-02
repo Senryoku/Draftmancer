@@ -30,6 +30,9 @@ import Swal, { SweetAlertIcon, SweetAlertOptions, SweetAlertResult } from "sweet
 import { SortableEvent } from "sortablejs";
 import { createCommonApp } from "./appCommon";
 
+// @ts-expect-error Don't want to debug why TS doesn't understand this for now. Import works fine.
+import { compressPacked, decompressPacked } from "smol-string/worker/packed";
+
 import SetsInfos, { SetInfo } from "../../src/SetInfos";
 import {
 	isEmpty,
@@ -3309,10 +3312,21 @@ export default defineComponent({
 			this.storeDraftLogsTimeout = setTimeout(this.doStoreDraftLogs, 5000);
 		},
 		doStoreDraftLogs() {
+			const stringified = JSON.stringify(this.draftLogs);
+			const start = performance.now();
+			//compress(stringified);
+			//console.log(`Smol compressed: ${performance.now() - start}ms`);
+			compressPacked(stringified).then((str: string) => {
+				console.log(`Smol compressed: ${performance.now() - start}ms`);
+				localStorage.setItem("draftLogs-smol", str);
+			});
+
+			const start_lz = performance.now();
 			const worker = new Worker(new URL("./logstore.worker.ts", import.meta.url));
 			worker.onmessage = (e) => {
 				localStorage.setItem("draftLogs", e.data);
 				this.storeDraftLogsTimeout = null;
+				console.log(`LZ compressed: ${performance.now() - start_lz}ms`);
 				console.log("Stored Draft Logs.");
 			};
 			worker.postMessage(["compress", toRaw(this.draftLogs)]);
@@ -3743,6 +3757,25 @@ export default defineComponent({
 					}
 				};
 				worker.postMessage(["decompress", storedLogs]);
+			}
+
+			const storedLogsSmol = localStorage.getItem("draftLogs-smol");
+			if (storedLogsSmol) {
+				console.log("Found draftLogs-smol");
+				const start = performance.now();
+				// This doesn't work in Firefox for some reason... (But does in Chrome)
+				// The synchronous version does work however... I have no idea what's going on.
+				// Maybe linked to https://bugzilla.mozilla.org/show_bug.cgi?id=1592227 ?
+				decompressPacked(storedLogsSmol)
+					.then((str: string) => {
+						console.log(`Smol Decompressed in ${performance.now() - start}ms`);
+						console.log(str);
+						//this.draftLogs = JSON.parse(str);
+						//console.log(`Loaded ${this.draftLogs.length} saved draft logs (smol).`);
+					})
+					.catch((e: any) => {
+						console.error("decompressPacked threw an error: ", e);
+					});
 			}
 
 			// If we're waiting on a storeDraftLogsTimeout, ask the user to wait and trigger the compressiong/storing immediatly
