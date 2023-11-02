@@ -32,6 +32,10 @@ import { createCommonApp } from "./appCommon";
 
 // @ts-expect-error Don't want to debug why TS doesn't understand this for now. Import works fine.
 import { compressPacked, decompressPacked } from "smol-string/worker/packed";
+// This is an issue with TS moduleResolution, see:
+// https://github.com/microsoft/TypeScript/issues/50794
+// and https://github.com/microsoft/TypeScript/pull/51669
+// moduleResolution: bundle solves this particular issue, but breaks everything else, I can't be bothered.
 
 import SetsInfos, { SetInfo } from "../../src/SetInfos";
 import {
