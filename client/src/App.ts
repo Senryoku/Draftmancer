@@ -1979,7 +1979,7 @@ export default defineComponent({
 			}
 			this.gridDraftState.booster = booster;
 		},
-		startHousmanDraft: async function () {
+		startHousmanDraft() {
 			if (this.userID !== this.sessionOwner || this.drafting) return;
 
 			this.spawnDialog(HousmanDialog, {
@@ -2025,7 +2025,7 @@ export default defineComponent({
 			this.gameState = GameState.Brewing;
 			fireToast("success", "Done drafting!");
 		},
-		startSolomonDraft: async function () {
+		startSolomonDraft() {
 			if (this.userID !== this.sessionOwner || this.drafting) return;
 
 			const start = (cardCount: number, roundCount: number, removeBasicLands: boolean) => {
@@ -2046,7 +2046,7 @@ export default defineComponent({
 			this.gameState = GameState.Brewing;
 			fireToast("success", "Done drafting!");
 		},
-		startGridDraft: async function () {
+		startGridDraft() {
 			if (this.userID !== this.sessionOwner || this.drafting) return;
 
 			if (!this.ownerIsPlayer) {
@@ -2092,7 +2092,7 @@ export default defineComponent({
 			this.rochesterDraftState = state;
 		},
 		startRochesterDraft: async function () {
-			if (this.userID != this.sessionOwner || this.drafting) return;
+			if (this.userID !== this.sessionOwner || this.drafting) return;
 
 			if (!this.ownerIsPlayer) {
 				Alert.fire({
