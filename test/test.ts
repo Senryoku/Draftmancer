@@ -334,6 +334,8 @@ describe("Single Player Draft", function () {
 		boosterCount: 0,
 		boosterNumber: 0,
 		pickNumber: 0,
+		picksThisRound: 0,
+		burnsThisRound: 0,
 		skipPick: false,
 	};
 
@@ -2007,7 +2009,15 @@ describe("Multiple Drafts", function () {
 						sessionID: sessionIDs[sess],
 						userName: `Client ${sess * playersPerSession + i}`,
 					}),
-					state: { booster: [], boosterCount: 0, boosterNumber: 0, pickNumber: 0, skipPick: false },
+					state: {
+						booster: [],
+						boosterCount: 0,
+						boosterNumber: 0,
+						pickNumber: 0,
+						picksThisRound: 0,
+						burnsThisRound: 0,
+						skipPick: false,
+					},
 					pickedCards: [],
 				});
 			}
@@ -2064,7 +2074,7 @@ describe("Multiple Drafts", function () {
 
 					c.socket.once("draftState", function (state) {
 						const s = state as ReturnType<DraftState["syncData"]>;
-						(c as any).state = s;
+						(c as { state: ReturnType<DraftState["syncData"]> }).state = s;
 						boosters.push(s.booster);
 						if (
 							sessionsCorrectlyStartedDrafting === sessionCount &&

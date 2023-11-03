@@ -143,17 +143,22 @@ export class DraftState extends IDraftState {
 	}
 
 	syncData(userID: UserID) {
+		const { picksThisRound, burnsThisRound } = this.picksAndBurnsThisRound(userID);
 		return {
 			booster: this.players[userID].boosters[0],
 			boosterCount: this.players[userID].boosters.length,
 			boosterNumber: this.boosterNumber,
 			pickNumber: this.players[userID].pickNumber,
+			picksThisRound,
+			burnsThisRound,
 			skipPick:
 				(this.players[userID].effect?.skipNPicks ?? 0) > 0 ||
 				this.players[userID].effect?.skipUntilNextRound === true,
 		};
 	}
 }
+
+export type DraftSyncData = ReturnType<DraftState["syncData"]>;
 
 export function isDraftState(obj: unknown): obj is DraftState {
 	return obj instanceof DraftState;

@@ -2524,6 +2524,13 @@ export class Session implements IIndexable {
 
 			if (this.owner && !this.ownerIsPlayer)
 				Connections[this.owner]?.socket.emit("draftState", {
+					booster: [],
+					boosterCount: 0,
+					pickNumber: 0,
+					picksThisRound: 0,
+					burnsThisRound: 0,
+					skipPick: true,
+
 					boosterNumber: s.boosterNumber,
 				});
 		};
@@ -3260,9 +3267,16 @@ export class Session implements IIndexable {
 		Connections[userID].sessionID = this.id;
 		this.syncSessionOptions(userID);
 		this.notifyUserChange();
-		if (this.drafting && this.draftState && this.draftState instanceof DraftState) {
+		if (this.drafting && isDraftState(this.draftState)) {
 			Connections[userID].socket.emit("startDraft", this.getSortedVirtualPlayerData());
 			Connections[userID].socket.emit("draftState", {
+				booster: [],
+				boosterCount: 0,
+				pickNumber: 0,
+				picksThisRound: 0,
+				burnsThisRound: 0,
+				skipPick: true,
+
 				boosterNumber: this.draftState.boosterNumber,
 			});
 			// Update draft log for live display if owner in not playing
