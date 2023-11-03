@@ -440,7 +440,7 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
 
         if c['set'] == "lci":
             try:
-                selection['in_booster'] = int(c['collector_number']) > 0 and int(c['collector_number']) <= 287
+                selection['in_booster'] = int(c['collector_number']) > 0 and int(c['collector_number']) <= 286
             except:
                 selection['in_booster'] = False
 
