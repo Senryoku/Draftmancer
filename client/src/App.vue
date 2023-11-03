@@ -1033,7 +1033,7 @@
 										Waiting for other players to pick...
 									</template>
 								</div>
-								<scale-slider v-model.number="boosterCardScale" style="float: right" />
+								<scale-slider v-model.number="boosterCardScale" />
 							</div>
 							<!-- Note: Duration for booster-open can't be determined by Vue since it's composite. Be sure to keep that in sync :) -->
 							<transition-group
