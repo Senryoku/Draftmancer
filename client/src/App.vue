@@ -1255,7 +1255,7 @@
 					<div style="flex-grow: 1">
 						<div class="section-title controls">
 							<h2>Rochester Draft</h2>
-							<div class="controls">
+							<div class="controls" style="flex-grow: 2">
 								<span>
 									Pack #{{ rochesterDraftState.boosterNumber + 1 }}/{{
 										rochesterDraftState.boosterCount
@@ -1287,35 +1287,41 @@
 									</span>
 								</template>
 							</div>
+							<scale-slider v-model.number="boosterCardScale" />
 						</div>
-						<transition-group name="booster-cards" tag="div" class="booster card-container">
-							<template v-if="userID === rochesterDraftState.currentPlayer">
+						<transition name="fade" mode="out-in" appear>
+							<transition-group
+								name="booster-cards"
+								tag="div"
+								class="booster card-container"
+								:style="`--booster-card-scale: ${boosterCardScale};`"
+								:key="rochesterDraftState.boosterNumber"
+							>
 								<booster-card
 									v-for="card in rochesterDraftState.booster"
 									:key="`card-booster-${card.uniqueID}`"
 									:card="card"
 									:language="language"
 									:canbeburned="false"
-									:class="{ selected: selectedCards.includes(card) }"
-									@click="selectCard($event, card)"
-									@dblclick="doubleClickCard($event, card)"
-									draggable
-									@dragstart="dragBoosterCard($event, card)"
+									:class="{
+										selected:
+											userID === rochesterDraftState.currentPlayer &&
+											selectedCards.includes(card),
+									}"
+									@click="if (userID === rochesterDraftState.currentPlayer) selectCard($event, card);"
+									@dblclick="
+										if (userID === rochesterDraftState.currentPlayer) doubleClickCard($event, card);
+									"
+									:draggable="userID === rochesterDraftState.currentPlayer"
+									@dragstart="
+										if (userID === rochesterDraftState.currentPlayer) dragBoosterCard($event, card);
+									"
 									:hasenoughwildcards="hasEnoughWildcards(card)"
 									:wildcardneeded="displayCollectionStatus && wildcardCost(card)"
+									:scale="boosterCardScale"
 								></booster-card>
-							</template>
-							<template v-else>
-								<booster-card
-									v-for="card in rochesterDraftState.booster"
-									:key="`card-booster-${card.uniqueID}`"
-									:card="card"
-									:language="language"
-									:hasenoughwildcards="hasEnoughWildcards(card)"
-									:wildcardneeded="displayCollectionStatus && wildcardCost(card)"
-								></booster-card>
-							</template>
-						</transition-group>
+							</transition-group>
+						</transition>
 					</div>
 					<pick-summary :picks="rochesterDraftState.lastPicks"></pick-summary>
 				</div>
