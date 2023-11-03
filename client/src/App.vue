@@ -1253,32 +1253,27 @@
 							</div>
 						</div>
 						<transition-group name="booster-cards" tag="div" class="booster card-container">
-							<template v-if="userID === rochesterDraftState.currentPlayer">
-								<booster-card
-									v-for="card in rochesterDraftState.booster"
-									:key="`card-booster-${card.uniqueID}`"
-									:card="card"
-									:language="language"
-									:canbeburned="false"
-									:class="{ selected: selectedCards.includes(card) }"
-									@click="selectCard($event, card)"
-									@dblclick="doubleClickCard($event, card)"
-									draggable
-									@dragstart="dragBoosterCard($event, card)"
-									:hasenoughwildcards="hasEnoughWildcards(card)"
-									:wildcardneeded="displayCollectionStatus && wildcardCost(card)"
-								></booster-card>
-							</template>
-							<template v-else>
-								<booster-card
-									v-for="card in rochesterDraftState.booster"
-									:key="`card-booster-${card.uniqueID}`"
-									:card="card"
-									:language="language"
-									:hasenoughwildcards="hasEnoughWildcards(card)"
-									:wildcardneeded="displayCollectionStatus && wildcardCost(card)"
-								></booster-card>
-							</template>
+							<booster-card
+								v-for="card in rochesterDraftState.booster"
+								:key="`card-booster-${card.uniqueID}`"
+								:card="card"
+								:language="language"
+								:canbeburned="false"
+								:class="{
+									selected:
+										userID === rochesterDraftState.currentPlayer && selectedCards.includes(card),
+								}"
+								@click="if (userID === rochesterDraftState.currentPlayer) selectCard($event, card);"
+								@dblclick="
+									if (userID === rochesterDraftState.currentPlayer) doubleClickCard($event, card);
+								"
+								:draggable="userID === rochesterDraftState.currentPlayer"
+								@dragstart="
+									if (userID === rochesterDraftState.currentPlayer) dragBoosterCard($event, card);
+								"
+								:hasenoughwildcards="hasEnoughWildcards(card)"
+								:wildcardneeded="displayCollectionStatus && wildcardCost(card)"
+							></booster-card>
 						</transition-group>
 					</div>
 					<pick-summary :picks="rochesterDraftState.lastPicks"></pick-summary>
