@@ -1017,7 +1017,7 @@
 									Waiting for other players to pick...
 								</template>
 							</div>
-							<scale-slider v-model.number="boosterCardScale" style="float: right" />
+							<scale-slider v-model.number="boosterCardScale" />
 						</div>
 						<!-- Note: Duration for booster-open can't be determined by Vue since it's composite. Be sure to keep that in sync :) -->
 						<transition-group
@@ -1219,7 +1219,7 @@
 					<div style="flex-grow: 1">
 						<div class="section-title controls">
 							<h2>Rochester Draft</h2>
-							<div class="controls">
+							<div class="controls" style="flex-grow: 2">
 								<span>
 									Pack #{{ rochesterDraftState.boosterNumber + 1 }}/{{
 										rochesterDraftState.boosterCount
@@ -1251,12 +1251,14 @@
 									</span>
 								</template>
 							</div>
+							<scale-slider v-model.number="boosterCardScale" />
 						</div>
 						<transition name="fade" mode="out-in" appear>
 							<transition-group
 								name="booster-cards"
 								tag="div"
 								class="booster card-container"
+								:style="`--booster-card-scale: ${boosterCardScale};`"
 								:key="rochesterDraftState.boosterNumber"
 							>
 								<booster-card
@@ -1280,6 +1282,7 @@
 									"
 									:hasenoughwildcards="hasEnoughWildcards(card)"
 									:wildcardneeded="displayCollectionStatus && wildcardCost(card)"
+									:scale="boosterCardScale"
 								></booster-card>
 							</transition-group>
 						</transition>
