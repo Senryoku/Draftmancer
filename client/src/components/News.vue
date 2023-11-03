@@ -1,6 +1,22 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
+			<em>November 03, 2023</em>
+			<ul>
+				<li>
+					<img src="img/sets/lci.svg" class="set-icon" style="--invertedness: 100%" alt="" /> The Lost Caverns
+					of Ixalan are now available! <br />
+					As usual with new sets, there might be errors in the cards or collation. Please report them and I'll
+					fix them as soon as possible!
+				</li>
+				<li>
+					Fixed an issue creating phantom cards when a card was automatically picked while drag and dropping
+					another.
+				</li>
+				<li>Usual card updates and small fixes.</li>
+			</ul>
+		</div>
+		<div class="news">
 			<em>October 04, 2023</em>
 			<ul>
 				<li>Better support for parentheses in card names.</li>
@@ -22,20 +38,6 @@
 					customizable period of time if the owner forgot to do it.
 				</li>
 				<li>Usual tweaks and fixes.</li>
-			</ul>
-		</div>
-		<div class="news">
-			<em>July 23, 2023</em>
-			<p>
-				<img src="img/sets/cmm.svg" class="set-icon" style="--invertedness: 100%" alt="" /> Commander Masters
-				experimental support.
-			</p>
-			<ul>
-				<li>
-					Available from the <font-awesome-icon icon="fa-solid fa-ellipsis-v"></font-awesome-icon> More
-					sets... menu.
-				</li>
-				<li>Use 'Picked cards per booster' set to 2 to draft the set as intended!</li>
 			</ul>
 		</div>
 	</div>

@@ -1,5 +1,13 @@
 [
 	{
+		"date": "03/11/2023",
+		"notes": [
+			"The Lost Caverns of Ixalan support.",
+			"Fixed an issue creating phantom cards when a card was automatically picked while drag and dropping another.",
+			"Usual card updates and small fixes."
+		]
+	},
+	{
 		"date": "11/10/2023",
 		"notes": [
 			"MTGO Draft logs import into Game Logs.",
