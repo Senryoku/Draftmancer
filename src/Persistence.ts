@@ -117,6 +117,24 @@ export function restoreSession(s: any, owner: UserID) {
 	if (s.draftState) {
 		switch (s.draftState.type) {
 			case "draft": {
+				// Backward compatibility: Convert previous DraftState format to new DraftState format
+				// FIXME: Remove this, soon
+				if (!s.draftState.packSettings) {
+					s.draftState.packSettings = [
+						{
+							pickedCardsPerRound: s.draftState.pickedCardsPerRound,
+							burnedCardsPerRound: s.draftState.burnedCardsPerRound,
+							doubleMastersMode: s.draftState.doubleMastersMode,
+						},
+					];
+				} else {
+					// FIXME: (TEMP Backward compatibility) Remove as soon as we're able to construct from a packSettings
+					s.draftState.pickedCardsPerRound = s.draftState.packSettings[0].pickedCardsPerRound;
+					s.draftState.burnedCardsPerRound = s.draftState.packSettings[0].burnedCardsPerRound;
+					s.draftState.doubleMastersMode = s.draftState.packSettings[0].doubleMastersMode;
+				}
+
+				// FIXME: Properly re-construct the state using the new format.
 				const draftState = new DraftState([], [], {
 					pickedCardsPerRound: s.draftState.pickedCardsPerRound,
 					burnedCardsPerRound: s.draftState.burnedCardsPerRound,
