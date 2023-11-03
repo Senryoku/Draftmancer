@@ -1693,13 +1693,15 @@ export default defineComponent({
 			// Give Vue one frame to react to state changes before triggering the
 			// transitions.
 			this.$nextTick(() => {
-				if (!this.draftState) return;
+				if (!this.draftState && !this.rochesterDraftState) return;
+
+				const state = this.draftState ?? this.rochesterDraftState!;
 
 				const selectedCards = this.selectedCards;
 				const burningCards = this.burningCards;
 				const toSideboard = options?.toSideboard;
 
-				const boosterBackup = structuredClone(toRaw(this.draftState.booster));
+				const boosterBackup = structuredClone(toRaw(state.booster));
 
 				const onSuccess: (() => void)[] = [];
 
@@ -1714,7 +1716,7 @@ export default defineComponent({
 						// Restore cardPool and booster state
 						this.deck = this.deck.filter((c) => !selectedCards.includes(c));
 						this.sideboard = this.sideboard.filter((c) => !selectedCards.includes(c));
-						this.draftState!.booster = boosterBackup;
+						state!.booster = boosterBackup;
 						this.selectedUsableDraftEffect = undefined; // Reset effects since it's probably an effect that triggered the error in the first place.
 						this.gameState = GameState.Picking;
 						Alert.fire(answer.error as SweetAlertOptions);
@@ -1766,8 +1768,8 @@ export default defineComponent({
 								break;
 							}
 							case UsableDraftEffect.AgentOfAcquisitions: {
-								if (toSideboard) this.addToSideboard(this.draftState.booster, options);
-								else this.addToDeck(this.draftState.booster, options);
+								if (toSideboard) this.addToSideboard(state.booster, options);
+								else this.addToDeck(state.booster, options);
 								dontAddSelectedCardstoCardPool = true;
 								break;
 							}
@@ -1798,8 +1800,8 @@ export default defineComponent({
 					this.socket.emit(
 						"pickCard",
 						{
-							pickedCards: selectedCards.map((c) => this.draftState!.booster.findIndex((c2) => c === c2)),
-							burnedCards: burningCards.map((c) => this.draftState!.booster.findIndex((c2) => c === c2)),
+							pickedCards: selectedCards.map((c) => state!.booster.findIndex((c2) => c === c2)),
+							burnedCards: burningCards.map((c) => state!.booster.findIndex((c2) => c === c2)),
 							draftEffect,
 							optionalOnPickDraftEffect,
 						},
@@ -1808,9 +1810,7 @@ export default defineComponent({
 					this.gameState = GameState.Waiting;
 				}
 				// Removes picked & burned cards for animation
-				this.draftState.booster = this.draftState.booster.filter(
-					(c) => !selectedCards.includes(c) && !burningCards.includes(c)
-				);
+				state.booster = state.booster.filter((c) => !selectedCards.includes(c) && !burningCards.includes(c));
 				if (!dontAddSelectedCardstoCardPool)
 					if (toSideboard) this.addToSideboard(selectedCards, options);
 					else this.addToDeck(selectedCards, options);
@@ -1821,9 +1821,11 @@ export default defineComponent({
 			this.socket.emit("passBooster");
 		},
 		forcePick() {
-			if (!this.draftState || this.gameState !== GameState.Picking) return;
+			if ((!this.draftState && !this.rochesterDraftState) || this.gameState !== GameState.Picking) return;
 
-			if (this.draftState.skipPick) return this.passBooster();
+			if (this.draftState?.skipPick) return this.passBooster();
+
+			const state = this.draftState ?? this.rochesterDraftState!;
 
 			// Uses botScores to automatically select picks if available
 			if (this.botScores) {
@@ -1836,12 +1838,11 @@ export default defineComponent({
 				while (currIdx < orderedPicks.length && this.selectedCards.length < this.cardsToPick) {
 					while (
 						currIdx < orderedPicks.length &&
-						(this.selectedCards.includes(this.draftState.booster[orderedPicks[currIdx]]) ||
-							this.burningCards.includes(this.draftState.booster[orderedPicks[currIdx]]))
+						(this.selectedCards.includes(state.booster[orderedPicks[currIdx]]) ||
+							this.burningCards.includes(state.booster[orderedPicks[currIdx]]))
 					)
 						++currIdx;
-					if (currIdx < orderedPicks.length)
-						this.selectedCards.push(this.draftState.booster[orderedPicks[currIdx]]);
+					if (currIdx < orderedPicks.length) this.selectedCards.push(state.booster[orderedPicks[currIdx]]);
 					++currIdx;
 				}
 				currIdx = 0;
@@ -1849,12 +1850,11 @@ export default defineComponent({
 				while (currIdx < orderedPicks.length && this.burningCards.length < this.cardsToBurnThisRound) {
 					while (
 						currIdx < orderedPicks.length &&
-						(this.selectedCards.includes(this.draftState.booster[orderedPicks[currIdx]]) ||
-							this.burningCards.includes(this.draftState.booster[orderedPicks[currIdx]]))
+						(this.selectedCards.includes(state.booster[orderedPicks[currIdx]]) ||
+							this.burningCards.includes(state.booster[orderedPicks[currIdx]]))
 					)
 						++currIdx;
-					if (currIdx < orderedPicks.length)
-						this.burningCards.push(this.draftState.booster[orderedPicks[currIdx]]);
+					if (currIdx < orderedPicks.length) this.burningCards.push(state.booster[orderedPicks[currIdx]]);
 					++currIdx;
 				}
 			}
@@ -1862,22 +1862,22 @@ export default defineComponent({
 			// Forces a random card if there isn't enough selected already
 			while (this.selectedCards.length < this.cardsToPick) {
 				let randomIdx;
-				do randomIdx = Math.floor(Math.random() * this.draftState.booster.length);
+				do randomIdx = Math.floor(Math.random() * state.booster.length);
 				while (
-					this.selectedCards.includes(this.draftState.booster[randomIdx]) ||
-					this.burningCards.includes(this.draftState.booster[randomIdx])
+					this.selectedCards.includes(state.booster[randomIdx]) ||
+					this.burningCards.includes(state.booster[randomIdx])
 				);
-				this.selectedCards.push(this.draftState.booster[randomIdx]);
+				this.selectedCards.push(state.booster[randomIdx]);
 			}
 			// Forces random cards to burn if there isn't enough selected already
 			while (this.burningCards.length < this.cardsToBurnThisRound) {
 				let randomIdx;
-				do randomIdx = Math.floor(Math.random() * this.draftState.booster.length);
+				do randomIdx = Math.floor(Math.random() * state.booster.length);
 				while (
-					this.selectedCards.includes(this.draftState.booster[randomIdx]) ||
-					this.burningCards.includes(this.draftState.booster[randomIdx])
+					this.selectedCards.includes(state.booster[randomIdx]) ||
+					this.burningCards.includes(state.booster[randomIdx])
 				);
-				this.burningCards.push(this.draftState.booster[randomIdx]);
+				this.burningCards.push(state.booster[randomIdx]);
 			}
 			this.pickCard();
 		},
