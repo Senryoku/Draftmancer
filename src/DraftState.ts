@@ -7,13 +7,15 @@ import { IDraftState } from "./IDraftState.js";
 import { UserID } from "./IDTypes.js";
 
 export class DraftState extends IDraftState {
-	readonly pickedCardsPerRound: number;
-	readonly burnedCardsPerRound: number;
-	readonly doubleMastersMode: boolean;
+	readonly packSettings: {
+		readonly pickedCardsPerRound: number;
+		readonly burnedCardsPerRound: number;
+		readonly doubleMastersMode: boolean;
+	}[];
 
-	boosters: Array<Array<UniqueCard>>;
+	boosters: UniqueCard[][]; // Boosters waiting to be distributed
 	boosterNumber = 0;
-	numPicks = 0;
+	numPicks = 0; // Number of picks in the current round. This is currently set to the number of cards in the first booster by doDistributeBoosters, which is correct for standard 1 pick/0 burn draft with all identical boosters and no special rules, and just a bad appromixation otherwise.
 	players: {
 		[userID: UserID]: {
 			isBot: boolean;
@@ -48,9 +50,13 @@ export class DraftState extends IDraftState {
 		}
 	) {
 		super("draft");
-		this.pickedCardsPerRound = options.pickedCardsPerRound;
-		this.burnedCardsPerRound = options.burnedCardsPerRound;
-		this.doubleMastersMode = options.doubleMastersMode;
+		this.packSettings = [
+			{
+				pickedCardsPerRound: options.pickedCardsPerRound,
+				burnedCardsPerRound: options.burnedCardsPerRound,
+				doubleMastersMode: options.doubleMastersMode,
+			},
+		];
 
 		this.boosters = boosters;
 
@@ -91,12 +97,13 @@ export class DraftState extends IDraftState {
 	}
 
 	picksAndBurnsThisRound(userID: UserID) {
+		const settings = this.packSettings[this.boosterNumber % this.packSettings.length];
 		return {
 			picksThisRound: Math.min(
-				this.doubleMastersMode && this.players[userID].pickNumber > 0 ? 1 : this.pickedCardsPerRound,
+				settings.doubleMastersMode && this.players[userID].pickNumber > 0 ? 1 : settings.pickedCardsPerRound,
 				this.players[userID].boosters[0].length
 			),
-			burnsThisRound: this.burnedCardsPerRound,
+			burnsThisRound: settings.burnedCardsPerRound,
 		};
 	}
 
