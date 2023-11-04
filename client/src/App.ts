@@ -1297,9 +1297,8 @@ export default defineComponent({
 			this.socket.on("sealedBoosters", (boosters) => {
 				const cards = boosters.reduce((acc, val) => acc.concat(val), []);
 				this.spawnDialog(SealedPresentation, {
-					boosters: false // Note: SealedPresentation has the ability to present boosters one by one, we're not using it, yet.
-						? boosters
-						: [cards.filter((c) => c.rarity !== "common" && c.rarity !== "uncommon")],
+					// Note: SealedPresentation has the ability to present boosters one by one, we're not using it, yet.
+					boosters: [cards.filter((c) => c.rarity !== "common" && c.rarity !== "uncommon")],
 					title: "Sealed - Rares and Mythics",
 				});
 				this.setCardPool(cards);
