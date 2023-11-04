@@ -2297,18 +2297,18 @@
         "cardCount": 370,
         "isPrimary": false,
         "icon": "img/sets/lcc.svg",
-        "commonCount": 34,
+        "commonCount": 33,
         "mythicCount": 50,
-        "rareCount": 208,
+        "rareCount": 209,
         "uncommonCount": 78
     },
     "lci": {
         "code": "lci",
         "fullName": "The Lost Caverns of Ixalan",
-        "cardCount": 416,
+        "cardCount": 415,
         "isPrimary": true,
         "icon": "img/sets/lci.svg",
-        "commonCount": 124,
+        "commonCount": 123,
         "mythicCount": 51,
         "rareCount": 130,
         "uncommonCount": 111
@@ -2382,12 +2382,12 @@
     "ltr": {
         "code": "ltr",
         "fullName": "The Lord of the Rings: Tales of Middle-earth",
-        "cardCount": 834,
+        "cardCount": 836,
         "isPrimary": true,
         "icon": "img/sets/ltr.svg",
         "commonCount": 243,
-        "mythicCount": 109,
-        "rareCount": 272,
+        "mythicCount": 110,
+        "rareCount": 273,
         "uncommonCount": 210
     },
     "m10": {
@@ -5032,11 +5032,11 @@
     "rex": {
         "code": "rex",
         "fullName": "Jurassic World Collection",
-        "cardCount": 39,
+        "cardCount": 45,
         "isPrimary": false,
         "icon": "img/sets/rex.svg",
-        "commonCount": 1,
-        "rareCount": 38
+        "commonCount": 6,
+        "rareCount": 39
     },
     "rix": {
         "code": "rix",
@@ -5213,6 +5213,14 @@
         "icon": "img/sets/slc.svg",
         "mythicCount": 10,
         "rareCount": 21
+    },
+    "slci": {
+        "code": "slci",
+        "fullName": "The Lost Caverns of Ixalan Substitute Cards",
+        "cardCount": 1,
+        "isPrimary": false,
+        "icon": "img/sets/slci.svg",
+        "commonCount": 1
     },
     "sld": {
         "code": "sld",
