@@ -18,6 +18,7 @@ import {
 	ackNoError,
 	ValidCubes,
 	getUID,
+	latestSetCardPerBooster,
 } from "./src/common.js";
 import { Constants } from "../src/Constants.js";
 import type { DistributionMode } from "../src/Session/SessionTypes";
@@ -704,8 +705,6 @@ describe("Single Draft (Two Players)", function () {
 			disconnect();
 		});
 	}
-
-	const latestSetCardPerBooster: number = 15;
 
 	describe(`Drafting without set restriction`, function () {
 		connect();

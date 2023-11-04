@@ -15,6 +15,7 @@ import {
 } from "./src/common.js";
 import { ElementHandle, Page } from "puppeteer";
 import { simulateRestart } from "../../src/Persistence.js";
+import { latestSetCardPerBooster } from "../src/common.js";
 
 async function clickDraft(page: Page) {
 	// Click 'Start' button
@@ -273,9 +274,9 @@ describe("Front End - Multi, Review Timer", function () {
 		});
 	});
 
-	it("Each player picks 14 cards", async function () {
+	it(`Each player picks ${latestSetCardPerBooster} cards`, async function () {
 		const picks = [0, 0];
-		while (picks[0] !== 14 && picks[1] !== 14) {
+		while (picks[0] !== latestSetCardPerBooster && picks[1] !== latestSetCardPerBooster) {
 			if ((await pickCard(pages[0])) === PickResult.Picked) picks[0]++;
 			if ((await pickCard(pages[1])) === PickResult.Picked) picks[1]++;
 		}
@@ -292,9 +293,9 @@ describe("Front End - Multi, Review Timer", function () {
 		});
 	});
 
-	it("Each player picks 14 cards", async function () {
+	it(`Each player picks ${latestSetCardPerBooster} cards`, async function () {
 		const picks = [0, 0];
-		while (picks[0] !== 14 && picks[1] !== 14) {
+		while (picks[0] !== latestSetCardPerBooster && picks[1] !== latestSetCardPerBooster) {
 			if ((await pickCard(pages[0])) === PickResult.Picked) picks[0]++;
 			if ((await pickCard(pages[1])) === PickResult.Picked) picks[1]++;
 		}
@@ -326,9 +327,9 @@ describe("Front End - Multi, Review Timer", function () {
 		});
 	});
 
-	it("Each player picks 14 cards", async function () {
+	it(`Each player picks ${latestSetCardPerBooster} cards`, async function () {
 		const picks = [0, 0];
-		while (picks[0] !== 14 && picks[1] !== 14) {
+		while (picks[0] !== latestSetCardPerBooster && picks[1] !== latestSetCardPerBooster) {
 			if ((await pickCard(pages[0])) === PickResult.Picked) picks[0]++;
 			if ((await pickCard(pages[1])) === PickResult.Picked) picks[1]++;
 		}
@@ -368,9 +369,9 @@ describe("Front End - Multi, Review Timer", function () {
 		});
 	});
 
-	it("Each player picks 14 cards", async function () {
+	it(`Each player picks ${latestSetCardPerBooster} cards`, async function () {
 		const picks = [0, 0];
-		while (picks[0] !== 14 && picks[1] !== 14) {
+		while (picks[0] !== latestSetCardPerBooster && picks[1] !== latestSetCardPerBooster) {
 			if ((await pickCard(pages[0])) === PickResult.Picked) picks[0]++;
 			if ((await pickCard(pages[1])) === PickResult.Picked) picks[1]++;
 		}
