@@ -5158,11 +5158,11 @@
     "sch": {
         "code": "sch",
         "fullName": "Store Championships",
-        "cardCount": 17,
+        "cardCount": 20,
         "isPrimary": false,
         "icon": "img/sets/sch.svg",
         "mythicCount": 3,
-        "rareCount": 14
+        "rareCount": 17
     },
     "shm": {
         "code": "shm",
