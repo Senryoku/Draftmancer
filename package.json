@@ -55,7 +55,7 @@
 		"glob": "^10.3.1",
 		"JSONStream": "^1.3.5",
 		"lz-string": "^1.5.0",
-		"mixpanel": "^0.17.0",
+		"mixpanel": "^0.18.0",
 		"pico-emitter": "^1.2.1",
 		"random-js": "^2.1.0",
 		"socket.io": "^4.7.2",
