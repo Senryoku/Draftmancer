@@ -212,6 +212,24 @@ Card Name 6
 	duplicateProtection: boolean,       <comment>// Enable or disable Duplicate Protection (defaults to true).</comment>
 	showSlots: boolean,                 <comment>// If layouts are used, will display what sheet slot generated which card.</comment>
 
+	boosterSettings: {"picks": number, "burns": number, "doubleMastersMode": boolean}[], <comment>// Allows you to customize some settings on a per booster basis.</comment>
+	<comment>// Example:</comment>
+	"boosterSettings": [
+		{
+			"picks": 1,
+			"burns": 14
+		}, 
+		{
+			"picks": 2,
+			"burns": 0,
+			"doubleMastersMode": true
+		}, 
+		{
+			"picks": 3,
+			"burns": 1
+		}
+	]
+
 	layouts: Record&lt;string, PackLayout&gt; <comment>// See below</comment>
 
 	<comment>// Specify the exact order of the pack layouts rather than picking them randomly, useful for block drafts. 

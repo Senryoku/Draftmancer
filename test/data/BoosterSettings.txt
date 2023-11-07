@@ -9,7 +9,8 @@
 		}, 
 		{
 			"picks": 2,
-			"burns": 0
+			"burns": 0,
+			"doubleMastersMode": true
 		}, 
 		{
 			"picks": 3,

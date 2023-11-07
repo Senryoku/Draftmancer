@@ -1894,6 +1894,7 @@ describe("Single Draft (Two Players)", function () {
 			{
 				picks: 2,
 				burns: 0,
+				doubleMastersMode: true,
 			},
 			{
 				picks: 3,
@@ -1947,9 +1948,17 @@ describe("Single Draft (Two Players)", function () {
 						s.boosterCount > 0
 					) {
 						expect(s.booster).to.exist;
-						expect(s.picksThisRound).to.equal(
-							Math.min(s.booster.length, expectedboosterSettings[s.boosterNumber].picks)
-						);
+						if (expectedboosterSettings[s.boosterNumber].doubleMastersMode)
+							expect(s.picksThisRound).to.equal(
+								Math.min(
+									s.booster.length,
+									s.pickNumber === 0 ? expectedboosterSettings[s.boosterNumber].picks : 1
+								)
+							);
+						else
+							expect(s.picksThisRound).to.equal(
+								Math.min(s.booster.length, expectedboosterSettings[s.boosterNumber].picks)
+							);
 						expect(s.burnsThisRound).to.equal(
 							Math.min(
 								Math.max(s.booster.length - expectedboosterSettings[s.boosterNumber].picks, 0),
