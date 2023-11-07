@@ -101,7 +101,7 @@ export class DraftState extends IDraftState {
 		return {
 			picksThisRound: Math.min(
 				settings.doubleMastersMode && this.players[userID].pickNumber > 0 ? 1 : settings.pickedCardsPerRound,
-				this.players[userID].boosters[0].length
+				this.players[userID].boosters[0]?.length ?? 0
 			),
 			burnsThisRound: settings.burnedCardsPerRound,
 		};
