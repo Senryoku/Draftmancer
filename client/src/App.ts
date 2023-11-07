@@ -1575,7 +1575,7 @@ export default defineComponent({
 			if (this.burningCards.includes(c)) return;
 			if (this.selectedCards.includes(c)) this.selectedCards.splice(this.selectedCards.indexOf(c), 1);
 			this.burningCards.push(c);
-			if (this.burningCards.length > this.burnedCardsPerRound) this.burningCards.shift();
+			if (this.burningCards.length > this.draftState!.burnsThisRound) this.burningCards.shift();
 			if (e) e.stopPropagation();
 		},
 		restoreCard(e: Event | null, c: UniqueCard) {

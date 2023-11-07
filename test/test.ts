@@ -23,6 +23,10 @@ import { Constants } from "../src/Constants.js";
 import type { DistributionMode } from "../src/Session/SessionTypes";
 import { ReadyState } from "../src/Session/SessionTypes.js";
 
+const clientStates: {
+	[uid: UserID]: { pickedCards: UniqueCard[]; state: ReturnType<DraftState["syncData"]> };
+} = {};
+
 const checkColorBalance = function (booster: Card[]) {
 	for (const color of "WUBRG")
 		expect(
@@ -59,6 +63,8 @@ const CustomCards_MultipleDefaultSlots_Invalid = fs.readFileSync(
 const WithReplacement = fs.readFileSync(`./test/data/ReplacementTest.txt`, "utf8");
 const WithReplacementLayouts = fs.readFileSync(`./test/data/ReplacementTest_Layouts.txt`, "utf8");
 const DuplicationProtectionCube = fs.readFileSync(`./test/data/DuplicationProtection.txt`, "utf8");
+
+const BoosterSettingsCube = fs.readFileSync(`./test/data/BoosterSettings.txt`, "utf8");
 
 describe("Inter client communication", function () {
 	const sessionID = "sessionID";
@@ -441,8 +447,6 @@ describe("Single Draft (Two Players)", function () {
 	let sessionID = "sessionID";
 	let ownerIdx = 0;
 	let nonOwnerIdx = 0;
-	const clientStates: { [uid: UserID]: { pickedCards: UniqueCard[]; state: ReturnType<DraftState["syncData"]> } } =
-		{};
 
 	beforeEach(function (done) {
 		disableLogs();
@@ -1619,6 +1623,7 @@ describe("Single Draft (Two Players)", function () {
 
 	describe("Using an observer and bots.", function () {
 		connect();
+
 		it("Clients should receive the updated ownerIsPlayer.", function (done) {
 			clients[nonOwnerIdx].once("sessionOptions", function (val) {
 				expect(val.ownerIsPlayer).to.equal(false);
@@ -1648,7 +1653,7 @@ describe("Single Draft (Two Players)", function () {
 				clients[c].once("draftState", function (state) {
 					const s = state as ReturnType<DraftState["syncData"]>;
 					expect(s.booster).to.exist;
-					clientStates[getUID(clients[c])].state = s;
+					clientStates[getUID(clients[c])] = { pickedCards: [], state: s };
 					receivedBoosters += 1;
 					if (connectedClients === clients.length - 1 && receivedBoosters === clients.length - 1) done();
 				});
@@ -1721,7 +1726,6 @@ describe("Single Draft (Two Players)", function () {
 			let connectedClients = 0;
 			let receivedBoosters = 0;
 			for (const c of clients) {
-				const clientState = clientStates[getUID(c)];
 				c.once("startDraft", function () {
 					++connectedClients;
 					if (connectedClients === clients.length && receivedBoosters === clients.length) done();
@@ -1730,8 +1734,7 @@ describe("Single Draft (Two Players)", function () {
 				c.once("draftState", function (state) {
 					const s = state as ReturnType<DraftState["syncData"]>;
 					expect(s.booster).to.exist;
-					clientState.state = s;
-					clientState.pickedCards = [];
+					clientStates[getUID(c)] = { pickedCards: [], state: s };
 					++receivedBoosters;
 					if (connectedClients === clients.length && receivedBoosters === clients.length) done();
 				});
@@ -1742,9 +1745,9 @@ describe("Single Draft (Two Players)", function () {
 		it("Pick enough times, and the draft should end.", function (done) {
 			this.timeout(20000);
 			let draftEnded = 0;
-			for (let c = 0; c < clients.length; ++c) {
-				const clientState = clientStates[getUID(clients[c])];
-				clients[c].on("draftState", function (state) {
+			for (const c of clients) {
+				const clientState = clientStates[getUID(c)];
+				c.on("draftState", function (state) {
 					const s = state as ReturnType<DraftState["syncData"]>;
 					if (s.pickNumber !== clientState.state.pickNumber && s.boosterCount > 0) {
 						clientState.state = s;
@@ -1752,22 +1755,22 @@ describe("Single Draft (Two Players)", function () {
 						for (let cidx = 1; cidx < 1 + burnedCardsPerRound && cidx < s.booster.length; ++cidx)
 							burned.push(cidx);
 						clientState.pickedCards.push(clientState.state.booster[0]);
-						clients[c].emit("pickCard", { pickedCards: [0], burnedCards: burned }, ackNoError);
+						c.emit("pickCard", { pickedCards: [0], burnedCards: burned }, ackNoError);
 					}
 				});
-				clients[c].once("endDraft", function () {
+				c.once("endDraft", function () {
 					draftEnded += 1;
-					clients[c].removeListener("draftState");
+					c.removeListener("draftState");
 					if (draftEnded === clients.length) done();
 				});
 			}
-			for (let c = 0; c < clients.length; ++c) {
+			for (const c of clients) {
 				const burned = [];
-				const clientState = clientStates[getUID(clients[c])];
+				const clientState = clientStates[getUID(c)];
 				for (let cidx = 1; cidx < 1 + burnedCardsPerRound && cidx < clientState.state.booster.length; ++cidx)
 					burned.push(cidx);
 				clientState.pickedCards.push(clientState.state.booster[0]);
-				clients[c].emit("pickCard", { pickedCards: [0], burnedCards: burned }, ackNoError);
+				c.emit("pickCard", { pickedCards: [0], burnedCards: burned }, ackNoError);
 			}
 		});
 		expectCardCount(3 * Math.floor(15 / 3));
@@ -1776,6 +1779,7 @@ describe("Single Draft (Two Players)", function () {
 
 	describe("Draft mixing multiple picks and burning", function () {
 		connect();
+
 		it("Clients should receive the updated bot count.", function (done) {
 			ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
 			nonOwnerIdx = 1 - ownerIdx;
@@ -1824,9 +1828,12 @@ describe("Single Draft (Two Players)", function () {
 
 						c.once("draftState", function (state) {
 							const s = state as ReturnType<DraftState["syncData"]>;
-							const clientState = clientStates[getUID(c)];
 							expect(s.booster).to.exist;
-							clientState.state = s;
+							expect(s.picksThisRound).to.equal(Math.min(s.booster.length, pickPerRound));
+							expect(s.burnsThisRound).to.equal(
+								Math.min(Math.max(s.booster.length - pickPerRound, 0), burnPerRound)
+							);
+							clientStates[getUID(c)] = { pickedCards: [], state: s };
 							receivedBoosters += 1;
 							if (connectedClients === clients.length && receivedBoosters === clients.length) done();
 						});
@@ -1843,6 +1850,10 @@ describe("Single Draft (Two Players)", function () {
 							const s = state as ReturnType<DraftState["syncData"]>;
 							if (s.pickNumber !== clientState.state.pickNumber && s.boosterCount > 0) {
 								expect(s.booster).to.exist;
+								expect(s.picksThisRound).to.equal(Math.min(s.booster.length, pickPerRound));
+								expect(s.burnsThisRound).to.equal(
+									Math.min(Math.max(s.booster.length - pickPerRound, 0), burnPerRound)
+								);
 								clientState.state = s;
 								let cidx = 0;
 								const picked = [];
@@ -1871,6 +1882,108 @@ describe("Single Draft (Two Players)", function () {
 				});
 			}
 		}
+		disconnect();
+	});
+
+	describe("Cube with boosterSettings", function () {
+		const expectedboosterSettings = [
+			{
+				picks: 1,
+				burns: 14,
+			},
+			{
+				picks: 2,
+				burns: 0,
+			},
+			{
+				picks: 3,
+				burns: 1,
+			},
+		];
+
+		connect();
+
+		it("Select cube", function (done) {
+			clients[ownerIdx].emit("parseCustomCardList", BoosterSettingsCube, (e) => {
+				ackNoError(e);
+				done();
+			});
+		});
+
+		it("When session owner launch draft, everyone should receive a startDraft event", function (done) {
+			let connectedClients = 0;
+			let receivedBoosters = 0;
+			for (const c of clients) {
+				c.once("startDraft", function () {
+					connectedClients += 1;
+					if (connectedClients === clients.length && receivedBoosters === clients.length) done();
+				});
+
+				c.once("draftState", function (state) {
+					const s = state as ReturnType<DraftState["syncData"]>;
+					expect(s.booster).to.exist;
+					expect(s.picksThisRound).to.equal(Math.min(s.booster.length, expectedboosterSettings[0].picks));
+					expect(s.burnsThisRound).to.equal(
+						Math.min(Math.max(s.booster.length - s.picksThisRound, 0), expectedboosterSettings[0].burns)
+					);
+					clientStates[getUID(c)] = { pickedCards: [], state: s };
+					receivedBoosters += 1;
+					if (connectedClients === clients.length && receivedBoosters === clients.length) done();
+				});
+			}
+			clients[ownerIdx].emit("startDraft", ackNoError);
+		});
+
+		it("Pick enough times, and the draft should end.", function (done) {
+			this.timeout(20000);
+			let draftEnded = 0;
+			for (let c = 0; c < clients.length; ++c) {
+				const clientState = clientStates[getUID(clients[c])];
+				clients[c].on("draftState", function (state) {
+					const s = state as ReturnType<DraftState["syncData"]>;
+					if (
+						(s.pickNumber !== clientState.state.pickNumber ||
+							s.boosterNumber !== clientState.state.boosterNumber) &&
+						s.boosterCount > 0
+					) {
+						expect(s.booster).to.exist;
+						expect(s.picksThisRound).to.equal(
+							Math.min(s.booster.length, expectedboosterSettings[s.boosterNumber].picks)
+						);
+						expect(s.burnsThisRound).to.equal(
+							Math.min(
+								Math.max(s.booster.length - expectedboosterSettings[s.boosterNumber].picks, 0),
+								expectedboosterSettings[s.boosterNumber].burns
+							)
+						);
+						clientState.state = s;
+						let cidx = 0;
+						const picked = [];
+						while (cidx < s.picksThisRound && cidx < s.booster.length) picked.push(cidx++);
+						const burned = [];
+						while (burned.length < s.burnsThisRound && cidx < s.booster.length) burned.push(cidx++);
+						clients[c].emit("pickCard", { pickedCards: picked, burnedCards: burned }, ackNoError);
+					}
+				});
+				clients[c].once("endDraft", function () {
+					draftEnded += 1;
+					clients[c].removeListener("draftState");
+					if (draftEnded === clients.length) done();
+				});
+			}
+			for (let c = 0; c < clients.length; ++c) {
+				const clientState = clientStates[getUID(clients[c])];
+				let cidx = 0;
+				const picked = [];
+				while (cidx < clientState.state.picksThisRound && cidx < clientState.state.booster.length)
+					picked.push(cidx++);
+				const burned = [];
+				while (burned.length < clientState.state.burnsThisRound && cidx < clientState.state.booster.length)
+					burned.push(cidx++);
+				clients[c].emit("pickCard", { pickedCards: picked, burnedCards: burned }, ackNoError);
+			}
+		});
+
 		disconnect();
 	});
 

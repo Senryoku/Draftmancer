@@ -7,9 +7,9 @@ import { IDraftState } from "./IDraftState.js";
 import { UserID } from "./IDTypes.js";
 
 export class DraftState extends IDraftState {
-	readonly packSettings: {
-		readonly pickedCardsPerRound: number;
-		readonly burnedCardsPerRound: number;
+	readonly boosterSettings: {
+		readonly picks: number;
+		readonly burns: number;
 		readonly doubleMastersMode: boolean;
 	}[];
 
@@ -41,22 +41,18 @@ export class DraftState extends IDraftState {
 		boosters: UniqueCard[][],
 		players: UserID[],
 		options: {
-			pickedCardsPerRound: number;
-			burnedCardsPerRound: number;
-			doubleMastersMode: boolean;
+			boosterSettings: {
+				picks: number;
+				burns: number;
+				doubleMastersMode: boolean;
+			}[];
 			botCount: number;
 			simpleBots: boolean;
 			botParameters?: MTGDraftBotParameters;
 		}
 	) {
 		super("draft");
-		this.packSettings = [
-			{
-				pickedCardsPerRound: options.pickedCardsPerRound,
-				burnedCardsPerRound: options.burnedCardsPerRound,
-				doubleMastersMode: options.doubleMastersMode,
-			},
-		];
+		this.boosterSettings = options.boosterSettings;
 
 		this.boosters = boosters;
 
@@ -97,13 +93,17 @@ export class DraftState extends IDraftState {
 	}
 
 	picksAndBurnsThisRound(userID: UserID) {
-		const settings = this.packSettings[this.boosterNumber % this.packSettings.length];
+		const settings = this.boosterSettings[this.boosterNumber % this.boosterSettings.length];
+		const picksThisRound = Math.min(
+			settings.doubleMastersMode && this.players[userID].pickNumber > 0 ? 1 : settings.picks,
+			this.players[userID].boosters[0]?.length ?? 0
+		);
 		return {
-			picksThisRound: Math.min(
-				settings.doubleMastersMode && this.players[userID].pickNumber > 0 ? 1 : settings.pickedCardsPerRound,
-				this.players[userID].boosters[0]?.length ?? 0
+			picksThisRound,
+			burnsThisRound: Math.min(
+				settings.burns,
+				Math.max(0, (this.players[userID].boosters[0]?.length ?? 0) - picksThisRound)
 			),
-			burnsThisRound: settings.burnedCardsPerRound,
 		};
 	}
 

@@ -1091,7 +1091,7 @@
 									:key="`card-booster-${card.uniqueID}`"
 									:card="card"
 									:language="language"
-									:canbeburned="burnedCardsPerRound > 0"
+									:canbeburned="draftState.burnsThisRound > 0"
 									:burned="burningCards.includes(card)"
 									:class="{ selected: selectedCards.includes(card) }"
 									@click="draftState.skipPick ? () => {} : selectCard($event, card)"

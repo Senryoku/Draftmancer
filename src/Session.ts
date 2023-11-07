@@ -1768,10 +1768,19 @@ export class Session implements IIndexable {
 		const oracleIds = boosters.flat().map((card) => card.oracle_id);
 		const simpleBots = fallbackToSimpleBots([...new Set(oracleIds)], botParameters.wantedModel);
 
+		const boosterSettings =
+			this.useCustomCardList && this.customCardList.settings?.boosterSettings
+				? this.customCardList.settings.boosterSettings
+				: [
+						{
+							picks: this.pickedCardsPerRound,
+							burns: this.burnedCardsPerRound,
+							doubleMastersMode: this.doubleMastersMode,
+						},
+				  ];
+
 		this.draftState = new DraftState(boosters, this.getSortedHumanPlayersIDs(), {
-			pickedCardsPerRound: this.pickedCardsPerRound,
-			burnedCardsPerRound: this.burnedCardsPerRound,
-			doubleMastersMode: this.doubleMastersMode,
+			boosterSettings,
 			simpleBots: simpleBots,
 			botCount: this.bots,
 			botParameters,
