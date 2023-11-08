@@ -2109,7 +2109,7 @@ export class Session implements IIndexable {
 			return reportError(
 				`Invalid picked cards (pickedCards: ${pickedCards}, booster length: ${booster.length}).`
 			);
-		if (pickedCards.some((idx) => idx >= booster.length))
+		if (pickedCards.some((idx) => idx < 0 || idx >= booster.length))
 			return reportError(
 				`Invalid card index [${pickedCards.join(", ")}] for booster #${booster} (${booster.length}).`
 			);
@@ -2118,7 +2118,7 @@ export class Session implements IIndexable {
 			burnedCards &&
 			(burnedCards.length > burnsThisRound ||
 				burnedCards.length !== Math.min(burnsThisRound, booster.length - pickedCards.length) ||
-				burnedCards.some((idx) => idx >= booster.length))
+				burnedCards.some((idx) => idx < 0 || idx >= booster.length))
 		)
 			return reportError(
 				`Invalid burned cards (expected length: ${burnsThisRound}, burnedCards: ${burnedCards.length}, booster: ${booster.length}).`
