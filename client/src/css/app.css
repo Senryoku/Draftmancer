@@ -537,7 +537,8 @@ div:where(.swal2-container) .swal2-checkbox {
 .welcome-top {
 	display: flex;
 	justify-content: center;
-	gap: 1em;
+	align-items: center;
+	gap: 2vw;
 }
 
 @media (max-width: 1200px) {
@@ -1723,4 +1724,18 @@ See: https://stackoverflow.com/questions/52937708/why-does-applying-a-css-filter
 	bottom: -20%;
 	border-radius: 3.5%/28% 28% 24% 24%;
 	background-color: #518ae6d0;
+}
+
+/* Temp The Lost Caverns of Ixalan Banner */
+.lci-banner {
+	position: relative;
+	max-width: min(500px, 90wv);
+}
+
+.lci-banner img {
+	border-radius: 10px;
+	box-shadow:
+		0 4px 8px 0 rgba(0, 0, 0, 0.2),
+		0 6px 20px 0 rgba(0, 0, 0, 0.19);
+	width: 100%;
 }

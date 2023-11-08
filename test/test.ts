@@ -18,6 +18,7 @@ import {
 	ackNoError,
 	ValidCubes,
 	getUID,
+	latestSetCardPerBooster,
 } from "./src/common.js";
 import { Constants } from "../src/Constants.js";
 import type { DistributionMode } from "../src/Session/SessionTypes";
@@ -266,6 +267,7 @@ describe("Sets content", function () {
 		mom: { common: 116, uncommon: 80, rare: 60, mythic: 20 },
 		ltr: { common: 101, uncommon: 80, rare: 60, mythic: 20 },
 		woe: { common: 101, uncommon: 80, rare: 60, mythic: 20 },
+		lci: { common: 108, uncommon: 92, rare: 64, mythic: 22 },
 	};
 
 	beforeEach(function (done) {
@@ -709,8 +711,6 @@ describe("Single Draft (Two Players)", function () {
 			disconnect();
 		});
 	}
-
-	const latestSetCardPerBooster: number = 14;
 
 	describe(`Drafting without set restriction`, function () {
 		connect();

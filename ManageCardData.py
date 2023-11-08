@@ -4,6 +4,7 @@ import mmap
 import json
 import requests
 import os
+import filecmp
 import datetime
 import gzip
 import urllib
@@ -425,17 +426,32 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
 
         if c['set'] == "ltr":
             # Workaround: Remove alternate printings and Jumpstart cards from LTR draft boosters (and the 20 basics)
-            selection['in_booster'] = int(c['collector_number']) > 0 and int(c['collector_number']) <= 261
+            try:
+                selection['in_booster'] = int(c['collector_number']) > 0 and int(c['collector_number']) <= 261
+            except:
+                selection['in_booster'] = False
             if "Ring tempts you" in c['oracle_text'] and ("all_parts" not in c or next((x for x in c["all_parts"] if x["id"] == "7215460e-8c06-47d0-94e5-d1832d0218af"), None) == None):
                 if "related_cards" not in selection:
                     selection["related_cards"] = []
                 selection["related_cards"].append("7215460e-8c06-47d0-94e5-d1832d0218af")
                 
         if c['set'] == "cmm":
-            selection['in_booster'] = int(c['collector_number']) > 0 and int(c['collector_number']) <= 436
+            try:
+                selection['in_booster'] = int(c['collector_number']) > 0 and int(c['collector_number']) <= 436
+            except:
+                selection['in_booster'] = False
 
         if c['set'] == "woe":
-            selection['in_booster'] = int(c['collector_number']) > 0 and int(c['collector_number']) <= 261
+            try:
+                selection['in_booster'] = int(c['collector_number']) > 0 and int(c['collector_number']) <= 261
+            except:
+                selection['in_booster'] = False
+
+        if c['set'] == "lci":
+            try:
+                selection['in_booster'] = int(c['collector_number']) > 0 and int(c['collector_number']) <= 286
+            except:
+                selection['in_booster'] = False
 
         if c['layout'] == "split":
             if 'Aftermath' in c['keywords']:
@@ -703,7 +719,7 @@ setinfos = {}
 
 
 def getIcon(mtgset, icon_path):
-    if not os.path.isfile("client/public/" + icon_path):
+    if not os.path.isfile("client/public/" + icon_path): # or filecmp.cmp("client/public/" + icon_path, "client/public/img/sets/default.svg", shallow=False):
         try:
             response = requests.get(
                 "https://api.scryfall.com/sets/{}".format(mtgset))
@@ -801,6 +817,6 @@ constants = {}
 with open("src/data/constants.json", 'r', encoding="utf8") as constantsFile:
     constants = json.loads(constantsFile.read())
 constants['PrimarySets'] = [
-    s for s in PrimarySets if s in setinfos and s not in subsets and s not in ["ren", "rin", "a22", "y22", "j22", "sis", "ltc", "who", "wot", "rvr", "lci"]]  # Exclude some codes that are actually part of larger sets (tsb, fmb1, h1r... see subsets), or aren't out yet
+    s for s in PrimarySets if s in setinfos and s not in subsets and s not in ["ren", "rin", "a22", "y22", "j22", "sis", "ltc", "who", "wot", "rvr"]]  # Exclude some codes that are actually part of larger sets (tsb, fmb1, h1r... see subsets), or aren't out yet
 with open("src/data/constants.json", 'w', encoding="utf8") as constantsFile:
     json.dump(constants, constantsFile, ensure_ascii=False, indent=4)

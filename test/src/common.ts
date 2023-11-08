@@ -10,6 +10,8 @@ import { ClientToServerEvents, ServerToClientEvents } from "../../src/SocketType
 import { SocketAck } from "../../src/Message.js";
 import type { UserID } from "../../src/IDTypes";
 
+export const latestSetCardPerBooster: number = 15;
+
 export const ValidCubes: { [name: string]: string } = {
 	CustomSlotsTestFile: fs.readFileSync(`./test/data/CustomSheets.txt`, "utf8"),
 	CustomLayoutsTestFile: fs.readFileSync(`./test/data/CustomLayouts.txt`, "utf8"),

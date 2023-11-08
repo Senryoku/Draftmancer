@@ -2042,11 +2042,11 @@
     "inv": {
         "code": "inv",
         "fullName": "Invasion",
-        "cardCount": 351,
+        "cardCount": 352,
         "isPrimary": true,
         "block": "Invasion",
         "icon": "img/sets/inv.svg",
-        "commonCount": 131,
+        "commonCount": 132,
         "rareCount": 110,
         "uncommonCount": 110
     },
@@ -2294,24 +2294,24 @@
     "lcc": {
         "code": "lcc",
         "fullName": "Lost Caverns of Ixalan Commander",
-        "cardCount": 24,
+        "cardCount": 370,
         "isPrimary": false,
         "icon": "img/sets/lcc.svg",
-        "commonCount": 2,
-        "mythicCount": 19,
-        "rareCount": 1,
-        "uncommonCount": 2
+        "commonCount": 33,
+        "mythicCount": 50,
+        "rareCount": 209,
+        "uncommonCount": 78
     },
     "lci": {
         "code": "lci",
         "fullName": "The Lost Caverns of Ixalan",
-        "cardCount": 144,
+        "cardCount": 415,
         "isPrimary": true,
         "icon": "img/sets/lci.svg",
-        "commonCount": 30,
-        "mythicCount": 40,
-        "rareCount": 43,
-        "uncommonCount": 31
+        "commonCount": 123,
+        "mythicCount": 51,
+        "rareCount": 130,
+        "uncommonCount": 111
     },
     "lea": {
         "code": "lea",
@@ -2382,12 +2382,12 @@
     "ltr": {
         "code": "ltr",
         "fullName": "The Lord of the Rings: Tales of Middle-earth",
-        "cardCount": 834,
+        "cardCount": 836,
         "isPrimary": true,
         "icon": "img/sets/ltr.svg",
         "commonCount": 243,
-        "mythicCount": 109,
-        "rareCount": 272,
+        "mythicCount": 110,
+        "rareCount": 273,
         "uncommonCount": 210
     },
     "m10": {
@@ -4213,11 +4213,11 @@
     "pmei": {
         "code": "pmei",
         "fullName": "Media Inserts",
-        "cardCount": 9,
+        "cardCount": 10,
         "isPrimary": false,
         "icon": "img/sets/pmei.svg",
         "commonCount": 7,
-        "rareCount": 1,
+        "rareCount": 2,
         "uncommonCount": 1
     },
     "pmh1": {
@@ -5032,11 +5032,11 @@
     "rex": {
         "code": "rex",
         "fullName": "Jurassic World Collection",
-        "cardCount": 20,
+        "cardCount": 45,
         "isPrimary": false,
         "icon": "img/sets/rex.svg",
-        "commonCount": 1,
-        "rareCount": 19
+        "commonCount": 6,
+        "rareCount": 39
     },
     "rix": {
         "code": "rix",
@@ -5158,11 +5158,11 @@
     "sch": {
         "code": "sch",
         "fullName": "Store Championships",
-        "cardCount": 17,
+        "cardCount": 20,
         "isPrimary": false,
         "icon": "img/sets/sch.svg",
         "mythicCount": 3,
-        "rareCount": 14
+        "rareCount": 17
     },
     "shm": {
         "code": "shm",
@@ -5213,6 +5213,14 @@
         "icon": "img/sets/slc.svg",
         "mythicCount": 10,
         "rareCount": 21
+    },
+    "slci": {
+        "code": "slci",
+        "fullName": "The Lost Caverns of Ixalan Substitute Cards",
+        "cardCount": 1,
+        "isPrimary": false,
+        "icon": "img/sets/slci.svg",
+        "commonCount": 1
     },
     "sld": {
         "code": "sld",
@@ -5325,12 +5333,12 @@
     "spg": {
         "code": "spg",
         "fullName": "Special Guests",
-        "cardCount": 14,
+        "cardCount": 24,
         "isPrimary": false,
         "icon": "img/sets/spg.svg",
-        "mythicCount": 8,
-        "rareCount": 4,
-        "uncommonCount": 2
+        "mythicCount": 11,
+        "rareCount": 8,
+        "uncommonCount": 5
     },
     "ss1": {
         "code": "ss1",

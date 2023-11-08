@@ -96,7 +96,7 @@
 		"file-loader": "^6.2.0",
 		"html-webpack-plugin": "^5.5.0",
 		"husky": "^8.0.3",
-		"lint-staged": "^14.0.0",
+		"lint-staged": "^15.0.2",
 		"mocha": "^10.2.0",
 		"prettier": "^3.0.3",
 		"puppeteer": "^21.3.6",

@@ -1290,7 +1290,6 @@ export default defineComponent({
 				const cards = boosters.reduce((acc, val) => acc.concat(val), []);
 				this.spawnDialog(SealedPresentation, {
 					// Note: SealedPresentation has the ability to present boosters one by one, we're not using it, yet.
-					//       e.g. boosters: boosters
 					boosters: [cards.filter((c) => c.rarity !== "common" && c.rarity !== "uncommon")],
 					title: "Sealed - Rares and Mythics",
 				});
@@ -1594,7 +1593,7 @@ export default defineComponent({
 			// Allow dropping only if the dragged object is the selected card
 
 			// A better (?) solution would be something like
-			// 		let cardid = e.dataTransfer.getData("text");
+			// 		let cardid = e.dataTransfer.getData("uniqueID");
 			// 		if (this.selectedCards && cardid == this.selectedCards.id)
 			// {
 			// but only Firefox allows to check for dataTransfer in this event (and
@@ -1626,7 +1625,7 @@ export default defineComponent({
 		dragBoosterCard(e: DragEvent, card: UniqueCard) {
 			if (e.dataTransfer) {
 				e.dataTransfer.setData("isboostercard", "true"); // Workaround: See allowBoosterCardDrop
-				e.dataTransfer.setData("text", card.id);
+				e.dataTransfer.setData("uniqueID", card.uniqueID.toString());
 				e.dataTransfer.effectAllowed = "move";
 			}
 			this.selectCard(null, card);
@@ -1642,13 +1641,13 @@ export default defineComponent({
 				(this.gameState === GameState.Picking || this.gameState === GameState.RochesterPicking)
 			) {
 				e.preventDefault();
-				const cardid = e.dataTransfer.getData("text");
-				if (!this.selectedCards.some((c) => cardid === c.id)) {
+				const cardUID = e.dataTransfer.getData("uniqueID");
+				if (!this.selectedCards.some((c) => cardUID === c.uniqueID.toString())) {
 					console.error(
-						"dropBoosterCard error: cardid (%s) could not be found in this.selectedCards:",
-						cardid
+						`dropBoosterCard error: cardUID (${cardUID}) could not be found in this.selectedCards:`
 					);
 					console.error(this.selectedCards);
+					this.selectedCards = [];
 					return;
 				}
 
@@ -3690,7 +3689,7 @@ export default defineComponent({
 		pageTitle(): string {
 			if (this.sessionUsers.length < 2)
 				return `Draftmancer ${
-					this.titleNotification ? this.titleNotification.message : "- Multiplayer MTG Limited Simulator"
+					this.titleNotification ? this.titleNotification.message : "- Multiplayer MTG Draft Simulator"
 				}`;
 			else
 				return `Draftmancer (${this.sessionUsers.length}/${this.maxPlayers}) ${
