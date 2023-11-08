@@ -2298,8 +2298,8 @@
         "isPrimary": false,
         "icon": "img/sets/lcc.svg",
         "commonCount": 33,
-        "mythicCount": 50,
-        "rareCount": 209,
+        "mythicCount": 51,
+        "rareCount": 208,
         "uncommonCount": 78
     },
     "lci": {
@@ -5336,8 +5336,8 @@
         "cardCount": 24,
         "isPrimary": false,
         "icon": "img/sets/spg.svg",
-        "mythicCount": 11,
-        "rareCount": 8,
+        "mythicCount": 12,
+        "rareCount": 7,
         "uncommonCount": 5
     },
     "ss1": {
