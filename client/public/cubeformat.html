@@ -75,6 +75,10 @@
 				color: #31aa2d;
 			}
 
+			pre type {
+				color: #59a7d4;
+			}
+
 			pre note {
 				color: #999999;
 			}
@@ -206,13 +210,13 @@ Card Name 6
 				<p>Here are the possible settings with their description:</p>
 				<pre>
 {
-	name: string,                       <comment>// The name of your cube.</comment>
-	boostersPerPlayer: number,          <comment>// Specify the default value of the "boostersPerPlayer" session setting.</comment>
-	withReplacement: boolean,           <comment>// Specify the default value of the "withReplacement" session setting (can still be overridden).</comment>
-	duplicateProtection: boolean,       <comment>// Enable or disable Duplicate Protection (defaults to true).</comment>
-	showSlots: boolean,                 <comment>// If layouts are used, will display what sheet slot generated which card.</comment>
+	name: <type>string</type>;                       <comment>// The name of your cube.</comment>
+	boostersPerPlayer: <type>number</type>;          <comment>// Specify the default value of the "boostersPerPlayer" session setting.</comment>
+	withReplacement: <type>boolean</type>;           <comment>// Specify the default value of the "withReplacement" session setting (can still be overridden).</comment>
+	duplicateProtection: <type>boolean</type>;       <comment>// Enable or disable Duplicate Protection (defaults to true).</comment>
+	showSlots: <type>boolean</type>;                 <comment>// If layouts are used, will display what sheet slot generated which card.</comment>
 
-	boosterSettings: {"picks": number, "burns": number, "doubleMastersMode": boolean}[], <comment>// Allows you to customize some settings on a per booster basis.</comment>
+	boosterSettings: <type>{picks: number | number[], burns: number | number[]}[]</type>; <comment>// Allows you to customize some settings on a per booster basis.</comment>
 	<comment>// Example:</comment>
 	"boosterSettings": [
 		{
@@ -220,29 +224,28 @@ Card Name 6
 			"burns": 14
 		}, 
 		{
-			"picks": 2,
-			"burns": 0,
-			"doubleMastersMode": true
+			"picks": [2, 1], <comment>// Simulate the "Double Masters mode", with 2 picks right after openning the booster, then 1.</comment>
+			"burns": 0
 		}, 
 		{
-			"picks": 3,
-			"burns": 1
+			"picks": [3, 2, 1], <comment>// For booster #3: pick 3 and burn 1, then pick 2 burn 0 and finally pick 1 burn 0 until the pack is empty.</comment>
+			"burns": [1, 0]
 		}
 	]
 
-	layouts: Record&lt;string, PackLayout&gt; <comment>// See below</comment>
+	layouts: <type>Record&lt;string, PackLayout&gt;</type>; <comment>// See below</comment>
 
 	<comment>// Specify the exact order of the pack layouts rather than picking them randomly, useful for block drafts. 
 	//   Array of layout names, array of arrays of layout names (weights inherited from the layout declaration) 
 	//   or array of Record&lt;string, number&gt; to override the weights.</comment>
-	predeterminedLayouts: string[] | string[][] | Record&lt;string, number&gt;[], 
+	predeterminedLayouts: <type>string[] | string[][] | Record&lt;string, number&gt;[]</type>;
 	<comment>// Examples:</comment>
 	"predeterminedLayouts": ["SheetA", "SheetB", "SheetC"],
 	"predeterminedLayouts": [["Set1_Rare", "Set1_Mythic"], ["Set2_Rare", "Set2_Mythic"]]
 	"predeterminedLayouts": [{"Set1_Rare": 7, "Set1_Mythic": 1}, {"Set2_Rare": 7, "Set2_Mythic": 1}]
 
 	<comment>// Specify if the layouts are randomly picked with or without replacement (default: true).</comment>
-	layoutWithReplacement: boolean,     
+	layoutWithReplacement: <type>boolean</type>;    
 }
 </pre>
 			</section>
@@ -491,29 +494,29 @@ Card related to Nazgûl somehow
 				<p>Full Card specification ('?' denotes an optional field):</p>
 				<pre>
 CardFace {
-	name: string;
-	image_uris: { [lang: string]: URL };
-	type: string;
-	printed_names?: { [lang: string]: string };
-	subtypes?: Array&lt;string&gt;;
+	name: <type>string</type>;
+	image_uris: <type>{ [lang: string]: URL }</type>;
+	type: <type>string</type>;
+	printed_names?: <type>{ [lang: string]: string }</type>;
+	subtypes?: <type>Array&lt;string&gt;</type>;
 }
 
 CustomCard {
-	name: string,
-	mana_cost: string,
-	type: string,
-	image_uris: { [lang: string]: URL },
-	printed_names?: { [lang: string]: string };
-	colors?: Array&lt;"W" | "U" | "B" | "R" | "G"&gt;;
-	set?: string,	
-	collector_number?: string;
-	rarity?: string;
-	subtypes?: Array&lt;string&gt; = [];
-	rating?: number = 0; <comment>// A rating of the strength of the card in a vacuum, between 0 and 5. This may help bots navigate drafts when they don't know any cards :^)</comment>
-	layout?: string;
-	back?: CardFace;
-	related_cards?: Array&lt;CardID | CardFace&gt;; <comment>// You can use this field to display some related cards when right clicking on the card. CardID can be the name of another custom card, or a Scryfall ID.</comment>
-	draft_effects?: Array&lt;DraftEffect&gt;; <comment>// See the list of valid effects bellow.</comment>
+	name: <type>string</type>;
+	mana_cost: <type>string</type>;
+	type: <type>string</type>;
+	image_uris: <type>{ [lang: string]: URL }</type>;
+	printed_names?: <type>{ [lang: string]: string }</type>;
+	colors?: <type>Array&lt;"W" | "U" | "B" | "R" | "G"&gt;</type>;
+	set?: <type>string</type>;	
+	collector_number?: <type>string</type>;
+	rarity?: <type>string</type>;
+	subtypes?: <type>Array&lt;string&gt;</type> = [];
+	rating?: <type>number</type> = 0; <comment>// A rating of the strength of the card in a vacuum, between 0 and 5. This may help bots navigate drafts when they don't know any cards :^)</comment>
+	layout?: <type>string</type>;
+	back?: <type>CardFace</type>;
+	related_cards?: <type>Array&lt;CardID | CardFace&gt;</type>; <comment>// You can use this field to display some related cards when right clicking on the card. CardID can be the name of another custom card, or a Scryfall ID.</comment>
+	draft_effects?: <type>Array&lt;DraftEffect&gt;</type>; <comment>// See the list of valid effects bellow.</comment>
 }</pre>
 				The mana cost field follows
 				<a href="https://scryfall.com/docs/api/card-symbols/all" target="_blank">Scryfall Symbology</a>

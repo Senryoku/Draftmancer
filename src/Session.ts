@@ -1773,9 +1773,8 @@ export class Session implements IIndexable {
 				? this.customCardList.settings.boosterSettings
 				: [
 						{
-							picks: this.pickedCardsPerRound,
-							burns: this.burnedCardsPerRound,
-							doubleMastersMode: this.doubleMastersMode,
+							picks: this.doubleMastersMode ? [this.pickedCardsPerRound, 1] : [this.pickedCardsPerRound],
+							burns: [this.burnedCardsPerRound],
 						},
 				  ];
 

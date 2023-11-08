@@ -345,27 +345,49 @@ function parseSettings(
 		}
 		const boosterSettings = [];
 		for (const boosterSetting of parsedSettings.boosterSettings) {
-			if (!hasOptionalProperty("picks", isInteger)(boosterSetting))
+			if (
+				!hasOptionalProperty("picks", isInteger)(boosterSetting) &&
+				!hasOptionalProperty("picks", isArrayOf(isInteger))(boosterSetting)
+			)
 				return ackError({
 					title: `[Settings]`,
-					text: `'boosterSettings.picks' must be a positive integer.`,
+					text: `'boosterSettings.picks' must be a positive integer, or an array of positive integers.`,
 				});
-			if (!hasOptionalProperty("burns", isInteger)(boosterSetting))
+			if (
+				!hasOptionalProperty("burns", isInteger)(boosterSetting) &&
+				!hasOptionalProperty("burns", isArrayOf(isInteger))(boosterSetting)
+			)
 				return ackError({
 					title: `[Settings]`,
-					text: `'boosterSettings.burns' must be a positive integer.`,
+					text: `'boosterSettings.burns' must be a positive integer, or an array of positive integers.`,
 				});
-			if (!hasOptionalProperty("doubleMastersMode", isBoolean)(boosterSetting))
+
+			let picks = [1];
+			let burns = [0];
+			if (boosterSetting.picks)
+				if (isNumber(boosterSetting.picks)) picks = [boosterSetting.picks];
+				else picks = boosterSetting.picks;
+			if (boosterSetting.burns)
+				if (isNumber(boosterSetting.burns)) burns = [boosterSetting.burns];
+				else burns = boosterSetting.burns;
+
+			if (picks.some((pick) => pick < 1))
 				return ackError({
 					title: `[Settings]`,
-					text: `'boosterSettings.doubleMastersMode' must be a boolean.`,
+					text: `'boosterSettings.picks' must be a strictly positive integer, or an array of strictly positive integers.`,
 				});
+			if (burns.some((burn) => burn < 0))
+				return ackError({
+					title: `[Settings]`,
+					text: `'boosterSettings.burns' must be a positive integer, or an array of positive integers.`,
+				});
+
 			boosterSettings.push({
-				picks: boosterSetting.picks ?? 1,
-				burns: boosterSetting.burns ?? 0,
-				doubleMastersMode: boosterSetting.doubleMastersMode ?? false,
+				picks,
+				burns,
 			});
 		}
+
 		settings.boosterSettings = boosterSettings;
 	}
 

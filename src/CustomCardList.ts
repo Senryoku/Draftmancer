@@ -16,7 +16,7 @@ export type CCLSettings = {
 	name?: string;
 	withReplacement?: boolean;
 	showSlots?: boolean;
-	boosterSettings?: { picks: number; burns: number; doubleMastersMode: boolean }[];
+	boosterSettings?: { picks: number[]; burns: number[] }[];
 	predeterminedLayouts?: { name: LayoutName; weight: number }[][];
 	layoutWithReplacement?: boolean;
 	boostersPerPlayer?: number;

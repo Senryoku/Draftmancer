@@ -1886,15 +1886,17 @@ describe("Single Draft (Two Players)", function () {
 	});
 
 	describe("Cube with boosterSettings", function () {
-		const expectedboosterSettings = [
+		const expectedboosterSettings: {
+			picks: number | number[];
+			burns: number | number[];
+		}[] = [
 			{
 				picks: 1,
 				burns: 14,
 			},
 			{
-				picks: 2,
+				picks: [2, 1],
 				burns: 0,
-				doubleMastersMode: true,
 			},
 			{
 				picks: 3,
@@ -1923,9 +1925,22 @@ describe("Single Draft (Two Players)", function () {
 				c.once("draftState", function (state) {
 					const s = state as ReturnType<DraftState["syncData"]>;
 					expect(s.booster).to.exist;
-					expect(s.picksThisRound).to.equal(Math.min(s.booster.length, expectedboosterSettings[0].picks));
+					const settings = expectedboosterSettings[s.boosterNumber];
+					expect(s.picksThisRound).to.equal(
+						Math.min(
+							s.booster.length,
+							isNumber(settings.picks)
+								? settings.picks
+								: settings.picks[Math.min(s.pickNumber, settings.picks.length - 1)]
+						)
+					);
 					expect(s.burnsThisRound).to.equal(
-						Math.min(Math.max(s.booster.length - s.picksThisRound, 0), expectedboosterSettings[0].burns)
+						Math.min(
+							Math.max(s.booster.length - s.picksThisRound, 0),
+							isNumber(settings.burns)
+								? settings.burns
+								: settings.burns[Math.min(s.pickNumber, settings.burns.length - 1)]
+						)
 					);
 					clientStates[getUID(c)] = { pickedCards: [], state: s };
 					receivedBoosters += 1;
@@ -1948,21 +1963,22 @@ describe("Single Draft (Two Players)", function () {
 						s.boosterCount > 0
 					) {
 						expect(s.booster).to.exist;
-						if (expectedboosterSettings[s.boosterNumber].doubleMastersMode)
-							expect(s.picksThisRound).to.equal(
-								Math.min(
-									s.booster.length,
-									s.pickNumber === 0 ? expectedboosterSettings[s.boosterNumber].picks : 1
-								)
-							);
-						else
-							expect(s.picksThisRound).to.equal(
-								Math.min(s.booster.length, expectedboosterSettings[s.boosterNumber].picks)
-							);
+
+						const settings = expectedboosterSettings[s.boosterNumber];
+						expect(s.picksThisRound).to.equal(
+							Math.min(
+								s.booster.length,
+								isNumber(settings.picks)
+									? settings.picks
+									: settings.picks[Math.min(s.pickNumber, settings.picks.length - 1)]
+							)
+						);
 						expect(s.burnsThisRound).to.equal(
 							Math.min(
-								Math.max(s.booster.length - expectedboosterSettings[s.boosterNumber].picks, 0),
-								expectedboosterSettings[s.boosterNumber].burns
+								Math.max(s.booster.length - s.picksThisRound, 0),
+								isNumber(settings.burns)
+									? settings.burns
+									: settings.burns[Math.min(s.pickNumber, settings.burns.length - 1)]
 							)
 						);
 						clientState.state = s;
@@ -2345,6 +2361,7 @@ import { Socket } from "socket.io-client";
 import { JHHBooster } from "../src/JumpstartHistoricHorizons.js";
 import { parseLine } from "../src/parseCardList.js";
 import { SocketError, isSocketError } from "../src/Message.js";
+import { isNumber } from "../src/TypeChecks.js";
 
 describe("Jumpstart", function () {
 	let clients: ReturnType<typeof makeClients> = [];

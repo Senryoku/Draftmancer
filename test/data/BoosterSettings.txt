@@ -8,9 +8,8 @@
 			"burns": 14
 		}, 
 		{
-			"picks": 2,
+			"picks": [2, 1],
 			"burns": 0,
-			"doubleMastersMode": true
 		}, 
 		{
 			"picks": 3,

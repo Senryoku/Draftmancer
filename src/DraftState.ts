@@ -8,9 +8,8 @@ import { UserID } from "./IDTypes.js";
 
 export class DraftState extends IDraftState {
 	readonly boosterSettings: {
-		readonly picks: number;
-		readonly burns: number;
-		readonly doubleMastersMode: boolean;
+		readonly picks: number[];
+		readonly burns: number[];
 	}[];
 
 	boosters: UniqueCard[][]; // Boosters waiting to be distributed
@@ -42,9 +41,8 @@ export class DraftState extends IDraftState {
 		players: UserID[],
 		options: {
 			boosterSettings: {
-				picks: number;
-				burns: number;
-				doubleMastersMode: boolean;
+				picks: number[];
+				burns: number[];
 			}[];
 			botCount: number;
 			simpleBots: boolean;
@@ -95,13 +93,13 @@ export class DraftState extends IDraftState {
 	picksAndBurnsThisRound(userID: UserID) {
 		const settings = this.boosterSettings[this.boosterNumber % this.boosterSettings.length];
 		const picksThisRound = Math.min(
-			settings.doubleMastersMode && this.players[userID].pickNumber > 0 ? 1 : settings.picks,
+			settings.picks[Math.min(this.players[userID].pickNumber, settings.picks.length - 1)],
 			this.players[userID].boosters[0]?.length ?? 0
 		);
 		return {
 			picksThisRound,
 			burnsThisRound: Math.min(
-				settings.burns,
+				settings.burns[Math.min(this.players[userID].pickNumber, settings.burns.length - 1)],
 				Math.max(0, (this.players[userID].boosters[0]?.length ?? 0) - picksThisRound)
 			),
 		};
