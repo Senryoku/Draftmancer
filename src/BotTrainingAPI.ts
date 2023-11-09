@@ -108,7 +108,7 @@ export function sendLog(type: string, session: Session) {
 
 			if (LogStoreEndpoint && !InTesting && InProduction && players.length > 0) {
 				const data = {
-					useCustomCardList: session.draftLog.useCustomBoosters,
+					useCustomCardList: session.useCustomCardList,
 					setRestriction: session.draftLog.setRestriction,
 					players,
 				};
