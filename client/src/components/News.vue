@@ -1,6 +1,17 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
+			<em>November 09, 2023</em>
+			<ul>
+				<li>
+					New experimental setting for cubes: <em>Per-booster settings</em>.
+					<br />
+					Allows you to adjust the number of picked or burned cards for each booster. See the
+					<a href="cubeformat.html#settings" target="_blank">Cube format documentation</a>.
+				</li>
+			</ul>
+		</div>
+		<div class="news">
 			<em>November 03, 2023</em>
 			<ul>
 				<li>
