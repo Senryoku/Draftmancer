@@ -10,6 +10,9 @@ const MTGDraftbotsDeckEndpoint =
 	process.env.MTGDRAFTBOTS_DECKENDPOINT ?? " https://cubeartisan.net/integrations/decklog";
 const MTGDraftbotsAPIKey = process.env.MTGDRAFTBOTS_APIKEY;
 
+const LogStoreEndpoint = process.env.LOGSTORE_ENDPOINT ?? "http://localhost:52666/api/log";
+const LogStoreAPIKey = process.env.LOGSTORE_APIKEY ?? "1234";
+
 type MTGDraftbotsLogEntry = {
 	pack: string[];
 	picks: number[];
@@ -43,11 +46,8 @@ export function sendLog(type: string, session: Session) {
 			return;
 
 		// Send log to MTGDraftbots endpoint
-		if (MTGDraftbotsAPIKey && type === "Draft" && !session.customCardList?.customCards) {
-			const data: MTGDraftbotsLog = {
-				players: [],
-				apiKey: MTGDraftbotsAPIKey,
-			};
+		if (type === "Draft" && !session.customCardList?.customCards) {
+			const players = [];
 			for (const uid in session.draftLog.users) {
 				const u = session.draftLog.users[uid];
 				// Skip bots, and players replaced by bots
@@ -85,10 +85,15 @@ export function sendLog(type: string, session: Session) {
 						p.numPacks = packNum + 1;
 						if (p.numPicks === -1) p.numPicks = pickNum;
 					}
-					if (player.length > 0) data.players.push(player);
+					if (player.length > 0) players.push(player);
 				}
 			}
-			if (!InTesting && InProduction && data.players.length > 0)
+
+			if (MTGDraftbotsAPIKey && !InTesting && InProduction && players.length > 0) {
+				const data: MTGDraftbotsLog = {
+					players: players,
+					apiKey: MTGDraftbotsAPIKey,
+				};
 				axios
 					.post(MTGDraftbotsLogEndpoint, data)
 					.then((response) => {
@@ -99,6 +104,25 @@ export function sendLog(type: string, session: Session) {
 						}
 					})
 					.catch((err) => console.error("Error sending logs to CubeArtisan: ", err.message));
+			}
+
+			if (LogStoreEndpoint && !InTesting && InProduction && players.length > 0) {
+				const data = {
+					useCustomCardList: session.draftLog.useCustomBoosters,
+					setRestriction: session.draftLog.setRestriction,
+					players,
+				};
+				axios
+					.post(LogStoreEndpoint, data, { headers: { "x-api-key": LogStoreAPIKey }, timeout: 5000 })
+					.then((response) => {
+						// We expect a 201 (Created) response
+						if (response.status !== 201) {
+							console.warn("Unexpected response after sending draft log to LogStoreEndpoint: ");
+							console.warn(response);
+						}
+					})
+					.catch((err) => console.error("Error sending logs to LogStoreEndpoint: ", err.message));
+			}
 		}
 	}
 }
