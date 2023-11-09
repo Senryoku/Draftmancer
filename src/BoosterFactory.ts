@@ -1706,9 +1706,10 @@ class LCIBoosterFactory extends BoosterFactory {
 	dfcByRarity: SlotedCardPool;
 
 	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
-		const [dfcByRarity, filteredCardPool] = filterCardPool(cardPool, (cid: CardID) =>
-			getCard(cid).name.includes("//")
-		);
+		const [dfcByRarity, filteredCardPool] = filterCardPool(cardPool, (cid: CardID) => {
+			const c = getCard(cid);
+			return c.name.includes("//") && (c.rarity === "common" || c.rarity === "uncommon");
+		});
 		super(filteredCardPool, landSlot, options);
 		this.dfcByRarity = dfcByRarity;
 	}
