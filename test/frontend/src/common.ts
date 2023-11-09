@@ -306,6 +306,7 @@ export async function pickCard(page: Page): Promise<PickResult> {
 	}
 	while (await (await card.toElement("div")).evaluate((el) => !el.classList.contains("selected"))) await card.click();
 	await waitAndClickSelector(page, 'input[value="Confirm Pick"]');
+	await new Promise((resolve) => setTimeout(resolve, 50)); // FIXME: Very bad workaround to avoid picking too fast (twice on the same booster, which will just be ignored).
 	return PickResult.Picked;
 }
 

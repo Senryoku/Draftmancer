@@ -1700,6 +1700,22 @@ export default defineComponent({
 				const burningCards = this.burningCards;
 				const toSideboard = options?.toSideboard;
 
+				const pickedCardIndices = selectedCards.map((c) =>
+					state!.booster.findIndex((c2) => c.uniqueID === c2.uniqueID)
+				);
+				const burnedCardIndices = burningCards.map((c) =>
+					state!.booster.findIndex((c2) => c.uniqueID === c2.uniqueID)
+				);
+
+				// Was probably triggered on a previous pack, ignore it. Can probably only be possible during front end testing.
+				if (pickedCardIndices.some((idx) => idx < 0) || burnedCardIndices.some((idx) => idx < 0)) {
+					fireToast("warning", "Invalid pick."); // Display a warning in case I'm wrong and it does happen in the wild.
+					this.pickInFlight = false;
+					this.selectedCards = [];
+					this.burningCards = [];
+					return;
+				}
+
 				const boosterBackup = structuredClone(toRaw(state.booster));
 
 				const onSuccess: (() => void)[] = [];
@@ -1730,11 +1746,7 @@ export default defineComponent({
 				let dontAddSelectedCardstoCardPool = false;
 
 				if (this.rochesterDraftState) {
-					this.socket.emit(
-						"rochesterDraftPick",
-						selectedCards.map((c) => this.rochesterDraftState!.booster.findIndex((c2) => c === c2)),
-						ack
-					);
+					this.socket.emit("rochesterDraftPick", pickedCardIndices, ack);
 					this.gameState = GameState.RochesterWaiting;
 				} else {
 					let draftEffect:
@@ -1799,8 +1811,8 @@ export default defineComponent({
 					this.socket.emit(
 						"pickCard",
 						{
-							pickedCards: selectedCards.map((c) => state!.booster.findIndex((c2) => c === c2)),
-							burnedCards: burningCards.map((c) => state!.booster.findIndex((c2) => c === c2)),
+							pickedCards: pickedCardIndices,
+							burnedCards: burnedCardIndices,
 							draftEffect,
 							optionalOnPickDraftEffect,
 						},

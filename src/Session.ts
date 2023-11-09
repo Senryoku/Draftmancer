@@ -2113,14 +2113,12 @@ export class Session implements IIndexable {
 				);
 		}
 
-		if (!pickedCards || pickedCards.length !== picksThisRound)
-			return reportError(
-				`Invalid picked cards (pickedCards: ${pickedCards}, booster length: ${booster.length}).`
-			);
-		if (pickedCards.some((idx) => idx < 0 || idx >= booster.length))
-			return reportError(
-				`Invalid card index [${pickedCards.join(", ")}] for booster #${booster} (${booster.length}).`
-			);
+		if (
+			!pickedCards ||
+			pickedCards.length !== picksThisRound ||
+			pickedCards.some((idx) => idx < 0 || idx >= booster.length)
+		)
+			return reportError(`Invalid picked cards ([${pickedCards.join(", ")}], booster length: ${booster.length})`);
 
 		if (
 			burnedCards &&
