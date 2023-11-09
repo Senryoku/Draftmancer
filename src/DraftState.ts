@@ -7,13 +7,14 @@ import { IDraftState } from "./IDraftState.js";
 import { UserID } from "./IDTypes.js";
 
 export class DraftState extends IDraftState {
-	readonly pickedCardsPerRound: number;
-	readonly burnedCardsPerRound: number;
-	readonly doubleMastersMode: boolean;
+	readonly boosterSettings: {
+		readonly picks: number[];
+		readonly burns: number[];
+	}[];
 
-	boosters: Array<Array<UniqueCard>>;
+	boosters: UniqueCard[][]; // Boosters waiting to be distributed
 	boosterNumber = 0;
-	numPicks = 0;
+	numPicks = 0; // Number of picks in the current round. This is currently set to the number of cards in the first booster by doDistributeBoosters, which is correct for standard 1 pick/0 burn draft with all identical boosters and no special rules, and just a bad appromixation otherwise.
 	players: {
 		[userID: UserID]: {
 			isBot: boolean;
@@ -39,18 +40,17 @@ export class DraftState extends IDraftState {
 		boosters: UniqueCard[][],
 		players: UserID[],
 		options: {
-			pickedCardsPerRound: number;
-			burnedCardsPerRound: number;
-			doubleMastersMode: boolean;
+			boosterSettings: {
+				picks: number[];
+				burns: number[];
+			}[];
 			botCount: number;
 			simpleBots: boolean;
 			botParameters?: MTGDraftBotParameters;
 		}
 	) {
 		super("draft");
-		this.pickedCardsPerRound = options.pickedCardsPerRound;
-		this.burnedCardsPerRound = options.burnedCardsPerRound;
-		this.doubleMastersMode = options.doubleMastersMode;
+		this.boosterSettings = options.boosterSettings;
 
 		this.boosters = boosters;
 
@@ -91,12 +91,17 @@ export class DraftState extends IDraftState {
 	}
 
 	picksAndBurnsThisRound(userID: UserID) {
+		const settings = this.boosterSettings[this.boosterNumber % this.boosterSettings.length];
+		const picksThisRound = Math.min(
+			settings.picks[Math.min(this.players[userID].pickNumber, settings.picks.length - 1)],
+			this.players[userID].boosters[0]?.length ?? 0
+		);
 		return {
-			picksThisRound: Math.min(
-				this.doubleMastersMode && this.players[userID].pickNumber > 0 ? 1 : this.pickedCardsPerRound,
-				this.players[userID].boosters[0].length
+			picksThisRound,
+			burnsThisRound: Math.min(
+				settings.burns[Math.min(this.players[userID].pickNumber, settings.burns.length - 1)],
+				Math.max(0, (this.players[userID].boosters[0]?.length ?? 0) - picksThisRound)
 			),
-			burnsThisRound: this.burnedCardsPerRound,
 		};
 	}
 
@@ -136,17 +141,22 @@ export class DraftState extends IDraftState {
 	}
 
 	syncData(userID: UserID) {
+		const { picksThisRound, burnsThisRound } = this.picksAndBurnsThisRound(userID);
 		return {
 			booster: this.players[userID].boosters[0],
 			boosterCount: this.players[userID].boosters.length,
 			boosterNumber: this.boosterNumber,
 			pickNumber: this.players[userID].pickNumber,
+			picksThisRound,
+			burnsThisRound,
 			skipPick:
 				(this.players[userID].effect?.skipNPicks ?? 0) > 0 ||
 				this.players[userID].effect?.skipUntilNextRound === true,
 		};
 	}
 }
+
+export type DraftSyncData = ReturnType<DraftState["syncData"]>;
 
 export function isDraftState(obj: unknown): obj is DraftState {
 	return obj instanceof DraftState;

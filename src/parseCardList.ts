@@ -5,7 +5,18 @@ import { CardsByName, CardVersionsByName, getCard, isValidCardID } from "./Cards
 import { CCLSettings, CustomCardList, PackLayout } from "./CustomCardList.js";
 import { escapeHTML } from "./utils.js";
 import { ackError, isSocketError, SocketError } from "./Message.js";
-import { isAny, isArrayOf, isBoolean, isInteger, isRecord, isString, isUnknown } from "./TypeChecks.js";
+import {
+	hasOptionalProperty,
+	hasProperty,
+	isAny,
+	isArrayOf,
+	isBoolean,
+	isInteger,
+	isNumber,
+	isRecord,
+	isString,
+	isUnknown,
+} from "./TypeChecks.js";
 
 const lineRegex =
 	/^(?:(?<count>\d+)\s+)?(?<name>[^\v\n]+?)(?:\s\((?<set>\w+)\)(?:\s+(?<number>[^+\s()]+))?)?(?:\s+\+?(F))?$/;
@@ -323,6 +334,61 @@ function parseSettings(
 				text: `'predeterminedLayouts' must be an string[] | string[][] | Record<string, number>[], .`,
 			});
 		}
+	}
+
+	if ("boosterSettings" in parsedSettings) {
+		if (!isArrayOf(isRecord(isString, isUnknown))(parsedSettings.boosterSettings)) {
+			return ackError({
+				title: `[Settings]`,
+				text: `Invalid 'boosterSettings' format.`,
+			});
+		}
+		const boosterSettings = [];
+		for (const boosterSetting of parsedSettings.boosterSettings) {
+			if (
+				!hasOptionalProperty("picks", isInteger)(boosterSetting) &&
+				!hasOptionalProperty("picks", isArrayOf(isInteger))(boosterSetting)
+			)
+				return ackError({
+					title: `[Settings]`,
+					text: `'boosterSettings.picks' must be a positive integer, or an array of positive integers.`,
+				});
+			if (
+				!hasOptionalProperty("burns", isInteger)(boosterSetting) &&
+				!hasOptionalProperty("burns", isArrayOf(isInteger))(boosterSetting)
+			)
+				return ackError({
+					title: `[Settings]`,
+					text: `'boosterSettings.burns' must be a positive integer, or an array of positive integers.`,
+				});
+
+			let picks = [1];
+			let burns = [0];
+			if (boosterSetting.picks)
+				if (isNumber(boosterSetting.picks)) picks = [boosterSetting.picks];
+				else picks = boosterSetting.picks;
+			if (boosterSetting.burns)
+				if (isNumber(boosterSetting.burns)) burns = [boosterSetting.burns];
+				else burns = boosterSetting.burns;
+
+			if (picks.some((pick) => pick < 1))
+				return ackError({
+					title: `[Settings]`,
+					text: `'boosterSettings.picks' must be a strictly positive integer, or an array of strictly positive integers.`,
+				});
+			if (burns.some((burn) => burn < 0))
+				return ackError({
+					title: `[Settings]`,
+					text: `'boosterSettings.burns' must be a positive integer, or an array of positive integers.`,
+				});
+
+			boosterSettings.push({
+				picks,
+				burns,
+			});
+		}
+
+		settings.boosterSettings = boosterSettings;
 	}
 
 	if ("layoutWithReplacement" in parsedSettings) {

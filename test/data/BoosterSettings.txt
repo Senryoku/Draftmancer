@@ -1,0 +1,21 @@
+[Settings]
+{
+	"withReplacement": true,
+	"cardPerBooster": 15,
+	"boosterSettings": [
+		{
+			"picks": 1,
+			"burns": 14
+		}, 
+		{
+			"picks": [2, 1],
+			"burns": 0,
+		}, 
+		{
+			"picks": 3,
+			"burns": 1
+		}
+	]
+}
+[Default]
+Adventure Awaits

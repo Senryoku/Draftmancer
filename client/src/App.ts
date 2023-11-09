@@ -75,10 +75,11 @@ import ScaleSlider from "./components/ScaleSlider.vue";
 import CardBack from /* webpackPrefetch: true */ "./assets/img/cardback.webp";
 import { SolomonDraftSyncData } from "@/SolomonDraft";
 import { isSomeEnum } from "../../src/TypeChecks";
+import { DraftSyncData } from "@/DraftState";
 const img = new Image();
 img.src = CardBack;
 
-enum DraftState {
+enum GameState {
 	None = "None",
 	Waiting = "Waiting",
 	Picking = "Picking",
@@ -272,7 +273,7 @@ export default defineComponent({
 
 		return {
 			// Make these enums available in the template
-			DraftState,
+			GameState: GameState,
 			ReadyState,
 			PassingOrder,
 
@@ -348,11 +349,10 @@ export default defineComponent({
 			draftLogLive: null as DraftLog | null,
 			bracket: null as Bracket | null,
 			virtualPlayersData: null as UsersData | null,
-			booster: [] as UniqueCard[],
-			boosterNumber: 0,
-			pickNumber: 0,
-			skipPick: false, // Used for some Conspiracy cards effects
+
 			botScores: null as BotScores | null,
+
+			draftState: null as DraftSyncData | null,
 			winstonDraftState: null as WinstonDraftSyncData | null,
 			gridDraftState: null as GridDraftSyncData | null,
 			rochesterDraftState: null as RochesterDraftSyncData | null,
@@ -362,6 +362,7 @@ export default defineComponent({
 			winchesterDraftState: null as WinchesterDraftSyncData | null,
 			housmanDraftState: null as HousmanDraftSyncData | null,
 			solomonDraftState: null as SolomonDraftSyncData | null,
+
 			draftPaused: false,
 
 			publicSessions: [] as {
@@ -385,7 +386,7 @@ export default defineComponent({
 			cubeLists: Constants.CubeLists,
 			pendingReadyCheck: false,
 			setsInfos: SetsInfos,
-			draftingState: DraftState.None,
+			gameState: GameState.None,
 			displayBotScores: initialSettings.displayBotScores,
 			fixedDeck: initialSettings.fixedDeck,
 
@@ -527,7 +528,7 @@ export default defineComponent({
 				if (this.drafting) {
 					// Expelled during drafting
 					this.drafting = false;
-					this.draftingState = DraftState.Brewing;
+					this.gameState = GameState.Brewing;
 				}
 			});
 
@@ -685,15 +686,15 @@ export default defineComponent({
 			this.socket.on("winstonDraftNextRound", (currentPlayer) => {
 				if (this.userID === currentPlayer) {
 					this.notifyTurn();
-					this.draftingState = DraftState.WinstonPicking;
+					this.gameState = GameState.WinstonPicking;
 				} else {
-					this.draftingState = DraftState.WinstonWaiting;
+					this.gameState = GameState.WinstonWaiting;
 				}
 			});
 			this.socket.on("winstonDraftEnd", () => {
 				this.drafting = false;
 				this.winstonDraftState = null;
-				this.draftingState = DraftState.Brewing;
+				this.gameState = GameState.Brewing;
 				fireToast("success", "Done drafting!");
 			});
 			this.socket.on("winstonDraftRandomCard", (c) => {
@@ -721,8 +722,8 @@ export default defineComponent({
 					for (const c of data.pickedCards.main) this.addToDeck(c);
 					for (const c of data.pickedCards.side) this.addToSideboard(c);
 
-					if (this.userID === data.state.currentPlayer) this.draftingState = DraftState.WinstonPicking;
-					else this.draftingState = DraftState.WinstonWaiting;
+					if (this.userID === data.state.currentPlayer) this.gameState = GameState.WinstonPicking;
+					else this.gameState = GameState.WinstonWaiting;
 
 					Alert.fire({
 						position: "center",
@@ -739,18 +740,18 @@ export default defineComponent({
 			this.socket.on("startWinchesterDraft", (state) => {
 				startDraftSetup("Winchester draft");
 				this.winchesterDraftState = state;
-				this.draftingState =
-					state.currentPlayer === this.userID ? DraftState.WinchesterPicking : DraftState.WinchesterWaiting;
+				this.gameState =
+					state.currentPlayer === this.userID ? GameState.WinchesterPicking : GameState.WinchesterWaiting;
 			});
 			this.socket.on("winchesterDraftSync", (state) => {
 				this.winchesterDraftState = state;
-				this.draftingState =
-					state.currentPlayer === this.userID ? DraftState.WinchesterPicking : DraftState.WinchesterWaiting;
+				this.gameState =
+					state.currentPlayer === this.userID ? GameState.WinchesterPicking : GameState.WinchesterWaiting;
 			});
 			this.socket.on("winchesterDraftEnd", () => {
 				this.drafting = false;
 				this.winchesterDraftState = null;
-				this.draftingState = DraftState.Brewing;
+				this.gameState = GameState.Brewing;
 				fireToast("success", "Done drafting!");
 			});
 
@@ -762,10 +763,10 @@ export default defineComponent({
 					for (const c of data.pickedCards.main) this.addToDeck(c);
 					for (const c of data.pickedCards.side) this.addToSideboard(c);
 
-					this.draftingState =
+					this.gameState =
 						data.state.currentPlayer === this.userID
-							? DraftState.WinchesterPicking
-							: DraftState.WinchesterWaiting;
+							? GameState.WinchesterPicking
+							: GameState.WinchesterWaiting;
 
 					Alert.fire({
 						position: "center",
@@ -780,12 +781,12 @@ export default defineComponent({
 			this.socket.on("startHousmanDraft", (state) => {
 				startDraftSetup("Housman draft");
 				this.housmanDraftState = state;
-				this.draftingState = DraftState.HousmanDraft;
+				this.gameState = GameState.HousmanDraft;
 			});
 			this.socket.on("rejoinHousmanDraft", (data) => {
 				this.clearState();
 				this.drafting = true;
-				this.draftingState = DraftState.HousmanDraft;
+				this.gameState = GameState.HousmanDraft;
 				this.housmanDraftState = data.state;
 				this.$nextTick(() => {
 					for (const c of data.pickedCards.main) this.addToDeck(c);
@@ -804,12 +805,12 @@ export default defineComponent({
 			this.socket.on("startSolomonDraft", (state) => {
 				startDraftSetup("Solomon draft");
 				this.solomonDraftState = state;
-				this.draftingState = DraftState.SolomonDraft;
+				this.gameState = GameState.SolomonDraft;
 			});
 			this.socket.on("rejoinSolomonDraft", (data) => {
 				this.clearState();
 				this.drafting = true;
-				this.draftingState = DraftState.SolomonDraft;
+				this.gameState = GameState.SolomonDraft;
 				this.solomonDraftState = data.state;
 				this.$nextTick(() => {
 					for (const c of data.pickedCards.main) this.addToDeck(c);
@@ -828,8 +829,7 @@ export default defineComponent({
 			// Grid Draft
 			this.socket.on("startGridDraft", (state) => {
 				startDraftSetup("Grid draft");
-				this.draftingState =
-					this.userID === state.currentPlayer ? DraftState.GridPicking : DraftState.GridWaiting;
+				this.gameState = this.userID === state.currentPlayer ? GameState.GridPicking : GameState.GridWaiting;
 				this.setGridDraftState(state);
 			});
 			this.socket.on("gridDraftNextRound", (state) => {
@@ -837,9 +837,9 @@ export default defineComponent({
 					this.setGridDraftState(state);
 					if (this.userID === state.currentPlayer) {
 						this.notifyTurn();
-						this.draftingState = DraftState.GridPicking;
+						this.gameState = GameState.GridPicking;
 					} else {
-						this.draftingState = DraftState.GridWaiting;
+						this.gameState = GameState.GridWaiting;
 					}
 				};
 
@@ -854,7 +854,7 @@ export default defineComponent({
 					() => {
 						this.drafting = false;
 						this.gridDraftState = null;
-						this.draftingState = DraftState.Brewing;
+						this.gameState = GameState.Brewing;
 						fireToast("success", "Done drafting!");
 					},
 					this.gridDraftState?.currentPlayer === null ? (navigator.webdriver ? 10 : 2500) : 0
@@ -870,8 +870,8 @@ export default defineComponent({
 					for (const c of data.pickedCards.main) this.addToDeck(c);
 					for (const c of data.pickedCards.side) this.addToSideboard(c);
 
-					if (this.userID === data.state.currentPlayer) this.draftingState = DraftState.GridPicking;
-					else this.draftingState = DraftState.GridWaiting;
+					if (this.userID === data.state.currentPlayer) this.gameState = GameState.GridPicking;
+					else this.gameState = GameState.GridWaiting;
 
 					Alert.fire({
 						position: "center",
@@ -886,24 +886,24 @@ export default defineComponent({
 			// Rochester Draft
 			this.socket.on("startRochesterDraft", (state) => {
 				startDraftSetup("Rochester draft");
-				this.draftingState =
-					this.userID === state.currentPlayer ? DraftState.RochesterPicking : DraftState.RochesterWaiting;
+				this.gameState =
+					this.userID === state.currentPlayer ? GameState.RochesterPicking : GameState.RochesterWaiting;
 				this.setRochesterDraftState(state);
 			});
 			this.socket.on("rochesterDraftNextRound", (state) => {
 				this.setRochesterDraftState(state);
 				if (this.userID === state.currentPlayer) {
 					this.notifyTurn();
-					this.draftingState = DraftState.RochesterPicking;
+					this.gameState = GameState.RochesterPicking;
 					this.selectedCards = [];
 				} else {
-					this.draftingState = DraftState.RochesterWaiting;
+					this.gameState = GameState.RochesterWaiting;
 				}
 			});
 			this.socket.on("rochesterDraftEnd", () => {
 				this.drafting = false;
 				this.rochesterDraftState = null;
-				this.draftingState = DraftState.Brewing;
+				this.gameState = GameState.Brewing;
 				fireToast("success", "Done drafting!");
 			});
 
@@ -916,8 +916,8 @@ export default defineComponent({
 					for (const c of data.pickedCards.main) this.addToDeck(c);
 					for (const c of data.pickedCards.side) this.addToSideboard(c);
 
-					if (this.userID === data.state.currentPlayer) this.draftingState = DraftState.RochesterPicking;
-					else this.draftingState = DraftState.RochesterWaiting;
+					if (this.userID === data.state.currentPlayer) this.gameState = GameState.RochesterPicking;
+					else this.gameState = GameState.RochesterWaiting;
 
 					Alert.fire({
 						position: "center",
@@ -932,7 +932,7 @@ export default defineComponent({
 			// Rotisserie Draft
 			this.socket.on("startRotisserieDraft", (state) => {
 				startDraftSetup("Rotisserie draft");
-				this.draftingState = DraftState.RotisserieDraft;
+				this.gameState = GameState.RotisserieDraft;
 				this.rotisserieDraftState = state;
 			});
 			this.socket.on("rotisserieDraftUpdateState", (uniqueCardID, newOwnerID, currentPlayer) => {
@@ -953,14 +953,14 @@ export default defineComponent({
 			this.socket.on("rotisserieDraftEnd", () => {
 				this.drafting = false;
 				this.rotisserieDraftState = null;
-				this.draftingState = DraftState.Brewing;
+				this.gameState = GameState.Brewing;
 				fireToast("success", "Done drafting!");
 			});
 
 			this.socket.on("rejoinRotisserieDraft", (data) => {
 				this.clearState();
 				this.drafting = true;
-				this.draftingState = DraftState.RotisserieDraft;
+				this.gameState = GameState.RotisserieDraft;
 				this.$nextTick(() => {
 					for (const c of data.pickedCards.main) this.addToDeck(c);
 					for (const c of data.pickedCards.side) this.addToSideboard(c);
@@ -980,8 +980,8 @@ export default defineComponent({
 			// Minesweeper Draft
 			this.socket.on("startMinesweeperDraft", (state) => {
 				startDraftSetup("Minesweeper draft");
-				this.draftingState =
-					this.userID === state.currentPlayer ? DraftState.MinesweeperPicking : DraftState.MinesweeperWaiting;
+				this.gameState =
+					this.userID === state.currentPlayer ? GameState.MinesweeperPicking : GameState.MinesweeperWaiting;
 				this.setMinesweeperDraftState(state);
 			});
 			this.socket.on("minesweeperDraftState", (state) => {
@@ -998,7 +998,7 @@ export default defineComponent({
 					() => {
 						this.drafting = false;
 						this.minesweeperDraftState = null;
-						this.draftingState = DraftState.Brewing;
+						this.gameState = GameState.Brewing;
 						fireToast("success", "Done drafting!");
 					},
 					options?.immediate ? 0 : 1000
@@ -1013,8 +1013,8 @@ export default defineComponent({
 					for (const c of data.pickedCards.main) this.addToDeck(c);
 					for (const c of data.pickedCards.side) this.addToSideboard(c);
 
-					if (this.userID === data.state.currentPlayer) this.draftingState = DraftState.MinesweeperPicking;
-					else this.draftingState = DraftState.MinesweeperWaiting;
+					if (this.userID === data.state.currentPlayer) this.gameState = GameState.MinesweeperPicking;
+					else this.gameState = GameState.MinesweeperWaiting;
 
 					Alert.fire({
 						position: "center",
@@ -1031,7 +1031,7 @@ export default defineComponent({
 
 				startDraftSetup("team sealed", "Team Sealed started!");
 				this.teamSealedState = data.state;
-				this.draftingState = DraftState.TeamSealed;
+				this.gameState = GameState.TeamSealed;
 			});
 
 			this.socket.on("rejoinTeamSealed", (data) => {
@@ -1039,7 +1039,7 @@ export default defineComponent({
 
 				startDraftSetup("team sealed", "Rejoined Team Sealed!");
 				this.teamSealedState = data.state;
-				this.draftingState = DraftState.TeamSealed;
+				this.gameState = GameState.TeamSealed;
 
 				this.deckDisplay?.sync();
 				this.sideboardDisplay?.sync();
@@ -1051,23 +1051,23 @@ export default defineComponent({
 
 			this.socket.on("startTeamSealedSpectator", () => {
 				this.drafting = true;
-				this.draftingState = DraftState.Watching;
+				this.gameState = GameState.Watching;
 			});
 
 			this.socket.on("endTeamSealed", () => {
 				fireToast("success", "Team Sealed stopped!");
 				this.drafting = false;
 				this.draftPaused = false;
-				if (this.draftingState === DraftState.Watching) {
+				if (this.gameState === GameState.Watching) {
 					// As player list will be reverting to its non-drafting state, click events used to select player have to be re-registered.
 					this.$nextTick(() => {
 						this.draftLogLiveComponentRef?.registerPlayerSelectEvents();
 					});
-				} else this.draftingState = DraftState.Brewing;
+				} else this.gameState = GameState.Brewing;
 			});
 
 			this.socket.on("teamSealedUpdateCard", (cardUniqueID, newOwnerID) => {
-				if (!this.drafting || this.draftingState !== DraftState.TeamSealed || !this.teamSealedState) return;
+				if (!this.drafting || this.gameState !== GameState.TeamSealed || !this.teamSealedState) return;
 
 				const card = this.teamSealedState.cards.find((c) => c.uniqueID === cardUniqueID);
 				if (!card) return;
@@ -1123,7 +1123,7 @@ export default defineComponent({
 
 				// Are we just an Organizer, and not a player?
 				if (!this.virtualPlayers.map((u) => u.userID).includes(this.userID)) {
-					this.draftingState = DraftState.Watching;
+					this.gameState = GameState.Watching;
 				}
 			});
 
@@ -1135,16 +1135,10 @@ export default defineComponent({
 					for (const c of data.pickedCards.main) this.addToDeck(c);
 					for (const c of data.pickedCards.side) this.addToSideboard(c);
 
-					this.booster = [];
-					if (data.state.booster) {
-						this.booster = data.state.booster;
-						this.draftingState = DraftState.Picking;
-					} else if (this.draftingState !== DraftState.Reviewing) this.draftingState = DraftState.Waiting;
-
-					this.boosterNumber = data.state.boosterNumber;
-					this.pickNumber = data.state.pickNumber;
-					this.skipPick = data.state.skipPick;
-					this.botScores = data.botScores;
+					this.draftState = data.state;
+					if (this.draftState.booster) {
+						this.gameState = GameState.Picking;
+					} else if (this.gameState !== GameState.Reviewing) this.gameState = GameState.Waiting;
 
 					this.selectedCards = [];
 					this.burningCards = [];
@@ -1164,38 +1158,36 @@ export default defineComponent({
 
 			this.socket.on("draftState", (data) => {
 				// Only watching, not playing/receiving a booster ourself.
-				if (this.draftingState === DraftState.Watching) {
-					this.boosterNumber = data.boosterNumber;
+				if (this.gameState === GameState.Watching) {
+					this.draftState = data;
 					return;
 				}
 
 				if ("boosterCount" in data && data.boosterCount > 0) {
 					if (
-						!this.booster ||
-						this.booster.length === 0 ||
-						this.pickNumber !== data.pickNumber ||
-						this.boosterNumber !== data.boosterNumber
+						!this.draftState ||
+						!this.draftState.booster ||
+						this.draftState.booster.length === 0 ||
+						this.draftState.pickNumber !== data.pickNumber ||
+						this.draftState.boosterNumber !== data.boosterNumber
 					) {
 						this.botScores = null; // Clear bot scores
 						this.selectedCards = [];
 						this.burningCards = [];
-						this.booster = data.booster;
 						this.playSound("next");
 					}
-					this.boosterNumber = data.boosterNumber;
-					this.pickNumber = data.pickNumber;
-					this.draftingState = DraftState.Picking;
-					this.skipPick = data.skipPick;
+					this.draftState = data;
+					this.gameState = GameState.Picking;
 				} else {
-					if (this.draftingState !== DraftState.Reviewing) {
+					if (this.gameState !== GameState.Reviewing) {
 						// No new booster, don't update the state yet.
-						this.draftingState = DraftState.Waiting;
+						this.gameState = GameState.Waiting;
 					}
 				}
 			});
 
 			this.socket.on("startReviewPhase", (timer) => {
-				this.draftingState = DraftState.Reviewing;
+				this.gameState = GameState.Reviewing;
 				this.pickTimer = Math.ceil(timer);
 				// This one is purely visual.
 				const interval = setInterval(() => {
@@ -1213,19 +1205,19 @@ export default defineComponent({
 			});
 
 			this.socket.on("botRecommandations", (data) => {
-				if (data.pickNumber === this.pickNumber) this.botScores = data.scores;
+				if (data.pickNumber === this.draftState?.pickNumber) this.botScores = data.scores;
 			});
 
 			this.socket.on("endDraft", () => {
 				fireToast("success", "Done drafting!");
 				this.drafting = false;
 				this.draftPaused = false;
-				if (this.draftingState === DraftState.Watching) {
+				if (this.gameState === GameState.Watching) {
 					// As player list will be reverting to its non-drafting state, click events used to select player have to be re-registered.
 					this.$nextTick(() => {
 						this.draftLogLiveComponentRef?.registerPlayerSelectEvents();
 					});
-				} else this.draftingState = DraftState.Brewing;
+				} else this.gameState = GameState.Brewing;
 				// Clear sessionID for managed sessions
 				if (this.managed) eraseCookie("sessionID");
 			});
@@ -1399,7 +1391,7 @@ export default defineComponent({
 			this.clearSideboard();
 			this.addToDeck(d.main);
 			this.addToSideboard(d.side);
-			this.draftingState = DraftState.Brewing;
+			this.gameState = GameState.Brewing;
 		},
 		clearState() {
 			this.disconnectedUsers = {};
@@ -1409,9 +1401,7 @@ export default defineComponent({
 			this.deckFilter = "";
 			this.lands = { W: 0, U: 0, B: 0, R: 0, G: 0 };
 			this.currentDraftLog = null;
-			this.boosterNumber = -1;
-			this.pickNumber = -1;
-			this.booster = [];
+			this.draftState = null;
 			this.botScores = null;
 		},
 		resetSessionSettings() {
@@ -1497,7 +1487,7 @@ export default defineComponent({
 			// Let vue react to changes to card pools
 			this.$nextTick(() => {
 				this.addToDeck(cards);
-				this.draftingState = DraftState.Brewing;
+				this.gameState = GameState.Brewing;
 				fireToast("success", "Cards received!");
 				this.pushNotification("Cards received!");
 			});
@@ -1584,7 +1574,7 @@ export default defineComponent({
 			if (this.burningCards.includes(c)) return;
 			if (this.selectedCards.includes(c)) this.selectedCards.splice(this.selectedCards.indexOf(c), 1);
 			this.burningCards.push(c);
-			if (this.burningCards.length > this.burnedCardsPerRound) this.burningCards.shift();
+			if (this.burningCards.length > this.draftState!.burnsThisRound) this.burningCards.shift();
 			if (e) e.stopPropagation();
 		},
 		restoreCard(e: Event | null, c: UniqueCard) {
@@ -1613,7 +1603,7 @@ export default defineComponent({
 				e.dataTransfer?.types.includes("isboostercard") ||
 				// Allow dropping picks during Rotisserie draft if it is our turn to pick.
 				(e.dataTransfer?.types.includes("isrotisseriedraft") &&
-					this.draftingState === DraftState.RotisserieDraft &&
+					this.gameState === GameState.RotisserieDraft &&
 					this.rotisserieDraftState?.currentPlayer === this.userID)
 			) {
 				e.preventDefault();
@@ -1648,7 +1638,7 @@ export default defineComponent({
 			// Filter other events; Disable when we're not picking (probably useless buuuuut...)
 			if (
 				e.dataTransfer?.getData("isboostercard") === "true" &&
-				(this.draftingState === DraftState.Picking || this.draftingState === DraftState.RochesterPicking)
+				(this.gameState === GameState.Picking || this.gameState === GameState.RochesterPicking)
 			) {
 				e.preventDefault();
 				const cardUID = e.dataTransfer.getData("uniqueID");
@@ -1667,7 +1657,7 @@ export default defineComponent({
 
 			if (
 				e.dataTransfer?.getData("isrotisseriedraft") === "true" &&
-				this.draftingState === DraftState.RotisserieDraft &&
+				this.gameState === GameState.RotisserieDraft &&
 				this.rotisserieDraftState?.currentPlayer === this.userID
 			) {
 				e.preventDefault();
@@ -1679,7 +1669,7 @@ export default defineComponent({
 		pickCard(options: { toSideboard?: boolean; event?: MouseEvent } | undefined = undefined) {
 			if (
 				this.pickInFlight || // We already send a pick request and are waiting for an anwser
-				(this.draftingState !== DraftState.Picking && this.draftingState !== DraftState.RochesterPicking)
+				(this.gameState !== GameState.Picking && this.gameState !== GameState.RochesterPicking)
 			)
 				return;
 
@@ -1702,11 +1692,15 @@ export default defineComponent({
 			// Give Vue one frame to react to state changes before triggering the
 			// transitions.
 			this.$nextTick(() => {
+				if (!this.draftState && !this.rochesterDraftState) return;
+
+				const state = this.draftState ?? this.rochesterDraftState!;
+
 				const selectedCards = this.selectedCards;
 				const burningCards = this.burningCards;
 				const toSideboard = options?.toSideboard;
 
-				const boosterBackup = structuredClone(toRaw(this.booster));
+				const boosterBackup = structuredClone(toRaw(state.booster));
 
 				const onSuccess: (() => void)[] = [];
 
@@ -1721,9 +1715,9 @@ export default defineComponent({
 						// Restore cardPool and booster state
 						this.deck = this.deck.filter((c) => !selectedCards.includes(c));
 						this.sideboard = this.sideboard.filter((c) => !selectedCards.includes(c));
-						this.booster = boosterBackup;
+						state!.booster = boosterBackup;
 						this.selectedUsableDraftEffect = undefined; // Reset effects since it's probably an effect that triggered the error in the first place.
-						this.draftingState = DraftState.Picking;
+						this.gameState = GameState.Picking;
 						Alert.fire(answer.error as SweetAlertOptions);
 					} else {
 						if (toSideboard)
@@ -1741,7 +1735,7 @@ export default defineComponent({
 						selectedCards.map((c) => this.rochesterDraftState!.booster.findIndex((c2) => c === c2)),
 						ack
 					);
-					this.draftingState = DraftState.RochesterWaiting;
+					this.gameState = GameState.RochesterWaiting;
 				} else {
 					let draftEffect:
 						| {
@@ -1773,8 +1767,8 @@ export default defineComponent({
 								break;
 							}
 							case UsableDraftEffect.AgentOfAcquisitions: {
-								if (toSideboard) this.addToSideboard(this.booster, options);
-								else this.addToDeck(this.booster, options);
+								if (toSideboard) this.addToSideboard(state.booster, options);
+								else this.addToDeck(state.booster, options);
 								dontAddSelectedCardstoCardPool = true;
 								break;
 							}
@@ -1805,17 +1799,17 @@ export default defineComponent({
 					this.socket.emit(
 						"pickCard",
 						{
-							pickedCards: selectedCards.map((c) => this.booster.findIndex((c2) => c === c2)),
-							burnedCards: burningCards.map((c) => this.booster.findIndex((c2) => c === c2)),
+							pickedCards: selectedCards.map((c) => state!.booster.findIndex((c2) => c === c2)),
+							burnedCards: burningCards.map((c) => state!.booster.findIndex((c2) => c === c2)),
 							draftEffect,
 							optionalOnPickDraftEffect,
 						},
 						ack
 					);
-					this.draftingState = DraftState.Waiting;
+					this.gameState = GameState.Waiting;
 				}
 				// Removes picked & burned cards for animation
-				this.booster = this.booster.filter((c) => !selectedCards.includes(c) && !burningCards.includes(c));
+				state.booster = state.booster.filter((c) => !selectedCards.includes(c) && !burningCards.includes(c));
 				if (!dontAddSelectedCardstoCardPool)
 					if (toSideboard) this.addToSideboard(selectedCards, options);
 					else this.addToDeck(selectedCards, options);
@@ -1826,9 +1820,11 @@ export default defineComponent({
 			this.socket.emit("passBooster");
 		},
 		forcePick() {
-			if (this.draftingState !== DraftState.Picking) return;
+			if ((!this.draftState && !this.rochesterDraftState) || this.gameState !== GameState.Picking) return;
 
-			if (this.skipPick) return this.passBooster();
+			if (this.draftState?.skipPick) return this.passBooster();
+
+			const state = this.draftState ?? this.rochesterDraftState!;
 
 			// Uses botScores to automatically select picks if available
 			if (this.botScores) {
@@ -1841,11 +1837,11 @@ export default defineComponent({
 				while (currIdx < orderedPicks.length && this.selectedCards.length < this.cardsToPick) {
 					while (
 						currIdx < orderedPicks.length &&
-						(this.selectedCards.includes(this.booster[orderedPicks[currIdx]]) ||
-							this.burningCards.includes(this.booster[orderedPicks[currIdx]]))
+						(this.selectedCards.includes(state.booster[orderedPicks[currIdx]]) ||
+							this.burningCards.includes(state.booster[orderedPicks[currIdx]]))
 					)
 						++currIdx;
-					if (currIdx < orderedPicks.length) this.selectedCards.push(this.booster[orderedPicks[currIdx]]);
+					if (currIdx < orderedPicks.length) this.selectedCards.push(state.booster[orderedPicks[currIdx]]);
 					++currIdx;
 				}
 				currIdx = 0;
@@ -1853,11 +1849,11 @@ export default defineComponent({
 				while (currIdx < orderedPicks.length && this.burningCards.length < this.cardsToBurnThisRound) {
 					while (
 						currIdx < orderedPicks.length &&
-						(this.selectedCards.includes(this.booster[orderedPicks[currIdx]]) ||
-							this.burningCards.includes(this.booster[orderedPicks[currIdx]]))
+						(this.selectedCards.includes(state.booster[orderedPicks[currIdx]]) ||
+							this.burningCards.includes(state.booster[orderedPicks[currIdx]]))
 					)
 						++currIdx;
-					if (currIdx < orderedPicks.length) this.burningCards.push(this.booster[orderedPicks[currIdx]]);
+					if (currIdx < orderedPicks.length) this.burningCards.push(state.booster[orderedPicks[currIdx]]);
 					++currIdx;
 				}
 			}
@@ -1865,22 +1861,22 @@ export default defineComponent({
 			// Forces a random card if there isn't enough selected already
 			while (this.selectedCards.length < this.cardsToPick) {
 				let randomIdx;
-				do randomIdx = Math.floor(Math.random() * this.booster.length);
+				do randomIdx = Math.floor(Math.random() * state.booster.length);
 				while (
-					this.selectedCards.includes(this.booster[randomIdx]) ||
-					this.burningCards.includes(this.booster[randomIdx])
+					this.selectedCards.includes(state.booster[randomIdx]) ||
+					this.burningCards.includes(state.booster[randomIdx])
 				);
-				this.selectedCards.push(this.booster[randomIdx]);
+				this.selectedCards.push(state.booster[randomIdx]);
 			}
 			// Forces random cards to burn if there isn't enough selected already
 			while (this.burningCards.length < this.cardsToBurnThisRound) {
 				let randomIdx;
-				do randomIdx = Math.floor(Math.random() * this.booster.length);
+				do randomIdx = Math.floor(Math.random() * state.booster.length);
 				while (
-					this.selectedCards.includes(this.booster[randomIdx]) ||
-					this.burningCards.includes(this.booster[randomIdx])
+					this.selectedCards.includes(state.booster[randomIdx]) ||
+					this.burningCards.includes(state.booster[randomIdx])
 				);
-				this.burningCards.push(this.booster[randomIdx]);
+				this.burningCards.push(state.booster[randomIdx]);
 			}
 			this.pickCard();
 		},
@@ -1982,7 +1978,7 @@ export default defineComponent({
 			}
 			this.gridDraftState.booster = booster;
 		},
-		startHousmanDraft: async function () {
+		startHousmanDraft() {
 			if (this.userID !== this.sessionOwner || this.drafting) return;
 
 			this.spawnDialog(HousmanDialog, {
@@ -2025,10 +2021,10 @@ export default defineComponent({
 		housmanDraftEnd() {
 			this.drafting = false;
 			this.housmanDraftState = null;
-			this.draftingState = DraftState.Brewing;
+			this.gameState = GameState.Brewing;
 			fireToast("success", "Done drafting!");
 		},
-		startSolomonDraft: async function () {
+		startSolomonDraft() {
 			if (this.userID !== this.sessionOwner || this.drafting) return;
 
 			const start = (cardCount: number, roundCount: number, removeBasicLands: boolean) => {
@@ -2046,10 +2042,10 @@ export default defineComponent({
 		solomonDraftEnd() {
 			this.drafting = false;
 			this.solomonDraftState = null;
-			this.draftingState = DraftState.Brewing;
+			this.gameState = GameState.Brewing;
 			fireToast("success", "Done drafting!");
 		},
-		startGridDraft: async function () {
+		startGridDraft() {
 			if (this.userID !== this.sessionOwner || this.drafting) return;
 
 			if (!this.ownerIsPlayer) {
@@ -2095,7 +2091,7 @@ export default defineComponent({
 			this.rochesterDraftState = state;
 		},
 		startRochesterDraft: async function () {
-			if (this.userID != this.sessionOwner || this.drafting) return;
+			if (this.userID !== this.sessionOwner || this.drafting) return;
 
 			if (!this.ownerIsPlayer) {
 				Alert.fire({
@@ -2733,7 +2729,7 @@ export default defineComponent({
 					this.clearState();
 					for (const c of data.deck) this.addToDeck(c);
 					for (const c of data.sideboard) this.addToSideboard(c);
-					this.draftingState = DraftState.Brewing;
+					this.gameState = GameState.Brewing;
 				}
 				fireToast("success", "Successfully imported deck!");
 				this.displayedModal = null;
@@ -2943,7 +2939,7 @@ export default defineComponent({
 			this.clearState();
 			for (const c of choices[0][choice].cards) this.addToDeck(c);
 			for (const c of choices[1][choice][secondChoice].cards) this.addToDeck(c);
-			this.draftingState = DraftState.Brewing;
+			this.gameState = GameState.Brewing;
 
 			ack?.(
 				this.userID,
@@ -3460,12 +3456,9 @@ export default defineComponent({
 			return null;
 		},
 		cardsToPick(): number {
-			if (this.rochesterDraftState || !this.booster) return 1;
-			let picksThisRound: number = this.pickedCardsPerRound;
-			// Special case for doubleMastersMode. The number of picks could (should?) be send as part of the draftState rather
-			// than duplicating the logic here, but currently this is the only special case and I'm chosing the easier solution.
-			if (this.draftingState === DraftState.Picking && this.doubleMastersMode && this.pickNumber !== 0)
-				picksThisRound = 1;
+			if (!this.draftState) return 1;
+			let picksThisRound: number = this.draftState.picksThisRound;
+
 			if (
 				this.selectedUsableDraftEffect &&
 				(this.selectedUsableDraftEffect.effect === UsableDraftEffect.CogworkLibrarian ||
@@ -3473,11 +3466,14 @@ export default defineComponent({
 			)
 				picksThisRound += 1;
 
-			return Math.min(picksThisRound, this.booster.length);
+			return Math.min(picksThisRound, this.draftState.booster.length);
 		},
 		cardsToBurnThisRound(): number {
-			if (this.rochesterDraftState || !this.booster) return 0;
-			return Math.max(0, Math.min(this.burnedCardsPerRound, this.booster.length - this.cardsToPick));
+			if (!this.draftState) return 0;
+			return Math.max(
+				0,
+				Math.min(this.draftState.burnsThisRound, this.draftState.booster.length - this.cardsToPick)
+			);
 		},
 		waitingForDisconnectedUsers(): boolean {
 			//                    Disconnected players do not matter for managed sessions, Team Sealed or Rotisserie Draft.
@@ -3543,11 +3539,14 @@ export default defineComponent({
 					return PassingOrder.Right;
 				}
 			}
-			return this.boosterNumber !== undefined
-				? this.boosterNumber % 2 === 1
-					? PassingOrder.Left
-					: PassingOrder.Right
-				: PassingOrder.None;
+			if (this.draftState)
+				return this.draftState.boosterNumber !== undefined
+					? this.draftState.boosterNumber % 2 === 1
+						? PassingOrder.Left
+						: PassingOrder.Right
+					: PassingOrder.None;
+
+			return PassingOrder.None;
 		},
 		currentPlayer(): UserID | null {
 			if (this.winstonDraftState) return this.winstonDraftState.currentPlayer;
@@ -3587,6 +3586,7 @@ export default defineComponent({
 			effect: UsableDraftEffect;
 			cardID: UniqueCardID;
 		}[] {
+			if (!this.draftState) return [];
 			const r = [];
 			for (const arr of [this.deck, this.sideboard])
 				for (const card of arr.filter((c) => c.draft_effects !== undefined))
@@ -3603,7 +3603,7 @@ export default defineComponent({
 								].includes(effect as UsableDraftEffect)) ||
 							// Disallow Cogwork Librarian effect if there's not enough cards in the pack.
 							(effect === UsableDraftEffect.CogworkLibrarian &&
-								this.booster.length <= this.pickedCardsPerRound)
+								this.draftState.booster.length <= this.pickedCardsPerRound)
 						)
 							continue;
 						r.push({
@@ -3671,13 +3671,13 @@ export default defineComponent({
 		displayDeckAndSideboard(): boolean {
 			return (
 				(this.drafting &&
-					(!this.hidePicks || this.draftingState === DraftState.Reviewing) &&
-					this.draftingState !== DraftState.Watching) ||
-				this.draftingState === DraftState.Brewing
+					(!this.hidePicks || this.gameState === GameState.Reviewing) &&
+					this.gameState !== GameState.Watching) ||
+				this.gameState === GameState.Brewing
 			);
 		},
 		displayFixedDeck(): boolean {
-			return this.displayDeckAndSideboard && this.fixedDeck && this.draftingState !== DraftState.Brewing;
+			return this.displayDeckAndSideboard && this.fixedDeck && this.gameState !== GameState.Brewing;
 		},
 
 		userByID(): { [uid: UserID]: SessionUser } {

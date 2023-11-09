@@ -905,203 +905,242 @@
 		</div>
 		<div class="main-content">
 			<!-- Draft Controls -->
-			<div v-show="drafting || draftingState === DraftState.Watching" class="generic-container">
-				<transition
-					:name="
-						pickNumber > 0
-							? `slide-fade-${passingOrder === PassingOrder.Left ? 'left' : 'right'}`
-							: 'booster-fade-in'
-					"
-					mode="out-in"
-				>
-					<div v-if="draftingState === DraftState.Watching" key="draft-watching" class="draft-watching">
-						<div class="draft-watching-state">
-							<h1 v-if="!drafting">Draft Completed</h1>
-							<h1 v-else-if="!draftPaused">Players are drafting...</h1>
-							<h1 v-else>Draft Paused</h1>
-							<div v-if="drafting">Pack #{{ boosterNumber + 1 }}</div>
-							<div v-else>Players are now brewing their decks</div>
+			<div v-show="drafting || gameState === GameState.Watching" class="generic-container">
+				<template v-if="draftState">
+					<transition
+						:name="
+							draftState.pickNumber > 0
+								? `slide-fade-${passingOrder === PassingOrder.Left ? 'left' : 'right'}`
+								: 'booster-fade-in'
+						"
+						mode="out-in"
+					>
+						<div v-if="gameState === GameState.Watching" key="draft-watching" class="draft-watching">
+							<div class="draft-watching-state">
+								<h1 v-if="!drafting">Draft Completed</h1>
+								<h1 v-else-if="!draftPaused">Players are drafting...</h1>
+								<h1 v-else>Draft Paused</h1>
+								<div v-if="drafting">Pack #{{ draftState.boosterNumber + 1 }}</div>
+								<div v-else>Players are now brewing their decks</div>
+							</div>
+							<div
+								v-if="draftLogLive && draftLogLive.sessionID === sessionID"
+								class="draft-watching-live-log"
+							>
+								<DraftLogLiveComponent
+									:draftlog="draftLogLive"
+									:show="['owner', 'delayed', 'everyone'].includes(draftLogRecipients)"
+									:language="language"
+									:key="draftLogLive.time"
+									ref="draftloglive"
+								></DraftLogLiveComponent>
+							</div>
 						</div>
 						<div
-							v-if="draftLogLive && draftLogLive.sessionID === sessionID"
-							class="draft-watching-live-log"
+							v-else-if="
+								(gameState === GameState.Waiting || gameState === GameState.Picking) &&
+								draftState.booster
+							"
+							:key="`draft-picking-${draftState.boosterNumber}-${draftState.pickNumber}`"
+							class="container"
+							:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
 						>
-							<DraftLogLiveComponent
-								:draftlog="draftLogLive"
-								:show="['owner', 'delayed', 'everyone'].includes(draftLogRecipients)"
-								:language="language"
-								:key="draftLogLive.time"
-								ref="draftloglive"
-							></DraftLogLiveComponent>
-						</div>
-					</div>
-					<div
-						v-else-if="
-							(draftingState === DraftState.Waiting || draftingState === DraftState.Picking) && booster
-						"
-						:key="`draft-picking-${boosterNumber}-${pickNumber}`"
-						class="container"
-						:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
-					>
-						<div id="booster-controls" class="section-title">
-							<h2>Your Booster ({{ booster.length }})</h2>
-							<div class="controls" style="flex-grow: 2">
-								<span>Pack #{{ boosterNumber + 1 }}, Pick #{{ pickNumber + 1 }}</span>
-								<span v-show="pickTimer >= 0" :class="{ redbg: pickTimer <= 10 }" id="chrono">
-									<div
-										class="timer-icon"
-										:key="`${maxTimer}_${boosterNumber}_${pickNumber}`"
-										:style="`--timer-max: ${maxTimer}; --timer-current: ${pickTimer - 1}`"
+							<div id="booster-controls" class="section-title">
+								<h2>Your Booster ({{ draftState.booster.length }})</h2>
+								<div class="controls" style="flex-grow: 2">
+									<span
+										>Pack #{{ draftState.boosterNumber + 1 }}, Pick #{{
+											draftState.pickNumber + 1
+										}}</span
 									>
-										<font-awesome-icon icon="fa-solid fa-stopwatch" size="lg"></font-awesome-icon>
-										<div class="timer-icon-moving"></div>
-									</div>
-									<span>{{ pickTimer }}</span>
-								</span>
-								<template v-if="draftingState == DraftState.Picking">
-									<template v-if="skipPick">
-										<button @click="passBooster">Pass Booster</button>
+									<span v-show="pickTimer >= 0" :class="{ redbg: pickTimer <= 10 }" id="chrono">
+										<div
+											class="timer-icon"
+											:key="`${maxTimer}_${draftState.boosterNumber}_${draftState.pickNumber}`"
+											:style="`--timer-max: ${maxTimer}; --timer-current: ${pickTimer - 1}`"
+										>
+											<font-awesome-icon
+												icon="fa-solid fa-stopwatch"
+												size="lg"
+											></font-awesome-icon>
+											<div class="timer-icon-moving"></div>
+										</div>
+										<span>{{ pickTimer }}</span>
+									</span>
+									<template v-if="gameState == GameState.Picking">
+										<template v-if="draftState.skipPick">
+											<button @click="passBooster">Pass Booster</button>
+										</template>
+										<template v-else>
+											<input
+												type="button"
+												@click="pickCard()"
+												value="Confirm Pick"
+												v-if="
+													selectedCards.length === cardsToPick &&
+													burningCards.length === cardsToBurnThisRound
+												"
+											/>
+											<span v-else>
+												<span v-if="cardsToPick === 1">Pick a card</span>
+												<span v-else>
+													Pick {{ cardsToPick }} cards ({{ selectedCards.length }}/{{
+														cardsToPick
+													}})
+												</span>
+												<span v-if="cardsToBurnThisRound === 1">
+													and remove a card from the pool.</span
+												>
+												<span v-else-if="cardsToBurnThisRound > 1">
+													and remove {{ cardsToBurnThisRound }} cards from the pool ({{
+														burningCards.length
+													}}/{{ cardsToBurnThisRound }}).
+												</span>
+											</span>
+											<span v-if="availableOptionalDraftEffects.length > 0">
+												<label for="optional-pick-effect">Pick Effect:</label>
+												<select
+													id="optional-pick-effect"
+													v-model="selectedOptionalDraftPickEffect"
+												>
+													<option
+														v-for="v in availableOptionalDraftEffects"
+														:value="v"
+														:key="v.effect"
+													>
+														{{ v.name }} ({{ v.effect }})
+													</option>
+													<option :value="undefined">Do not use</option>
+												</select>
+											</span>
+											<span v-if="availableDraftEffects.length > 0">
+												<label for="pick-effect">Pick Effect:</label>
+												<select id="pick-effect" v-model="selectedUsableDraftEffect">
+													<option
+														v-for="v in availableDraftEffects"
+														:value="v"
+														:key="v.effect"
+													>
+														{{ v.name }} ({{ v.effect }})
+													</option>
+													<option :value="undefined">None</option>
+												</select>
+											</span>
+										</template>
 									</template>
 									<template v-else>
-										<input
-											type="button"
-											@click="pickCard()"
-											value="Confirm Pick"
-											v-if="
-												selectedCards.length === cardsToPick &&
-												burningCards.length === cardsToBurnThisRound
-											"
-										/>
-										<span v-else>
-											<span v-if="cardsToPick === 1">Pick a card</span>
-											<span v-else>
-												Pick {{ cardsToPick }} cards ({{ selectedCards.length }}/{{
-													cardsToPick
-												}})
-											</span>
-											<span v-if="cardsToBurnThisRound === 1">
-												and remove a card from the pool.</span
-											>
-											<span v-else-if="cardsToBurnThisRound > 1">
-												and remove {{ cardsToBurnThisRound }} cards from the pool ({{
-													burningCards.length
-												}}/{{ cardsToBurnThisRound }}).
-											</span>
-										</span>
-										<span v-if="availableOptionalDraftEffects.length > 0">
-											<label for="optional-pick-effect">Pick Effect:</label>
-											<select id="optional-pick-effect" v-model="selectedOptionalDraftPickEffect">
-												<option
-													v-for="v in availableOptionalDraftEffects"
-													:value="v"
-													:key="v.effect"
-												>
-													{{ v.name }} ({{ v.effect }})
-												</option>
-												<option :value="undefined">Do not use</option>
-											</select>
-										</span>
-										<span v-if="availableDraftEffects.length > 0">
-											<label for="pick-effect">Pick Effect:</label>
-											<select id="pick-effect" v-model="selectedUsableDraftEffect">
-												<option v-for="v in availableDraftEffects" :value="v" :key="v.effect">
-													{{ v.name }} ({{ v.effect }})
-												</option>
-												<option :value="undefined">None</option>
-											</select>
-										</span>
+										<font-awesome-icon icon="fa-solid fa-spinner" spin></font-awesome-icon>
+										Waiting for other players to pick...
 									</template>
-								</template>
-								<template v-else>
-									<font-awesome-icon icon="fa-solid fa-spinner" spin></font-awesome-icon>
-									Waiting for other players to pick...
-								</template>
+								</div>
+								<scale-slider v-model.number="boosterCardScale" />
 							</div>
-							<scale-slider v-model.number="boosterCardScale" />
+							<!-- Note: Duration for booster-open can't be determined by Vue since it's composite. Be sure to keep that in sync :) -->
+							<transition-group
+								tag="div"
+								:name="draftState.pickNumber === 0 ? 'booster-open' : 'booster-cards'"
+								class="booster card-container"
+								:class="{
+									'booster-waiting': gameState === GameState.Waiting,
+									skipped: draftState.skipPick,
+								}"
+								:style="`--booster-card-scale: ${boosterCardScale};`"
+								:duration="
+									draftState.pickNumber === 0
+										? 500 + 500 + 400 + Math.min(20, draftState.booster.length) * 40
+										: 0
+								"
+								@enter="onEnterBoosterCards"
+								appear
+							>
+								<div class="wait" key="wait" v-if="gameState === GameState.Waiting">
+									<font-awesome-icon
+										class="passing-order"
+										:class="{
+											'booster-wait-passing-order-left': passingOrder === PassingOrder.Left,
+											'booster-wait-passing-order-right': passingOrder === PassingOrder.Right,
+										}"
+										:icon="
+											'fa-solid ' +
+											(passingOrder === PassingOrder.Left
+												? 'fa-angle-double-left'
+												: 'fa-angle-double-right')
+										"
+										size="sm"
+										v-show="draftState.booster.length > 0"
+									></font-awesome-icon>
+									<font-awesome-icon icon="fa-solid fa-spinner" size="lg" spin></font-awesome-icon>
+									<font-awesome-icon
+										class="passing-order"
+										:class="{
+											'booster-wait-passing-order-left': passingOrder === PassingOrder.Left,
+											'booster-wait-passing-order-right': passingOrder === PassingOrder.Right,
+										}"
+										:icon="
+											'fa-solid ' +
+											(passingOrder === PassingOrder.Left
+												? 'fa-angle-double-left'
+												: 'fa-angle-double-right')
+										"
+										size="sm"
+										v-show="draftState.booster.length > 0"
+									></font-awesome-icon>
+								</div>
+								<booster-card
+									v-for="(card, idx) in draftState.booster"
+									:key="`card-booster-${card.uniqueID}`"
+									:card="card"
+									:language="language"
+									:canbeburned="draftState.burnsThisRound > 0"
+									:burned="burningCards.includes(card)"
+									:class="{ selected: selectedCards.includes(card) }"
+									@click="draftState.skipPick ? () => {} : selectCard($event, card)"
+									@dblclick="draftState.skipPick ? () => {} : doubleClickCard($event, card)"
+									@burn="draftState.skipPick ? () => {} : burnCard($event, card)"
+									@restore="draftState.skipPick ? () => {} : restoreCard($event, card)"
+									:draggable="!draftState.skipPick"
+									@dragstart="draftState.skipPick ? () => {} : dragBoosterCard($event, card)"
+									:hasenoughwildcards="hasEnoughWildcards(card)"
+									:wildcardneeded="displayCollectionStatus && wildcardCost(card)"
+									:botscore="
+										gameState !== GameState.Waiting &&
+										botScores &&
+										botScores.scores &&
+										displayBotScores
+											? botScores.scores[idx]
+											: null
+									"
+									:botpicked="
+										gameState !== GameState.Waiting &&
+										botScores &&
+										displayBotScores &&
+										idx === botScores.chosenOption
+									"
+									:scale="boosterCardScale"
+									:renderCommonBackside="draftState.pickNumber === 0"
+								></booster-card>
+							</transition-group>
 						</div>
-						<!-- Note: Duration for booster-open can't be determined by Vue since it's composite. Be sure to keep that in sync :) -->
-						<transition-group
-							tag="div"
-							:name="pickNumber === 0 ? 'booster-open' : 'booster-cards'"
-							class="booster card-container"
-							:class="{ 'booster-waiting': draftingState === DraftState.Waiting, skipped: skipPick }"
-							:style="`--booster-card-scale: ${boosterCardScale};`"
-							:duration="pickNumber === 0 ? 500 + 500 + 400 + Math.min(20, booster.length) * 40 : 0"
-							@enter="onEnterBoosterCards"
-							appear
-						>
-							<div class="wait" key="wait" v-if="draftingState === DraftState.Waiting">
-								<font-awesome-icon
-									class="passing-order"
-									:class="{
-										'booster-wait-passing-order-left': passingOrder === PassingOrder.Left,
-										'booster-wait-passing-order-right': passingOrder === PassingOrder.Right,
-									}"
-									:icon="
-										'fa-solid ' +
-										(passingOrder === PassingOrder.Left
-											? 'fa-angle-double-left'
-											: 'fa-angle-double-right')
-									"
-									size="sm"
-									v-show="booster.length > 0"
-								></font-awesome-icon>
-								<font-awesome-icon icon="fa-solid fa-spinner" size="lg" spin></font-awesome-icon>
-								<font-awesome-icon
-									class="passing-order"
-									:class="{
-										'booster-wait-passing-order-left': passingOrder === PassingOrder.Left,
-										'booster-wait-passing-order-right': passingOrder === PassingOrder.Right,
-									}"
-									:icon="
-										'fa-solid ' +
-										(passingOrder === PassingOrder.Left
-											? 'fa-angle-double-left'
-											: 'fa-angle-double-right')
-									"
-									size="sm"
-									v-show="booster.length > 0"
-								></font-awesome-icon>
+					</transition>
+
+					<div v-if="gameState === GameState.Reviewing" style="text-align: center">
+						<h1>Review Phase</h1>
+						<span class="chrono">
+							<div
+								class="timer-icon"
+								:key="`${reviewTimer}_${draftState.boosterNumber}_${draftState.pickNumber}`"
+								:style="`--timer-max: ${reviewTimer}; --timer-current: ${pickTimer - 1}`"
+							>
+								<font-awesome-icon icon="fa-solid fa-stopwatch" size="lg"></font-awesome-icon>
+								<div class="timer-icon-moving"></div>
 							</div>
-							<booster-card
-								v-for="(card, idx) in booster"
-								:key="`card-booster-${card.uniqueID}`"
-								:card="card"
-								:language="language"
-								:canbeburned="burnedCardsPerRound > 0"
-								:burned="burningCards.includes(card)"
-								:class="{ selected: selectedCards.includes(card) }"
-								@click="skipPick ? () => {} : selectCard($event, card)"
-								@dblclick="skipPick ? () => {} : doubleClickCard($event, card)"
-								@burn="skipPick ? () => {} : burnCard($event, card)"
-								@restore="skipPick ? () => {} : restoreCard($event, card)"
-								:draggable="!skipPick"
-								@dragstart="skipPick ? () => {} : dragBoosterCard($event, card)"
-								:hasenoughwildcards="hasEnoughWildcards(card)"
-								:wildcardneeded="displayCollectionStatus && wildcardCost(card)"
-								:botscore="
-									draftingState !== DraftState.Waiting &&
-									botScores &&
-									botScores.scores &&
-									displayBotScores
-										? botScores.scores[idx]
-										: null
-								"
-								:botpicked="
-									draftingState !== DraftState.Waiting &&
-									botScores &&
-									displayBotScores &&
-									idx === botScores.chosenOption
-								"
-								:scale="boosterCardScale"
-								:renderCommonBackside="pickNumber === 0"
-							></booster-card>
-						</transition-group>
+							<span>{{ pickTimer }}</span>
+						</span>
 					</div>
-				</transition>
+				</template>
 				<winston-draft
 					v-if="
-						(draftingState === DraftState.WinstonPicking || draftingState === DraftState.WinstonWaiting) &&
+						(gameState === GameState.WinstonPicking || gameState === GameState.WinstonWaiting) &&
 						winstonDraftState
 					"
 					class="container"
@@ -1115,8 +1154,7 @@
 				/>
 				<winchester-draft
 					v-if="
-						(draftingState === DraftState.WinchesterPicking ||
-							draftingState === DraftState.WinchesterWaiting) &&
+						(gameState === GameState.WinchesterPicking || gameState === GameState.WinchesterWaiting) &&
 						winchesterDraftState
 					"
 					class="container"
@@ -1128,7 +1166,7 @@
 					@pick="winchesterDraftPick"
 				/>
 				<housman-draft
-					v-if="draftingState === DraftState.HousmanDraft && housmanDraftState"
+					v-if="gameState === GameState.HousmanDraft && housmanDraftState"
 					class="container"
 					:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
 					:socket="socket"
@@ -1141,7 +1179,7 @@
 					@end="housmanDraftEnd"
 				/>
 				<solomon-draft
-					v-if="draftingState === DraftState.SolomonDraft && solomonDraftState"
+					v-if="gameState === GameState.SolomonDraft && solomonDraftState"
 					class="container"
 					:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
 					:socket="socket"
@@ -1157,8 +1195,7 @@
 				<div
 					:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
 					v-if="
-						(draftingState === DraftState.GridPicking || draftingState === DraftState.GridWaiting) &&
-						gridDraftState
+						(gameState === GameState.GridPicking || gameState === GameState.GridWaiting) && gridDraftState
 					"
 				>
 					<div class="section-title">
@@ -1211,8 +1248,7 @@
 					class="rochester-container"
 					:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
 					v-if="
-						(draftingState === DraftState.RochesterPicking ||
-							draftingState === DraftState.RochesterWaiting) &&
+						(gameState === GameState.RochesterPicking || gameState === GameState.RochesterWaiting) &&
 						rochesterDraftState
 					"
 				>
@@ -1316,8 +1352,7 @@
 				<minesweeper-draft
 					:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
 					v-if="
-						(draftingState === DraftState.MinesweeperPicking ||
-							draftingState === DraftState.MinesweeperWaiting) &&
+						(gameState === GameState.MinesweeperPicking || gameState === GameState.MinesweeperWaiting) &&
 						minesweeperDraftState
 					"
 					:state="minesweeperDraftState"
@@ -1332,14 +1367,14 @@
 					@pick="minesweeperDraftPick"
 				></minesweeper-draft>
 				<team-sealed
-					v-if="draftingState === DraftState.TeamSealed"
+					v-if="gameState === GameState.TeamSealed"
 					:language="language"
 					:state="teamSealedState"
 					:users="sessionUsers"
 					@pick="teamSealedPick"
 				></team-sealed>
 				<rotisserie-draft
-					v-if="draftingState === DraftState.RotisserieDraft"
+					v-if="gameState === GameState.RotisserieDraft"
 					:language="language"
 					:state="rotisserieDraftState"
 					:users="sessionUsers"
@@ -1388,7 +1423,7 @@
 				</transition>
 			</div>
 
-			<div v-if="draftingState === DraftState.Brewing" style="padding: 0.5em 1em 0 1em">
+			<div v-if="gameState === GameState.Brewing" style="padding: 0.5em 1em 0 1em">
 				<template v-if="managed">
 					<a href="/draftqueue">
 						<font-awesome-icon icon="fa-solid fa-arrow-left"></font-awesome-icon>
@@ -1396,26 +1431,11 @@
 					</a>
 				</template>
 				<template v-else>
-					<a @click="draftingState = DraftState.None">
+					<a @click="gameState = GameState.None">
 						<font-awesome-icon icon="fa-solid fa-arrow-left"></font-awesome-icon>
 						Back to Home
 					</a>
 				</template>
-			</div>
-
-			<div v-if="draftingState === DraftState.Reviewing" style="text-align: center">
-				<h1>Review Phase</h1>
-				<span class="chrono">
-					<div
-						class="timer-icon"
-						:key="`${reviewTimer}_${boosterNumber}_${pickNumber}`"
-						:style="`--timer-max: ${reviewTimer}; --timer-current: ${pickTimer - 1}`"
-					>
-						<font-awesome-icon icon="fa-solid fa-stopwatch" size="lg"></font-awesome-icon>
-						<div class="timer-icon-moving"></div>
-					</div>
-					<span>{{ pickTimer }}</span>
-				</span>
 			</div>
 
 			<!-- Brewing controls (Deck & Sideboard) -->
@@ -1443,8 +1463,8 @@
 						class="container deck-container"
 						v-show="
 							(deck !== undefined && deck.length > 0) ||
-							(drafting && draftingState !== DraftState.Watching) ||
-							draftingState === DraftState.Brewing
+							(drafting && gameState !== GameState.Watching) ||
+							gameState === GameState.Brewing
 						"
 					>
 						<div class="deck">
@@ -1465,7 +1485,7 @@
 								<template v-slot:title>
 									Deck ({{ deck.length
 									}}<span
-										v-show="draftingState == DraftState.Brewing && totalLands > 0"
+										v-show="gameState == GameState.Brewing && totalLands > 0"
 										v-tooltip="'Added basics on export (Not shown in decklist below).'"
 									>
 										+ {{ totalLands }}</span
@@ -1499,7 +1519,7 @@
 										</div>
 									</div>
 									<land-control
-										v-if="draftingState === DraftState.Brewing"
+										v-if="gameState === GameState.Brewing"
 										:lands="lands"
 										v-model:autoland="autoLand"
 										v-model:targetDeckSize="targetDeckSize"
@@ -1612,8 +1632,8 @@
 							v-if="
 								collapseSideboard &&
 								((sideboard != undefined && sideboard.length > 0) ||
-									(drafting && draftingState !== DraftState.Watching) ||
-									draftingState == DraftState.Brewing)
+									(drafting && gameState !== GameState.Watching) ||
+									gameState == GameState.Brewing)
 							"
 							class="collapsed-sideboard"
 						>
@@ -1668,8 +1688,8 @@
 						v-show="
 							!collapseSideboard &&
 							((sideboard != undefined && sideboard.length > 0) ||
-								(drafting && draftingState !== DraftState.Watching) ||
-								draftingState == DraftState.Brewing)
+								(drafting && gameState !== GameState.Watching) ||
+								gameState == GameState.Brewing)
 						"
 						class="container sideboard"
 					>
@@ -1705,7 +1725,7 @@
 				</div>
 			</div>
 
-			<div class="welcome" v-if="draftingState === DraftState.None">
+			<div class="welcome" v-if="gameState === GameState.None">
 				<template v-if="page === 'draftqueue'">
 					<DraftQueue :socket="socket"></DraftQueue>
 				</template>

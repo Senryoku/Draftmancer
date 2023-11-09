@@ -21,7 +21,7 @@ import {
 } from "./CardTypes";
 import { RochesterDraftSyncData } from "./RochesterDraft";
 import { MinesweeperSyncData, MinesweeperSyncDataDiff } from "./MinesweeperDraftTypes";
-import { DraftState } from "./DraftState";
+import { DraftState, DraftSyncData } from "./DraftState";
 import { BotScores } from "./Bot";
 import { SessionsSettingsProps } from "./Session/SessionProps";
 import { getPublicSessionData } from "./Session";
@@ -105,7 +105,7 @@ export interface ServerToClientEvents {
 	disableTimer: () => void;
 
 	startDraft: (userData: UsersData) => void;
-	draftState: (state: ReturnType<DraftState["syncData"]> | { boosterNumber: number }) => void;
+	draftState: (state: DraftSyncData) => void;
 	startReviewPhase: (timer: number) => void;
 	endDraft: () => void;
 	pauseDraft: () => void;
