@@ -1,0 +1,9 @@
+[Settings]
+{
+	"name": "Session Settings Test",
+	"withReplacement": true,
+	"boostersPerPlayer": 42,
+	"colorBalance": false,
+}
+[Common]
+4 Adventure Awaits

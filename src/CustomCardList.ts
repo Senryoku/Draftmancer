@@ -14,13 +14,15 @@ export type LayoutName = string;
 
 export type CCLSettings = {
 	name?: string;
-	withReplacement?: boolean;
 	showSlots?: boolean;
 	boosterSettings?: { picks: number[]; burns: number[] }[];
 	predeterminedLayouts?: { name: LayoutName; weight: number }[][];
 	layoutWithReplacement?: boolean;
-	boostersPerPlayer?: number;
 	duplicateProtection?: boolean;
+	// Default values for session settings when using this list. Can still be overridden by the user.
+	boostersPerPlayer?: number;
+	withReplacement?: boolean;
+	colorBalance?: boolean;
 };
 
 export type CustomCardList = {

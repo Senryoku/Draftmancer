@@ -211,10 +211,14 @@ Card Name 6
 				<pre>
 {
 	name: <type>string</type>;                       <comment>// The name of your cube.</comment>
-	boostersPerPlayer: <type>number</type>;          <comment>// Specify the default value of the "boostersPerPlayer" session setting.</comment>
-	withReplacement: <type>boolean</type>;           <comment>// Specify the default value of the "withReplacement" session setting (can still be overridden).</comment>
-	duplicateProtection: <type>boolean</type>;       <comment>// Enable or disable Duplicate Protection (defaults to true).</comment>
+	duplicateProtection: <type>boolean</type>;       <comment>// Enable or disable Duplicate Protection within a booster (defaults to true).</comment>
 	showSlots: <type>boolean</type>;                 <comment>// If layouts are used, will display what sheet slot generated which card.</comment>
+	
+	<comment>// The following properties provide default values for some session settings, applied when the list is uploaded.
+	// They can still be overridden by the user via the UI.</comment>
+	boostersPerPlayer: <type>number</type>;          <comment>// Specify the default value of the "boostersPerPlayer" session setting.</comment>
+	withReplacement: <type>boolean</type>;           <comment>// Specify the default value of the "withReplacement" session setting.</comment>
+	colorBalance: <type>boolean</type>;              <comment>// Specify the default value of the "colorBalance" session setting.</comment>
 
 	boosterSettings: <type>{picks: number | number[], burns: number | number[]}[]</type>; <comment>// Allows you to customize some settings on a per booster basis.</comment>
 	<comment>// Example:</comment>

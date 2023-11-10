@@ -421,6 +421,16 @@ function parseSettings(
 		settings.duplicateProtection = parsedSettings.duplicateProtection;
 	}
 
+	if ("colorBalance" in parsedSettings) {
+		if (!isBoolean(parsedSettings.colorBalance)) {
+			return ackError({
+				title: `[Settings]`,
+				text: `'colorBalance' must be a boolean.`,
+			});
+		}
+		settings.colorBalance = parsedSettings.colorBalance;
+	}
+
 	if (settings.predeterminedLayouts) {
 		if (!customCardList.layouts) {
 			return ackError({

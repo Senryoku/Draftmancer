@@ -351,7 +351,9 @@ export class Session implements IIndexable {
 
 		if (cardList.settings?.withReplacement !== undefined)
 			this.customCardListWithReplacement = cardList.settings.withReplacement;
-		if (cardList.settings?.boostersPerPlayer) this.boostersPerPlayer = cardList.settings.boostersPerPlayer;
+		if (cardList.settings?.boostersPerPlayer !== undefined)
+			this.boostersPerPlayer = cardList.settings.boostersPerPlayer;
+		if (cardList.settings?.colorBalance !== undefined) this.colorBalance = cardList.settings.colorBalance;
 
 		this.forUsers(
 			(uid: UserID) =>
@@ -360,6 +362,7 @@ export class Session implements IIndexable {
 					customCardList: this.customCardList,
 					customCardListWithReplacement: this.customCardListWithReplacement,
 					boostersPerPlayer: this.boostersPerPlayer,
+					colorBalance: this.colorBalance,
 				})
 		);
 	}

@@ -224,4 +224,17 @@ describe("Custom Card List Parsing", function () {
 			}
 		});
 	});
+
+	it(`should apply the provided default session settings.`, () => {
+		const session = new Session("sessionid", "clientid");
+		const list = parseCardList(fs.readFileSync(`./test/data/SessionSettingsDefaults.txt`, "utf8"), {});
+		if (isSocketError(list)) {
+			expect(isSocketError(list), `Got ${JSON.stringify((list as SocketError).error)}`).to.be.false;
+			return;
+		}
+		session.setCustomCardList(list);
+		expect(session.customCardListWithReplacement).to.be.true;
+		expect(session.boostersPerPlayer).to.be.equal(42);
+		expect(session.colorBalance).to.be.false;
+	});
 });
