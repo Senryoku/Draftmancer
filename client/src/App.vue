@@ -2468,50 +2468,56 @@
 							</div>
 						</div>
 						<div
-							class="line"
-							v-tooltip.right="{
-								popperClass: 'option-tooltip',
-								content:
-									'<p>Number of cards to pick from each booster. Useful for Commander Legends for example (2 cards per booster).</p><p>Default is 1.</p><p>First Pick Only: The custom value will only be used for the first pick of each booster, then revert to 1. For example, you should check this with a value of 2 for Double Masters sets.</p>',
-								html: true,
+							v-bind:class="{
+								disabled: useCustomCardList && customCardList?.settings?.boosterSettings,
 							}"
 						>
-							<label for="picked-cards-per-round">Picked cards per booster</label>
-							<div class="right">
-								<input
-									type="number"
-									id="picked-cards-per-round"
-									class="small-number-input"
-									min="1"
-									step="1"
-									v-model.number="pickedCardsPerRound"
-									@change="if (pickedCardsPerRound < 1) pickedCardsPerRound = 1;"
-								/>
-								<label for="doubleMastersMode">First Pick Only</label
-								><input type="checkbox" id="doubleMastersMode" v-model="doubleMastersMode" />
+							<div
+								class="line"
+								v-tooltip.right="{
+									popperClass: 'option-tooltip',
+									content:
+										'<p>Number of cards to pick from each booster. Useful for Commander Legends for example (2 cards per booster).</p><p>Default is 1.</p><p>First Pick Only: The custom value will only be used for the first pick of each booster, then revert to 1. For example, you should check this with a value of 2 for Double Masters sets.</p>',
+									html: true,
+								}"
+							>
+								<label for="picked-cards-per-round">Picked cards per booster</label>
+								<div class="right">
+									<input
+										type="number"
+										id="picked-cards-per-round"
+										class="small-number-input"
+										min="1"
+										step="1"
+										v-model.number="pickedCardsPerRound"
+										@change="if (pickedCardsPerRound < 1) pickedCardsPerRound = 1;"
+									/>
+									<label for="doubleMastersMode">First Pick Only</label
+									><input type="checkbox" id="doubleMastersMode" v-model="doubleMastersMode" />
+								</div>
 							</div>
-						</div>
-						<div
-							class="line"
-							v-tooltip.right="{
-								popperClass: 'option-tooltip',
-								content:
-									'<p>In addition to picking a card, you will also remove this number of cards from the same booster.</p><p>This is typically used in conjunction with a higher count of boosters per player for drafting with 2 to 4 players. Burn or Glimpse Draft is generally 9 boosters per player with 2 cards being burned in addition to a pick.</p><p>Default is 0.</p>',
-								html: true,
-							}"
-						>
-							<label for="burned-cards-per-round">Burned cards per booster</label>
-							<div class="right">
-								<input
-									type="number"
-									id="burned-cards-per-round"
-									class="small-number-input"
-									min="0"
-									max="24"
-									step="1"
-									v-model.number="burnedCardsPerRound"
-									@change="if (burnedCardsPerRound < 0) burnedCardsPerRound = 0;"
-								/>
+							<div
+								class="line"
+								v-tooltip.right="{
+									popperClass: 'option-tooltip',
+									content:
+										'<p>In addition to picking a card, you will also remove this number of cards from the same booster.</p><p>This is typically used in conjunction with a higher count of boosters per player for drafting with 2 to 4 players. Burn or Glimpse Draft is generally 9 boosters per player with 2 cards being burned in addition to a pick.</p><p>Default is 0.</p>',
+									html: true,
+								}"
+							>
+								<label for="burned-cards-per-round">Burned cards per booster</label>
+								<div class="right">
+									<input
+										type="number"
+										id="burned-cards-per-round"
+										class="small-number-input"
+										min="0"
+										max="24"
+										step="1"
+										v-model.number="burnedCardsPerRound"
+										@change="if (burnedCardsPerRound < 0) burnedCardsPerRound = 0;"
+									/>
+								</div>
 							</div>
 						</div>
 						<div
