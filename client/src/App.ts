@@ -1568,6 +1568,17 @@ export default defineComponent({
 				while (this.selectedCards.length > 0 && this.selectedCards.length > this.cardsToPick)
 					this.selectedCards.shift();
 				this.restoreCard(null, c);
+
+				// If there's no other choice, automatically mark all non-selected cards as burn.
+				// This really streamlines "select one, burn the rest" types of drafts.
+				const state = this.draftState ?? this.rochesterDraftState;
+				if (
+					state &&
+					this.selectedCards.length === this.cardsToPick &&
+					this.selectedCards.length + this.cardsToBurnThisRound === state.booster.length
+				) {
+					this.burningCards = state.booster.filter((c) => !this.selectedCards.includes(c));
+				}
 			}
 		},
 		burnCard(e: Event, c: UniqueCard) {
