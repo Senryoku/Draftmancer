@@ -118,9 +118,14 @@ export default defineComponent({
 		download() {
 			if (!this.cards) return;
 			let str = "";
+			if (this.cardlist.settings) {
+				str += "[Settings]\n";
+				str += JSON.stringify(this.cardlist.settings, null, 2);
+				str += "\n";
+			}
 			if (this.cardlist.customCards) {
 				str += "[CustomCards]\n";
-				str += JSON.stringify(this.cardlist.customCards, null, 2);
+				str += JSON.stringify(Object.values(this.cardlist.customCards), null, 2);
 				str += "\n";
 			}
 			if (this.cardlist.layouts !== false) {
