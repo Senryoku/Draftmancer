@@ -30,8 +30,11 @@ describe("Minesweeper Draft", function () {
 	it(`Select Cube`, async function () {
 		await waitAndClickXpath(pages[0], "//button[contains(., 'Settings')]");
 		await waitAndClickXpath(pages[0], "//button[contains(., 'Load Cube')]");
-		await pages[0].keyboard.press("Escape");
 		await dismissToast(pages[0]);
+		await pages[0].keyboard.press("Escape"); // Close settings modal
+		await pages[0].waitForXPath("//h2[contains(., 'Session Settings')]", {
+			hidden: true,
+		});
 	});
 
 	it(`Launch Minesweeper Draft`, async function () {
