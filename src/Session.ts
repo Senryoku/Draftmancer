@@ -1840,11 +1840,14 @@ export class Session implements IIndexable {
 			if (s.players[to].isBot || (this.isDisconnected(to) && this.disconnectedUsers[to].replaced)) {
 				this.startBotPickChain(to);
 			} else if (!this.isDisconnected(to)) {
-				this.sendDraftState(to);
 				// This user was waiting for a booster
 				if (s.players[to].boosters.length === 1) {
+					this.sendDraftState(to);
 					this.startCountdown(to);
 					this.requestBotRecommendation(to);
+				} else {
+					// Only send the updated boosterCount (Nothing else should have changed.)
+					Connections[to]?.socket.emit("draftState:boosterCount", s.syncData(to).boosterCount);
 				}
 			}
 		}

@@ -1163,7 +1163,7 @@ export default defineComponent({
 					return;
 				}
 
-				if ("boosterCount" in data && data.boosterCount > 0) {
+				if (data.boosterCount > 0) {
 					if (
 						!this.draftState ||
 						!this.draftState.booster ||
@@ -1185,6 +1185,11 @@ export default defineComponent({
 						this.gameState = GameState.Waiting;
 					}
 				}
+			});
+
+			this.socket.on("draftState:boosterCount", (boosterCount) => {
+				if (!this.draftState) return;
+				this.draftState.boosterCount = boosterCount;
 			});
 
 			this.socket.on("startReviewPhase", (timer) => {
