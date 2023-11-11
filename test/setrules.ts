@@ -6,9 +6,10 @@ import { makeClients, waitForClientDisconnects, enableLogs, disableLogs, ackNoEr
 import { CardColor, UniqueCard } from "../src/CardTypes.js";
 import { SetCode } from "../src/Types.js";
 
-describe("Set Specific Booster Rules", function () {
+describe.only("Set Specific Booster Rules", function () {
 	let clients: ReturnType<typeof makeClients> = [];
 	const pickNumber: { [id: string]: number } = {};
+	const boosterNumber: { [id: string]: number } = {};
 	const sessionID = "SessionID";
 
 	const validateColorBalance = (booster: UniqueCard[]) => {
@@ -271,16 +272,15 @@ describe("Set Specific Booster Rules", function () {
 			const boosters: UniqueCard[][] = [];
 			for (const client of clients) {
 				pickNumber[client.id] = -1;
-				client.on("draftState", (data) => {
-					const state = data as {
-						booster: UniqueCard[];
-						boosterCount: number;
-						boosterNumber: number;
-						pickNumber: number;
-					};
-					if (state.boosterCount > 0 && state.pickNumber != pickNumber[client.id]) {
+				boosterNumber[client.id] = -1;
+				client.on("draftState", (state) => {
+					if (
+						state.boosterCount > 0 &&
+						(state.boosterNumber !== boosterNumber[client.id] || state.pickNumber !== pickNumber[client.id])
+					) {
 						if (state.pickNumber === 0) boosters.push(state.booster);
 						pickNumber[client.id] = state.pickNumber;
+						boosterNumber[client.id] = state.boosterNumber;
 						client.emit("pickCard", { pickedCards: [0], burnedCards: [] }, ackNoError);
 					}
 				});
@@ -301,6 +301,7 @@ describe("Set Specific Booster Rules", function () {
 			clients[ownerIdx].emit("ignoreCollections", true);
 			clients[ownerIdx].emit("setRestriction", [set]);
 			clients[ownerIdx].emit("setCustomBoosters", ["", "", ""]);
+			clients[ownerIdx].emit("setDiscardRemainingCardsAt", 30);
 			clients[ownerIdx].emit("startDraft", ackNoError);
 			const boosters = await collectBoosters();
 			for (const b of boosters) validationFunc(b);
@@ -311,6 +312,7 @@ describe("Set Specific Booster Rules", function () {
 			clients[ownerIdx].emit("ignoreCollections", true);
 			clients[ownerIdx].emit("setRestriction", []);
 			clients[ownerIdx].emit("setCustomBoosters", [set, set, set]);
+			clients[ownerIdx].emit("setDiscardRemainingCardsAt", 30);
 			clients[ownerIdx].emit("startDraft", ackNoError);
 			const boosters = await collectBoosters();
 			for (const b of boosters) validationFunc(b);
