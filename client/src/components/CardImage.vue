@@ -177,6 +177,7 @@ export default defineComponent({
 }
 
 img {
+	display: block;
 	width: 100%;
 	border-radius: 3%;
 	-webkit-user-select: none;

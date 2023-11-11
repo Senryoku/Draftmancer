@@ -170,6 +170,7 @@ export default /*#__PURE__*/ defineComponent({
 }
 
 .minesweeper-grid .card {
+	display: block;
 	width: calc(var(--grid-scale) * 200px);
 	height: calc(var(--grid-scale) * 282px);
 	transition: transform 0.2s ease-in-out;
