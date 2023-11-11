@@ -129,6 +129,21 @@ describe("Draft Queue", function () {
 
 		it(`All accept`, async function () {
 			await Promise.all(pages.map((page) => waitAndClickSelector(page, ".ready-button")));
+			await Promise.all(
+				pages.map((page) =>
+					page.waitForXPath("//div[contains(., 'Draft Started!')]", {
+						hidden: true,
+					})
+				)
+			);
+		});
+
+		it("Each player picks a card", async function () {
+			await Promise.all(
+				pages.map(async (page) => {
+					while ((await pickCard(page)) !== PickResult.Picked);
+				})
+			);
 		});
 
 		it("...and drafts until done.", async function () {
@@ -140,9 +155,7 @@ describe("Draft Queue", function () {
 					if (!done[i])
 						promises.push(
 							(async () => {
-								let r: PickResult = PickResult.Waiting;
-								while ((r = await pickCard(pages[i])) === PickResult.Waiting);
-								return r === PickResult.Done;
+								return (await pickCard(pages[i])) === PickResult.Done;
 							})()
 						);
 					else promises.push(true);

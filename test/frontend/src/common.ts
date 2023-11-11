@@ -289,10 +289,15 @@ export enum PickResult {
 }
 
 export async function pickCard(page: Page): Promise<PickResult> {
+	const draftInProgress = await page.$("#booster-controls");
+	if (draftInProgress === null) return PickResult.Done;
+
 	const done = await page.$$("xpath///h2[contains(., 'Done drafting!')]");
 	if (done.length > 0) return PickResult.Done;
+
 	const waiting = await page.$$(".booster-waiting");
 	if (waiting.length > 0) return PickResult.Waiting;
+
 	const cards = await page.$$(".booster:not(.booster-waiting) .booster-card");
 	if (cards.length === 0) return PickResult.Waiting;
 
