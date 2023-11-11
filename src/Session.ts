@@ -1812,12 +1812,12 @@ export class Session implements IIndexable {
 	}
 
 	// Pass a booster to the next player at the table
-	passBooster(booster: Array<UniqueCard>, to: UserID) {
+	passBooster(booster: Array<UniqueCard>, to: UserID, canDiscard: boolean = true) {
 		const s = this.draftState;
 		if (!isDraftState(s)) return;
 
 		// Booster is empty or the remaining cards have to be burned
-		if (booster.length <= Math.max(0, this.discardRemainingCardsAt)) {
+		if (booster.length === 0 || (canDiscard && booster.length <= Math.max(0, this.discardRemainingCardsAt))) {
 			// Don't re-insert it, and check for end of round
 			this.checkDraftRoundEnd();
 		} else {
@@ -2530,7 +2530,7 @@ export class Session implements IIndexable {
 				assert(p.boosters.length === 0, `distributeBoosters: ${userID} boosters.length ${p.boosters.length}`);
 
 				p.pickNumber = 0;
-				this.passBooster(boosters[boosterIndex], userID);
+				this.passBooster(boosters[boosterIndex], userID, false);
 				++boosterIndex;
 			}
 
