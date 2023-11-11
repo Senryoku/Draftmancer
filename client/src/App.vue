@@ -1092,8 +1092,8 @@
 									:card="card"
 									:language="language"
 									:canbeburned="draftState.burnsThisRound > 0"
-									:burned="burningCards.includes(card)"
-									:class="{ selected: selectedCards.includes(card) }"
+									:burned="burningCards.includes(card.uniqueID)"
+									:class="{ selected: selectedCards.includes(card.uniqueID) }"
 									@click="draftState.skipPick ? () => {} : selectCard($event, card)"
 									@dblclick="draftState.skipPick ? () => {} : doubleClickCard($event, card)"
 									@burn="draftState.skipPick ? () => {} : burnCard($event, card)"
@@ -1306,7 +1306,7 @@
 									:class="{
 										selected:
 											userID === rochesterDraftState.currentPlayer &&
-											selectedCards.includes(card),
+											selectedCards.includes(card.uniqueID),
 									}"
 									@click="if (userID === rochesterDraftState.currentPlayer) selectCard($event, card);"
 									@dblclick="

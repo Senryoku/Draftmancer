@@ -408,8 +408,8 @@ export default defineComponent({
 			titleNotification: null as { timeout: ReturnType<typeof setTimeout>; message: string } | null,
 			// Draft Booster
 			pickInFlight: false,
-			selectedCards: [] as UniqueCard[],
-			burningCards: [] as UniqueCard[],
+			selectedCards: [] as UniqueCardID[],
+			burningCards: [] as UniqueCardID[],
 			selectedUsableDraftEffect: undefined as
 				| undefined
 				| { name: string; effect: UsableDraftEffect; cardID: UniqueCardID },
@@ -1171,11 +1171,12 @@ export default defineComponent({
 						this.draftState.pickNumber !== data.pickNumber ||
 						this.draftState.boosterNumber !== data.boosterNumber
 					) {
-						this.botScores = null; // Clear bot scores
+						this.botScores = null;
 						this.selectedCards = [];
 						this.burningCards = [];
 						this.playSound("next");
 					}
+
 					this.draftState = data;
 					this.gameState = GameState.Picking;
 				} else {
@@ -1563,8 +1564,8 @@ export default defineComponent({
 			this.socket.emit("resumeDraft");
 		},
 		selectCard(e: Event | null, c: UniqueCard) {
-			if (!this.selectedCards.includes(c)) {
-				this.selectedCards.push(c);
+			if (!this.selectedCards.includes(c.uniqueID)) {
+				this.selectedCards.push(c.uniqueID);
 				while (this.selectedCards.length > 0 && this.selectedCards.length > this.cardsToPick)
 					this.selectedCards.shift();
 				this.restoreCard(null, c);
@@ -1577,21 +1578,24 @@ export default defineComponent({
 					this.selectedCards.length === this.cardsToPick &&
 					this.selectedCards.length + this.cardsToBurnThisRound === state.booster.length
 				) {
-					this.burningCards = state.booster.filter((c) => !this.selectedCards.includes(c));
+					this.burningCards = state.booster
+						.map((c) => c.uniqueID)
+						.filter((cuid) => !this.selectedCards.includes(cuid));
 				}
 			}
 		},
 		burnCard(e: Event, c: UniqueCard) {
-			if (this.burningCards.includes(c)) return;
-			if (this.selectedCards.includes(c)) this.selectedCards.splice(this.selectedCards.indexOf(c), 1);
-			this.burningCards.push(c);
+			if (this.burningCards.includes(c.uniqueID)) return;
+			if (this.selectedCards.includes(c.uniqueID))
+				this.selectedCards.splice(this.selectedCards.indexOf(c.uniqueID), 1);
+			this.burningCards.push(c.uniqueID);
 			if (this.burningCards.length > this.draftState!.burnsThisRound) this.burningCards.shift();
 			if (e) e.stopPropagation();
 		},
 		restoreCard(e: Event | null, c: UniqueCard) {
-			if (!this.burningCards.includes(c)) return;
+			if (!this.burningCards.includes(c.uniqueID)) return;
 			this.burningCards.splice(
-				this.burningCards.findIndex((o) => o === c),
+				this.burningCards.findIndex((cuid) => cuid === c.uniqueID),
 				1
 			);
 			if (e) e.stopPropagation();
@@ -1604,8 +1608,8 @@ export default defineComponent({
 			// Allow dropping only if the dragged object is the selected card
 
 			// A better (?) solution would be something like
-			// 		let cardid = e.dataTransfer.getData("uniqueID");
-			// 		if (this.selectedCards && cardid == this.selectedCards.id)
+			// 		let cuid = e.dataTransfer.getData("uniqueID");
+			// 		if (this.selectedCards && this.selectedCards.includes(cuid) &&)
 			// {
 			// but only Firefox allows to check for dataTransfer in this event (and
 			// it's against the standard)
@@ -1653,7 +1657,7 @@ export default defineComponent({
 			) {
 				e.preventDefault();
 				const cardUID = e.dataTransfer.getData("uniqueID");
-				if (!this.selectedCards.some((c) => cardUID === c.uniqueID.toString())) {
+				if (!this.selectedCards.some((cuid) => cardUID === cuid.toString())) {
 					console.error(
 						`dropBoosterCard error: cardUID (${cardUID}) could not be found in this.selectedCards:`
 					);
@@ -1711,11 +1715,11 @@ export default defineComponent({
 				const burningCards = this.burningCards;
 				const toSideboard = options?.toSideboard;
 
-				const pickedCardIndices = selectedCards.map((c) =>
-					state!.booster.findIndex((c2) => c.uniqueID === c2.uniqueID)
+				const pickedCardIndices = selectedCards.map((cuid) =>
+					state!.booster.findIndex((c) => cuid === c.uniqueID)
 				);
-				const burnedCardIndices = burningCards.map((c) =>
-					state!.booster.findIndex((c2) => c.uniqueID === c2.uniqueID)
+				const burnedCardIndices = burningCards.map((cuid) =>
+					state!.booster.findIndex((c) => cuid === c.uniqueID)
 				);
 
 				// Was probably triggered on a previous pack, ignore it. Can probably only be possible during front end testing.
@@ -1740,16 +1744,14 @@ export default defineComponent({
 					this.pickInFlight = false;
 					if (answer.code !== 0) {
 						// Restore cardPool and booster state
-						this.deck = this.deck.filter((c) => !selectedCards.includes(c));
-						this.sideboard = this.sideboard.filter((c) => !selectedCards.includes(c));
+						this.deck = this.deck.filter((c) => !selectedCards.includes(c.uniqueID));
+						this.sideboard = this.sideboard.filter((c) => !selectedCards.includes(c.uniqueID));
 						state!.booster = boosterBackup;
 						this.selectedUsableDraftEffect = undefined; // Reset effects since it's probably an effect that triggered the error in the first place.
 						this.gameState = GameState.Picking;
 						Alert.fire(answer.error as SweetAlertOptions);
 					} else {
-						if (toSideboard)
-							for (const cuid of selectedCards.map((c) => c.uniqueID))
-								this.socket.emit("moveCard", cuid, "side");
+						if (toSideboard) for (const cuid of selectedCards) this.socket.emit("moveCard", cuid, "side");
 						for (const callback of onSuccess) callback();
 					}
 				};
@@ -1831,11 +1833,15 @@ export default defineComponent({
 					);
 					this.gameState = GameState.Waiting;
 				}
+				if (!dontAddSelectedCardstoCardPool) {
+					const pickedCards = state.booster.filter((c) => selectedCards.includes(c.uniqueID));
+					if (toSideboard) this.addToSideboard(pickedCards, options);
+					else this.addToDeck(pickedCards, options);
+				}
 				// Removes picked & burned cards for animation
-				state.booster = state.booster.filter((c) => !selectedCards.includes(c) && !burningCards.includes(c));
-				if (!dontAddSelectedCardstoCardPool)
-					if (toSideboard) this.addToSideboard(selectedCards, options);
-					else this.addToDeck(selectedCards, options);
+				state.booster = state.booster.filter(
+					(c) => !selectedCards.includes(c.uniqueID) && !burningCards.includes(c.uniqueID)
+				);
 			});
 			this.pickInFlight = true;
 		},
@@ -1860,11 +1866,12 @@ export default defineComponent({
 				while (currIdx < orderedPicks.length && this.selectedCards.length < this.cardsToPick) {
 					while (
 						currIdx < orderedPicks.length &&
-						(this.selectedCards.includes(state.booster[orderedPicks[currIdx]]) ||
-							this.burningCards.includes(state.booster[orderedPicks[currIdx]]))
+						(this.selectedCards.includes(state.booster[orderedPicks[currIdx]].uniqueID) ||
+							this.burningCards.includes(state.booster[orderedPicks[currIdx]].uniqueID))
 					)
 						++currIdx;
-					if (currIdx < orderedPicks.length) this.selectedCards.push(state.booster[orderedPicks[currIdx]]);
+					if (currIdx < orderedPicks.length)
+						this.selectedCards.push(state.booster[orderedPicks[currIdx]].uniqueID);
 					++currIdx;
 				}
 				currIdx = 0;
@@ -1872,11 +1879,12 @@ export default defineComponent({
 				while (currIdx < orderedPicks.length && this.burningCards.length < this.cardsToBurnThisRound) {
 					while (
 						currIdx < orderedPicks.length &&
-						(this.selectedCards.includes(state.booster[orderedPicks[currIdx]]) ||
-							this.burningCards.includes(state.booster[orderedPicks[currIdx]]))
+						(this.selectedCards.includes(state.booster[orderedPicks[currIdx]].uniqueID) ||
+							this.burningCards.includes(state.booster[orderedPicks[currIdx]].uniqueID))
 					)
 						++currIdx;
-					if (currIdx < orderedPicks.length) this.burningCards.push(state.booster[orderedPicks[currIdx]]);
+					if (currIdx < orderedPicks.length)
+						this.burningCards.push(state.booster[orderedPicks[currIdx]].uniqueID);
 					++currIdx;
 				}
 			}
@@ -1886,20 +1894,20 @@ export default defineComponent({
 				let randomIdx;
 				do randomIdx = Math.floor(Math.random() * state.booster.length);
 				while (
-					this.selectedCards.includes(state.booster[randomIdx]) ||
-					this.burningCards.includes(state.booster[randomIdx])
+					this.selectedCards.includes(state.booster[randomIdx].uniqueID) ||
+					this.burningCards.includes(state.booster[randomIdx].uniqueID)
 				);
-				this.selectedCards.push(state.booster[randomIdx]);
+				this.selectedCards.push(state.booster[randomIdx].uniqueID);
 			}
 			// Forces random cards to burn if there isn't enough selected already
 			while (this.burningCards.length < this.cardsToBurnThisRound) {
 				let randomIdx;
 				do randomIdx = Math.floor(Math.random() * state.booster.length);
 				while (
-					this.selectedCards.includes(state.booster[randomIdx]) ||
-					this.burningCards.includes(state.booster[randomIdx])
+					this.selectedCards.includes(state.booster[randomIdx].uniqueID) ||
+					this.burningCards.includes(state.booster[randomIdx].uniqueID)
 				);
-				this.burningCards.push(state.booster[randomIdx]);
+				this.burningCards.push(state.booster[randomIdx].uniqueID);
 			}
 			this.pickCard();
 		},
@@ -3594,8 +3602,12 @@ export default defineComponent({
 			effect: OptionalOnPickDraftEffect;
 			cardID: UniqueCardID;
 		}[] {
+			if (!this.draftState?.booster) return [];
 			const r = [];
-			for (const card of this.selectedCards.filter((c) => c.draft_effects !== undefined))
+			const selectedCards = this.draftState.booster.filter(
+				(c) => c.draft_effects !== undefined && this.selectedCards.includes(c.uniqueID)
+			);
+			for (const card of selectedCards)
 				for (const effect of card.draft_effects!.filter((e) => isSomeEnum(OptionalOnPickDraftEffect)(e)))
 					r.push({
 						name: card.name,
