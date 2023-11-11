@@ -1,25 +1,26 @@
-import { Browser, Page } from "puppeteer";
+import { Page } from "puppeteer";
 import chai from "chai";
 const expect = chai.expect;
-import {
-	waitAndClickSelector,
-	startBrowsers,
-	waitAndClickXpath,
-	getSessionLink,
-	join,
-	setupBrowsers,
-	pages,
-	launchMode,
-	replaceInput,
-} from "./src/common.js";
+import { waitAndClickSelector, waitAndClickXpath, setupBrowsers, pages, launchMode } from "./src/common.js";
 import { getRandom } from "../../src/utils.js";
 
 async function pickCard(page: Page) {
-	let next = await page.waitForXPath(
-		"//div[contains(., 'Done drafting!')] | //span[contains(., 'your turn')] | //span[contains(., 'Advancing')]"
-	);
+	const draftInProgress = await page.$x("//div[contains(., 'Grid Draft')]");
+	if (draftInProgress.length === 0) return true;
+
+	let next;
+	try {
+		next = await page.waitForXPath(
+			"//div[contains(., 'Done drafting!')] | //span[contains(., 'your turn')] | //span[contains(., 'Advancing')]",
+			{ timeout: 1000 }
+		);
+	} catch (e) {
+		return false;
+	}
+
 	let text = await page.evaluate((next) => (next as HTMLElement).innerText, next);
 	if (text === "Done drafting!") return true;
+
 	while (text.includes("Advancing")) {
 		await new Promise((r) => setTimeout(r, 10));
 		next = await page.waitForXPath(
