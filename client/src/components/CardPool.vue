@@ -387,7 +387,7 @@ export default defineComponent({
 				// Make sure we're removing the intended card (source may have changed: see App.forcePick and #606)
 				if (item.dataset.uniqueid) {
 					const cardUniqueID = parseInt(item.dataset.uniqueid);
-					if (column[index].uniqueID !== cardUniqueID) {
+					if (index < 0 || index >= column.length || column[index].uniqueID !== cardUniqueID) {
 						const fixedIndex = column.findIndex((c) => c.uniqueID === cardUniqueID);
 						if (fixedIndex >= 0) {
 							column.splice(fixedIndex, 1);
