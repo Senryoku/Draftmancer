@@ -349,6 +349,12 @@ export default defineComponent({
 				const cardUniqueID = parseInt(item.dataset.uniqueid!);
 
 				if (inner) {
+					// FIXME: Failsafe. Make sure we won't introduce a duplicate when inserting the card into this column.
+					// Note: This seem to happen when drag & dropping multiple cards, multiple times in a row (without letting go of ctrl).
+					//       I feel like this is an issue with sortablejs-vue3 wich doesn't properly clear the dragged items, but I have to investigate the root cause.
+					const alreadyAdded = column.findIndex((c) => c.uniqueID === cardUniqueID);
+					if (alreadyAdded >= 0) continue;
+
 					const idx = this.cards.findIndex((c) => c.uniqueID === cardUniqueID);
 					if (idx >= 0) column.splice(index, 0, this.cards[idx]);
 				} else {
@@ -356,6 +362,10 @@ export default defineComponent({
 					this.$emit("cardDragAdd", cardUniqueID);
 
 					this.$nextTick(() => {
+						// See above.
+						const alreadyAdded = column.findIndex((c) => c.uniqueID === cardUniqueID);
+						if (alreadyAdded >= 0) return;
+
 						const idx = this.cards.findIndex((c) => c.uniqueID === cardUniqueID);
 						if (idx >= 0) column.splice(index, 0, this.cards[idx]);
 					});
