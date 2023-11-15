@@ -341,7 +341,7 @@ export default defineComponent({
 
 			for (const entry of entries) {
 				const item = entry.multiDragElement;
-				const index = entry.index;
+				const targetIndex = Math.min(entry.index, column.length); // Make sure we won't introduce undefined values by inserting past the end.
 				// Remove the previous DOM element: rendering will be handled by vue once the state is correctly updated.
 				item.remove();
 
@@ -356,7 +356,7 @@ export default defineComponent({
 					if (alreadyAdded >= 0) continue;
 
 					const idx = this.cards.findIndex((c) => c.uniqueID === cardUniqueID);
-					if (idx >= 0) column.splice(index, 0, this.cards[idx]);
+					if (idx >= 0) column.splice(targetIndex, 0, this.cards[idx]);
 				} else {
 					// Parent is responsible for updating this.cards prop by reacting to this event.
 					this.$emit("cardDragAdd", cardUniqueID);
@@ -367,7 +367,7 @@ export default defineComponent({
 						if (alreadyAdded >= 0) return;
 
 						const idx = this.cards.findIndex((c) => c.uniqueID === cardUniqueID);
-						if (idx >= 0) column.splice(index, 0, this.cards[idx]);
+						if (idx >= 0) column.splice(targetIndex, 0, this.cards[idx]);
 					});
 				}
 			}
