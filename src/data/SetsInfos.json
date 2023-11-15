@@ -1531,10 +1531,10 @@
     "fltr": {
         "code": "fltr",
         "fullName": "Tales of Middle-earth Front Cards",
-        "cardCount": 5,
+        "cardCount": 10,
         "isPrimary": false,
         "icon": "img/sets/fltr.svg",
-        "commonCount": 5
+        "commonCount": 10
     },
     "fmb1": {
         "code": "fmb1",
@@ -1968,10 +1968,10 @@
     "hho": {
         "code": "hho",
         "fullName": "Happy Holidays",
-        "cardCount": 19,
+        "cardCount": 20,
         "isPrimary": false,
         "icon": "img/sets/hho.svg",
-        "mythicCount": 9,
+        "mythicCount": 10,
         "rareCount": 10
     },
     "hml": {
@@ -2293,14 +2293,14 @@
     },
     "lcc": {
         "code": "lcc",
-        "fullName": "Lost Caverns of Ixalan Commander",
+        "fullName": "The Lost Caverns of Ixalan Commander",
         "cardCount": 370,
         "isPrimary": false,
         "icon": "img/sets/lcc.svg",
         "commonCount": 33,
         "mythicCount": 51,
-        "rareCount": 208,
-        "uncommonCount": 78
+        "rareCount": 209,
+        "uncommonCount": 77
     },
     "lci": {
         "code": "lci",
@@ -4074,14 +4074,14 @@
     "plist": {
         "code": "plist",
         "fullName": "The List",
-        "cardCount": 1288,
+        "cardCount": 1338,
         "isPrimary": true,
         "icon": "img/sets/plist.svg",
-        "commonCount": 170,
-        "mythicCount": 155,
-        "rareCount": 597,
+        "commonCount": 175,
+        "mythicCount": 160,
+        "rareCount": 613,
         "specialCount": 4,
-        "uncommonCount": 362
+        "uncommonCount": 386
     },
     "plrw": {
         "code": "plrw",
@@ -5225,12 +5225,12 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 1105,
+        "cardCount": 1111,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
         "commonCount": 46,
-        "mythicCount": 225,
-        "rareCount": 814,
+        "mythicCount": 226,
+        "rareCount": 819,
         "uncommonCount": 20
     },
     "slp": {
