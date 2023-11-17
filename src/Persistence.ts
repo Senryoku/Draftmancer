@@ -117,18 +117,6 @@ export function restoreSession(s: any, owner: UserID) {
 	if (s.draftState) {
 		switch (s.draftState.type) {
 			case "draft": {
-				// Backward compatibility: Convert previous DraftState format to new DraftState format
-				// FIXME: Remove this, soon.
-				if (!s.draftState.boosterSettings) {
-					s.draftState.boosterSettings = [
-						{
-							picks: s.draftState.pickedCardsPerRound,
-							burns: s.draftState.burnedCardsPerRound,
-							doubleMastersMode: s.draftState.doubleMastersMode,
-						},
-					];
-				}
-
 				const draftState = new DraftState([], [], {
 					boosterSettings: s.draftState.boosterSettings,
 					botCount: 0,

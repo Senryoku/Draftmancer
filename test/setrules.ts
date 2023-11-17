@@ -6,7 +6,7 @@ import { makeClients, waitForClientDisconnects, enableLogs, disableLogs, ackNoEr
 import { CardColor, UniqueCard } from "../src/CardTypes.js";
 import { SetCode } from "../src/Types.js";
 
-describe.only("Set Specific Booster Rules", function () {
+describe("Set Specific Booster Rules", function () {
 	let clients: ReturnType<typeof makeClients> = [];
 	const pickNumber: { [id: string]: number } = {};
 	const boosterNumber: { [id: string]: number } = {};

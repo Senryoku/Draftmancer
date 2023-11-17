@@ -121,16 +121,12 @@ const localStorageSessionSettingsKey = "draftmancer-session-settings";
 const sessionStorageWindowSpecificDataKey = "draftmancer-window-specific-data";
 
 const defaultUserName = `Player_${randomStr4()}`;
-// Backwards compatility: these used to be stored in cookies.
-const cookieUserName = getCookie("userName", defaultUserName);
-const cookieUseCollection = getCookie("useCollection", "true") === "true";
-const cookieLanguage = getCookie("language", "en") as Language;
 
 // Personal front-end settings
 const defaultSettings = {
-	userName: cookieUserName,
-	useCollection: cookieUseCollection,
-	language: cookieLanguage,
+	userName: defaultUserName,
+	useCollection: false,
+	language: "en" as Language,
 	targetDeckSize: 40,
 	hideSessionID: false,
 	displayCollectionStatus: true,
@@ -944,7 +940,6 @@ export default defineComponent({
 				if (!card) return;
 				card.owner = newOwnerID;
 
-				if (!this.rotisserieDraftState.lastPicks) this.rotisserieDraftState.lastPicks = []; // FIXME: Here for backward compatibility. Will soon be safely removable.
 				this.rotisserieDraftState.lastPicks.push(uniqueCardID);
 				if (this.rotisserieDraftState.lastPicks.length > 8) this.rotisserieDraftState.lastPicks.shift();
 

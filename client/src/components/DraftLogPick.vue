@@ -109,7 +109,6 @@ export default defineComponent({
 	},
 	methods: {
 		getUnique(cid: CardID): UniqueCard {
-			if (typeof cid !== "string") return toUnique(cid); // FIXME: Backward compatility with previously unused WinstonDraftPick where cards were stored as full objects, should be removed at some point.
 			return toUnique(this.carddata[cid]);
 		},
 	},

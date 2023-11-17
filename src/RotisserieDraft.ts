@@ -18,7 +18,7 @@ export class RotisserieDraftState extends IDraftState implements TurnBased {
 	readonly cardsPerPlayer: number;
 
 	pickNumber = 0;
-	lastPicks?: UniqueCardID[] = []; // FIXME: Made optional for backward compatibility, this will should be removed soon (along with the associated null checks).
+	lastPicks: UniqueCardID[] = [];
 
 	constructor(players: UserID[], cards: UniqueCard[], cardsPerPlayer: number) {
 		super("rotisserie");
@@ -52,7 +52,6 @@ export class RotisserieDraftState extends IDraftState implements TurnBased {
 
 		++this.pickNumber;
 
-		if (!this.lastPicks) this.lastPicks = []; // FIXME: Here for backward compatibility. Will soon be safely removable.
 		this.lastPicks.push(card.uniqueID);
 		if (this.lastPicks.length > 8) this.lastPicks.shift();
 
