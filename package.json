@@ -73,7 +73,7 @@
 		"@types/chai": "^4.3.4",
 		"@types/compression": "^1.7.2",
 		"@types/cookie-parser": "^1.4.6",
-		"@types/mocha": "^10.0.1",
+		"@types/mocha": "^10.0.4",
 		"@types/node": "^20.8.7",
 		"@types/sortablejs": "^1.15.5",
 		"@types/uuid": "^9.0.7",
