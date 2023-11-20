@@ -101,7 +101,7 @@
 		"prettier": "^3.0.3",
 		"puppeteer": "^21.3.6",
 		"source-map-support": "^0.5.21",
-		"ts-loader": "^9.4.4",
+		"ts-loader": "^9.5.1",
 		"typescript": "^5.0.2",
 		"vue-loader": "^17.2.2",
 		"vue-style-loader": "^4.1.3",
