@@ -2,21 +2,35 @@
 	<dropdown>
 		<template v-slot:handle>Export</template>
 		<template v-slot:dropdown>
-			<button
-				type="button"
-				@click="exportDeck($event, true)"
-				v-tooltip.right="'Export deck and sideboard for Arena'"
-			>
-				<img class="set-icon button-icon" src="../assets/img/mtga-icon.png" />MTGA
-			</button>
-			<button type="button" @click="exportDeck($event, false)" v-tooltip.right="'Export without set information'">
-				<font-awesome-icon icon="fa-solid fa-clipboard" class="button-icon"></font-awesome-icon>Card Names
-			</button>
-			<button type="button" @click="exportDeckMTGO()" v-tooltip.right="'Export for MTGO (.dek)'">
+			<div class="row">
+				<button
+					@click="clipboardMTGA(true)"
+					v-tooltip.right="'Export deck and sideboard for Arena to clipboard'"
+				>
+					<img class="set-icon button-icon" src="../assets/img/mtga-icon.png" />MTGA
+				</button>
+				<button @click="downloadMTGA(true)" v-tooltip.right="'Download deck and sideboard for Arena'">
+					<FontAwesomeIcon icon="fa-solid fa-file-download" class="button-icon"></FontAwesomeIcon>
+				</button>
+			</div>
+			<div class="row">
+				<button
+					@click="clipboardMTGA(false)"
+					v-tooltip.right="'Export deck and sideboard without set information to clipboard'"
+				>
+					<font-awesome-icon icon="fa-solid fa-clipboard" class="button-icon"></font-awesome-icon>Card Names
+				</button>
+				<button
+					@click="downloadMTGA(false)"
+					v-tooltip.right="'Download deck and sideboard without set information'"
+				>
+					<FontAwesomeIcon icon="fa-solid fa-file-download" class="button-icon"></FontAwesomeIcon>
+				</button>
+			</div>
+			<button @click="exportDeckMTGO()" v-tooltip.right="'Download .deck file for MTGO'">
 				<img class="set-icon button-icon" src="../assets/img/mtgo-icon.webp" /> MTGO .dek
 			</button>
 			<button
-				type="button"
 				@click="exportDeckToFaBrary()"
 				v-tooltip.right="'Export directly to FaBrary, the Flesh and Blood library.'"
 			>
@@ -34,9 +48,10 @@ import { Card, UniqueCard } from "@/CardTypes";
 import { exportToMTGA } from "../exportToMTGA";
 import { exportToMTGO } from "../exportToMTGO";
 import { fireToast } from "../alerts";
-import { copyToClipboard } from "../helper";
+import { copyToClipboard, download } from "../helper";
 import Dropdown from "./Dropdown.vue";
 import { Language } from "@/Types";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 // Some always available cards, such as a default hero, available equipement, set unique mechanics, ...etc
 const FaBAlwaysAvailableCards = {
@@ -44,7 +59,7 @@ const FaBAlwaysAvailableCards = {
 };
 
 export default defineComponent({
-	components: { Dropdown },
+	components: { Dropdown, FontAwesomeIcon },
 	props: {
 		language: { type: String as PropType<Language>, required: true },
 		deck: { type: Array as PropType<UniqueCard[]>, required: true },
@@ -57,15 +72,19 @@ export default defineComponent({
 		},
 	},
 	methods: {
-		exportDeck(event: Event, full = true) {
-			copyToClipboard(
-				exportToMTGA(this.deck, this.sideboard, this.language, this.options.lands, {
-					preferredBasics: this.options.preferredBasics,
-					sideboardBasics: this.options.sideboardBasics,
-					full: full,
-				})
-			);
+		exportDeckMTGA(full = true) {
+			return exportToMTGA(this.deck, this.sideboard, this.language, this.options.lands, {
+				preferredBasics: this.options.preferredBasics,
+				sideboardBasics: this.options.sideboardBasics,
+				full: full,
+			});
+		},
+		clipboardMTGA(full = true) {
+			copyToClipboard(this.exportDeckMTGA(full));
 			fireToast("success", "Deck exported to clipboard!");
+		},
+		downloadMTGA(full = true) {
+			download("Deck.txt", this.exportDeckMTGA(full));
 		},
 		exportDeckMTGO() {
 			exportToMTGO(this.deck, this.sideboard, this.options);
@@ -101,3 +120,14 @@ export default defineComponent({
 	},
 });
 </script>
+
+<style scoped>
+.row {
+	display: flex;
+}
+
+.row > button:first-child {
+	flex-grow: 1;
+	padding-left: 28px !important; /* Account for the icon. #main-container messes with the specificity, again. */
+}
+</style>
