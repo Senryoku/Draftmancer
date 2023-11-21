@@ -1,6 +1,6 @@
 <template>
 	<dropdown>
-		<template v-slot:handle><div @click="exportDeck($event, true)">Export</div></template>
+		<template v-slot:handle>Export</template>
 		<template v-slot:dropdown>
 			<button
 				type="button"
