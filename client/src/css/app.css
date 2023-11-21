@@ -369,6 +369,7 @@ div:where(.swal2-container) .swal2-checkbox {
 .session-options-container {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
+	gap: 1em;
 
 	grid-template-areas:
 		"option-column-left option-column-right"
@@ -377,6 +378,12 @@ div:where(.swal2-container) .swal2-checkbox {
 
 .session-options-container h4 {
 	margin: 0.25em;
+	margin-top: 0.5em;
+	border-bottom: 1px solid #555;
+	font-variant: small-caps;
+}
+.session-options-container h4:first-child {
+	margin-top: 0;
 }
 
 .option-column-left {
@@ -399,7 +406,6 @@ div:where(.swal2-container) .swal2-checkbox {
 }
 
 .option-column {
-	margin: 0.5em;
 }
 
 .option-tooltip {

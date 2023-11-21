@@ -2078,6 +2078,7 @@
 			<template v-slot:body>
 				<div class="session-options-container" :class="{ disabled: userID != sessionOwner }">
 					<div class="option-column option-column-left">
+						<h4>Session</h4>
 						<div
 							class="line"
 							v-tooltip.left="{
@@ -2146,6 +2147,7 @@
 								/>
 							</div>
 						</div>
+						<h4>Booster Generation</h4>
 						<div
 							class="line"
 							v-tooltip.left="{
@@ -2178,28 +2180,17 @@
 						</div>
 						<div
 							class="line"
+							v-bind:class="{ disabled: usePredeterminedBoosters || useCustomCardList }"
 							v-tooltip.left="{
 								popperClass: 'option-tooltip',
-								content: '<p>Upload your own boosters.</p>',
+								content:
+									'<p>If enabled, each pack will have a chance to contain a \'foil\' card of any rarity in place of one common.</p>',
 								html: true,
 							}"
 						>
-							<label for="use-predetermined-boosters">Use Pre-Determined Boosters</label>
+							<label for="option-foil">Foil</label>
 							<div class="right">
-								<input
-									type="checkbox"
-									v-model="usePredeterminedBoosters"
-									id="use-predetermined-boosters"
-								/>
-								<button @click="displayedModal = 'uploadBoosters'">
-									<font-awesome-icon icon="fa-solid fa-upload"></font-awesome-icon> Upload
-								</button>
-								<button
-									@click="shuffleUploadedBoosters"
-									v-tooltip="'Shuffle the boosters before distributing them.'"
-								>
-									Shuffle
-								</button>
+								<input type="checkbox" v-model="foil" id="option-foil" />
 							</div>
 						</div>
 						<div
@@ -2309,19 +2300,31 @@
 						</div>
 						<div
 							class="line"
-							v-bind:class="{ disabled: usePredeterminedBoosters || useCustomCardList }"
 							v-tooltip.left="{
 								popperClass: 'option-tooltip',
-								content:
-									'<p>If enabled, each pack will have a chance to contain a \'foil\' card of any rarity in place of one common.</p>',
+								content: '<p>Upload your own boosters.</p>',
 								html: true,
 							}"
 						>
-							<label for="option-foil">Foil</label>
+							<label for="use-predetermined-boosters">Use Pre-Determined Boosters</label>
 							<div class="right">
-								<input type="checkbox" v-model="foil" id="option-foil" />
+								<input
+									type="checkbox"
+									v-model="usePredeterminedBoosters"
+									id="use-predetermined-boosters"
+								/>
+								<button @click="displayedModal = 'uploadBoosters'">
+									<font-awesome-icon icon="fa-solid fa-upload"></font-awesome-icon> Upload
+								</button>
+								<button
+									@click="shuffleUploadedBoosters"
+									v-tooltip="'Shuffle the boosters before distributing them.'"
+								>
+									Shuffle
+								</button>
 							</div>
 						</div>
+						<h4>Game Logs</h4>
 						<div
 							class="line"
 							v-tooltip.left="{
