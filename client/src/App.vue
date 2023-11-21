@@ -2195,6 +2195,7 @@
 						</div>
 						<div
 							class="line"
+							v-bind:class="{ disabled: usePredeterminedBoosters }"
 							v-tooltip.left="{
 								popperClass: 'option-tooltip',
 								content: `Restrict card pool to Player Collections: <strong>${
