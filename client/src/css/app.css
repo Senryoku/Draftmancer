@@ -349,6 +349,21 @@ div:where(.swal2-container) .swal2-checkbox {
 	}
 }
 
+/* Personal Settings */
+
+.personal-settings {
+	display: flex;
+	gap: 0.75em;
+	align-items: center;
+	margin-right: 0.25em;
+}
+
+.personal-settings-icon {
+	min-width: 20px;
+	text-align: center;
+	user-select: none;
+}
+
 /* ** Session Options ** */
 
 .session-options-container {

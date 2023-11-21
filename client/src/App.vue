@@ -117,83 +117,89 @@
 					<font-awesome-icon icon="fa-solid fa-list"></font-awesome-icon> Game Logs
 				</button>
 			</div>
-			<span style="display: flex; gap: 0.75em; align-items: center; margin-right: 0.25em">
-				<div style="min-width: 20px; text-align: center" :class="{ faded: !fixedDeck, crossed: !fixedDeck }">
+			<span class="personal-settings">
+				<div
+					class="clickable personal-settings-icon"
+					:class="{ faded: !fixedDeck, crossed: !fixedDeck }"
+					@click="fixedDeck = !fixedDeck"
+					v-tooltip="{
+						content: `Deck always visible: <strong>${fixedDeck ? 'Enabled' : 'Disabled'}</strong>`,
+						html: true,
+					}"
+					tabindex="0"
+				>
 					<font-awesome-icon
 						icon="fa-solid fa-thumbtack"
-						class="clickable"
 						style="font-size: 1.2em; vertical-align: -20%"
-						@click="fixedDeck = !fixedDeck"
-						v-tooltip="{
-							content: `Deck always visible: <strong>${fixedDeck ? 'Enabled' : 'Disabled'}</strong>`,
-							html: true,
-						}"
 					></font-awesome-icon>
 				</div>
 				<div
-					style="min-width: 20px; text-align: center"
+					class="clickable personal-settings-icon"
 					:class="{ faded: !pickOnDblclick, crossed: !pickOnDblclick }"
+					@click="pickOnDblclick = !pickOnDblclick"
+					v-tooltip="{
+						content: `Pick cards by double clicking: <strong>${
+							pickOnDblclick ? 'Enabled' : 'Disabled'
+						}</strong>`,
+						html: true,
+					}"
+					tabindex="0"
 				>
 					<font-awesome-icon
 						icon="fa-solid fa-mouse-pointer"
-						class="clickable"
 						style="font-size: 1.2em; vertical-align: -20%"
-						@click="pickOnDblclick = !pickOnDblclick"
-						v-tooltip="{
-							content: `Pick cards by double clicking: <strong>${
-								pickOnDblclick ? 'Enabled' : 'Disabled'
-							}</strong>`,
-							html: true,
-						}"
 					></font-awesome-icon>
 				</div>
-				<div style="min-width: 20px">
-					<div
-						class="clickable"
-						style="width: 20px; margin-top: 5px"
-						:class="{ faded: !displayBotScores, crossed: !displayBotScores }"
-						@click="displayBotScores = !displayBotScores"
-						v-tooltip="{
-							content: `Display Bot Recommendations: <strong>${
-								displayBotScores ? 'Enabled' : 'Disabled'
-							}</strong><br /><small>Note: Bot recommendations can be disabled by the session owner.</small>`,
-							html: true,
-						}"
-						alt="Bot Recommendations Button"
-					>
+				<div
+					class="clickable personal-settings-icon"
+					:class="{ faded: !displayBotScores, crossed: !displayBotScores }"
+					@click="displayBotScores = !displayBotScores"
+					v-tooltip="{
+						content: `Display Bot Recommendations: <strong>${
+							displayBotScores ? 'Enabled' : 'Disabled'
+						}</strong><br /><small>Note: Bot recommendations can be disabled by the session owner.</small>`,
+						html: true,
+					}"
+					tabindex="0"
+				>
+					<div style="width: 20px; margin-top: 5px" alt="Bot Recommendations Button">
 						<img src="./assets/img/bot-score.svg" width="20" height="20" alt="Bot Recommendations Button" />
 					</div>
 				</div>
-				<div style="min-width: 20px">
+				<div
+					class="clickable personal-settings-icon"
+					:class="{ faded: !enableSound }"
+					@click="enableSound = !enableSound"
+					v-tooltip="{
+						content: `Sound: <strong>${enableSound ? 'Enabled' : 'Disabled'}</strong>`,
+						html: true,
+					}"
+					tabindex="0"
+				>
 					<font-awesome-icon
 						:icon="`fa-solid ${enableSound ? 'fa-volume-up' : 'fa-volume-mute'}`"
-						class="clickable"
-						:class="{ faded: !enableSound }"
-						@click="enableSound = !enableSound"
-						v-tooltip="{
-							content: `Sound: <strong>${enableSound ? 'Enabled' : 'Disabled'}</strong>`,
-							html: true,
-						}"
 					></font-awesome-icon>
 				</div>
-				<div style="min-width: 20px; text-align: center">
+				<div
+					class="clickable personal-settings-icon"
+					:class="{
+						faded: !enableNotifications,
+						'greyed-out': notificationPermission === 'denied',
+					}"
+					v-tooltip="{
+						content:
+							notificationPermission === 'denied'
+								? 'Notifications for this domain are blocked in your browser'
+								: `Desktop Notifications: <strong>${
+										enableNotifications ? 'Enabled' : 'Disabled'
+								  }</strong>`,
+						html: true,
+					}"
+					@click="toggleNotifications"
+					tabindex="0"
+				>
 					<font-awesome-icon
-						v-tooltip="{
-							content:
-								notificationPermission === 'denied'
-									? 'Notifications for this domain are blocked in your browser'
-									: `Desktop Notifications: <strong>${
-											enableNotifications ? 'Enabled' : 'Disabled'
-									  }</strong>`,
-							html: true,
-						}"
-						class="clickable"
-						:class="{
-							faded: !enableNotifications,
-							'greyed-out': notificationPermission === 'denied',
-						}"
 						:icon="`fa-solid ${enableNotifications ? 'fa-bell' : 'fa-bell-slash'}`"
-						@click="toggleNotifications"
 					></font-awesome-icon>
 				</div>
 			</span>
