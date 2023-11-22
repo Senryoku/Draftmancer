@@ -106,10 +106,19 @@ export function sendLog(type: string, session: Session) {
 					.catch((err) => console.error("Error sending logs to CubeArtisan: ", err.message));
 			}
 
-			if (LogStoreEndpoint && !InTesting && InProduction && players.length > 0) {
+			if (
+				LogStoreEndpoint &&
+				!InTesting &&
+				InProduction &&
+				players.length > 0 &&
+				!session.usePredeterminedBoosters
+			) {
 				const data = {
 					useCustomCardList: session.useCustomCardList,
 					setRestriction: session.draftLog.setRestriction,
+					boostersSets: session.draftLog.customBoosters.map((s) =>
+						s === "" ? session.draftLog?.setRestriction : s
+					),
 					players,
 				};
 				axios
