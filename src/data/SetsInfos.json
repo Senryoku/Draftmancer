@@ -2,6366 +2,3491 @@
     "10e": {
         "code": "10e",
         "fullName": "Tenth Edition",
-        "cardCount": 508,
-        "isPrimary": true,
         "block": "Core Set",
-        "icon": "img/sets/10e.svg",
-        "commonCount": 187,
-        "rareCount": 161,
-        "uncommonCount": 160
+        "icon": "img/sets/10e.svg"
     },
     "2ed": {
         "code": "2ed",
         "fullName": "Unlimited Edition",
-        "cardCount": 302,
-        "isPrimary": true,
         "block": "Core Set",
-        "icon": "img/sets/2ed.svg",
-        "commonCount": 90,
-        "rareCount": 117,
-        "uncommonCount": 95
+        "icon": "img/sets/2ed.svg"
     },
     "2x2": {
         "code": "2x2",
         "fullName": "Double Masters 2022",
-        "cardCount": 579,
-        "isPrimary": true,
-        "icon": "img/sets/2x2.svg",
-        "commonCount": 101,
-        "mythicCount": 105,
-        "rareCount": 272,
-        "uncommonCount": 101
+        "icon": "img/sets/2x2.svg"
     },
     "2xm": {
         "code": "2xm",
         "fullName": "Double Masters",
-        "cardCount": 384,
-        "isPrimary": true,
-        "icon": "img/sets/2xm.svg",
-        "commonCount": 101,
-        "mythicCount": 60,
-        "rareCount": 143,
-        "uncommonCount": 80
+        "icon": "img/sets/2xm.svg"
     },
     "30a": {
         "code": "30a",
         "fullName": "30th Anniversary Edition",
-        "cardCount": 594,
-        "isPrimary": false,
-        "icon": "img/sets/30a.svg",
-        "commonCount": 178,
-        "rareCount": 226,
-        "uncommonCount": 190
+        "icon": "img/sets/30a.svg"
     },
     "3ed": {
         "code": "3ed",
         "fullName": "Revised Edition",
-        "cardCount": 306,
-        "isPrimary": true,
         "block": "Core Set",
-        "icon": "img/sets/3ed.svg",
-        "commonCount": 90,
-        "rareCount": 121,
-        "uncommonCount": 95
+        "icon": "img/sets/3ed.svg"
     },
     "40k": {
         "code": "40k",
         "fullName": "Warhammer 40,000 Commander",
-        "cardCount": 617,
-        "isPrimary": false,
         "block": "Commander",
-        "icon": "img/sets/40k.svg",
-        "commonCount": 104,
-        "mythicCount": 26,
-        "rareCount": 341,
-        "uncommonCount": 146
+        "icon": "img/sets/40k.svg"
     },
     "4ed": {
         "code": "4ed",
         "fullName": "Fourth Edition",
-        "cardCount": 378,
-        "isPrimary": true,
         "block": "Core Set",
-        "icon": "img/sets/4ed.svg",
-        "commonCount": 136,
-        "rareCount": 121,
-        "uncommonCount": 121
+        "icon": "img/sets/4ed.svg"
     },
     "5dn": {
         "code": "5dn",
         "fullName": "Fifth Dawn",
-        "cardCount": 165,
-        "isPrimary": true,
         "block": "Mirrodin",
-        "icon": "img/sets/5dn.svg",
-        "commonCount": 55,
-        "rareCount": 55,
-        "uncommonCount": 55
+        "icon": "img/sets/5dn.svg"
     },
     "5ed": {
         "code": "5ed",
         "fullName": "Fifth Edition",
-        "cardCount": 454,
-        "isPrimary": true,
         "block": "Core Set",
-        "icon": "img/sets/5ed.svg",
-        "commonCount": 185,
-        "rareCount": 137,
-        "uncommonCount": 132
+        "icon": "img/sets/5ed.svg"
     },
     "6ed": {
         "code": "6ed",
         "fullName": "Classic Sixth Edition",
-        "cardCount": 350,
-        "isPrimary": true,
         "block": "Core Set",
-        "icon": "img/sets/6ed.svg",
-        "commonCount": 130,
-        "rareCount": 110,
-        "uncommonCount": 110
+        "icon": "img/sets/6ed.svg"
     },
     "7ed": {
         "code": "7ed",
         "fullName": "Seventh Edition",
-        "cardCount": 700,
-        "isPrimary": true,
         "block": "Core Set",
-        "icon": "img/sets/7ed.svg",
-        "commonCount": 260,
-        "rareCount": 220,
-        "uncommonCount": 220
+        "icon": "img/sets/7ed.svg"
     },
     "8ed": {
         "code": "8ed",
         "fullName": "Eighth Edition",
-        "cardCount": 707,
-        "isPrimary": true,
         "block": "Core Set",
-        "icon": "img/sets/8ed.svg",
-        "commonCount": 263,
-        "rareCount": 221,
-        "uncommonCount": 223
+        "icon": "img/sets/8ed.svg"
     },
     "9ed": {
         "code": "9ed",
         "fullName": "Ninth Edition",
-        "cardCount": 709,
-        "isPrimary": true,
         "block": "Core Set",
-        "icon": "img/sets/9ed.svg",
-        "commonCount": 266,
-        "rareCount": 221,
-        "uncommonCount": 222
+        "icon": "img/sets/9ed.svg"
     },
     "a25": {
         "code": "a25",
         "fullName": "Masters 25",
-        "cardCount": 249,
-        "isPrimary": true,
-        "icon": "img/sets/a25.svg",
-        "commonCount": 101,
-        "mythicCount": 15,
-        "rareCount": 53,
-        "uncommonCount": 80
+        "icon": "img/sets/a25.svg"
     },
     "aer": {
         "code": "aer",
         "fullName": "Aether Revolt",
-        "cardCount": 197,
-        "isPrimary": true,
         "block": "Kaladesh",
-        "icon": "img/sets/aer.svg",
-        "commonCount": 77,
-        "mythicCount": 14,
-        "rareCount": 44,
-        "uncommonCount": 62
+        "icon": "img/sets/aer.svg"
     },
     "afc": {
         "code": "afc",
         "fullName": "Forgotten Realms Commander",
-        "cardCount": 331,
-        "isPrimary": false,
         "block": "Commander",
-        "icon": "img/sets/afc.svg",
-        "commonCount": 33,
-        "mythicCount": 24,
-        "rareCount": 195,
-        "uncommonCount": 79
+        "icon": "img/sets/afc.svg"
     },
     "afr": {
         "code": "afr",
         "fullName": "Adventures in the Forgotten Realms",
-        "cardCount": 424,
-        "isPrimary": true,
-        "icon": "img/sets/afr.svg",
-        "commonCount": 146,
-        "mythicCount": 43,
-        "rareCount": 119,
-        "uncommonCount": 116
+        "icon": "img/sets/afr.svg"
     },
     "ajmp": {
         "code": "ajmp",
         "fullName": "Jumpstart Arena Exclusives",
-        "cardCount": 18,
-        "isPrimary": false,
-        "icon": "img/sets/ajmp.svg",
-        "commonCount": 4,
-        "rareCount": 7,
-        "uncommonCount": 7
+        "icon": "img/sets/ajmp.svg"
     },
     "akh": {
         "code": "akh",
         "fullName": "Amonkhet",
-        "cardCount": 287,
-        "isPrimary": true,
         "block": "Amonkhet",
-        "icon": "img/sets/akh.svg",
-        "commonCount": 133,
-        "mythicCount": 17,
-        "rareCount": 55,
-        "uncommonCount": 82
+        "icon": "img/sets/akh.svg"
     },
     "akr": {
         "code": "akr",
         "fullName": "Amonkhet Remastered",
-        "cardCount": 339,
-        "isPrimary": true,
-        "icon": "img/sets/akr.svg",
-        "commonCount": 143,
-        "mythicCount": 31,
-        "rareCount": 75,
-        "uncommonCount": 90
+        "icon": "img/sets/akr.svg"
     },
     "ala": {
         "code": "ala",
         "fullName": "Shards of Alara",
-        "cardCount": 250,
-        "isPrimary": true,
         "block": "Alara",
-        "icon": "img/sets/ala.svg",
-        "commonCount": 121,
-        "mythicCount": 16,
-        "rareCount": 53,
-        "uncommonCount": 60
+        "icon": "img/sets/ala.svg"
     },
     "all": {
         "code": "all",
         "fullName": "Alliances",
-        "cardCount": 199,
-        "isPrimary": true,
         "block": "Ice Age",
-        "icon": "img/sets/all.svg",
-        "commonCount": 110,
-        "rareCount": 46,
-        "uncommonCount": 43
+        "icon": "img/sets/all.svg"
     },
     "ana": {
         "code": "ana",
         "fullName": "Arena New Player Experience",
-        "cardCount": 40,
-        "isPrimary": false,
-        "icon": "img/sets/ana.svg",
-        "commonCount": 40
+        "icon": "img/sets/ana.svg"
     },
     "anb": {
         "code": "anb",
         "fullName": "Arena Beginner Set",
-        "cardCount": 120,
-        "isPrimary": false,
-        "icon": "img/sets/anb.svg",
-        "commonCount": 76,
-        "rareCount": 20,
-        "uncommonCount": 24
+        "icon": "img/sets/anb.svg"
     },
     "apc": {
         "code": "apc",
         "fullName": "Apocalypse",
-        "cardCount": 143,
-        "isPrimary": true,
         "block": "Invasion",
-        "icon": "img/sets/apc.svg",
-        "commonCount": 55,
-        "rareCount": 44,
-        "uncommonCount": 44
+        "icon": "img/sets/apc.svg"
     },
     "arb": {
         "code": "arb",
         "fullName": "Alara Reborn",
-        "cardCount": 145,
-        "isPrimary": true,
         "block": "Alara",
-        "icon": "img/sets/arb.svg",
-        "commonCount": 60,
-        "mythicCount": 10,
-        "rareCount": 35,
-        "uncommonCount": 40
+        "icon": "img/sets/arb.svg"
     },
     "arc": {
         "code": "arc",
         "fullName": "Archenemy",
-        "cardCount": 150,
-        "isPrimary": false,
-        "icon": "img/sets/arc.svg",
-        "commonCount": 67,
-        "rareCount": 32,
-        "uncommonCount": 51
+        "icon": "img/sets/arc.svg"
     },
     "arn": {
         "code": "arn",
         "fullName": "Arabian Nights",
-        "cardCount": 92,
-        "isPrimary": true,
-        "icon": "img/sets/arn.svg",
-        "commonCount": 41,
-        "rareCount": 33,
-        "uncommonCount": 18
+        "icon": "img/sets/arn.svg"
     },
     "ath": {
         "code": "ath",
         "fullName": "Anthologies",
-        "cardCount": 85,
-        "isPrimary": false,
-        "icon": "img/sets/ath.svg",
-        "commonCount": 51,
-        "rareCount": 9,
-        "uncommonCount": 25
+        "icon": "img/sets/ath.svg"
     },
     "atq": {
         "code": "atq",
         "fullName": "Antiquities",
-        "cardCount": 102,
-        "isPrimary": true,
-        "icon": "img/sets/atq.svg",
-        "commonCount": 31,
-        "rareCount": 26,
-        "uncommonCount": 45
+        "icon": "img/sets/atq.svg"
     },
     "avr": {
         "code": "avr",
         "fullName": "Avacyn Restored",
-        "cardCount": 244,
-        "isPrimary": true,
         "block": "Innistrad",
-        "icon": "img/sets/avr.svg",
-        "commonCount": 116,
-        "mythicCount": 15,
-        "rareCount": 53,
-        "uncommonCount": 60
+        "icon": "img/sets/avr.svg"
     },
     "bbd": {
         "code": "bbd",
         "fullName": "Battlebond",
-        "cardCount": 256,
-        "isPrimary": true,
-        "icon": "img/sets/bbd.svg",
-        "commonCount": 106,
-        "mythicCount": 17,
-        "rareCount": 53,
-        "uncommonCount": 80
+        "icon": "img/sets/bbd.svg"
     },
     "bfz": {
         "code": "bfz",
         "fullName": "Battle for Zendikar",
-        "cardCount": 299,
-        "isPrimary": true,
         "block": "Battle for Zendikar",
-        "icon": "img/sets/bfz.svg",
-        "commonCount": 151,
-        "mythicCount": 15,
-        "rareCount": 53,
-        "uncommonCount": 80
+        "icon": "img/sets/bfz.svg"
     },
     "bng": {
         "code": "bng",
         "fullName": "Born of the Gods",
-        "cardCount": 165,
-        "isPrimary": true,
         "block": "Theros",
-        "icon": "img/sets/bng.svg",
-        "commonCount": 60,
-        "mythicCount": 10,
-        "rareCount": 35,
-        "uncommonCount": 60
+        "icon": "img/sets/bng.svg"
     },
     "bok": {
         "code": "bok",
         "fullName": "Betrayers of Kamigawa",
-        "cardCount": 165,
-        "isPrimary": true,
         "block": "Kamigawa",
-        "icon": "img/sets/bok.svg",
-        "commonCount": 55,
-        "rareCount": 55,
-        "uncommonCount": 55
+        "icon": "img/sets/bok.svg"
     },
     "bot": {
         "code": "bot",
         "fullName": "Transformers",
-        "cardCount": 29,
-        "isPrimary": false,
-        "icon": "img/sets/bot.svg",
-        "mythicCount": 29
+        "icon": "img/sets/bot.svg"
     },
     "brb": {
         "code": "brb",
         "fullName": "Battle Royale Box Set",
-        "cardCount": 136,
-        "isPrimary": false,
-        "icon": "img/sets/brb.svg",
-        "commonCount": 96,
-        "rareCount": 8,
-        "uncommonCount": 32
+        "icon": "img/sets/brb.svg"
     },
     "brc": {
         "code": "brc",
         "fullName": "The Brothers' War Commander",
-        "cardCount": 209,
-        "isPrimary": false,
         "block": "Commander",
-        "icon": "img/sets/brc.svg",
-        "commonCount": 41,
-        "mythicCount": 25,
-        "rareCount": 107,
-        "uncommonCount": 36
+        "icon": "img/sets/brc.svg"
     },
     "bro": {
         "code": "bro",
         "fullName": "The Brothers' War",
-        "cardCount": 388,
-        "isPrimary": true,
-        "icon": "img/sets/bro.svg",
-        "commonCount": 121,
-        "mythicCount": 47,
-        "rareCount": 134,
-        "uncommonCount": 86
+        "icon": "img/sets/bro.svg"
     },
     "brr": {
         "code": "brr",
         "fullName": "The Brothers' War Retro Artifacts",
-        "cardCount": 189,
-        "isPrimary": false,
-        "icon": "img/sets/brr.svg",
-        "mythicCount": 45,
-        "rareCount": 90,
-        "uncommonCount": 54
+        "icon": "img/sets/brr.svg"
     },
     "btd": {
         "code": "btd",
         "fullName": "Beatdown Box Set",
-        "cardCount": 90,
-        "isPrimary": false,
-        "icon": "img/sets/btd.svg",
-        "commonCount": 66,
-        "rareCount": 10,
-        "uncommonCount": 14
+        "icon": "img/sets/btd.svg"
     },
     "c13": {
         "code": "c13",
         "fullName": "Commander 2013",
-        "cardCount": 356,
-        "isPrimary": false,
         "block": "Commander",
-        "icon": "img/sets/c13.svg",
-        "commonCount": 94,
-        "mythicCount": 19,
-        "rareCount": 114,
-        "uncommonCount": 129
+        "icon": "img/sets/c13.svg"
     },
     "c14": {
         "code": "c14",
         "fullName": "Commander 2014",
-        "cardCount": 337,
-        "isPrimary": false,
         "block": "Commander",
-        "icon": "img/sets/c14.svg",
-        "commonCount": 75,
-        "mythicCount": 22,
-        "rareCount": 153,
-        "uncommonCount": 87
+        "icon": "img/sets/c14.svg"
     },
     "c15": {
         "code": "c15",
         "fullName": "Commander 2015",
-        "cardCount": 342,
-        "isPrimary": false,
         "block": "Commander",
-        "icon": "img/sets/c15.svg",
-        "commonCount": 87,
-        "mythicCount": 20,
-        "rareCount": 135,
-        "uncommonCount": 100
+        "icon": "img/sets/c15.svg"
     },
     "c16": {
         "code": "c16",
         "fullName": "Commander 2016",
-        "cardCount": 351,
-        "isPrimary": false,
         "block": "Commander",
-        "icon": "img/sets/c16.svg",
-        "commonCount": 58,
-        "mythicCount": 31,
-        "rareCount": 169,
-        "uncommonCount": 93
+        "icon": "img/sets/c16.svg"
     },
     "c17": {
         "code": "c17",
         "fullName": "Commander 2017",
-        "cardCount": 309,
-        "isPrimary": false,
         "block": "Commander",
-        "icon": "img/sets/c17.svg",
-        "commonCount": 59,
-        "mythicCount": 24,
-        "rareCount": 134,
-        "uncommonCount": 92
+        "icon": "img/sets/c17.svg"
     },
     "c18": {
         "code": "c18",
         "fullName": "Commander 2018",
-        "cardCount": 307,
-        "isPrimary": false,
         "block": "Commander",
-        "icon": "img/sets/c18.svg",
-        "commonCount": 82,
-        "mythicCount": 20,
-        "rareCount": 118,
-        "uncommonCount": 87
+        "icon": "img/sets/c18.svg"
     },
     "c19": {
         "code": "c19",
         "fullName": "Commander 2019",
-        "cardCount": 302,
-        "isPrimary": false,
         "block": "Commander",
-        "icon": "img/sets/c19.svg",
-        "commonCount": 73,
-        "mythicCount": 34,
-        "rareCount": 119,
-        "uncommonCount": 76
+        "icon": "img/sets/c19.svg"
     },
     "c20": {
         "code": "c20",
         "fullName": "Commander 2020",
-        "cardCount": 322,
-        "isPrimary": false,
         "block": "Commander",
-        "icon": "img/sets/c20.svg",
-        "commonCount": 35,
-        "mythicCount": 38,
-        "rareCount": 166,
-        "uncommonCount": 83
+        "icon": "img/sets/c20.svg"
     },
     "c21": {
         "code": "c21",
         "fullName": "Commander 2021",
-        "cardCount": 409,
-        "isPrimary": false,
         "block": "Commander",
-        "icon": "img/sets/c21.svg",
-        "commonCount": 38,
-        "mythicCount": 40,
-        "rareCount": 254,
-        "uncommonCount": 77
+        "icon": "img/sets/c21.svg"
     },
     "cc1": {
         "code": "cc1",
         "fullName": "Commander Collection: Green",
-        "cardCount": 8,
-        "isPrimary": false,
-        "icon": "img/sets/cc1.svg",
-        "mythicCount": 2,
-        "rareCount": 6
+        "icon": "img/sets/cc1.svg"
     },
     "cc2": {
         "code": "cc2",
         "fullName": "Commander Collection: Black",
-        "cardCount": 8,
-        "isPrimary": false,
-        "icon": "img/sets/cc2.svg",
-        "mythicCount": 2,
-        "rareCount": 6
+        "icon": "img/sets/cc2.svg"
     },
     "ced": {
         "code": "ced",
         "fullName": "Collectors' Edition",
-        "cardCount": 302,
-        "isPrimary": false,
-        "icon": "img/sets/ced.svg",
-        "commonCount": 90,
-        "rareCount": 117,
-        "uncommonCount": 95
+        "icon": "img/sets/ced.svg"
     },
     "cei": {
         "code": "cei",
         "fullName": "Intl. Collectors' Edition",
-        "cardCount": 302,
-        "isPrimary": false,
-        "icon": "img/sets/cei.svg",
-        "commonCount": 90,
-        "rareCount": 117,
-        "uncommonCount": 95
+        "icon": "img/sets/cei.svg"
     },
     "chk": {
         "code": "chk",
         "fullName": "Champions of Kamigawa",
-        "cardCount": 307,
-        "isPrimary": true,
         "block": "Kamigawa",
-        "icon": "img/sets/chk.svg",
-        "commonCount": 130,
-        "rareCount": 88,
-        "uncommonCount": 89
+        "icon": "img/sets/chk.svg"
     },
     "chr": {
         "code": "chr",
         "fullName": "Chronicles",
-        "cardCount": 125,
-        "isPrimary": true,
-        "icon": "img/sets/chr.svg",
-        "commonCount": 37,
-        "rareCount": 45,
-        "uncommonCount": 43
+        "icon": "img/sets/chr.svg"
     },
     "clb": {
         "code": "clb",
         "fullName": "Commander Legends: Battle for Baldur's Gate",
-        "cardCount": 936,
-        "isPrimary": true,
-        "icon": "img/sets/clb.svg",
-        "commonCount": 201,
-        "mythicCount": 90,
-        "rareCount": 387,
-        "specialCount": 1,
-        "uncommonCount": 257
+        "icon": "img/sets/clb.svg"
     },
     "cm1": {
         "code": "cm1",
         "fullName": "Commander's Arsenal",
-        "cardCount": 18,
-        "isPrimary": false,
         "block": "Commander",
-        "icon": "img/sets/cm1.svg",
-        "commonCount": 2,
-        "mythicCount": 4,
-        "rareCount": 11,
-        "uncommonCount": 1
+        "icon": "img/sets/cm1.svg"
     },
     "cm2": {
         "code": "cm2",
         "fullName": "Commander Anthology Volume II",
-        "cardCount": 312,
-        "isPrimary": false,
         "block": "Commander",
-        "icon": "img/sets/cm2.svg",
-        "commonCount": 90,
-        "mythicCount": 19,
-        "rareCount": 111,
-        "uncommonCount": 92
+        "icon": "img/sets/cm2.svg"
     },
     "cma": {
         "code": "cma",
         "fullName": "Commander Anthology",
-        "cardCount": 320,
-        "isPrimary": false,
         "block": "Commander",
-        "icon": "img/sets/cma.svg",
-        "commonCount": 105,
-        "mythicCount": 15,
-        "rareCount": 92,
-        "uncommonCount": 108
+        "icon": "img/sets/cma.svg"
     },
     "cmb1": {
         "code": "cmb1",
         "fullName": "Mystery Booster Playtest Cards 2019",
-        "cardCount": 121,
-        "isPrimary": false,
-        "icon": "img/sets/cmb1.svg",
-        "rareCount": 121
+        "icon": "img/sets/cmb1.svg"
     },
     "cmb2": {
         "code": "cmb2",
         "fullName": "Mystery Booster Playtest Cards 2021",
-        "cardCount": 121,
-        "isPrimary": false,
-        "icon": "img/sets/cmb2.svg",
-        "rareCount": 121
+        "icon": "img/sets/cmb2.svg"
     },
     "cmd": {
         "code": "cmd",
         "fullName": "Commander 2011",
-        "cardCount": 318,
-        "isPrimary": false,
         "block": "Commander",
-        "icon": "img/sets/cmd.svg",
-        "commonCount": 97,
-        "mythicCount": 14,
-        "rareCount": 92,
-        "uncommonCount": 115
+        "icon": "img/sets/cmd.svg"
     },
     "cmm": {
         "code": "cmm",
         "fullName": "Commander Masters",
-        "cardCount": 1067,
-        "isPrimary": true,
-        "icon": "img/sets/cmm.svg",
-        "commonCount": 211,
-        "mythicCount": 144,
-        "rareCount": 475,
-        "specialCount": 1,
-        "uncommonCount": 236
+        "icon": "img/sets/cmm.svg"
     },
     "cmr": {
         "code": "cmr",
         "fullName": "Commander Legends",
-        "cardCount": 718,
-        "isPrimary": true,
-        "icon": "img/sets/cmr.svg",
-        "commonCount": 202,
-        "mythicCount": 81,
-        "rareCount": 199,
-        "specialCount": 2,
-        "uncommonCount": 234
+        "icon": "img/sets/cmr.svg"
     },
     "cn2": {
         "code": "cn2",
         "fullName": "Conspiracy: Take the Crown",
-        "cardCount": 222,
-        "isPrimary": true,
         "block": "Conspiracy",
-        "icon": "img/sets/cn2.svg",
-        "commonCount": 90,
-        "mythicCount": 15,
-        "rareCount": 50,
-        "uncommonCount": 67
+        "icon": "img/sets/cn2.svg"
     },
     "cns": {
         "code": "cns",
         "fullName": "Conspiracy",
-        "cardCount": 210,
-        "isPrimary": true,
         "block": "Conspiracy",
-        "icon": "img/sets/cns.svg",
-        "commonCount": 89,
-        "mythicCount": 10,
-        "rareCount": 43,
-        "uncommonCount": 68
+        "icon": "img/sets/cns.svg"
     },
     "con": {
         "code": "con",
         "fullName": "Conflux",
-        "cardCount": 145,
-        "isPrimary": true,
         "block": "Alara",
-        "icon": "img/sets/conf.svg",
-        "commonCount": 60,
-        "mythicCount": 10,
-        "rareCount": 35,
-        "uncommonCount": 40
+        "icon": "img/sets/conf.svg"
     },
     "cp1": {
         "code": "cp1",
         "fullName": "Magic 2015 Clash Pack",
-        "cardCount": 6,
-        "isPrimary": false,
-        "icon": "img/sets/cp1.svg",
-        "commonCount": 1,
-        "rareCount": 5
+        "icon": "img/sets/cp1.svg"
     },
     "cp2": {
         "code": "cp2",
         "fullName": "Fate Reforged Clash Pack",
-        "cardCount": 6,
-        "isPrimary": false,
         "block": "Khans of Tarkir",
-        "icon": "img/sets/cp2.svg",
-        "rareCount": 6
+        "icon": "img/sets/cp2.svg"
     },
     "cp3": {
         "code": "cp3",
         "fullName": "Magic Origins Clash Pack",
-        "cardCount": 6,
-        "isPrimary": false,
-        "icon": "img/sets/cp3.svg",
-        "rareCount": 3,
-        "uncommonCount": 3
+        "icon": "img/sets/cp3.svg"
     },
     "csp": {
         "code": "csp",
         "fullName": "Coldsnap",
-        "cardCount": 155,
-        "isPrimary": true,
         "block": "Ice Age",
-        "icon": "img/sets/csp.svg",
-        "commonCount": 60,
-        "rareCount": 40,
-        "uncommonCount": 55
+        "icon": "img/sets/csp.svg"
     },
     "cst": {
         "code": "cst",
         "fullName": "Coldsnap Theme Decks",
-        "cardCount": 62,
-        "isPrimary": false,
         "block": "Ice Age",
-        "icon": "img/sets/cst.svg",
-        "commonCount": 42,
-        "uncommonCount": 20
+        "icon": "img/sets/cst.svg"
     },
     "dbl": {
         "code": "dbl",
         "fullName": "Innistrad: Double Feature",
-        "cardCount": 535,
-        "isPrimary": true,
-        "icon": "img/sets/dbl.svg",
-        "commonCount": 200,
-        "mythicCount": 40,
-        "rareCount": 129,
-        "uncommonCount": 166
+        "icon": "img/sets/dbl.svg"
     },
     "dd1": {
         "code": "dd1",
         "fullName": "Duel Decks: Elves vs. Goblins",
-        "cardCount": 62,
-        "isPrimary": false,
-        "icon": "img/sets/dd1.svg",
-        "commonCount": 32,
-        "rareCount": 8,
-        "uncommonCount": 22
+        "icon": "img/sets/dd1.svg"
     },
     "dd2": {
         "code": "dd2",
         "fullName": "Duel Decks: Jace vs. Chandra",
-        "cardCount": 62,
-        "isPrimary": false,
-        "icon": "img/sets/dd2.svg",
-        "commonCount": 33,
-        "mythicCount": 2,
-        "rareCount": 6,
-        "uncommonCount": 21
+        "icon": "img/sets/dd2.svg"
     },
     "ddc": {
         "code": "ddc",
         "fullName": "Duel Decks: Divine vs. Demonic",
-        "cardCount": 62,
-        "isPrimary": false,
-        "icon": "img/sets/ddc.svg",
-        "commonCount": 28,
-        "mythicCount": 2,
-        "rareCount": 8,
-        "uncommonCount": 24
+        "icon": "img/sets/ddc.svg"
     },
     "ddd": {
         "code": "ddd",
         "fullName": "Duel Decks: Garruk vs. Liliana",
-        "cardCount": 63,
-        "isPrimary": false,
-        "icon": "img/sets/ddd.svg",
-        "commonCount": 36,
-        "mythicCount": 2,
-        "rareCount": 6,
-        "uncommonCount": 19
+        "icon": "img/sets/ddd.svg"
     },
     "dde": {
         "code": "dde",
         "fullName": "Duel Decks: Phyrexia vs. the Coalition",
-        "cardCount": 71,
-        "isPrimary": false,
-        "icon": "img/sets/dde.svg",
-        "commonCount": 30,
-        "mythicCount": 2,
-        "rareCount": 10,
-        "uncommonCount": 29
+        "icon": "img/sets/dde.svg"
     },
     "ddf": {
         "code": "ddf",
         "fullName": "Duel Decks: Elspeth vs. Tezzeret",
-        "cardCount": 79,
-        "isPrimary": false,
-        "icon": "img/sets/ddf.svg",
-        "commonCount": 38,
-        "mythicCount": 2,
-        "rareCount": 10,
-        "uncommonCount": 29
+        "icon": "img/sets/ddf.svg"
     },
     "ddg": {
         "code": "ddg",
         "fullName": "Duel Decks: Knights vs. Dragons",
-        "cardCount": 81,
-        "isPrimary": false,
-        "icon": "img/sets/ddg.svg",
-        "commonCount": 39,
-        "mythicCount": 2,
-        "rareCount": 10,
-        "uncommonCount": 30
+        "icon": "img/sets/ddg.svg"
     },
     "ddh": {
         "code": "ddh",
         "fullName": "Duel Decks: Ajani vs. Nicol Bolas",
-        "cardCount": 80,
-        "isPrimary": false,
-        "icon": "img/sets/ddh.svg",
-        "commonCount": 32,
-        "mythicCount": 2,
-        "rareCount": 10,
-        "uncommonCount": 36
+        "icon": "img/sets/ddh.svg"
     },
     "ddi": {
         "code": "ddi",
         "fullName": "Duel Decks: Venser vs. Koth",
-        "cardCount": 77,
-        "isPrimary": false,
-        "icon": "img/sets/ddi.svg",
-        "commonCount": 39,
-        "mythicCount": 2,
-        "rareCount": 10,
-        "uncommonCount": 26
+        "icon": "img/sets/ddi.svg"
     },
     "ddj": {
         "code": "ddj",
         "fullName": "Duel Decks: Izzet vs. Golgari",
-        "cardCount": 90,
-        "isPrimary": false,
-        "icon": "img/sets/ddj.svg",
-        "commonCount": 47,
-        "mythicCount": 2,
-        "rareCount": 10,
-        "uncommonCount": 31
+        "icon": "img/sets/ddj.svg"
     },
     "ddk": {
         "code": "ddk",
         "fullName": "Duel Decks: Sorin vs. Tibalt",
-        "cardCount": 80,
-        "isPrimary": false,
-        "icon": "img/sets/ddk.svg",
-        "commonCount": 38,
-        "mythicCount": 2,
-        "rareCount": 10,
-        "uncommonCount": 30
+        "icon": "img/sets/ddk.svg"
     },
     "ddl": {
         "code": "ddl",
         "fullName": "Duel Decks: Heroes vs. Monsters",
-        "cardCount": 81,
-        "isPrimary": false,
-        "icon": "img/sets/ddl.svg",
-        "commonCount": 42,
-        "mythicCount": 2,
-        "rareCount": 10,
-        "uncommonCount": 27
+        "icon": "img/sets/ddl.svg"
     },
     "ddm": {
         "code": "ddm",
         "fullName": "Duel Decks: Jace vs. Vraska",
-        "cardCount": 88,
-        "isPrimary": false,
-        "icon": "img/sets/ddm.svg",
-        "commonCount": 52,
-        "mythicCount": 2,
-        "rareCount": 10,
-        "uncommonCount": 24
+        "icon": "img/sets/ddm.svg"
     },
     "ddn": {
         "code": "ddn",
         "fullName": "Duel Decks: Speed vs. Cunning",
-        "cardCount": 81,
-        "isPrimary": false,
-        "icon": "img/sets/ddn.svg",
-        "commonCount": 46,
-        "mythicCount": 2,
-        "rareCount": 10,
-        "uncommonCount": 23
+        "icon": "img/sets/ddn.svg"
     },
     "ddo": {
         "code": "ddo",
         "fullName": "Duel Decks: Elspeth vs. Kiora",
-        "cardCount": 65,
-        "isPrimary": false,
-        "icon": "img/sets/ddo.svg",
-        "commonCount": 40,
-        "mythicCount": 2,
-        "rareCount": 10,
-        "uncommonCount": 13
+        "icon": "img/sets/ddo.svg"
     },
     "ddp": {
         "code": "ddp",
         "fullName": "Duel Decks: Zendikar vs. Eldrazi",
-        "cardCount": 75,
-        "isPrimary": false,
-        "icon": "img/sets/ddp.svg",
-        "commonCount": 42,
-        "mythicCount": 2,
-        "rareCount": 10,
-        "uncommonCount": 21
+        "icon": "img/sets/ddp.svg"
     },
     "ddq": {
         "code": "ddq",
         "fullName": "Duel Decks: Blessed vs. Cursed",
-        "cardCount": 76,
-        "isPrimary": false,
-        "icon": "img/sets/ddq.svg",
-        "commonCount": 39,
-        "mythicCount": 2,
-        "rareCount": 10,
-        "uncommonCount": 25
+        "icon": "img/sets/ddq.svg"
     },
     "ddr": {
         "code": "ddr",
         "fullName": "Duel Decks: Nissa vs. Ob Nixilis",
-        "cardCount": 70,
-        "isPrimary": false,
-        "icon": "img/sets/ddr.svg",
-        "commonCount": 42,
-        "mythicCount": 2,
-        "rareCount": 10,
-        "uncommonCount": 16
+        "icon": "img/sets/ddr.svg"
     },
     "dds": {
         "code": "dds",
         "fullName": "Duel Decks: Mind vs. Might",
-        "cardCount": 65,
-        "isPrimary": false,
-        "icon": "img/sets/dds.svg",
-        "commonCount": 32,
-        "mythicCount": 2,
-        "rareCount": 19,
-        "uncommonCount": 12
+        "icon": "img/sets/dds.svg"
     },
     "ddt": {
         "code": "ddt",
         "fullName": "Duel Decks: Merfolk vs. Goblins",
-        "cardCount": 63,
-        "isPrimary": false,
-        "icon": "img/sets/ddt.svg",
-        "commonCount": 25,
-        "mythicCount": 2,
-        "rareCount": 18,
-        "uncommonCount": 18
+        "icon": "img/sets/ddt.svg"
     },
     "ddu": {
         "code": "ddu",
         "fullName": "Duel Decks: Elves vs. Inventors",
-        "cardCount": 76,
-        "isPrimary": false,
-        "icon": "img/sets/ddu.svg",
-        "commonCount": 39,
-        "mythicCount": 2,
-        "rareCount": 16,
-        "uncommonCount": 19
+        "icon": "img/sets/ddu.svg"
     },
     "dgm": {
         "code": "dgm",
         "fullName": "Dragon's Maze",
-        "cardCount": 156,
-        "isPrimary": true,
         "block": "Return to Ravnica",
-        "icon": "img/sets/dgm.svg",
-        "commonCount": 70,
-        "mythicCount": 11,
-        "rareCount": 35,
-        "uncommonCount": 40
+        "icon": "img/sets/dgm.svg"
     },
     "dis": {
         "code": "dis",
         "fullName": "Dissension",
-        "cardCount": 180,
-        "isPrimary": true,
         "block": "Ravnica",
-        "icon": "img/sets/dis.svg",
-        "commonCount": 60,
-        "rareCount": 60,
-        "uncommonCount": 60
+        "icon": "img/sets/dis.svg"
     },
     "dka": {
         "code": "dka",
         "fullName": "Dark Ascension",
-        "cardCount": 158,
-        "isPrimary": true,
         "block": "Innistrad",
-        "icon": "img/sets/dka.svg",
-        "commonCount": 64,
-        "mythicCount": 12,
-        "rareCount": 38,
-        "uncommonCount": 44
+        "icon": "img/sets/dka.svg"
     },
     "dkm": {
         "code": "dkm",
         "fullName": "Deckmasters",
-        "cardCount": 58,
-        "isPrimary": false,
-        "icon": "img/sets/dkm.svg",
-        "commonCount": 35,
-        "rareCount": 8,
-        "uncommonCount": 15
+        "icon": "img/sets/dkm.svg"
     },
     "dmc": {
         "code": "dmc",
         "fullName": "Dominaria United Commander",
-        "cardCount": 240,
-        "isPrimary": false,
         "block": "Commander",
-        "icon": "img/sets/dmc.svg",
-        "commonCount": 21,
-        "mythicCount": 36,
-        "rareCount": 126,
-        "uncommonCount": 57
+        "icon": "img/sets/dmc.svg"
     },
     "dmr": {
         "code": "dmr",
         "fullName": "Dominaria Remastered",
-        "cardCount": 457,
-        "isPrimary": true,
-        "icon": "img/sets/dmr.svg",
-        "commonCount": 136,
-        "mythicCount": 57,
-        "rareCount": 144,
-        "uncommonCount": 120
+        "icon": "img/sets/dmr.svg"
     },
     "dmu": {
         "code": "dmu",
         "fullName": "Dominaria United",
-        "cardCount": 434,
-        "isPrimary": true,
-        "icon": "img/sets/dmu.svg",
-        "commonCount": 122,
-        "mythicCount": 47,
-        "rareCount": 141,
-        "uncommonCount": 124
+        "icon": "img/sets/dmu.svg"
     },
     "dom": {
         "code": "dom",
         "fullName": "Dominaria",
-        "cardCount": 281,
-        "isPrimary": true,
-        "icon": "img/sets/dom.svg",
-        "commonCount": 125,
-        "mythicCount": 18,
-        "rareCount": 56,
-        "uncommonCount": 82
+        "icon": "img/sets/dom.svg"
     },
     "dpa": {
         "code": "dpa",
         "fullName": "Duels of the Planeswalkers",
-        "cardCount": 113,
-        "isPrimary": false,
-        "icon": "img/sets/dpa.svg",
-        "commonCount": 55,
-        "rareCount": 25,
-        "uncommonCount": 33
+        "icon": "img/sets/dpa.svg"
     },
     "drb": {
         "code": "drb",
         "fullName": "From the Vault: Dragons",
-        "cardCount": 15,
-        "isPrimary": false,
-        "icon": "img/sets/drb.svg",
-        "rareCount": 15
+        "icon": "img/sets/drb.svg"
     },
     "drk": {
         "code": "drk",
         "fullName": "The Dark",
-        "cardCount": 122,
-        "isPrimary": true,
-        "icon": "img/sets/drk.svg",
-        "commonCount": 41,
-        "rareCount": 35,
-        "uncommonCount": 46
+        "icon": "img/sets/drk.svg"
     },
     "dst": {
         "code": "dst",
         "fullName": "Darksteel",
-        "cardCount": 165,
-        "isPrimary": true,
         "block": "Mirrodin",
-        "icon": "img/sets/dst.svg",
-        "commonCount": 55,
-        "rareCount": 55,
-        "uncommonCount": 55
+        "icon": "img/sets/dst.svg"
     },
     "dtk": {
         "code": "dtk",
         "fullName": "Dragons of Tarkir",
-        "cardCount": 264,
-        "isPrimary": true,
         "block": "Khans of Tarkir",
-        "icon": "img/sets/dtk.svg",
-        "commonCount": 116,
-        "mythicCount": 15,
-        "rareCount": 53,
-        "uncommonCount": 80
+        "icon": "img/sets/dtk.svg"
     },
     "dvd": {
         "code": "dvd",
         "fullName": "Duel Decks Anthology: Divine vs. Demonic",
-        "cardCount": 62,
-        "isPrimary": false,
-        "icon": "img/sets/dvd.svg",
-        "commonCount": 28,
-        "mythicCount": 2,
-        "rareCount": 6,
-        "uncommonCount": 26
+        "icon": "img/sets/dvd.svg"
     },
     "e01": {
         "code": "e01",
         "fullName": "Archenemy: Nicol Bolas",
-        "cardCount": 106,
-        "isPrimary": false,
-        "icon": "img/sets/e01.svg",
-        "commonCount": 40,
-        "mythicCount": 8,
-        "rareCount": 31,
-        "uncommonCount": 27
+        "icon": "img/sets/e01.svg"
     },
     "e02": {
         "code": "e02",
         "fullName": "Explorers of Ixalan",
-        "cardCount": 47,
-        "isPrimary": false,
-        "icon": "img/sets/e02.svg",
-        "commonCount": 11,
-        "mythicCount": 2,
-        "rareCount": 15,
-        "uncommonCount": 19
+        "icon": "img/sets/e02.svg"
     },
     "ea1": {
         "code": "ea1",
         "fullName": "Explorer Anthology 1",
-        "cardCount": 20,
-        "isPrimary": false,
-        "icon": "img/sets/ea1.svg",
-        "commonCount": 4,
-        "mythicCount": 1,
-        "rareCount": 9,
-        "uncommonCount": 6
+        "icon": "img/sets/ea1.svg"
     },
     "ea2": {
         "code": "ea2",
         "fullName": "Explorer Anthology 2",
-        "cardCount": 25,
-        "isPrimary": false,
-        "icon": "img/sets/ea2.svg",
-        "commonCount": 6,
-        "mythicCount": 4,
-        "rareCount": 10,
-        "uncommonCount": 5
+        "icon": "img/sets/ea2.svg"
     },
     "ea3": {
         "code": "ea3",
         "fullName": "Explorer Anthology 3",
-        "cardCount": 25,
-        "isPrimary": false,
-        "icon": "img/sets/ea3.svg",
-        "commonCount": 1,
-        "mythicCount": 4,
-        "rareCount": 12,
-        "uncommonCount": 8
+        "icon": "img/sets/ea3.svg"
     },
     "eld": {
         "code": "eld",
         "fullName": "Throne of Eldraine",
-        "cardCount": 399,
-        "isPrimary": true,
-        "icon": "img/sets/eld.svg",
-        "commonCount": 141,
-        "mythicCount": 37,
-        "rareCount": 124,
-        "uncommonCount": 97
+        "icon": "img/sets/eld.svg"
     },
     "ema": {
         "code": "ema",
         "fullName": "Eternal Masters",
-        "cardCount": 249,
-        "isPrimary": true,
-        "icon": "img/sets/ema.svg",
-        "commonCount": 101,
-        "mythicCount": 15,
-        "rareCount": 53,
-        "uncommonCount": 80
+        "icon": "img/sets/ema.svg"
     },
     "emn": {
         "code": "emn",
         "fullName": "Eldritch Moon",
-        "cardCount": 208,
-        "isPrimary": true,
         "block": "Shadows over Innistrad",
-        "icon": "img/sets/emn.svg",
-        "commonCount": 75,
-        "mythicCount": 15,
-        "rareCount": 48,
-        "uncommonCount": 70
+        "icon": "img/sets/emn.svg"
     },
     "eve": {
         "code": "eve",
         "fullName": "Eventide",
-        "cardCount": 180,
-        "isPrimary": true,
         "block": "Shadowmoor",
-        "icon": "img/sets/eve.svg",
-        "commonCount": 60,
-        "rareCount": 60,
-        "uncommonCount": 60
+        "icon": "img/sets/eve.svg"
     },
     "evg": {
         "code": "evg",
         "fullName": "Duel Decks Anthology: Elves vs. Goblins",
-        "cardCount": 62,
-        "isPrimary": false,
-        "icon": "img/sets/evg.svg",
-        "commonCount": 32,
-        "rareCount": 8,
-        "uncommonCount": 22
+        "icon": "img/sets/evg.svg"
     },
     "exo": {
         "code": "exo",
         "fullName": "Exodus",
-        "cardCount": 143,
-        "isPrimary": true,
         "block": "Tempest",
-        "icon": "img/sets/exo.svg",
-        "commonCount": 55,
-        "rareCount": 44,
-        "uncommonCount": 44
+        "icon": "img/sets/exo.svg"
     },
     "exp": {
         "code": "exp",
         "fullName": "Zendikar Expeditions",
-        "cardCount": 45,
-        "isPrimary": false,
         "block": "Battle for Zendikar",
-        "icon": "img/sets/exp.svg",
-        "mythicCount": 45
+        "icon": "img/sets/exp.svg"
     },
     "f01": {
         "code": "f01",
         "fullName": "Friday Night Magic 2001",
-        "cardCount": 7,
-        "isPrimary": false,
         "block": "Friday Night Magic",
-        "icon": "img/sets/f01.svg",
-        "rareCount": 7
+        "icon": "img/sets/f01.svg"
     },
     "f02": {
         "code": "f02",
         "fullName": "Friday Night Magic 2002",
-        "cardCount": 12,
-        "isPrimary": false,
         "block": "Friday Night Magic",
-        "icon": "img/sets/f02.svg",
-        "rareCount": 12
+        "icon": "img/sets/f02.svg"
     },
     "f03": {
         "code": "f03",
         "fullName": "Friday Night Magic 2003",
-        "cardCount": 13,
-        "isPrimary": false,
         "block": "Friday Night Magic",
-        "icon": "img/sets/f03.svg",
-        "rareCount": 13
+        "icon": "img/sets/f03.svg"
     },
     "f04": {
         "code": "f04",
         "fullName": "Friday Night Magic 2004",
-        "cardCount": 12,
-        "isPrimary": false,
         "block": "Friday Night Magic",
-        "icon": "img/sets/f04.svg",
-        "rareCount": 12
+        "icon": "img/sets/f04.svg"
     },
     "f05": {
         "code": "f05",
         "fullName": "Friday Night Magic 2005",
-        "cardCount": 12,
-        "isPrimary": false,
         "block": "Friday Night Magic",
-        "icon": "img/sets/f05.svg",
-        "rareCount": 12
+        "icon": "img/sets/f05.svg"
     },
     "f06": {
         "code": "f06",
         "fullName": "Friday Night Magic 2006",
-        "cardCount": 12,
-        "isPrimary": false,
         "block": "Friday Night Magic",
-        "icon": "img/sets/f06.svg",
-        "rareCount": 12
+        "icon": "img/sets/f06.svg"
     },
     "f07": {
         "code": "f07",
         "fullName": "Friday Night Magic 2007",
-        "cardCount": 12,
-        "isPrimary": false,
         "block": "Friday Night Magic",
-        "icon": "img/sets/f07.svg",
-        "rareCount": 12
+        "icon": "img/sets/f07.svg"
     },
     "f08": {
         "code": "f08",
         "fullName": "Friday Night Magic 2008",
-        "cardCount": 12,
-        "isPrimary": false,
         "block": "Friday Night Magic",
-        "icon": "img/sets/f08.svg",
-        "rareCount": 12
+        "icon": "img/sets/f08.svg"
     },
     "f09": {
         "code": "f09",
         "fullName": "Friday Night Magic 2009",
-        "cardCount": 12,
-        "isPrimary": false,
         "block": "Friday Night Magic",
-        "icon": "img/sets/f09.svg",
-        "rareCount": 12
+        "icon": "img/sets/f09.svg"
     },
     "f10": {
         "code": "f10",
         "fullName": "Friday Night Magic 2010",
-        "cardCount": 12,
-        "isPrimary": false,
         "block": "Friday Night Magic",
-        "icon": "img/sets/f10.svg",
-        "rareCount": 12
+        "icon": "img/sets/f10.svg"
     },
     "f11": {
         "code": "f11",
         "fullName": "Friday Night Magic 2011",
-        "cardCount": 12,
-        "isPrimary": false,
         "block": "Friday Night Magic",
-        "icon": "img/sets/f11.svg",
-        "rareCount": 12
+        "icon": "img/sets/f11.svg"
     },
     "f12": {
         "code": "f12",
         "fullName": "Friday Night Magic 2012",
-        "cardCount": 12,
-        "isPrimary": false,
         "block": "Friday Night Magic",
-        "icon": "img/sets/f12.svg",
-        "rareCount": 12
+        "icon": "img/sets/f12.svg"
     },
     "f13": {
         "code": "f13",
         "fullName": "Friday Night Magic 2013",
-        "cardCount": 12,
-        "isPrimary": false,
         "block": "Friday Night Magic",
-        "icon": "img/sets/f13.svg",
-        "rareCount": 12
+        "icon": "img/sets/f13.svg"
     },
     "f14": {
         "code": "f14",
         "fullName": "Friday Night Magic 2014",
-        "cardCount": 12,
-        "isPrimary": false,
         "block": "Friday Night Magic",
-        "icon": "img/sets/f14.svg",
-        "rareCount": 12
+        "icon": "img/sets/f14.svg"
     },
     "f15": {
         "code": "f15",
         "fullName": "Friday Night Magic 2015",
-        "cardCount": 12,
-        "isPrimary": false,
         "block": "Friday Night Magic",
-        "icon": "img/sets/f15.svg",
-        "rareCount": 12
+        "icon": "img/sets/f15.svg"
     },
     "f16": {
         "code": "f16",
         "fullName": "Friday Night Magic 2016",
-        "cardCount": 12,
-        "isPrimary": false,
         "block": "Friday Night Magic",
-        "icon": "img/sets/f16.svg",
-        "rareCount": 12
+        "icon": "img/sets/f16.svg"
     },
     "f17": {
         "code": "f17",
         "fullName": "Friday Night Magic 2017",
-        "cardCount": 9,
-        "isPrimary": false,
         "block": "Friday Night Magic",
-        "icon": "img/sets/f17.svg",
-        "rareCount": 9
+        "icon": "img/sets/f17.svg"
     },
     "fbro": {
         "code": "fbro",
         "fullName": "The Brothers' War Jumpstart Front Cards",
-        "cardCount": 5,
-        "isPrimary": false,
-        "icon": "img/sets/fbro.svg",
-        "commonCount": 5
+        "icon": "img/sets/fbro.svg"
     },
     "fdmu": {
         "code": "fdmu",
         "fullName": "Dominaria United Jumpstart Front Cards",
-        "cardCount": 10,
-        "isPrimary": false,
-        "icon": "img/sets/fdmu.svg",
-        "commonCount": 10
+        "icon": "img/sets/fdmu.svg"
     },
     "fem": {
         "code": "fem",
         "fullName": "Fallen Empires",
-        "cardCount": 187,
-        "isPrimary": true,
-        "icon": "img/sets/fem.svg",
-        "commonCount": 121,
-        "rareCount": 36,
-        "uncommonCount": 30
+        "icon": "img/sets/fem.svg"
     },
     "fj22": {
         "code": "fj22",
         "fullName": "Jumpstart 2022 Front Cards",
-        "cardCount": 46,
-        "isPrimary": false,
-        "icon": "img/sets/fj22.svg",
-        "commonCount": 20,
-        "mythicCount": 11,
-        "rareCount": 15
+        "icon": "img/sets/fj22.svg"
     },
     "fjmp": {
         "code": "fjmp",
         "fullName": "Jumpstart Front Cards",
-        "cardCount": 46,
-        "isPrimary": false,
-        "icon": "img/sets/fjmp.svg",
-        "commonCount": 20,
-        "mythicCount": 11,
-        "rareCount": 15
+        "icon": "img/sets/fjmp.svg"
     },
     "fltr": {
         "code": "fltr",
         "fullName": "Tales of Middle-earth Front Cards",
-        "cardCount": 10,
-        "isPrimary": false,
-        "icon": "img/sets/fltr.svg",
-        "commonCount": 10
+        "icon": "img/sets/fltr.svg"
     },
     "fmb1": {
         "code": "fmb1",
         "fullName": "Mystery Booster Retail Edition Foils",
-        "cardCount": 121,
-        "isPrimary": true,
-        "icon": "img/sets/fmb1.svg",
-        "commonCount": 22,
-        "mythicCount": 8,
-        "rareCount": 52,
-        "uncommonCount": 39
+        "icon": "img/sets/fmb1.svg"
     },
     "fmom": {
         "code": "fmom",
         "fullName": "March of the Machine Jumpstart Front Cards",
-        "cardCount": 5,
-        "isPrimary": false,
-        "icon": "img/sets/fmom.svg",
-        "commonCount": 5
+        "icon": "img/sets/fmom.svg"
     },
     "fnm": {
         "code": "fnm",
         "fullName": "Friday Night Magic 2000",
-        "cardCount": 11,
-        "isPrimary": false,
         "block": "Friday Night Magic",
-        "icon": "img/sets/fnm.svg",
-        "rareCount": 11
+        "icon": "img/sets/fnm.svg"
     },
     "fone": {
         "code": "fone",
         "fullName": "Phyrexia: All Will Be One Jumpstart Front Cards",
-        "cardCount": 5,
-        "isPrimary": false,
-        "icon": "img/sets/fone.svg",
-        "commonCount": 5
+        "icon": "img/sets/fone.svg"
     },
     "frf": {
         "code": "frf",
         "fullName": "Fate Reforged",
-        "cardCount": 191,
-        "isPrimary": true,
         "block": "Khans of Tarkir",
-        "icon": "img/sets/frf.svg",
-        "commonCount": 80,
-        "mythicCount": 10,
-        "rareCount": 41,
-        "uncommonCount": 60
+        "icon": "img/sets/frf.svg"
     },
     "fut": {
         "code": "fut",
         "fullName": "Future Sight",
-        "cardCount": 180,
-        "isPrimary": true,
         "block": "Time Spiral",
-        "icon": "img/sets/fut.svg",
-        "commonCount": 60,
-        "rareCount": 60,
-        "uncommonCount": 60
+        "icon": "img/sets/fut.svg"
     },
     "g00": {
         "code": "g00",
         "fullName": "Judge Gift Cards 2000",
-        "cardCount": 2,
-        "isPrimary": false,
         "block": "Judge Gift Cards",
-        "icon": "img/sets/g00.svg",
-        "rareCount": 2
+        "icon": "img/sets/g00.svg"
     },
     "g01": {
         "code": "g01",
         "fullName": "Judge Gift Cards 2001",
-        "cardCount": 2,
-        "isPrimary": false,
         "block": "Judge Gift Cards",
-        "icon": "img/sets/g01.svg",
-        "rareCount": 2
+        "icon": "img/sets/g01.svg"
     },
     "g02": {
         "code": "g02",
         "fullName": "Judge Gift Cards 2002",
-        "cardCount": 2,
-        "isPrimary": false,
         "block": "Judge Gift Cards",
-        "icon": "img/sets/g02.svg",
-        "rareCount": 2
+        "icon": "img/sets/g02.svg"
     },
     "g03": {
         "code": "g03",
         "fullName": "Judge Gift Cards 2003",
-        "cardCount": 3,
-        "isPrimary": false,
         "block": "Judge Gift Cards",
-        "icon": "img/sets/g03.svg",
-        "rareCount": 3
+        "icon": "img/sets/g03.svg"
     },
     "g04": {
         "code": "g04",
         "fullName": "Judge Gift Cards 2004",
-        "cardCount": 6,
-        "isPrimary": false,
         "block": "Judge Gift Cards",
-        "icon": "img/sets/g04.svg",
-        "rareCount": 6
+        "icon": "img/sets/g04.svg"
     },
     "g05": {
         "code": "g05",
         "fullName": "Judge Gift Cards 2005",
-        "cardCount": 4,
-        "isPrimary": false,
         "block": "Judge Gift Cards",
-        "icon": "img/sets/g05.svg",
-        "rareCount": 4
+        "icon": "img/sets/g05.svg"
     },
     "g06": {
         "code": "g06",
         "fullName": "Judge Gift Cards 2006",
-        "cardCount": 4,
-        "isPrimary": false,
         "block": "Judge Gift Cards",
-        "icon": "img/sets/g06.svg",
-        "rareCount": 4
+        "icon": "img/sets/g06.svg"
     },
     "g07": {
         "code": "g07",
         "fullName": "Judge Gift Cards 2007",
-        "cardCount": 5,
-        "isPrimary": false,
         "block": "Judge Gift Cards",
-        "icon": "img/sets/g07.svg",
-        "rareCount": 5
+        "icon": "img/sets/g07.svg"
     },
     "g08": {
         "code": "g08",
         "fullName": "Judge Gift Cards 2008",
-        "cardCount": 5,
-        "isPrimary": false,
         "block": "Judge Gift Cards",
-        "icon": "img/sets/g08.svg",
-        "rareCount": 5
+        "icon": "img/sets/g08.svg"
     },
     "g09": {
         "code": "g09",
         "fullName": "Judge Gift Cards 2009",
-        "cardCount": 10,
-        "isPrimary": false,
         "block": "Judge Gift Cards",
-        "icon": "img/sets/g09.svg",
-        "rareCount": 10
+        "icon": "img/sets/g09.svg"
     },
     "g10": {
         "code": "g10",
         "fullName": "Judge Gift Cards 2010",
-        "cardCount": 8,
-        "isPrimary": false,
         "block": "Judge Gift Cards",
-        "icon": "img/sets/g10.svg",
-        "rareCount": 8
+        "icon": "img/sets/g10.svg"
     },
     "g11": {
         "code": "g11",
         "fullName": "Judge Gift Cards 2011",
-        "cardCount": 8,
-        "isPrimary": false,
         "block": "Judge Gift Cards",
-        "icon": "img/sets/g11.svg",
-        "rareCount": 8
+        "icon": "img/sets/g11.svg"
     },
     "g17": {
         "code": "g17",
         "fullName": "2017 Gift Pack",
-        "cardCount": 5,
-        "isPrimary": false,
-        "icon": "img/sets/g17.svg",
-        "rareCount": 5
+        "icon": "img/sets/g17.svg"
     },
     "g18": {
         "code": "g18",
         "fullName": "M19 Gift Pack",
-        "cardCount": 5,
-        "isPrimary": false,
-        "icon": "img/sets/g18.svg",
-        "rareCount": 5
+        "icon": "img/sets/g18.svg"
     },
     "g99": {
         "code": "g99",
         "fullName": "Judge Gift Cards 1999",
-        "cardCount": 1,
-        "isPrimary": false,
         "block": "Judge Gift Cards",
-        "icon": "img/sets/g99.svg",
-        "rareCount": 1
+        "icon": "img/sets/g99.svg"
     },
     "gdy": {
         "code": "gdy",
         "fullName": "Game Day Promos",
-        "cardCount": 9,
-        "isPrimary": false,
-        "icon": "img/sets/gdy.svg",
-        "mythicCount": 3,
-        "rareCount": 6
+        "icon": "img/sets/gdy.svg"
     },
     "gk1": {
         "code": "gk1",
         "fullName": "GRN Guild Kit",
-        "cardCount": 127,
-        "isPrimary": false,
-        "icon": "img/sets/gk1.svg",
-        "commonCount": 36,
-        "mythicCount": 6,
-        "rareCount": 44,
-        "uncommonCount": 41
+        "icon": "img/sets/gk1.svg"
     },
     "gk2": {
         "code": "gk2",
         "fullName": "RNA Guild Kit",
-        "cardCount": 133,
-        "isPrimary": false,
-        "icon": "img/sets/gk2.svg",
-        "commonCount": 29,
-        "mythicCount": 9,
-        "rareCount": 46,
-        "uncommonCount": 49
+        "icon": "img/sets/gk2.svg"
     },
     "gn2": {
         "code": "gn2",
         "fullName": "Game Night 2019",
-        "cardCount": 64,
-        "isPrimary": false,
-        "icon": "img/sets/gn2.svg",
-        "commonCount": 32,
-        "mythicCount": 5,
-        "rareCount": 10,
-        "uncommonCount": 17
+        "icon": "img/sets/gn2.svg"
     },
     "gn3": {
         "code": "gn3",
         "fullName": "Game Night: Free-for-All",
-        "cardCount": 135,
-        "isPrimary": false,
-        "icon": "img/sets/gn3.svg",
-        "commonCount": 55,
-        "mythicCount": 5,
-        "rareCount": 27,
-        "uncommonCount": 48
+        "icon": "img/sets/gn3.svg"
     },
     "gnt": {
         "code": "gnt",
         "fullName": "Game Night",
-        "cardCount": 68,
-        "isPrimary": false,
-        "icon": "img/sets/gnt.svg",
-        "commonCount": 28,
-        "mythicCount": 5,
-        "rareCount": 10,
-        "uncommonCount": 25
+        "icon": "img/sets/gnt.svg"
     },
     "gpt": {
         "code": "gpt",
         "fullName": "Guildpact",
-        "cardCount": 167,
-        "isPrimary": true,
         "block": "Ravnica",
-        "icon": "img/sets/gpt.svg",
-        "commonCount": 55,
-        "rareCount": 55,
-        "uncommonCount": 57
+        "icon": "img/sets/gpt.svg"
     },
     "grn": {
         "code": "grn",
         "fullName": "Guilds of Ravnica",
-        "cardCount": 273,
-        "isPrimary": true,
         "block": "Guilds of Ravnica",
-        "icon": "img/sets/grn.svg",
-        "commonCount": 118,
-        "mythicCount": 18,
-        "rareCount": 55,
-        "uncommonCount": 82
+        "icon": "img/sets/grn.svg"
     },
     "gs1": {
         "code": "gs1",
         "fullName": "Global Series Jiang Yanggu & Mu Yanling",
-        "cardCount": 40,
-        "isPrimary": false,
-        "icon": "img/sets/gs1.svg",
-        "commonCount": 29,
-        "mythicCount": 2,
-        "rareCount": 4,
-        "uncommonCount": 5
+        "icon": "img/sets/gs1.svg"
     },
     "gtc": {
         "code": "gtc",
         "fullName": "Gatecrash",
-        "cardCount": 249,
-        "isPrimary": true,
         "block": "Return to Ravnica",
-        "icon": "img/sets/gtc.svg",
-        "commonCount": 101,
-        "mythicCount": 15,
-        "rareCount": 53,
-        "uncommonCount": 80
+        "icon": "img/sets/gtc.svg"
     },
     "gvl": {
         "code": "gvl",
         "fullName": "Duel Decks Anthology: Garruk vs. Liliana",
-        "cardCount": 63,
-        "isPrimary": false,
-        "icon": "img/sets/gvl.svg",
-        "commonCount": 36,
-        "mythicCount": 2,
-        "rareCount": 6,
-        "uncommonCount": 19
+        "icon": "img/sets/gvl.svg"
     },
     "h09": {
         "code": "h09",
         "fullName": "Premium Deck Series: Slivers",
-        "cardCount": 41,
-        "isPrimary": false,
-        "icon": "img/sets/h09.svg",
-        "commonCount": 20,
-        "mythicCount": 1,
-        "rareCount": 5,
-        "uncommonCount": 15
+        "icon": "img/sets/h09.svg"
     },
     "h17": {
         "code": "h17",
         "fullName": "HasCon 2017",
-        "cardCount": 3,
-        "isPrimary": false,
-        "icon": "img/sets/h17.svg",
-        "mythicCount": 3
+        "icon": "img/sets/h17.svg"
     },
     "h1r": {
         "code": "h1r",
         "fullName": "Modern Horizons 1 Timeshifts",
-        "cardCount": 40,
-        "isPrimary": true,
-        "icon": "img/sets/h1r.svg",
-        "mythicCount": 5,
-        "rareCount": 12,
-        "uncommonCount": 23
+        "icon": "img/sets/h1r.svg"
     },
     "ha1": {
         "code": "ha1",
         "fullName": "Historic Anthology 1",
-        "cardCount": 20,
-        "isPrimary": false,
-        "icon": "img/sets/ha1.svg",
-        "commonCount": 7,
-        "rareCount": 9,
-        "uncommonCount": 4
+        "icon": "img/sets/ha1.svg"
     },
     "ha2": {
         "code": "ha2",
         "fullName": "Historic Anthology 2",
-        "cardCount": 25,
-        "isPrimary": false,
-        "icon": "img/sets/ha2.svg",
-        "commonCount": 7,
-        "mythicCount": 2,
-        "rareCount": 10,
-        "uncommonCount": 6
+        "icon": "img/sets/ha2.svg"
     },
     "ha3": {
         "code": "ha3",
         "fullName": "Historic Anthology 3",
-        "cardCount": 27,
-        "isPrimary": false,
-        "icon": "img/sets/ha3.svg",
-        "commonCount": 4,
-        "mythicCount": 4,
-        "rareCount": 8,
-        "uncommonCount": 11
+        "icon": "img/sets/ha3.svg"
     },
     "ha4": {
         "code": "ha4",
         "fullName": "Historic Anthology 4",
-        "cardCount": 25,
-        "isPrimary": false,
-        "icon": "img/sets/ha4.svg",
-        "commonCount": 6,
-        "mythicCount": 2,
-        "rareCount": 10,
-        "uncommonCount": 7
+        "icon": "img/sets/ha4.svg"
     },
     "ha5": {
         "code": "ha5",
         "fullName": "Historic Anthology 5",
-        "cardCount": 25,
-        "isPrimary": false,
-        "icon": "img/sets/ha5.svg",
-        "commonCount": 9,
-        "mythicCount": 5,
-        "rareCount": 7,
-        "uncommonCount": 4
+        "icon": "img/sets/ha5.svg"
     },
     "ha6": {
         "code": "ha6",
         "fullName": "Historic Anthology 6",
-        "cardCount": 20,
-        "isPrimary": false,
-        "icon": "img/sets/ha6.svg",
-        "commonCount": 10,
-        "mythicCount": 3,
-        "rareCount": 7
+        "icon": "img/sets/ha6.svg"
     },
     "ha7": {
         "code": "ha7",
         "fullName": "Historic Anthology 7",
-        "cardCount": 25,
-        "isPrimary": false,
-        "icon": "img/sets/ha7.svg",
-        "commonCount": 6,
-        "mythicCount": 6,
-        "rareCount": 9,
-        "uncommonCount": 4
+        "icon": "img/sets/ha7.svg"
     },
     "hbg": {
         "code": "hbg",
         "fullName": "Alchemy Horizons: Baldur's Gate",
-        "cardCount": 436,
-        "isPrimary": true,
         "block": "Alchemy 2022",
-        "icon": "img/sets/hbg.svg",
-        "commonCount": 143,
-        "mythicCount": 36,
-        "rareCount": 106,
-        "uncommonCount": 151
+        "icon": "img/sets/hbg.svg"
     },
     "hho": {
         "code": "hho",
         "fullName": "Happy Holidays",
-        "cardCount": 20,
-        "isPrimary": false,
-        "icon": "img/sets/hho.svg",
-        "mythicCount": 10,
-        "rareCount": 10
+        "icon": "img/sets/hho.svg"
     },
     "hml": {
         "code": "hml",
         "fullName": "Homelands",
-        "cardCount": 140,
-        "isPrimary": true,
-        "icon": "img/sets/hml.svg",
-        "commonCount": 71,
-        "rareCount": 42,
-        "uncommonCount": 27
+        "icon": "img/sets/hml.svg"
     },
     "hop": {
         "code": "hop",
         "fullName": "Planechase",
-        "cardCount": 169,
-        "isPrimary": false,
-        "icon": "img/sets/hop.svg",
-        "commonCount": 88,
-        "rareCount": 32,
-        "uncommonCount": 49
+        "icon": "img/sets/hop.svg"
     },
     "hou": {
         "code": "hou",
         "fullName": "Hour of Devastation",
-        "cardCount": 209,
-        "isPrimary": true,
         "block": "Amonkhet",
-        "icon": "img/sets/hou.svg",
-        "commonCount": 89,
-        "mythicCount": 14,
-        "rareCount": 44,
-        "uncommonCount": 62
+        "icon": "img/sets/hou.svg"
     },
     "ice": {
         "code": "ice",
         "fullName": "Ice Age",
-        "cardCount": 383,
-        "isPrimary": true,
         "block": "Ice Age",
-        "icon": "img/sets/ice.svg",
-        "commonCount": 141,
-        "rareCount": 121,
-        "uncommonCount": 121
+        "icon": "img/sets/ice.svg"
     },
     "iko": {
         "code": "iko",
         "fullName": "Ikoria: Lair of Behemoths",
-        "cardCount": 387,
-        "isPrimary": true,
-        "icon": "img/sets/iko.svg",
-        "commonCount": 132,
-        "mythicCount": 39,
-        "rareCount": 111,
-        "uncommonCount": 105
+        "icon": "img/sets/iko.svg"
     },
     "ima": {
         "code": "ima",
         "fullName": "Iconic Masters",
-        "cardCount": 249,
-        "isPrimary": true,
-        "icon": "img/sets/ima.svg",
-        "commonCount": 101,
-        "mythicCount": 15,
-        "rareCount": 53,
-        "uncommonCount": 80
+        "icon": "img/sets/ima.svg"
     },
     "inv": {
         "code": "inv",
         "fullName": "Invasion",
-        "cardCount": 352,
-        "isPrimary": true,
         "block": "Invasion",
-        "icon": "img/sets/inv.svg",
-        "commonCount": 132,
-        "rareCount": 110,
-        "uncommonCount": 110
+        "icon": "img/sets/inv.svg"
     },
     "isd": {
         "code": "isd",
         "fullName": "Innistrad",
-        "cardCount": 264,
-        "isPrimary": true,
         "block": "Innistrad",
-        "icon": "img/sets/isd.svg",
-        "commonCount": 122,
-        "mythicCount": 16,
-        "rareCount": 59,
-        "uncommonCount": 67
+        "icon": "img/sets/isd.svg"
     },
     "itp": {
         "code": "itp",
         "fullName": "Introductory Two-Player Set",
-        "cardCount": 67,
-        "isPrimary": false,
-        "icon": "img/sets/itp.svg",
-        "commonCount": 45,
-        "rareCount": 6,
-        "uncommonCount": 16
+        "icon": "img/sets/itp.svg"
     },
     "j12": {
         "code": "j12",
         "fullName": "Judge Gift Cards 2012",
-        "cardCount": 8,
-        "isPrimary": false,
         "block": "Judge Gift Cards",
-        "icon": "img/sets/j12.svg",
-        "rareCount": 8
+        "icon": "img/sets/j12.svg"
     },
     "j13": {
         "code": "j13",
         "fullName": "Judge Gift Cards 2013",
-        "cardCount": 8,
-        "isPrimary": false,
         "block": "Judge Gift Cards",
-        "icon": "img/sets/j13.svg",
-        "rareCount": 8
+        "icon": "img/sets/j13.svg"
     },
     "j14": {
         "code": "j14",
         "fullName": "Judge Gift Cards 2014",
-        "cardCount": 13,
-        "isPrimary": false,
         "block": "Judge Gift Cards",
-        "icon": "img/sets/j14.svg",
-        "mythicCount": 1,
-        "rareCount": 12
+        "icon": "img/sets/j14.svg"
     },
     "j15": {
         "code": "j15",
         "fullName": "Judge Gift Cards 2015",
-        "cardCount": 8,
-        "isPrimary": false,
         "block": "Judge Gift Cards",
-        "icon": "img/sets/j15.svg",
-        "mythicCount": 1,
-        "rareCount": 7
+        "icon": "img/sets/j15.svg"
     },
     "j16": {
         "code": "j16",
         "fullName": "Judge Gift Cards 2016",
-        "cardCount": 8,
-        "isPrimary": false,
         "block": "Judge Gift Cards",
-        "icon": "img/sets/j16.svg",
-        "rareCount": 8
+        "icon": "img/sets/j16.svg"
     },
     "j17": {
         "code": "j17",
         "fullName": "Judge Gift Cards 2017",
-        "cardCount": 9,
-        "isPrimary": false,
         "block": "Judge Gift Cards",
-        "icon": "img/sets/j17.svg",
-        "mythicCount": 2,
-        "rareCount": 7
+        "icon": "img/sets/j17.svg"
     },
     "j18": {
         "code": "j18",
         "fullName": "Judge Gift Cards 2018",
-        "cardCount": 8,
-        "isPrimary": false,
         "block": "Judge Gift Cards",
-        "icon": "img/sets/j18.svg",
-        "rareCount": 8
+        "icon": "img/sets/j18.svg"
     },
     "j19": {
         "code": "j19",
         "fullName": "Judge Gift Cards 2019",
-        "cardCount": 8,
-        "isPrimary": false,
         "block": "Judge Gift Cards",
-        "icon": "img/sets/j19.svg",
-        "mythicCount": 5,
-        "rareCount": 3
+        "icon": "img/sets/j19.svg"
     },
     "j20": {
         "code": "j20",
         "fullName": "Judge Gift Cards 2020",
-        "cardCount": 10,
-        "isPrimary": false,
         "block": "Judge Gift Cards",
-        "icon": "img/sets/j20.svg",
-        "rareCount": 10
+        "icon": "img/sets/j20.svg"
     },
     "j21": {
         "code": "j21",
         "fullName": "Jumpstart: Historic Horizons",
-        "cardCount": 389,
-        "isPrimary": true,
-        "icon": "img/sets/j21.svg",
-        "commonCount": 191,
-        "mythicCount": 13,
-        "rareCount": 59,
-        "uncommonCount": 126
+        "icon": "img/sets/j21.svg"
     },
     "j22": {
         "code": "j22",
         "fullName": "Jumpstart 2022",
-        "cardCount": 835,
-        "isPrimary": true,
-        "icon": "img/sets/j22.svg",
-        "commonCount": 422,
-        "mythicCount": 33,
-        "rareCount": 118,
-        "uncommonCount": 262
+        "icon": "img/sets/j22.svg"
     },
     "jgp": {
         "code": "jgp",
         "fullName": "Judge Gift Cards 1998",
-        "cardCount": 3,
-        "isPrimary": false,
         "block": "Judge Gift Cards",
-        "icon": "img/sets/jgp.svg",
-        "rareCount": 3
+        "icon": "img/sets/jgp.svg"
     },
     "jmp": {
         "code": "jmp",
         "fullName": "Jumpstart",
-        "cardCount": 496,
-        "isPrimary": true,
-        "icon": "img/sets/jmp.svg",
-        "commonCount": 235,
-        "mythicCount": 17,
-        "rareCount": 88,
-        "uncommonCount": 156
+        "icon": "img/sets/jmp.svg"
     },
     "jou": {
         "code": "jou",
         "fullName": "Journey into Nyx",
-        "cardCount": 165,
-        "isPrimary": true,
         "block": "Theros",
-        "icon": "img/sets/jou.svg",
-        "commonCount": 60,
-        "mythicCount": 10,
-        "rareCount": 35,
-        "uncommonCount": 60
+        "icon": "img/sets/jou.svg"
     },
     "jud": {
         "code": "jud",
         "fullName": "Judgment",
-        "cardCount": 143,
-        "isPrimary": true,
         "block": "Odyssey",
-        "icon": "img/sets/jud.svg",
-        "commonCount": 55,
-        "rareCount": 44,
-        "uncommonCount": 44
+        "icon": "img/sets/jud.svg"
     },
     "jvc": {
         "code": "jvc",
         "fullName": "Duel Decks Anthology: Jace vs. Chandra",
-        "cardCount": 62,
-        "isPrimary": false,
-        "icon": "img/sets/jvc.svg",
-        "commonCount": 33,
-        "mythicCount": 2,
-        "rareCount": 6,
-        "uncommonCount": 21
+        "icon": "img/sets/jvc.svg"
     },
     "khc": {
         "code": "khc",
         "fullName": "Kaldheim Commander",
-        "cardCount": 119,
-        "isPrimary": false,
         "block": "Commander",
-        "icon": "img/sets/khc.svg",
-        "commonCount": 26,
-        "mythicCount": 6,
-        "rareCount": 37,
-        "uncommonCount": 50
+        "icon": "img/sets/khc.svg"
     },
     "khm": {
         "code": "khm",
         "fullName": "Kaldheim",
-        "cardCount": 426,
-        "isPrimary": true,
-        "icon": "img/sets/khm.svg",
-        "commonCount": 130,
-        "mythicCount": 47,
-        "rareCount": 130,
-        "uncommonCount": 119
+        "icon": "img/sets/khm.svg"
     },
     "kld": {
         "code": "kld",
         "fullName": "Kaladesh",
-        "cardCount": 278,
-        "isPrimary": true,
         "block": "Kaladesh",
-        "icon": "img/sets/kld.svg",
-        "commonCount": 122,
-        "mythicCount": 17,
-        "rareCount": 55,
-        "uncommonCount": 84
+        "icon": "img/sets/kld.svg"
     },
     "klr": {
         "code": "klr",
         "fullName": "Kaladesh Remastered",
-        "cardCount": 302,
-        "isPrimary": true,
-        "icon": "img/sets/klr.svg",
-        "commonCount": 119,
-        "mythicCount": 23,
-        "rareCount": 63,
-        "uncommonCount": 97
+        "icon": "img/sets/klr.svg"
     },
     "ktk": {
         "code": "ktk",
         "fullName": "Khans of Tarkir",
-        "cardCount": 269,
-        "isPrimary": true,
         "block": "Khans of Tarkir",
-        "icon": "img/sets/ktk.svg",
-        "commonCount": 121,
-        "mythicCount": 15,
-        "rareCount": 53,
-        "uncommonCount": 80
+        "icon": "img/sets/ktk.svg"
     },
     "lcc": {
         "code": "lcc",
         "fullName": "The Lost Caverns of Ixalan Commander",
-        "cardCount": 370,
-        "isPrimary": false,
-        "icon": "img/sets/lcc.svg",
-        "commonCount": 33,
-        "mythicCount": 51,
-        "rareCount": 209,
-        "uncommonCount": 77
+        "icon": "img/sets/lcc.svg"
     },
     "lci": {
         "code": "lci",
         "fullName": "The Lost Caverns of Ixalan",
-        "cardCount": 415,
-        "isPrimary": true,
-        "icon": "img/sets/lci.svg",
-        "commonCount": 123,
-        "mythicCount": 51,
-        "rareCount": 130,
-        "uncommonCount": 111
+        "icon": "img/sets/lci.svg"
     },
     "lea": {
         "code": "lea",
         "fullName": "Limited Edition Alpha",
-        "cardCount": 295,
-        "isPrimary": true,
         "block": "Core Set",
-        "icon": "img/sets/lea.svg",
-        "commonCount": 84,
-        "rareCount": 116,
-        "uncommonCount": 95
+        "icon": "img/sets/lea.svg"
     },
     "leb": {
         "code": "leb",
         "fullName": "Limited Edition Beta",
-        "cardCount": 302,
-        "isPrimary": true,
         "block": "Core Set",
-        "icon": "img/sets/leb.svg",
-        "commonCount": 90,
-        "rareCount": 117,
-        "uncommonCount": 95
+        "icon": "img/sets/leb.svg"
     },
     "leg": {
         "code": "leg",
         "fullName": "Legends",
-        "cardCount": 310,
-        "isPrimary": true,
-        "icon": "img/sets/leg.svg",
-        "commonCount": 75,
-        "rareCount": 121,
-        "uncommonCount": 114
+        "icon": "img/sets/leg.svg"
     },
     "lgn": {
         "code": "lgn",
         "fullName": "Legions",
-        "cardCount": 145,
-        "isPrimary": true,
         "block": "Onslaught",
-        "icon": "img/sets/lgn.svg",
-        "commonCount": 55,
-        "rareCount": 45,
-        "uncommonCount": 45
+        "icon": "img/sets/lgn.svg"
     },
     "lrw": {
         "code": "lrw",
         "fullName": "Lorwyn",
-        "cardCount": 301,
-        "isPrimary": true,
         "block": "Lorwyn",
-        "icon": "img/sets/lrw.svg",
-        "commonCount": 141,
-        "rareCount": 80,
-        "uncommonCount": 80
+        "icon": "img/sets/lrw.svg"
     },
     "ltc": {
         "code": "ltc",
         "fullName": "Tales of Middle-earth Commander",
-        "cardCount": 562,
-        "isPrimary": false,
         "block": "Commander",
-        "icon": "img/sets/ltc.svg",
-        "commonCount": 38,
-        "mythicCount": 111,
-        "rareCount": 359,
-        "uncommonCount": 54
+        "icon": "img/sets/ltc.svg"
     },
     "ltr": {
         "code": "ltr",
         "fullName": "The Lord of the Rings: Tales of Middle-earth",
-        "cardCount": 836,
-        "isPrimary": true,
-        "icon": "img/sets/ltr.svg",
-        "commonCount": 243,
-        "mythicCount": 110,
-        "rareCount": 273,
-        "uncommonCount": 210
+        "icon": "img/sets/ltr.svg"
     },
     "m10": {
         "code": "m10",
         "fullName": "Magic 2010",
-        "cardCount": 249,
-        "isPrimary": true,
         "block": "Core Set",
-        "icon": "img/sets/m10.svg",
-        "commonCount": 121,
-        "mythicCount": 15,
-        "rareCount": 53,
-        "uncommonCount": 60
+        "icon": "img/sets/m10.svg"
     },
     "m11": {
         "code": "m11",
         "fullName": "Magic 2011",
-        "cardCount": 249,
-        "isPrimary": true,
         "block": "Core Set",
-        "icon": "img/sets/m11.svg",
-        "commonCount": 121,
-        "mythicCount": 15,
-        "rareCount": 53,
-        "uncommonCount": 60
+        "icon": "img/sets/m11.svg"
     },
     "m12": {
         "code": "m12",
         "fullName": "Magic 2012",
-        "cardCount": 249,
-        "isPrimary": true,
         "block": "Core Set",
-        "icon": "img/sets/m12.svg",
-        "commonCount": 121,
-        "mythicCount": 15,
-        "rareCount": 53,
-        "uncommonCount": 60
+        "icon": "img/sets/m12.svg"
     },
     "m13": {
         "code": "m13",
         "fullName": "Magic 2013",
-        "cardCount": 249,
-        "isPrimary": true,
         "block": "Core Set",
-        "icon": "img/sets/m13.svg",
-        "commonCount": 121,
-        "mythicCount": 15,
-        "rareCount": 53,
-        "uncommonCount": 60
+        "icon": "img/sets/m13.svg"
     },
     "m14": {
         "code": "m14",
         "fullName": "Magic 2014",
-        "cardCount": 249,
-        "isPrimary": true,
         "block": "Core Set",
-        "icon": "img/sets/m14.svg",
-        "commonCount": 121,
-        "mythicCount": 15,
-        "rareCount": 53,
-        "uncommonCount": 60
+        "icon": "img/sets/m14.svg"
     },
     "m15": {
         "code": "m15",
         "fullName": "Magic 2015",
-        "cardCount": 284,
-        "isPrimary": true,
         "block": "Core Set",
-        "icon": "img/sets/m15.svg",
-        "commonCount": 127,
-        "mythicCount": 15,
-        "rareCount": 58,
-        "uncommonCount": 84
+        "icon": "img/sets/m15.svg"
     },
     "m19": {
         "code": "m19",
         "fullName": "Core Set 2019",
-        "cardCount": 314,
-        "isPrimary": true,
         "block": "Core Set",
-        "icon": "img/sets/m19.svg",
-        "commonCount": 143,
-        "mythicCount": 22,
-        "rareCount": 63,
-        "uncommonCount": 86
+        "icon": "img/sets/m19.svg"
     },
     "m20": {
         "code": "m20",
         "fullName": "Core Set 2020",
-        "cardCount": 345,
-        "isPrimary": true,
         "block": "Core Set",
-        "icon": "img/sets/m20.svg",
-        "commonCount": 172,
-        "mythicCount": 21,
-        "rareCount": 65,
-        "uncommonCount": 87
+        "icon": "img/sets/m20.svg"
     },
     "m21": {
         "code": "m21",
         "fullName": "Core Set 2021",
-        "cardCount": 397,
-        "isPrimary": true,
         "block": "Core Set",
-        "icon": "img/sets/m21.svg",
-        "commonCount": 143,
-        "mythicCount": 48,
-        "rareCount": 113,
-        "uncommonCount": 93
+        "icon": "img/sets/m21.svg"
     },
     "mat": {
         "code": "mat",
         "fullName": "March of the Machine: The Aftermath",
-        "cardCount": 230,
-        "isPrimary": true,
-        "icon": "img/sets/mat.svg",
-        "mythicCount": 48,
-        "rareCount": 123,
-        "uncommonCount": 59
+        "icon": "img/sets/mat.svg"
     },
     "mb1": {
         "code": "mb1",
         "fullName": "Mystery Booster",
-        "cardCount": 1697,
-        "isPrimary": true,
-        "icon": "img/sets/mb1.svg",
-        "commonCount": 1060,
-        "mythicCount": 30,
-        "rareCount": 154,
-        "uncommonCount": 453
+        "icon": "img/sets/mb1.svg"
     },
     "mbs": {
         "code": "mbs",
         "fullName": "Mirrodin Besieged",
-        "cardCount": 155,
-        "isPrimary": true,
         "block": "Scars of Mirrodin",
-        "icon": "img/sets/mbs.svg",
-        "commonCount": 70,
-        "mythicCount": 10,
-        "rareCount": 35,
-        "uncommonCount": 40
+        "icon": "img/sets/mbs.svg"
     },
     "md1": {
         "code": "md1",
         "fullName": "Modern Event Deck 2014",
-        "cardCount": 26,
-        "isPrimary": false,
-        "icon": "img/sets/md1.svg",
-        "commonCount": 5,
-        "mythicCount": 2,
-        "rareCount": 7,
-        "uncommonCount": 12
+        "icon": "img/sets/md1.svg"
     },
     "me1": {
         "code": "me1",
         "fullName": "Masters Edition",
-        "cardCount": 195,
-        "isPrimary": true,
-        "icon": "img/sets/me1.svg",
-        "commonCount": 75,
-        "rareCount": 60,
-        "uncommonCount": 60
+        "icon": "img/sets/me1.svg"
     },
     "me2": {
         "code": "me2",
         "fullName": "Masters Edition II",
-        "cardCount": 245,
-        "isPrimary": true,
-        "icon": "img/sets/me2.svg",
-        "commonCount": 85,
-        "rareCount": 80,
-        "uncommonCount": 80
+        "icon": "img/sets/me2.svg"
     },
     "me3": {
         "code": "me3",
         "fullName": "Masters Edition III",
-        "cardCount": 230,
-        "isPrimary": true,
-        "icon": "img/sets/me3.svg",
-        "commonCount": 90,
-        "rareCount": 70,
-        "uncommonCount": 70
+        "icon": "img/sets/me3.svg"
     },
     "me4": {
         "code": "me4",
         "fullName": "Masters Edition IV",
-        "cardCount": 269,
-        "isPrimary": true,
-        "icon": "img/sets/me4.svg",
-        "commonCount": 92,
-        "rareCount": 105,
-        "uncommonCount": 72
+        "icon": "img/sets/me4.svg"
     },
     "med": {
         "code": "med",
         "fullName": "Mythic Edition",
-        "cardCount": 24,
-        "isPrimary": false,
-        "icon": "img/sets/med.svg",
-        "mythicCount": 24
+        "icon": "img/sets/med.svg"
     },
     "mgb": {
         "code": "mgb",
         "fullName": "Multiverse Gift Box",
-        "cardCount": 10,
-        "isPrimary": false,
-        "icon": "img/sets/mgb.svg",
-        "rareCount": 10
+        "icon": "img/sets/mgb.svg"
     },
     "mh1": {
         "code": "mh1",
         "fullName": "Modern Horizons",
-        "cardCount": 255,
-        "isPrimary": true,
-        "icon": "img/sets/mh1.svg",
-        "commonCount": 106,
-        "mythicCount": 15,
-        "rareCount": 54,
-        "uncommonCount": 80
+        "icon": "img/sets/mh1.svg"
     },
     "mh2": {
         "code": "mh2",
         "fullName": "Modern Horizons 2",
-        "cardCount": 494,
-        "isPrimary": true,
-        "icon": "img/sets/mh2.svg",
-        "commonCount": 135,
-        "mythicCount": 59,
-        "rareCount": 174,
-        "uncommonCount": 126
+        "icon": "img/sets/mh2.svg"
     },
     "mic": {
         "code": "mic",
         "fullName": "Midnight Hunt Commander",
-        "cardCount": 187,
-        "isPrimary": false,
         "block": "Commander",
-        "icon": "img/sets/mic.svg",
-        "commonCount": 15,
-        "mythicCount": 21,
-        "rareCount": 114,
-        "uncommonCount": 37
+        "icon": "img/sets/mic.svg"
     },
     "mid": {
         "code": "mid",
         "fullName": "Innistrad: Midnight Hunt",
-        "cardCount": 400,
-        "isPrimary": true,
         "block": "Innistrad: Double Feature",
-        "icon": "img/sets/mid.svg",
-        "commonCount": 126,
-        "mythicCount": 43,
-        "rareCount": 132,
-        "uncommonCount": 99
+        "icon": "img/sets/mid.svg"
     },
     "mir": {
         "code": "mir",
         "fullName": "Mirage",
-        "cardCount": 351,
-        "isPrimary": true,
         "block": "Mirage",
-        "icon": "img/sets/mir.svg",
-        "commonCount": 130,
-        "rareCount": 110,
-        "uncommonCount": 111
+        "icon": "img/sets/mir.svg"
     },
     "mm2": {
         "code": "mm2",
         "fullName": "Modern Masters 2015",
-        "cardCount": 249,
-        "isPrimary": true,
-        "icon": "img/sets/mm2.svg",
-        "commonCount": 101,
-        "mythicCount": 15,
-        "rareCount": 53,
-        "uncommonCount": 80
+        "icon": "img/sets/mm2.svg"
     },
     "mm3": {
         "code": "mm3",
         "fullName": "Modern Masters 2017",
-        "cardCount": 249,
-        "isPrimary": true,
-        "icon": "img/sets/mm3.svg",
-        "commonCount": 101,
-        "mythicCount": 15,
-        "rareCount": 53,
-        "uncommonCount": 80
+        "icon": "img/sets/mm3.svg"
     },
     "mma": {
         "code": "mma",
         "fullName": "Modern Masters",
-        "cardCount": 229,
-        "isPrimary": true,
-        "icon": "img/sets/mma.svg",
-        "commonCount": 101,
-        "mythicCount": 15,
-        "rareCount": 53,
-        "uncommonCount": 60
+        "icon": "img/sets/mma.svg"
     },
     "mmq": {
         "code": "mmq",
         "fullName": "Mercadian Masques",
-        "cardCount": 350,
-        "isPrimary": true,
         "block": "Masques",
-        "icon": "img/sets/mmq.svg",
-        "commonCount": 130,
-        "rareCount": 110,
-        "uncommonCount": 110
+        "icon": "img/sets/mmq.svg"
     },
     "moc": {
         "code": "moc",
         "fullName": "March of the Machine Commander",
-        "cardCount": 400,
-        "isPrimary": false,
         "block": "Commander",
-        "icon": "img/sets/moc.svg",
-        "commonCount": 44,
-        "mythicCount": 50,
-        "rareCount": 217,
-        "uncommonCount": 89
+        "icon": "img/sets/moc.svg"
     },
     "mom": {
         "code": "mom",
         "fullName": "March of the Machine",
-        "cardCount": 387,
-        "isPrimary": true,
-        "icon": "img/sets/mom.svg",
-        "commonCount": 136,
-        "mythicCount": 40,
-        "rareCount": 121,
-        "uncommonCount": 90
+        "icon": "img/sets/mom.svg"
     },
     "mor": {
         "code": "mor",
         "fullName": "Morningtide",
-        "cardCount": 150,
-        "isPrimary": true,
         "block": "Lorwyn",
-        "icon": "img/sets/mor.svg",
-        "commonCount": 60,
-        "rareCount": 50,
-        "uncommonCount": 40
+        "icon": "img/sets/mor.svg"
     },
     "mp2": {
         "code": "mp2",
         "fullName": "Amonkhet Invocations",
-        "cardCount": 54,
-        "isPrimary": false,
         "block": "Amonkhet",
-        "icon": "img/sets/mp2.svg",
-        "specialCount": 54
+        "icon": "img/sets/mp2.svg"
     },
     "mpr": {
         "code": "mpr",
         "fullName": "Magic Player Rewards 2001",
-        "cardCount": 1,
-        "isPrimary": false,
         "block": "Magic Player Rewards",
-        "icon": "img/sets/mpr.svg",
-        "rareCount": 1
+        "icon": "img/sets/mpr.svg"
     },
     "mps": {
         "code": "mps",
         "fullName": "Kaladesh Inventions",
-        "cardCount": 54,
-        "isPrimary": false,
         "block": "Kaladesh",
-        "icon": "img/sets/mps.svg",
-        "specialCount": 54
+        "icon": "img/sets/mps.svg"
     },
     "mrd": {
         "code": "mrd",
         "fullName": "Mirrodin",
-        "cardCount": 306,
-        "isPrimary": true,
         "block": "Mirrodin",
-        "icon": "img/sets/mrd.svg",
-        "commonCount": 130,
-        "rareCount": 88,
-        "uncommonCount": 88
+        "icon": "img/sets/mrd.svg"
     },
     "mul": {
         "code": "mul",
         "fullName": "Multiverse Legends",
-        "cardCount": 260,
-        "isPrimary": false,
-        "icon": "img/sets/mul.svg",
-        "mythicCount": 60,
-        "rareCount": 120,
-        "uncommonCount": 80
+        "icon": "img/sets/mul.svg"
     },
     "ncc": {
         "code": "ncc",
         "fullName": "New Capenna Commander",
-        "cardCount": 447,
-        "isPrimary": false,
         "block": "Commander",
-        "icon": "img/sets/ncc.svg",
-        "commonCount": 35,
-        "mythicCount": 50,
-        "rareCount": 304,
-        "uncommonCount": 58
+        "icon": "img/sets/ncc.svg"
     },
     "nec": {
         "code": "nec",
         "fullName": "Neon Dynasty Commander",
-        "cardCount": 179,
-        "isPrimary": false,
         "block": "Commander",
-        "icon": "img/sets/nec.svg",
-        "commonCount": 14,
-        "mythicCount": 20,
-        "rareCount": 115,
-        "uncommonCount": 30
+        "icon": "img/sets/nec.svg"
     },
     "nem": {
         "code": "nem",
         "fullName": "Nemesis",
-        "cardCount": 143,
-        "isPrimary": true,
         "block": "Masques",
-        "icon": "img/sets/nem.svg",
-        "commonCount": 55,
-        "rareCount": 44,
-        "uncommonCount": 44
+        "icon": "img/sets/nem.svg"
     },
     "neo": {
         "code": "neo",
         "fullName": "Kamigawa: Neon Dynasty",
-        "cardCount": 531,
-        "isPrimary": true,
-        "icon": "img/sets/neo.svg",
-        "commonCount": 161,
-        "mythicCount": 67,
-        "rareCount": 189,
-        "uncommonCount": 114
+        "icon": "img/sets/neo.svg"
     },
     "nph": {
         "code": "nph",
         "fullName": "New Phyrexia",
-        "cardCount": 175,
-        "isPrimary": true,
         "block": "Scars of Mirrodin",
-        "icon": "img/sets/nph.svg",
-        "commonCount": 70,
-        "mythicCount": 10,
-        "rareCount": 35,
-        "uncommonCount": 60
+        "icon": "img/sets/nph.svg"
     },
     "oafc": {
         "code": "oafc",
         "fullName": "Forgotten Realms Commander Display Commanders",
-        "cardCount": 4,
-        "isPrimary": false,
-        "icon": "img/sets/oafc.svg",
-        "mythicCount": 4
+        "icon": "img/sets/oafc.svg"
     },
     "oana": {
         "code": "oana",
         "fullName": "Arena New Player Experience Cards",
-        "cardCount": 14,
-        "isPrimary": false,
-        "icon": "img/sets/oana.svg",
-        "commonCount": 10,
-        "rareCount": 1,
-        "uncommonCount": 3
+        "icon": "img/sets/oana.svg"
     },
     "oc21": {
         "code": "oc21",
         "fullName": "Commander 2021 Display Commanders",
-        "cardCount": 5,
-        "isPrimary": false,
-        "icon": "img/sets/oc21.svg",
-        "mythicCount": 5
+        "icon": "img/sets/oc21.svg"
     },
     "ody": {
         "code": "ody",
         "fullName": "Odyssey",
-        "cardCount": 352,
-        "isPrimary": true,
         "block": "Odyssey",
-        "icon": "img/sets/ody.svg",
-        "commonCount": 132,
-        "rareCount": 110,
-        "uncommonCount": 110
+        "icon": "img/sets/ody.svg"
     },
     "ogw": {
         "code": "ogw",
         "fullName": "Oath of the Gatewatch",
-        "cardCount": 187,
-        "isPrimary": true,
         "block": "Battle for Zendikar",
-        "icon": "img/sets/ogw.svg",
-        "commonCount": 72,
-        "mythicCount": 12,
-        "rareCount": 43,
-        "uncommonCount": 60
+        "icon": "img/sets/ogw.svg"
     },
     "omic": {
         "code": "omic",
         "fullName": "Midnight Hunt Commander Display Commanders",
-        "cardCount": 2,
-        "isPrimary": false,
         "block": "Commander",
-        "icon": "img/sets/omic.svg",
-        "mythicCount": 2
+        "icon": "img/sets/omic.svg"
     },
     "onc": {
         "code": "onc",
         "fullName": "Phyrexia: All Will Be One Commander",
-        "cardCount": 174,
-        "isPrimary": false,
         "block": "Commander",
-        "icon": "img/sets/onc.svg",
-        "commonCount": 10,
-        "mythicCount": 17,
-        "rareCount": 96,
-        "uncommonCount": 51
+        "icon": "img/sets/onc.svg"
     },
     "one": {
         "code": "one",
         "fullName": "Phyrexia: All Will Be One",
-        "cardCount": 479,
-        "isPrimary": true,
-        "icon": "img/sets/one.svg",
-        "commonCount": 133,
-        "mythicCount": 88,
-        "rareCount": 159,
-        "uncommonCount": 99
+        "icon": "img/sets/one.svg"
     },
     "ons": {
         "code": "ons",
         "fullName": "Onslaught",
-        "cardCount": 351,
-        "isPrimary": true,
         "block": "Onslaught",
-        "icon": "img/sets/ons.svg",
-        "commonCount": 130,
-        "rareCount": 110,
-        "uncommonCount": 111
+        "icon": "img/sets/ons.svg"
     },
     "ori": {
         "code": "ori",
         "fullName": "Magic Origins",
-        "cardCount": 288,
-        "isPrimary": true,
         "block": "Core Set",
-        "icon": "img/sets/ori.svg",
-        "commonCount": 128,
-        "mythicCount": 16,
-        "rareCount": 60,
-        "uncommonCount": 84
+        "icon": "img/sets/ori.svg"
     },
     "ovoc": {
         "code": "ovoc",
         "fullName": "Crimson Vow Commander Display Commanders",
-        "cardCount": 2,
-        "isPrimary": false,
         "block": "Innistrad: Double Feature",
-        "icon": "img/sets/ovoc.svg",
-        "mythicCount": 2
+        "icon": "img/sets/ovoc.svg"
     },
     "p02": {
         "code": "p02",
         "fullName": "Portal Second Age",
-        "cardCount": 165,
-        "isPrimary": false,
-        "icon": "img/sets/p02.svg",
-        "commonCount": 85,
-        "rareCount": 35,
-        "uncommonCount": 45
+        "icon": "img/sets/p02.svg"
     },
     "p03": {
         "code": "p03",
         "fullName": "Magic Player Rewards 2003",
-        "cardCount": 1,
-        "isPrimary": false,
         "block": "Magic Player Rewards",
-        "icon": "img/sets/p03.svg",
-        "rareCount": 1
+        "icon": "img/sets/p03.svg"
     },
     "p04": {
         "code": "p04",
         "fullName": "Magic Player Rewards 2004",
-        "cardCount": 1,
-        "isPrimary": false,
         "block": "Magic Player Rewards",
-        "icon": "img/sets/p04.svg",
-        "rareCount": 1
+        "icon": "img/sets/p04.svg"
     },
     "p05": {
         "code": "p05",
         "fullName": "Magic Player Rewards 2005",
-        "cardCount": 6,
-        "isPrimary": false,
         "block": "Magic Player Rewards",
-        "icon": "img/sets/p05.svg",
-        "rareCount": 6
+        "icon": "img/sets/p05.svg"
     },
     "p06": {
         "code": "p06",
         "fullName": "Magic Player Rewards 2006",
-        "cardCount": 7,
-        "isPrimary": false,
         "block": "Magic Player Rewards",
-        "icon": "img/sets/p06.svg",
-        "rareCount": 7
+        "icon": "img/sets/p06.svg"
     },
     "p07": {
         "code": "p07",
         "fullName": "Magic Player Rewards 2007",
-        "cardCount": 7,
-        "isPrimary": false,
         "block": "Magic Player Rewards",
-        "icon": "img/sets/p07.svg",
-        "rareCount": 7
+        "icon": "img/sets/p07.svg"
     },
     "p08": {
         "code": "p08",
         "fullName": "Magic Player Rewards 2008",
-        "cardCount": 7,
-        "isPrimary": false,
         "block": "Magic Player Rewards",
-        "icon": "img/sets/p08.svg",
-        "rareCount": 7
+        "icon": "img/sets/p08.svg"
     },
     "p09": {
         "code": "p09",
         "fullName": "Magic Player Rewards 2009",
-        "cardCount": 9,
-        "isPrimary": false,
         "block": "Magic Player Rewards",
-        "icon": "img/sets/p09.svg",
-        "rareCount": 9
+        "icon": "img/sets/p09.svg"
     },
     "p10": {
         "code": "p10",
         "fullName": "Magic Player Rewards 2010",
-        "cardCount": 9,
-        "isPrimary": false,
         "block": "Magic Player Rewards",
-        "icon": "img/sets/p10.svg",
-        "rareCount": 9
+        "icon": "img/sets/p10.svg"
     },
     "p10e": {
         "code": "p10e",
         "fullName": "Tenth Edition Promos",
-        "cardCount": 3,
-        "isPrimary": false,
-        "icon": "img/sets/p10e.svg",
-        "rareCount": 3
+        "icon": "img/sets/p10e.svg"
     },
     "p11": {
         "code": "p11",
         "fullName": "Magic Player Rewards 2011",
-        "cardCount": 5,
-        "isPrimary": false,
         "block": "Magic Player Rewards",
-        "icon": "img/sets/p11.svg",
-        "rareCount": 5
+        "icon": "img/sets/p11.svg"
     },
     "p15a": {
         "code": "p15a",
         "fullName": "15th Anniversary Cards",
-        "cardCount": 2,
-        "isPrimary": false,
-        "icon": "img/sets/p15a.svg",
-        "rareCount": 2
+        "icon": "img/sets/p15a.svg"
     },
     "p22": {
         "code": "p22",
         "fullName": "Judge Gift Cards 2022",
-        "cardCount": 10,
-        "isPrimary": false,
         "block": "Judge Gift Cards",
-        "icon": "img/sets/p22.svg",
-        "rareCount": 10
+        "icon": "img/sets/p22.svg"
     },
     "p23": {
         "code": "p23",
         "fullName": "Judge Gift Cards 2023",
-        "cardCount": 10,
-        "isPrimary": false,
         "block": "Judge Gift Cards",
-        "icon": "img/sets/p23.svg",
-        "mythicCount": 1,
-        "rareCount": 9
+        "icon": "img/sets/p23.svg"
     },
     "p2hg": {
         "code": "p2hg",
         "fullName": "Two-Headed Giant Tournament",
-        "cardCount": 1,
-        "isPrimary": false,
-        "icon": "img/sets/p2hg.svg",
-        "rareCount": 1
+        "icon": "img/sets/p2hg.svg"
     },
     "p30a": {
         "code": "p30a",
         "fullName": "30th Anniversary Play Promos",
-        "cardCount": 23,
-        "isPrimary": false,
-        "icon": "img/sets/p30a.svg",
-        "mythicCount": 1,
-        "rareCount": 22
+        "icon": "img/sets/p30a.svg"
     },
     "p30h": {
         "code": "p30h",
         "fullName": "30th Anniversary History Promos",
-        "cardCount": 10,
-        "isPrimary": false,
-        "icon": "img/sets/p30h.svg",
-        "rareCount": 10
+        "icon": "img/sets/p30h.svg"
     },
     "p30m": {
         "code": "p30m",
         "fullName": "30th Anniversary Misc Promos",
-        "cardCount": 5,
-        "isPrimary": false,
-        "icon": "img/sets/p30m.svg",
-        "mythicCount": 1,
-        "rareCount": 4
+        "icon": "img/sets/p30m.svg"
     },
     "p30t": {
         "code": "p30t",
         "fullName": "30th Anniversary Celebration Tokyo",
-        "cardCount": 2,
-        "isPrimary": false,
-        "icon": "img/sets/p30t.svg",
-        "rareCount": 2
+        "icon": "img/sets/p30t.svg"
     },
     "p5dn": {
         "code": "p5dn",
         "fullName": "Fifth Dawn Promos",
-        "cardCount": 1,
-        "isPrimary": false,
         "block": "Mirrodin",
-        "icon": "img/sets/p5dn.svg",
-        "rareCount": 1
+        "icon": "img/sets/p5dn.svg"
     },
     "p8ed": {
         "code": "p8ed",
         "fullName": "Eighth Edition Promos",
-        "cardCount": 1,
-        "isPrimary": false,
         "block": "Core Set",
-        "icon": "img/sets/p8ed.svg",
-        "rareCount": 1
+        "icon": "img/sets/p8ed.svg"
     },
     "p9ed": {
         "code": "p9ed",
         "fullName": "Ninth Edition Promos",
-        "cardCount": 1,
-        "isPrimary": false,
         "block": "Core Set",
-        "icon": "img/sets/p9ed.svg",
-        "rareCount": 1
+        "icon": "img/sets/p9ed.svg"
     },
     "paer": {
         "code": "paer",
         "fullName": "Aether Revolt Promos",
-        "cardCount": 65,
-        "isPrimary": false,
         "block": "Kaladesh",
-        "icon": "img/sets/paer.svg",
-        "mythicCount": 13,
-        "rareCount": 51,
-        "uncommonCount": 1
+        "icon": "img/sets/paer.svg"
     },
     "pafr": {
         "code": "pafr",
         "fullName": "Adventures in the Forgotten Realms Promos",
-        "cardCount": 240,
-        "isPrimary": false,
-        "icon": "img/sets/pafr.svg",
-        "mythicCount": 60,
-        "rareCount": 180
+        "icon": "img/sets/pafr.svg"
     },
     "pagl": {
         "code": "pagl",
         "fullName": "Angels: They're Just Like Us but Cooler and with Wings",
-        "cardCount": 59,
-        "isPrimary": false,
         "block": "Commander",
-        "icon": "img/sets/pagl.svg",
-        "commonCount": 5,
-        "mythicCount": 6,
-        "rareCount": 32,
-        "uncommonCount": 16
+        "icon": "img/sets/pagl.svg"
     },
     "pakh": {
         "code": "pakh",
         "fullName": "Amonkhet Promos",
-        "cardCount": 76,
-        "isPrimary": false,
         "block": "Amonkhet",
-        "icon": "img/sets/pakh.svg",
-        "mythicCount": 15,
-        "rareCount": 60,
-        "uncommonCount": 1
+        "icon": "img/sets/pakh.svg"
     },
     "pal00": {
         "code": "pal00",
         "fullName": "Arena League 2000",
-        "cardCount": 11,
-        "isPrimary": false,
         "block": "Arena League",
-        "icon": "img/sets/pal00.svg",
-        "rareCount": 11
+        "icon": "img/sets/pal00.svg"
     },
     "pal01": {
         "code": "pal01",
         "fullName": "Arena League 2001",
-        "cardCount": 12,
-        "isPrimary": false,
         "block": "Arena League",
-        "icon": "img/sets/pal01.svg",
-        "rareCount": 12
+        "icon": "img/sets/pal01.svg"
     },
     "pal02": {
         "code": "pal02",
         "fullName": "Arena League 2002",
-        "cardCount": 5,
-        "isPrimary": false,
         "block": "Arena League",
-        "icon": "img/sets/pal02.svg",
-        "rareCount": 5
+        "icon": "img/sets/pal02.svg"
     },
     "pal03": {
         "code": "pal03",
         "fullName": "Arena League 2003",
-        "cardCount": 8,
-        "isPrimary": false,
         "block": "Arena League",
-        "icon": "img/sets/pal03.svg",
-        "rareCount": 8
+        "icon": "img/sets/pal03.svg"
     },
     "pal04": {
         "code": "pal04",
         "fullName": "Arena League 2004",
-        "cardCount": 14,
-        "isPrimary": false,
         "block": "Arena League",
-        "icon": "img/sets/pal04.svg",
-        "rareCount": 14
+        "icon": "img/sets/pal04.svg"
     },
     "pal05": {
         "code": "pal05",
         "fullName": "Arena League 2005",
-        "cardCount": 8,
-        "isPrimary": false,
         "block": "Arena League",
-        "icon": "img/sets/pal05.svg",
-        "rareCount": 8
+        "icon": "img/sets/pal05.svg"
     },
     "pal06": {
         "code": "pal06",
         "fullName": "Arena League 2006",
-        "cardCount": 9,
-        "isPrimary": false,
         "block": "Arena League",
-        "icon": "img/sets/pal06.svg",
-        "rareCount": 9
+        "icon": "img/sets/pal06.svg"
     },
     "pal99": {
         "code": "pal99",
         "fullName": "Arena League 1999",
-        "cardCount": 10,
-        "isPrimary": false,
         "block": "Arena League",
-        "icon": "img/sets/pal99.svg",
-        "rareCount": 10
+        "icon": "img/sets/pal99.svg"
     },
     "pala": {
         "code": "pala",
         "fullName": "Shards of Alara Promos",
-        "cardCount": 1,
-        "isPrimary": false,
         "block": "Alara",
-        "icon": "img/sets/pala.svg",
-        "mythicCount": 1
+        "icon": "img/sets/pala.svg"
     },
     "palp": {
         "code": "palp",
         "fullName": "Asia Pacific Land Program",
-        "cardCount": 15,
-        "isPrimary": false,
-        "icon": "img/sets/palp.svg",
-        "commonCount": 15
+        "icon": "img/sets/palp.svg"
     },
     "pana": {
         "code": "pana",
         "fullName": "MTG Arena Promos",
-        "cardCount": 78,
-        "isPrimary": false,
-        "icon": "img/sets/pana.svg",
-        "commonCount": 57,
-        "mythicCount": 4,
-        "rareCount": 17
+        "icon": "img/sets/pana.svg"
     },
     "parb": {
         "code": "parb",
         "fullName": "Alara Reborn Promos",
-        "cardCount": 2,
-        "isPrimary": false,
         "block": "Alara",
-        "icon": "img/sets/parb.svg",
-        "mythicCount": 1,
-        "rareCount": 1
+        "icon": "img/sets/parb.svg"
     },
     "parl": {
         "code": "parl",
         "fullName": "Arena League 1996",
-        "cardCount": 7,
-        "isPrimary": false,
         "block": "Arena League",
-        "icon": "img/sets/parl.svg",
-        "rareCount": 7
+        "icon": "img/sets/parl.svg"
     },
     "past": {
         "code": "past",
         "fullName": "Astral Cards",
-        "cardCount": 12,
-        "isPrimary": false,
-        "icon": "img/sets/past.svg",
-        "commonCount": 12
+        "icon": "img/sets/past.svg"
     },
     "pavr": {
         "code": "pavr",
         "fullName": "Avacyn Restored Promos",
-        "cardCount": 5,
-        "isPrimary": false,
         "block": "Innistrad",
-        "icon": "img/sets/pavr.svg",
-        "rareCount": 4,
-        "uncommonCount": 1
+        "icon": "img/sets/pavr.svg"
     },
     "pbbd": {
         "code": "pbbd",
         "fullName": "Battlebond Promos",
-        "cardCount": 22,
-        "isPrimary": false,
-        "icon": "img/sets/pbbd.svg",
-        "mythicCount": 2,
-        "rareCount": 10,
-        "uncommonCount": 10
+        "icon": "img/sets/pbbd.svg"
     },
     "pbfz": {
         "code": "pbfz",
         "fullName": "Battle for Zendikar Promos",
-        "cardCount": 89,
-        "isPrimary": false,
         "block": "Battle for Zendikar",
-        "icon": "img/sets/pbfz.svg",
-        "mythicCount": 20,
-        "rareCount": 67,
-        "uncommonCount": 2
+        "icon": "img/sets/pbfz.svg"
     },
     "pbng": {
         "code": "pbng",
         "fullName": "Born of the Gods Promos",
-        "cardCount": 9,
-        "isPrimary": false,
         "block": "Theros",
-        "icon": "img/sets/pbng.svg",
-        "rareCount": 8,
-        "uncommonCount": 1
+        "icon": "img/sets/pbng.svg"
     },
     "pbok": {
         "code": "pbok",
         "fullName": "Betrayers of Kamigawa Promos",
-        "cardCount": 2,
-        "isPrimary": false,
         "block": "Kamigawa",
-        "icon": "img/sets/pbok.svg",
-        "rareCount": 1,
-        "uncommonCount": 1
+        "icon": "img/sets/pbok.svg"
     },
     "pbook": {
         "code": "pbook",
         "fullName": "Miscellaneous Book Promos",
-        "cardCount": 1,
-        "isPrimary": false,
-        "icon": "img/sets/pbook.svg",
-        "mythicCount": 1
+        "icon": "img/sets/pbook.svg"
     },
     "pbro": {
         "code": "pbro",
         "fullName": "The Brothers' War Promos",
-        "cardCount": 169,
-        "isPrimary": false,
-        "icon": "img/sets/pbro.svg",
-        "mythicCount": 46,
-        "rareCount": 123
+        "icon": "img/sets/pbro.svg"
     },
     "pc2": {
         "code": "pc2",
         "fullName": "Planechase 2012",
-        "cardCount": 156,
-        "isPrimary": false,
-        "icon": "img/sets/pc2.svg",
-        "commonCount": 72,
-        "mythicCount": 4,
-        "rareCount": 28,
-        "uncommonCount": 52
+        "icon": "img/sets/pc2.svg"
     },
     "pca": {
         "code": "pca",
         "fullName": "Planechase Anthology",
-        "cardCount": 156,
-        "isPrimary": false,
-        "icon": "img/sets/pca.svg",
-        "commonCount": 72,
-        "mythicCount": 4,
-        "rareCount": 28,
-        "uncommonCount": 52
+        "icon": "img/sets/pca.svg"
     },
     "pcel": {
         "code": "pcel",
         "fullName": "Celebration Cards",
-        "cardCount": 8,
-        "isPrimary": false,
-        "icon": "img/sets/pcel.svg",
-        "mythicCount": 2,
-        "rareCount": 6
+        "icon": "img/sets/pcel.svg"
     },
     "pchk": {
         "code": "pchk",
         "fullName": "Champions of Kamigawa Promos",
-        "cardCount": 1,
-        "isPrimary": false,
         "block": "Kamigawa",
-        "icon": "img/sets/pchk.svg",
-        "rareCount": 1
+        "icon": "img/sets/pchk.svg"
     },
     "pclb": {
         "code": "pclb",
         "fullName": "Battle for Baldur's Gate Promos",
-        "cardCount": 99,
-        "isPrimary": false,
-        "icon": "img/sets/pclb.svg",
-        "mythicCount": 22,
-        "rareCount": 77
+        "icon": "img/sets/pclb.svg"
     },
     "pcmp": {
         "code": "pcmp",
         "fullName": "Champs and States",
-        "cardCount": 12,
-        "isPrimary": false,
-        "icon": "img/sets/pcmp.svg",
-        "rareCount": 12
+        "icon": "img/sets/pcmp.svg"
     },
     "pcns": {
         "code": "pcns",
         "fullName": "Conspiracy Promos",
-        "cardCount": 1,
-        "isPrimary": false,
         "block": "Conspiracy",
-        "icon": "img/sets/pcns.svg",
-        "rareCount": 1
+        "icon": "img/sets/pcns.svg"
     },
     "pcon": {
         "code": "pcon",
         "fullName": "Conflux Promos",
-        "cardCount": 2,
-        "isPrimary": false,
         "block": "Alara",
-        "icon": "img/sets/pcon.svg",
-        "mythicCount": 1,
-        "rareCount": 1
+        "icon": "img/sets/pcon.svg"
     },
     "pcsp": {
         "code": "pcsp",
         "fullName": "Coldsnap Promos",
-        "cardCount": 1,
-        "isPrimary": false,
         "block": "Ice Age",
-        "icon": "img/sets/pcsp.svg",
-        "rareCount": 1
+        "icon": "img/sets/pcsp.svg"
     },
     "pctb": {
         "code": "pctb",
         "fullName": "From Cute to Brute",
-        "cardCount": 95,
-        "isPrimary": false,
-        "icon": "img/sets/pctb.svg",
-        "commonCount": 17,
-        "mythicCount": 14,
-        "rareCount": 47,
-        "uncommonCount": 17
+        "icon": "img/sets/pctb.svg"
     },
     "pcy": {
         "code": "pcy",
         "fullName": "Prophecy",
-        "cardCount": 143,
-        "isPrimary": true,
         "block": "Masques",
-        "icon": "img/sets/pcy.svg",
-        "commonCount": 55,
-        "rareCount": 44,
-        "uncommonCount": 44
+        "icon": "img/sets/pcy.svg"
     },
     "pd2": {
         "code": "pd2",
         "fullName": "Premium Deck Series: Fire and Lightning",
-        "cardCount": 34,
-        "isPrimary": false,
-        "icon": "img/sets/pd2.svg",
-        "commonCount": 13,
-        "rareCount": 6,
-        "uncommonCount": 15
+        "icon": "img/sets/pd2.svg"
     },
     "pd3": {
         "code": "pd3",
         "fullName": "Premium Deck Series: Graveborn",
-        "cardCount": 30,
-        "isPrimary": false,
-        "icon": "img/sets/pd3.svg",
-        "commonCount": 11,
-        "mythicCount": 1,
-        "rareCount": 7,
-        "uncommonCount": 11
+        "icon": "img/sets/pd3.svg"
     },
     "pdci": {
         "code": "pdci",
         "fullName": "DCI Promos",
-        "cardCount": 69,
-        "isPrimary": false,
-        "icon": "img/sets/pdci.svg",
-        "commonCount": 1,
-        "rareCount": 64,
-        "uncommonCount": 4
+        "icon": "img/sets/pdci.svg"
     },
     "pdgm": {
         "code": "pdgm",
         "fullName": "Dragon's Maze Promos",
-        "cardCount": 6,
-        "isPrimary": false,
         "block": "Return to Ravnica",
-        "icon": "img/sets/pdgm.svg",
-        "commonCount": 1,
-        "mythicCount": 1,
-        "rareCount": 3,
-        "uncommonCount": 1
+        "icon": "img/sets/pdgm.svg"
     },
     "pdis": {
         "code": "pdis",
         "fullName": "Dissension Promos",
-        "cardCount": 2,
-        "isPrimary": false,
         "block": "Ravnica",
-        "icon": "img/sets/pdis.svg",
-        "rareCount": 2
+        "icon": "img/sets/pdis.svg"
     },
     "pdka": {
         "code": "pdka",
         "fullName": "Dark Ascension Promos",
-        "cardCount": 5,
-        "isPrimary": false,
         "block": "Innistrad",
-        "icon": "img/sets/pdka.svg",
-        "rareCount": 4,
-        "uncommonCount": 1
+        "icon": "img/sets/pdka.svg"
     },
     "pdmu": {
         "code": "pdmu",
         "fullName": "Dominaria United Promos",
-        "cardCount": 160,
-        "isPrimary": false,
-        "icon": "img/sets/pdmu.svg",
-        "mythicCount": 40,
-        "rareCount": 120
+        "icon": "img/sets/pdmu.svg"
     },
     "pdom": {
         "code": "pdom",
         "fullName": "Dominaria Promos",
-        "cardCount": 117,
-        "isPrimary": false,
-        "icon": "img/sets/pdom.svg",
-        "commonCount": 2,
-        "mythicCount": 18,
-        "rareCount": 74,
-        "uncommonCount": 23
+        "icon": "img/sets/pdom.svg"
     },
     "pdp10": {
         "code": "pdp10",
         "fullName": "Duels of the Planeswalkers 2010 Promos ",
-        "cardCount": 2,
-        "isPrimary": false,
-        "icon": "img/sets/pdp10.svg",
-        "mythicCount": 2
+        "icon": "img/sets/pdp10.svg"
     },
     "pdp12": {
         "code": "pdp12",
         "fullName": "Duels of the Planeswalkers 2012 Promos ",
-        "cardCount": 3,
-        "isPrimary": false,
-        "icon": "img/sets/pdp12.svg",
-        "mythicCount": 3
+        "icon": "img/sets/pdp12.svg"
     },
     "pdp13": {
         "code": "pdp13",
         "fullName": "Duels of the Planeswalkers 2013 Promos ",
-        "cardCount": 3,
-        "isPrimary": false,
-        "icon": "img/sets/pdp13.svg",
-        "mythicCount": 3
+        "icon": "img/sets/pdp13.svg"
     },
     "pdp14": {
         "code": "pdp14",
         "fullName": "Duels of the Planeswalkers 2014 Promos ",
-        "cardCount": 3,
-        "isPrimary": false,
-        "icon": "img/sets/pdp14.svg",
-        "rareCount": 3
+        "icon": "img/sets/pdp14.svg"
     },
     "pdp15": {
         "code": "pdp15",
         "fullName": "Duels of the Planeswalkers 2015 Promos ",
-        "cardCount": 2,
-        "isPrimary": false,
-        "icon": "img/sets/pdp15.svg",
-        "mythicCount": 2
+        "icon": "img/sets/pdp15.svg"
     },
     "pdrc": {
         "code": "pdrc",
         "fullName": "Dragon Con",
-        "cardCount": 1,
-        "isPrimary": false,
-        "icon": "img/sets/pdrc.svg",
-        "rareCount": 1
+        "icon": "img/sets/pdrc.svg"
     },
     "pdst": {
         "code": "pdst",
         "fullName": "Darksteel Promos",
-        "cardCount": 1,
-        "isPrimary": false,
         "block": "Mirrodin",
-        "icon": "img/sets/pdst.svg",
-        "rareCount": 1
+        "icon": "img/sets/pdst.svg"
     },
     "pdtk": {
         "code": "pdtk",
         "fullName": "Dragons of Tarkir Promos",
-        "cardCount": 51,
-        "isPrimary": false,
         "block": "Khans of Tarkir",
-        "icon": "img/sets/pdtk.svg",
-        "mythicCount": 5,
-        "rareCount": 45,
-        "uncommonCount": 1
+        "icon": "img/sets/pdtk.svg"
     },
     "pdtp": {
         "code": "pdtp",
         "fullName": "Duels of the Planeswalkers 2009 Promos ",
-        "cardCount": 1,
-        "isPrimary": false,
-        "icon": "img/sets/pdtp.svg",
-        "mythicCount": 1
+        "icon": "img/sets/pdtp.svg"
     },
     "peld": {
         "code": "peld",
         "fullName": "Throne of Eldraine Promos",
-        "cardCount": 136,
-        "isPrimary": false,
-        "icon": "img/sets/peld.svg",
-        "mythicCount": 30,
-        "rareCount": 106
+        "icon": "img/sets/peld.svg"
     },
     "pelp": {
         "code": "pelp",
         "fullName": "European Land Program",
-        "cardCount": 15,
-        "isPrimary": false,
-        "icon": "img/sets/pelp.svg",
-        "commonCount": 15
+        "icon": "img/sets/pelp.svg"
     },
     "pemn": {
         "code": "pemn",
         "fullName": "Eldritch Moon Promos",
-        "cardCount": 75,
-        "isPrimary": false,
         "block": "Shadows over Innistrad",
-        "icon": "img/sets/pemn.svg",
-        "mythicCount": 15,
-        "rareCount": 59,
-        "uncommonCount": 1
+        "icon": "img/sets/pemn.svg"
     },
     "peve": {
         "code": "peve",
         "fullName": "Eventide Promos",
-        "cardCount": 2,
-        "isPrimary": false,
         "block": "Shadowmoor",
-        "icon": "img/sets/peve.svg",
-        "rareCount": 2
+        "icon": "img/sets/peve.svg"
     },
     "pewk": {
         "code": "pewk",
         "fullName": "Eternal Weekend 2022",
-        "cardCount": 2,
-        "isPrimary": false,
-        "icon": "img/sets/pewk.svg",
-        "rareCount": 2
+        "icon": "img/sets/pewk.svg"
     },
     "pexo": {
         "code": "pexo",
         "fullName": "Exodus Promos",
-        "cardCount": 1,
-        "isPrimary": false,
         "block": "Tempest",
-        "icon": "img/sets/pexo.svg",
-        "rareCount": 1
+        "icon": "img/sets/pexo.svg"
     },
     "pf19": {
         "code": "pf19",
         "fullName": "MagicFest 2019",
-        "cardCount": 7,
-        "isPrimary": false,
-        "icon": "img/sets/pf19.svg",
-        "rareCount": 7
+        "icon": "img/sets/pf19.svg"
     },
     "pf20": {
         "code": "pf20",
         "fullName": "MagicFest 2020",
-        "cardCount": 6,
-        "isPrimary": false,
-        "icon": "img/sets/pf20.svg",
-        "rareCount": 6
+        "icon": "img/sets/pf20.svg"
     },
     "pf23": {
         "code": "pf23",
         "fullName": "MagicFest 2023",
-        "cardCount": 4,
-        "isPrimary": false,
-        "icon": "img/sets/pf23.svg",
-        "rareCount": 4
+        "icon": "img/sets/pf23.svg"
     },
     "pfrf": {
         "code": "pfrf",
         "fullName": "Fate Reforged Promos",
-        "cardCount": 42,
-        "isPrimary": false,
         "block": "Khans of Tarkir",
-        "icon": "img/sets/pfrf.svg",
-        "mythicCount": 5,
-        "rareCount": 36,
-        "uncommonCount": 1
+        "icon": "img/sets/pfrf.svg"
     },
     "pfut": {
         "code": "pfut",
         "fullName": "Future Sight Promos",
-        "cardCount": 2,
-        "isPrimary": false,
         "block": "Time Spiral",
-        "icon": "img/sets/pfut.svg",
-        "rareCount": 2
+        "icon": "img/sets/pfut.svg"
     },
     "pgpt": {
         "code": "pgpt",
         "fullName": "Guildpact Promos",
-        "cardCount": 2,
-        "isPrimary": false,
         "block": "Ravnica",
-        "icon": "img/sets/pgpt.svg",
-        "rareCount": 2
+        "icon": "img/sets/pgpt.svg"
     },
     "pgpx": {
         "code": "pgpx",
         "fullName": "Grand Prix Promos",
-        "cardCount": 20,
-        "isPrimary": false,
-        "icon": "img/sets/pgpx.svg",
-        "mythicCount": 4,
-        "rareCount": 16
+        "icon": "img/sets/pgpx.svg"
     },
     "pgrn": {
         "code": "pgrn",
         "fullName": "Guilds of Ravnica Promos",
-        "cardCount": 83,
-        "isPrimary": false,
         "block": "Guilds of Ravnica",
-        "icon": "img/sets/pgrn.svg",
-        "mythicCount": 12,
-        "rareCount": 66,
-        "uncommonCount": 5
+        "icon": "img/sets/pgrn.svg"
     },
     "pgru": {
         "code": "pgru",
         "fullName": "Guru",
-        "cardCount": 5,
-        "isPrimary": false,
-        "icon": "img/sets/pgru.svg",
-        "rareCount": 5
+        "icon": "img/sets/pgru.svg"
     },
     "pgtc": {
         "code": "pgtc",
         "fullName": "Gatecrash Promos",
-        "cardCount": 9,
-        "isPrimary": false,
         "block": "Return to Ravnica",
-        "icon": "img/sets/pgtc.svg",
-        "rareCount": 8,
-        "uncommonCount": 1
+        "icon": "img/sets/pgtc.svg"
     },
     "ph17": {
         "code": "ph17",
         "fullName": "2017 Heroes of the Realm",
-        "cardCount": 3,
-        "isPrimary": false,
         "block": "Heroes of the Realm",
-        "icon": "img/sets/ph17.svg",
-        "mythicCount": 3
+        "icon": "img/sets/ph17.svg"
     },
     "ph18": {
         "code": "ph18",
         "fullName": "2018 Heroes of the Realm",
-        "cardCount": 5,
-        "isPrimary": false,
         "block": "Heroes of the Realm",
-        "icon": "img/sets/ph18.svg",
-        "mythicCount": 5
+        "icon": "img/sets/ph18.svg"
     },
     "ph19": {
         "code": "ph19",
         "fullName": "2019 Heroes of the Realm",
-        "cardCount": 7,
-        "isPrimary": false,
         "block": "Heroes of the Realm",
-        "icon": "img/sets/ph19.svg",
-        "mythicCount": 7
+        "icon": "img/sets/ph19.svg"
     },
     "ph20": {
         "code": "ph20",
         "fullName": "2020 Heroes of the Realm",
-        "cardCount": 3,
-        "isPrimary": false,
         "block": "Heroes of the Realm",
-        "icon": "img/sets/ph20.svg",
-        "mythicCount": 3
+        "icon": "img/sets/ph20.svg"
     },
     "ph21": {
         "code": "ph21",
         "fullName": "2021 Heroes of the Realm",
-        "cardCount": 4,
-        "isPrimary": false,
         "block": "Heroes of the Realm",
-        "icon": "img/sets/ph21.svg",
-        "mythicCount": 4
+        "icon": "img/sets/ph21.svg"
     },
     "phed": {
         "code": "phed",
         "fullName": "Heads I Win, Tails You Lose",
-        "cardCount": 82,
-        "isPrimary": false,
         "block": "Commander",
-        "icon": "img/sets/phed.svg",
-        "commonCount": 15,
-        "mythicCount": 5,
-        "rareCount": 38,
-        "uncommonCount": 24
+        "icon": "img/sets/phed.svg"
     },
     "phou": {
         "code": "phou",
         "fullName": "Hour of Devastation Promos",
-        "cardCount": 62,
-        "isPrimary": false,
         "block": "Amonkhet",
-        "icon": "img/sets/phou.svg",
-        "mythicCount": 13,
-        "rareCount": 48,
-        "uncommonCount": 1
+        "icon": "img/sets/phou.svg"
     },
     "phpr": {
         "code": "phpr",
         "fullName": "HarperPrism Book Promos",
-        "cardCount": 5,
-        "isPrimary": false,
-        "icon": "img/sets/phpr.svg",
-        "rareCount": 5
+        "icon": "img/sets/phpr.svg"
     },
     "phtr": {
         "code": "phtr",
         "fullName": "2016 Heroes of the Realm",
-        "cardCount": 3,
-        "isPrimary": false,
         "block": "Heroes of the Realm",
-        "icon": "img/sets/phtr.svg",
-        "mythicCount": 3
+        "icon": "img/sets/phtr.svg"
     },
     "phuk": {
         "code": "phuk",
         "fullName": "Hachette UK",
-        "cardCount": 60,
-        "isPrimary": false,
-        "icon": "img/sets/phuk.svg",
-        "commonCount": 42,
-        "rareCount": 5,
-        "uncommonCount": 13
+        "icon": "img/sets/phuk.svg"
     },
     "pidw": {
         "code": "pidw",
         "fullName": "IDW Comics Inserts",
-        "cardCount": 17,
-        "isPrimary": false,
-        "icon": "img/sets/pidw.svg",
-        "rareCount": 17
+        "icon": "img/sets/pidw.svg"
     },
     "piko": {
         "code": "piko",
         "fullName": "Ikoria: Lair of Behemoths Promos",
-        "cardCount": 136,
-        "isPrimary": false,
-        "icon": "img/sets/piko.svg",
-        "mythicCount": 30,
-        "rareCount": 106
+        "icon": "img/sets/piko.svg"
     },
     "pip": {
         "code": "pip",
         "fullName": "Fallout",
-        "cardCount": 50,
-        "isPrimary": false,
-        "icon": "img/sets/pip.svg",
-        "commonCount": 11,
-        "mythicCount": 16,
-        "rareCount": 16,
-        "uncommonCount": 7
+        "icon": "img/sets/pip.svg"
     },
     "pisd": {
         "code": "pisd",
         "fullName": "Innistrad Promos",
-        "cardCount": 5,
-        "isPrimary": false,
         "block": "Innistrad",
-        "icon": "img/sets/pisd.svg",
-        "rareCount": 4,
-        "uncommonCount": 1
+        "icon": "img/sets/pisd.svg"
     },
     "pj21": {
         "code": "pj21",
         "fullName": "Judge Gift Cards 2021",
-        "cardCount": 10,
-        "isPrimary": false,
         "block": "Judge Gift Cards",
-        "icon": "img/sets/pj21.svg",
-        "mythicCount": 8,
-        "rareCount": 2
+        "icon": "img/sets/pj21.svg"
     },
     "pjas": {
         "code": "pjas",
         "fullName": "Junior APAC Series",
-        "cardCount": 6,
-        "isPrimary": false,
-        "icon": "img/sets/pjas.svg",
-        "rareCount": 6
+        "icon": "img/sets/pjas.svg"
     },
     "pjou": {
         "code": "pjou",
         "fullName": "Journey into Nyx Promos",
-        "cardCount": 10,
-        "isPrimary": false,
         "block": "Theros",
-        "icon": "img/sets/pjou.svg",
-        "rareCount": 9,
-        "uncommonCount": 1
+        "icon": "img/sets/pjou.svg"
     },
     "pjse": {
         "code": "pjse",
         "fullName": "Junior Series Europe",
-        "cardCount": 8,
-        "isPrimary": false,
-        "icon": "img/sets/pjse.svg",
-        "rareCount": 8
+        "icon": "img/sets/pjse.svg"
     },
     "pkhm": {
         "code": "pkhm",
         "fullName": "Kaldheim Promos",
-        "cardCount": 152,
-        "isPrimary": false,
-        "icon": "img/sets/pkhm.svg",
-        "mythicCount": 35,
-        "rareCount": 117
+        "icon": "img/sets/pkhm.svg"
     },
     "pkld": {
         "code": "pkld",
         "fullName": "Kaladesh Promos",
-        "cardCount": 82,
-        "isPrimary": false,
         "block": "Kaladesh",
-        "icon": "img/sets/pkld.svg",
-        "mythicCount": 19,
-        "rareCount": 61,
-        "uncommonCount": 2
+        "icon": "img/sets/pkld.svg"
     },
     "pktk": {
         "code": "pktk",
         "fullName": "Khans of Tarkir Promos",
-        "cardCount": 56,
-        "isPrimary": false,
         "block": "Khans of Tarkir",
-        "icon": "img/sets/pktk.svg",
-        "mythicCount": 6,
-        "rareCount": 48,
-        "uncommonCount": 2
+        "icon": "img/sets/pktk.svg"
     },
     "pl21": {
         "code": "pl21",
         "fullName": "Year of the Ox 2021",
-        "cardCount": 5,
-        "isPrimary": false,
-        "icon": "img/sets/pl21.svg",
-        "mythicCount": 3,
-        "rareCount": 2
+        "icon": "img/sets/pl21.svg"
     },
     "pl22": {
         "code": "pl22",
         "fullName": "Year of the Tiger 2022",
-        "cardCount": 5,
-        "isPrimary": false,
-        "icon": "img/sets/pl22.svg",
-        "rareCount": 5
+        "icon": "img/sets/pl22.svg"
     },
     "pl23": {
         "code": "pl23",
         "fullName": "Year of the Rabbit 2023",
-        "cardCount": 5,
-        "isPrimary": false,
-        "icon": "img/sets/pl23.svg",
-        "rareCount": 5
+        "icon": "img/sets/pl23.svg"
     },
     "plc": {
         "code": "plc",
         "fullName": "Planar Chaos",
-        "cardCount": 165,
-        "isPrimary": true,
         "block": "Time Spiral",
-        "icon": "img/sets/plc.svg",
-        "commonCount": 60,
-        "rareCount": 50,
-        "uncommonCount": 55
+        "icon": "img/sets/plc.svg"
     },
     "plg20": {
         "code": "plg20",
         "fullName": "Love Your LGS 2020",
-        "cardCount": 2,
-        "isPrimary": false,
-        "icon": "img/sets/plg20.svg",
-        "rareCount": 2
+        "icon": "img/sets/plg20.svg"
     },
     "plg21": {
         "code": "plg21",
         "fullName": "Love Your LGS 2021",
-        "cardCount": 6,
-        "isPrimary": false,
-        "icon": "img/sets/plg21.svg",
-        "rareCount": 6
+        "icon": "img/sets/plg21.svg"
     },
     "plg22": {
         "code": "plg22",
         "fullName": "Love Your LGS 2022",
-        "cardCount": 2,
-        "isPrimary": false,
-        "icon": "img/sets/plg22.svg",
-        "rareCount": 2
+        "icon": "img/sets/plg22.svg"
     },
     "plgm": {
         "code": "plgm",
         "fullName": "DCI Legend Membership",
-        "cardCount": 2,
-        "isPrimary": false,
-        "icon": "img/sets/plgm.svg",
-        "rareCount": 2
+        "icon": "img/sets/plgm.svg"
     },
     "plgn": {
         "code": "plgn",
         "fullName": "Legions Promos",
-        "cardCount": 1,
-        "isPrimary": false,
         "block": "Onslaught",
-        "icon": "img/sets/plgn.svg",
-        "rareCount": 1
+        "icon": "img/sets/plgn.svg"
     },
     "plist": {
         "code": "plist",
         "fullName": "The List",
-        "cardCount": 1338,
-        "isPrimary": true,
-        "icon": "img/sets/plist.svg",
-        "commonCount": 175,
-        "mythicCount": 160,
-        "rareCount": 613,
-        "specialCount": 4,
-        "uncommonCount": 386
+        "icon": "img/sets/plist.svg"
     },
     "plrw": {
         "code": "plrw",
         "fullName": "Lorwyn Promos",
-        "cardCount": 2,
-        "isPrimary": false,
         "block": "Lorwyn",
-        "icon": "img/sets/plrw.svg",
-        "rareCount": 2
+        "icon": "img/sets/plrw.svg"
     },
     "pls": {
         "code": "pls",
         "fullName": "Planeshift",
-        "cardCount": 146,
-        "isPrimary": true,
         "block": "Invasion",
-        "icon": "img/sets/pls.svg",
-        "commonCount": 55,
-        "rareCount": 47,
-        "uncommonCount": 44
+        "icon": "img/sets/pls.svg"
     },
     "pltr": {
         "code": "pltr",
         "fullName": "Tales of Middle-earth Promos",
-        "cardCount": 86,
-        "isPrimary": false,
-        "icon": "img/sets/pltr.svg",
-        "commonCount": 1,
-        "mythicCount": 20,
-        "rareCount": 62,
-        "uncommonCount": 3
+        "icon": "img/sets/pltr.svg"
     },
     "pm10": {
         "code": "pm10",
         "fullName": "Magic 2010 Promos",
-        "cardCount": 3,
-        "isPrimary": false,
-        "icon": "img/sets/pm10.svg",
-        "mythicCount": 1,
-        "rareCount": 2
+        "icon": "img/sets/pm10.svg"
     },
     "pm11": {
         "code": "pm11",
         "fullName": "Magic 2011 Promos",
-        "cardCount": 3,
-        "isPrimary": false,
-        "icon": "img/sets/pm11.svg",
-        "mythicCount": 1,
-        "rareCount": 2
+        "icon": "img/sets/pm11.svg"
     },
     "pm12": {
         "code": "pm12",
         "fullName": "Magic 2012 Promos",
-        "cardCount": 3,
-        "isPrimary": false,
-        "icon": "img/sets/pm12.svg",
-        "mythicCount": 1,
-        "rareCount": 2
+        "icon": "img/sets/pm12.svg"
     },
     "pm13": {
         "code": "pm13",
         "fullName": "Magic 2013 Promos",
-        "cardCount": 5,
-        "isPrimary": false,
-        "icon": "img/sets/pm13.svg",
-        "rareCount": 4,
-        "uncommonCount": 1
+        "icon": "img/sets/pm13.svg"
     },
     "pm14": {
         "code": "pm14",
         "fullName": "Magic 2014 Promos",
-        "cardCount": 5,
-        "isPrimary": false,
-        "icon": "img/sets/pm14.svg",
-        "commonCount": 1,
-        "rareCount": 4
+        "icon": "img/sets/pm14.svg"
     },
     "pm15": {
         "code": "pm15",
         "fullName": "Magic 2015 Promos",
-        "cardCount": 13,
-        "isPrimary": false,
-        "icon": "img/sets/pm15.svg",
-        "mythicCount": 1,
-        "rareCount": 11,
-        "uncommonCount": 1
+        "icon": "img/sets/pm15.svg"
     },
     "pm19": {
         "code": "pm19",
         "fullName": "Core Set 2019 Promos",
-        "cardCount": 94,
-        "isPrimary": false,
-        "icon": "img/sets/pm19.svg",
-        "commonCount": 1,
-        "mythicCount": 18,
-        "rareCount": 71,
-        "uncommonCount": 4
+        "icon": "img/sets/pm19.svg"
     },
     "pm20": {
         "code": "pm20",
         "fullName": "Core Set 2020 Promos",
-        "cardCount": 143,
-        "isPrimary": false,
-        "icon": "img/sets/pm20.svg",
-        "commonCount": 1,
-        "mythicCount": 30,
-        "rareCount": 108,
-        "uncommonCount": 4
+        "icon": "img/sets/pm20.svg"
     },
     "pm21": {
         "code": "pm21",
         "fullName": "Core Set 2021 Promos",
-        "cardCount": 136,
-        "isPrimary": false,
-        "icon": "img/sets/pm21.svg",
-        "mythicCount": 30,
-        "rareCount": 106
+        "icon": "img/sets/pm21.svg"
     },
     "pmbs": {
         "code": "pmbs",
         "fullName": "Mirrodin Besieged Promos",
-        "cardCount": 4,
-        "isPrimary": false,
         "block": "Scars of Mirrodin",
-        "icon": "img/sets/pmbs.svg",
-        "mythicCount": 2,
-        "rareCount": 2
+        "icon": "img/sets/pmbs.svg"
     },
     "pmei": {
         "code": "pmei",
         "fullName": "Media Inserts",
-        "cardCount": 10,
-        "isPrimary": false,
-        "icon": "img/sets/pmei.svg",
-        "commonCount": 7,
-        "rareCount": 2,
-        "uncommonCount": 1
+        "icon": "img/sets/pmei.svg"
     },
     "pmh1": {
         "code": "pmh1",
         "fullName": "Modern Horizons Promos",
-        "cardCount": 2,
-        "isPrimary": false,
-        "icon": "img/sets/pmh1.svg",
-        "mythicCount": 1,
-        "rareCount": 1
+        "icon": "img/sets/pmh1.svg"
     },
     "pmh2": {
         "code": "pmh2",
         "fullName": "Modern Horizons 2 Promos",
-        "cardCount": 80,
-        "isPrimary": false,
-        "icon": "img/sets/pmh2.svg",
-        "mythicCount": 20,
-        "rareCount": 60
+        "icon": "img/sets/pmh2.svg"
     },
     "pmid": {
         "code": "pmid",
         "fullName": "Innistrad: Midnight Hunt Promos",
-        "cardCount": 152,
-        "isPrimary": false,
         "block": "Innistrad: Double Feature",
-        "icon": "img/sets/pmid.svg",
-        "mythicCount": 35,
-        "rareCount": 117
+        "icon": "img/sets/pmid.svg"
     },
     "pmmq": {
         "code": "pmmq",
         "fullName": "Mercadian Masques Promos",
-        "cardCount": 1,
-        "isPrimary": false,
         "block": "Masques",
-        "icon": "img/sets/pmmq.svg",
-        "rareCount": 1
+        "icon": "img/sets/pmmq.svg"
     },
     "pmoa": {
         "code": "pmoa",
         "fullName": "Magic Online Avatars",
-        "cardCount": 85,
-        "isPrimary": false,
-        "icon": "img/sets/pmoa.svg",
-        "rareCount": 85
+        "icon": "img/sets/pmoa.svg"
     },
     "pmom": {
         "code": "pmom",
         "fullName": "March of the Machine Promos",
-        "cardCount": 134,
-        "isPrimary": false,
-        "icon": "img/sets/pmom.svg",
-        "mythicCount": 30,
-        "rareCount": 104
+        "icon": "img/sets/pmom.svg"
     },
     "pmor": {
         "code": "pmor",
         "fullName": "Morningtide Promos",
-        "cardCount": 2,
-        "isPrimary": false,
         "block": "Lorwyn",
-        "icon": "img/sets/pmor.svg",
-        "rareCount": 2
+        "icon": "img/sets/pmor.svg"
     },
     "pmrd": {
         "code": "pmrd",
         "fullName": "Mirrodin Promos",
-        "cardCount": 1,
-        "isPrimary": false,
         "block": "Mirrodin",
-        "icon": "img/sets/pmrd.svg",
-        "rareCount": 1
+        "icon": "img/sets/pmrd.svg"
     },
     "pnat": {
         "code": "pnat",
         "fullName": "Nationals Promos",
-        "cardCount": 1,
-        "isPrimary": false,
-        "icon": "img/sets/pnat.svg",
-        "rareCount": 1
+        "icon": "img/sets/pnat.svg"
     },
     "pncc": {
         "code": "pncc",
         "fullName": "New Capenna Commander Promos",
-        "cardCount": 75,
-        "isPrimary": false,
-        "icon": "img/sets/pncc.svg",
-        "rareCount": 75
+        "icon": "img/sets/pncc.svg"
     },
     "pnem": {
         "code": "pnem",
         "fullName": "Nemesis Promos",
-        "cardCount": 1,
-        "isPrimary": false,
         "block": "Masques",
-        "icon": "img/sets/pnem.svg",
-        "rareCount": 1
+        "icon": "img/sets/pnem.svg"
     },
     "pneo": {
         "code": "pneo",
         "fullName": "Kamigawa: Neon Dynasty Promos",
-        "cardCount": 146,
-        "isPrimary": false,
-        "icon": "img/sets/pneo.svg",
-        "mythicCount": 33,
-        "rareCount": 113
+        "icon": "img/sets/pneo.svg"
     },
     "pnph": {
         "code": "pnph",
         "fullName": "New Phyrexia Promos",
-        "cardCount": 4,
-        "isPrimary": false,
         "block": "Scars of Mirrodin",
-        "icon": "img/sets/pnph.svg",
-        "commonCount": 1,
-        "mythicCount": 1,
-        "rareCount": 2
+        "icon": "img/sets/pnph.svg"
     },
     "pogw": {
         "code": "pogw",
         "fullName": "Oath of the Gatewatch Promos",
-        "cardCount": 65,
-        "isPrimary": false,
         "block": "Battle for Zendikar",
-        "icon": "img/sets/pogw.svg",
-        "mythicCount": 13,
-        "rareCount": 51,
-        "uncommonCount": 1
+        "icon": "img/sets/pogw.svg"
     },
     "pone": {
         "code": "pone",
         "fullName": "Phyrexia: All Will Be One Promos",
-        "cardCount": 160,
-        "isPrimary": false,
-        "icon": "img/sets/pone.svg",
-        "mythicCount": 40,
-        "rareCount": 120
+        "icon": "img/sets/pone.svg"
     },
     "pons": {
         "code": "pons",
         "fullName": "Onslaught Promos",
-        "cardCount": 1,
-        "isPrimary": false,
         "block": "Onslaught",
-        "icon": "img/sets/pons.svg",
-        "rareCount": 1
+        "icon": "img/sets/pons.svg"
     },
     "por": {
         "code": "por",
         "fullName": "Portal",
-        "cardCount": 228,
-        "isPrimary": false,
-        "icon": "img/sets/por.svg",
-        "commonCount": 115,
-        "rareCount": 55,
-        "uncommonCount": 58
+        "icon": "img/sets/por.svg"
     },
     "pori": {
         "code": "pori",
         "fullName": "Magic Origins Promos",
-        "cardCount": 53,
-        "isPrimary": false,
-        "icon": "img/sets/pori.svg",
-        "mythicCount": 5,
-        "rareCount": 47,
-        "uncommonCount": 1
+        "icon": "img/sets/pori.svg"
     },
     "ppcy": {
         "code": "ppcy",
         "fullName": "Prophecy Promos",
-        "cardCount": 1,
-        "isPrimary": false,
         "block": "Masques",
-        "icon": "img/sets/ppcy.svg",
-        "rareCount": 1
+        "icon": "img/sets/ppcy.svg"
     },
     "pplc": {
         "code": "pplc",
         "fullName": "Planar Chaos Promos",
-        "cardCount": 2,
-        "isPrimary": false,
         "block": "Time Spiral",
-        "icon": "img/sets/pplc.svg",
-        "rareCount": 2
+        "icon": "img/sets/pplc.svg"
     },
     "ppp1": {
         "code": "ppp1",
         "fullName": "M20 Promo Packs",
-        "cardCount": 5,
-        "isPrimary": false,
         "block": "Core Set",
-        "icon": "img/sets/ppp1.svg",
-        "rareCount": 5
+        "icon": "img/sets/ppp1.svg"
     },
     "ppro": {
         "code": "ppro",
         "fullName": "Pro Tour Promos",
-        "cardCount": 15,
-        "isPrimary": false,
-        "icon": "img/sets/ppro.svg",
-        "mythicCount": 5,
-        "rareCount": 10
+        "icon": "img/sets/ppro.svg"
     },
     "pptk": {
         "code": "pptk",
         "fullName": "Portal: Three Kingdoms Promos",
-        "cardCount": 2,
-        "isPrimary": false,
-        "icon": "img/sets/pptk.svg",
-        "rareCount": 2
+        "icon": "img/sets/pptk.svg"
     },
     "pr23": {
         "code": "pr23",
         "fullName": "Regional Championship Qualifiers 2023",
-        "cardCount": 3,
-        "isPrimary": false,
-        "icon": "img/sets/pr23.svg",
-        "mythicCount": 1,
-        "rareCount": 2
+        "icon": "img/sets/pr23.svg"
     },
     "prav": {
         "code": "prav",
         "fullName": "Ravnica: City of Guilds Promos",
-        "cardCount": 2,
-        "isPrimary": false,
         "block": "Ravnica",
-        "icon": "img/sets/prav.svg",
-        "rareCount": 2
+        "icon": "img/sets/prav.svg"
     },
     "prcq": {
         "code": "prcq",
         "fullName": "Regional Championship Qualifiers 2022",
-        "cardCount": 3,
-        "isPrimary": false,
-        "icon": "img/sets/prcq.svg",
-        "mythicCount": 1,
-        "rareCount": 2
+        "icon": "img/sets/prcq.svg"
     },
     "pres": {
         "code": "pres",
         "fullName": "Resale Promos",
-        "cardCount": 37,
-        "isPrimary": false,
-        "icon": "img/sets/pres.svg",
-        "mythicCount": 1,
-        "rareCount": 36
+        "icon": "img/sets/pres.svg"
     },
     "prix": {
         "code": "prix",
         "fullName": "Rivals of Ixalan Promos",
-        "cardCount": 97,
-        "isPrimary": false,
         "block": "Ixalan",
-        "icon": "img/sets/prix.svg",
-        "commonCount": 1,
-        "mythicCount": 17,
-        "rareCount": 78,
-        "uncommonCount": 1
+        "icon": "img/sets/prix.svg"
     },
     "prm": {
         "code": "prm",
         "fullName": "Magic Online Promos",
-        "cardCount": 3061,
-        "isPrimary": false,
-        "icon": "img/sets/prm.svg",
-        "commonCount": 392,
-        "mythicCount": 450,
-        "rareCount": 1693,
-        "specialCount": 1,
-        "uncommonCount": 525
+        "icon": "img/sets/prm.svg"
     },
     "prna": {
         "code": "prna",
         "fullName": "Ravnica Allegiance Promos",
-        "cardCount": 80,
-        "isPrimary": false,
         "block": "Guilds of Ravnica",
-        "icon": "img/sets/prna.svg",
-        "commonCount": 1,
-        "mythicCount": 11,
-        "rareCount": 64,
-        "uncommonCount": 4
+        "icon": "img/sets/prna.svg"
     },
     "proe": {
         "code": "proe",
         "fullName": "Rise of the Eldrazi Promos",
-        "cardCount": 3,
-        "isPrimary": false,
         "block": "Zendikar",
-        "icon": "img/sets/proe.svg",
-        "mythicCount": 1,
-        "rareCount": 2
+        "icon": "img/sets/proe.svg"
     },
     "prtr": {
         "code": "prtr",
         "fullName": "Return to Ravnica Promos",
-        "cardCount": 10,
-        "isPrimary": false,
         "block": "Return to Ravnica",
-        "icon": "img/sets/prtr.svg",
-        "rareCount": 8,
-        "uncommonCount": 2
+        "icon": "img/sets/prtr.svg"
     },
     "prw2": {
         "code": "prw2",
         "fullName": "RNA Ravnica Weekend",
-        "cardCount": 10,
-        "isPrimary": false,
         "block": "Guilds of Ravnica",
-        "icon": "img/sets/prw2.svg",
-        "commonCount": 10
+        "icon": "img/sets/prw2.svg"
     },
     "prwk": {
         "code": "prwk",
         "fullName": "GRN Ravnica Weekend",
-        "cardCount": 10,
-        "isPrimary": false,
         "block": "Guilds of Ravnica",
-        "icon": "img/sets/prwk.svg",
-        "commonCount": 10
+        "icon": "img/sets/prwk.svg"
     },
     "ps14": {
         "code": "ps14",
         "fullName": "San Diego Comic-Con 2014",
-        "cardCount": 6,
-        "isPrimary": false,
-        "icon": "img/sets/ps14.svg",
-        "mythicCount": 6
+        "icon": "img/sets/ps14.svg"
     },
     "ps15": {
         "code": "ps15",
         "fullName": "San Diego Comic-Con 2015",
-        "cardCount": 5,
-        "isPrimary": false,
-        "icon": "img/sets/ps15.svg",
-        "mythicCount": 5
+        "icon": "img/sets/ps15.svg"
     },
     "ps16": {
         "code": "ps16",
         "fullName": "San Diego Comic-Con 2016",
-        "cardCount": 5,
-        "isPrimary": false,
-        "icon": "img/sets/ps16.svg",
-        "mythicCount": 5
+        "icon": "img/sets/ps16.svg"
     },
     "ps17": {
         "code": "ps17",
         "fullName": "San Diego Comic-Con 2017",
-        "cardCount": 6,
-        "isPrimary": false,
-        "icon": "img/sets/ps17.svg",
-        "mythicCount": 6
+        "icon": "img/sets/ps17.svg"
     },
     "ps18": {
         "code": "ps18",
         "fullName": "San Diego Comic-Con 2018",
-        "cardCount": 5,
-        "isPrimary": false,
-        "icon": "img/sets/ps18.svg",
-        "mythicCount": 5
+        "icon": "img/sets/ps18.svg"
     },
     "ps19": {
         "code": "ps19",
         "fullName": "San Diego Comic-Con 2019",
-        "cardCount": 5,
-        "isPrimary": false,
-        "icon": "img/sets/ps19.svg",
-        "mythicCount": 5
+        "icon": "img/sets/ps19.svg"
     },
     "pscg": {
         "code": "pscg",
         "fullName": "Scourge Promos",
-        "cardCount": 1,
-        "isPrimary": false,
         "block": "Onslaught",
-        "icon": "img/sets/pscg.svg",
-        "rareCount": 1
+        "icon": "img/sets/pscg.svg"
     },
     "psdc": {
         "code": "psdc",
         "fullName": "San Diego Comic-Con 2013",
-        "cardCount": 5,
-        "isPrimary": false,
-        "icon": "img/sets/psdc.svg",
-        "mythicCount": 5
+        "icon": "img/sets/psdc.svg"
     },
     "pshm": {
         "code": "pshm",
         "fullName": "Shadowmoor Promos",
-        "cardCount": 2,
-        "isPrimary": false,
         "block": "Shadowmoor",
-        "icon": "img/sets/pshm.svg",
-        "rareCount": 2
+        "icon": "img/sets/pshm.svg"
     },
     "psnc": {
         "code": "psnc",
         "fullName": "Streets of New Capenna Promos",
-        "cardCount": 160,
-        "isPrimary": false,
-        "icon": "img/sets/psnc.svg",
-        "mythicCount": 40,
-        "rareCount": 120
+        "icon": "img/sets/psnc.svg"
     },
     "psoi": {
         "code": "psoi",
         "fullName": "Shadows over Innistrad Promos",
-        "cardCount": 90,
-        "isPrimary": false,
         "block": "Shadows over Innistrad",
-        "icon": "img/sets/psoi.svg",
-        "mythicCount": 18,
-        "rareCount": 70,
-        "uncommonCount": 2
+        "icon": "img/sets/psoi.svg"
     },
     "psok": {
         "code": "psok",
         "fullName": "Saviors of Kamigawa Promos",
-        "cardCount": 2,
-        "isPrimary": false,
         "block": "Kamigawa",
-        "icon": "img/sets/psok.svg",
-        "rareCount": 1,
-        "uncommonCount": 1
+        "icon": "img/sets/psok.svg"
     },
     "psom": {
         "code": "psom",
         "fullName": "Scars of Mirrodin Promos",
-        "cardCount": 3,
-        "isPrimary": false,
         "block": "Scars of Mirrodin",
-        "icon": "img/sets/psom.svg",
-        "mythicCount": 1,
-        "rareCount": 2
+        "icon": "img/sets/psom.svg"
     },
     "pss1": {
         "code": "pss1",
         "fullName": "BFZ Standard Series",
-        "cardCount": 5,
-        "isPrimary": false,
         "block": "Battle for Zendikar",
-        "icon": "img/sets/pss1.svg",
-        "rareCount": 5
+        "icon": "img/sets/pss1.svg"
     },
     "pss2": {
         "code": "pss2",
         "fullName": "XLN Standard Showdown",
-        "cardCount": 5,
-        "isPrimary": false,
         "block": "Ixalan",
-        "icon": "img/sets/pss2.svg",
-        "rareCount": 5
+        "icon": "img/sets/pss2.svg"
     },
     "pss3": {
         "code": "pss3",
         "fullName": "M19 Standard Showdown",
-        "cardCount": 5,
-        "isPrimary": false,
-        "icon": "img/sets/pss3.svg",
-        "rareCount": 5
+        "icon": "img/sets/pss3.svg"
     },
     "psth": {
         "code": "psth",
         "fullName": "Stronghold Promos",
-        "cardCount": 1,
-        "isPrimary": false,
         "block": "Tempest",
-        "icon": "img/sets/psth.svg",
-        "rareCount": 1
+        "icon": "img/sets/psth.svg"
     },
     "pstx": {
         "code": "pstx",
         "fullName": "Strixhaven: School of Mages Promos",
-        "cardCount": 164,
-        "isPrimary": false,
-        "icon": "img/sets/pstx.svg",
-        "mythicCount": 37,
-        "rareCount": 127
+        "icon": "img/sets/pstx.svg"
     },
     "psus": {
         "code": "psus",
         "fullName": "Junior Super Series",
-        "cardCount": 18,
-        "isPrimary": false,
-        "icon": "img/sets/psus.svg",
-        "rareCount": 18
+        "icon": "img/sets/psus.svg"
     },
     "ptc": {
         "code": "ptc",
         "fullName": "Pro Tour Collector Set",
-        "cardCount": 307,
-        "isPrimary": false,
-        "icon": "img/sets/ptc.svg",
-        "commonCount": 120,
-        "rareCount": 91,
-        "uncommonCount": 96
+        "icon": "img/sets/ptc.svg"
     },
     "ptg": {
         "code": "ptg",
         "fullName": "Ponies: The Galloping",
-        "cardCount": 3,
-        "isPrimary": false,
-        "icon": "img/sets/ptg.svg",
-        "mythicCount": 3
+        "icon": "img/sets/ptg.svg"
     },
     "pthb": {
         "code": "pthb",
         "fullName": "Theros Beyond Death Promos",
-        "cardCount": 136,
-        "isPrimary": false,
-        "icon": "img/sets/pthb.svg",
-        "mythicCount": 30,
-        "rareCount": 106
+        "icon": "img/sets/pthb.svg"
     },
     "pths": {
         "code": "pths",
         "fullName": "Theros Promos",
-        "cardCount": 10,
-        "isPrimary": false,
         "block": "Theros",
-        "icon": "img/sets/pths.svg",
-        "rareCount": 8,
-        "uncommonCount": 2
+        "icon": "img/sets/pths.svg"
     },
     "ptk": {
         "code": "ptk",
         "fullName": "Portal Three Kingdoms",
-        "cardCount": 180,
-        "isPrimary": false,
-        "icon": "img/sets/ptk.svg",
-        "commonCount": 70,
-        "rareCount": 55,
-        "uncommonCount": 55
+        "icon": "img/sets/ptk.svg"
     },
     "ptkdf": {
         "code": "ptkdf",
         "fullName": "Tarkir Dragonfury",
-        "cardCount": 4,
-        "isPrimary": false,
         "block": "Khans of Tarkir",
-        "icon": "img/sets/ptkdf.svg",
-        "commonCount": 2,
-        "rareCount": 1,
-        "uncommonCount": 1
+        "icon": "img/sets/ptkdf.svg"
     },
     "ptmp": {
         "code": "ptmp",
         "fullName": "Tempest Promos",
-        "cardCount": 1,
-        "isPrimary": false,
         "block": "Tempest",
-        "icon": "img/sets/ptmp.svg",
-        "rareCount": 1
+        "icon": "img/sets/ptmp.svg"
     },
     "ptsp": {
         "code": "ptsp",
         "fullName": "Time Spiral Promos",
-        "cardCount": 2,
-        "isPrimary": false,
         "block": "Time Spiral",
-        "icon": "img/sets/ptsp.svg",
-        "rareCount": 2
+        "icon": "img/sets/ptsp.svg"
     },
     "puds": {
         "code": "puds",
         "fullName": "Urza's Destiny Promos",
-        "cardCount": 1,
-        "isPrimary": false,
         "block": "Urza",
-        "icon": "img/sets/puds.svg",
-        "rareCount": 1
+        "icon": "img/sets/puds.svg"
     },
     "pulg": {
         "code": "pulg",
         "fullName": "Urza's Legacy Promos",
-        "cardCount": 2,
-        "isPrimary": false,
         "block": "Urza",
-        "icon": "img/sets/pulg.svg",
-        "rareCount": 2
+        "icon": "img/sets/pulg.svg"
     },
     "puma": {
         "code": "puma",
         "fullName": "Ultimate Box Topper",
-        "cardCount": 40,
-        "isPrimary": false,
-        "icon": "img/sets/puma.svg",
-        "mythicCount": 40
+        "icon": "img/sets/puma.svg"
     },
     "punh": {
         "code": "punh",
         "fullName": "Unhinged Promos",
-        "cardCount": 1,
-        "isPrimary": false,
-        "icon": "img/sets/punh.svg",
-        "rareCount": 1
+        "icon": "img/sets/punh.svg"
     },
     "purl": {
         "code": "purl",
         "fullName": "URL/Convention Promos",
-        "cardCount": 7,
-        "isPrimary": false,
-        "icon": "img/sets/purl.svg",
-        "commonCount": 1,
-        "rareCount": 6
+        "icon": "img/sets/purl.svg"
     },
     "pusg": {
         "code": "pusg",
         "fullName": "Urza's Saga Promos",
-        "cardCount": 1,
-        "isPrimary": false,
         "block": "Urza",
-        "icon": "img/sets/pusg.svg",
-        "rareCount": 1
+        "icon": "img/sets/pusg.svg"
     },
     "pust": {
         "code": "pust",
         "fullName": "Unstable Promos",
-        "cardCount": 1,
-        "isPrimary": false,
-        "icon": "img/sets/pust.svg",
-        "rareCount": 1
+        "icon": "img/sets/pust.svg"
     },
     "pvow": {
         "code": "pvow",
         "fullName": "Innistrad: Crimson Vow Promos",
-        "cardCount": 110,
-        "isPrimary": false,
-        "icon": "img/sets/pvow.svg",
-        "mythicCount": 26,
-        "rareCount": 84
+        "icon": "img/sets/pvow.svg"
     },
     "pw11": {
         "code": "pw11",
         "fullName": "Wizards Play Network 2011",
-        "cardCount": 3,
-        "isPrimary": false,
-        "icon": "img/sets/pw11.svg",
-        "rareCount": 3
+        "icon": "img/sets/pw11.svg"
     },
     "pw12": {
         "code": "pw12",
         "fullName": "Wizards Play Network 2012",
-        "cardCount": 3,
-        "isPrimary": false,
-        "icon": "img/sets/pw12.svg",
-        "rareCount": 3
+        "icon": "img/sets/pw12.svg"
     },
     "pw21": {
         "code": "pw21",
         "fullName": "Wizards Play Network 2021",
-        "cardCount": 6,
-        "isPrimary": false,
-        "icon": "img/sets/pw21.svg",
-        "mythicCount": 1,
-        "rareCount": 5
+        "icon": "img/sets/pw21.svg"
     },
     "pw22": {
         "code": "pw22",
         "fullName": "Wizards Play Network 2022",
-        "cardCount": 4,
-        "isPrimary": false,
-        "icon": "img/sets/pw22.svg",
-        "mythicCount": 1,
-        "rareCount": 3
+        "icon": "img/sets/pw22.svg"
     },
     "pw23": {
         "code": "pw23",
         "fullName": "Wizards Play Network 2023",
-        "cardCount": 7,
-        "isPrimary": false,
-        "icon": "img/sets/pw23.svg",
-        "rareCount": 7
+        "icon": "img/sets/pw23.svg"
     },
     "pw24": {
         "code": "pw24",
         "fullName": "Wizards Play Network 2024",
-        "cardCount": 5,
-        "isPrimary": false,
-        "icon": "img/sets/pw24.svg",
-        "rareCount": 5
+        "icon": "img/sets/pw24.svg"
     },
     "pwar": {
         "code": "pwar",
         "fullName": "War of the Spark Promos",
-        "cardCount": 139,
-        "isPrimary": false,
-        "icon": "img/sets/pwar.svg",
-        "mythicCount": 21,
-        "rareCount": 94,
-        "uncommonCount": 24
+        "icon": "img/sets/pwar.svg"
     },
     "pwoe": {
         "code": "pwoe",
         "fullName": "Wilds of Eldraine Promos",
-        "cardCount": 160,
-        "isPrimary": false,
-        "icon": "img/sets/pwoe.svg",
-        "mythicCount": 40,
-        "rareCount": 120
+        "icon": "img/sets/pwoe.svg"
     },
     "pwor": {
         "code": "pwor",
         "fullName": "World Championship Promos",
-        "cardCount": 2,
-        "isPrimary": false,
-        "icon": "img/sets/pwor.svg",
-        "mythicCount": 1,
-        "rareCount": 1
+        "icon": "img/sets/pwor.svg"
     },
     "pwos": {
         "code": "pwos",
         "fullName": "Wizards of the Coast Online Store",
-        "cardCount": 1,
-        "isPrimary": false,
-        "icon": "img/sets/pwos.svg",
-        "rareCount": 1
+        "icon": "img/sets/pwos.svg"
     },
     "pwwk": {
         "code": "pwwk",
         "fullName": "Worldwake Promos",
-        "cardCount": 3,
-        "isPrimary": false,
         "block": "Zendikar",
-        "icon": "img/sets/pwwk.svg",
-        "mythicCount": 1,
-        "rareCount": 2
+        "icon": "img/sets/pwwk.svg"
     },
     "pxln": {
         "code": "pxln",
         "fullName": "Ixalan Promos",
-        "cardCount": 120,
-        "isPrimary": false,
         "block": "Ixalan",
-        "icon": "img/sets/pxln.svg",
-        "mythicCount": 18,
-        "rareCount": 100,
-        "uncommonCount": 2
+        "icon": "img/sets/pxln.svg"
     },
     "pxtc": {
         "code": "pxtc",
         "fullName": "XLN Treasure Chest",
-        "cardCount": 10,
-        "isPrimary": false,
         "block": "Ixalan",
-        "icon": "img/sets/pxtc.svg",
-        "rareCount": 10
+        "icon": "img/sets/pxtc.svg"
     },
     "pz1": {
         "code": "pz1",
         "fullName": "Legendary Cube Prize Pack",
-        "cardCount": 149,
-        "isPrimary": false,
-        "icon": "img/sets/pz1.svg",
-        "mythicCount": 16,
-        "rareCount": 64,
-        "uncommonCount": 69
+        "icon": "img/sets/pz1.svg"
     },
     "pz2": {
         "code": "pz2",
         "fullName": "Treasure Chest",
-        "cardCount": 282,
-        "isPrimary": false,
-        "icon": "img/sets/pz2.svg",
-        "commonCount": 52,
-        "mythicCount": 57,
-        "rareCount": 133,
-        "uncommonCount": 40
+        "icon": "img/sets/pz2.svg"
     },
     "pzen": {
         "code": "pzen",
         "fullName": "Zendikar Promos",
-        "cardCount": 3,
-        "isPrimary": false,
         "block": "Zendikar",
-        "icon": "img/sets/pzen.svg",
-        "mythicCount": 1,
-        "rareCount": 2
+        "icon": "img/sets/pzen.svg"
     },
     "pznr": {
         "code": "pznr",
         "fullName": "Zendikar Rising Promos",
-        "cardCount": 152,
-        "isPrimary": false,
-        "icon": "img/sets/pznr.svg",
-        "mythicCount": 35,
-        "rareCount": 117
+        "icon": "img/sets/pznr.svg"
     },
     "q06": {
         "code": "q06",
         "fullName": "Pioneer Challenger Decks 2021",
-        "cardCount": 10,
-        "isPrimary": false,
-        "icon": "img/sets/q06.svg",
-        "commonCount": 2,
-        "mythicCount": 1,
-        "rareCount": 4,
-        "uncommonCount": 3
+        "icon": "img/sets/q06.svg"
     },
     "rav": {
         "code": "rav",
         "fullName": "Ravnica: City of Guilds",
-        "cardCount": 306,
-        "isPrimary": true,
         "block": "Ravnica",
-        "icon": "img/sets/rav.svg",
-        "commonCount": 130,
-        "rareCount": 88,
-        "uncommonCount": 88
+        "icon": "img/sets/rav.svg"
     },
     "rex": {
         "code": "rex",
         "fullName": "Jurassic World Collection",
-        "cardCount": 45,
-        "isPrimary": false,
-        "icon": "img/sets/rex.svg",
-        "commonCount": 6,
-        "rareCount": 39
+        "icon": "img/sets/rex.svg"
     },
     "rix": {
         "code": "rix",
         "fullName": "Rivals of Ixalan",
-        "cardCount": 205,
-        "isPrimary": true,
         "block": "Ixalan",
-        "icon": "img/sets/rix.svg",
-        "commonCount": 78,
-        "mythicCount": 15,
-        "rareCount": 50,
-        "uncommonCount": 62
+        "icon": "img/sets/rix.svg"
     },
     "rna": {
         "code": "rna",
         "fullName": "Ravnica Allegiance",
-        "cardCount": 273,
-        "isPrimary": true,
         "block": "Guilds of Ravnica",
-        "icon": "img/sets/rna.svg",
-        "commonCount": 118,
-        "mythicCount": 18,
-        "rareCount": 55,
-        "uncommonCount": 82
+        "icon": "img/sets/rna.svg"
     },
     "roe": {
         "code": "roe",
         "fullName": "Rise of the Eldrazi",
-        "cardCount": 248,
-        "isPrimary": true,
         "block": "Zendikar",
-        "icon": "img/sets/roe.svg",
-        "commonCount": 120,
-        "mythicCount": 15,
-        "rareCount": 53,
-        "uncommonCount": 60
+        "icon": "img/sets/roe.svg"
     },
     "rqs": {
         "code": "rqs",
         "fullName": "Rivals Quick Start Set",
-        "cardCount": 65,
-        "isPrimary": false,
-        "icon": "img/sets/rqs.svg",
-        "commonCount": 44,
-        "rareCount": 6,
-        "uncommonCount": 15
+        "icon": "img/sets/rqs.svg"
     },
     "rtr": {
         "code": "rtr",
         "fullName": "Return to Ravnica",
-        "cardCount": 274,
-        "isPrimary": true,
         "block": "Return to Ravnica",
-        "icon": "img/sets/rtr.svg",
-        "commonCount": 126,
-        "mythicCount": 15,
-        "rareCount": 53,
-        "uncommonCount": 80
+        "icon": "img/sets/rtr.svg"
     },
     "rvr": {
         "code": "rvr",
         "fullName": "Ravnica Remastered",
-        "cardCount": 50,
-        "isPrimary": true,
-        "icon": "img/sets/rvr.svg",
-        "mythicCount": 3,
-        "rareCount": 47
+        "icon": "img/sets/rvr.svg"
     },
     "s00": {
         "code": "s00",
         "fullName": "Starter 2000",
-        "cardCount": 20,
-        "isPrimary": false,
-        "icon": "img/sets/s00.svg",
-        "commonCount": 15,
-        "rareCount": 3,
-        "uncommonCount": 2
+        "icon": "img/sets/s00.svg"
     },
     "s99": {
         "code": "s99",
         "fullName": "Starter 1999",
-        "cardCount": 173,
-        "isPrimary": false,
-        "icon": "img/sets/s99.svg",
-        "commonCount": 82,
-        "rareCount": 36,
-        "uncommonCount": 55
+        "icon": "img/sets/s99.svg"
     },
     "sbro": {
         "code": "sbro",
         "fullName": "The Brothers' War Substitute Cards",
-        "cardCount": 1,
-        "isPrimary": false,
-        "icon": "img/sets/sbro.svg",
-        "commonCount": 1
+        "icon": "img/sets/sbro.svg"
     },
     "scd": {
         "code": "scd",
         "fullName": "Starter Commander Decks",
-        "cardCount": 352,
-        "isPrimary": false,
-        "icon": "img/sets/scd.svg",
-        "commonCount": 66,
-        "mythicCount": 24,
-        "rareCount": 137,
-        "uncommonCount": 125
+        "icon": "img/sets/scd.svg"
     },
     "scg": {
         "code": "scg",
         "fullName": "Scourge",
-        "cardCount": 143,
-        "isPrimary": true,
         "block": "Onslaught",
-        "icon": "img/sets/scg.svg",
-        "commonCount": 55,
-        "rareCount": 44,
-        "uncommonCount": 44
+        "icon": "img/sets/scg.svg"
     },
     "sch": {
         "code": "sch",
         "fullName": "Store Championships",
-        "cardCount": 20,
-        "isPrimary": false,
-        "icon": "img/sets/sch.svg",
-        "mythicCount": 3,
-        "rareCount": 17
+        "icon": "img/sets/sch.svg"
     },
     "shm": {
         "code": "shm",
         "fullName": "Shadowmoor",
-        "cardCount": 302,
-        "isPrimary": true,
         "block": "Shadowmoor",
-        "icon": "img/sets/shm.svg",
-        "commonCount": 141,
-        "rareCount": 81,
-        "uncommonCount": 80
+        "icon": "img/sets/shm.svg"
     },
     "sir": {
         "code": "sir",
         "fullName": "Shadows over Innistrad Remastered",
-        "cardCount": 294,
-        "isPrimary": true,
-        "icon": "img/sets/sir.svg",
-        "commonCount": 110,
-        "mythicCount": 24,
-        "rareCount": 67,
-        "uncommonCount": 93
+        "icon": "img/sets/sir.svg"
     },
     "sis": {
         "code": "sis",
         "fullName": "Shadows of the Past",
-        "cardCount": 76,
-        "isPrimary": true,
-        "icon": "img/sets/sis.svg",
-        "commonCount": 28,
-        "mythicCount": 12,
-        "rareCount": 12,
-        "uncommonCount": 24
+        "icon": "img/sets/sis.svg"
     },
     "skhm": {
         "code": "skhm",
         "fullName": "Kaldheim Substitute Cards",
-        "cardCount": 9,
-        "isPrimary": false,
-        "icon": "img/sets/skhm.svg",
-        "commonCount": 9
+        "icon": "img/sets/skhm.svg"
     },
     "slc": {
         "code": "slc",
         "fullName": "Secret Lair 30th Anniversary Countdown Kit",
-        "cardCount": 31,
-        "isPrimary": false,
-        "icon": "img/sets/slc.svg",
-        "mythicCount": 10,
-        "rareCount": 21
+        "icon": "img/sets/slc.svg"
     },
     "slci": {
         "code": "slci",
         "fullName": "The Lost Caverns of Ixalan Substitute Cards",
-        "cardCount": 1,
-        "isPrimary": false,
-        "icon": "img/sets/slci.svg",
-        "commonCount": 1
+        "icon": "img/sets/slci.svg"
     },
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 1111,
-        "isPrimary": false,
-        "icon": "img/sets/sld.svg",
-        "commonCount": 46,
-        "mythicCount": 226,
-        "rareCount": 819,
-        "uncommonCount": 20
+        "icon": "img/sets/sld.svg"
     },
     "slp": {
         "code": "slp",
         "fullName": "Secret Lair Showdown",
-        "cardCount": 14,
-        "isPrimary": false,
-        "icon": "img/sets/slp.svg",
-        "mythicCount": 3,
-        "rareCount": 11
+        "icon": "img/sets/slp.svg"
     },
     "slu": {
         "code": "slu",
         "fullName": "Secret Lair: Ultimate Edition",
-        "cardCount": 16,
-        "isPrimary": false,
-        "icon": "img/sets/slu.svg",
-        "rareCount": 16
+        "icon": "img/sets/slu.svg"
     },
     "slx": {
         "code": "slx",
         "fullName": "Universes Within",
-        "cardCount": 23,
-        "isPrimary": true,
-        "icon": "img/sets/slx.svg",
-        "mythicCount": 7,
-        "rareCount": 16
+        "icon": "img/sets/slx.svg"
     },
     "smid": {
         "code": "smid",
         "fullName": "Innistrad: Midnight Hunt Substitute Cards",
-        "cardCount": 9,
-        "isPrimary": false,
         "block": "Innistrad: Double Feature",
-        "icon": "img/sets/smid.svg",
-        "commonCount": 9
+        "icon": "img/sets/smid.svg"
     },
     "smom": {
         "code": "smom",
         "fullName": "March of the Machine Substitute Cards",
-        "cardCount": 1,
-        "isPrimary": false,
-        "icon": "img/sets/smom.svg",
-        "commonCount": 1
+        "icon": "img/sets/smom.svg"
     },
     "snc": {
         "code": "snc",
         "fullName": "Streets of New Capenna",
-        "cardCount": 502,
-        "isPrimary": true,
-        "icon": "img/sets/snc.svg",
-        "commonCount": 168,
-        "mythicCount": 55,
-        "rareCount": 152,
-        "uncommonCount": 127
+        "icon": "img/sets/snc.svg"
     },
     "sneo": {
         "code": "sneo",
         "fullName": "Kamigawa: Neon Dynasty Substitute Cards",
-        "cardCount": 9,
-        "isPrimary": false,
-        "icon": "img/sets/sneo.svg",
-        "commonCount": 9
+        "icon": "img/sets/sneo.svg"
     },
     "soi": {
         "code": "soi",
         "fullName": "Shadows over Innistrad",
-        "cardCount": 302,
-        "isPrimary": true,
         "block": "Shadows over Innistrad",
-        "icon": "img/sets/soi.svg",
-        "commonCount": 120,
-        "mythicCount": 18,
-        "rareCount": 64,
-        "uncommonCount": 100
+        "icon": "img/sets/soi.svg"
     },
     "sok": {
         "code": "sok",
         "fullName": "Saviors of Kamigawa",
-        "cardCount": 165,
-        "isPrimary": true,
         "block": "Kamigawa",
-        "icon": "img/sets/sok.svg",
-        "commonCount": 55,
-        "rareCount": 55,
-        "uncommonCount": 55
+        "icon": "img/sets/sok.svg"
     },
     "som": {
         "code": "som",
         "fullName": "Scars of Mirrodin",
-        "cardCount": 249,
-        "isPrimary": true,
         "block": "Scars of Mirrodin",
-        "icon": "img/sets/som.svg",
-        "commonCount": 121,
-        "mythicCount": 15,
-        "rareCount": 53,
-        "uncommonCount": 60
+        "icon": "img/sets/som.svg"
     },
     "spg": {
         "code": "spg",
         "fullName": "Special Guests",
-        "cardCount": 24,
-        "isPrimary": false,
-        "icon": "img/sets/spg.svg",
-        "mythicCount": 12,
-        "rareCount": 7,
-        "uncommonCount": 5
+        "icon": "img/sets/spg.svg"
     },
     "ss1": {
         "code": "ss1",
         "fullName": "Signature Spellbook: Jace",
-        "cardCount": 8,
-        "isPrimary": false,
-        "icon": "img/sets/ss1.svg",
-        "mythicCount": 1,
-        "rareCount": 7
+        "icon": "img/sets/ss1.svg"
     },
     "ss2": {
         "code": "ss2",
         "fullName": "Signature Spellbook: Gideon",
-        "cardCount": 8,
-        "isPrimary": false,
-        "icon": "img/sets/ss2.svg",
-        "mythicCount": 1,
-        "rareCount": 7
+        "icon": "img/sets/ss2.svg"
     },
     "ss3": {
         "code": "ss3",
         "fullName": "Signature Spellbook: Chandra",
-        "cardCount": 8,
-        "isPrimary": false,
-        "icon": "img/sets/ss3.svg",
-        "mythicCount": 2,
-        "rareCount": 6
+        "icon": "img/sets/ss3.svg"
     },
     "sstx": {
         "code": "sstx",
         "fullName": "Strixhaven: School of Mages Substitute Cards",
-        "cardCount": 9,
-        "isPrimary": false,
-        "icon": "img/sets/sstx.svg",
-        "commonCount": 9
+        "icon": "img/sets/sstx.svg"
     },
     "sta": {
         "code": "sta",
         "fullName": "Strixhaven Mystical Archive",
-        "cardCount": 63,
-        "isPrimary": false,
-        "icon": "img/sets/sta.svg",
-        "mythicCount": 15,
-        "rareCount": 30,
-        "uncommonCount": 18
+        "icon": "img/sets/sta.svg"
     },
     "sth": {
         "code": "sth",
         "fullName": "Stronghold",
-        "cardCount": 143,
-        "isPrimary": true,
         "block": "Tempest",
-        "icon": "img/sets/sth.svg",
-        "commonCount": 55,
-        "rareCount": 44,
-        "uncommonCount": 44
+        "icon": "img/sets/sth.svg"
     },
     "stx": {
         "code": "stx",
         "fullName": "Strixhaven: School of Mages",
-        "cardCount": 393,
-        "isPrimary": true,
-        "icon": "img/sets/stx.svg",
-        "commonCount": 116,
-        "mythicCount": 44,
-        "rareCount": 141,
-        "uncommonCount": 92
+        "icon": "img/sets/stx.svg"
     },
     "sum": {
         "code": "sum",
         "fullName": "Summer Magic / Edgar",
-        "cardCount": 306,
-        "isPrimary": true,
         "block": "Core Set",
-        "icon": "img/sets/sum.svg",
-        "commonCount": 90,
-        "rareCount": 121,
-        "uncommonCount": 95
+        "icon": "img/sets/sum.svg"
     },
     "sunf": {
         "code": "sunf",
         "fullName": "Unfinity Sticker Sheets",
-        "cardCount": 48,
-        "isPrimary": false,
-        "icon": "img/sets/sunf.svg",
-        "commonCount": 48
+        "icon": "img/sets/sunf.svg"
     },
     "svow": {
         "code": "svow",
         "fullName": "Innistrad: Crimson Vow Substitute Cards",
-        "cardCount": 9,
-        "isPrimary": false,
-        "icon": "img/sets/svow.svg",
-        "commonCount": 9
+        "icon": "img/sets/svow.svg"
     },
     "sznr": {
         "code": "sznr",
         "fullName": "Zendikar Rising Substitute Cards",
-        "cardCount": 9,
-        "isPrimary": false,
-        "icon": "img/sets/sznr.svg",
-        "commonCount": 9
+        "icon": "img/sets/sznr.svg"
     },
     "tafr": {
         "code": "tafr",
         "fullName": "Adventures in the Forgotten Realms Tokens",
-        "cardCount": 3,
-        "isPrimary": false,
-        "icon": "img/sets/tafr.svg",
-        "commonCount": 3
+        "icon": "img/sets/tafr.svg"
     },
     "tbth": {
         "code": "tbth",
         "fullName": "Battle the Horde",
-        "cardCount": 10,
-        "isPrimary": false,
         "block": "Theros",
-        "icon": "img/sets/tbth.svg",
-        "commonCount": 10
+        "icon": "img/sets/tbth.svg"
     },
     "tc15": {
         "code": "tc15",
         "fullName": "Commander 2015 Tokens",
-        "cardCount": 1,
-        "isPrimary": false,
         "block": "Commander",
-        "icon": "img/sets/tc15.svg",
-        "commonCount": 1
+        "icon": "img/sets/tc15.svg"
     },
     "tcm2": {
         "code": "tcm2",
         "fullName": "Commander Anthology Volume II Tokens",
-        "cardCount": 1,
-        "isPrimary": false,
         "block": "Commander",
-        "icon": "img/sets/tcm2.svg",
-        "commonCount": 1
+        "icon": "img/sets/tcm2.svg"
     },
     "tcma": {
         "code": "tcma",
         "fullName": "Commander Anthology Tokens",
-        "cardCount": 1,
-        "isPrimary": false,
         "block": "Commander",
-        "icon": "img/sets/tcma.svg",
-        "commonCount": 1
+        "icon": "img/sets/tcma.svg"
     },
     "td0": {
         "code": "td0",
         "fullName": "Magic Online Theme Decks",
-        "cardCount": 197,
-        "isPrimary": false,
-        "icon": "img/sets/td0.svg",
-        "commonCount": 99,
-        "rareCount": 26,
-        "uncommonCount": 72
+        "icon": "img/sets/td0.svg"
     },
     "td2": {
         "code": "td2",
         "fullName": "Duel Decks: Mirrodin Pure vs. New Phyrexia",
-        "cardCount": 88,
-        "isPrimary": false,
-        "icon": "img/sets/td2.svg",
-        "commonCount": 37,
-        "mythicCount": 2,
-        "rareCount": 14,
-        "uncommonCount": 35
+        "icon": "img/sets/td2.svg"
     },
     "tdag": {
         "code": "tdag",
         "fullName": "Defeat a God",
-        "cardCount": 8,
-        "isPrimary": false,
         "block": "Theros",
-        "icon": "img/sets/tdag.svg",
-        "commonCount": 8
+        "icon": "img/sets/tdag.svg"
     },
     "tfth": {
         "code": "tfth",
         "fullName": "Face the Hydra",
-        "cardCount": 10,
-        "isPrimary": false,
         "block": "Theros",
-        "icon": "img/sets/tfth.svg",
-        "commonCount": 10
+        "icon": "img/sets/tfth.svg"
     },
     "thb": {
         "code": "thb",
         "fullName": "Theros Beyond Death",
-        "cardCount": 358,
-        "isPrimary": true,
-        "icon": "img/sets/thb.svg",
-        "commonCount": 120,
-        "mythicCount": 32,
-        "rareCount": 116,
-        "uncommonCount": 90
+        "icon": "img/sets/thb.svg"
     },
     "thp1": {
         "code": "thp1",
         "fullName": "Theros Hero's Path",
-        "cardCount": 7,
-        "isPrimary": false,
         "block": "Theros",
-        "icon": "img/sets/thp1.svg",
-        "commonCount": 7
+        "icon": "img/sets/thp1.svg"
     },
     "thp2": {
         "code": "thp2",
         "fullName": "Born of the Gods Hero's Path",
-        "cardCount": 7,
-        "isPrimary": false,
         "block": "Theros",
-        "icon": "img/sets/thp2.svg",
-        "commonCount": 7
+        "icon": "img/sets/thp2.svg"
     },
     "thp3": {
         "code": "thp3",
         "fullName": "Journey into Nyx Hero's Path",
-        "cardCount": 7,
-        "isPrimary": false,
         "block": "Theros",
-        "icon": "img/sets/thp3.svg",
-        "commonCount": 7
+        "icon": "img/sets/thp3.svg"
     },
     "ths": {
         "code": "ths",
         "fullName": "Theros",
-        "cardCount": 249,
-        "isPrimary": true,
         "block": "Theros",
-        "icon": "img/sets/ths.svg",
-        "commonCount": 121,
-        "mythicCount": 15,
-        "rareCount": 53,
-        "uncommonCount": 60
+        "icon": "img/sets/ths.svg"
     },
     "tkhm": {
         "code": "tkhm",
         "fullName": "Kaldheim Tokens",
-        "cardCount": 1,
-        "isPrimary": false,
-        "icon": "img/sets/tkhm.svg",
-        "commonCount": 1
+        "icon": "img/sets/tkhm.svg"
     },
     "tmbs": {
         "code": "tmbs",
         "fullName": "Mirrodin Besieged Tokens",
-        "cardCount": 1,
-        "isPrimary": false,
         "block": "Scars of Mirrodin",
-        "icon": "img/sets/tmbs.svg",
-        "commonCount": 1
+        "icon": "img/sets/tmbs.svg"
     },
     "tmp": {
         "code": "tmp",
         "fullName": "Tempest",
-        "cardCount": 350,
-        "isPrimary": true,
         "block": "Tempest",
-        "icon": "img/sets/tmp.svg",
-        "commonCount": 130,
-        "rareCount": 110,
-        "uncommonCount": 110
+        "icon": "img/sets/tmp.svg"
     },
     "tnph": {
         "code": "tnph",
         "fullName": "New Phyrexia Tokens",
-        "cardCount": 1,
-        "isPrimary": false,
         "block": "Scars of Mirrodin",
-        "icon": "img/sets/tnph.svg",
-        "commonCount": 1
+        "icon": "img/sets/tnph.svg"
     },
     "tone": {
         "code": "tone",
         "fullName": "Phyrexia: All Will Be One Tokens",
-        "cardCount": 1,
-        "isPrimary": false,
-        "icon": "img/sets/tone.svg",
-        "commonCount": 1
+        "icon": "img/sets/tone.svg"
     },
     "tor": {
         "code": "tor",
         "fullName": "Torment",
-        "cardCount": 143,
-        "isPrimary": true,
         "block": "Odyssey",
-        "icon": "img/sets/tor.svg",
-        "commonCount": 55,
-        "rareCount": 44,
-        "uncommonCount": 44
+        "icon": "img/sets/tor.svg"
     },
     "tpr": {
         "code": "tpr",
         "fullName": "Tempest Remastered",
-        "cardCount": 269,
-        "isPrimary": true,
-        "icon": "img/sets/tpr.svg",
-        "commonCount": 121,
-        "mythicCount": 15,
-        "rareCount": 53,
-        "uncommonCount": 80
+        "icon": "img/sets/tpr.svg"
     },
     "tsb": {
         "code": "tsb",
         "fullName": "Time Spiral Timeshifted",
-        "cardCount": 121,
-        "isPrimary": true,
         "block": "Time Spiral",
-        "icon": "img/sets/tsb.svg",
-        "specialCount": 121
+        "icon": "img/sets/tsb.svg"
     },
     "tsom": {
         "code": "tsom",
         "fullName": "Scars of Mirrodin Tokens",
-        "cardCount": 1,
-        "isPrimary": false,
         "block": "Scars of Mirrodin",
-        "icon": "img/sets/tsom.svg",
-        "commonCount": 1
+        "icon": "img/sets/tsom.svg"
     },
     "tsp": {
         "code": "tsp",
         "fullName": "Time Spiral",
-        "cardCount": 301,
-        "isPrimary": true,
         "block": "Time Spiral",
-        "icon": "img/sets/tsp.svg",
-        "commonCount": 141,
-        "rareCount": 80,
-        "uncommonCount": 80
+        "icon": "img/sets/tsp.svg"
     },
     "tsr": {
         "code": "tsr",
         "fullName": "Time Spiral Remastered",
-        "cardCount": 411,
-        "isPrimary": true,
-        "icon": "img/sets/tsr.svg",
-        "commonCount": 121,
-        "mythicCount": 15,
-        "rareCount": 54,
-        "specialCount": 121,
-        "uncommonCount": 100
+        "icon": "img/sets/tsr.svg"
     },
     "tund": {
         "code": "tund",
         "fullName": "Unsanctioned Tokens",
-        "cardCount": 1,
-        "isPrimary": false,
-        "icon": "img/sets/tund.svg",
-        "commonCount": 1
+        "icon": "img/sets/tund.svg"
     },
     "tunf": {
         "code": "tunf",
         "fullName": "Unfinity Tokens",
-        "cardCount": 1,
-        "isPrimary": false,
-        "icon": "img/sets/tunf.svg",
-        "commonCount": 1
+        "icon": "img/sets/tunf.svg"
     },
     "twoc": {
         "code": "twoc",
         "fullName": "Wilds of Eldraine Commander Tokens",
-        "cardCount": 3,
-        "isPrimary": false,
-        "icon": "img/sets/twoc.svg",
-        "commonCount": 3
+        "icon": "img/sets/twoc.svg"
     },
     "twoe": {
         "code": "twoe",
         "fullName": "Wilds of Eldraine Tokens",
-        "cardCount": 3,
-        "isPrimary": false,
-        "icon": "img/sets/twoe.svg",
-        "commonCount": 3
+        "icon": "img/sets/twoe.svg"
     },
     "uds": {
         "code": "uds",
         "fullName": "Urza's Destiny",
-        "cardCount": 143,
-        "isPrimary": true,
         "block": "Urza",
-        "icon": "img/sets/uds.svg",
-        "commonCount": 55,
-        "rareCount": 44,
-        "uncommonCount": 44
+        "icon": "img/sets/uds.svg"
     },
     "ugin": {
         "code": "ugin",
         "fullName": "Ugin's Fate",
-        "cardCount": 26,
-        "isPrimary": false,
         "block": "Khans of Tarkir",
-        "icon": "img/sets/ugin.svg",
-        "commonCount": 10,
-        "mythicCount": 1,
-        "rareCount": 7,
-        "uncommonCount": 8
+        "icon": "img/sets/ugin.svg"
     },
     "ugl": {
         "code": "ugl",
         "fullName": "Unglued",
-        "cardCount": 88,
-        "isPrimary": true,
-        "icon": "img/sets/ugl.svg",
-        "commonCount": 38,
-        "rareCount": 28,
-        "uncommonCount": 22
+        "icon": "img/sets/ugl.svg"
     },
     "ulg": {
         "code": "ulg",
         "fullName": "Urza's Legacy",
-        "cardCount": 143,
-        "isPrimary": true,
         "block": "Urza",
-        "icon": "img/sets/ulg.svg",
-        "commonCount": 55,
-        "rareCount": 44,
-        "uncommonCount": 44
+        "icon": "img/sets/ulg.svg"
     },
     "uma": {
         "code": "uma",
         "fullName": "Ultimate Masters",
-        "cardCount": 254,
-        "isPrimary": true,
-        "icon": "img/sets/uma.svg",
-        "commonCount": 101,
-        "mythicCount": 20,
-        "rareCount": 53,
-        "uncommonCount": 80
+        "icon": "img/sets/uma.svg"
     },
     "und": {
         "code": "und",
         "fullName": "Unsanctioned",
-        "cardCount": 96,
-        "isPrimary": true,
-        "icon": "img/sets/und.svg",
-        "commonCount": 40,
-        "mythicCount": 4,
-        "rareCount": 30,
-        "uncommonCount": 22
+        "icon": "img/sets/und.svg"
     },
     "unf": {
         "code": "unf",
         "fullName": "Unfinity",
-        "cardCount": 639,
-        "isPrimary": true,
-        "icon": "img/sets/unf.svg",
-        "commonCount": 233,
-        "mythicCount": 52,
-        "rareCount": 156,
-        "uncommonCount": 198
+        "icon": "img/sets/unf.svg"
     },
     "unh": {
         "code": "unh",
         "fullName": "Unhinged",
-        "cardCount": 168,
-        "isPrimary": true,
-        "icon": "img/sets/unh.svg",
-        "commonCount": 74,
-        "rareCount": 50,
-        "uncommonCount": 44
+        "icon": "img/sets/unh.svg"
     },
     "uplist": {
         "code": "uplist",
         "fullName": "The List (Unfinity Foil Edition)",
-        "cardCount": 62,
-        "isPrimary": false,
-        "icon": "img/sets/uplist.svg",
-        "mythicCount": 11,
-        "rareCount": 51
+        "icon": "img/sets/uplist.svg"
     },
     "usg": {
         "code": "usg",
         "fullName": "Urza's Saga",
-        "cardCount": 350,
-        "isPrimary": true,
         "block": "Urza",
-        "icon": "img/sets/usg.svg",
-        "commonCount": 130,
-        "rareCount": 110,
-        "uncommonCount": 110
+        "icon": "img/sets/usg.svg"
     },
     "ust": {
         "code": "ust",
         "fullName": "Unstable",
-        "cardCount": 268,
-        "isPrimary": true,
-        "icon": "img/sets/ust.svg",
-        "commonCount": 102,
-        "mythicCount": 15,
-        "rareCount": 61,
-        "uncommonCount": 90
+        "icon": "img/sets/ust.svg"
     },
     "v09": {
         "code": "v09",
         "fullName": "From the Vault: Exiled",
-        "cardCount": 15,
-        "isPrimary": false,
-        "icon": "img/sets/v09.svg",
-        "mythicCount": 15
+        "icon": "img/sets/v09.svg"
     },
     "v10": {
         "code": "v10",
         "fullName": "From the Vault: Relics",
-        "cardCount": 15,
-        "isPrimary": false,
-        "icon": "img/sets/v10.svg",
-        "mythicCount": 15
+        "icon": "img/sets/v10.svg"
     },
     "v11": {
         "code": "v11",
         "fullName": "From the Vault: Legends",
-        "cardCount": 15,
-        "isPrimary": false,
-        "icon": "img/sets/v11.svg",
-        "mythicCount": 15
+        "icon": "img/sets/v11.svg"
     },
     "v12": {
         "code": "v12",
         "fullName": "From the Vault: Realms",
-        "cardCount": 15,
-        "isPrimary": false,
-        "icon": "img/sets/v12.svg",
-        "mythicCount": 15
+        "icon": "img/sets/v12.svg"
     },
     "v13": {
         "code": "v13",
         "fullName": "From the Vault: Twenty",
-        "cardCount": 20,
-        "isPrimary": false,
-        "icon": "img/sets/v13.svg",
-        "mythicCount": 20
+        "icon": "img/sets/v13.svg"
     },
     "v14": {
         "code": "v14",
         "fullName": "From the Vault: Annihilation",
-        "cardCount": 15,
-        "isPrimary": false,
-        "icon": "img/sets/v14.svg",
-        "mythicCount": 15
+        "icon": "img/sets/v14.svg"
     },
     "v15": {
         "code": "v15",
         "fullName": "From the Vault: Angels",
-        "cardCount": 15,
-        "isPrimary": false,
-        "icon": "img/sets/v15.svg",
-        "mythicCount": 15
+        "icon": "img/sets/v15.svg"
     },
     "v16": {
         "code": "v16",
         "fullName": "From the Vault: Lore",
-        "cardCount": 15,
-        "isPrimary": false,
-        "icon": "img/sets/v16.svg",
-        "mythicCount": 15
+        "icon": "img/sets/v16.svg"
     },
     "v17": {
         "code": "v17",
         "fullName": "From the Vault: Transform",
-        "cardCount": 16,
-        "isPrimary": false,
-        "icon": "img/sets/v17.svg",
-        "mythicCount": 16
+        "icon": "img/sets/v17.svg"
     },
     "vis": {
         "code": "vis",
         "fullName": "Visions",
-        "cardCount": 167,
-        "isPrimary": true,
         "block": "Mirage",
-        "icon": "img/sets/vis.svg",
-        "commonCount": 62,
-        "rareCount": 50,
-        "uncommonCount": 55
+        "icon": "img/sets/vis.svg"
     },
     "vma": {
         "code": "vma",
         "fullName": "Vintage Masters",
-        "cardCount": 325,
-        "isPrimary": true,
-        "icon": "img/sets/vma.svg",
-        "bonusCount": 9,
-        "commonCount": 101,
-        "mythicCount": 30,
-        "rareCount": 105,
-        "uncommonCount": 80
+        "icon": "img/sets/vma.svg"
     },
     "voc": {
         "code": "voc",
         "fullName": "Crimson Vow Commander",
-        "cardCount": 188,
-        "isPrimary": false,
         "block": "Commander",
-        "icon": "img/sets/voc.svg",
-        "commonCount": 15,
-        "mythicCount": 17,
-        "rareCount": 123,
-        "uncommonCount": 33
+        "icon": "img/sets/voc.svg"
     },
     "vow": {
         "code": "vow",
         "fullName": "Innistrad: Crimson Vow",
-        "cardCount": 423,
-        "isPrimary": true,
         "block": "Innistrad: Double Feature",
-        "icon": "img/sets/vow.svg",
-        "commonCount": 130,
-        "mythicCount": 46,
-        "rareCount": 141,
-        "uncommonCount": 106
+        "icon": "img/sets/vow.svg"
     },
     "w16": {
         "code": "w16",
         "fullName": "Welcome Deck 2016",
-        "cardCount": 16,
-        "isPrimary": false,
-        "icon": "img/sets/w16.svg",
-        "commonCount": 6,
-        "rareCount": 5,
-        "uncommonCount": 5
+        "icon": "img/sets/w16.svg"
     },
     "w17": {
         "code": "w17",
         "fullName": "Welcome Deck 2017",
-        "cardCount": 30,
-        "isPrimary": false,
-        "icon": "img/sets/w17.svg",
-        "commonCount": 20,
-        "rareCount": 5,
-        "uncommonCount": 5
+        "icon": "img/sets/w17.svg"
     },
     "war": {
         "code": "war",
         "fullName": "War of the Spark",
-        "cardCount": 276,
-        "isPrimary": true,
         "block": "Guilds of Ravnica",
-        "icon": "img/sets/war.svg",
-        "commonCount": 120,
-        "mythicCount": 18,
-        "rareCount": 56,
-        "uncommonCount": 82
+        "icon": "img/sets/war.svg"
     },
     "wc00": {
         "code": "wc00",
         "fullName": "World Championship Decks 2000",
-        "cardCount": 107,
-        "isPrimary": false,
-        "icon": "img/sets/wc00.svg",
-        "commonCount": 27,
-        "rareCount": 53,
-        "uncommonCount": 27
+        "icon": "img/sets/wc00.svg"
     },
     "wc01": {
         "code": "wc01",
         "fullName": "World Championship Decks 2001",
-        "cardCount": 128,
-        "isPrimary": false,
-        "icon": "img/sets/wc01.svg",
-        "commonCount": 61,
-        "rareCount": 38,
-        "uncommonCount": 29
+        "icon": "img/sets/wc01.svg"
     },
     "wc02": {
         "code": "wc02",
         "fullName": "World Championship Decks 2002",
-        "cardCount": 143,
-        "isPrimary": false,
-        "icon": "img/sets/wc02.svg",
-        "commonCount": 78,
-        "rareCount": 28,
-        "uncommonCount": 37
+        "icon": "img/sets/wc02.svg"
     },
     "wc03": {
         "code": "wc03",
         "fullName": "World Championship Decks 2003",
-        "cardCount": 132,
-        "isPrimary": false,
-        "icon": "img/sets/wc03.svg",
-        "commonCount": 57,
-        "rareCount": 34,
-        "uncommonCount": 41
+        "icon": "img/sets/wc03.svg"
     },
     "wc04": {
         "code": "wc04",
         "fullName": "World Championship Decks 2004",
-        "cardCount": 93,
-        "isPrimary": false,
-        "icon": "img/sets/wc04.svg",
-        "commonCount": 47,
-        "rareCount": 25,
-        "uncommonCount": 21
+        "icon": "img/sets/wc04.svg"
     },
     "wc97": {
         "code": "wc97",
         "fullName": "World Championship Decks 1997",
-        "cardCount": 121,
-        "isPrimary": false,
-        "icon": "img/sets/wc97.svg",
-        "commonCount": 63,
-        "rareCount": 25,
-        "uncommonCount": 33
+        "icon": "img/sets/wc97.svg"
     },
     "wc98": {
         "code": "wc98",
         "fullName": "World Championship Decks 1998",
-        "cardCount": 107,
-        "isPrimary": false,
-        "icon": "img/sets/wc98.svg",
-        "commonCount": 45,
-        "rareCount": 31,
-        "uncommonCount": 31
+        "icon": "img/sets/wc98.svg"
     },
     "wc99": {
         "code": "wc99",
         "fullName": "World Championship Decks 1999",
-        "cardCount": 100,
-        "isPrimary": false,
-        "icon": "img/sets/wc99.svg",
-        "commonCount": 33,
-        "rareCount": 34,
-        "uncommonCount": 33
+        "icon": "img/sets/wc99.svg"
     },
     "who": {
         "code": "who",
         "fullName": "Doctor Who",
-        "cardCount": 1138,
-        "isPrimary": false,
-        "icon": "img/sets/who.svg",
-        "commonCount": 72,
-        "mythicCount": 35,
-        "rareCount": 895,
-        "uncommonCount": 136
+        "icon": "img/sets/who.svg"
     },
     "wmc": {
         "code": "wmc",
         "fullName": "World Magic Cup Qualifiers",
-        "cardCount": 5,
-        "isPrimary": false,
-        "icon": "img/sets/wmc.svg",
-        "mythicCount": 2,
-        "rareCount": 3
+        "icon": "img/sets/wmc.svg"
     },
     "woc": {
         "code": "woc",
         "fullName": "Wilds of Eldraine Commander",
-        "cardCount": 173,
-        "isPrimary": false,
         "block": "Commander",
-        "icon": "img/sets/woc.svg",
-        "commonCount": 26,
-        "mythicCount": 18,
-        "rareCount": 98,
-        "uncommonCount": 31
+        "icon": "img/sets/woc.svg"
     },
     "woe": {
         "code": "woe",
         "fullName": "Wilds of Eldraine",
-        "cardCount": 381,
-        "isPrimary": true,
-        "icon": "img/sets/woe.svg",
-        "commonCount": 118,
-        "mythicCount": 41,
-        "rareCount": 129,
-        "uncommonCount": 93
+        "icon": "img/sets/woe.svg"
     },
     "wot": {
         "code": "wot",
         "fullName": "Wilds of Eldraine: Enchanting Tales",
-        "cardCount": 103,
-        "isPrimary": false,
-        "icon": "img/sets/wot.svg",
-        "mythicCount": 45,
-        "rareCount": 40,
-        "uncommonCount": 18
+        "icon": "img/sets/wot.svg"
     },
     "wth": {
         "code": "wth",
         "fullName": "Weatherlight",
-        "cardCount": 167,
-        "isPrimary": true,
         "block": "Mirage",
-        "icon": "img/sets/wth.svg",
-        "commonCount": 62,
-        "rareCount": 50,
-        "uncommonCount": 55
+        "icon": "img/sets/wth.svg"
     },
     "wwk": {
         "code": "wwk",
         "fullName": "Worldwake",
-        "cardCount": 145,
-        "isPrimary": true,
         "block": "Zendikar",
-        "icon": "img/sets/wwk.svg",
-        "commonCount": 60,
-        "mythicCount": 10,
-        "rareCount": 35,
-        "uncommonCount": 40
+        "icon": "img/sets/wwk.svg"
     },
     "xana": {
         "code": "xana",
         "fullName": "Arena New Player Experience Extras",
-        "cardCount": 29,
-        "isPrimary": false,
-        "icon": "img/sets/xana.svg",
-        "commonCount": 15,
-        "mythicCount": 1,
-        "rareCount": 3,
-        "uncommonCount": 10
+        "icon": "img/sets/xana.svg"
     },
     "xln": {
         "code": "xln",
         "fullName": "Ixalan",
-        "cardCount": 289,
-        "isPrimary": true,
         "block": "Ixalan",
-        "icon": "img/sets/xln.svg",
-        "commonCount": 125,
-        "mythicCount": 17,
-        "rareCount": 65,
-        "uncommonCount": 82
+        "icon": "img/sets/xln.svg"
     },
     "ybro": {
         "code": "ybro",
         "fullName": "Alchemy: The Brothers' War",
-        "cardCount": 30,
-        "isPrimary": false,
         "block": "Alchemy 2023",
-        "icon": "img/sets/ybro.svg",
-        "mythicCount": 5,
-        "rareCount": 15,
-        "uncommonCount": 10
+        "icon": "img/sets/ybro.svg"
     },
     "ydmu": {
         "code": "ydmu",
         "fullName": "Alchemy: Dominaria",
-        "cardCount": 39,
-        "isPrimary": true,
         "block": "Alchemy 2023",
-        "icon": "img/sets/ydmu.svg",
-        "mythicCount": 14,
-        "rareCount": 15,
-        "uncommonCount": 10
+        "icon": "img/sets/ydmu.svg"
     },
     "ymid": {
         "code": "ymid",
         "fullName": "Alchemy: Innistrad",
-        "cardCount": 63,
-        "isPrimary": false,
         "block": "Alchemy 2022",
-        "icon": "img/sets/ymid.svg",
-        "mythicCount": 10,
-        "rareCount": 42,
-        "uncommonCount": 11
+        "icon": "img/sets/ymid.svg"
     },
     "yneo": {
         "code": "yneo",
         "fullName": "Alchemy: Kamigawa",
-        "cardCount": 30,
-        "isPrimary": false,
         "block": "Alchemy 2022",
-        "icon": "img/sets/yneo.svg",
-        "mythicCount": 5,
-        "rareCount": 20,
-        "uncommonCount": 5
+        "icon": "img/sets/yneo.svg"
     },
     "yone": {
         "code": "yone",
         "fullName": "Alchemy: Phyrexia",
-        "cardCount": 30,
-        "isPrimary": false,
         "block": "Alchemy 2023",
-        "icon": "img/sets/yone.svg",
-        "mythicCount": 5,
-        "rareCount": 15,
-        "uncommonCount": 10
+        "icon": "img/sets/yone.svg"
     },
     "ysnc": {
         "code": "ysnc",
         "fullName": "Alchemy: New Capenna",
-        "cardCount": 30,
-        "isPrimary": false,
         "block": "Alchemy 2022",
-        "icon": "img/sets/ysnc.svg",
-        "mythicCount": 5,
-        "rareCount": 15,
-        "uncommonCount": 10
+        "icon": "img/sets/ysnc.svg"
     },
     "ywoe": {
         "code": "ywoe",
         "fullName": "Alchemy: Wilds of Eldraine",
-        "cardCount": 30,
-        "isPrimary": false,
         "block": "Alchemy 2023",
-        "icon": "img/sets/ywoe.svg",
-        "mythicCount": 5,
-        "rareCount": 15,
-        "uncommonCount": 10
+        "icon": "img/sets/ywoe.svg"
     },
     "zen": {
         "code": "zen",
         "fullName": "Zendikar",
-        "cardCount": 269,
-        "isPrimary": true,
         "block": "Zendikar",
-        "icon": "img/sets/zen.svg",
-        "commonCount": 141,
-        "mythicCount": 15,
-        "rareCount": 53,
-        "uncommonCount": 60
+        "icon": "img/sets/zen.svg"
     },
     "znc": {
         "code": "znc",
         "fullName": "Zendikar Rising Commander",
-        "cardCount": 142,
-        "isPrimary": false,
         "block": "Commander",
-        "icon": "img/sets/znc.svg",
-        "commonCount": 32,
-        "mythicCount": 9,
-        "rareCount": 41,
-        "uncommonCount": 60
+        "icon": "img/sets/znc.svg"
     },
     "zne": {
         "code": "zne",
         "fullName": "Zendikar Rising Expeditions",
-        "cardCount": 30,
-        "isPrimary": false,
-        "icon": "img/sets/zne.svg",
-        "mythicCount": 30
+        "icon": "img/sets/zne.svg"
     },
     "znr": {
         "code": "znr",
         "fullName": "Zendikar Rising",
-        "cardCount": 408,
-        "isPrimary": true,
-        "icon": "img/sets/znr.svg",
-        "commonCount": 134,
-        "mythicCount": 42,
-        "rareCount": 135,
-        "uncommonCount": 97
+        "icon": "img/sets/znr.svg"
     },
     "planeshifted_snc": {
         "code": "planeshifted_snc",
         "fullName": "Planeshifted New Capenna",
-        "cardCount": 502,
-        "isPrimary": true,
-        "icon": "img/sets/snc.svg",
-        "commonCount": 168,
-        "mythicCount": 55,
-        "rareCount": 152,
-        "uncommonCount": 127
+        "icon": "img/sets/snc.svg"
     },
     "mb1_convention_2019": {
         "code": "mb1_convention_2019",
         "fullName": "Mystery Booster Convention 2019",
-        "cardCount": 1697,
-        "isPrimary": true,
-        "icon": "img/sets/mb1.svg",
-        "commonCount": 1060,
-        "mythicCount": 30,
-        "rareCount": 154,
-        "uncommonCount": 453
+        "icon": "img/sets/mb1.svg"
     },
     "mb1_convention_2021": {
         "code": "mb1_convention_2021",
         "fullName": "Mystery Booster Convention 2021",
-        "cardCount": 1697,
-        "isPrimary": true,
-        "icon": "img/sets/mb1.svg",
-        "commonCount": 1060,
-        "mythicCount": 30,
-        "rareCount": 154,
-        "uncommonCount": 453
+        "icon": "img/sets/mb1.svg"
     },
     "sir0": {
         "code": "sir0",
         "fullName": "SIR: Creature Type Terror!",
-        "cardCount": 294,
-        "isPrimary": true,
-        "icon": "img/sets/sir.svg",
-        "commonCount": 110,
-        "mythicCount": 24,
-        "rareCount": 67,
-        "uncommonCount": 93,
-        "block": "Shadows over Innistrad Remastered"
+        "block": "Shadows over Innistrad Remastered",
+        "icon": "img/sets/sir.svg"
     },
     "sir1": {
         "code": "sir1",
         "fullName": "SIR: Fatal Flashback!",
-        "cardCount": 294,
-        "isPrimary": true,
-        "icon": "img/sets/sir.svg",
-        "commonCount": 110,
-        "mythicCount": 24,
-        "rareCount": 67,
-        "uncommonCount": 93,
-        "block": "Shadows over Innistrad Remastered"
+        "block": "Shadows over Innistrad Remastered",
+        "icon": "img/sets/sir.svg"
     },
     "sir2": {
         "code": "sir2",
         "fullName": "SIR: Morbid and Macabre!",
-        "cardCount": 294,
-        "isPrimary": true,
-        "icon": "img/sets/sir.svg",
-        "commonCount": 110,
-        "mythicCount": 24,
-        "rareCount": 67,
-        "uncommonCount": 93,
-        "block": "Shadows over Innistrad Remastered"
+        "block": "Shadows over Innistrad Remastered",
+        "icon": "img/sets/sir.svg"
     },
     "sir3": {
         "code": "sir3",
         "fullName": "SIR: Abominable All Stars!",
-        "cardCount": 294,
-        "isPrimary": true,
-        "icon": "img/sets/sir.svg",
-        "commonCount": 110,
-        "mythicCount": 24,
-        "rareCount": 67,
-        "uncommonCount": 93,
-        "block": "Shadows over Innistrad Remastered"
+        "block": "Shadows over Innistrad Remastered",
+        "icon": "img/sets/sir.svg"
     }
 }

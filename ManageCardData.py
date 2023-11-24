@@ -811,7 +811,10 @@ with open("src/data/shadow_of_the_past.json", "r") as bonusSheetsFile:
         bonusSheetsIndex += 1
 
 with open(SetsInfosPath, 'w+', encoding="utf8") as setinfosfile:
-    json.dump(setinfos, setinfosfile, ensure_ascii=False, indent=4)
+    setinfos_disk = {}
+    for set_code in setinfos:
+        setinfos_disk[set_code] = {k: setinfos[set_code][k] for k in filter(lambda k: k in setinfos[set_code], ["code", "fullName", "block", "icon"])}
+    json.dump(setinfos_disk, setinfosfile, ensure_ascii=False, indent=4)
 
 constants = {}
 with open("src/data/constants.json", 'r', encoding="utf8") as constantsFile:
