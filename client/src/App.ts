@@ -22,6 +22,9 @@ import { HousmanDraftSyncData } from "@/HousmanDraft";
 import { minesweeperApplyDiff } from "../../src/MinesweeperDraftTypes";
 import Constants, { CubeDescription, EnglishBasicLandNames } from "../../src/Constants";
 import { CardColor, OptionalOnPickDraftEffect, UsableDraftEffect } from "../../src/CardTypes";
+import { SolomonDraftSyncData } from "@/SolomonDraft";
+import { isSomeEnum } from "../../src/TypeChecks";
+import { DraftSyncData } from "@/DraftState";
 
 import io, { Socket } from "socket.io-client";
 import { toRaw, defineComponent, defineAsyncComponent, Component } from "vue";
@@ -59,23 +62,21 @@ import Dropdown from "./components/Dropdown.vue";
 import ExportDropdown from "./components/ExportDropdown.vue";
 import Modal from "./components/Modal.vue";
 import SetSelect from "./components/SetSelect.vue";
-import GlimpseDialog from "./components/GlimpseDraftDialog.vue";
-import GridDialog from "./components/GridDraftDialog.vue";
-import HousmanDialog from "./components/HousmanDialog.vue";
-import MinesweeperDialog from "./components/MinesweeperDraftDialog.vue";
-import RotisserieDraftDialog from "./components/RotisserieDraftDialog.vue";
-import SealedDialog from "./components/SealedDialog.vue";
-import SealedPresentation from "./components/SealedPresentation.vue";
-import SolomonDialog from "./components/SolomonDialog.vue";
-import WinchesterDialog from "./components/WinchesterDraftDialog.vue";
-import WinstonDialog from "./components/WinstonDraftDialog.vue";
 import ScaleSlider from "./components/ScaleSlider.vue";
+
+const GlimpseDialog = defineAsyncComponent(() => import("./components/GlimpseDraftDialog.vue"));
+const GridDialog = defineAsyncComponent(() => import("./components/GridDraftDialog.vue"));
+const HousmanDialog = defineAsyncComponent(() => import("./components/HousmanDialog.vue"));
+const MinesweeperDialog = defineAsyncComponent(() => import("./components/MinesweeperDraftDialog.vue"));
+const RotisserieDraftDialog = defineAsyncComponent(() => import("./components/RotisserieDraftDialog.vue"));
+const SolomonDialog = defineAsyncComponent(() => import("./components/SolomonDialog.vue"));
+const WinchesterDialog = defineAsyncComponent(() => import("./components/WinchesterDraftDialog.vue"));
+const WinstonDialog = defineAsyncComponent(() => import("./components/WinstonDraftDialog.vue"));
+const SealedDialog = defineAsyncComponent(() => import("./components/SealedDialog.vue"));
+const SealedPresentation = defineAsyncComponent(() => import("./components/SealedPresentation.vue"));
 
 // Preload Carback
 import CardBack from /* webpackPrefetch: true */ "./assets/img/cardback.webp";
-import { SolomonDraftSyncData } from "@/SolomonDraft";
-import { isSomeEnum } from "../../src/TypeChecks";
-import { DraftSyncData } from "@/DraftState";
 const img = new Image();
 img.src = CardBack;
 
@@ -637,10 +638,10 @@ export default defineComponent({
 				const ownerUsername = !this.sessionOwner
 					? "Session owner"
 					: this.sessionOwner in this.userByID
-					? this.userByID[this.sessionOwner].userName
-					: this.sessionOwnerUsername
-					? this.sessionOwnerUsername
-					: "Session owner";
+					  ? this.userByID[this.sessionOwner].userName
+					  : this.sessionOwnerUsername
+					    ? this.sessionOwnerUsername
+					    : "Session owner";
 
 				this.pushNotification("Are you ready?", {
 					body: `${ownerUsername} has initiated a ready check`,
