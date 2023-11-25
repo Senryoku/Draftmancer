@@ -341,4 +341,7 @@ export function expectNCardsInTotal(n: number) {
 export async function launchMode(mode: string) {
 	await waitAndClickSelector(pages[0], ".handle");
 	await waitAndClickXpath(pages[0], `//button[contains(., '${mode}')]`);
+
+	// Rochester draft starts immediately without dialog
+	if (mode !== "Rochester") await pages[0].waitForSelector(".confirm");
 }
