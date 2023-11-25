@@ -897,8 +897,8 @@
 										msg.author in userByID
 											? userByID[msg.author].userName
 											: msg.author === sessionOwner && sessionOwnerUsername
-											? sessionOwnerUsername
-											: "(Left)"
+											  ? sessionOwnerUsername
+											  : "(Left)"
 									}}
 								</span>
 								<span class="chat-message">{{ msg.text }}</span>
@@ -1366,8 +1366,8 @@
 						minesweeperDraftState.currentPlayer in userByID
 							? userByID[minesweeperDraftState.currentPlayer].userName
 							: minesweeperDraftState.currentPlayer == ''
-							? ''
-							: '(Disconnected)'
+							  ? ''
+							  : '(Disconnected)'
 					"
 					:picking="userID === minesweeperDraftState.currentPlayer"
 					@pick="minesweeperDraftPick"
@@ -1755,6 +1755,8 @@
 								<img
 									src="./assets/img/lci.webp"
 									alt="Try The Lost Caverns of Ixalan with human players right now in the Draft Queue!"
+									width="500"
+									height="260"
 								/>
 							</div>
 						</a>
