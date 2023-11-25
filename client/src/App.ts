@@ -33,6 +33,13 @@ import Swal, { SweetAlertIcon, SweetAlertOptions, SweetAlertResult } from "sweet
 import { SortableEvent } from "sortablejs";
 import { createCommonApp } from "./appCommon";
 
+// @ts-expect-error Don't want to debug why TS doesn't understand this for now. Import works fine.
+import { compress, decompress } from "smol-string/worker";
+// This is an issue with TS moduleResolution, see:
+// https://github.com/microsoft/TypeScript/issues/50794
+// and https://github.com/microsoft/TypeScript/pull/51669
+// moduleResolution: bundle solves this particular issue, but breaks everything else, I can't be bothered.
+
 import SetsInfos, { SetInfo } from "../../src/SetInfos";
 import {
 	isEmpty,
@@ -3336,13 +3343,29 @@ export default defineComponent({
 			this.storeDraftLogsTimeout = setTimeout(this.doStoreDraftLogs, 5000);
 		},
 		doStoreDraftLogs() {
-			const worker = new Worker(new URL("./logstore.worker.ts", import.meta.url));
-			worker.onmessage = (e) => {
-				localStorage.setItem("draftLogs", e.data);
-				this.storeDraftLogsTimeout = null;
-				console.log("Stored Draft Logs.");
-			};
-			worker.postMessage(["compress", toRaw(this.draftLogs)]);
+			// Backward compatibility: Remove previous version of the compression.
+			// FIXME: Remove this at some point.
+			if (localStorage.getItem("draftLogs")) localStorage.removeItem("draftLogs");
+
+			compress(JSON.stringify(this.draftLogs))
+				.then((str: string) => {
+					localStorage.setItem("draftLogs-smol", str);
+					this.storeDraftLogsTimeout = null;
+					console.log("Stored Draft Logs.");
+				})
+				.catch((e: Error) => {
+					console.error("Error compressing draft logs using smol-string: ", e);
+					// Backward compatibility
+					console.error("Fallingback to lz-string.");
+					// FIXME: Remove this at some point.
+					const worker = new Worker(new URL("./logstore.worker.ts", import.meta.url));
+					worker.onmessage = (ev) => {
+						localStorage.setItem("draftLogs", ev.data);
+						this.storeDraftLogsTimeout = null;
+						console.log("Stored Draft Logs.");
+					};
+					worker.postMessage(["compress", toRaw(this.draftLogs)]);
+				});
 		},
 		toggleLimitDuplicates() {
 			if (this.maxDuplicates !== null) this.maxDuplicates = null;
@@ -3764,6 +3787,8 @@ export default defineComponent({
 				}
 			}
 
+			// Backward compatibilty: Retrieve draft logs using the old compression method and convert them to the new one.
+			// FIXME: Delete this at some point.
 			const storedLogs = localStorage.getItem("draftLogs");
 			if (storedLogs) {
 				const worker = new Worker(new URL("./logstore.worker.ts", import.meta.url));
@@ -3776,8 +3801,39 @@ export default defineComponent({
 						const log = logsForThisSession.reduce((prev, curr) => (prev.time > curr.time ? prev : curr)); // Get the latest log
 						this.socket?.emit("retrieveUpdatedDraftLogs", log.sessionID, log.time, log.lastUpdated);
 					}
+					console.log("Converting stored logs to smol-string compression...");
+					this.doStoreDraftLogs();
 				};
 				worker.postMessage(["decompress", storedLogs]);
+			} else {
+				// New compressing method
+				const storedLogsSmol = localStorage.getItem("draftLogs-smol");
+				if (storedLogsSmol) {
+					// Workaround what I can only assume is a Firefox bug. Don't ask me how many hours I lost on this.
+					setTimeout(() => {
+						decompress(storedLogsSmol)
+							.then((str: string) => {
+								this.draftLogs = JSON.parse(str);
+								console.log(`Loaded ${this.draftLogs.length} saved draft logs.`);
+								// Asks the server if the last log was updated while we were offline.
+								const logsForThisSession = this.draftLogs.filter((l) => l.sessionID === this.sessionID);
+								if (logsForThisSession.length > 0) {
+									const log = logsForThisSession.reduce((prev, curr) =>
+										prev.time > curr.time ? prev : curr
+									); // Get the latest log
+									this.socket?.emit(
+										"retrieveUpdatedDraftLogs",
+										log.sessionID,
+										log.time,
+										log.lastUpdated
+									);
+								}
+							})
+							.catch((e: unknown) => {
+								console.error("smol-string decompress threw an error: ", e);
+							});
+					}, 0);
+				}
 			}
 
 			// If we're waiting on a storeDraftLogsTimeout, ask the user to wait and trigger the compressiong/storing immediatly
