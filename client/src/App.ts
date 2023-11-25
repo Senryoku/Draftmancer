@@ -31,7 +31,7 @@ import { SortableEvent } from "sortablejs";
 import { createCommonApp } from "./appCommon";
 
 // @ts-expect-error Don't want to debug why TS doesn't understand this for now. Import works fine.
-import { compressPacked, decompressPacked } from "smol-string/worker/packed";
+import { compress, decompress } from "smol-string/worker";
 // This is an issue with TS moduleResolution, see:
 // https://github.com/microsoft/TypeScript/issues/50794
 // and https://github.com/microsoft/TypeScript/pull/51669
@@ -3316,7 +3316,7 @@ export default defineComponent({
 			this.storeDraftLogsTimeout = setTimeout(this.doStoreDraftLogs, 5000);
 		},
 		doStoreDraftLogs() {
-			compressPacked(JSON.stringify(this.draftLogs)).then((str: string) => {
+			compress(JSON.stringify(this.draftLogs)).then((str: string) => {
 				localStorage.setItem("draftLogs-smol", str);
 				this.storeDraftLogsTimeout = null;
 				console.log("Stored Draft Logs.");
@@ -3761,7 +3761,7 @@ export default defineComponent({
 				if (storedLogsSmol) {
 					// Workaround what I can only assume is a Firefox bug. Don't ask me how many hours I lost on this.
 					setTimeout(() => {
-						decompressPacked(storedLogsSmol)
+						decompress(storedLogsSmol)
 							.then((str: string) => {
 								this.draftLogs = JSON.parse(str);
 								console.log(`Loaded ${this.draftLogs.length} saved draft logs.`);
