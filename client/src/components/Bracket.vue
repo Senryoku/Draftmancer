@@ -59,7 +59,16 @@
 						:teamrecords="teamRecords"
 						:draftlog="draftlog"
 						:final="!isDoubleBracket && colIndex === 2"
-						:editable="editable"
+						:editable="
+							editable &&
+							!(
+								type === 'swiss' &&
+								colIndex < matches.length - 1 &&
+								matches[colIndex + 1].some(
+									(m) => bracket.results[m.index][0] !== 0 || bracket.results[m.index][1] !== 0
+								)
+							)
+						"
 						@updated="(index, value) => $emit('updated', m.index, index, value)"
 						@selectuser="(user) => (selectedUser = user)"
 					/>
@@ -67,16 +76,16 @@
 			</div>
 			<div class="bracket-column" v-if="isDoubleBracket">
 				<BracketMatch
-					:key="final.index"
-					:match="final"
-					:result="bracket.results[final.index]"
+					:key="final!.index"
+					:match="final!"
+					:result="bracket.results[final!.index]"
 					:bracket="bracket"
 					:records="records"
 					:teamrecords="teamRecords"
 					:draftlog="draftlog"
 					:final="true"
 					:editable="editable"
-					@updated="(index, value) => $emit('updated', final.index, index, value)"
+					@updated="(index, value) => $emit('updated', final!.index, index, value)"
 					@selectuser="(user) => (selectedUser = user)"
 				/>
 			</div>
@@ -153,10 +162,9 @@ export default defineComponent({
 			? "swiss"
 			: "single";
 		return {
-			type,
 			selectedUser: null,
 			typeToGenerate: type,
-		} as { type: string; selectedUser: MatchPlayerData | null; typeToGenerate: string };
+		} as { selectedUser: MatchPlayerData | null; typeToGenerate: string };
 	},
 	props: {
 		bracket: { type: Object as PropType<Bracket>, required: true },
@@ -221,6 +229,15 @@ export default defineComponent({
 		},
 	},
 	computed: {
+		type() {
+			return !this.bracket
+				? "single"
+				: isDoubleBracket(this.bracket)
+				? "double"
+				: isSwissBracket(this.bracket)
+				? "swiss"
+				: "single";
+		},
 		matches() {
 			let m: Match[][] = [[], [], []];
 			const getPlayer = this.getPlayer;
@@ -384,6 +401,7 @@ export default defineComponent({
 			return m;
 		},
 		final() {
+			if (!isDoubleBracket(this.bracket)) return null;
 			return new Match(13, [this.winner(this.matches[2][0]), this.winner(this.lowerBracket[3][0])]);
 		},
 		records() {
