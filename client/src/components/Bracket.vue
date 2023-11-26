@@ -36,34 +36,34 @@
 			</span>
 		</div>
 		<h2 v-if="isDoubleBracket">Upper Bracket</h2>
-		<div class="bracket-columns">
-			<div
-				class="bracket-column"
-				v-for="(col, colIndex) in matches"
-				:key="colIndex"
-				:class="{
-					disabled:
-						colIndex > 0 &&
-						type === 'swiss' &&
-						matches[colIndex - 1].some(
-							(m) => bracket.results[m.index][0] === 0 && bracket.results[m.index][1] === 0
-						),
-				}"
-			>
-				<BracketMatch
-					v-for="m in col"
-					:key="m.index"
-					:match="m"
-					:result="bracket.results[m.index]"
-					:bracket="bracket"
-					:records="records"
-					:teamrecords="teamRecords"
-					:draftlog="draftlog"
-					:final="!isDoubleBracket && colIndex === 2"
-					:editable="editable"
-					@updated="(index, value) => $emit('updated', m.index, index, value)"
-					@selectuser="(user) => (selectedUser = user)"
-				/>
+		<div
+			class="bracket-columns"
+			:style="`--column-count: ${isDoubleBracket ? matches.length + 1 : matches.length}`"
+		>
+			<div class="bracket-column" v-for="(col, colIndex) in matches" :key="colIndex">
+				<!-- Previous round of Swiss isn't done yet -->
+				<template v-if="matches[colIndex].length === 0">
+					<div style="text-align: center; padding: 1em; max-width: 200px; margin: auto">
+						<strong>Round {{ colIndex + 1 }}: TBD</strong><br />
+						<small>(Will unlock when all the results of the previous round are entered.)</small>
+					</div>
+				</template>
+				<template v-else>
+					<BracketMatch
+						v-for="m in col"
+						:key="m.index"
+						:match="m"
+						:result="bracket.results[m.index]"
+						:bracket="bracket"
+						:records="records"
+						:teamrecords="teamRecords"
+						:draftlog="draftlog"
+						:final="!isDoubleBracket && colIndex === 2"
+						:editable="editable"
+						@updated="(index, value) => $emit('updated', m.index, index, value)"
+						@selectuser="(user) => (selectedUser = user)"
+					/>
+				</template>
 			</div>
 			<div class="bracket-column" v-if="isDoubleBracket">
 				<BracketMatch
@@ -82,7 +82,7 @@
 			</div>
 		</div>
 		<h2 v-if="isDoubleBracket">Lower Bracket</h2>
-		<div class="bracket-columns" v-if="isDoubleBracket">
+		<div class="bracket-columns" v-if="isDoubleBracket" :style="`--column-count: ${lowerBracket.length}`">
 			<div class="bracket-column" v-for="(col, colIndex) in lowerBracket" :key="colIndex">
 				<BracketMatch
 					v-for="m in col"
@@ -125,14 +125,14 @@ import Decklist from "./Decklist.vue";
 import BracketMatch, { Match, MatchPlayerData } from "./BracketMatch.vue";
 import { isDoubleBracket, isSwissBracket, isTeamBracket } from "../../../src/Brackets";
 
-function* generate_pairs<T>(arr: T[]): Generator<[T, T][]> {
+function* generatePairs<T>(arr: T[]): Generator<[T, T][]> {
 	if (arr.length < 2) return [];
 	// We assume arr length is pair.
 	const a = arr[0];
 	for (let i = 1; i < arr.length; ++i) {
 		const pair: [T, T] = [a, arr[i]];
 		const rest = arr.slice(1, i).concat(arr.slice(i + 1, arr.length));
-		const gen = generate_pairs(rest);
+		const gen = generatePairs(rest);
 		let val = gen.next();
 		while (val.value) {
 			yield [pair].concat(val.value);
@@ -228,6 +228,7 @@ export default defineComponent({
 
 			if (isSwissBracket(this.bracket)) {
 				if (this.realPlayerCount() !== 6 && this.realPlayerCount() !== 8) return m;
+
 				const alreadyPaired = [];
 				for (let i = 0; i < this.bracket.players.length / 2; ++i) {
 					const match = new Match(i, [getPlayer(2 * i), getPlayer(2 * i + 1)]);
@@ -235,84 +236,115 @@ export default defineComponent({
 					alreadyPaired.push([match.players[0].userID, match.players[1].userID]);
 					alreadyPaired.push([match.players[1].userID, match.players[0].userID]);
 				}
+
+				const records: { [userID: UserID]: number } = {};
 				const scores: { [userID: UserID]: number } = {};
-				for (let player of this.bracket.players) if (player) scores[player.userID] = 0;
-				let alreadyPairedBackup; // In case the fast algorithm fails and we have to start over.
-				// Determine matches for the second and third round.
+
+				for (let player of this.bracket.players)
+					if (player) {
+						scores[player.userID] = 0;
+						records[player.userID] = 0;
+					}
+				let groupPairingFallback = false;
 				for (let round = 0; round < 2; ++round) {
-					alreadyPairedBackup = [...alreadyPaired];
-					// Compute scores after the first and second round
 					for (let i = 0; i < m[round].length; ++i) {
 						const match = m[round][i];
-						const diff = this.bracket.results[match.index][0] - this.bracket.results[match.index][1];
-						scores[match.players[0].userID!] += diff;
-						scores[match.players[1].userID!] -= diff;
+						const result = this.bracket.results[match.index];
+
+						if (result[0] === result[1]) {
+							// Match has not been played yet.
+							if (result[0] === 0) return m;
+							// We have draw, group pairing might not be possible, we'll fallback to a single group pairing by score.
+							groupPairingFallback = true;
+						} else records[match.players[result[0] > result[1] ? 0 : 1].userID!] += 1;
+						// Compute fine scores
+						for (let i = 0; i < m[round].length; ++i) {
+							const match = m[round][i];
+							const diff = this.bracket.results[match.index][0] - this.bracket.results[match.index][1];
+							scores[match.players[0].userID!] += diff;
+							scores[match.players[1].userID!] -= diff;
+						}
 					}
-					let sortedPlayers = Object.keys(scores).sort((lhs, rhs) => scores[rhs] - scores[lhs]);
-					while (sortedPlayers.length > 0) {
-						const firstPlayer = sortedPlayers.shift();
-						let index = 0;
-						// Find the player with the closest score which firstPlayer did not encountered yet
-						while (
-							index < sortedPlayers.length &&
-							alreadyPaired.find((el) => el[0] === firstPlayer && el[1] === sortedPlayers[index])
-						)
-							++index;
-						// We may be out of undisputed matches depending of the order of assignments, revert to a failsafe but less optimal algorithm in this case.
-						if (index >= sortedPlayers.length) {
-							m[round + 1] = [];
-							const matchesMatrix = [];
-							const players = Object.keys(scores);
-							for (let i = 0; i < this.bracket.players.length; ++i) {
-								const row = [];
-								for (let j = 0; j < this.bracket.players.length; ++j) {
-									let val = alreadyPairedBackup.find(
-										(el) => el[0] === players[i] && el[1] === players[j]
-									)
-										? 99999
-										: 0;
-									val += Math.abs(scores[players[i]] - scores[players[j]]);
-									row.push(val);
-								}
-								matchesMatrix.push(row);
-							}
-							const indices = [];
-							for (let i = 0; i < this.bracket.players.length; ++i) indices.push(i);
-							let minValue = 10000000;
-							let bestPermutation = undefined;
-							// Enumerate all possible permutations and keep the "best" one.
-							const permutations = generate_pairs(indices);
-							let perm = permutations.next();
-							while (perm.value) {
-								let val = 0;
-								for (let pair of perm.value) val += matchesMatrix[pair[0]][pair[1]];
-								if (val < minValue) {
-									minValue = val;
-									bestPermutation = perm.value;
-								}
-								perm = permutations.next();
-							}
-							// Finally generate the matches
-							for (let pair of bestPermutation) {
-								m[round + 1].push(
-									new Match(m[0].length + m[1].length + m[2].length, [
-										this.bracket.players.find((p) => p?.userID === players[pair[0]])!,
-										this.bracket.players.find((p) => p?.userID === players[pair[1]])!,
+
+					const groups: UserID[][] = [];
+					if (!groupPairingFallback) {
+						for (let record of [...new Set(Object.values(records))]) {
+							groups[record] = Object.keys(records).filter((uid) => records[uid] === record);
+						}
+						groups.reverse();
+					} else groups.push(this.bracket.players.map((p) => p!.userID!));
+
+					for (const players of groups) {
+						const alreadyPairedBackup = [...alreadyPaired]; // In case the fast algorithm fails and we have to start over.
+						const sortedPlayers = structuredClone(players).sort((lhs, rhs) => scores[rhs] - scores[lhs]);
+
+						let group_matches: Match[] = [];
+						while (sortedPlayers.length > 0) {
+							const firstPlayer = sortedPlayers.shift();
+							let index = 0;
+							// Find the player with the closest score which firstPlayer did not encountered yet
+							while (
+								index < sortedPlayers.length &&
+								alreadyPaired.find((el) => el[0] === firstPlayer && el[1] === sortedPlayers[index])
+							)
+								++index;
+							if (index < sortedPlayers.length) {
+								const secondPlayer = sortedPlayers[index];
+								sortedPlayers.splice(index, 1);
+								group_matches.push(
+									new Match(m[0].length + m[1].length + m[2].length + group_matches.length, [
+										this.bracket.players.find((p) => p?.userID === firstPlayer)!,
+										this.bracket.players.find((p) => p?.userID === secondPlayer)!,
 									])
 								);
+								alreadyPaired.push([firstPlayer, secondPlayer]);
+								alreadyPaired.push([secondPlayer, firstPlayer]);
+							} else {
+								// We are out of undisputed matches because of the order of assignments, revert to a failsafe but less optimal algorithm in this case.
+								group_matches = [];
+								const matchesMatrix: number[][] = [];
+								for (let i = 0; i < players.length; ++i) {
+									const row = [];
+									for (let j = 0; j < players.length; ++j) {
+										let val = alreadyPairedBackup.find(
+											(el) => el[0] === players[i] && el[1] === players[j]
+										)
+											? 99999
+											: 0;
+										val += Math.abs(scores[players[i]] - scores[players[j]]);
+										row.push(val);
+									}
+									matchesMatrix.push(row);
+								}
+								let minValue = 10000000;
+								let bestPermutation = undefined;
+								// Enumerate all possible permutations and keep the "best" one.
+								const permutations = generatePairs([...Array(players.length).keys()]);
+								let perm = permutations.next();
+								while (perm.value) {
+									const val = perm.value.reduce(
+										(sum: number, pair: [number, number]) => sum + matchesMatrix[pair[0]][pair[1]],
+										0
+									);
+									if (val < minValue) {
+										minValue = val;
+										bestPermutation = perm.value;
+									}
+									perm = permutations.next();
+								}
+								// Finally generate the matches
+								for (let pair of bestPermutation) {
+									group_matches.push(
+										new Match(m[0].length + m[1].length + m[2].length + group_matches.length, [
+											this.bracket.players.find((p) => p?.userID === players[pair[0]])!,
+											this.bracket.players.find((p) => p?.userID === players[pair[1]])!,
+										])
+									);
+								}
+								break;
 							}
-						} else {
-							const secondPlayer = sortedPlayers[index];
-							sortedPlayers.splice(index, 1);
-							m[round + 1].push(
-								new Match(m[0].length + m[1].length + m[2].length, [
-									this.bracket.players.find((p) => p?.userID === firstPlayer)!,
-									this.bracket.players.find((p) => p?.userID === secondPlayer)!,
-								])
-							);
-							alreadyPaired.push([firstPlayer, secondPlayer]);
-							alreadyPaired.push([secondPlayer, firstPlayer]);
 						}
+						m[round + 1].push(...group_matches);
 					}
 				}
 				return m;
@@ -414,7 +446,8 @@ export default defineComponent({
 }
 
 .bracket-columns {
-	display: flex;
+	display: grid;
+	grid-template-columns: repeat(var(--column-count), 1fr);
 }
 
 .bracket-column {
