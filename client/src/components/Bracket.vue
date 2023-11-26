@@ -262,7 +262,9 @@ export default defineComponent({
 						scores[player.userID] = 0;
 						records[player.userID] = 0;
 					}
-				let groupPairingFallback = false;
+
+				let groupPairingFallback = this.realPlayerCount() == 6;
+
 				for (let round = 0; round < 2; ++round) {
 					for (let i = 0; i < m[round].length; ++i) {
 						const match = m[round][i];
@@ -271,7 +273,7 @@ export default defineComponent({
 						if (result[0] === result[1]) {
 							// Match has not been played yet.
 							if (result[0] === 0) return m;
-							// We have draw, group pairing might not be possible, we'll fallback to a single group pairing by score.
+							// We have a draw, group pairing might not be possible, we'll fallback to a single group pairing by score.
 							groupPairingFallback = true;
 						} else records[match.players[result[0] > result[1] ? 0 : 1].userID!] += 1;
 						// Compute fine scores
