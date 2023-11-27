@@ -1764,6 +1764,7 @@ export class Session implements IIndexable {
 			!this.usePredeterminedBoosters &&
 			!this.useCustomCardList &&
 			this.setRestriction.length === 1 &&
+			this.boostersPerPlayer === 3 &&
 			this.customBoosters.every((s) => s === "" || s === this.setRestriction[0])
 		)
 			botParameters.wantedModel = this.setRestriction[0];
