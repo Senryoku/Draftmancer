@@ -1827,21 +1827,57 @@
 								<div>
 									Hello there!<br />
 									I hope you're enjoying using Draftmancer!<br />
-									If you find it useful, please consider supporting it by becoming a
-									<a href="https://github.com/sponsors/Senryoku" target="_blank">
-										<font-awesome-icon icon="fa-brands fa-github"></font-awesome-icon> GitHub
-										Sponsor
-									</a>
-									or donating through
-									<a
-										href="https://www.paypal.com/donate/?hosted_button_id=6L2CUS6DH82DL"
-										target="_blank"
+									If you find it useful, please consider supporting it with a small donation using one
+									of these platforms:
+									<div
+										style="
+											display: flex;
+											gap: 1em;
+											justify-content: center;
+											align-items: center;
+											text-align: center;
+											margin: 0.25em;
+											margin-bottom: 0.8em;
+										"
 									>
-										<font-awesome-icon icon="fa-brands fa-paypal"></font-awesome-icon> PayPal </a
-									>.<br />
+										<div style="position: relative">
+											<a href="https://github.com/sponsors/Senryoku" target="_blank">
+												<font-awesome-icon
+													icon="fa-brands fa-github"
+													size="2x"
+												></font-awesome-icon>
+												<div>GitHub Sponsor</div>
+											</a>
+											<div
+												style="
+													font-size: 0.7em;
+													color: #aaa;
+													position: absolute;
+													bottom: -0.8rem;
+													left: 50%;
+													transform: translateX(-50%);
+												"
+											>
+												(No fees!)
+											</div>
+										</div>
+										<div>or</div>
+										<div>
+											<a
+												href="https://www.paypal.com/donate/?hosted_button_id=6L2CUS6DH82DL"
+												target="_blank"
+											>
+												<font-awesome-icon
+													icon="fa-brands fa-paypal"
+													size="2x"
+												></font-awesome-icon>
+												<div>PayPal</div>
+											</a>
+										</div>
+									</div>
 									Your support will help keep the project online, updated, and will motivate me to add
 									new features.<br />
-									Thank you! — Sen
+									<div style="text-align: right">Thank you! — Sen</div>
 								</div>
 							</div>
 						</div>
