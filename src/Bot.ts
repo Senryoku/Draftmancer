@@ -272,7 +272,8 @@ export class Bot implements IBot {
 		this.parameters = parameters;
 	}
 
-	async getScores(booster: Card[], boosterNum: number, numBoosters: number, pickNum: number, numPicks: number) {
+	async getScores(_booster: Card[], boosterNum: number, numBoosters: number, pickNum: number, numPicks: number) {
+		const booster = [..._booster];
 		const packOracleIds: OracleID[] = booster.map((c: Card) => c.oracle_id);
 		// getScores might be called multiple times for the same booster (multiple picks). Only add to the seen list once.
 		if (
@@ -326,7 +327,7 @@ export class Bot implements IBot {
 				console.error(
 					`Error '${e.code}' requesting bots scores (url: '${e.response?.config?.url
 						?.replaceAll(process.env.MTGDRAFTBOTS_AUTHTOKEN ?? "testing", "xxx")
-						.replaceAll(DraftmancerAI.authToken, "xxx")}): ${e.message}`
+						.replaceAll(DraftmancerAI.authToken, "xxx")}'): ${e.message}`
 				);
 				if (e.response?.config?.url?.startsWith(DraftmancerAI.domain))
 					console.error("  Error from DraftmancerAI: ", e.response?.data);
