@@ -1,7 +1,18 @@
 [
 	{
+		"date": "29/11/2023",
+		"notes": [
+			"Resolved an issue causing cards to disappear from the deck.",
+			"Improved the Swiss bracket pairing algorithm and user interface.",
+			"Added a download option for MTGA/Card Names exports",
+			"Optimized draft logs compression and decompression speed."
+		]
+	},
+	{
 		"date": "09/11/2023",
-		"notes": ["Per-booster settings in cube files."]
+		"notes": [
+			"Per-booster settings in cube files."
+		]
 	},
 	{
 		"date": "03/11/2023",
@@ -56,8 +67,18 @@
 			"Added 'Show Slots' setting for custom card list. Thanks @Susucre for the idea and first implementation."
 		]
 	},
-	{ "date": "23/07/2023", "notes": ["Commander Masters experimental support."] },
-	{ "date": "26/06/2023", "notes": ["Jumpstart 2022 support."] },
+	{
+		"date": "23/07/2023",
+		"notes": [
+			"Commander Masters experimental support."
+		]
+	},
+	{
+		"date": "26/06/2023",
+		"notes": [
+			"Jumpstart 2022 support."
+		]
+	},
 	{
 		"date": "21/06/2023",
 		"notes": [
@@ -65,7 +86,12 @@
 			"Extended Winston Draft to any number of players"
 		]
 	},
-	{ "date": "09/06/2023", "notes": ["The Lord of the Rings: Tales of Middle-earth initial support."] },
+	{
+		"date": "09/06/2023",
+		"notes": [
+			"The Lord of the Rings: Tales of Middle-earth initial support."
+		]
+	},
 	{
 		"date": "30/05/2023",
 		"notes": [
@@ -76,11 +102,16 @@
 	},
 	{
 		"date": "15/05/2023",
-		"notes": ["Conspirary draft matters cards experimental support."]
+		"notes": [
+			"Conspirary draft matters cards experimental support."
+		]
 	},
 	{
 		"date": "09/05/2023",
-		"notes": ["New feature: Draft Queues.", "March of the Machine: The Aftermath draft."]
+		"notes": [
+			"New feature: Draft Queues.",
+			"March of the Machine: The Aftermath draft."
+		]
 	},
 	{
 		"date": "04/05/2023",
@@ -109,15 +140,21 @@
 	},
 	{
 		"date": "10/04/2023",
-		"notes": ["MTGADraft renamed to Draftmancer"]
+		"notes": [
+			"MTGADraft renamed to Draftmancer"
+		]
 	},
 	{
 		"date": "05/04/2023",
-		"notes": ["March of the Machine preliminary support"]
+		"notes": [
+			"March of the Machine preliminary support"
+		]
 	},
 	{
 		"date": "31/03/2023",
-		"notes": ["Bug fixes, most notably regarding cards drag & drop."]
+		"notes": [
+			"Bug fixes, most notably regarding cards drag & drop."
+		]
 	},
 	{
 		"date": "27/03/2023",
@@ -130,39 +167,58 @@
 	},
 	{
 		"date": "17/03/2023",
-		"notes": ["Shadows over Innistrad preliminary support."]
+		"notes": [
+			"Shadows over Innistrad preliminary support."
+		]
 	},
 	{
 		"date": "11/03/2023",
-		"notes": ["3 Players variant for Grid Draft."]
+		"notes": [
+			"3 Players variant for Grid Draft."
+		]
 	},
 	{
 		"date": "27/02/2023",
-		"notes": ["Rotisserie Draft game mode.", "Bug fixes and card data base update."]
+		"notes": [
+			"Rotisserie Draft game mode.",
+			"Bug fixes and card data base update."
+		]
 	},
 	{
 		"date": "15/02/2023",
-		"notes": ["Fixed Deck setting."]
+		"notes": [
+			"Fixed Deck setting."
+		]
 	},
 	{
 		"date": "14/02/2023",
-		"notes": ["New game mode: Team Sealed."]
+		"notes": [
+			"New game mode: Team Sealed."
+		]
 	},
 	{
 		"date": "27/01/2023",
-		"notes": ["Phyrexia: All Will Be One initial support."]
+		"notes": [
+			"Phyrexia: All Will Be One initial support."
+		]
 	},
 	{
 		"date": "22/01/2023",
-		"notes": ["Removed deck sharing button: It is now automatic."]
+		"notes": [
+			"Removed deck sharing button: It is now automatic."
+		]
 	},
 	{
 		"date": "05/11/2022",
-		"notes": ["The Brothers' War preliminary support."]
+		"notes": [
+			"The Brothers' War preliminary support."
+		]
 	},
 	{
 		"date": "20/10/2022",
-		"notes": ["Added a setting to specify a prefered set for basic lands."]
+		"notes": [
+			"Added a setting to specify a prefered set for basic lands."
+		]
 	},
 	{
 		"date": "18/10/2022",
@@ -172,19 +228,27 @@
 	},
 	{
 		"date": "09/10/2022",
-		"notes": ["Adjusted the Swiss bracket generation algorithm. Only usable by 6 or 8 players pods."]
+		"notes": [
+			"Adjusted the Swiss bracket generation algorithm. Only usable by 6 or 8 players pods."
+		]
 	},
 	{
 		"date": "28/09/2022",
-		"notes": ["Support importing collection directly from a Player.log with MTGA Pro Tracker running."]
+		"notes": [
+			"Support importing collection directly from a Player.log with MTGA Pro Tracker running."
+		]
 	},
 	{
 		"date": "26/08/2022",
-		"notes": ["Dominaria United (DMU) support."]
+		"notes": [
+			"Dominaria United (DMU) support."
+		]
 	},
 	{
 		"date": "07/08/2022",
-		"notes": ["Added a zoom slider for the draft booster."]
+		"notes": [
+			"Added a zoom slider for the draft booster."
+		]
 	},
 	{
 		"date": "25/07/2022",
@@ -210,7 +274,9 @@
 	},
 	{
 		"date": "25/06/2022",
-		"notes": ["Double Masters 2022 (2X2) support."]
+		"notes": [
+			"Double Masters 2022 (2X2) support."
+		]
 	},
 	{
 		"date": "24/06/2022",
@@ -220,11 +286,15 @@
 	},
 	{
 		"date": "20/06/2022",
-		"notes": ["New game mode: Minesweeper Draft."]
+		"notes": [
+			"New game mode: Minesweeper Draft."
+		]
 	},
 	{
 		"date": "02/06/2022",
-		"notes": ["Commander Legends: Battle for Baldur's Gate (CLB) initial support."]
+		"notes": [
+			"Commander Legends: Battle for Baldur's Gate (CLB) initial support."
+		]
 	},
 	{
 		"date": "29/05/2022",
@@ -234,7 +304,9 @@
 	},
 	{
 		"date": "28/04/2022",
-		"notes": ["Experimental support for custom cards in cubes. See the cube format documentation for details."]
+		"notes": [
+			"Experimental support for custom cards in cubes. See the cube format documentation for details."
+		]
 	},
 	{
 		"date": "24/04/2022",
@@ -259,39 +331,58 @@
 	},
 	{
 		"date": "05/02/2022",
-		"notes": ["Use updated ruler501's draft bots.", "Kamigawa: Neon Dynasty (NEO) support."]
+		"notes": [
+			"Use updated ruler501's draft bots.",
+			"Kamigawa: Neon Dynasty (NEO) support."
+		]
 	},
 	{
 		"date": "16/11/2021",
-		"notes": ["Innistrad: Double Feature (DBL) support."]
+		"notes": [
+			"Innistrad: Double Feature (DBL) support."
+		]
 	},
 	{
 		"date": "05/11/2021",
-		"notes": ["Innistrad: Crimson Vow (VOW) support."]
+		"notes": [
+			"Innistrad: Crimson Vow (VOW) support."
+		]
 	},
 	{
 		"date": "28/09/2021",
-		"notes": ["Added new experimental bots from ruler501 (https://github.com/ruler501)."]
+		"notes": [
+			"Added new experimental bots from ruler501 (https://github.com/ruler501)."
+		]
 	},
 	{
 		"date": "11/09/2021",
-		"notes": ["Innistrad: Midnight Hunt (MID) support."]
+		"notes": [
+			"Innistrad: Midnight Hunt (MID) support."
+		]
 	},
 	{
 		"date": "20/08/2021",
-		"notes": ["Fixed a bug preventing Kaladesh Remaster to be used in Chaos Draft."]
+		"notes": [
+			"Fixed a bug preventing Kaladesh Remaster to be used in Chaos Draft."
+		]
 	},
 	{
 		"date": "05/08/2021",
-		"notes": ["Preliminary Jumpstart: Historic Horizons support."]
+		"notes": [
+			"Preliminary Jumpstart: Historic Horizons support."
+		]
 	},
 	{
 		"date": "07/07/2021",
-		"notes": ["Adventures in the Forgotten Realms (AFR) support."]
+		"notes": [
+			"Adventures in the Forgotten Realms (AFR) support."
+		]
 	},
 	{
 		"date": "03/06/2021",
-		"notes": ["Modern Horizons 2 (MH2) support."]
+		"notes": [
+			"Modern Horizons 2 (MH2) support."
+		]
 	},
 	{
 		"date": "25/05/2021",
@@ -302,19 +393,28 @@
 	},
 	{
 		"date": "22/05/2021",
-		"notes": ["Updated card zoom on right-click to be more legible.", "Double elimination brackets."]
+		"notes": [
+			"Updated card zoom on right-click to be more legible.",
+			"Double elimination brackets."
+		]
 	},
 	{
 		"date": "16/05/2021",
-		"notes": ["Improved spectator view for organizer."]
+		"notes": [
+			"Improved spectator view for organizer."
+		]
 	},
 	{
 		"date": "11/05/2021",
-		"notes": ["Fixed a bug in STX collation when Lessons in collection(s) were insufficient."]
+		"notes": [
+			"Fixed a bug in STX collation when Lessons in collection(s) were insufficient."
+		]
 	},
 	{
 		"date": "05/05/2021",
-		"notes": ["Download Session Collection Tool."]
+		"notes": [
+			"Download Session Collection Tool."
+		]
 	},
 	{
 		"date": "03/05/2021",
@@ -327,23 +427,34 @@
 	},
 	{
 		"date": "10/04/2021",
-		"notes": ["Expanded last picks reminder to Rochester Draft."]
+		"notes": [
+			"Expanded last picks reminder to Rochester Draft."
+		]
 	},
 	{
 		"date": "09/04/2021",
-		"notes": ["Added last picks reminder in Grid Draft."]
+		"notes": [
+			"Added last picks reminder in Grid Draft."
+		]
 	},
 	{
 		"date": "07/04/2021",
-		"notes": ["Tweaked Strixhaven pack collation."]
+		"notes": [
+			"Tweaked Strixhaven pack collation."
+		]
 	},
 	{
 		"date": "06/04/2021",
-		"notes": ["Minor improvements to the search feature."]
+		"notes": [
+			"Minor improvements to the search feature."
+		]
 	},
 	{
 		"date": "04/04/2021",
-		"notes": ["Strixhaven: School of Mages support.", "Search in deck/sideboard feature."]
+		"notes": [
+			"Strixhaven: School of Mages support.",
+			"Search in deck/sideboard feature."
+		]
 	},
 	{
 		"date": "03/04/2021",
@@ -353,11 +464,15 @@
 	},
 	{
 		"date": "31/03/2021",
-		"notes": ["Front-end support for flip, split and meld cards."]
+		"notes": [
+			"Front-end support for flip, split and meld cards."
+		]
 	},
 	{
 		"date": "06/03/2021",
-		"notes": ["Time Spiral Remastered support."]
+		"notes": [
+			"Time Spiral Remastered support."
+		]
 	},
 	{
 		"date": "01/03/2021",
@@ -368,11 +483,15 @@
 	},
 	{
 		"date": "23/02/2021",
-		"notes": ["Added pre-determined boosters support."]
+		"notes": [
+			"Added pre-determined boosters support."
+		]
 	},
 	{
 		"date": "14/02/2021",
-		"notes": ["Implemented wildcard tracking while drafting and brewing."]
+		"notes": [
+			"Implemented wildcard tracking while drafting and brewing."
+		]
 	},
 	{
 		"date": "30/01/2021",
@@ -382,15 +501,23 @@
 	},
 	{
 		"date": "28/01/2021",
-		"notes": ["Extended logs to other game modes.", "Collection viewer updated for Kaldheim."]
+		"notes": [
+			"Extended logs to other game modes.",
+			"Collection viewer updated for Kaldheim."
+		]
 	},
 	{
 		"date": "20/01/2021",
-		"notes": ["Added preliminary Kaldheim support."]
+		"notes": [
+			"Added preliminary Kaldheim support."
+		]
 	},
 	{
 		"date": "18/01/2021",
-		"notes": ["Minor bug fixes.", "Added a way to customize the set of each booster of a sealed pool individually."]
+		"notes": [
+			"Minor bug fixes.",
+			"Added a way to customize the set of each booster of a sealed pool individually."
+		]
 	},
 	{
 		"date": "11/01/2021",
@@ -412,27 +539,39 @@
 	},
 	{
 		"date": "16/12/2020",
-		"notes": ["Added a crude import deck list feature."]
+		"notes": [
+			"Added a crude import deck list feature."
+		]
 	},
 	{
 		"date": "14/12/2020",
-		"notes": ["Added December 2020 Arena Cube."]
+		"notes": [
+			"Added December 2020 Arena Cube."
+		]
 	},
 	{
 		"date": "08/12/2020",
-		"notes": ["Optimizations and visual tweaks."]
+		"notes": [
+			"Optimizations and visual tweaks."
+		]
 	},
 	{
 		"date": "27/11/2020",
-		"notes": ["Fixed a collation bug."]
+		"notes": [
+			"Fixed a collation bug."
+		]
 	},
 	{
 		"date": "17/11/2020",
-		"notes": ["Updated basic land controls."]
+		"notes": [
+			"Updated basic land controls."
+		]
 	},
 	{
 		"date": "12/11/2020",
-		"notes": ["Kaladesh Remastered support."]
+		"notes": [
+			"Kaladesh Remastered support."
+		]
 	},
 	{
 		"date": "06/11/2020",
@@ -445,11 +584,15 @@
 	},
 	{
 		"date": "22/10/2020",
-		"notes": ["Tweaked how decks are displayed to accomodate a wider range of screen resolutions."]
+		"notes": [
+			"Tweaked how decks are displayed to accomodate a wider range of screen resolutions."
+		]
 	},
 	{
 		"date": "14/09/2020",
-		"notes": ["Zendikar Rising support!"]
+		"notes": [
+			"Zendikar Rising support!"
+		]
 	},
 	{
 		"date": "13/09/2020",
@@ -460,7 +603,9 @@
 	},
 	{
 		"date": "03/09/2020",
-		"notes": ["Sideboard can now be minimized to a single column to the right of the deck."]
+		"notes": [
+			"Sideboard can now be minimized to a single column to the right of the deck."
+		]
 	},
 	{
 		"date": "02/09/2020",
@@ -471,11 +616,15 @@
 	},
 	{
 		"date": "27/08/2020",
-		"notes": ["Implemented Rochester Draft."]
+		"notes": [
+			"Implemented Rochester Draft."
+		]
 	},
 	{
 		"date": "19/08/2020",
-		"notes": ["Implemented Grid Draft as a 2-player variant for drafting cubes."]
+		"notes": [
+			"Implemented Grid Draft as a 2-player variant for drafting cubes."
+		]
 	},
 	{
 		"date": "06/08/2020",
@@ -485,7 +634,9 @@
 	},
 	{
 		"date": "03/08/2020",
-		"notes": ["Cards can be zoomed-in by right clicking."]
+		"notes": [
+			"Cards can be zoomed-in by right clicking."
+		]
 	},
 	{
 		"date": "02/08/2020",
@@ -496,23 +647,34 @@
 	},
 	{
 		"date": "24/07/2020",
-		"notes": ["Added 'Random Set from Card Pool' option for individual boosters."]
+		"notes": [
+			"Added 'Random Set from Card Pool' option for individual boosters."
+		]
 	},
 	{
 		"date": "22/07/2020",
-		"notes": ["Added link to a read-only version of the bracket to share with non-players."]
+		"notes": [
+			"Added link to a read-only version of the bracket to share with non-players."
+		]
 	},
 	{
 		"date": "16/07/2020",
-		"notes": ["Updated landing page.", "Added Jumpstart cards and gamemode."]
+		"notes": [
+			"Updated landing page.",
+			"Added Jumpstart cards and gamemode."
+		]
 	},
 	{
 		"date": "05/07/2020",
-		"notes": ["Added 3-Round Swiss support (by Squerp)."]
+		"notes": [
+			"Added 3-Round Swiss support (by Squerp)."
+		]
 	},
 	{
 		"date": "27/06/2020",
-		"notes": ["Cards from booster can now be picked by drag & drop."]
+		"notes": [
+			"Cards from booster can now be picked by drag & drop."
+		]
 	},
 	{
 		"date": "24/06/2020",
@@ -525,7 +687,11 @@
 	},
 	{
 		"date": "23/06/2020",
-		"notes": ["Added sort by color and rarity.", "Improved Edge compatibility.", "Minor front-end changes."]
+		"notes": [
+			"Added sort by color and rarity.",
+			"Improved Edge compatibility.",
+			"Minor front-end changes."
+		]
 	},
 	{
 		"date": "19/06/2020",
@@ -536,7 +702,9 @@
 	},
 	{
 		"date": "18/06/2020",
-		"notes": ["Added M21 cards (most images are only available in English for now)"]
+		"notes": [
+			"Added M21 cards (most images are only available in English for now)"
+		]
 	},
 	{
 		"date": "17/06/2020",
@@ -547,15 +715,23 @@
 	},
 	{
 		"date": "16/06/2020",
-		"notes": ["Lazy loading of languages.", "A lot of Front-End rewrite and slight optimizations."]
+		"notes": [
+			"Lazy loading of languages.",
+			"A lot of Front-End rewrite and slight optimizations."
+		]
 	},
 	{
 		"date": "10/06/2020",
-		"notes": ["Added Distribution Mode option when using boosters from different sets."]
+		"notes": [
+			"Added Distribution Mode option when using boosters from different sets."
+		]
 	},
 	{
 		"date": "04/06/2020",
-		"notes": ["Added option to customize the content of boosters (replaces Maximum Rarity).", "Updated tooltips."]
+		"notes": [
+			"Added option to customize the content of boosters (replaces Maximum Rarity).",
+			"Updated tooltips."
+		]
 	},
 	{
 		"date": "03/06/2020",
@@ -567,7 +743,10 @@
 	},
 	{
 		"date": "21/05/2020",
-		"notes": ["Updated card data with Historic Anthology 3 cards.", "'output_log.txt' is now 'Player.log'."]
+		"notes": [
+			"Updated card data with Historic Anthology 3 cards.",
+			"'output_log.txt' is now 'Player.log'."
+		]
 	},
 	{
 		"date": "13/05/2020",
@@ -578,7 +757,9 @@
 	},
 	{
 		"date": "08/05/2020",
-		"notes": ["Added Burned Cards per Round option to play Glimpse/Burn Draft."]
+		"notes": [
+			"Added Burned Cards per Round option to play Glimpse/Burn Draft."
+		]
 	},
 	{
 		"date": "03/05/2020",
@@ -589,11 +770,16 @@
 	},
 	{
 		"date": "27/04/2020",
-		"notes": ["Implemented Winston Draft.", "Various Fixes."]
+		"notes": [
+			"Implemented Winston Draft.",
+			"Various Fixes."
+		]
 	},
 	{
 		"date": "25/04/2020",
-		"notes": ["Players can now be re-ordered by drag & drop."]
+		"notes": [
+			"Players can now be re-ordered by drag & drop."
+		]
 	},
 	{
 		"date": "24/04/2020",
@@ -604,7 +790,9 @@
 	},
 	{
 		"date": "21/04/2020",
-		"notes": ["Added simple bracket generation (pairings)."]
+		"notes": [
+			"Added simple bracket generation (pairings)."
+		]
 	},
 	{
 		"date": "19/04/2020",
@@ -616,7 +804,9 @@
 	},
 	{
 		"date": "12/04/2020",
-		"notes": ["Added specific land slot rules when a single set is selected."]
+		"notes": [
+			"Added specific land slot rules when a single set is selected."
+		]
 	},
 	{
 		"date": "11/04/2020",
@@ -628,15 +818,21 @@
 	},
 	{
 		"date": "10/04/2020",
-		"notes": ["Improved card image loading."]
+		"notes": [
+			"Improved card image loading."
+		]
 	},
 	{
 		"date": "08/04/2020",
-		"notes": ["Added support for a custom cube format for more control over your boosters."]
+		"notes": [
+			"Added support for a custom cube format for more control over your boosters."
+		]
 	},
 	{
 		"date": "07/04/2020",
-		"notes": ["Can remove draggable column."]
+		"notes": [
+			"Can remove draggable column."
+		]
 	},
 	{
 		"date": "05/04/2020",
@@ -650,23 +846,36 @@
 	},
 	{
 		"date": "02/04/2020",
-		"notes": ["Fixed some images."]
+		"notes": [
+			"Fixed some images."
+		]
 	},
 	{
 		"date": "01/04/2020",
-		"notes": ["Improved bot ordering.", "Bug fixes."]
+		"notes": [
+			"Improved bot ordering.",
+			"Bug fixes."
+		]
 	},
 	{
 		"date": "31/03/2020",
-		"notes": ["Improved/Fixed card database.", "Fixed Conflux card exporting."]
+		"notes": [
+			"Improved/Fixed card database.",
+			"Fixed Conflux card exporting."
+		]
 	},
 	{
 		"date": "30/03/2020",
-		"notes": ["Draggable cards option in deck builder."]
+		"notes": [
+			"Draggable cards option in deck builder."
+		]
 	},
 	{
 		"date": "29/03/2020",
-		"notes": ["Added a Color Columns option to display cards.", "Added a Ready Check for the session owner."]
+		"notes": [
+			"Added a Color Columns option to display cards.",
+			"Added a Ready Check for the session owner."
+		]
 	},
 	{
 		"date": "28/03/2020",
@@ -680,7 +889,9 @@
 	},
 	{
 		"date": "26/03/2020",
-		"notes": ["Added a delayed draft log sharing option. Useful for tournament settings."]
+		"notes": [
+			"Added a delayed draft log sharing option. Useful for tournament settings."
+		]
 	},
 	{
 		"date": "24/03/2020",

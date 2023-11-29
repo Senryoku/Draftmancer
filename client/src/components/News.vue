@@ -1,6 +1,21 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
+			<em>November 29, 2023</em>
+			<ul>
+				<li>
+					Resolved an issue causing cards to disappear from the deck.<br />This should catch most cases, but
+					I'm still unsure of the root cause. Please report if you encounter a similar issue!
+				</li>
+				<li>Improved the Swiss bracket pairing algorithm and user interface.</li>
+				<li>
+					Added a download option for MTGA/Card Names exports, as an alternative to the default copy to
+					clipboard behaviour.
+				</li>
+				<li>Optimized draft logs compression and decompression speed.</li>
+			</ul>
+		</div>
+		<div class="news">
 			<em>November 09, 2023</em>
 			<ul>
 				<li>
@@ -33,21 +48,6 @@
 				<li>Better support for parentheses in card names.</li>
 				<li>Improved reconnection reliability when multiple tabs are open.</li>
 				<li>Players can now start a vote to take ownership of a session (4 players or more).</li>
-				<li>Usual tweaks and fixes.</li>
-			</ul>
-		</div>
-		<div class="news">
-			<em>August 24, 2023</em>
-			<ul>
-				<li>
-					<img src="img/sets/woe.svg" class="set-icon" style="--invertedness: 100%" alt="" /> Wilds of
-					Eldraine is now available!
-				</li>
-				<li>Two new Grid Draft variants: Two players with two picks per grid and four players.</li>
-				<li>
-					New session setting "Automatic Logs Unlock Timer". This will automatically unlock the logs after a
-					customizable period of time if the owner forgot to do it.
-				</li>
 				<li>Usual tweaks and fixes.</li>
 			</ul>
 		</div>
