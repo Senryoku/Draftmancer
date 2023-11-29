@@ -364,10 +364,6 @@ export default defineComponent({
 				console.warn(e);
 			}
 
-			this.$nextTick(() => {
-				this.checkDOMColumn(e.to, column);
-			});
-
 			for (const entry of entries) {
 				const item = entry.multiDragElement;
 				const targetIndex = Math.min(entry.index, column.length); // Make sure we won't introduce undefined values by inserting past the end.
