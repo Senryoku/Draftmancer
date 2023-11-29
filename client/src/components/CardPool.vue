@@ -110,7 +110,7 @@
 				</dropdown>
 			</div>
 		</div>
-		<div class="card-pool" ref="cardcolumns">
+		<div class="card-pool" ref="cardcolumns" :key="forceRerender">
 			<div class="empty-warning" v-if="cards.length == 0">
 				<slot name="empty">
 					<h3>This card pool is currently empty!</h3>
@@ -206,6 +206,8 @@ export default defineComponent({
 			},
 			rows: [[[], [], [], [], [], [], []]] as UniqueCard[][][],
 			tempColumn: [] as UniqueCard[] /* Temp. destination for card when creating a new column by drag & drop */,
+
+			forceRerender: 0, // Workaround. See forceUpdate().
 		};
 	},
 	mounted() {
@@ -214,6 +216,29 @@ export default defineComponent({
 		this.sync();
 	},
 	methods: {
+		forceUpdate() {
+			// Forces a re-render of the whole component.
+			// Used to workaround some de-sync issues (see #623). Might be a bug in sortablejs-vue3.
+			this.forceRerender++;
+		},
+		checkDOMColumn(DOMColumn: HTMLElement, column: UniqueCard[]) {
+			// Checks if the DOM column is still valid and forces a re-render if not.
+			// FIXME: This is a workaround. I'm still looking for a proper fix to #623.
+			if (DOMColumn.children.length !== column.length) {
+				console.error("[CardPool] Missing card in column! Forcing a re-render...");
+				++this.forceRerender;
+			} else {
+				const DOMUIDs = [...DOMColumn.children].map((c) => parseInt((c as HTMLElement).dataset.uniqueid!));
+				const columnUIDs = column.map((c) => c.uniqueID);
+				for (let i = 0; i < DOMUIDs.length; ++i) {
+					if (DOMUIDs[i] !== columnUIDs[i]) {
+						console.error("[CardPool] Unexcepted unique card ID! Forcing a re-render...");
+						++this.forceRerender;
+						break;
+					}
+				}
+			}
+		},
 		reset() {
 			const colCount = Math.max(1, this.options.columnCount);
 			this.rows = [[]];
@@ -339,6 +364,10 @@ export default defineComponent({
 				console.warn(e);
 			}
 
+			this.$nextTick(() => {
+				this.checkDOMColumn(e.to, column);
+			});
+
 			for (const entry of entries) {
 				const item = entry.multiDragElement;
 				const targetIndex = Math.min(entry.index, column.length); // Make sure we won't introduce undefined values by inserting past the end.
@@ -390,6 +419,10 @@ export default defineComponent({
 				console.warn(e);
 			}
 
+			this.$nextTick(() => {
+				this.checkDOMColumn(e.from, column);
+			});
+
 			for (const entry of entries) {
 				const item = entry.multiDragElement;
 				const index = entry.index;
@@ -407,8 +440,12 @@ export default defineComponent({
 								`Error in CardPool::removeFromColumn: Invalid card UniqueID (${cardUniqueID}).`,
 								e
 							);
-					} else column.splice(boundedIndex, 1);
-				} else column.splice(boundedIndex, 1);
+					} else {
+						column.splice(boundedIndex, 1);
+					}
+				} else {
+					column.splice(boundedIndex, 1);
+				}
 
 				if (!inner) {
 					if (!item.dataset.uniqueid)
@@ -496,8 +533,8 @@ export default defineComponent({
 				this.rows && this.rows[0] && this.rows[0].length
 					? this.rows[0].length
 					: this.options.columnCount
-					? this.options.columnCount
-					: 7;
+					  ? this.options.columnCount
+					  : 7;
 			this.options.columnCount = Math.max(2, Math.min(columnCount, 32));
 			localStorage.setItem("card-pool-options", JSON.stringify(this.options));
 		},
