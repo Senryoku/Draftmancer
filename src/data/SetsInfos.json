@@ -2009,6 +2009,11 @@
         "fullName": "MagicFest 2023",
         "icon": "img/sets/pf23.svg"
     },
+    "pf24": {
+        "code": "pf24",
+        "fullName": "MagicFest 2024",
+        "icon": "img/sets/pf24.svg"
+    },
     "pfrf": {
         "code": "pfrf",
         "fullName": "Fate Reforged Promos",
