@@ -143,12 +143,21 @@ export function download(filename: string, text: string) {
 }
 
 export function escapeHTML(str: string) {
-	return str
-		?.replace(/&/g, "&amp;")
-		.replace(/</g, "&lt;")
-		.replace(/>/g, "&gt;")
-		.replace(/"/g, "&quot;")
-		.replace(/'/g, "&#39;");
+	return str.replace(/[<>&'"]/g, (c) => {
+		switch (c) {
+			case "<":
+				return "&lt;";
+			case ">":
+				return "&gt;";
+			case "&":
+				return "&amp;";
+			case "'":
+				return "&apos;";
+			case '"':
+				return "&quot;";
+		}
+		return c;
+	});
 }
 
 export function sortableUpdate<T>(e: SortableEvent, arr: T[]) {

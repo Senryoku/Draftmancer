@@ -59,7 +59,7 @@ export async function exportToMTGO(
 		cardsLines.push(
 			`  <Cards CatID="${mtgo_id}" Quantity="${count ?? 1}" Sideboard="${
 				sideboard ? "true" : "false"
-			}" Name="${fixedName}" Annotation="0"/>`
+			}" Name="${escapeHTML(fixedName)}" Annotation="0"/>`
 		);
 	};
 
