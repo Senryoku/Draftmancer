@@ -1797,7 +1797,13 @@ function returnCollectionPlainText(res: express.Response, sid: SessionID) {
 	} else if (sid in Sessions) {
 		const coll = Sessions[sid].collection(false);
 		let r = "";
-		for (const cid in coll) r += `${coll.get(cid)} ${getCard(cid).name}\n`;
+		for (const [cid, count] of coll) {
+			const card = getCard(cid);
+			if (card) {
+				if (!["Plains", "Island", "Swamp", "Mountain", "Forest"].includes(card.name))
+					r += `${count} ${card.name}\n`;
+			} else console.error("Error in getCollectionPlainText: Unknown cardID: ", cid);
+		}
 		res.set("Content-disposition", `attachment; filename=collection_${sid}.txt`);
 		res.set("Content-Type", "text/plain");
 		res.send(r);
