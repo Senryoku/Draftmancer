@@ -128,6 +128,7 @@ export default defineComponent({
 
 .row > button:first-child {
 	flex-grow: 1;
+	min-width: 0;
 	padding-left: 28px !important; /* Account for the icon. #main-container messes with the specificity, again. */
 }
 </style>
