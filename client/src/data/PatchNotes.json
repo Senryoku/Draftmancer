@@ -1,5 +1,14 @@
 [
 	{
+		"date": "TBD",
+		"notes": [
+			"Adjusted mythics/rares ratio depending on the set.",
+			"Correctly escape special characters, like quotes, in card names for MTGO export.",
+			"Fixed session collection download.",
+			"Usual minor tweaks"
+		]
+	},
+	{
 		"date": "29/11/2023",
 		"notes": [
 			"Resolved an issue causing cards to disappear from the deck.",
