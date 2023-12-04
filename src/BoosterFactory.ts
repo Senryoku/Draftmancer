@@ -6,7 +6,7 @@ import { BasicLandSlot } from "./LandSlot.js";
 
 // Generates booster for regular MtG Sets
 
-const mythicRate = 1.0 / 8.0;
+const DefaultMythicRate = 1.0 / 8.0;
 const foilRate = 15.0 / 67.0;
 // 1/16 chances of a foil basic land added to the common slot. Mythic to common
 const foilRarityRates: { [slot: string]: number } = {
@@ -15,6 +15,24 @@ const foilRarityRates: { [slot: string]: number } = {
 	uncommon: 1.0 / 16 + 3.0 / 16,
 	common: 1.0,
 };
+
+const SetMythicRates: Record<string, number> = {};
+
+for (const [set, cards] of Object.entries(BoosterCardsBySet)) {
+	const rareCount = cards.filter((cid) => getCard(cid).rarity === "rare").length;
+	const mythicCount = cards.filter((cid) => getCard(cid).rarity === "mythic").length;
+	const mythicRate = mythicCount / (2 * rareCount + mythicCount);
+	// Reject NaN and outliers
+	if (!isNaN(mythicRate) && mythicRate > 1 / 9 && mythicRate < 1 / 6)
+		SetMythicRates[set] = mythicCount / (2 * rareCount + mythicCount);
+}
+Object.freeze(SetMythicRates);
+
+export function getSetMythicRate(set: string | null): number {
+	if (set === null) return DefaultMythicRate;
+	if (SetMythicRates[set]) return SetMythicRates[set];
+	return DefaultMythicRate;
+}
 
 export function getSetFoilRate(set: string | null) {
 	if (set === null) return foilRate;
@@ -168,6 +186,7 @@ export type BoosterFactoryOptions = {
 	foilRate?: number;
 	foilCardPool?: SlotedCardPool;
 	mythicPromotion?: boolean;
+	mythicRate?: number;
 	colorBalance?: boolean;
 	session?: Session;
 	maxDuplicates?: Record<string, number>;
@@ -212,6 +231,7 @@ export class BoosterFactory implements IBoosterFactory {
 				}
 		}
 
+		const mythicRate = this.options.mythicRate ?? DefaultMythicRate;
 		for (let i = 0; i < targets["rare"]; ++i) {
 			if (
 				(!this.options.mythicPromotion || this.cardPool["mythic"].size === 0) &&
@@ -269,7 +289,7 @@ function filterCardPool(slotedCardPool: SlotedCardPool, predicate: (cid: CardID)
 function rollSpecialCardRarity(
 	cardCounts: { [slot: string]: number },
 	targets: Targets,
-	options: { minRarity?: string; mythicPromotion?: boolean }
+	options: { minRarity?: string; mythicPromotion?: boolean; mythicRate?: number }
 ) {
 	const mythicPromotion = options.mythicPromotion ?? true;
 	let pickedRarity = options.minRarity ?? "uncommon";
@@ -283,7 +303,10 @@ function rollSpecialCardRarity(
 	else if (rand < targets.rare + targets.uncommon) pickedRarity = "uncommon";
 
 	if (pickedRarity === "rare") {
-		if (cardCounts["rare"] === 0 || (cardCounts["mythic"] > 0 && mythicPromotion && random.bool(mythicRate)))
+		if (
+			cardCounts["rare"] === 0 ||
+			(cardCounts["mythic"] > 0 && mythicPromotion && random.bool(options.mythicRate ?? DefaultMythicRate))
+		)
 			pickedRarity = "mythic";
 	}
 
@@ -579,8 +602,8 @@ class STXBoosterFactory extends BoosterFactory {
 			? mythicPromotion && rarityRoll < 0.006 && this.lessonsByRarity["mythic"].size > 0
 				? "mythic"
 				: rarityRoll < 0.08 && this.lessonsByRarity["rare"].size > 0
-				? "rare"
-				: "common"
+				  ? "rare"
+				  : "common"
 			: "common";
 
 		if (this.lessonsByRarity[pickedRarity].size <= 0)
@@ -597,8 +620,8 @@ class STXBoosterFactory extends BoosterFactory {
 				? mythicPromotion && archiveCounts["mythic"] > 0 && archiveRarityRoll < 0.066
 					? "mythic"
 					: archiveCounts["rare"] > 0 && archiveRarityRoll < 0.066 + 0.264
-					? "rare"
-					: "uncommon"
+					  ? "rare"
+					  : "uncommon"
 				: "uncommon";
 
 			if (archiveCounts[archiveRarity] <= 0)
@@ -752,12 +775,14 @@ class DBLBoosterFactory extends BoosterFactory {
 
 		const booster: Array<UniqueCard> | false = [];
 		const mythicPromotion = this.options?.mythicPromotion ?? true;
+		const mythicRate = this.options.mythicRate ?? DefaultMythicRate;
 
 		// Silver screen foil card (Note: We could eventually use actual DBL cards for this, to get the proper image)
 		const pickedPool = random.pick([this.midCardPool, this.vowCardPool]);
 		const pickedRarity = rollSpecialCardRarity(countBySlot(pickedPool), updatedTargets, {
 			minRarity: "common",
 			mythicPromotion,
+			mythicRate,
 		});
 		booster.push(pickCard(pickedPool[pickedRarity], [])); // Allow duplicates here
 
@@ -813,9 +838,7 @@ class NEOBoosterFactory extends BoosterFactory {
 			const pickedRarity = rollSpecialCardRarity(
 				countBySlot(this.doubleFacedUCs),
 				{ rare: 0, uncommon: updatedTargets.uncommon, common: updatedTargets.common },
-				{
-					minRarity: "common",
-				}
+				{ minRarity: "common" }
 			);
 			pickedDoubleFacedUC = pickCard(this.doubleFacedUCs[pickedRarity], []);
 			// Insert the Double-Faced common or uncommon as the first uncommon in the pack
@@ -951,6 +974,7 @@ class M2X2BoosterFactory extends BoosterFactory {
 			const pickedRarity = rollSpecialCardRarity(countBySlot(this.cardPool), updatedTargets, {
 				minRarity: "common",
 				mythicPromotion,
+				mythicRate: this.options.mythicRate ?? DefaultMythicRate,
 			});
 			booster.unshift(pickCard(this.cardPool[pickedRarity], booster, { foil: true }));
 		}
@@ -1079,8 +1103,8 @@ class YDMUBoosterFactory extends BoosterFactory {
 					? this.options.mythicPromotion && alchemyCardsCounts["mythic"] > 0 && alchemyRarityRoll < 0.066
 						? "mythic"
 						: alchemyCardsCounts["rare"] > 0 && alchemyRarityRoll < 0.066 + 0.264
-						? "rare"
-						: "uncommon"
+						  ? "rare"
+						  : "uncommon"
 					: "uncommon";
 			const alchemyCard = pickCard(this.alchemyCards[pickedRarity], []);
 
@@ -1205,9 +1229,9 @@ class BROBoosterFactory extends BoosterFactory {
 						  retroRarityRoll < this.RetroMythicChance
 							? "mythic"
 							: retroCardsCounts["rare"] > 0 &&
-							  retroRarityRoll < this.RetroMythicChance + this.RetroRareChance
-							? "rare"
-							: "uncommon"
+							    retroRarityRoll < this.RetroMythicChance + this.RetroRareChance
+							  ? "rare"
+							  : "uncommon"
 						: "uncommon";
 				retroArtifacts.push(pickCard(this.retroArtifacts[pickedRarity], []));
 			}
@@ -1458,8 +1482,8 @@ class MOMBoosterFactory extends BoosterFactory {
 					this.options?.mythicPromotion && mulCounts.mythic > 0 && mulRarityRoll <= 1.0 / 15.0
 						? "mythic"
 						: mulCounts.rare > 0 && mulRarityRoll <= 5.0 / 15.0
-						? "rare"
-						: "uncommon";
+						  ? "rare"
+						  : "uncommon";
 				mulCards.push(pickCard(this.multiverseLegend[mulRarity]));
 			}
 
@@ -1469,6 +1493,8 @@ class MOMBoosterFactory extends BoosterFactory {
 				(targets.uncommon > 0 && random.real(0, 1) <= targets.uncommon / (targets.common + targets.uncommon))
 					? "uncommon"
 					: "common";
+
+			const mythicRate = this.options.mythicRate ?? DefaultMythicRate;
 
 			const insertedCards: UniqueCard[] = [];
 			if (targets.rare > 0) {
@@ -1541,8 +1567,8 @@ class MATBoosterFactory extends MOMBoosterFactory {
 					this.options?.mythicPromotion && matCounts.mythic > 0 && matRarityRoll <= 1.0 / 15.0
 						? "mythic"
 						: matCounts.rare > 0 && matRarityRoll <= 5.0 / 15.0
-						? "rare"
-						: "uncommon";
+						  ? "rare"
+						  : "uncommon";
 				matCards.push(pickCard(this.matPool[matRarity]));
 			}
 			const booster = super.generateBooster(targets);
@@ -1688,8 +1714,8 @@ class WOEBoosterFactory extends BoosterFactory {
 					this.options?.mythicPromotion && wotCounts.mythic > 0 && wotRarityRoll <= 1.0 / 15.0
 						? "mythic"
 						: wotCounts.rare > 0 && wotRarityRoll <= 5.0 / 15.0
-						? "rare"
-						: "uncommon";
+						  ? "rare"
+						  : "uncommon";
 				wotCards.push(pickCard(this.wotPool[wotRarity]));
 			}
 			const booster = super.generateBooster(updatedTargets);
@@ -1783,7 +1809,7 @@ export const getBoosterFactory = function (
 	landSlot: BasicLandSlot | null,
 	options: BoosterFactoryOptions
 ) {
-	const localOptions = Object.assign({ foilRate: getSetFoilRate(set) }, options);
+	const localOptions = { ...options, foilRate: getSetFoilRate(set), mythicRate: getSetMythicRate(set) };
 	// Check for a special booster factory
 	if (set && set in SetSpecificFactories) return new SetSpecificFactories[set](cardPool, landSlot, localOptions);
 	return new BoosterFactory(cardPool, landSlot, localOptions);
