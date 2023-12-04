@@ -1711,9 +1711,9 @@ class WOEBoosterFactory extends BoosterFactory {
 				// Rates from Multiverse Legends in MOM
 				const wotRarityRoll = random.real(0, 1);
 				const wotRarity =
-					this.options?.mythicPromotion && wotCounts.mythic > 0 && wotRarityRoll <= 1.0 / 15.0
+					this.options?.mythicPromotion && wotCounts.mythic > 0 && wotRarityRoll <= 0.05
 						? "mythic"
-						: wotCounts.rare > 0 && wotRarityRoll <= 5.0 / 15.0
+						: wotCounts.rare > 0 && wotRarityRoll <= 0.25
 						  ? "rare"
 						  : "uncommon";
 				wotCards.push(pickCard(this.wotPool[wotRarity]));
