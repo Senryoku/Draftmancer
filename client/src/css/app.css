@@ -1747,13 +1747,13 @@ See: https://stackoverflow.com/questions/52937708/why-does-applying-a-css-filter
 	background-color: #518ae6d0;
 }
 
-/* Temp The Lost Caverns of Ixalan Banner */
-.lci-banner {
+/* Temp Draft Queue Banner */
+.draft-queue-banner {
 	position: relative;
 	max-width: min(500px, 90wv);
 }
 
-.lci-banner img {
+.draft-queue-banner img {
 	border-radius: 10px;
 	box-shadow:
 		0 4px 8px 0 rgba(0, 0, 0, 0.2),

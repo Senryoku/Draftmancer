@@ -1,6 +1,24 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
+			<em>December 6, 2023</em>
+			<ul>
+				<li>
+					Added a
+					<a href="/draftqueue"
+						>Draft Queue for
+						<img src="img/sets/ktk.svg" class="set-icon" style="--invertedness: 100%" alt="KTK" /> Khans of
+						Tarkir</a
+					>
+					to accompany its release on MTGA!
+				</li>
+				<li>Adjusted mythics/rares ratio depending on the set.</li>
+				<li>Correctly escape special characters, like quotes, in card names for MTGO export.</li>
+				<li>Fixed session collection download.</li>
+				<li>Usual minor tweaks</li>
+			</ul>
+		</div>
+		<div class="news">
 			<em>November 29, 2023</em>
 			<ul>
 				<li>
@@ -40,15 +58,6 @@
 					another.
 				</li>
 				<li>Usual card updates and small fixes.</li>
-			</ul>
-		</div>
-		<div class="news">
-			<em>October 04, 2023</em>
-			<ul>
-				<li>Better support for parentheses in card names.</li>
-				<li>Improved reconnection reliability when multiple tabs are open.</li>
-				<li>Players can now start a vote to take ownership of a session (4 players or more).</li>
-				<li>Usual tweaks and fixes.</li>
 			</ul>
 		</div>
 	</div>
