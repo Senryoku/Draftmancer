@@ -6,7 +6,7 @@ export const AvailableQueues: readonly QueueDescription[] = [
 	{ id: "woe", name: "Wilds of Eldraine", playerCount: 8, setCode: "woe" },
 	// { id: "cmm", name: "Commander Masters", playerCount: 8, setCode: "cmm", settings: { pickedCardsPerRound: 2 } },
 	// { id: "ltr", name: "The Lord of the Rings: Tales of Middle-earth", playerCount: 8, setCode: "ltr" },
-	//{ id: "mom", name: "March of the Machine", playerCount: 8, setCode: "mom" },
+	// { id: "mom", name: "March of the Machine", playerCount: 8, setCode: "mom" },
 	// { id: "one", name: "Phyrexia: All Will Be One", playerCount: 8, setCode: "one" },
 	// { id: "mat", name: "March of the Machine: the Aftermath", playerCount: 8, setCode: "mat" },
 	// { id: "mid", name: "Innistrad: Midnight Hunt", playerCount: 8, setCode: "mid" },
