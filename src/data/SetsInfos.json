@@ -322,6 +322,11 @@
         "fullName": "Commander Legends: Battle for Baldur's Gate",
         "icon": "img/sets/clb.svg"
     },
+    "clu": {
+        "code": "clu",
+        "fullName": "Ravnica: Clue Edition",
+        "icon": "img/sets/clu.svg"
+    },
     "cm1": {
         "code": "cm1",
         "fullName": "Commander's Arsenal",
@@ -1386,6 +1391,11 @@
         "block": "Mirage",
         "icon": "img/sets/mir.svg"
     },
+    "mkm": {
+        "code": "mkm",
+        "fullName": "Murders at Karlov Manor",
+        "icon": "img/sets/mkm.svg"
+    },
     "mm2": {
         "code": "mm2",
         "fullName": "Modern Masters 2015",
@@ -1985,7 +1995,7 @@
     },
     "pewk": {
         "code": "pewk",
-        "fullName": "Eternal Weekend 2022",
+        "fullName": "Eternal Weekend",
         "icon": "img/sets/pewk.svg"
     },
     "pexo": {
@@ -2192,6 +2202,11 @@
         "fullName": "Planar Chaos",
         "block": "Time Spiral",
         "icon": "img/sets/plc.svg"
+    },
+    "plci": {
+        "code": "plci",
+        "fullName": "The Lost Caverns of Ixalan Promos",
+        "icon": "img/sets/plci.svg"
     },
     "plg20": {
         "code": "plg20",
@@ -3402,6 +3417,12 @@
         "fullName": "Alchemy: Dominaria",
         "block": "Alchemy 2023",
         "icon": "img/sets/ydmu.svg"
+    },
+    "ylci": {
+        "code": "ylci",
+        "fullName": "Alchemy: Ixalan",
+        "block": "Alchemy 2023",
+        "icon": "img/sets/ylci.svg"
     },
     "ymid": {
         "code": "ymid",
