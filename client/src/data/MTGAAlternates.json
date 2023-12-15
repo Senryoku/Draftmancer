@@ -371,6 +371,7 @@
     ],
     "Scoured Barrens": [
         79714,
+        58421,
         71321,
         70036,
         84579,
@@ -385,6 +386,9 @@
     ],
     "Enchanted Carriage": [
         70365
+    ],
+    "Rite of the Serpent": [
+        58109
     ],
     "Feeling of Dread": [
         86376
@@ -460,6 +464,7 @@
         82760,
         67608,
         65363,
+        58437,
         72564,
         72558,
         79116,
@@ -472,6 +477,7 @@
         66503,
         82761,
         74146,
+        58439,
         70774,
         36786,
         75873,
@@ -1004,6 +1010,9 @@
         36788,
         68232
     ],
+    "Secret Plans": [
+        58333
+    ],
     "Night of Souls' Betrayal": [
         21287,
         21287
@@ -1036,10 +1045,12 @@
         72029,
         70033,
         84577,
-        79709
+        79709,
+        58407
     ],
     "Disdainful Stroke": [
         68498,
+        58011,
         80190,
         86734,
         75093
@@ -1118,6 +1129,7 @@
     ],
     "Tormenting Voice": [
         86231,
+        58183,
         68008,
         73377,
         73959
@@ -1194,6 +1206,9 @@
         71376,
         71376
     ],
+    "Dragon Grip": [
+        58151
+    ],
     "Mirari's Wake": [
         17618,
         17618
@@ -1238,6 +1253,9 @@
     ],
     "Conqueror's Galleon // Conqueror's Foothold": [
         66437
+    ],
+    "Mardu Ascendancy": [
+        58307
     ],
     "Mission Briefing": [
         68505
@@ -1304,6 +1322,9 @@
     ],
     "Hall Monitor": [
         76498
+    ],
+    "Surrak Dragonclaw": [
+        58349
     ],
     "Pharika's Libation": [
         70622
@@ -1477,6 +1498,9 @@
     ],
     "Martyr of Dusk": [
         66645
+    ],
+    "Warden of the Eye": [
+        58361
     ],
     "Faithless Looting": [
         86653,
@@ -1795,6 +1819,9 @@
     "Gravitic Punch": [
         68566
     ],
+    "Villainous Wealth": [
+        58359
+    ],
     "Long Rest": [
         77298
     ],
@@ -2012,6 +2039,9 @@
     "Hungry Flames": [
         72398,
         75707
+    ],
+    "Bloodfire Expert": [
+        58139
     ],
     "Gallia of the Endless Dance": [
         70728
@@ -2314,6 +2344,9 @@
     "Strength of Solidarity": [
         73415
     ],
+    "Hooting Mandrills": [
+        58211
+    ],
     "Expedition Diviner": [
         73246
     ],
@@ -2343,6 +2376,9 @@
     ],
     "Bull's Strength": [
         77279
+    ],
+    "Necropolis Fiend": [
+        58101
     ],
     "Infestation Expert // Infested Werewolf": [
         79019
@@ -2399,6 +2435,9 @@
     "Demonic Vigor": [
         67274
     ],
+    "Heir of the Wilds": [
+        58205
+    ],
     "Consign to the Pit": [
         69197
     ],
@@ -2426,6 +2465,9 @@
     ],
     "Vodalian Tide Mage": [
         83542
+    ],
+    "Debilitating Injury": [
+        58073
     ],
     "Marionette Master": [
         75676
@@ -2693,7 +2735,8 @@
         73282
     ],
     "Ainok Bond-Kin": [
-        79237
+        79237,
+        57943
     ],
     "Appetite for the Unnatural": [
         75729
@@ -2833,6 +2876,7 @@
     "Naturalize": [
         66895,
         68060,
+        58221,
         81657
     ],
     "Cavalier of Flame": [
@@ -2900,6 +2944,7 @@
     ],
     "Bloodfell Caves": [
         71310,
+        58395,
         72025,
         84574,
         70027,
@@ -3011,12 +3056,18 @@
     "Dire Flail // Dire Blunderbuss": [
         87294
     ],
+    "Retribution of the Ancients": [
+        58107
+    ],
     "Subtle Strike": [
         73327,
         75685
     ],
     "Tatyova, Steward of Tides": [
         82274
+    ],
+    "Rush of Battle": [
+        57975
     ],
     "Lavabelly Sliver": [
         71548,
@@ -3145,7 +3196,8 @@
         75329,
         71592,
         80146,
-        71592
+        71592,
+        90249
     ],
     "Sunken Hollow": [
         62113,
@@ -3198,6 +3250,9 @@
     ],
     "Chemister's Insight": [
         68493
+    ],
+    "Kheru Spellsnatcher": [
+        58027
     ],
     "March of Burgeoning Life": [
         79637,
@@ -3422,6 +3477,9 @@
         78453,
         78719
     ],
+    "Leaping Master": [
+        58165
+    ],
     "Wall of One Thousand Cuts": [
         71377,
         71377
@@ -3431,6 +3489,14 @@
     ],
     "Elspeth's Devotee": [
         70768
+    ],
+    "Tranquil Cove": [
+        58429,
+        72040,
+        71324,
+        84582,
+        79720,
+        70044
     ],
     "Pack's Favor": [
         68600
@@ -3510,12 +3576,8 @@
         61231,
         61231
     ],
-    "Tranquil Cove": [
-        72040,
-        71324,
-        84582,
-        79720,
-        70044
+    "Ainok Tracker": [
+        58129
     ],
     "Gruesome Scourger": [
         69889
@@ -3730,6 +3792,9 @@
     "You Cannot Pass!": [
         84730
     ],
+    "Temur Ascendancy": [
+        58351
+    ],
     "Aim for the Head": [
         78884
     ],
@@ -3819,7 +3884,8 @@
         87346
     ],
     "Ride Down": [
-        86298
+        86298,
+        58325
     ],
     "Staggering Insight": [
         70739
@@ -3850,6 +3916,9 @@
     "Ognis, the Dragon's Lash": [
         80503,
         80361
+    ],
+    "Cranial Archive": [
+        58373
     ],
     "Yasharn, Implacable Earth": [
         73452
@@ -3982,6 +4051,9 @@
         80334,
         80483
     ],
+    "Mardu Warshrieker": [
+        58171
+    ],
     "Sanctuary Lockdown": [
         71095
     ],
@@ -4039,6 +4111,9 @@
     "Kroxa and Kunoros": [
         84552
     ],
+    "Zurgo Helmsmasher": [
+        58365
+    ],
     "Voracious Greatshark": [
         71137,
         81646
@@ -4046,6 +4121,10 @@
     "Scrap Welder": [
         79590,
         79801
+    ],
+    "Smite the Monstrous": [
+        57985,
+        73230
     ],
     "Wicked Slumber": [
         84349
@@ -4200,6 +4279,9 @@
     "Rasaad, Warrior Monk": [
         81517
     ],
+    "Windstorm": [
+        58251
+    ],
     "Arcbound Whelp": [
         76067,
         76067
@@ -4213,6 +4295,9 @@
     ],
     "Marauding Dreadship": [
         84435
+    ],
+    "Rotting Mastodon": [
+        58111
     ],
     "Faerie Formation": [
         70449
@@ -4375,6 +4460,9 @@
     "Flames of the Raze-Boar": [
         69229,
         72380
+    ],
+    "Sultai Banner": [
+        58387
     ],
     "Prey Upon": [
         68604,
@@ -4626,6 +4714,9 @@
         73381,
         74671
     ],
+    "Warg Rider": [
+        84972
+    ],
     "Universal Automaton": [
         71576,
         71576
@@ -4646,6 +4737,9 @@
     "Candy Grapple": [
         86776
     ],
+    "Smoke Teller": [
+        58239
+    ],
     "Threefold Thunderhulk": [
         87429
     ],
@@ -4659,6 +4753,9 @@
     "Harmonic Prodigy": [
         76086,
         76086
+    ],
+    "Ponyback Brigade": [
+        58319
     ],
     "Sea Gate Restoration // Sea Gate, Reborn": [
         73267
@@ -5043,6 +5140,9 @@
     "Steel Seraph": [
         82522
     ],
+    "Abzan Guide": [
+        58261
+    ],
     "Dreamshackle Geist": [
         78844
     ],
@@ -5186,6 +5286,7 @@
     "Snow-Covered Forest": [
         71595,
         80149,
+        90252,
         71595,
         75335,
         75336
@@ -5554,7 +5655,8 @@
         69219,
         69909,
         72351,
-        67934
+        67934,
+        58127
     ],
     "Cheeky House-Mouse // Squeak By": [
         86690
@@ -5679,7 +5781,8 @@
         82675
     ],
     "High Sentinels of Arashin": [
-        72170
+        72170,
+        57963
     ],
     "Arm the Cathars": [
         78778
@@ -5870,6 +5973,9 @@
         79197,
         78957
     ],
+    "Opulent Palace": [
+        58413
+    ],
     "Choose Your Weapon": [
         77280,
         81796
@@ -5966,6 +6072,10 @@
         77146,
         77384
     ],
+    "Abzan Falconer": [
+        57941,
+        79236
+    ],
     "A-Sigardian Paladin": [
         83506
     ],
@@ -6057,6 +6167,9 @@
     "Valakut Awakening // Valakut Stoneforge": [
         73379
     ],
+    "Venerable Lammasu": [
+        57993
+    ],
     "Toralf, God of Fury // Toralf's Hammer": [
         75197,
         75418
@@ -6117,6 +6230,9 @@
     ],
     "Kardur's Vicious Return": [
         75264
+    ],
+    "Mardu Hordechief": [
+        57971
     ],
     "Shadrix Silverquill": [
         76771,
@@ -6235,6 +6351,7 @@
         80148,
         75333,
         71594,
+        90251,
         71594,
         75334
     ],
@@ -6322,6 +6439,9 @@
     ],
     "Rootwire Amalgam": [
         82688
+    ],
+    "Thousand Winds": [
+        58053
     ],
     "Bretagard Stronghold": [
         75302
@@ -6499,6 +6619,9 @@
     "Solemn Simulacrum": [
         74651,
         72021
+    ],
+    "Wingmate Roc": [
+        57999
     ],
     "Opt": [
         67224,
@@ -6859,6 +6982,9 @@
     "Dream Fracture": [
         81704
     ],
+    "Chief of the Edge": [
+        58275
+    ],
     "Underhanded Designs": [
         75686
     ],
@@ -7018,6 +7144,9 @@
     "Cloister Gargoyle": [
         77112,
         77403
+    ],
+    "Sage of the Inward Eye": [
+        58327
     ],
     "Gouged Zealot": [
         76085,
@@ -7296,6 +7425,9 @@
     "Compleat Devotion": [
         83707
     ],
+    "Trap Essence": [
+        58355
+    ],
     "Kayla's Reconstruction": [
         82494
     ],
@@ -7382,12 +7514,19 @@
         72327,
         84394
     ],
+    "Shatter": [
+        58177,
+        66845
+    ],
     "Gavony Silversmith": [
         78348
     ],
     "Teferi's Ageless Insight": [
         76869,
         71858
+    ],
+    "Salt Road Patrol": [
+        57979
     ],
     "Bake into a Pie": [
         72263,
@@ -7441,6 +7580,9 @@
     "Unwinding Clock": [
         82860,
         82923
+    ],
+    "Sultai Scavenger": [
+        58119
     ],
     "March of the Multitudes": [
         68649
@@ -7552,6 +7694,9 @@
     "Lunarch Mantle": [
         86073
     ],
+    "Tusked Colossodon": [
+        58247
+    ],
     "Sanguine Spy": [
         80244
     ],
@@ -7578,6 +7723,9 @@
     "Founding the Third Path": [
         82102
     ],
+    "Disowned Ancestor": [
+        58077
+    ],
     "Faunsbane Troll": [
         86913
     ],
@@ -7597,6 +7745,9 @@
     "Unsubstantiate": [
         71864
     ],
+    "Swift Kick": [
+        58181
+    ],
     "Devout Decree": [
         69798
     ],
@@ -7606,6 +7757,9 @@
     ],
     "Bastion of Remembrance": [
         71140
+    ],
+    "Sandsteppe Citadel": [
+        58419
     ],
     "Late to Dinner": [
         75971,
@@ -7698,6 +7852,9 @@
     ],
     "Promising Duskmage": [
         76478
+    ],
+    "Barrage of Boulders": [
+        58137
     ],
     "Gonti, Lord of Luxury": [
         72302,
@@ -8094,6 +8251,7 @@
     "Blossoming Sands": [
         70028,
         71311,
+        58399,
         72026,
         79705,
         84575
@@ -8239,6 +8397,9 @@
     "Prayer of Binding": [
         82080
     ],
+    "Deflecting Palm": [
+        58283
+    ],
     "Fabrication Foundry": [
         87143
     ],
@@ -8377,6 +8538,9 @@
         73408,
         69975
     ],
+    "Sultai Ascendancy": [
+        58343
+    ],
     "The Blackstaff of Waterdeep": [
         77153
     ],
@@ -8454,6 +8618,7 @@
     ],
     "Dismal Backwater": [
         84576,
+        58401,
         71313,
         70030,
         72027,
@@ -8630,6 +8795,9 @@
     "Borborygmos and Fblthp": [
         84513
     ],
+    "Bloodsoaked Champion": [
+        58069
+    ],
     "Doublecast": [
         68814,
         72369,
@@ -8794,6 +8962,9 @@
     "Ambergris, Agent of Tyranny": [
         81564
     ],
+    "Arc Lightning": [
+        58131
+    ],
     "Veiled Shade": [
         68549
     ],
@@ -8893,6 +9064,9 @@
     ],
     "Sticky Fingers": [
         80275
+    ],
+    "See the Unwritten": [
+        58235
     ],
     "Hamletback Goliath": [
         72394
@@ -9191,6 +9365,9 @@
     "Sunscorched Desert": [
         74153
     ],
+    "Alpine Grizzly": [
+        58191
+    ],
     "Lavabrink Venturer": [
         71086
     ],
@@ -9305,6 +9482,9 @@
         71533,
         71533
     ],
+    "Utter End": [
+        58357
+    ],
     "Ajani Unyielding": [
         75766
     ],
@@ -9388,6 +9568,12 @@
         76038,
         76038
     ],
+    "Defiant Strike": [
+        57951,
+        71797,
+        77482,
+        69460
+    ],
     "Pieces of the Puzzle": [
         86125
     ],
@@ -9423,6 +9609,9 @@
     ],
     "Excavation Mole": [
         71217
+    ],
+    "Sagu Archer": [
+        58229
     ],
     "Vat Emergence": [
         83812
@@ -9523,6 +9712,7 @@
     ],
     "Rugged Highlands": [
         84578,
+        58417,
         79713,
         71319,
         72031,
@@ -9548,6 +9738,15 @@
     "Eiganjo Exemplar": [
         79428,
         79860
+    ],
+    "Wind-Scarred Crag": [
+        58431,
+        72041,
+        70421,
+        84583,
+        71325,
+        70045,
+        79722
     ],
     "Cobbled Wings": [
         66435
@@ -9677,6 +9876,9 @@
     "Trial of Ambition": [
         73908
     ],
+    "Seeker of the Way": [
+        57981
+    ],
     "Gala Greeters": [
         80299
     ],
@@ -9719,7 +9921,8 @@
         66419
     ],
     "Incremental Growth": [
-        79337
+        79337,
+        58213
     ],
     "Surgehacker Mech": [
         79700,
@@ -9743,6 +9946,9 @@
     ],
     "Redcap Heelslasher": [
         84444
+    ],
+    "Lens of Clarity": [
+        58383
     ],
     "Shock": [
         69945,
@@ -9789,6 +9995,9 @@
     "World Shaper": [
         75551,
         66919
+    ],
+    "Sage-Eye Harrier": [
+        57977
     ],
     "Can't Stay Away": [
         78576
@@ -10299,6 +10508,9 @@
     "Nahiri, Heir of the Ancients": [
         73442,
         74696
+    ],
+    "Avalanche Tusker": [
+        58269
     ],
     "Samite Herbalist": [
         82083
@@ -10897,6 +11109,9 @@
     "Desecrated Tomb": [
         68142
     ],
+    "Shambling Attendants": [
+        58115
+    ],
     "Sarulf, Realm Eater": [
         75439,
         75275
@@ -11236,6 +11451,10 @@
         75520,
         66269
     ],
+    "Heart-Piercer Bow": [
+        58379,
+        70013
+    ],
     "Angrath's Ambusher": [
         67035
     ],
@@ -11258,6 +11477,9 @@
     ],
     "Horror of the Broken Lands": [
         73884
+    ],
+    "Bloodfire Mentor": [
+        58141
     ],
     "Hollowhenge Scavenger": [
         86664
@@ -11506,6 +11728,9 @@
     ],
     "Nightmare Shepherd": [
         70619
+    ],
+    "Ashcloud Phoenix": [
+        58135
     ],
     "Etchings of the Chosen": [
         71539,
@@ -11756,11 +11981,17 @@
         71455,
         71455
     ],
+    "Sagu Mauler": [
+        58329
+    ],
     "Misleading Motes": [
         86750
     ],
     "Beloved Princess": [
         70154
+    ],
+    "Butcher of the Horde": [
+        58273
     ],
     "Shadowfax, Lord of Horses": [
         84919
@@ -11780,6 +12011,9 @@
     ],
     "Buried Treasure": [
         87408
+    ],
+    "Savage Knuckleblade": [
+        58331
     ],
     "Artful Takedown": [
         68612
@@ -12067,7 +12301,8 @@
         82127
     ],
     "Highland Game": [
-        68056
+        68056,
+        58207
     ],
     "Blisterspit Gremlin": [
         71175
@@ -12184,6 +12419,9 @@
     ],
     "Invasion of Belenon // Belenon War Anthem": [
         84269
+    ],
+    "Rattleclaw Mystic": [
+        58225
     ],
     "Wall of Mist": [
         67846,
@@ -12457,6 +12695,9 @@
     "Militia Rallier": [
         78804
     ],
+    "Whirlwind Adept": [
+        58063
+    ],
     "Grow from the Ashes": [
         67432
     ],
@@ -12616,6 +12857,9 @@
         82851,
         82914
     ],
+    "Feed the Clan": [
+        58201
+    ],
     "Ovalchase Dragster": [
         75833
     ],
@@ -12706,6 +12950,9 @@
     ],
     "Memorial to War": [
         67596
+    ],
+    "Horde Ambusher": [
+        58157
     ],
     "Sarevok, Deadly Usurper": [
         81546
@@ -12996,6 +13243,9 @@
     "Hurkyl's Final Meditation": [
         82536
     ],
+    "Mindswipe": [
+        58315
+    ],
     "Ivory Tower": [
         82885,
         82822
@@ -13167,14 +13417,6 @@
     "Tocasia's Welcome": [
         82514
     ],
-    "Wind-Scarred Crag": [
-        72041,
-        70421,
-        84583,
-        71325,
-        70045,
-        79722
-    ],
     "Resolute Watchdog": [
         69147
     ],
@@ -13316,6 +13558,9 @@
     ],
     "Dalakos, Crafter of Wonders": [
         70723
+    ],
+    "Krumar Bond-Kin": [
+        58091
     ],
     "Ironshell Beetle": [
         68595,
@@ -13566,6 +13811,7 @@
     "Cancel": [
         71828,
         67776,
+        58003,
         66055
     ],
     "Flicker of Fate": [
@@ -13691,6 +13937,9 @@
     ],
     "Spirited Companion": [
         79460
+    ],
+    "Dragonscale Boon": [
+        58199
     ],
     "Legion Vanguard": [
         76045,
@@ -13913,17 +14162,15 @@
     "Security Bypass": [
         80210
     ],
+    "Dig Through Time": [
+        58009
+    ],
     "Beluna's Gatekeeper // Entry Denied": [
         86729
     ],
     "Pixie Guide": [
         77410,
         77171
-    ],
-    "Defiant Strike": [
-        71797,
-        77482,
-        69460
     ],
     "Family Reunion": [
         87144
@@ -14139,6 +14386,9 @@
         77433,
         77306
     ],
+    "Howl of the Horde": [
+        58161
+    ],
     "Mask of the Jadecrafter": [
         82686
     ],
@@ -14150,6 +14400,9 @@
     ],
     "Pass the Torch": [
         81948
+    ],
+    "Quiet Contemplation": [
+        58037
     ],
     "Dance of the Manse": [
         70333
@@ -14192,6 +14445,9 @@
         82875,
         82812
     ],
+    "Become Immense": [
+        58197
+    ],
     "Necrotic Fumes": [
         76471
     ],
@@ -14202,6 +14458,9 @@
         81642,
         71133,
         73659
+    ],
+    "Scion of Glaciers": [
+        58043
     ],
     "Aether Hub": [
         75857
@@ -14576,6 +14835,9 @@
         54163,
         54163
     ],
+    "Highspire Mantis": [
+        58291
+    ],
     "War of the Last Alliance": [
         84728
     ],
@@ -14638,6 +14900,9 @@
     "Wind Strider": [
         66139
     ],
+    "Trail of Mystery": [
+        58245
+    ],
     "Necromancer's Familiar": [
         76049,
         76049
@@ -14686,7 +14951,8 @@
         69421
     ],
     "Kill Shot": [
-        80170
+        80170,
+        57967
     ],
     "Baloth Packhunter": [
         75531
@@ -15018,6 +15284,9 @@
     "Mass Production": [
         82499
     ],
+    "Despise": [
+        58075
+    ],
     "Battlefield Forge": [
         82744,
         82796
@@ -15056,6 +15325,9 @@
     ],
     "Pilfering Imp": [
         68542
+    ],
+    "Dragon-Style Twins": [
+        58153
     ],
     "Baldur's Gate": [
         81865
@@ -15096,6 +15368,9 @@
     ],
     "Relic of Legends": [
         82288
+    ],
+    "Archers' Parapet": [
+        58193
     ],
     "Cavern Whisperer": [
         71146,
@@ -15165,6 +15440,9 @@
     ],
     "A Golden Opportunity": [
         90127
+    ],
+    "War Behemoth": [
+        57995
     ],
     "Diligent Excavator": [
         67206
@@ -15299,6 +15577,9 @@
     "Finale of Revelation": [
         69502
     ],
+    "Jeskai Windscout": [
+        58025
+    ],
     "Restless Spire": [
         86992
     ],
@@ -15403,6 +15684,9 @@
     ],
     "Pious Interdiction": [
         66013
+    ],
+    "Singing Bell Strike": [
+        58047
     ],
     "Wail of the Forgotten": [
         87406
@@ -15589,6 +15873,9 @@
     ],
     "Archon of Absolution": [
         70150
+    ],
+    "Jeskai Banner": [
+        58381
     ],
     "Vampiric Rites": [
         87075
@@ -15860,6 +16147,7 @@
     "Snow-Covered Swamp": [
         75331,
         75332,
+        90250,
         71593,
         71593,
         80147
@@ -16067,11 +16355,17 @@
         72399,
         67976
     ],
+    "Ankle Shanker": [
+        58265
+    ],
     "Mindwrack Harpy": [
         70772
     ],
     "Cabaretti Initiate": [
         80288
+    ],
+    "Savage Punch": [
+        58231
     ],
     "Shatterskull Charger": [
         73361
@@ -16426,6 +16720,9 @@
     "Wrenn and Realmbreaker": [
         84511
     ],
+    "Stubborn Denial": [
+        58049
+    ],
     "Two-Headed Giant": [
         67398
     ],
@@ -16452,6 +16749,7 @@
     "Snow-Covered Plains": [
         75328,
         71591,
+        90248,
         75327,
         71591,
         80145
@@ -16514,6 +16812,9 @@
     "Insatiable Hemophage": [
         71160,
         73663
+    ],
+    "Master the Way": [
+        58313
     ],
     "Elven Ambush": [
         75359
@@ -16593,6 +16894,7 @@
         70037,
         84580,
         72033,
+        58423,
         79717
     ],
     "Scalding Cauldron": [
@@ -16600,6 +16902,9 @@
     ],
     "Keldon Flamesage": [
         82187
+    ],
+    "Ghostfire Blade": [
+        58377
     ],
     "Itzquinth, Firstborn of Gishath": [
         87390
@@ -16809,6 +17114,9 @@
     "Thassa's Oracle": [
         70584
     ],
+    "Jeering Instigator": [
+        58163
+    ],
     "Arcus Acolyte": [
         76141,
         76141
@@ -16895,7 +17203,8 @@
         84365
     ],
     "Feat of Resistance": [
-        71801
+        71801,
+        57957
     ],
     "Skywarp Skaab": [
         78869
@@ -17221,6 +17530,9 @@
     "A-Lantern of Revealing": [
         83671
     ],
+    "Ivorytusk Fortress": [
+        58295
+    ],
     "Storm God's Oracle": [
         76171,
         76171
@@ -17299,6 +17611,9 @@
     ],
     "Thalia's Lancers": [
         86086
+    ],
+    "Witness of the Ages": [
+        58393
     ],
     "Ajani, Sleeper Agent": [
         82244
@@ -17602,6 +17917,9 @@
     "Cryptolith Fragment // Aurora of Emrakul": [
         86306
     ],
+    "Abzan Banner": [
+        58367
+    ],
     "Closing Statement": [
         76577
     ],
@@ -17777,6 +18095,9 @@
     "Amplifire": [
         69220
     ],
+    "Treasure Cruise": [
+        58055
+    ],
     "Shacklegeist": [
         71852
     ],
@@ -17902,6 +18223,9 @@
     ],
     "Kiora, Sovereign of the Deep": [
         85091
+    ],
+    "Mystic of the Hidden Way": [
+        58033
     ],
     "Realmbreaker, the Invasion Tree": [
         84570
@@ -18195,6 +18519,11 @@
     "Jolrael, Mwonvuli Recluse": [
         71973
     ],
+    "Hardened Scales": [
+        58203,
+        87093,
+        79335
+    ],
     "God-Pharaoh's Statue": [
         69689
     ],
@@ -18227,6 +18556,9 @@
     ],
     "Ketria Crystal": [
         71303
+    ],
+    "Abomination of Gudul": [
+        58255
     ],
     "Jace, Unraveler of Secrets": [
         73841,
@@ -18384,8 +18716,14 @@
     "Elderfang Disciple": [
         75133
     ],
+    "Sultai Flayer": [
+        58241
+    ],
     "Tajuru Blightblade": [
         73417
+    ],
+    "Bloodstained Mire": [
+        58397
     ],
     "Attendant of Vraska": [
         68752
@@ -18440,6 +18778,9 @@
     "Gollum, Scheming Guide": [
         84983
     ],
+    "Briber's Purse": [
+        58371
+    ],
     "Tah-Crop Elite": [
         73814
     ],
@@ -18480,6 +18821,9 @@
     "Roadside Reliquary": [
         79712
     ],
+    "Mistfire Weaver": [
+        58029
+    ],
     "Cinder Glade": [
         62085,
         62085
@@ -18517,6 +18861,10 @@
     ],
     "Starfield Mystic": [
         69824
+    ],
+    "Awaken the Bear": [
+        58195,
+        79328
     ],
     "Hungry Ridgewolf": [
         78965
@@ -18559,6 +18907,9 @@
     ],
     "Giant Spider": [
         68046
+    ],
+    "End Hostilities": [
+        57953
     ],
     "Champion of the Perished": [
         78736,
@@ -18611,6 +18962,9 @@
     ],
     "Hidetsugu and Kairi": [
         84522
+    ],
+    "Scaldkin": [
+        58041
     ],
     "Heartflame Duelist // Heartflame Slash": [
         86946
@@ -18796,6 +19150,9 @@
     "Skemfar Elderhall": [
         75319
     ],
+    "Mantis Rider": [
+        58305
+    ],
     "Earthquake Dragon": [
         81804
     ],
@@ -18845,6 +19202,9 @@
     ],
     "Archfiend's Vessel": [
         71870
+    ],
+    "Roar of Challenge": [
+        58227
     ],
     "Professor of Zoomancy": [
         76533
@@ -19098,6 +19458,9 @@
     ],
     "Territorial Maro": [
         82236
+    ],
+    "Valley Dasher": [
+        58187
     ],
     "Vengeful Reaper": [
         75158
@@ -19432,6 +19795,9 @@
     "Wand of Vertebrae": [
         68723
     ],
+    "Taigam's Scheming": [
+        58051
+    ],
     "Goblin Assault Team": [
         69580
     ],
@@ -19457,6 +19823,9 @@
     ],
     "Devouring Hellion": [
         69575
+    ],
+    "Glacial Stalker": [
+        58019
     ],
     "Dire Fleet Poisoner": [
         66753
@@ -19542,6 +19911,9 @@
     "Deathbloom Gardener": [
         82211
     ],
+    "Embodiment of Spring": [
+        58015
+    ],
     "Erebos's Intervention": [
         70605
     ],
@@ -19613,6 +19985,9 @@
     ],
     "Selfless Glyphweaver // Deadly Vanity": [
         76560
+    ],
+    "Efreet Weaponmaster": [
+        58287
     ],
     "Zada, Hedron Grinder": [
         85016,
@@ -19979,6 +20354,9 @@
     "Chittering Witch": [
         70452
     ],
+    "Flooded Strand": [
+        58403
+    ],
     "Hunted Witness": [
         68476
     ],
@@ -20091,6 +20469,7 @@
     ],
     "Thornwood Falls": [
         71323,
+        58425,
         79719,
         70043,
         84581,
@@ -20134,6 +20513,9 @@
     "Arcbound Shikari": [
         76140,
         76140
+    ],
+    "Altar of the Brood": [
+        58369
     ],
     "Dragonborn Immolator": [
         81262
@@ -20377,6 +20759,10 @@
     "Teyo, Aegis Adept": [
         79364
     ],
+    "Abzan Battle Priest": [
+        57939,
+        79235
+    ],
     "Humble Naturalist": [
         71227
     ],
@@ -20398,6 +20784,9 @@
     ],
     "A-Cobbled Lancer": [
         78838
+    ],
+    "Abzan Charm": [
+        58259
     ],
     "Predatory Sludge": [
         79935
@@ -20444,6 +20833,9 @@
     "Surge Mare": [
         67834
     ],
+    "Jeskai Student": [
+        57965
+    ],
     "Teleportation Circle": [
         77144
     ],
@@ -20458,6 +20850,9 @@
     ],
     "Gate of the Black Dragon": [
         81288
+    ],
+    "Minas Tirith Garrison": [
+        84971
     ],
     "Dig Up the Body": [
         80227
@@ -20663,6 +21058,9 @@
         41185,
         41185
     ],
+    "Death Frenzy": [
+        58281
+    ],
     "Sunblade Angel": [
         69482
     ],
@@ -20715,6 +21113,9 @@
     "Wrecking Crew": [
         80283
     ],
+    "Kin-Tree Invocation": [
+        58303
+    ],
     "Eldritch Pact": [
         81743
     ],
@@ -20728,9 +21129,6 @@
     ],
     "Light Up the Stage": [
         69235
-    ],
-    "Shatter": [
-        66845
     ],
     "Guardian of Pilgrims": [
         86067
@@ -20854,6 +21252,9 @@
     "Shadowspear": [
         70747
     ],
+    "Pine Walker": [
+        58223
+    ],
     "Rumbling Baloth": [
         72488,
         68801,
@@ -20917,6 +21318,9 @@
     ],
     "Dinosaur Hunter": [
         66751
+    ],
+    "Ugin's Nexus": [
+        58391
     ],
     "Skywriter Djinn": [
         83518
@@ -21148,6 +21552,9 @@
     "Goblin Smuggler": [
         69929
     ],
+    "Crater's Claws": [
+        58149
+    ],
     "Tome of the Guildpact": [
         69390
     ],
@@ -21262,6 +21669,9 @@
     "Akki Ronin": [
         79560,
         79870
+    ],
+    "Timeless Dragon": [
+        76931
     ],
     "Edgar's Awakening": [
         78906
@@ -21592,6 +22002,9 @@
     "Rootless Yew": [
         75236
     ],
+    "Sultai Charm": [
+        58345
+    ],
     "Verdant Rebirth": [
         66393
     ],
@@ -21642,6 +22055,9 @@
     ],
     "Poppet Stitcher // Poppet Factory": [
         78407
+    ],
+    "Temur Banner": [
+        58389
     ],
     "Power Plant Worker": [
         82727
@@ -21762,6 +22178,9 @@
     "Tale of Tinúviel": [
         84726
     ],
+    "Abzan Ascendancy": [
+        58257
+    ],
     "Knockout Blow": [
         80171
     ],
@@ -21802,6 +22221,9 @@
     "Fire of Orthanc": [
         84819
     ],
+    "Blinding Spray": [
+        58001
+    ],
     "Cosima, God of the Voyage // The Omenkeel": [
         75403,
         75088
@@ -21821,6 +22243,9 @@
     ],
     "Burning-Fist Minotaur": [
         73921
+    ],
+    "Bring Low": [
+        58143
     ],
     "Temporal Machinations": [
         67646
@@ -21878,9 +22303,6 @@
     ],
     "Coral Colony": [
         82097
-    ],
-    "Smite the Monstrous": [
-        73230
     ],
     "Surrak and Goreclaw": [
         85121
@@ -22043,6 +22465,9 @@
     "Ranger's Hawk": [
         77142
     ],
+    "Hooded Hydra": [
+        58209
+    ],
     "Moonsnare Prototype": [
         79494
     ],
@@ -22089,6 +22514,9 @@
     ],
     "Seismic Elemental": [
         72424
+    ],
+    "Waterwhirl": [
+        58057
     ],
     "Cabaretti Courtyard": [
         80400
@@ -22298,6 +22726,9 @@
     "Vhal, Eager Scholar": [
         81537
     ],
+    "Dragon's Eye Savants": [
+        58013
+    ],
     "Talons of Wildwood": [
         68084
     ],
@@ -22483,7 +22914,8 @@
         63475
     ],
     "Jeskai Elder": [
-        71835
+        71835,
+        58023
     ],
     "The Book of Exalted Deeds": [
         77109
@@ -22497,6 +22929,9 @@
     "Black Lotus": [
         84162,
         59677
+    ],
+    "Bellowing Saddlebrute": [
+        58065
     ],
     "Huatli's Spurring": [
         66555
@@ -22579,8 +23014,15 @@
     "Ravenous Sailback": [
         84495
     ],
+    "Chief of the Scale": [
+        58277
+    ],
     "Hordeling Outburst": [
-        79311
+        79311,
+        58159
+    ],
+    "Unyielding Krumar": [
+        58125
     ],
     "A-Return Upon the Tide": [
         75146
@@ -22878,6 +23320,9 @@
     "Song of Freyalise": [
         67462
     ],
+    "Eagle of Deliverance": [
+        84970
+    ],
     "Mishra, Claimed by Gix": [
         82701
     ],
@@ -22904,6 +23349,9 @@
     ],
     "Launch Party": [
         72310
+    ],
+    "Weave Fate": [
+        58059
     ],
     "Beetleback Chief": [
         72356
@@ -23025,6 +23473,9 @@
     ],
     "Gale, Storm Conduit": [
         81529
+    ],
+    "Armament Corps": [
+        58267
     ],
     "Damping Sphere": [
         67530
@@ -23180,6 +23631,9 @@
         79584,
         79798
     ],
+    "Gurmag Swiftwing": [
+        58085
+    ],
     "Quicksand Whirlpool": [
         87164
     ],
@@ -23269,6 +23723,9 @@
     "Citanul Stalwart": [
         82660
     ],
+    "Wooded Foothills": [
+        58435
+    ],
     "Munitions Expert": [
         71550,
         71550
@@ -23276,8 +23733,14 @@
     "Gift of Fangs": [
         78909
     ],
+    "Watcher of the Roost": [
+        57997
+    ],
     "Guardian of the Great Door": [
         87147
+    ],
+    "Woolly Loxodon": [
+        58253
     ],
     "Watchful Blisterzoa": [
         83778
@@ -23389,6 +23852,9 @@
     "Chrome Prowler": [
         83745
     ],
+    "Meandering Towershell": [
+        58219
+    ],
     "Rampaging Geoderm": [
         84558
     ],
@@ -23449,6 +23915,9 @@
     ],
     "Ojer Pakpatiq, Deepest Epoch // Temple of Cyclical Time": [
         87208
+    ],
+    "Goblinslide": [
+        58155
     ],
     "Adaptive Snapjaw": [
         79326
@@ -23661,6 +24130,9 @@
     "Stronghold Confessor": [
         67314
     ],
+    "Rakshasa Deathdealer": [
+        58321
+    ],
     "Trusty Retriever": [
         72111
     ],
@@ -23870,6 +24342,9 @@
     "Aven Heartstabber": [
         80317
     ],
+    "Crippling Chill": [
+        58007
+    ],
     "Martyr for the Cause": [
         69474
     ],
@@ -23890,6 +24365,9 @@
     ],
     "Sublime Epiphany": [
         71856
+    ],
+    "Alabaster Kirin": [
+        57945
     ],
     "Teferi, Who Slows the Sunset": [
         78612,
@@ -23980,6 +24458,9 @@
     "Éowyn, Fearless Knight": [
         84893
     ],
+    "Sultai Soothsayer": [
+        58347
+    ],
     "Voldaren Epicure": [
         78989,
         79200
@@ -23998,6 +24479,9 @@
     ],
     "Sea Legs": [
         66717
+    ],
+    "Rakshasa's Secret": [
+        58105
     ],
     "Bond of Passion": [
         69567
@@ -24230,6 +24714,9 @@
     ],
     "Replicating Ring": [
         75291
+    ],
+    "Icy Blast": [
+        58021
     ],
     "Cut Short": [
         84257
@@ -24489,6 +24976,9 @@
     "A-Deal Gone Bad": [
         84102
     ],
+    "Murderous Cut": [
+        58099
+    ],
     "Woodland Chasm": [
         75325
     ],
@@ -24537,6 +25027,9 @@
     ],
     "Dive Down": [
         66067
+    ],
+    "Tuskguard Captain": [
+        58249
     ],
     "Sandsteppe Outcast": [
         79256
@@ -24912,6 +25405,9 @@
     "Grunn, the Lonely King": [
         67434
     ],
+    "Throttle": [
+        58123
+    ],
     "Blazing Hope": [
         66623
     ],
@@ -24995,6 +25491,9 @@
     "Armored Kincaller": [
         87328
     ],
+    "Molting Snakeskin": [
+        58097
+    ],
     "Ironroot Warlord": [
         72514,
         69994
@@ -25041,9 +25540,6 @@
     "Tyrant's Scorn": [
         69676
     ],
-    "Abzan Battle Priest": [
-        79235
-    ],
     "Grim Physician": [
         70611
     ],
@@ -25055,6 +25551,10 @@
     ],
     "Fear of Death": [
         78845
+    ],
+    "Monastery Swiftspear": [
+        58173,
+        82628
     ],
     "Serpentine Ambush": [
         78868
@@ -25115,6 +25615,9 @@
     ],
     "Johann, Apprentice Sorcerer": [
         86917
+    ],
+    "Winterflame": [
+        58363
     ],
     "Karplusan Forest": [
         82302
@@ -25362,6 +25865,9 @@
         81777,
         77257
     ],
+    "Suspension Field": [
+        57987
+    ],
     "Huatli's Raptor": [
         69650
     ],
@@ -25429,12 +25935,18 @@
         80165,
         80466
     ],
+    "Mystic Monastery": [
+        58409
+    ],
     "Centaur Courser": [
         68022,
         69953
     ],
     "Blinding Fog": [
         66321
+    ],
+    "Kheru Bloodsucker": [
+        58087
     ],
     "Glimmer of Genius": [
         75627
@@ -25827,9 +26339,6 @@
     "Painful Quandary": [
         82595
     ],
-    "Abzan Falconer": [
-        79236
-    ],
     "Pelt Collector": [
         68602
     ],
@@ -26127,6 +26636,9 @@
     "Brazen Borrower // Petty Theft": [
         70186
     ],
+    "Riverwheel Aerialists": [
+        58039
+    ],
     "Eutropia the Twice-Favored": [
         70727
     ],
@@ -26285,6 +26797,9 @@
     ],
     "Balduvian Berserker": [
         82168
+    ],
+    "Mardu Charm": [
+        58309
     ],
     "Flood of Tears": [
         69844
@@ -26498,8 +27013,14 @@
     "Star-Crowned Stag": [
         67756
     ],
+    "Arrow Storm": [
+        58133
+    ],
     "Loxodon Sergeant": [
         69472
+    ],
+    "Sarkhan, the Dragonspeaker": [
+        58175
     ],
     "Fires of Victory": [
         82175
@@ -26607,7 +27128,8 @@
         83741
     ],
     "Trumpet Blast": [
-        68010
+        68010,
+        58185
     ],
     "Wilson, Ardent Bear": [
         81607
@@ -26785,6 +27307,9 @@
     "Hallar, the Firefletcher": [
         67496
     ],
+    "Anafenza, the Foremost": [
+        58263
+    ],
     "Deeproot Elite": [
         66871
     ],
@@ -26876,6 +27401,9 @@
     "Scurrid Colony": [
         76535
     ],
+    "Ruthless Ripper": [
+        58113
+    ],
     "Goremand": [
         71883
     ],
@@ -26915,6 +27443,9 @@
     "Clash of Titans": [
         71178
     ],
+    "Jeskai Charm": [
+        58299
+    ],
     "Transmogrant Altar": [
         82608
     ],
@@ -26929,6 +27460,9 @@
     ],
     "Howling Moon": [
         79016
+    ],
+    "Mirkwood Channeler": [
+        84974
     ],
     "Diamond Mare": [
         68144
@@ -26953,6 +27487,9 @@
     ],
     "Pledge of Unity": [
         69659
+    ],
+    "Jeskai Ascendancy": [
+        58297
     ],
     "Decoction Module": [
         75810
@@ -27013,6 +27550,9 @@
     "Dwindle": [
         67786
     ],
+    "Rakshasa Vizier": [
+        58323
+    ],
     "Burglar Rat": [
         72276,
         68525
@@ -27070,6 +27610,10 @@
         79443,
         79766
     ],
+    "Swarm of Bloodflies": [
+        58121,
+        72344
+    ],
     "Minotaur Sureshot": [
         72412
     ],
@@ -27081,6 +27625,9 @@
     ],
     "Ledev Guardian": [
         68479
+    ],
+    "Mardu Blazebringer": [
+        58167
     ],
     "Guardian Naga // Banishing Coils": [
         81673
@@ -27200,6 +27747,9 @@
     "Rebel Salvo": [
         83844
     ],
+    "Raiders' Spoils": [
+        58103
+    ],
     "Tournament Grounds": [
         70395
     ],
@@ -27236,6 +27786,9 @@
     ],
     "Redcap Thief": [
         86849
+    ],
+    "Set Adrift": [
+        58045
     ],
     "Rally the Peasants": [
         86379
@@ -27326,6 +27879,9 @@
     "Shakedown Heavy": [
         80246
     ],
+    "Dazzling Ramparts": [
+        57949
+    ],
     "Typhoid Rats": [
         75504
     ],
@@ -27393,6 +27949,9 @@
     ],
     "Faith Unbroken": [
         86062
+    ],
+    "Grim Haruspex": [
+        58083
     ],
     "Ingenious Prodigy": [
         86745
@@ -27515,6 +28074,9 @@
     "Aether Meltdown": [
         75616
     ],
+    "Duneblast": [
+        58285
+    ],
     "Rally to Battle": [
         69146
     ],
@@ -27609,6 +28171,9 @@
     "Infectious Horror": [
         67882
     ],
+    "Mardu Heart-Piercer": [
+        58169
+    ],
     "Mounted Dreadknight": [
         78500
     ],
@@ -27641,6 +28206,9 @@
     ],
     "Carnival // Carnage": [
         69352
+    ],
+    "Erase": [
+        57955
     ],
     "Curious Homunculus // Voracious Reader": [
         86095
@@ -27726,10 +28294,6 @@
     ],
     "Warfire Javelineer": [
         72432
-    ],
-    "Hardened Scales": [
-        87093,
-        79335
     ],
     "Molten Rebuke": [
         83841
@@ -27924,6 +28488,9 @@
     "Warehouse Tabby": [
         86814
     ],
+    "Dragon Throne of Tarkir": [
+        58375
+    ],
     "Fearsome Whelp": [
         79945
     ],
@@ -27958,8 +28525,8 @@
     "Charging Monstrosaur": [
         66241
     ],
-    "Awaken the Bear": [
-        79328
+    "Seek the Horizon": [
+        58237
     ],
     "Fighter Class": [
         77327
@@ -28019,6 +28586,9 @@
     "Light of Promise": [
         71807
     ],
+    "Dutiful Return": [
+        58079
+    ],
     "Seraph of the Scales": [
         69333
     ],
@@ -28045,6 +28615,9 @@
     ],
     "Golden-Tail Disciple": [
         79435
+    ],
+    "Mardu Roughrider": [
+        58311
     ],
     "Jodah's Codex": [
         82285
@@ -28099,6 +28672,9 @@
     "Slate Street Ruffian": [
         72341
     ],
+    "Bear's Companion": [
+        58271
+    ],
     "Regisaur Alpha": [
         66423
     ],
@@ -28116,9 +28692,6 @@
     ],
     "Ruin-Lurker Bat": [
         87166
-    ],
-    "Monastery Swiftspear": [
-        82628
     ],
     "Blazing Crescendo": [
         83823
@@ -28481,9 +29054,6 @@
     "Glorious Protector": [
         75047
     ],
-    "Swarm of Bloodflies": [
-        72344
-    ],
     "Torch Breath": [
         80278
     ],
@@ -28498,6 +29068,9 @@
     ],
     "Ancient Crab": [
         73822
+    ],
+    "Sorin, Solemn Visitor": [
+        58341
     ],
     "Ethereal Escort": [
         79910
@@ -28753,6 +29326,9 @@
     "Planar Bridge": [
         75839
     ],
+    "Timely Hordemate": [
+        57991
+    ],
     "Charming Prince": [
         70155
     ],
@@ -28783,6 +29359,9 @@
     ],
     "Incubation // Incongruity": [
         69364
+    ],
+    "Mardu Skullhunter": [
+        58093
     ],
     "Uurg, Spawn of Turg": [
         82277
@@ -28837,6 +29416,12 @@
     ],
     "Venomous Brutalizer": [
         83893
+    ],
+    "Longshot Squad": [
+        58217
+    ],
+    "Force Away": [
+        58017
     ],
     "Ob Nixilis, Captive Kingpin": [
         85097
@@ -28916,6 +29501,9 @@
     ],
     "Mogis's Favor": [
         70618
+    ],
+    "Riders of the Mark": [
+        84973
     ],
     "Glimpse the Core": [
         87340
@@ -29076,6 +29664,9 @@
     ],
     "Lantern Flare": [
         78803
+    ],
+    "Kin-Tree Warden": [
+        58215
     ],
     "Heroes of the Revel": [
         70649
@@ -29308,9 +29899,6 @@
     "Conduit of Storms // Conduit of Emrakul": [
         86195
     ],
-    "Heart-Piercer Bow": [
-        70013
-    ],
     "Loaming Shaman": [
         69965
     ],
@@ -29364,6 +29952,9 @@
     ],
     "Riveteers Initiate": [
         80271
+    ],
+    "Temur Charm": [
+        58353
     ],
     "Crashing Tide": [
         66685
@@ -29484,6 +30075,12 @@
     "Questing Beast": [
         70318
     ],
+    "Bitter Revelation": [
+        58067
+    ],
+    "Frontier Bivouac": [
+        58405
+    ],
     "Ghitu Journeymage": [
         67356
     ],
@@ -29573,6 +30170,9 @@
     ],
     "Branchblight Stalker": [
         83860
+    ],
+    "Monastery Flock": [
+        58031
     ],
     "Onakke Javelineer": [
         84438
@@ -29711,6 +30311,9 @@
     "Heirloom Mirror // Inherited Fiend": [
         78448
     ],
+    "Sidisi's Pet": [
+        58117
+    ],
     "Aquatic Alchemist // Bubble Up": [
         86725
     ],
@@ -29804,6 +30407,9 @@
     "Grafted Growth": [
         79623
     ],
+    "Windswept Heath": [
+        58433
+    ],
     "Harald Unites the Elves": [
         75260
     ],
@@ -29827,6 +30433,9 @@
     ],
     "Bomat Courier": [
         75802
+    ],
+    "Kheru Lich Lord": [
+        58301
     ],
     "Garrison Cat": [
         71081
@@ -29863,6 +30472,9 @@
     ],
     "Greataxe": [
         77350
+    ],
+    "Master of Pearls": [
+        57973
     ],
     "Unleash Fury": [
         71952
@@ -29906,11 +30518,17 @@
     "Rankle's Prank": [
         86798
     ],
+    "Kheru Dreadmaw": [
+        58089
+    ],
     "Evangel of Synthesis": [
         82694
     ],
     "Faerie Guidemother // Gift of the Fae": [
         70158
+    ],
+    "Herald of Anafenza": [
+        57961
     ],
     "Winged Shepherd": [
         79264
@@ -29920,6 +30538,9 @@
     ],
     "Angelic Ascension": [
         71785
+    ],
+    "War-Name Aspirant": [
+        58189
     ],
     "Alloy Myr": [
         72519
@@ -29969,6 +30590,9 @@
     ],
     "Persistent Petitioners": [
         69172
+    ],
+    "Empty the Pits": [
+        58081
     ],
     "Liliana's Spoils": [
         68270
@@ -30086,6 +30710,9 @@
     "Navigator's Ruin": [
         66087
     ],
+    "Scout the Borders": [
+        58233
+    ],
     "Sandstalker Moloch": [
         84496
     ],
@@ -30139,6 +30766,9 @@
     ],
     "Incendiary Oracle": [
         70651
+    ],
+    "Tomb of the Spirit Dragon": [
+        58427
     ],
     "Solar Blaze": [
         69665
@@ -30282,6 +30912,9 @@
     "Purphoros's Intervention": [
         70662
     ],
+    "Icefeather Aven": [
+        58293
+    ],
     "Vilis, Broker of Blood": [
         69907
     ],
@@ -30338,6 +30971,9 @@
     ],
     "Specter's Shriek": [
         70253
+    ],
+    "Firehoof Cavalry": [
+        57959
     ],
     "Halo Forager": [
         84521
@@ -30498,6 +31134,9 @@
     "Tenth District Veteran": [
         69154
     ],
+    "Canyon Lurkers": [
+        58147
+    ],
     "Study Break": [
         76427
     ],
@@ -30506,6 +31145,9 @@
     ],
     "Stick Together": [
         81691
+    ],
+    "Brave the Sands": [
+        57947
     ],
     "Voracious Typhon": [
         70714
@@ -30765,9 +31407,15 @@
     "Footfall Crater": [
         71185
     ],
+    "Flying Crane Technique": [
+        58289
+    ],
     "Spreading Insurrection": [
         76098,
         76098
+    ],
+    "Mardu Hateblade": [
+        57969
     ],
     "Tekuthal, Inquiry Dominus": [
         83771
@@ -30801,6 +31449,9 @@
     ],
     "Icebreaker Kraken": [
         75102
+    ],
+    "Narset, Enlightened Master": [
+        58317
     ],
     "Chandra's Defeat": [
         73925
@@ -31035,6 +31686,9 @@
     "Steeple Creeper": [
         69270
     ],
+    "Burn Away": [
+        58145
+    ],
     "Angel of the Dawn": [
         67694
     ],
@@ -31151,6 +31805,9 @@
     ],
     "Desert of the Indomitable": [
         74111
+    ],
+    "Snowhorn Rider": [
+        58339
     ],
     "Impervious Greatwurm": [
         68754
@@ -31280,6 +31937,9 @@
     "Kuldotha Cackler": [
         83839
     ],
+    "Wetland Sambar": [
+        58061
+    ],
     "Call to the Feast": [
         66407
     ],
@@ -31342,6 +32002,9 @@
     ],
     "Affa Guard Hound": [
         72143
+    ],
+    "Temur Charger": [
+        58243
     ],
     "Horses of the Bruinen": [
         84747
@@ -31412,6 +32075,9 @@
     "Life of Toshiro Umezawa // Memory of Toshiro": [
         79533
     ],
+    "Summit Prowler": [
+        58179
+    ],
     "Tolsimir, Friend to Wolves": [
         69673
     ],
@@ -31432,6 +32098,9 @@
     ],
     "Wall of Blossoms": [
         72504
+    ],
+    "Crackling Doom": [
+        58279
     ],
     "Titanic Pelagosaur": [
         69113
@@ -31731,6 +32400,9 @@
     "Overgrown Armasaur": [
         66899
     ],
+    "Nomad Outpost": [
+        58411
+    ],
     "Acclaimed Contender": [
         70148
     ],
@@ -31767,6 +32439,9 @@
     "Cathars' Crusade": [
         72157
     ],
+    "Siegecraft": [
+        57983
+    ],
     "Pitchburn Devils": [
         71938
     ],
@@ -31775,6 +32450,9 @@
     ],
     "Mystical Dispute": [
         70205
+    ],
+    "Pearl Lake Ancient": [
+        58035
     ],
     "Embraal Bruiser": [
         75660
@@ -31808,6 +32486,9 @@
     ],
     "Giant Ox": [
         75046
+    ],
+    "Take Up Arms": [
+        57989
     ],
     "Bramblefort Fink": [
         70424
@@ -31929,6 +32610,9 @@
     "Mardu Outrider": [
         75493
     ],
+    "Mardu Banner": [
+        58385
+    ],
     "Rite of Oblivion": [
         78604
     ],
@@ -31958,6 +32642,9 @@
     ],
     "Atzocan Seer": [
         66923
+    ],
+    "Mer-Ek Nightblade": [
+        58095
     ],
     "Goddric, Cloaked Reveler": [
         86830
@@ -32022,8 +32709,14 @@
     "Hurloon Battle Hymn": [
         82183
     ],
+    "Dead Drop": [
+        58071
+    ],
     "Join the Maestros": [
         80236
+    ],
+    "Polluted Delta": [
+        58415
     ],
     "Open the Gates": [
         69261
@@ -32081,6 +32774,9 @@
     ],
     "Daybreak Charger": [
         71796
+    ],
+    "Sidisi, Brood Tyrant": [
+        58335
     ],
     "Demonlord Belzenlok": [
         67276
