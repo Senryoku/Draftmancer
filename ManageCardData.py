@@ -453,6 +453,10 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
             except:
                 selection['in_booster'] = False
 
+        if c['set'] == "ktk":
+            if c['collector_number'].endswith("y"): # Duplicates; These versions from Arena should not be in boosters
+                selection['in_booster'] = False
+
         if c['layout'] == "split":
             if 'Aftermath' in c['keywords']:
                 selection['layout'] = 'split-left'
