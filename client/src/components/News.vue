@@ -12,7 +12,7 @@
 					Note that the retro frame slot is not simulated. It seems really convoluted and I don't think all
 					the information necessary to correctly implement it is available yet.
 				</li>
-				<li>Fixed Arena versions of cards in apppearing in Khans of Tarkir boosters.</li>
+				<li>Fixed Arena versions of cards apppearing in Khans of Tarkir boosters.</li>
 			</ul>
 		</div>
 		<div class="news">
