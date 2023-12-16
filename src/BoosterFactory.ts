@@ -56,6 +56,8 @@ export function getSetFoilRate(set: string | null) {
 			"mom",
 			"woe",
 			"lci",
+			"rvr",
+			"mkm",
 		].includes(set)
 	)
 		return 1.0 / 3.0;
@@ -1763,6 +1765,66 @@ class LCIBoosterFactory extends BoosterFactory {
 	}
 }
 
+// Ravnica Remastered
+// 10 Commons (1 Traditional Foil card replaces a Common in 33% of boosters)
+// 3 Uncommons
+// 1 Rare or mythic rare
+// 1 Mana slot card, replacing the basic land
+//   58% Guildgate (common)
+//   33% Signet (uncommon)
+//   9% Chromatic Lantern or a shock land (rare)
+// 1 Retro frame card of any rarity: One retro frame common, uncommon, rare, or mythic rare in every Draft Booster.
+//   If the rare or mythic rare has a retro frame, the common or uncommon does not and vice versa
+// Note: The retro frame slot is not simulated. But...
+// FIXME: Not all cards have a retro frame version, so this might affect pull rates. And it can be a 4th uncommon.
+class RVRBoosterFactory extends BoosterFactory {
+	manaSlot: SlotedCardPool;
+
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
+		const [manaSlot, filteredCardPool] = filterCardPool(cardPool, (cid: CardID) => {
+			const c = getCard(cid);
+			return (
+				c.name.includes("Signet") ||
+				c.name.includes("Guildgate") ||
+				// Chromatic Lantern
+				c.collector_number == "253" ||
+				// Shocklands
+				c.collector_number == "291" ||
+				c.collector_number == "273" ||
+				c.collector_number == "275" ||
+				c.collector_number == "277" ||
+				c.collector_number == "280" ||
+				c.collector_number == "283" ||
+				c.collector_number == "285" ||
+				c.collector_number == "288" ||
+				c.collector_number == "289" ||
+				c.collector_number == "290"
+			);
+		});
+		super(filteredCardPool, landSlot, options);
+		this.manaSlot = manaSlot;
+	}
+
+	generateBooster(targets: Targets) {
+		const manaSlotCounts = countBySlot(this.manaSlot);
+		if (Object.values(manaSlotCounts).every((c) => c === 0)) {
+			return super.generateBooster(targets);
+		} else {
+			const manaSlotRarityRoll = random.realZeroToOneInclusive();
+			const pickedRarity =
+				manaSlotRarityRoll < 0.58 ? "common" : manaSlotRarityRoll < 0.58 + 0.33 ? "uncommon" : "rare";
+			const pickedManaSlot = pickCard(this.manaSlot[pickedRarity], []);
+
+			const booster = super.generateBooster(structuredClone(targets));
+			if (isMessageError(booster)) return booster;
+
+			booster.push(pickedManaSlot);
+
+			return booster;
+		}
+	}
+}
+
 // Set specific rules.
 // Neither DOM, WAR or ZNR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
 export const SetSpecificFactories: {
@@ -1801,6 +1863,7 @@ export const SetSpecificFactories: {
 	cmm: CMMBoosterFactory,
 	woe: WOEBoosterFactory,
 	lci: LCIBoosterFactory,
+	rvr: RVRBoosterFactory,
 };
 
 export const getBoosterFactory = function (

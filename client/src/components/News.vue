@@ -8,7 +8,9 @@
 					<img src="img/sets/rvr.svg" class="set-icon" style="--invertedness: 100%" alt="RVR" /> Ravnica
 					Remastered! You can find it in the "<a class="clickable" @click="$emit('more-sets')"
 						>More sets... </a
-					>" menu.
+					>" menu.<br />
+					Note that the retro frame slot is not simulated. It seems really convoluted and I don't think all
+					the information necessary to correctly implement it is available yet.
 				</li>
 				<li>Fixed Arena versions of cards in apppearing in Khans of Tarkir boosters.</li>
 			</ul>
@@ -55,22 +57,6 @@
 					Allows you to adjust the number of picked or burned cards for each booster. See the
 					<a href="cubeformat.html#settings" target="_blank">Cube format documentation</a>.
 				</li>
-			</ul>
-		</div>
-		<div class="news">
-			<em>November 03, 2023</em>
-			<ul>
-				<li>
-					<img src="img/sets/lci.svg" class="set-icon" style="--invertedness: 100%" alt="" /> The Lost Caverns
-					of Ixalan are now available! <br />
-					As usual with new sets, there might be errors in the cards or collation. Please report them and I'll
-					fix them as soon as possible!
-				</li>
-				<li>
-					Fixed an issue creating phantom cards when a card was automatically picked while drag and dropping
-					another.
-				</li>
-				<li>Usual card updates and small fixes.</li>
 			</ul>
 		</div>
 	</div>
