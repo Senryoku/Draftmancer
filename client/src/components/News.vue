@@ -1,6 +1,19 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
+			<em>December 16, 2023</em>
+			<ul>
+				<li>
+					Support for
+					<img src="img/sets/rvr.svg" class="set-icon" style="--invertedness: 100%" alt="RVR" /> Ravnica
+					Remastered! You can find it in the "<a class="clickable" @click="$emit('more-sets')"
+						>More sets... </a
+					>" menu.
+				</li>
+				<li>Fixed Arena versions of cards in apppearing in Khans of Tarkir boosters.</li>
+			</ul>
+		</div>
+		<div class="news">
 			<em>December 6, 2023</em>
 			<ul>
 				<li>

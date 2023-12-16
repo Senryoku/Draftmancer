@@ -1793,7 +1793,7 @@
 							<div class="section-title">
 								<h2>News</h2>
 							</div>
-							<news class="welcome-section" />
+							<news class="welcome-section" @more-sets="displayedModal = 'setRestriction'" />
 						</div>
 						<div class="container" style="grid-area: Help">
 							<div class="section-title">

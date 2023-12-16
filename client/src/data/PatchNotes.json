@@ -1,5 +1,12 @@
 [
 	{
+		"date": "16/12/2023",
+		"notes": [
+			"Support for Ravnica Remastered.",
+			"Fixed Arena versions of cards in apppearing in Khans of Tarkir boosters."
+		]
+	},
+	{
 		"date": "06/12/2023",
 		"notes": [
 			"Adjusted mythics/rares ratio depending on the set.",
