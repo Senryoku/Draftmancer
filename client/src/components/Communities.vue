@@ -122,11 +122,11 @@ const communities = ref([
 	},
 	{
 		name: "XMage Draft Historical Society",
-		brief: 'Come experience the history of Limited Magic with the XDHS!<br />We host seven drafts each week, open to all, with a chronological progression plus bonus formats. Sundays (1:50pm EDT / 7:50pm CEST) are custom "remastered" sets designed by members of our community which we draft on Draftmancer. Matches are played on XMage with a full rules engine, all for free!',
+		brief: "Come experience the history of Limited Magic with the XDHS!<br />We host six drafts each week, open to all, with a chronological progression plus a variety of bonus formats. Matches are played out as a 3-round Swiss tourney on XMage with a full rules engine, all for free!",
 		description:
-			'Come experience the history of Limited Magic with the XDHS! Draftmancer makes it possible for us to run events where we draft custom "remastered" sets designed by members of our community. These are basically cubes with rarities, either refining an existing format or mixing together ideas from across different sets. We also offer a chronological progression where we draft almost every historical format in order. Remastered sets are Sundays at 1:50pm EDT / 7:50pm CEST, with other events offered each day to accommodate most timezones. After the draft, we play out the matches as a 3-round Swiss tourney on XMage with a full rules engine, all for free. No matter your experience level, we\'d love to have you play with us!',
+			"Come experience the history of Limited Magic with the XDHS!<br />We host six drafts each week, open to all, with a chronological progression plus a variety of bonus formats. Matches are played out as a 3-round Swiss tourney on XMage with a full rules engine, all for free!",
 		icon: "xdhs.webp",
-		tags: ["XMage", "Remastered", "Historical", "Swiss"],
+		tags: ["XMage", "Chrono", "Historical", "Swiss"],
 		links: { discord: "https://discord.gg/7xWaCvWyq8" },
 	},
 	{
