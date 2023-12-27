@@ -92,6 +92,7 @@
 			games afterwards. However, if you do want to challenge other players in your pod, a chat will be available
 			during and right after the draft!
 		</p>
+		<p>To reduce wait times during slow periods, some bots might join after a while.</p>
 		<p>
 			Want to organize your own customized drafts? Check out the
 			<a href="/">full application</a>!
@@ -316,11 +317,15 @@ function unregister() {
 	background-size: auto 100%;
 	background-position: 50% 50%;
 	background-repeat: no-repeat;
-	box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.8), inset 0 0 50px rgba(0, 0, 0, 1);
+	box-shadow:
+		5px 5px 10px rgba(0, 0, 0, 0.8),
+		inset 0 0 50px rgba(0, 0, 0, 1);
 }
 
 .set-card:hover {
-	box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.8), inset 0 0 50px rgba(0, 0, 0, 1);
+	box-shadow:
+		5px 5px 10px rgba(0, 0, 0, 0.8),
+		inset 0 0 50px rgba(0, 0, 0, 1);
 	background-size: auto 110%;
 	color: white;
 }
@@ -426,7 +431,9 @@ function unregister() {
 
 .player-ready {
 	background-image: linear-gradient(to left, #008029 0%, rgba(122, 196, 146, 0) 50%);
-	box-shadow: 0 0 8px 4px #008029, inset 0 0 2px 2px #008029;
+	box-shadow:
+		0 0 8px 4px #008029,
+		inset 0 0 2px 2px #008029;
 	animation: player-ready-pulse 0.5s ease-out forwards;
 }
 
@@ -440,11 +447,15 @@ function unregister() {
 	}
 
 	30% {
-		box-shadow: 0 0 4px 2px #01ac37, inset 0 0 4px 2px #008029;
+		box-shadow:
+			0 0 4px 2px #01ac37,
+			inset 0 0 4px 2px #008029;
 	}
 
 	100% {
-		box-shadow: 0 0 8px 4px #008029, inset 0 0 2px 2px #008029;
+		box-shadow:
+			0 0 8px 4px #008029,
+			inset 0 0 2px 2px #008029;
 	}
 }
 

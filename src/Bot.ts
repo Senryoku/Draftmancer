@@ -61,7 +61,7 @@ async function checkMTGDraftBotsAPIAvailability() {
 checkMTGDraftBotsAPIAvailability();
 setInterval(checkMTGDraftBotsAPIAvailability, 30 * 60 * 1000);
 
-const DraftmancerAI = {
+export const DraftmancerAI = {
 	available: false,
 	domain: process.env.DRAFTMANCER_AI_DOMAIN ?? "http://127.0.0.1:8080/",
 	authToken: process.env.DRAFTMANCER_AI_AUTH_TOKEN ?? "testing",

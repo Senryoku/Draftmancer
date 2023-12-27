@@ -11,20 +11,43 @@ import { ReadyState } from "../Session/SessionTypes.js";
 
 import { QueueID, QueueDescription } from "./QueueDescription.js";
 import { AvailableQueues } from "./AvailableQueues.js";
+import { DraftmancerAI } from "../Bot.js";
 
-const PlayerQueues: Map<QueueID, { description: QueueDescription; users: UserID[] }> = new Map<
-	QueueID,
-	{ description: QueueDescription; users: UserID[] }
->();
+type PlayerQueue = { description: QueueDescription; users: UserID[]; botCount: number; noBotsUntil: number };
+
+const PlayerQueues = new Map<QueueID, PlayerQueue>();
+
+// Controls the frequency at which bots are added to inactive queues (ms).
+const AddBotCheckInterval = 1000 * 10;
+const AddBotPauseAfterBotAddition = 1000 * 60 * 2;
+const AddBotPauseAfterPlayerJoin = 1000 * 60 * 3;
+const AddBotPauseAfterDraftStart = 1000 * 60 * 10;
 
 for (const queue of AvailableQueues) {
 	PlayerQueues.set(queue.id, {
 		description: queue,
 		users: [],
+		botCount: 0,
+		noBotsUntil: Date.now() + AddBotPauseAfterPlayerJoin,
 	});
 }
 
-function readyCheck(queueID: QueueID, users: UserID[]) {
+function readyCheck(queueID: QueueID) {
+	const queue = PlayerQueues.get(queueID);
+	if (!queue) return new SocketError(`Invalid queue '${queueID}'.`);
+
+	// This should not be possible, but if for some reason multiple bots were added at once and we actually don't
+	// need all of them, reduce their count.
+	if (queue.users.length + queue.botCount > queue.description.playerCount)
+		queue.botCount = queue.description.playerCount - queue.users.length;
+
+	const users = queue.users.slice(0, queue.description.playerCount);
+	const botCount = queue.botCount;
+
+	for (const uid of users) unregisterPlayer(uid, queueID);
+	queue.botCount = 0;
+	queue.noBotsUntil = Math.max(queue.noBotsUntil, Date.now() + AddBotPauseAfterDraftStart);
+
 	const playersStatus: Record<UserID, { status: ReadyState; onDisconnect: () => void }> = {};
 
 	const timeout = Date.now() + 45 * 1000;
@@ -53,6 +76,10 @@ function readyCheck(queueID: QueueID, users: UserID[]) {
 				registerPlayer(uid, queueID);
 			} else Connections[uid]?.socket?.emit("draftQueueReadyCheckCancel", queueID, false);
 		}
+		// Also add the bots back.
+		for (let i = 0; i < botCount; ++i) {
+			addBot(queue);
+		}
 	};
 
 	for (const uid of users)
@@ -63,6 +90,13 @@ function readyCheck(queueID: QueueID, users: UserID[]) {
 				cancel();
 			},
 		};
+
+	for (let botID = 0; botID < botCount; ++botID) {
+		playersStatus["__bot_" + botID] = {
+			status: ReadyState.Ready,
+			onDisconnect: () => {},
+		};
+	}
 
 	for (const uid of users) {
 		// Make sure player is still connected. This shouldn't be needed, but the case comes up in tests, and I'm not sure how...
@@ -79,7 +113,7 @@ function readyCheck(queueID: QueueID, users: UserID[]) {
 					Connections[uid]?.socket?.emit("draftQueueReadyCheckUpdate", queueID, getTableStatus());
 				if (Object.values(playersStatus).every((p) => p.status === ReadyState.Ready)) {
 					clearTimeout(cancelTimeout);
-					launchSession(queueID, users);
+					launchSession(queue.description, users, botCount);
 				}
 			}
 		});
@@ -87,24 +121,19 @@ function readyCheck(queueID: QueueID, users: UserID[]) {
 	}
 }
 
-function launchSession(queueID: QueueID, users: UserID[]) {
-	let sessionID = `DraftQueue-${queueID.toUpperCase()}-${uuidv4()}`;
-	while (sessionID in Sessions) sessionID = `DraftQueue-${queueID.toUpperCase()}-${uuidv4()}`;
+function launchSession(queueDescription: QueueDescription, users: UserID[], botCount: number) {
+	let sessionID = `DraftQueue-${queueDescription.setCode.toUpperCase()}-${uuidv4()}`;
+	while (sessionID in Sessions) sessionID = `DraftQueue-${queueDescription.setCode.toUpperCase()}-${uuidv4()}`;
 
 	const session = new Session(sessionID, undefined);
 
-	const queue = PlayerQueues.get(queueID);
-	if (!queue) {
-		console.error("DraftQueue.launchSession: Queue not found.");
-		return;
+	if (queueDescription.settings) {
+		if (queueDescription.settings.pickedCardsPerRound)
+			session.pickedCardsPerRound = queueDescription.settings.pickedCardsPerRound;
 	}
-
-	if (queue.description.settings) {
-		if (queue.description.settings.pickedCardsPerRound)
-			session.pickedCardsPerRound = queue.description.settings.pickedCardsPerRound;
-	}
-	session.setRestriction = [queue.description.setCode];
+	session.setRestriction = [queueDescription.setCode];
 	session.maxTimer = 70;
+	session.bots = botCount;
 	for (const uid of users) {
 		session.addUser(uid);
 		Connections[uid].socket.emit("setSession", sessionID);
@@ -131,6 +160,33 @@ function onDisconnect(this: Socket<ClientToServerEvents, ServerToClientEvents, I
 	}
 }
 
+function addBot(queue: PlayerQueue) {
+	const now = Date.now();
+	// Ensure we have at least two human players, and that we have adequate bots for this queue
+	if (
+		queue.botCount < queue.description.playerCount - 2 &&
+		DraftmancerAI.models.includes(queue.description.setCode)
+	) {
+		queue.noBotsUntil = Math.max(queue.noBotsUntil, now + AddBotPauseAfterBotAddition);
+		queue.botCount++;
+
+		if (queue.users.length + queue.botCount >= queue.description.playerCount) {
+			readyCheck(queue.description.id);
+		}
+	}
+}
+
+function addBotsToInactiveQueues() {
+	const now = Date.now();
+	for (const queue of PlayerQueues.values()) {
+		if (queue.noBotsUntil < now) {
+			addBot(queue);
+		}
+	}
+}
+
+setInterval(addBotsToInactiveQueues, AddBotCheckInterval);
+
 export function registerPlayer(userID: UserID, queueID: QueueID): SocketAck {
 	const conn = Connections[userID];
 	if (!conn) return new SocketError("Internal Error.");
@@ -142,13 +198,12 @@ export function registerPlayer(userID: UserID, queueID: QueueID): SocketAck {
 	if (!queue) return new SocketError(`Invalid queue '${queueID}'.`);
 
 	queue.users.push(userID);
+	queue.noBotsUntil = Math.max(queue.noBotsUntil, Date.now() + AddBotPauseAfterPlayerJoin);
 
 	conn.socket.once("disconnect", onDisconnect);
 
-	if (queue.users.length >= queue.description.playerCount) {
-		const users = queue.users.slice(0, queue.description.playerCount);
-		for (const uid of users) unregisterPlayer(uid, queueID);
-		readyCheck(queueID, users);
+	if (queue.users.length + queue.botCount >= queue.description.playerCount) {
+		readyCheck(queueID);
 	}
 
 	return new SocketAck();
@@ -179,7 +234,7 @@ export function getQueueStatus() {
 	for (const [k, v] of PlayerQueues.entries()) {
 		queues[k] = {
 			set: k,
-			inQueue: v.users.length,
+			inQueue: v.users.length + v.botCount,
 			playing: managedSessions
 				.filter(
 					(sid) =>
