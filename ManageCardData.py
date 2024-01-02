@@ -462,6 +462,12 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
                 selection['in_booster'] = int(c['collector_number']) > 0 and int(c['collector_number']) <= 291
             except:
                 selection['in_booster'] = False
+                
+        if c['set'] == "mkm":
+            try:
+                selection['in_booster'] = int(c['collector_number']) > 0 and int(c['collector_number']) < 272
+            except:
+                selection['in_booster'] = False
 
         if c['layout'] == "split":
             if 'Aftermath' in c['keywords']:

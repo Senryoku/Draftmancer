@@ -1839,10 +1839,12 @@ class RVRBoosterFactory extends BoosterFactory {
 // - Non-Foil Wildcard from the set
 // - Traditional Foil Wildcard from the set
 class PlayBoosterFactory extends BoosterFactory {
-	theList: CardPool;
+	theList: SlotedCardPool;
+	spg: CardPool; // Special Guests
 
 	constructor(
-		theList: CardPool,
+		theList: SlotedCardPool,
+		spg: CardPool,
 		cardPool: SlotedCardPool,
 		landSlot: BasicLandSlot | null,
 		options: BoosterFactoryOptions
@@ -1851,6 +1853,7 @@ class PlayBoosterFactory extends BoosterFactory {
 		opt.foil = false; // We'll handle the garanteed foil slot ourselves.
 		super(cardPool, landSlot, opt);
 		this.theList = theList;
+		this.spg = spg;
 	}
 
 	generateBooster(targets: Targets) {
@@ -1867,13 +1870,16 @@ class PlayBoosterFactory extends BoosterFactory {
 			--updatedTargets.common;
 			if (theListRand < 0.875 + 0.0938) {
 				// Common or Uncommon from The List
-				booster.push(pickCard(this.theList, [])); // FIXME
+				const rarity = random.bool(1 / 3) ? "uncommon" : "common";
+				booster.push(pickCard(this.theList[rarity], []));
 			} else if (theListRand < 0.875 + 0.0938 + 0.0156) {
-				// Rare or Mythic from The List
-				booster.push(pickCard(this.theList, [])); // FIXME
+				// Rare or Mythic from The List.
+				// FIXME: Unknown rate.
+				const rarity = random.bool(1 / 7) ? "mythic" : "rare";
+				booster.push(pickCard(this.theList[rarity], []));
 			} else {
 				// Special Guests from The List
-				booster.push(pickCard(this.theList, [])); // FIXME
+				booster.push(pickCard(this.spg, []));
 			}
 		}
 
@@ -1883,7 +1889,7 @@ class PlayBoosterFactory extends BoosterFactory {
 			let rarity = "common";
 			// FIXME: Actual rates unknown, using previous foil rates for now.
 			for (const r in foilRarityRates)
-				if (rarityRoll <= foilRarityRates[r] && this.cardPool[rarityRoll].size > 0) {
+				if (rarityRoll <= foilRarityRates[r] && this.cardPool[rarity].size > 0) {
 					rarity = r;
 					break;
 				}
@@ -1903,8 +1909,23 @@ class PlayBoosterFactory extends BoosterFactory {
 // Murders at Karlov Manor
 class MKMBoosterFactory extends PlayBoosterFactory {
 	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
-		const mkmTheList = new CardPool(); // TODO
-		super(mkmTheList, cardPool, landSlot, options);
+		// TODO
+		const mkmTheList = {
+			common: new CardPool(),
+			uncommon: new CardPool(),
+			rare: new CardPool(),
+			mythic: new CardPool(),
+		};
+		// TEMP Placeholders
+		mkmTheList.common.set("598f857d-ee17-4478-bb39-cc3ab77ab8d8", DefaultMaxDuplicates);
+		mkmTheList.uncommon.set("598f857d-ee17-4478-bb39-cc3ab77ab8d8", DefaultMaxDuplicates);
+		mkmTheList.rare.set("598f857d-ee17-4478-bb39-cc3ab77ab8d8", DefaultMaxDuplicates);
+		mkmTheList.mythic.set("598f857d-ee17-4478-bb39-cc3ab77ab8d8", DefaultMaxDuplicates);
+
+		const spg = new CardPool();
+		for (const cid of CardsBySet["spg"]) // FIXME: Narrow it down to MKM SPG
+			spg.set(cid, options.maxDuplicates?.[getCard(cid).rarity] ?? DefaultMaxDuplicates);
+		super(mkmTheList, spg, cardPool, landSlot, options);
 	}
 }
 
