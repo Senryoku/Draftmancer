@@ -2094,6 +2094,12 @@
         "block": "Heroes of the Realm",
         "icon": "img/sets/ph21.svg"
     },
+    "ph22": {
+        "code": "ph22",
+        "fullName": "2022 Heroes of the Realm",
+        "block": "Heroes of the Realm",
+        "icon": "img/sets/ph22.svg"
+    },
     "phed": {
         "code": "phed",
         "fullName": "Heads I Win, Tails You Lose",
@@ -2196,6 +2202,11 @@
         "code": "pl23",
         "fullName": "Year of the Rabbit 2023",
         "icon": "img/sets/pl23.svg"
+    },
+    "pl24": {
+        "code": "pl24",
+        "fullName": "Year of the Dragon 2024",
+        "icon": "img/sets/pl24.svg"
     },
     "plc": {
         "code": "plc",
