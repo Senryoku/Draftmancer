@@ -77,7 +77,8 @@
         "ltr",
         "woe",
         "lci",
-        "ktk"
+        "ktk",
+        "mkm"
     ],
     "AlchemySets": [
         "hbg",
@@ -95,7 +96,8 @@
         "mom",
         "mat",
         "woe",
-        "lci"
+        "lci",
+        "mkm"
     ],
     "BasicLandNames": {
         "en": {
