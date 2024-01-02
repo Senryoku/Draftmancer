@@ -1825,6 +1825,89 @@ class RVRBoosterFactory extends BoosterFactory {
 	}
 }
 
+// "Play Boosters": https://magic.wizards.com/en/news/making-magic/what-are-play-boosters
+// - 6 Commons from the set
+// - 7/8: 7th common from the set; 1/8: Random card from The List
+//   Full breakdown:
+//     - 87.5% – A common from the main set
+//     - 9.38% – A common or uncommon normal reprint from The List
+//     - 1.56% – A rare or mythic rare normal reprint from The List
+//     - 1.56% – A Special Guests card from The List
+// - 2 Uncommons from the set
+// - 1 Rare (6/7)/Mythic (1/7) from the set
+// - Land Slot
+// - Non-Foil Wildcard from the set
+// - Traditional Foil Wildcard from the set
+class PlayBoosterFactory extends BoosterFactory {
+	theList: CardPool;
+
+	constructor(
+		theList: CardPool,
+		cardPool: SlotedCardPool,
+		landSlot: BasicLandSlot | null,
+		options: BoosterFactoryOptions
+	) {
+		const opt = structuredClone(options);
+		opt.foil = false; // We'll handle the garanteed foil slot ourselves.
+		super(cardPool, landSlot, opt);
+		this.theList = theList;
+	}
+
+	generateBooster(targets: Targets) {
+		const updatedTargets = structuredClone(targets);
+		const booster: UniqueCard[] = [];
+
+		// We'll still try to honor the targets parameter. We'll be one common short in the end.
+		updatedTargets.common -= 3; // 10 -> 6 or 7
+		updatedTargets.uncommon -= 1; // 3 -> 2
+
+		// 7th Common or The List
+		const theListRand = random.realZeroToOneInclusive();
+		if (theListRand > 0.875) {
+			--updatedTargets.common;
+			if (theListRand < 0.875 + 0.0938) {
+				// Common or Uncommon from The List
+				booster.push(pickCard(this.theList, [])); // FIXME
+			} else if (theListRand < 0.875 + 0.0938 + 0.0156) {
+				// Rare or Mythic from The List
+				booster.push(pickCard(this.theList, [])); // FIXME
+			} else {
+				// Special Guests from The List
+				booster.push(pickCard(this.theList, [])); // FIXME
+			}
+		}
+
+		// Two "wildcards", one nonfoil and one foil
+		for (let i = 0; i < 2; ++i) {
+			const rarityRoll = random.realZeroToOneInclusive();
+			let rarity = "common";
+			// FIXME: Actual rates unknown, using previous foil rates for now.
+			for (const r in foilRarityRates)
+				if (rarityRoll <= foilRarityRates[r] && this.cardPool[rarityRoll].size > 0) {
+					rarity = r;
+					break;
+				}
+			booster.push(pickCard(this.cardPool[rarity], []));
+		}
+		booster[booster.length - 1].foil = true;
+
+		// Make sure there are no negative counts
+		for (const key in updatedTargets) updatedTargets[key] = Math.max(0, updatedTargets[key]);
+		const rest = super.generateBooster(updatedTargets);
+		if (isMessageError(rest)) return rest;
+
+		return [...booster, ...rest];
+	}
+}
+
+// Murders at Karlov Manor
+class MKMBoosterFactory extends PlayBoosterFactory {
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
+		const mkmTheList = new CardPool(); // TODO
+		super(mkmTheList, cardPool, landSlot, options);
+	}
+}
+
 // Set specific rules.
 // Neither DOM, WAR or ZNR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
 export const SetSpecificFactories: {
@@ -1864,6 +1947,7 @@ export const SetSpecificFactories: {
 	woe: WOEBoosterFactory,
 	lci: LCIBoosterFactory,
 	rvr: RVRBoosterFactory,
+	mkm: MKMBoosterFactory,
 };
 
 export const getBoosterFactory = function (
