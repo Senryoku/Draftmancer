@@ -5,7 +5,7 @@ import { glob } from "glob";
 import JSONStream from "JSONStream";
 import { memoryReport } from "./utils.js";
 
-import { ArenaID, Card, CardID, DraftEffectType, getNextCardID, UniqueCard } from "./CardTypes.js";
+import { ArenaID, Card, CardID, getNextCardID, UniqueCard } from "./CardTypes.js";
 
 export const DefaultMaxDuplicates = 999; // Supposed to be basically unlimited (i.e. with replacement, without explicitly enabling it)
 

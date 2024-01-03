@@ -57,6 +57,7 @@ export function validateCustomCardFace(face: unknown): SocketError | CardFace {
 	};
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function validateCustomCard(inputCard: any): SocketError | Card {
 	// Check mandatory fields
 	const missing =
@@ -202,17 +203,18 @@ export function validateCustomCard(inputCard: any): SocketError | Card {
 						)}</pre>`,
 					});
 				if (entry.type === "AddCards") {
-					if (!hasProperty("card_ids", isArrayOf(isString))(entry)) {
+					if (!hasProperty("cards", isArrayOf(isString))(entry)) {
 						return ackError({
 							title: `Invalid Property`,
-							html: `Invalid entry in 'draft_effects' of custom card. Missing 'card_ids' parameter for 'AddCards' effect. <pre>${JSON.stringify(
+							html: `Invalid entry in 'draft_effects' of custom card. Missing 'cards' parameter for 'AddCards' effect. <pre>${JSON.stringify(
 								inputCard,
 								null,
 								2
 							)}</pre>`,
 						});
 					}
-					card.draft_effects.push({ type: "AddCards", card_ids: entry.card_ids });
+					// NOTE: Full verification of the cards will be done later, once the rest of the file is parsed.
+					card.draft_effects.push({ type: "AddCards", cards: entry.cards });
 				} else {
 					return ackError({
 						title: `Invalid Property`,

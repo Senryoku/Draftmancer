@@ -45,8 +45,7 @@ export type SimpleDraftEffectType =
 	| OptionalOnPickDraftEffect
 	| UsableDraftEffect
 	| "AnimusOfPredation"
-	| "CogworkGrinder"
-	| "AddCards";
+	| "CogworkGrinder";
 
 export type DraftEffectType = SimpleDraftEffectType | "AddCards";
 
@@ -54,7 +53,7 @@ export type DraftEffect =
 	| {
 			type: SimpleDraftEffectType;
 	  }
-	| { type: "AddCards"; card_ids: CardID[] };
+	| { type: "AddCards"; cards: CardID[] };
 
 export type CardFace = {
 	name: string;

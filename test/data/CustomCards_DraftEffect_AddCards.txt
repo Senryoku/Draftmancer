@@ -1,0 +1,20 @@
+[CustomCards]
+[
+	{	
+		"name": "Duo Bruna",
+		"rarity": "mythic",
+		"mana_cost": "{5}{W}{W}",
+		"type": "Creature",
+		"image_uris": {
+			"en": "https://cards.scryfall.io/large/front/2/7/27907985-b5f6-4098-ab43-15a0c2bf94d5.jpg?1625771736"
+		},
+		"draft_effects": [
+			{
+				"type": "AddCards", 
+				"cards": ["Gisela, the Broken Blade"]
+			}
+		]
+	}
+]
+[Common]
+999 Duo Bruna

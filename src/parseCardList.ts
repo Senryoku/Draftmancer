@@ -7,7 +7,6 @@ import { escapeHTML } from "./utils.js";
 import { ackError, isSocketError, SocketError } from "./Message.js";
 import {
 	hasOptionalProperty,
-	hasProperty,
 	isAny,
 	isArrayOf,
 	isBoolean,
@@ -40,8 +39,8 @@ export function matchCardVersion(
 		name in CardVersionsByName
 			? CardVersionsByName[name]
 			: name.split(" //")[0] in CardVersionsByName // If not found, try double faced cards before giving up!
-			? CardVersionsByName[name.split(" //")[0]]
-			: []
+			  ? CardVersionsByName[name.split(" //")[0]]
+			  : []
 	).map((cid) => getCard(cid));
 
 	candidates = candidates.filter(
@@ -215,6 +214,7 @@ function parseSettings(
 	const settingsStr = removeJSONTrailingCommas(txtcardlist.substring(start, end + 1));
 	try {
 		parsedSettings = JSON.parse(settingsStr);
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	} catch (e: any) {
 		return ackError({
 			title: `[Settings]`,
@@ -489,6 +489,7 @@ function parseCustomCards(lines: string[], startIdx: number, txtcardlist: string
 	const customCardsStr = removeJSONTrailingCommas(txtcardlist.substring(start, end + 1));
 	try {
 		parsedCustomCards = JSON.parse(customCardsStr);
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	} catch (e: any) {
 		return ackError({
 			title: `[CustomCards]`,
@@ -544,6 +545,28 @@ function parseCustomCards(lines: string[], startIdx: number, txtcardlist: string
 							text: `'${rc}', referenced in '${card.name}' related cards, is not a valid card.`,
 						});
 					card.related_cards[i] = result.cardID;
+				}
+			}
+		}
+
+		if (card.draft_effects) {
+			for (const effect of card.draft_effects) {
+				if (effect.type === "AddCards") {
+					for (let i = 0; i < effect.cards.length; ++i) {
+						const cid = effect.cards[i];
+						// This is a valid card ID, nothing more to do.
+						if (isValidCardID(cid)) continue;
+						// Otherwise, treat it as a card line and replace it with the corresponding Card ID.
+						const result = parseLine(cid, {
+							customCards: { cards: customCardsIDs, nameCache: customCardsNameCache },
+						});
+						if (isSocketError(result))
+							return ackError({
+								title: `[CustomCards]`,
+								text: `'${cid}', referenced in '${card.name}' AddCards draft effect, is not a valid card.`,
+							});
+						effect.cards[i] = result.cardID;
+					}
 				}
 			}
 		}
@@ -692,7 +715,7 @@ export function parseCardList(
 								if (localOptions?.ignoreUnknownCards) outIgnoredCards?.push(lines[lineIdx]);
 								else return result;
 							} else {
-								const { count, cardID, foil } = result;
+								const { count, cardID } = result;
 								// Merge duplicate declarations
 								if (Object.prototype.hasOwnProperty.call(cardList.slots[slotName], cardID))
 									cardList.slots[slotName][cardID] += count;
@@ -753,7 +776,7 @@ export function parseCardList(
 						if (options?.ignoreUnknownCards) outIgnoredCards?.push(line);
 						else return result; // Return error from parseLine
 					} else {
-						const { count, cardID, foil } = result;
+						const { count, cardID } = result;
 						// Merge duplicate declarations
 						if (Object.prototype.hasOwnProperty.call(cardList.slots["default"], cardID))
 							cardList.slots["default"][cardID] += count;
