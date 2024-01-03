@@ -50,6 +50,7 @@ describe("Custom Draft Effect", () => {
 
 	const loadCubeAndStart = (cube: string) => (done: Mocha.Done) => {
 		disableLogs();
+		ownerIdx = clients.findIndex((c) => getUID(c) == Sessions[(c as any).query.sessionID].owner);
 		clients[ownerIdx].emit("parseCustomCardList", fs.readFileSync(`./test/data/${cube}.txt`, "utf8"), (r) => {
 			expect(r.code).to.equal(0);
 			let eventReceived = 0;
@@ -81,8 +82,9 @@ describe("Custom Draft Effect", () => {
 		it("Picking a card automatically add another card to the pool", (done) => {
 			let cardsReceived = 0;
 			for (let i = 0; i < clients.length; ++i) {
-				clients[i].once("addCards", () => {
+				clients[i].once("addCards", (msg, cards) => {
 					++cardsReceived;
+					expect(cards.length).to.equal(1);
 					if (cardsReceived == clients.length) done();
 				});
 				clients[i].emit(
@@ -97,15 +99,51 @@ describe("Custom Draft Effect", () => {
 		});
 
 		it("Added cards persist after a disconnect", (done) => {
-			clients[0].disconnect();
+			clients[1].disconnect();
 
-			clients[0].once("rejoinDraft", (data) => {
+			clients[1].once("rejoinDraft", (data) => {
 				expect(data).to.have.property("pickedCards");
 				expect(data.pickedCards.main).to.have.length(2);
 				done();
 			});
 
-			clients[0].connect();
+			clients[1].connect();
+		});
+	});
+
+	describe("AddCards - Multiple", () => {
+		before(loadCubeAndStart("CustomCards_DraftEffect_AddCards_Squadron_Hawk"));
+		after(stopDraft);
+
+		it("Picking a card automatically add 3 other cards to the pool", (done) => {
+			let cardsReceived = 0;
+			for (let i = 0; i < clients.length; ++i) {
+				clients[i].once("addCards", (msg, cards) => {
+					++cardsReceived;
+					expect(cards.length).to.equal(3);
+					if (cardsReceived == clients.length) done();
+				});
+				clients[i].emit(
+					"pickCard",
+					{
+						pickedCards: [0],
+						burnedCards: [],
+					},
+					ackNoError
+				);
+			}
+		});
+
+		it("Added cards persist after a disconnect", (done) => {
+			clients[1].disconnect();
+
+			clients[1].once("rejoinDraft", (data) => {
+				expect(data).to.have.property("pickedCards");
+				expect(data.pickedCards.main).to.have.length(4);
+				done();
+			});
+
+			clients[1].connect();
 		});
 	});
 });
