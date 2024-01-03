@@ -39,12 +39,22 @@ export enum UsableDraftEffect {
 	NoteCreatureTypes = "NoteCreatureTypes",
 }
 
-export type DraftEffect =
+// Draft effects without parameters
+export type SimpleDraftEffectType =
 	| OnPickDraftEffect
 	| OptionalOnPickDraftEffect
 	| UsableDraftEffect
 	| "AnimusOfPredation"
-	| "CogworkGrinder";
+	| "CogworkGrinder"
+	| "AddCards";
+
+export type DraftEffectType = SimpleDraftEffectType | "AddCards";
+
+export type DraftEffect =
+	| {
+			type: SimpleDraftEffectType;
+	  }
+	| { type: "AddCards"; card_ids: CardID[] };
 
 export type CardFace = {
 	name: string;
@@ -172,3 +182,9 @@ export class UniqueCard extends Card {
 
 // JSON can't use numbers as keys, we have to use a string and not ArenaID here.
 export type PlainCollection = { [aid: string]: number };
+
+export function hasEffect(card: Card, effect: DraftEffectType): boolean {
+	if (!card.draft_effects) return false;
+	for (const e of card.draft_effects) if (e.type === effect) return true;
+	return false;
+}

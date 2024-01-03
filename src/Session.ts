@@ -14,6 +14,7 @@ import {
 	UsableDraftEffect,
 	OptionalOnPickDraftEffect,
 	UniqueCardState,
+	hasEffect,
 } from "./CardTypes.js";
 import {
 	Cards,
@@ -1962,7 +1963,7 @@ export class Session implements IIndexable {
 			}
 			if (!cardOrNull) return reportError("Invalid UniqueCardID.");
 			const card = cardOrNull;
-			if (!card.draft_effects?.includes(draftEffect.effect))
+			if (!hasEffect(card, draftEffect.effect))
 				return reportError(`Invalid request: '${card.name}' do not have effect '${draftEffect.effect}'.`);
 			if (!card.state?.faceUp) return reportError("Already used this effect (Card is face down).");
 
@@ -2074,7 +2075,7 @@ export class Session implements IIndexable {
 			switch (optionalOnPickDraftEffect.effect) {
 				case OptionalOnPickDraftEffect.LoreSeeker: {
 					const index = booster.findIndex((c) => c.uniqueID === optionalOnPickDraftEffect.cardID);
-					if (index < 0 || !booster[index].draft_effects?.includes(OptionalOnPickDraftEffect.LoreSeeker))
+					if (index < 0 || !hasEffect(booster[index], OptionalOnPickDraftEffect.LoreSeeker))
 						return reportError("Invalid draft effect card.");
 					if (!pickedCards.includes(index))
 						return reportError("You must pick Lore Seeker to use its effect.");
@@ -2206,7 +2207,7 @@ export class Session implements IIndexable {
 			if (card.draft_effects) {
 				let notify = false;
 				for (const effect of card.draft_effects) {
-					switch (effect) {
+					switch (effect.type) {
 						case OnPickDraftEffect.FaceUp:
 							if (!card.state) card.state = {};
 							card.state.faceUp = true;
@@ -3469,8 +3470,8 @@ export class Session implements IIndexable {
 					userName: this.draftState.players[userID].isBot
 						? this.draftState.players[userID].botInstance.name
 						: this.isDisconnected(userID)
-						? this.disconnectedUsers[userID].userName
-						: Connections[userID]?.userName ?? "(Unknown)",
+						  ? this.disconnectedUsers[userID].userName
+						  : Connections[userID]?.userName ?? "(Unknown)",
 					isBot: this.draftState.players[userID].isBot,
 					isReplaced: this.isDisconnected(userID) && this.disconnectedUsers[userID].replaced === true,
 					isDisconnected: this.isDisconnected(userID),

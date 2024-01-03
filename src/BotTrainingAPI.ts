@@ -2,7 +2,7 @@ import axios from "axios";
 import { InTesting, InProduction } from "./Context.js";
 import { Session } from "./Session.js";
 import { getCard } from "./Cards.js";
-import { DraftEffect, OnPickDraftEffect, OptionalOnPickDraftEffect, UsableDraftEffect } from "./CardTypes.js";
+import { OnPickDraftEffect, OptionalOnPickDraftEffect, UsableDraftEffect } from "./CardTypes.js";
 import { DraftLog, DraftPick } from "./DraftLog.js";
 
 const MTGDraftbotsLogEndpoint = process.env.MTGDRAFTBOTS_ENDPOINT ?? "https://cubeartisan.net/integrations/draftlog";
@@ -31,7 +31,7 @@ type MTGDraftbotsLog = {
 export function sendLog(type: string, session: Session) {
 	if (session.draftLog) {
 		// Ignore drafts that contains effects messing with the packs. These won't be useful for training.
-		const excludedEffects: DraftEffect[] = [
+		const excludedEffects: string[] = [
 			OnPickDraftEffect.CanalDredger,
 			OptionalOnPickDraftEffect.LoreSeeker,
 			UsableDraftEffect.CogworkLibrarian,
@@ -40,7 +40,7 @@ export function sendLog(type: string, session: Session) {
 		];
 		if (
 			Object.values(session.draftLog.carddata).some(
-				(c) => c.draft_effects?.some((effect) => excludedEffects.includes(effect))
+				(c) => c.draft_effects?.some((effect) => excludedEffects.includes(effect.type))
 			)
 		)
 			return;

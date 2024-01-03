@@ -2,7 +2,7 @@ import parseCost from "./parseCost.js";
 import { escapeHTML } from "./utils.js";
 import { Card, CardColor, CardFace } from "./CardTypes.js";
 import { ackError, isMessageError, isSocketError, SocketAck, SocketError } from "./Message.js";
-import { isCard, isDraftEffect } from "./CardTypeCheck.js";
+import { isCard, isDraftEffectType, isSimpleDraftEffectType } from "./CardTypeCheck.js";
 import { hasProperty, isArrayOf, isObject, isRecord, isString } from "./TypeChecks.js";
 import { genCustomCardID } from "./CustomCardID.js";
 
@@ -180,16 +180,50 @@ export function validateCustomCard(inputCard: any): SocketError | Card {
 		if (arrayCheck) return arrayCheck;
 		card.draft_effects = [];
 		for (const entry of inputCard.draft_effects) {
-			if (!isDraftEffect(entry))
-				return ackError({
-					title: `Invalid Property`,
-					html: `Invalid entry in 'draft_effects' of custom card, must be a valid DraftEffect. <pre>${JSON.stringify(
-						inputCard,
-						null,
-						2
-					)}</pre>`,
-				});
-			card.draft_effects.push(entry);
+			if (isString(entry)) {
+				if (!isSimpleDraftEffectType(entry))
+					return ackError({
+						title: `Invalid Property`,
+						html: `Invalid entry in 'draft_effects' of custom card, must be a valid DraftEffect. <pre>${JSON.stringify(
+							inputCard,
+							null,
+							2
+						)}</pre>`,
+					});
+				card.draft_effects.push({ type: entry });
+			} else {
+				if (!hasProperty("type", isDraftEffectType)(entry))
+					return ackError({
+						title: `Invalid Property`,
+						html: `Invalid entry in 'draft_effects' of custom card. Invalid or missing 'type'. <pre>${JSON.stringify(
+							inputCard,
+							null,
+							2
+						)}</pre>`,
+					});
+				if (entry.type === "AddCards") {
+					if (!hasProperty("card_ids", isArrayOf(isString))(entry)) {
+						return ackError({
+							title: `Invalid Property`,
+							html: `Invalid entry in 'draft_effects' of custom card. Missing 'card_ids' parameter for 'AddCards' effect. <pre>${JSON.stringify(
+								inputCard,
+								null,
+								2
+							)}</pre>`,
+						});
+					}
+					card.draft_effects.push({ type: "AddCards", card_ids: entry.card_ids });
+				} else {
+					return ackError({
+						title: `Invalid Property`,
+						html: `Invalid entry in 'draft_effects' of custom card. Invalid 'type'. <pre>${JSON.stringify(
+							inputCard,
+							null,
+							2
+						)}</pre>`,
+					});
+				}
+			}
 		}
 	}
 
