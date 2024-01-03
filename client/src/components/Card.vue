@@ -32,7 +32,7 @@
 import { Language } from "@/Types";
 import { defineComponent, PropType } from "vue";
 import { UniqueCard } from "@/CardTypes";
-import { OnPickDraftEffect } from "../../../src/CardTypes";
+import { hasEffect, OnPickDraftEffect } from "../../../src/CardTypes";
 
 import CardImage from "./CardImage.vue";
 
@@ -62,19 +62,13 @@ export default defineComponent({
 		notes(): string | undefined {
 			if (!this.card?.state) return undefined;
 			if (this.card.draft_effects) {
-				if (this.card.draft_effects.includes("AnimusOfPredation") && this.card.state.removedCards)
+				if (hasEffect(this.card, "AnimusOfPredation") && this.card.state.removedCards)
 					return [...new Set(this.card.state.removedCards.map((card) => card.subtypes).flat())].join(", ");
-				if (this.card.draft_effects.includes("CogworkGrinder") && this.card.state.removedCards)
+				if (hasEffect(this.card, "CogworkGrinder") && this.card.state.removedCards)
 					return this.card.state.removedCards.length.toString();
-				if (
-					this.card.draft_effects.includes(OnPickDraftEffect.NoteDraftedCards) &&
-					this.card.state.cardsDraftedThisRound
-				)
+				if (hasEffect(this.card, OnPickDraftEffect.NoteDraftedCards) && this.card.state.cardsDraftedThisRound)
 					return this.card.state.cardsDraftedThisRound.toString();
-				if (
-					this.card.draft_effects.includes(OnPickDraftEffect.NotePassingPlayer) &&
-					this.card.state.passingPlayer
-				)
+				if (hasEffect(this.card, OnPickDraftEffect.NotePassingPlayer) && this.card.state.passingPlayer)
 					return this.card.state.passingPlayer;
 				if (this.card.state.cardName) return this.card.state.cardName;
 				if (this.card.state.creatureName) return this.card.state.creatureName;

@@ -387,7 +387,7 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
 
         # Conspiracy Draft Effects
         if c['oracle_id'] in DraftEffects:
-            selection['draft_effects'] = DraftEffects[c['oracle_id']]
+            selection['draft_effects'] = [{"type": t} for t in DraftEffects[c['oracle_id']]]
 
         if c['set'] == 'war':
             if 'promo_types' in c and 'jpwalker' in c['promo_types']:
