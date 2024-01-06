@@ -65,7 +65,8 @@ select.swal2-input option {
 	background: #ddd;
 }
 
-.swal2-content pre {
+.swal2-content pre,
+.swal2-html-container pre {
 	text-align: left;
 	font-size: 0.8em;
 	white-space: pre-wrap;

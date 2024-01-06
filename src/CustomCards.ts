@@ -3,7 +3,7 @@ import { escapeHTML } from "./utils.js";
 import { Card, CardColor, CardFace } from "./CardTypes.js";
 import { ackError, isMessageError, isSocketError, SocketAck, SocketError } from "./Message.js";
 import { isCard, isDraftEffectType, isSimpleDraftEffectType } from "./CardTypeCheck.js";
-import { hasProperty, isArrayOf, isObject, isRecord, isString } from "./TypeChecks.js";
+import { hasProperty, isArrayOf, isObject, isRecord, isString, isUnknown } from "./TypeChecks.js";
 import { genCustomCardID } from "./CustomCardID.js";
 
 function errorWithJSON(title: string, msg: string, json: unknown) {
@@ -193,14 +193,21 @@ export function validateCustomCard(inputCard: any): SocketError | Card {
 					});
 				card.draft_effects.push({ type: entry });
 			} else {
-				if (!hasProperty("type", isDraftEffectType)(entry))
+				if (!hasProperty("type", isUnknown)(entry))
 					return ackError({
 						title: `Invalid Property`,
-						html: `Invalid entry in 'draft_effects' of custom card. Invalid or missing 'type'. <pre>${JSON.stringify(
+						html: `Missing 'type' entry in 'draft_effects' of custom card. <pre>${JSON.stringify(
 							inputCard,
 							null,
 							2
 						)}</pre>`,
+					});
+				if (!hasProperty("type", isDraftEffectType)(entry))
+					return ackError({
+						title: `Invalid Property`,
+						html: `Invalid 'type' entry in 'draft_effects' of custom card. '${
+							entry.type
+						}' is not a valid Draft Effect. <pre>${JSON.stringify(inputCard, null, 2)}</pre>`,
 					});
 				if (entry.type === "AddCards") {
 					if (!hasProperty("cards", isArrayOf(isString))(entry)) {
