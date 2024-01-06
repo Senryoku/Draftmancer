@@ -1,0 +1,21 @@
+[CustomCards]
+[
+	{	
+		"name": "Gigantosaurus Evolved",
+		"rarity": "mythic",
+		"mana_cost": "{G}{G}{G}{G}{G}",
+		"type": "Creature",
+		"image_uris": {
+			"en": "https://cards.scryfall.io/large/front/c/1/c1db84d8-d426-4c0d-b44e-5be7b0f5f5bf.jpg?1562303938"
+		},
+		"draft_effects": [
+			{
+				"type": "AddRandomCards", 
+				"count": 3,
+				"cards": ["Brontotherium", "Titania, Nature's Force", "Carnivorous Moss-Beast", "Humbler of Mortals", "Briar Hydra", "Masumaro, First to Live", "Gaea's Liege"]
+			}
+		]
+	}
+]
+[Common]
+999 Gigantosaurus Evolved

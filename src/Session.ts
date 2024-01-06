@@ -1,6 +1,6 @@
 "use strict";
 import { UserID, SessionID } from "./IDTypes.js";
-import { shuffleArray, getRandom, arrayIntersect, Options, getNDisctinctRandom, pickRandom } from "./utils.js";
+import { shuffleArray, getRandom, arrayIntersect, Options, getNDisctinctRandom, pickRandom, random } from "./utils.js";
 import { Connections, getPickedCardIds } from "./Connection.js";
 import {
 	CardID,
@@ -15,6 +15,7 @@ import {
 	OptionalOnPickDraftEffect,
 	UniqueCardState,
 	hasEffect,
+	ParameterizedDraftEffectType,
 } from "./CardTypes.js";
 import {
 	Cards,
@@ -2266,10 +2267,24 @@ export class Session implements IIndexable {
 								Connections[userID]?.socket.emit("addCards", "You randomly picked:", picks);
 							break;
 						}
-						case "AddCards": {
+						case ParameterizedDraftEffectType.AddCards: {
 							const additionalPicks = effect.cards.map((cid) =>
 								getUnique(cid, { getCard: this.getCustomGetCardFunction() })
 							);
+							Connections[userID]?.pickedCards.main.push(...additionalPicks);
+							Connections[userID]?.socket.emit(
+								"addCards",
+								`Picking '${card.name}' also added:`,
+								additionalPicks
+							);
+							break;
+						}
+						case ParameterizedDraftEffectType.AddRandomCards: {
+							const availableCards = structuredClone(effect.cards);
+							random.shuffle(availableCards);
+							const additionalPicks = availableCards
+								.slice(0, effect.count)
+								.map((cid) => getUnique(cid, { getCard: this.getCustomGetCardFunction() }));
 							Connections[userID]?.pickedCards.main.push(...additionalPicks);
 							Connections[userID]?.socket.emit(
 								"addCards",

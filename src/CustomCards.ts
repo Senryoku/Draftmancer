@@ -1,9 +1,9 @@
 import parseCost from "./parseCost.js";
 import { escapeHTML } from "./utils.js";
-import { Card, CardColor, CardFace } from "./CardTypes.js";
+import { Card, CardColor, CardFace, ParameterizedDraftEffectType } from "./CardTypes.js";
 import { ackError, isMessageError, isSocketError, SocketAck, SocketError } from "./Message.js";
 import { isCard, isDraftEffectType, isSimpleDraftEffectType } from "./CardTypeCheck.js";
-import { hasProperty, isArrayOf, isObject, isRecord, isString, isUnknown } from "./TypeChecks.js";
+import { hasProperty, isArrayOf, isInteger, isObject, isRecord, isString, isUnknown } from "./TypeChecks.js";
 import { genCustomCardID } from "./CustomCardID.js";
 
 function errorWithJSON(title: string, msg: string, json: unknown) {
@@ -57,6 +57,10 @@ export function validateCustomCardFace(face: unknown): SocketError | CardFace {
 	};
 }
 
+function validationError(inputCard: unknown, title: string, msg: string) {
+	return ackError({ title: title, html: `${msg}<pre>${escapeHTML(JSON.stringify(inputCard, null, 2))}</pre>` });
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function validateCustomCard(inputCard: any): SocketError | Card {
 	// Check mandatory fields
@@ -79,46 +83,35 @@ export function validateCustomCard(inputCard: any): SocketError | Card {
 		checkPropertyTypeOrUndefined(inputCard, "printed_names", "object") ??
 		checkPropertyTypeOrUndefined(inputCard, "collector_number", "string");
 	if (typeError) return typeError;
+
+	const valErr = validationError.bind(null, inputCard);
+
 	if (Object.keys(inputCard["image_uris"]).length === 0)
-		return ackError({
-			title: `Invalid Property`,
-			html: `Invalid mandatory property 'image_uris' in custom card: Should have at least one entry. <pre>${JSON.stringify(
-				inputCard,
-				null,
-				2
-			)}</pre>`,
-		});
+		return valErr(
+			`Invalid Property`,
+			`Invalid mandatory property 'image_uris' in custom card: Should have at least one entry.`
+		);
 	if (!Object.keys(inputCard["image_uris"]).includes("en")) {
-		return ackError({
-			title: `Invalid Property`,
-			html: `Invalid mandatory property 'image_uris' in custom card: Missing 'en' property. <pre>${JSON.stringify(
-				inputCard,
-				null,
-				2
-			)}</pre>`,
-		});
+		return valErr(
+			`Invalid Property`,
+			`Invalid mandatory property 'image_uris' in custom card: Missing 'en' property.`
+		);
 	}
 	if ("colors" in inputCard) {
 		if (!Array.isArray(inputCard.colors) || inputCard.colors.some((c: CardColor) => !"WUBRG".includes(c))) {
-			return ackError({
-				title: `Invalid Property`,
-				html: `Invalid optional property 'colors' in custom card, 'colors' should be an Array of inputCard colors (W, U, B, R or G). Leave blank to let it be automatically infered from the mana cost. <pre>${JSON.stringify(
-					inputCard,
-					null,
-					2
-				)}</pre>`,
-			});
+			return valErr(
+				`Invalid Property`,
+				`Invalid optional property 'colors' in custom card, 'colors' should be an Array of inputCard colors (W, U, B, R or G). Leave blank to let it be automatically infered from the mana cost.`
+			);
 		}
 	}
 	if ("rarity" in inputCard) {
 		const acceptedValues = ["common", "uncommon", "rare", "mythic", "special"];
 		if (!acceptedValues.includes(inputCard.rarity))
-			return ackError({
-				title: `Invalid Property`,
-				html: `Invalid mandatory property 'rarity' in custom card, must be one of [${acceptedValues.join(
-					", "
-				)}]. <pre>${JSON.stringify(inputCard, null, 2)}</pre>`,
-			});
+			return valErr(
+				`Invalid Property`,
+				`Invalid mandatory property 'rarity' in custom card, must be one of [${acceptedValues.join(", ")}].`
+			);
 	}
 
 	const arrayCheck = checkPropertyIsArrayOrUndefined(inputCard, "subtypes");
@@ -165,14 +158,10 @@ export function validateCustomCard(inputCard: any): SocketError | Card {
 				if (isSocketError(ret)) return ret;
 				card.related_cards.push(ret);
 			} else
-				return ackError({
-					title: `Invalid Property`,
-					html: `Invalid entry in 'related_cards' of custom card, must be a string or an object. <pre>${JSON.stringify(
-						inputCard,
-						null,
-						2
-					)}</pre>`,
-				});
+				return valErr(
+					`Invalid Property`,
+					`Invalid entry in 'related_cards' of custom card, must be a string or an object.`
+				);
 		}
 	}
 
@@ -183,54 +172,55 @@ export function validateCustomCard(inputCard: any): SocketError | Card {
 		for (const entry of inputCard.draft_effects) {
 			if (isString(entry)) {
 				if (!isSimpleDraftEffectType(entry))
-					return ackError({
-						title: `Invalid Property`,
-						html: `Invalid entry in 'draft_effects' of custom card, must be a valid DraftEffect. <pre>${JSON.stringify(
-							inputCard,
-							null,
-							2
-						)}</pre>`,
-					});
+					return valErr(
+						`Invalid Property`,
+						`Invalid entry in 'draft_effects' of custom card, must be a valid DraftEffect.`
+					);
 				card.draft_effects.push({ type: entry });
 			} else {
 				if (!hasProperty("type", isUnknown)(entry))
-					return ackError({
-						title: `Invalid Property`,
-						html: `Missing 'type' entry in 'draft_effects' of custom card. <pre>${JSON.stringify(
-							inputCard,
-							null,
-							2
-						)}</pre>`,
-					});
+					return valErr(`Invalid Property`, `Missing 'type' entry in 'draft_effects' of custom card.`);
 				if (!hasProperty("type", isDraftEffectType)(entry))
-					return ackError({
-						title: `Invalid Property`,
-						html: `Invalid 'type' entry in 'draft_effects' of custom card. '${
-							entry.type
-						}' is not a valid Draft Effect. <pre>${JSON.stringify(inputCard, null, 2)}</pre>`,
-					});
-				if (entry.type === "AddCards") {
+					return valErr(
+						`Invalid Property`,
+						`Invalid 'type' entry in 'draft_effects' of custom card. '${entry.type}' is not a valid Draft Effect.`
+					);
+				if (entry.type === ParameterizedDraftEffectType.AddCards) {
 					if (!hasProperty("cards", isArrayOf(isString))(entry)) {
-						return ackError({
-							title: `Invalid Property`,
-							html: `Invalid entry in 'draft_effects' of custom card. Missing 'cards' parameter for 'AddCards' effect. <pre>${JSON.stringify(
-								inputCard,
-								null,
-								2
-							)}</pre>`,
-						});
+						return valErr(
+							`Invalid Parameter`,
+							`Invalid 'AddCards' entry in 'draft_effects' of custom card. Missing or invalid 'cards' parameter.`
+						);
 					}
 					// NOTE: Full verification of the cards will be done later, once the rest of the file is parsed.
-					card.draft_effects.push({ type: "AddCards", cards: entry.cards });
+					card.draft_effects.push({ type: entry.type, cards: entry.cards });
+				} else if (entry.type === ParameterizedDraftEffectType.AddRandomCards) {
+					if (!hasProperty("count", isInteger)(entry)) {
+						return valErr(
+							`Invalid Parameter`,
+							`Invalid 'AddRandomCards' entry in 'draft_effects' of custom card. Missing or invalid 'count' parameter.`
+						);
+					}
+					if (!hasProperty("cards", isArrayOf(isString))(entry)) {
+						return valErr(
+							`Invalid Parameter`,
+							`Invalid 'AddRandomCards' entry in 'draft_effects' of custom card. Missing or invalid 'cards' parameter.`
+						);
+					}
+					if (entry.count <= entry.cards.length) {
+						return valErr(
+							`Invalid Parameter`,
+							`Invalid 'AddRandomCards' entry in 'draft_effects' of custom card. 'count' must be less than or equal to the number of cards in 'cards'.`
+						);
+					}
+
+					// NOTE: Full verification of the cards will be done later, once the rest of the file is parsed.
+					card.draft_effects.push({ type: entry.type, count: entry.count, cards: entry.cards });
 				} else {
-					return ackError({
-						title: `Invalid Property`,
-						html: `Invalid entry in 'draft_effects' of custom card. Invalid 'type'. <pre>${JSON.stringify(
-							inputCard,
-							null,
-							2
-						)}</pre>`,
-					});
+					return valErr(
+						`Invalid Property`,
+						`Invalid entry in 'draft_effects' of custom card. Valid but unhandled type '${entry.type}'. This is probably my fault, please get in touch :)`
+					);
 				}
 			}
 		}
@@ -238,10 +228,7 @@ export function validateCustomCard(inputCard: any): SocketError | Card {
 
 	if (!isCard(card)) {
 		console.error("Error: Invalid Custom Card after validation: ", card);
-		return ackError({
-			title: `Invalid Card`,
-			html: `Unknown error in custom card: <pre>${escapeHTML(JSON.stringify(inputCard, null, 2))}</pre>`,
-		});
+		return valErr(`Invalid Card`, `Unknown error in custom card.`);
 	}
 	return card;
 }

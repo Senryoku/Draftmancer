@@ -47,13 +47,19 @@ export type SimpleDraftEffectType =
 	| "AnimusOfPredation"
 	| "CogworkGrinder";
 
-export type DraftEffectType = SimpleDraftEffectType | "AddCards";
+export enum ParameterizedDraftEffectType {
+	AddCards = "AddCards",
+	AddRandomCards = "AddRandomCards",
+}
+
+export type DraftEffectType = SimpleDraftEffectType | ParameterizedDraftEffectType;
 
 export type DraftEffect =
 	| {
 			type: SimpleDraftEffectType;
 	  }
-	| { type: "AddCards"; cards: CardID[] };
+	| { type: ParameterizedDraftEffectType.AddCards; cards: CardID[] }
+	| { type: ParameterizedDraftEffectType.AddRandomCards; count: number; cards: CardID[] };
 
 export type CardFace = {
 	name: string;

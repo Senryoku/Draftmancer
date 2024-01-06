@@ -1,6 +1,6 @@
 import { genCustomCardID } from "./CustomCardID.js";
 import { validateCustomCard } from "./CustomCards.js";
-import { Card, CardID } from "./CardTypes.js";
+import { Card, CardID, ParameterizedDraftEffectType } from "./CardTypes.js";
 import { CardsByName, CardVersionsByName, getCard, isValidCardID } from "./Cards.js";
 import { CCLSettings, CustomCardList, PackLayout } from "./CustomCardList.js";
 import { escapeHTML } from "./utils.js";
@@ -551,7 +551,10 @@ function parseCustomCards(lines: string[], startIdx: number, txtcardlist: string
 
 		if (card.draft_effects) {
 			for (const effect of card.draft_effects) {
-				if (effect.type === "AddCards") {
+				if (
+					effect.type === ParameterizedDraftEffectType.AddCards ||
+					effect.type === ParameterizedDraftEffectType.AddRandomCards
+				) {
 					for (let i = 0; i < effect.cards.length; ++i) {
 						const cid = effect.cards[i];
 						// This is a valid card ID, nothing more to do.
@@ -563,7 +566,7 @@ function parseCustomCards(lines: string[], startIdx: number, txtcardlist: string
 						if (isSocketError(result))
 							return ackError({
 								title: `[CustomCards]`,
-								text: `'${cid}', referenced in '${card.name}' AddCards draft effect, is not a valid card.`,
+								text: `'${cid}', referenced in '${card.name}' ${effect.type} draft effect, is not a valid card.`,
 							});
 						effect.cards[i] = result.cardID;
 					}
