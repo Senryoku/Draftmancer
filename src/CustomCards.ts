@@ -3,7 +3,16 @@ import { escapeHTML } from "./utils.js";
 import { Card, CardColor, CardFace, ParameterizedDraftEffectType } from "./CardTypes.js";
 import { ackError, isMessageError, isSocketError, SocketAck, SocketError } from "./Message.js";
 import { isCard, isDraftEffectType, isSimpleDraftEffectType } from "./CardTypeCheck.js";
-import { hasProperty, isArrayOf, isInteger, isObject, isRecord, isString, isUnknown } from "./TypeChecks.js";
+import {
+	hasOptionalProperty,
+	hasProperty,
+	isArrayOf,
+	isInteger,
+	isObject,
+	isRecord,
+	isString,
+	isUnknown,
+} from "./TypeChecks.js";
 import { genCustomCardID } from "./CustomCardID.js";
 
 function errorWithJSON(title: string, msg: string, json: unknown) {
@@ -192,30 +201,26 @@ export function validateCustomCard(inputCard: any): SocketError | Card {
 							`Invalid 'AddCards' entry in 'draft_effects' of custom card. Missing or invalid 'cards' parameter.`
 						);
 					}
+					if (!hasOptionalProperty("count", isInteger)(entry)) {
+						return valErr(
+							`Invalid Parameter`,
+							`Invalid 'AddCards' entry in 'draft_effects' of custom card. Missing or invalid 'count' parameter.`
+						);
+					}
+					if (entry.count) {
+						if (entry.count <= 0 || entry.count > entry.cards.length) {
+							return valErr(
+								`Invalid Parameter`,
+								`Invalid 'AddCards' entry in 'draft_effects' of custom card. 'count' must be strictly positive and less than or equal to the number of cards in 'cards'.`
+							);
+						}
+					}
 					// NOTE: Full verification of the cards will be done later, once the rest of the file is parsed.
-					card.draft_effects.push({ type: entry.type, cards: entry.cards });
-				} else if (entry.type === ParameterizedDraftEffectType.AddRandomCards) {
-					if (!hasProperty("count", isInteger)(entry)) {
-						return valErr(
-							`Invalid Parameter`,
-							`Invalid 'AddRandomCards' entry in 'draft_effects' of custom card. Missing or invalid 'count' parameter.`
-						);
-					}
-					if (!hasProperty("cards", isArrayOf(isString))(entry)) {
-						return valErr(
-							`Invalid Parameter`,
-							`Invalid 'AddRandomCards' entry in 'draft_effects' of custom card. Missing or invalid 'cards' parameter.`
-						);
-					}
-					if (entry.count <= 0 || entry.count > entry.cards.length) {
-						return valErr(
-							`Invalid Parameter`,
-							`Invalid 'AddRandomCards' entry in 'draft_effects' of custom card. 'count' must be strictly positive and less than or equal to the number of cards in 'cards'.`
-						);
-					}
-
-					// NOTE: Full verification of the cards will be done later, once the rest of the file is parsed.
-					card.draft_effects.push({ type: entry.type, count: entry.count, cards: entry.cards });
+					card.draft_effects.push({
+						type: entry.type,
+						count: entry.count ?? entry.cards.length,
+						cards: entry.cards,
+					});
 				} else {
 					return valErr(
 						`Invalid Property`,

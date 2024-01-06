@@ -556,7 +556,20 @@ NoteCreatureTypes   <comment>// Note the picked creature's types on the card.</c
 "draft_effects": [
 	"FaceUp",
 	"CogworkLibrarian"
-]</pre>
+]
+
+<comment>// The following effects are custom and do not match official Conspiracy effects.</comment>
+AddCards            <comment>// Adds additional cards to your draft pool.</comment>
+
+<comment>// Example value for AddCards</comment>
+"draft_effects": [
+	{
+		"type": "AddCards",
+		"count": 1, <comment>// Optional, if omitted, all cards from the following array will be added. Otherwise, 'count' random cards will be added to your pool.</comment>
+		"cards": ["Card Name 1", "Card Name 2"...]
+	}
+]
+</pre>
 				Please note that only the combinations of effects found on actual Conspiracy cards are officially supported, some might not work as intended! See the list of
 				supported official cards on
 				<a href="https://github.com/Senryoku/Draftmancer/wiki/Conspiracy-cards-support" target="_blank">this page of the GitHub wiki</a>

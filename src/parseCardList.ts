@@ -551,10 +551,7 @@ function parseCustomCards(lines: string[], startIdx: number, txtcardlist: string
 
 		if (card.draft_effects) {
 			for (const effect of card.draft_effects) {
-				if (
-					effect.type === ParameterizedDraftEffectType.AddCards ||
-					effect.type === ParameterizedDraftEffectType.AddRandomCards
-				) {
+				if (effect.type === ParameterizedDraftEffectType.AddCards) {
 					for (let i = 0; i < effect.cards.length; ++i) {
 						const cid = effect.cards[i];
 						// This is a valid card ID, nothing more to do.

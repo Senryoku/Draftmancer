@@ -2268,23 +2268,17 @@ export class Session implements IIndexable {
 							break;
 						}
 						case ParameterizedDraftEffectType.AddCards: {
-							const additionalPicks = effect.cards.map((cid) =>
+							const additionalPicksCIDs: CardID[] = [];
+							if (effect.count < effect.cards.length) {
+								const availableCards = structuredClone(effect.cards);
+								random.shuffle(availableCards);
+								additionalPicksCIDs.push(...availableCards.slice(0, effect.count));
+							} else {
+								additionalPicksCIDs.push(...effect.cards);
+							}
+							const additionalPicks = additionalPicksCIDs.map((cid) =>
 								getUnique(cid, { getCard: this.getCustomGetCardFunction() })
 							);
-							Connections[userID]?.pickedCards.main.push(...additionalPicks);
-							Connections[userID]?.socket.emit(
-								"addCards",
-								`Picking '${card.name}' also added:`,
-								additionalPicks
-							);
-							break;
-						}
-						case ParameterizedDraftEffectType.AddRandomCards: {
-							const availableCards = structuredClone(effect.cards);
-							random.shuffle(availableCards);
-							const additionalPicks = availableCards
-								.slice(0, effect.count)
-								.map((cid) => getUnique(cid, { getCard: this.getCustomGetCardFunction() }));
 							Connections[userID]?.pickedCards.main.push(...additionalPicks);
 							Connections[userID]?.socket.emit(
 								"addCards",

@@ -45,8 +45,7 @@ export function isParameterizedDraftEffectType(str: unknown): str is Parameteriz
 export function isDraftEffect(obj: unknown): obj is DraftEffect {
 	if (!isObject(obj)) return false;
 	if (!hasProperty("type", isDraftEffectType)(obj)) return false;
-	if (obj.type === ParameterizedDraftEffectType.AddCards) return hasProperty("cards", isArrayOf(isString))(obj);
-	if (obj.type === ParameterizedDraftEffectType.AddRandomCards)
+	if (obj.type === ParameterizedDraftEffectType.AddCards)
 		return hasProperty("count", isInteger)(obj) && hasProperty("cards", isArrayOf(isString))(obj);
 	return hasProperty("type", isSimpleDraftEffectType)(obj);
 }

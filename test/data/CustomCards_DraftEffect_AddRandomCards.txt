@@ -10,7 +10,7 @@
 		},
 		"draft_effects": [
 			{
-				"type": "AddRandomCards", 
+				"type": "AddCards", 
 				"count": 3,
 				"cards": ["Brontotherium", "Titania, Nature's Force", "Carnivorous Moss-Beast", "Humbler of Mortals", "Briar Hydra", "Masumaro, First to Live", "Gaea's Liege"]
 			}
