@@ -207,7 +207,7 @@ export function validateCustomCard(inputCard: any): SocketError | Card {
 							`Invalid 'AddRandomCards' entry in 'draft_effects' of custom card. Missing or invalid 'cards' parameter.`
 						);
 					}
-					if (entry.count <= entry.cards.length) {
+					if (entry.count > entry.cards.length) {
 						return valErr(
 							`Invalid Parameter`,
 							`Invalid 'AddRandomCards' entry in 'draft_effects' of custom card. 'count' must be less than or equal to the number of cards in 'cards'.`
