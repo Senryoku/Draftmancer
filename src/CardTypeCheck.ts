@@ -1,11 +1,14 @@
 import {
 	Card,
 	CardFace,
-	DraftEffect,
+	DraftEffectType,
+	SimpleDraftEffectType,
 	OnPickDraftEffect,
 	OptionalOnPickDraftEffect,
 	UniqueCard,
 	UsableDraftEffect,
+	DraftEffect,
+	ParameterizedDraftEffectType,
 } from "./CardTypes.js";
 import {
 	hasOptionalProperty,
@@ -18,9 +21,14 @@ import {
 	isNumber,
 	isUnion,
 	isSomeEnum,
+	isInteger,
 } from "./TypeChecks.js";
 
-export function isDraftEffect(str: unknown): str is DraftEffect {
+export function isDraftEffectType(str: unknown): str is DraftEffectType {
+	return isString(str) && (isSimpleDraftEffectType(str) || isParameterizedDraftEffectType(str));
+}
+
+export function isSimpleDraftEffectType(str: unknown): str is SimpleDraftEffectType {
 	return (
 		isString(str) &&
 		(isSomeEnum(OnPickDraftEffect)(str) ||
@@ -28,6 +36,18 @@ export function isDraftEffect(str: unknown): str is DraftEffect {
 			isSomeEnum(UsableDraftEffect)(str) ||
 			["AnimusOfPredation", "CogworkGrinder"].includes(str))
 	);
+}
+
+export function isParameterizedDraftEffectType(str: unknown): str is ParameterizedDraftEffectType {
+	return isString(str) && isSomeEnum(ParameterizedDraftEffectType)(str);
+}
+
+export function isDraftEffect(obj: unknown): obj is DraftEffect {
+	if (!isObject(obj)) return false;
+	if (!hasProperty("type", isDraftEffectType)(obj)) return false;
+	if (obj.type === ParameterizedDraftEffectType.AddCards)
+		return hasProperty("count", isInteger)(obj) && hasProperty("cards", isArrayOf(isString))(obj);
+	return hasProperty("type", isSimpleDraftEffectType)(obj);
 }
 
 export function isCardFace(obj: unknown): obj is CardFace {

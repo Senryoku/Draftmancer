@@ -3632,10 +3632,10 @@ export default defineComponent({
 				(c) => c.draft_effects !== undefined && this.selectedCards.includes(c.uniqueID)
 			);
 			for (const card of selectedCards)
-				for (const effect of card.draft_effects!.filter((e) => isSomeEnum(OptionalOnPickDraftEffect)(e)))
+				for (const effect of card.draft_effects!.filter((e) => isSomeEnum(OptionalOnPickDraftEffect)(e.type)))
 					r.push({
 						name: card.name,
-						effect: effect as OptionalOnPickDraftEffect,
+						effect: effect.type as OptionalOnPickDraftEffect,
 						cardID: card.uniqueID,
 					});
 			return r;
@@ -3649,7 +3649,7 @@ export default defineComponent({
 			const r = [];
 			for (const arr of [this.deck, this.sideboard])
 				for (const card of arr.filter((c) => c.draft_effects !== undefined))
-					for (const effect of card.draft_effects!.filter((e) => isSomeEnum(UsableDraftEffect)(e))) {
+					for (const effect of card.draft_effects!.filter((e) => isSomeEnum(UsableDraftEffect)(e.type))) {
 						if (
 							// These effects are only usable once.
 							(!card.state?.faceUp &&
@@ -3659,15 +3659,15 @@ export default defineComponent({
 									UsableDraftEffect.NoteCreatureTypes,
 									UsableDraftEffect.AgentOfAcquisitions,
 									UsableDraftEffect.LeovoldsOperative,
-								].includes(effect as UsableDraftEffect)) ||
+								].includes(effect.type as UsableDraftEffect)) ||
 							// Disallow Cogwork Librarian effect if there's not enough cards in the pack.
-							(effect === UsableDraftEffect.CogworkLibrarian &&
+							(effect.type === UsableDraftEffect.CogworkLibrarian &&
 								this.draftState.booster.length <= this.pickedCardsPerRound)
 						)
 							continue;
 						r.push({
 							name: card.name,
-							effect: effect as UsableDraftEffect,
+							effect: effect.type as UsableDraftEffect,
 							cardID: card.uniqueID,
 						});
 					}

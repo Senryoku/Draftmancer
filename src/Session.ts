@@ -1,6 +1,6 @@
 "use strict";
 import { UserID, SessionID } from "./IDTypes.js";
-import { shuffleArray, getRandom, arrayIntersect, Options, getNDisctinctRandom, pickRandom } from "./utils.js";
+import { shuffleArray, getRandom, arrayIntersect, Options, getNDisctinctRandom, pickRandom, random } from "./utils.js";
 import { Connections, getPickedCardIds } from "./Connection.js";
 import {
 	CardID,
@@ -14,6 +14,8 @@ import {
 	UsableDraftEffect,
 	OptionalOnPickDraftEffect,
 	UniqueCardState,
+	hasEffect,
+	ParameterizedDraftEffectType,
 } from "./CardTypes.js";
 import {
 	Cards,
@@ -1962,7 +1964,7 @@ export class Session implements IIndexable {
 			}
 			if (!cardOrNull) return reportError("Invalid UniqueCardID.");
 			const card = cardOrNull;
-			if (!card.draft_effects?.includes(draftEffect.effect))
+			if (!hasEffect(card, draftEffect.effect))
 				return reportError(`Invalid request: '${card.name}' do not have effect '${draftEffect.effect}'.`);
 			if (!card.state?.faceUp) return reportError("Already used this effect (Card is face down).");
 
@@ -2074,7 +2076,7 @@ export class Session implements IIndexable {
 			switch (optionalOnPickDraftEffect.effect) {
 				case OptionalOnPickDraftEffect.LoreSeeker: {
 					const index = booster.findIndex((c) => c.uniqueID === optionalOnPickDraftEffect.cardID);
-					if (index < 0 || !booster[index].draft_effects?.includes(OptionalOnPickDraftEffect.LoreSeeker))
+					if (index < 0 || !hasEffect(booster[index], OptionalOnPickDraftEffect.LoreSeeker))
 						return reportError("Invalid draft effect card.");
 					if (!pickedCards.includes(index))
 						return reportError("You must pick Lore Seeker to use its effect.");
@@ -2206,7 +2208,7 @@ export class Session implements IIndexable {
 			if (card.draft_effects) {
 				let notify = false;
 				for (const effect of card.draft_effects) {
-					switch (effect) {
+					switch (effect.type) {
 						case OnPickDraftEffect.FaceUp:
 							if (!card.state) card.state = {};
 							card.state.faceUp = true;
@@ -2263,6 +2265,26 @@ export class Session implements IIndexable {
 								picks.push(...(await this.randomPick(userID)));
 							if (picks.length > 0)
 								Connections[userID]?.socket.emit("addCards", "You randomly picked:", picks);
+							break;
+						}
+						case ParameterizedDraftEffectType.AddCards: {
+							const additionalPicksCIDs: CardID[] = [];
+							if (effect.count < effect.cards.length) {
+								const availableCards = structuredClone(effect.cards);
+								random.shuffle(availableCards);
+								additionalPicksCIDs.push(...availableCards.slice(0, effect.count));
+							} else {
+								additionalPicksCIDs.push(...effect.cards);
+							}
+							const additionalPicks = additionalPicksCIDs.map((cid) =>
+								getUnique(cid, { getCard: this.getCustomGetCardFunction() })
+							);
+							Connections[userID]?.pickedCards.main.push(...additionalPicks);
+							Connections[userID]?.socket.emit(
+								"addCards",
+								`Picking '${card.name}' also added:`,
+								additionalPicks
+							);
 							break;
 						}
 						default:
@@ -3469,8 +3491,8 @@ export class Session implements IIndexable {
 					userName: this.draftState.players[userID].isBot
 						? this.draftState.players[userID].botInstance.name
 						: this.isDisconnected(userID)
-						? this.disconnectedUsers[userID].userName
-						: Connections[userID]?.userName ?? "(Unknown)",
+						  ? this.disconnectedUsers[userID].userName
+						  : Connections[userID]?.userName ?? "(Unknown)",
 					isBot: this.draftState.players[userID].isBot,
 					isReplaced: this.isDisconnected(userID) && this.disconnectedUsers[userID].replaced === true,
 					isDisconnected: this.isDisconnected(userID),
