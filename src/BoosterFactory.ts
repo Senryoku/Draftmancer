@@ -1849,7 +1849,7 @@ class PlayBoosterFactory extends BoosterFactory {
 		landSlot: BasicLandSlot | null,
 		options: BoosterFactoryOptions
 	) {
-		const opt = structuredClone(options);
+		const opt = { ...options };
 		opt.foil = false; // We'll handle the garanteed foil slot ourselves.
 		super(cardPool, landSlot, opt);
 		this.theList = theList;
