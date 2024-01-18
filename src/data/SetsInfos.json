@@ -1391,6 +1391,11 @@
         "block": "Mirage",
         "icon": "img/sets/mir.svg"
     },
+    "mkc": {
+        "code": "mkc",
+        "fullName": "Murders at Karlov Manor Commander",
+        "icon": "img/sets/mkc.svg"
+    },
     "mkm": {
         "code": "mkm",
         "fullName": "Murders at Karlov Manor",
@@ -2597,6 +2602,11 @@
         "code": "pss3",
         "fullName": "M19 Standard Showdown",
         "icon": "img/sets/pss3.svg"
+    },
+    "pss4": {
+        "code": "pss4",
+        "fullName": "Murders at Karlov Manor Standard Showdown",
+        "icon": "img/sets/pss4.svg"
     },
     "psth": {
         "code": "psth",
