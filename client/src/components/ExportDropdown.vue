@@ -56,6 +56,7 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 // Some always available cards, such as a default hero, available equipement, set unique mechanics, ...etc
 const FaBAlwaysAvailableCards = {
 	EVO: ["EVO008", "EVO003", "EVO006", "EVO009", "EVO022", "EVO023", "EVO024", "EVO025"],
+	HVY: ["HVY002", "HVY005", "HVY005", "HVY049", "HVY094", "HVY094"],
 };
 
 export default defineComponent({
