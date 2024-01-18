@@ -1923,7 +1923,19 @@ class MKMBoosterFactory extends PlayBoosterFactory {
 		mkmTheList.mythic.set("598f857d-ee17-4478-bb39-cc3ab77ab8d8", DefaultMaxDuplicates);
 
 		const spg = new CardPool();
-		for (const cid of CardsBySet["spg"]) // FIXME: Narrow it down to MKM SPG
+		for (const cid of [
+			// Not exactly elegant, but it's only 10 cards...
+			"d0ae5ac7-4cd9-40d7-b3a7-e7d493f2bf7a",
+			"c754663b-8414-483f-b2b1-c2deebe60ee6",
+			"08844d76-fc69-4fe3-9c1d-118110b3eb2c",
+			"8cf5c0b7-dd26-4515-9034-1483437fbd7e",
+			"e7e7cbed-83d7-41e5-b495-9850d631ad56",
+			"6d289cdd-3afa-48dd-9c90-3d8f9df79f16",
+			"564eb8e2-e3fb-44b6-a36d-a74e2374f9ff",
+			"b3364018-aeba-4f58-8233-b0026c488dd0",
+			"03c8654e-900a-4720-a4a1-1107d6271c70",
+			"2cf97898-1e05-4c0e-896f-ba6713bf6a7b",
+		])
 			spg.set(cid, options.maxDuplicates?.[getCard(cid).rarity] ?? DefaultMaxDuplicates);
 		super(mkmTheList, spg, cardPool, landSlot, options);
 	}
