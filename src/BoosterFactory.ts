@@ -104,6 +104,12 @@ class ColorBalancedSlotCache {
 	}
 }
 
+import TheListMKM from "./data/TheList/MKM_TheList.json" assert { type: "json" };
+
+const TheList = {
+	mkm: TheListMKM,
+};
+
 /*
  Provides color balancing for the supplied cardPool
 */
@@ -1909,18 +1915,13 @@ class PlayBoosterFactory extends BoosterFactory {
 // Murders at Karlov Manor
 class MKMBoosterFactory extends PlayBoosterFactory {
 	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
-		// TODO
-		const mkmTheList = {
-			common: new CardPool(),
-			uncommon: new CardPool(),
-			rare: new CardPool(),
-			mythic: new CardPool(),
-		};
-		// TEMP Placeholders
-		mkmTheList.common.set("598f857d-ee17-4478-bb39-cc3ab77ab8d8", DefaultMaxDuplicates);
-		mkmTheList.uncommon.set("598f857d-ee17-4478-bb39-cc3ab77ab8d8", DefaultMaxDuplicates);
-		mkmTheList.rare.set("598f857d-ee17-4478-bb39-cc3ab77ab8d8", DefaultMaxDuplicates);
-		mkmTheList.mythic.set("598f857d-ee17-4478-bb39-cc3ab77ab8d8", DefaultMaxDuplicates);
+		const mkmTheList: Record<string, CardPool> = {};
+		for (const r in TheList.mkm) {
+			if (!mkmTheList[r]) mkmTheList[r] = new CardPool();
+			for (const cid of TheList.mkm[r as keyof typeof TheList.mkm]) {
+				mkmTheList[r].set(cid, options.maxDuplicates?.[r] ?? DefaultMaxDuplicates);
+			}
+		}
 
 		const spg = new CardPool();
 		for (const cid of [
