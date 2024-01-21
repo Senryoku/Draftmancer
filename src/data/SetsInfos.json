@@ -799,11 +799,6 @@
         "fullName": "Tales of Middle-earth Front Cards",
         "icon": "img/sets/fltr.svg"
     },
-    "fmb1": {
-        "code": "fmb1",
-        "fullName": "Mystery Booster Retail Edition Foils",
-        "icon": "img/sets/fmb1.svg"
-    },
     "fmom": {
         "code": "fmom",
         "fullName": "March of the Machine Jumpstart Front Cards",
@@ -1317,11 +1312,6 @@
         "fullName": "March of the Machine: The Aftermath",
         "icon": "img/sets/mat.svg"
     },
-    "mb1": {
-        "code": "mb1",
-        "fullName": "Mystery Booster",
-        "icon": "img/sets/mb1.svg"
-    },
     "mbs": {
         "code": "mbs",
         "fullName": "Mirrodin Besieged",
@@ -1694,12 +1684,6 @@
         "fullName": "Adventures in the Forgotten Realms Promos",
         "icon": "img/sets/pafr.svg"
     },
-    "pagl": {
-        "code": "pagl",
-        "fullName": "Angels: They're Just Like Us but Cooler and with Wings",
-        "block": "Commander",
-        "icon": "img/sets/pagl.svg"
-    },
     "pakh": {
         "code": "pakh",
         "fullName": "Amonkhet Promos",
@@ -1874,11 +1858,6 @@
         "fullName": "Coldsnap Promos",
         "block": "Ice Age",
         "icon": "img/sets/pcsp.svg"
-    },
-    "pctb": {
-        "code": "pctb",
-        "fullName": "From Cute to Brute",
-        "icon": "img/sets/pctb.svg"
     },
     "pcy": {
         "code": "pcy",
@@ -2105,12 +2084,6 @@
         "block": "Heroes of the Realm",
         "icon": "img/sets/ph22.svg"
     },
-    "phed": {
-        "code": "phed",
-        "fullName": "Heads I Win, Tails You Lose",
-        "block": "Commander",
-        "icon": "img/sets/phed.svg"
-    },
     "phou": {
         "code": "phou",
         "fullName": "Hour of Devastation Promos",
@@ -2249,11 +2222,6 @@
         "fullName": "Legions Promos",
         "block": "Onslaught",
         "icon": "img/sets/plgn.svg"
-    },
-    "plist": {
-        "code": "plist",
-        "fullName": "The List",
-        "icon": "img/sets/plist.svg"
     },
     "plrw": {
         "code": "plrw",
@@ -3238,11 +3206,6 @@
         "fullName": "Unhinged",
         "icon": "img/sets/unh.svg"
     },
-    "uplist": {
-        "code": "uplist",
-        "fullName": "The List (Unfinity Foil Edition)",
-        "icon": "img/sets/uplist.svg"
-    },
     "usg": {
         "code": "usg",
         "fullName": "Urza's Saga",
@@ -3501,6 +3464,11 @@
         "code": "planeshifted_snc",
         "fullName": "Planeshifted New Capenna",
         "icon": "img/sets/snc.svg"
+    },
+    "mb1": {
+        "code": "mb1",
+        "fullName": "Mystery Booster",
+        "icon": "img/sets/mb1.svg"
     },
     "mb1_convention_2019": {
         "code": "mb1_convention_2019",

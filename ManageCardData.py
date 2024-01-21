@@ -790,19 +790,22 @@ setinfos["planeshifted_snc"].update({"code": "planeshifted_snc",
                                      "isPrimary": True,
                                      })
 
-setinfos["mb1_convention_2019"] = {}
-setinfos["mb1_convention_2019"].update(setinfos["mb1"])
-setinfos["mb1_convention_2019"].update({"code": "mb1_convention_2019",
-                                     "fullName": "Mystery Booster Convention 2019",
-                                     "isPrimary": True,
-                                     })
+setinfos["mb1"] = {"code": "mb1",
+                                   "fullName": "Mystery Booster",
+                                   "icon": "img/sets/mb1.svg",
+                                   "isPrimary": True,
+                                   }
+setinfos["mb1_convention_2019"] = {"code": "mb1_convention_2019",
+                                   "fullName": "Mystery Booster Convention 2019",
+                                   "icon": "img/sets/mb1.svg",
+                                   "isPrimary": True,
+                                   }
 PrimarySets.append("mb1_convention_2019")
-setinfos["mb1_convention_2021"] = {}
-setinfos["mb1_convention_2021"].update(setinfos["mb1"])
-setinfos["mb1_convention_2021"].update({"code": "mb1_convention_2021",
-                                     "fullName": "Mystery Booster Convention 2021",
-                                     "isPrimary": True,
-                                     })
+setinfos["mb1_convention_2021"] = {"code": "mb1_convention_2021",
+                                   "fullName": "Mystery Booster Convention 2021",
+                                   "icon": "img/sets/mb1.svg",
+                                   "isPrimary": True,
+                                   }
 PrimarySets.append("mb1_convention_2021")
 
 # Add Portal sets as draftable (They're not meant to be drafted, but some users want to try anyway!) 
