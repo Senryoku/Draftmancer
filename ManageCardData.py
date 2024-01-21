@@ -733,6 +733,23 @@ array.sort(key=lambda c: c['set'])
 groups = groupby(array, lambda c: c['set'])
 setinfos = {}
 
+# Convert The List card names files to their corresponding IDs. Prefer plst version if available.
+# This is extremely ineficient, I don't care right now.
+for the_list_file in glob.glob("src/data/TheList/*.txt"):
+    the_list_cards = {}
+    with open(the_list_file, 'r', encoding="utf8") as file:
+        print("Processing: ", the_list_file)
+        for line in file:
+            name = line.strip().split('(')[0].strip()
+            cset = line.strip().split('(')[1].split(')')[0].strip().lower()
+            try:
+                c = next(v for k, v in cards.items() if v["name"] == name and (v["set"] == "plist" or v["set"] == "plst"))
+            except:
+                c = next(v for k, v in cards.items() if v["name"] == name and v["set"] == cset) 
+            if c["rarity"] not in the_list_cards:
+                the_list_cards[c["rarity"]] = []
+            the_list_cards[c["rarity"]].append(c["id"])
+    json.dump(the_list_cards, open(the_list_file.replace(".txt", ".json"), 'w', encoding="utf8"), indent=2)
 
 def getIcon(mtgset, icon_path):
     if not os.path.isfile("client/public/" + icon_path): # or filecmp.cmp("client/public/" + icon_path, "client/public/img/sets/default.svg", shallow=False):
