@@ -217,9 +217,10 @@ export class BoosterFactory implements IBoosterFactory {
 
 	/* Returns a standard draft booster
 	 *   targets: Card count for each slot (e.g. {common:10, uncommon:3, rare:1})
+	 *   pickedCards: (optional) Already picked cards, they do not count towards targets and are only there to provide duplicate protection.
 	 */
-	generateBooster(targets: Targets): UniqueCard[] | MessageError {
-		let booster: Array<UniqueCard> = [];
+	generateBooster(targets: Targets, pickedCards?: Array<UniqueCard>): UniqueCard[] | MessageError {
+		let booster: Array<UniqueCard> = pickedCards ?? [];
 
 		let addedFoils = 0;
 		const localFoilRate = this.options.foilRate ?? foilRate;
@@ -1907,10 +1908,7 @@ class PlayBoosterFactory extends BoosterFactory {
 
 		// Make sure there are no negative counts
 		for (const key in updatedTargets) updatedTargets[key] = Math.max(0, updatedTargets[key]);
-		const rest = super.generateBooster(updatedTargets);
-		if (isMessageError(rest)) return rest;
-
-		return [...booster, ...rest];
+		return super.generateBooster(updatedTargets, booster);
 	}
 }
 
