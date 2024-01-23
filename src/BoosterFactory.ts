@@ -1866,8 +1866,11 @@ class PlayBoosterFactory extends BoosterFactory {
 		const updatedTargets = structuredClone(targets);
 		const booster: UniqueCard[] = [];
 
-		// We'll still try to honor the targets parameter. We'll be one common short in the end.
-		updatedTargets.common -= 3; // 10 -> 6 or 7
+		if (targets === DefaultBoosterTargets) {
+			updatedTargets.common -= 3; // 10 -> 6 or 7
+		} else {
+			updatedTargets.common = Math.max(1, updatedTargets.common - 2);
+		}
 
 		// 7th Common or The List
 		const theListRand = random.realZeroToOneInclusive();
