@@ -165,6 +165,15 @@ const communities = ref([
 			discord: "https://discord.gg/wRXzJFeRtz",
 		},
 	},
+	{
+		name: "Remastering Magic",
+		brief: "We at REMA are taking Limited to the next level, by combining the creativity of cubes with the balancing nature of the rarity system - made possible by Draftmancer! We run multiple remastered set drafts per week and play out the matches on XMage. Come and join, whether you want to take part in the remastering yourself, or just draft some cool sets!",
+		icon: "REMA.webp",
+		tags: ["Remastered", "Set design", "Cubes with rarity", "XMage"],
+		links: {
+			discord: "https://discord.gg/PnkqwGu6sf",
+		},
+	},
 ]);
 shuffleArray(communities.value);
 
