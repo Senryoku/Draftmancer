@@ -2235,6 +2235,11 @@
         "block": "Invasion",
         "icon": "img/sets/pls.svg"
     },
+    "plst": {
+        "code": "plst",
+        "fullName": "The List",
+        "icon": "img/sets/plst.svg"
+    },
     "pltr": {
         "code": "pltr",
         "fullName": "Tales of Middle-earth Promos",
@@ -2284,6 +2289,11 @@
         "code": "pm21",
         "fullName": "Core Set 2021 Promos",
         "icon": "img/sets/pm21.svg"
+    },
+    "pmat": {
+        "code": "pmat",
+        "fullName": "March of the Machine: The Aftermath Promos",
+        "icon": "img/sets/pmat.svg"
     },
     "pmbs": {
         "code": "pmbs",
@@ -3185,6 +3195,11 @@
         "fullName": "Urza's Legacy",
         "block": "Urza",
         "icon": "img/sets/ulg.svg"
+    },
+    "ulst": {
+        "code": "ulst",
+        "fullName": "The List (Unfinity Foil Edition)",
+        "icon": "img/sets/ulst.svg"
     },
     "uma": {
         "code": "uma",
