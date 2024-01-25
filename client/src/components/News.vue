@@ -1,7 +1,7 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
-			<em>January 26, 2023</em>
+			<em>January 26, 2024</em>
 			<ul>
 				<li>
 					<img src="img/sets/mkm.svg" class="set-icon" style="--invertedness: 100%" alt="MKM" /> Murders at
