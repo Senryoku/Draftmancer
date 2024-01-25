@@ -1,6 +1,22 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
+			<em>January 26, 2023</em>
+			<ul>
+				<li>
+					<img src="img/sets/mkm.svg" class="set-icon" style="--invertedness: 100%" alt="MKM" /> Murders at
+					Karlov Manor is now available! <br />
+					As always, new set, new boosters, there might be issues, I'll try to fix them as soon as possible!
+				</li>
+				<li>Bots will now join inactive draft queues to help them start more often.</li>
+				<li>
+					New "AddCard" draft effect (See
+					<a href="cubeformat.html#custom-cards" target="_blank">Cube format</a>).
+				</li>
+				<li>General maintenance.</li>
+			</ul>
+		</div>
+		<div class="news">
 			<em>December 16, 2023</em>
 			<ul>
 				<li>
@@ -46,17 +62,6 @@
 					clipboard behaviour.
 				</li>
 				<li>Optimized draft logs compression and decompression speed.</li>
-			</ul>
-		</div>
-		<div class="news">
-			<em>November 09, 2023</em>
-			<ul>
-				<li>
-					New experimental setting for cubes: <em>Per-booster settings</em>.
-					<br />
-					Allows you to adjust the number of picked or burned cards for each booster. See the
-					<a href="cubeformat.html#settings" target="_blank">Cube format documentation</a>.
-				</li>
 			</ul>
 		</div>
 	</div>

@@ -1,5 +1,13 @@
 [
 	{
+		"date": "26/01/2023",
+		"notes": [
+			"Murders at Karlov Manor support.",
+			"Bots in Draft Queues",
+			"'AddCards' draft effect."
+		]
+	},
+	{
 		"date": "16/12/2023",
 		"notes": [
 			"Partial support for Ravnica Remastered.",
