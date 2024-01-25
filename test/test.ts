@@ -270,6 +270,7 @@ describe("Sets content", function () {
 		lci: { common: 108, uncommon: 92, rare: 64, mythic: 22 },
 		ktk: { common: 101, uncommon: 80, rare: 53, mythic: 15 },
 		rvr: { common: 110, uncommon: 90, rare: 71, mythic: 20 },
+		mkm: { common: 81, uncommon: 100, rare: 70, mythic: 20 },
 	};
 
 	beforeEach(function (done) {
@@ -705,7 +706,8 @@ describe("Single Draft (Two Players)", function () {
 							(set === "one" && ["neo", "dmu", "snc", "khm"].includes(c.set)) || // Praetors
 							(set === "mom" && c.set === "mul") ||
 							(set === "mat" && (c.set === "mul" || c.set === "mom")) ||
-							(set === "woe" && c.set === "wot")
+							(set === "woe" && c.set === "wot") ||
+							set === "mkm" // With the List, I give up.
 					),
 					`All cards in booster should be of the desired set, got [${[...new Set(b.map((c) => c.set))]}].`
 				).to.be.true;

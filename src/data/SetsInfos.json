@@ -799,11 +799,6 @@
         "fullName": "Tales of Middle-earth Front Cards",
         "icon": "img/sets/fltr.svg"
     },
-    "fmb1": {
-        "code": "fmb1",
-        "fullName": "Mystery Booster Retail Edition Foils",
-        "icon": "img/sets/fmb1.svg"
-    },
     "fmom": {
         "code": "fmom",
         "fullName": "March of the Machine Jumpstart Front Cards",
@@ -1317,11 +1312,6 @@
         "fullName": "March of the Machine: The Aftermath",
         "icon": "img/sets/mat.svg"
     },
-    "mb1": {
-        "code": "mb1",
-        "fullName": "Mystery Booster",
-        "icon": "img/sets/mb1.svg"
-    },
     "mbs": {
         "code": "mbs",
         "fullName": "Mirrodin Besieged",
@@ -1390,6 +1380,11 @@
         "fullName": "Mirage",
         "block": "Mirage",
         "icon": "img/sets/mir.svg"
+    },
+    "mkc": {
+        "code": "mkc",
+        "fullName": "Murders at Karlov Manor Commander",
+        "icon": "img/sets/mkc.svg"
     },
     "mkm": {
         "code": "mkm",
@@ -1689,12 +1684,6 @@
         "fullName": "Adventures in the Forgotten Realms Promos",
         "icon": "img/sets/pafr.svg"
     },
-    "pagl": {
-        "code": "pagl",
-        "fullName": "Angels: They're Just Like Us but Cooler and with Wings",
-        "block": "Commander",
-        "icon": "img/sets/pagl.svg"
-    },
     "pakh": {
         "code": "pakh",
         "fullName": "Amonkhet Promos",
@@ -1869,11 +1858,6 @@
         "fullName": "Coldsnap Promos",
         "block": "Ice Age",
         "icon": "img/sets/pcsp.svg"
-    },
-    "pctb": {
-        "code": "pctb",
-        "fullName": "From Cute to Brute",
-        "icon": "img/sets/pctb.svg"
     },
     "pcy": {
         "code": "pcy",
@@ -2094,11 +2078,11 @@
         "block": "Heroes of the Realm",
         "icon": "img/sets/ph21.svg"
     },
-    "phed": {
-        "code": "phed",
-        "fullName": "Heads I Win, Tails You Lose",
-        "block": "Commander",
-        "icon": "img/sets/phed.svg"
+    "ph22": {
+        "code": "ph22",
+        "fullName": "2022 Heroes of the Realm",
+        "block": "Heroes of the Realm",
+        "icon": "img/sets/ph22.svg"
     },
     "phou": {
         "code": "phou",
@@ -2197,6 +2181,11 @@
         "fullName": "Year of the Rabbit 2023",
         "icon": "img/sets/pl23.svg"
     },
+    "pl24": {
+        "code": "pl24",
+        "fullName": "Year of the Dragon 2024",
+        "icon": "img/sets/pl24.svg"
+    },
     "plc": {
         "code": "plc",
         "fullName": "Planar Chaos",
@@ -2234,11 +2223,6 @@
         "block": "Onslaught",
         "icon": "img/sets/plgn.svg"
     },
-    "plist": {
-        "code": "plist",
-        "fullName": "The List",
-        "icon": "img/sets/plist.svg"
-    },
     "plrw": {
         "code": "plrw",
         "fullName": "Lorwyn Promos",
@@ -2250,6 +2234,11 @@
         "fullName": "Planeshift",
         "block": "Invasion",
         "icon": "img/sets/pls.svg"
+    },
+    "plst": {
+        "code": "plst",
+        "fullName": "The List",
+        "icon": "img/sets/plst.svg"
     },
     "pltr": {
         "code": "pltr",
@@ -2300,6 +2289,11 @@
         "code": "pm21",
         "fullName": "Core Set 2021 Promos",
         "icon": "img/sets/pm21.svg"
+    },
+    "pmat": {
+        "code": "pmat",
+        "fullName": "March of the Machine: The Aftermath Promos",
+        "icon": "img/sets/pmat.svg"
     },
     "pmbs": {
         "code": "pmbs",
@@ -2586,6 +2580,11 @@
         "code": "pss3",
         "fullName": "M19 Standard Showdown",
         "icon": "img/sets/pss3.svg"
+    },
+    "pss4": {
+        "code": "pss4",
+        "fullName": "Murders at Karlov Manor Standard Showdown",
+        "icon": "img/sets/pss4.svg"
     },
     "psth": {
         "code": "psth",
@@ -3197,6 +3196,11 @@
         "block": "Urza",
         "icon": "img/sets/ulg.svg"
     },
+    "ulst": {
+        "code": "ulst",
+        "fullName": "The List (Unfinity Foil Edition)",
+        "icon": "img/sets/ulst.svg"
+    },
     "uma": {
         "code": "uma",
         "fullName": "Ultimate Masters",
@@ -3216,11 +3220,6 @@
         "code": "unh",
         "fullName": "Unhinged",
         "icon": "img/sets/unh.svg"
-    },
-    "uplist": {
-        "code": "uplist",
-        "fullName": "The List (Unfinity Foil Edition)",
-        "icon": "img/sets/uplist.svg"
     },
     "usg": {
         "code": "usg",
@@ -3480,6 +3479,11 @@
         "code": "planeshifted_snc",
         "fullName": "Planeshifted New Capenna",
         "icon": "img/sets/snc.svg"
+    },
+    "mb1": {
+        "code": "mb1",
+        "fullName": "Mystery Booster",
+        "icon": "img/sets/mb1.svg"
     },
     "mb1_convention_2019": {
         "code": "mb1_convention_2019",

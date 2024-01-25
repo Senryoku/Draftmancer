@@ -1759,5 +1759,6 @@ See: https://stackoverflow.com/questions/52937708/why-does-applying-a-css-filter
 	box-shadow:
 		0 4px 8px 0 rgba(0, 0, 0, 0.2),
 		0 6px 20px 0 rgba(0, 0, 0, 0.19);
-	width: 100%;
+	max-width: 100%;
+	height: auto;
 }

@@ -189,14 +189,6 @@ export default defineComponent({
 		opacity 0.5s;
 }
 
-.foil .card-image {
-	position: relative;
-	overflow: hidden;
-	filter: brightness(var(--brightness));
-	transform: perspective(1000px) rotate3d(0, 1, 0, var(--transform-rotation-x))
-		rotate3d(1, 0, 0, var(--transform-rotation-y));
-}
-
 .card-column .foil .card-image {
 	padding-bottom: 141.5%;
 }
@@ -225,60 +217,85 @@ export default defineComponent({
 	padding: 0.2em 0;
 }
 
-.foil:not(:hover) .card-image,
-.foil:not(:hover) .card-image:after,
-.foil:not(:hover) .card-image:before {
-	transition: all 0.5s ease-out;
+.foil:not(.booster-open-enter-active) {
+	.card-image {
+		position: relative;
+		overflow: hidden;
+		filter: brightness(var(--brightness));
+		transform: perspective(1000px) rotate3d(0, 1, 0, var(--transform-rotation-x))
+			rotate3d(1, 0, 0, var(--transform-rotation-y));
+	}
+
+	:not(:hover) {
+		.card-image,
+		.card-image:after,
+		.card-image:before {
+			transition: all 0.5s ease-out;
+		}
+	}
+
+	.card-image:after,
+	.card-image:before {
+		content: "";
+
+		position: absolute;
+		width: 100%;
+		padding-bottom: calc(1.41 * 300%);
+		top: calc(-75% + var(--foil-initial-top));
+		left: calc(0% + var(--foil-initial-left));
+		transform: rotate(30deg);
+	}
+
+	.card-image:after {
+		background: rgba(255, 255, 255, 0.5);
+		--saturation: 100%;
+		--lightness: 50%;
+		background: linear-gradient(
+			to right,
+			hsla(0, var(--saturation), var(--lightness), 0),
+			hsl(40, var(--saturation), var(--lightness)),
+			hsl(80, var(--saturation), var(--lightness)),
+			hsl(120, var(--saturation), var(--lightness)),
+			hsl(160, var(--saturation), var(--lightness)),
+			hsl(200, var(--saturation), var(--lightness)),
+			hsl(240, var(--saturation), var(--lightness)),
+			hsl(280, var(--saturation), var(--lightness)),
+			hsl(320, var(--saturation), var(--lightness)),
+			hsla(360, var(--saturation), var(--lightness), 0)
+		);
+		mix-blend-mode: hue;
+
+		animation: fade-in 0.15s linear forwards;
+	}
+
+	.card-image:before {
+		background: rgba(255, 255, 255, 0.25);
+		background: linear-gradient(
+			to right,
+			rgba(255, 255, 255, 0) 35%,
+			rgba(255, 255, 255, 0.04) 40%,
+			rgba(255, 255, 255, 0.2) 45%,
+			rgba(255, 255, 255, 0.24) 49%,
+			rgba(255, 255, 255, 0.25) 50%,
+			rgba(255, 255, 255, 0.24) 51%,
+			rgba(255, 255, 255, 0.2) 55%,
+			rgba(255, 255, 255, 0.04) 60%,
+			rgba(255, 255, 255, 0) 65%,
+			rgba(255, 255, 255, 0) 100%
+		);
+		mix-blend-mode: lighten;
+		z-index: 1;
+
+		animation: fade-in 0.15s linear forwards;
+	}
 }
 
-.foil .card-image:after,
-.foil .card-image:before {
-	content: "";
-
-	position: absolute;
-	width: 100%;
-	padding-bottom: calc(1.41 * 300%);
-	top: calc(-75% + var(--foil-initial-top));
-	left: calc(0% + var(--foil-initial-left));
-	transform: rotate(30deg);
-}
-
-.foil .card-image:after {
-	background: rgba(255, 255, 255, 0.5);
-	--saturation: 100%;
-	--lightness: 50%;
-	background: linear-gradient(
-		to right,
-		hsla(0, var(--saturation), var(--lightness), 0),
-		hsl(40, var(--saturation), var(--lightness)),
-		hsl(80, var(--saturation), var(--lightness)),
-		hsl(120, var(--saturation), var(--lightness)),
-		hsl(160, var(--saturation), var(--lightness)),
-		hsl(200, var(--saturation), var(--lightness)),
-		hsl(240, var(--saturation), var(--lightness)),
-		hsl(280, var(--saturation), var(--lightness)),
-		hsl(320, var(--saturation), var(--lightness)),
-		hsla(360, var(--saturation), var(--lightness), 0)
-	);
-	mix-blend-mode: hue;
-}
-
-.foil .card-image:before {
-	background: rgba(255, 255, 255, 0.25);
-	background: linear-gradient(
-		to right,
-		rgba(255, 255, 255, 0) 35%,
-		rgba(255, 255, 255, 0.04) 40%,
-		rgba(255, 255, 255, 0.2) 45%,
-		rgba(255, 255, 255, 0.24) 49%,
-		rgba(255, 255, 255, 0.25) 50%,
-		rgba(255, 255, 255, 0.24) 51%,
-		rgba(255, 255, 255, 0.2) 55%,
-		rgba(255, 255, 255, 0.04) 60%,
-		rgba(255, 255, 255, 0) 65%,
-		rgba(255, 255, 255, 0) 100%
-	);
-	mix-blend-mode: lighten;
-	z-index: 1;
+@keyframes fade-in {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
 }
 </style>

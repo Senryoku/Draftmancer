@@ -462,6 +462,12 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
                 selection['in_booster'] = int(c['collector_number']) > 0 and int(c['collector_number']) <= 291
             except:
                 selection['in_booster'] = False
+                
+        if c['set'] == "mkm":
+            try:
+                selection['in_booster'] = int(c['collector_number']) > 0 and int(c['collector_number']) < 272
+            except:
+                selection['in_booster'] = False
 
         if c['layout'] == "split":
             if 'Aftermath' in c['keywords']:
@@ -727,6 +733,23 @@ array.sort(key=lambda c: c['set'])
 groups = groupby(array, lambda c: c['set'])
 setinfos = {}
 
+# Convert The List card names files to their corresponding IDs. Prefer plst version if available.
+# This is extremely ineficient, I don't care right now.
+for the_list_file in glob.glob("src/data/TheList/*.txt"):
+    the_list_cards = {}
+    with open(the_list_file, 'r', encoding="utf8") as file:
+        print("Processing: ", the_list_file)
+        for line in file:
+            name = line.strip().split('(')[0].strip()
+            cset = line.strip().split('(')[1].split(')')[0].strip().lower()
+            try:
+                c = next(v for k, v in cards.items() if v["name"] == name and (v["set"] == "plist" or v["set"] == "plst"))
+            except:
+                c = next(v for k, v in cards.items() if v["name"] == name and v["set"] == cset) 
+            if c["rarity"] not in the_list_cards:
+                the_list_cards[c["rarity"]] = []
+            the_list_cards[c["rarity"]].append(c["id"])
+    json.dump(the_list_cards, open(the_list_file.replace(".txt", ".json"), 'w', encoding="utf8"), indent=2)
 
 def getIcon(mtgset, icon_path):
     if not os.path.isfile("client/public/" + icon_path): # or filecmp.cmp("client/public/" + icon_path, "client/public/img/sets/default.svg", shallow=False):
@@ -784,19 +807,22 @@ setinfos["planeshifted_snc"].update({"code": "planeshifted_snc",
                                      "isPrimary": True,
                                      })
 
-setinfos["mb1_convention_2019"] = {}
-setinfos["mb1_convention_2019"].update(setinfos["mb1"])
-setinfos["mb1_convention_2019"].update({"code": "mb1_convention_2019",
-                                     "fullName": "Mystery Booster Convention 2019",
-                                     "isPrimary": True,
-                                     })
+setinfos["mb1"] = {"code": "mb1",
+                                   "fullName": "Mystery Booster",
+                                   "icon": "img/sets/mb1.svg",
+                                   "isPrimary": True,
+                                   }
+setinfos["mb1_convention_2019"] = {"code": "mb1_convention_2019",
+                                   "fullName": "Mystery Booster Convention 2019",
+                                   "icon": "img/sets/mb1.svg",
+                                   "isPrimary": True,
+                                   }
 PrimarySets.append("mb1_convention_2019")
-setinfos["mb1_convention_2021"] = {}
-setinfos["mb1_convention_2021"].update(setinfos["mb1"])
-setinfos["mb1_convention_2021"].update({"code": "mb1_convention_2021",
-                                     "fullName": "Mystery Booster Convention 2021",
-                                     "isPrimary": True,
-                                     })
+setinfos["mb1_convention_2021"] = {"code": "mb1_convention_2021",
+                                   "fullName": "Mystery Booster Convention 2021",
+                                   "icon": "img/sets/mb1.svg",
+                                   "isPrimary": True,
+                                   }
 PrimarySets.append("mb1_convention_2021")
 
 # Add Portal sets as draftable (They're not meant to be drafted, but some users want to try anyway!) 
@@ -830,6 +856,6 @@ constants = {}
 with open("src/data/constants.json", 'r', encoding="utf8") as constantsFile:
     constants = json.loads(constantsFile.read())
 constants['PrimarySets'] = [
-    s for s in PrimarySets if s in setinfos and s not in subsets and s not in ["ren", "rin", "a22", "y22", "j22", "sis", "ltc", "who", "wot", "mkm"]]  # Exclude some codes that are actually part of larger sets (tsb, fmb1, h1r... see subsets), or aren't out yet
+    s for s in PrimarySets if s in setinfos and s not in subsets and s not in ["ren", "rin", "a22", "y22", "j22", "sis", "ltc", "who", "wot"]]  # Exclude some codes that are actually part of larger sets (tsb, fmb1, h1r... see subsets), or aren't out yet
 with open("src/data/constants.json", 'w', encoding="utf8") as constantsFile:
     json.dump(constants, constantsFile, ensure_ascii=False, indent=4)

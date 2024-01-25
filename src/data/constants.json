@@ -77,7 +77,8 @@
         "ltr",
         "woe",
         "lci",
-        "ktk"
+        "ktk",
+        "mkm"
     ],
     "AlchemySets": [
         "hbg",
@@ -95,7 +96,8 @@
         "mom",
         "mat",
         "woe",
-        "lci"
+        "lci",
+        "mkm"
     ],
     "BasicLandNames": {
         "en": {
@@ -304,6 +306,7 @@
         }
     ],
     "PrimarySets": [
+        "mkm",
         "rvr",
         "lci",
         "woe",
@@ -331,7 +334,7 @@
         "khm",
         "cmr",
         "klr",
-        "plist",
+        "plst",
         "znr",
         "akr",
         "2xm",
@@ -339,7 +342,6 @@
         "m21",
         "iko",
         "thb",
-        "mb1",
         "eld",
         "m20",
         "mh1",

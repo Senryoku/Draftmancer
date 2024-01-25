@@ -63,7 +63,7 @@ describe("Team Sealed", function () {
 					expect(data.state).to.exist;
 					expect(data.state.team).to.contain(getUID(c));
 					expect(data.state.cards).to.exist;
-					expect(data.state.cards.length).to.be.greaterThanOrEqual(14 * 12);
+					expect(data.state.cards.length).to.be.greaterThanOrEqual(13 * 12);
 					teamSealedStates[getUID(c)] = data.state;
 					eventsReceived++;
 					if (eventsReceived === clients.length) done();

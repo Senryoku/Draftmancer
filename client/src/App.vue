@@ -1754,8 +1754,8 @@
 							<a href="/draftqueue">
 								<div class="draft-queue-banner">
 									<img
-										src="./assets/img/ktk.webp"
-										alt="Practice Khans of Tarkir draft with human players right now in the Draft Queue!"
+										src="./assets/img/mkm_draft_queue_banner.webp"
+										alt="Practice Murders at Karlov Manor draft with human players right now in the Draft Queue!"
 										width="500"
 										height="260"
 									/>

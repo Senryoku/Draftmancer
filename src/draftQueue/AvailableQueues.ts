@@ -1,7 +1,8 @@
 import { QueueDescription } from "./QueueDescription";
 
 export const AvailableQueues: readonly QueueDescription[] = [
-	{ id: "ktk", name: "Khans of Tarkir", playerCount: 8, setCode: "ktk" },
+	{ id: "mkm", name: "Murders at Karlov Manor", playerCount: 8, setCode: "mkm" },
+	//{ id: "ktk", name: "Khans of Tarkir", playerCount: 8, setCode: "ktk" },
 	{ id: "lci", name: "The Lost Caverns of Ixalan", playerCount: 8, setCode: "lci" },
 	{ id: "woe", name: "Wilds of Eldraine", playerCount: 8, setCode: "woe" },
 	// { id: "cmm", name: "Commander Masters", playerCount: 8, setCode: "cmm", settings: { pickedCardsPerRound: 2 } },
