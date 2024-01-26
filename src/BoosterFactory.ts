@@ -1896,9 +1896,19 @@ class PlayBoosterFactory extends BoosterFactory {
 		for (let i = 0; i < 2; ++i) {
 			const rarityRoll = random.realZeroToOneInclusive();
 			let rarity = "common";
-			// FIXME: Actual rates unknown, using previous foil rates for now.
-			for (const r in foilRarityRates)
-				if (rarityRoll <= foilRarityRates[r] && this.cardPool[rarity].size > 0) {
+			// NOTE: This mimics the ratios of wildcard set boosters described here: https://magic.wizards.com/en/news/making-magic/set-boosters-2020-07-25
+			//         Common:   0.7
+			//         Uncommon: 0.175
+			//         Rare:     0.125
+			//       Will have to be reviewed once actual data is available.
+			const thresholds = {
+				mythic: (this.options.mythicRate ?? 1.0 / 7.0) * 0.125,
+				rare: 0.125,
+				uncommon: 0.125 + 0.175,
+				common: 1.0,
+			};
+			for (const r in thresholds)
+				if (rarityRoll <= thresholds[r as keyof typeof thresholds] && this.cardPool[rarity].size > 0) {
 					rarity = r;
 					break;
 				}
@@ -1938,7 +1948,7 @@ class MKMBoosterFactory extends PlayBoosterFactory {
 			"2cf97898-1e05-4c0e-896f-ba6713bf6a7b",
 		])
 			spg.set(cid, options.maxDuplicates?.[getCard(cid).rarity] ?? DefaultMaxDuplicates);
-		super(mkmTheList, spg, cardPool, landSlot, options);
+		super(mkmTheList, spg, cardPool, landSlot, { ...options, mythicRate: getSetMythicRate("mkm") });
 	}
 }
 
