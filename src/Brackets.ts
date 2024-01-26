@@ -27,7 +27,7 @@ export function isTeamBracket(obj: Bracket): obj is TeamBracket {
 export class SwissBracket extends Bracket {
 	swiss: boolean = true;
 	constructor(players: BracketPlayer[]) {
-		super(players, players.length === 6 ? 9 : 12);
+		super(players, { 6: 9, 8: 12, 10: 15 }[players.length]);
 	}
 }
 

@@ -3058,10 +3058,11 @@ export default defineComponent({
 		},
 		generateSwissBracket() {
 			if (this.userID != this.sessionOwner) return;
-			const players =
-				this.sessionUsers.length == 6
-					? this.prepareBracketPlayers([0, 3, 1, 4, 2, 5])
-					: this.prepareBracketPlayers([0, 4, 2, 6, 1, 5, 3, 7]);
+			const pairings = { 6: [0, 3, 1, 4, 2, 5], 8: [0, 4, 2, 6, 1, 5, 3, 7], 10: [0, 5, 1, 6, 2, 7, 3, 8, 4, 9] }[
+				this.sessionUsers.length
+			];
+			if (!pairings) return;
+			const players = this.prepareBracketPlayers(pairings);
 			this.socket.emit("generateSwissBracket", players, (answer) => {
 				if (answer.code === 0) this.displayedModal = "bracket";
 				else if (answer.error) Alert.fire(answer.error);

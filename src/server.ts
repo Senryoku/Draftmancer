@@ -1229,11 +1229,11 @@ function generateSwissBracket(
 ) {
 	if (!validateBracketPlayersType(players, ack)) return;
 	const realPlayerCount = players.filter((u) => u).length;
-	if (realPlayerCount !== 8 && realPlayerCount !== 6) {
+	if (![6, 8, 10].includes(realPlayerCount)) {
 		ack?.(
 			new SocketError(
 				"Error generating Swiss bracket",
-				"Swiss brackets are only available for pools of 6 or 8 players exactly."
+				"Swiss brackets are only available for pools of 6, 8 or 10 players exactly."
 			)
 		);
 		return;

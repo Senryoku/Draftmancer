@@ -157,10 +157,10 @@ export default defineComponent({
 		const type = !inst.bracket
 			? "single"
 			: isDoubleBracket(inst.bracket)
-			? "double"
-			: isSwissBracket(inst.bracket)
-			? "swiss"
-			: "single";
+			  ? "double"
+			  : isSwissBracket(inst.bracket)
+			    ? "swiss"
+			    : "single";
 		return {
 			selectedUser: null,
 			typeToGenerate: type,
@@ -233,10 +233,10 @@ export default defineComponent({
 			return !this.bracket
 				? "single"
 				: isDoubleBracket(this.bracket)
-				? "double"
-				: isSwissBracket(this.bracket)
-				? "swiss"
-				: "single";
+				  ? "double"
+				  : isSwissBracket(this.bracket)
+				    ? "swiss"
+				    : "single";
 		},
 		matches() {
 			let m: Match[][] = [[], [], []];
@@ -244,7 +244,7 @@ export default defineComponent({
 			const winner = this.winner;
 
 			if (isSwissBracket(this.bracket)) {
-				if (this.realPlayerCount() !== 6 && this.realPlayerCount() !== 8) return m;
+				if (![6, 8, 10].includes(this.realPlayerCount())) return m;
 
 				const alreadyPaired = [];
 				for (let i = 0; i < this.bracket.players.length / 2; ++i) {
@@ -263,7 +263,7 @@ export default defineComponent({
 						records[player.userID] = 0;
 					}
 
-				let groupPairingFallback = this.realPlayerCount() == 6;
+				let groupPairingFallback = this.realPlayerCount() != 8;
 
 				for (let round = 0; round < 2; ++round) {
 					for (let i = 0; i < m[round].length; ++i) {
