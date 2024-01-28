@@ -1880,15 +1880,15 @@ class PlayBoosterFactory extends BoosterFactory {
 			if (theListRand < 0.875 + 0.0938) {
 				// Common or Uncommon from The List
 				const rarity = random.bool(1 / 3) ? "uncommon" : "common";
-				booster.push(pickCard(this.theList[rarity], []));
+				booster.push(pickCard(this.theList[rarity], booster));
 			} else if (theListRand < 0.875 + 0.0938 + 0.0156) {
 				// Rare or Mythic from The List.
 				// FIXME: Unknown rate.
 				const rarity = random.bool(1 / 7) ? "mythic" : "rare";
-				booster.push(pickCard(this.theList[rarity], []));
+				booster.push(pickCard(this.theList[rarity], booster));
 			} else {
 				// Special Guests from The List
-				booster.push(pickCard(this.spg, []));
+				booster.push(pickCard(this.spg, booster));
 			}
 		}
 
@@ -1912,7 +1912,7 @@ class PlayBoosterFactory extends BoosterFactory {
 					rarity = r;
 					break;
 				}
-			booster.push(pickCard(this.cardPool[rarity], []));
+			booster.push(pickCard(this.cardPool[rarity], booster));
 		}
 		booster[booster.length - 1].foil = true;
 
@@ -1923,8 +1923,25 @@ class PlayBoosterFactory extends BoosterFactory {
 }
 
 // Murders at Karlov Manor
-class MKMBoosterFactory extends PlayBoosterFactory {
+// Should extends PlayBoosterFactory, but the rare lands irregularities are annoying.
+// https://magic.wizards.com/en/news/feature/collecting-murders-at-karlov-manor
+class MKMBoosterFactory extends BoosterFactory {
+	theList: SlotedCardPool;
+	spg: CardPool = new CardPool(); // Special Guests
+	rareLands: SlotedCardPool;
+	wildcardFoilPool: SlotedCardPool;
+
 	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
+		const [rareLands, filteredCardPool] = filterCardPool(cardPool, (cid: CardID) => {
+			const c = getCard(cid);
+			return c.rarity === "rare" && c.type.includes("Land");
+		});
+		const opt = { ...options, mythicRate: getSetMythicRate("mkm") };
+		opt.foil = false; // We'll handle the garanteed foil slot ourselves.
+		super(filteredCardPool, landSlot, opt);
+		this.rareLands = rareLands;
+		this.wildcardFoilPool = cardPool;
+
 		const mkmTheList: Record<string, CardPool> = {};
 		for (const r in TheList.mkm) {
 			if (!mkmTheList[r]) mkmTheList[r] = new CardPool();
@@ -1932,8 +1949,8 @@ class MKMBoosterFactory extends PlayBoosterFactory {
 				mkmTheList[r].set(cid, options.maxDuplicates?.[r] ?? DefaultMaxDuplicates);
 			}
 		}
+		this.theList = mkmTheList;
 
-		const spg = new CardPool();
 		for (const cid of [
 			// Not exactly elegant, but it's only 10 cards...
 			"d0ae5ac7-4cd9-40d7-b3a7-e7d493f2bf7a",
@@ -1947,8 +1964,78 @@ class MKMBoosterFactory extends PlayBoosterFactory {
 			"03c8654e-900a-4720-a4a1-1107d6271c70",
 			"2cf97898-1e05-4c0e-896f-ba6713bf6a7b",
 		])
-			spg.set(cid, options.maxDuplicates?.[getCard(cid).rarity] ?? DefaultMaxDuplicates);
-		super(mkmTheList, spg, cardPool, landSlot, { ...options, mythicRate: getSetMythicRate("mkm") });
+			this.spg.set(cid, options.maxDuplicates?.[getCard(cid).rarity] ?? DefaultMaxDuplicates);
+	}
+
+	generateBooster(targets: Targets) {
+		const updatedTargets = structuredClone(targets);
+		const booster: UniqueCard[] = [];
+
+		if (targets === DefaultBoosterTargets) {
+			updatedTargets.common -= 3; // 10 -> 6 or 7
+		} else {
+			updatedTargets.common = Math.max(1, updatedTargets.common - 2);
+		}
+
+		// 7th Common or The List
+		const theListRand = random.realZeroToOneInclusive();
+		if (theListRand > 0.875) {
+			--updatedTargets.common;
+			if (theListRand < 0.875 + 0.0938) {
+				// Common or Uncommon from The List
+				const rarity = random.bool(1 / 3) ? "uncommon" : "common";
+				booster.push(pickCard(this.theList[rarity], booster));
+			} else if (theListRand < 0.875 + 0.0938 + 0.0156) {
+				// Rare or Mythic from The List.
+				// FIXME: Unknown rate.
+				const rarity = random.bool(1 / 7) ? "mythic" : "rare";
+				booster.push(pickCard(this.theList[rarity], booster));
+			} else {
+				// Special Guests from The List
+				booster.push(pickCard(this.spg, booster));
+			}
+		}
+
+		// Two "wildcards", one nonfoil and one foil
+		// NOTE: This mimics the ratios of wildcard set boosters described here: https://magic.wizards.com/en/news/making-magic/set-boosters-2020-07-25
+		//         Common:   0.7
+		//         Uncommon: 0.175
+		//         Rare:     0.125
+		//       Will have to be reviewed once actual data is available.
+		const thresholds = {
+			mythic: (this.options.mythicRate ?? 1.0 / 7.0) * 0.125,
+			rare: 0.125,
+			uncommon: 0.125 + 0.175,
+			common: 1.0,
+		};
+		// The first has a 1/6 chance to be a rare dual land.
+		if (random.bool(1.0 / 6.0)) {
+			booster.push(pickCard(this.rareLands.rare, booster));
+		} else {
+			const rarityRoll = random.realZeroToOneInclusive();
+			let rarity = "common";
+			for (const r in thresholds)
+				if (rarityRoll <= thresholds[r as keyof typeof thresholds] && this.cardPool[rarity].size > 0) {
+					rarity = r;
+					break;
+				}
+			booster.push(pickCard(this.cardPool[rarity], booster));
+		}
+
+		// Traditional foil wildcard. This one can also be a rare dual land.
+		const rarityRoll = random.realZeroToOneInclusive();
+		let rarity = "common";
+		for (const r in thresholds)
+			if (rarityRoll <= thresholds[r as keyof typeof thresholds] && this.wildcardFoilPool[rarity].size > 0) {
+				rarity = r;
+				break;
+			}
+		booster.push(pickCard(this.wildcardFoilPool[rarity], [])); // NOTE: This is probably not duplicate protected.
+		booster[booster.length - 1].foil = true;
+
+		// Make sure there are no negative counts
+		for (const key in updatedTargets) updatedTargets[key] = Math.max(0, updatedTargets[key]);
+		return super.generateBooster(updatedTargets, booster);
 	}
 }
 
