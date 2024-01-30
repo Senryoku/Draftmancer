@@ -774,6 +774,11 @@
         "fullName": "The Brothers' War Jumpstart Front Cards",
         "icon": "img/sets/fbro.svg"
     },
+    "fclu": {
+        "code": "fclu",
+        "fullName": "Ravnica: Clue Edition Front Cards",
+        "icon": "img/sets/fclu.svg"
+    },
     "fdmu": {
         "code": "fdmu",
         "fullName": "Dominaria United Jumpstart Front Cards",
@@ -2583,7 +2588,7 @@
     },
     "pss4": {
         "code": "pss4",
-        "fullName": "Murders at Karlov Manor Standard Showdown",
+        "fullName": "MKM Standard Showdown",
         "icon": "img/sets/pss4.svg"
     },
     "psth": {
