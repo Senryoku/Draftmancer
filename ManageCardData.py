@@ -742,9 +742,20 @@ for the_list_file in glob.glob("src/data/TheList/*.txt"):
         for line in file:
             name = line.strip().split('(')[0].strip()
             cset = line.strip().split('(')[1].split(')')[0].strip().lower()
-            try:
-                c = next(v for k, v in cards.items() if v["name"] == name and (v["set"] == "plist" or v["set"] == "plst"))
-            except:
+
+            # Search for the plst version
+            candidates = [v for k, v in cards.items() if v["name"] == name and (v["set"] == "plist" or v["set"] == "plst")]
+            if len(candidates) > 0:
+                c = candidates[0]
+                # Multiple possibiliies, search for the best match
+                if len(candidates) > 1:
+                    for card in candidates:
+                        # Scryfall includes the code of the original set into the collector number
+                        if cset in card["collector_number"].lower():
+                            c = card
+                            break
+            else:
+                # Revert to the original if not available
                 c = next(v for k, v in cards.items() if v["name"] == name and v["set"] == cset) 
             if c["rarity"] not in the_list_cards:
                 the_list_cards[c["rarity"]] = []
