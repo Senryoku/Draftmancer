@@ -90,7 +90,8 @@ export function validateCustomCard(inputCard: any): SocketError | Card {
 		checkPropertyTypeOrUndefined(inputCard, "in_booster", "boolean") ??
 		checkPropertyTypeOrUndefined(inputCard, "layout", "string") ??
 		checkPropertyTypeOrUndefined(inputCard, "printed_names", "object") ??
-		checkPropertyTypeOrUndefined(inputCard, "collector_number", "string");
+		checkPropertyTypeOrUndefined(inputCard, "collector_number", "string") ??
+		checkPropertyTypeOrUndefined(inputCard, "foil", "boolean");
 	if (typeError) return typeError;
 
 	const valErr = validationError.bind(null, inputCard);
@@ -148,6 +149,7 @@ export function validateCustomCard(inputCard: any): SocketError | Card {
 	card.layout = inputCard.layout;
 	card.printed_names = inputCard.printed_names ?? { en: inputCard.name };
 	card.image_uris = inputCard.image_uris;
+	card.foil = inputCard.foil;
 
 	if ("back" in inputCard) {
 		const ret = validateCustomCardFace(inputCard.back);
