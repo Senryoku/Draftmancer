@@ -521,6 +521,7 @@ CustomCard {
 	back?: <type>CardFace</type>;
 	related_cards?: <type>Array&lt;CardID | CardFace&gt;</type>; <comment>// You can use this field to display some related cards when right clicking on the card. CardID can be the name of another custom card, or a Scryfall ID.</comment>
 	draft_effects?: <type>Array&lt;DraftEffect&gt;</type>; <comment>// See the list of valid effects bellow.</comment>
+	foil?: <type>boolean</type>; <comment>// Override the default finish of the card</comment>
 }</pre>
 				The mana cost field follows
 				<a href="https://scryfall.com/docs/api/card-symbols/all" target="_blank">Scryfall Symbology</a>

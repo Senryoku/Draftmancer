@@ -91,6 +91,7 @@ export class Card {
 	related_cards?: Array<CardID | CardFace>;
 	draft_effects?: Array<DraftEffect>;
 	is_custom?: boolean;
+	foil?: boolean; // Allows specifying a card as foil by default (Mostly useful for cubes). For standard cards available in both formats, see UniqueCard.foil.
 }
 
 export type DeckBasicLands = { [key in CardColor]: number };
