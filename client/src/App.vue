@@ -1669,8 +1669,10 @@
 							class="collapsed-sideboard"
 						>
 							<div class="section-title">
-								<h2>Sideboard ({{ sideboard.length }})</h2>
-								<div class="controls">
+								<h2>
+									Sideboard <span style="font-size: 0.8em">({{ sideboard.length }})</span>
+								</h2>
+								<div class="controls" style="margin-left: auto">
 									<font-awesome-icon
 										class="clickable"
 										icon="fa-regular fa-window-maximize"
