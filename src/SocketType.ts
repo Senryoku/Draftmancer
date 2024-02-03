@@ -265,6 +265,9 @@ export interface ClientToServerEvents {
 	updateBracket: (results: Array<[number, number]>) => void;
 	updateDeckLands: (lands: DeckBasicLands) => void;
 	moveCard: (uniqueID: UniqueCardID, destStr: string) => void;
+	swapDeckAndSideboard: () => void;
+	moveAllToDeck: () => void;
+	moveAllToSideboard: () => void;
 	removeBasicsFromDeck: () => void;
 	retrieveUpdatedDraftLogs: (logSessionID: SessionID, timestamp: number, lastUpdated: number | undefined) => void;
 

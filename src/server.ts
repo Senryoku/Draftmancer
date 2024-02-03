@@ -508,6 +508,28 @@ function moveCard(userID: UserID, sessionID: SessionID, uniqueID: UniqueCardID, 
 	}
 }
 
+function swapDeckAndSideboard(userID: UserID, sessionID: SessionID) {
+	if (!Connections[userID]?.pickedCards) return;
+	const tmp = Connections[userID].pickedCards.main;
+	Connections[userID].pickedCards.main = Connections[userID].pickedCards.side;
+	Connections[userID].pickedCards.side = tmp;
+	Sessions[sessionID].updateDecklist(userID);
+}
+
+function moveAllToDeck(userID: UserID, sessionID: SessionID) {
+	if (!Connections[userID]?.pickedCards) return;
+	Connections[userID].pickedCards.main.push(...Connections[userID].pickedCards.side);
+	Connections[userID].pickedCards.side = [];
+	Sessions[sessionID].updateDecklist(userID);
+}
+
+function moveAllToSideboard(userID: UserID, sessionID: SessionID) {
+	if (!Connections[userID]?.pickedCards) return;
+	Connections[userID].pickedCards.side.push(...Connections[userID].pickedCards.main);
+	Connections[userID].pickedCards.main = [];
+	Sessions[sessionID].updateDecklist(userID);
+}
+
 function removeBasicsFromDeck(userID: UserID, sessionID: SessionID) {
 	Sessions[sessionID].removeBasicsFromDeck(userID);
 }
@@ -1491,6 +1513,9 @@ io.on("connection", async function (socket) {
 	socket.on("updateBracket", prepareSocketCallback(updateBracket));
 	socket.on("updateDeckLands", prepareSocketCallback(updateDeckLands));
 	socket.on("moveCard", prepareSocketCallback(moveCard));
+	socket.on("swapDeckAndSideboard", prepareSocketCallback(swapDeckAndSideboard));
+	socket.on("moveAllToDeck", prepareSocketCallback(moveAllToDeck));
+	socket.on("moveAllToSideboard", prepareSocketCallback(moveAllToSideboard));
 	socket.on("removeBasicsFromDeck", prepareSocketCallback(removeBasicsFromDeck));
 	socket.on("retrieveUpdatedDraftLogs", prepareSocketCallback(retrieveUpdatedDraftLogs));
 	socket.on("requestTakeover", prepareSocketCallback(requestTakeover));

@@ -1627,6 +1627,31 @@
 										</span>
 									</div>
 								</template>
+								<template v-slot:right-controls>
+									<div style="display: flex; gap: 0.75em">
+										<font-awesome-icon
+											icon="fa-solid fa-arrow-right-arrow-left"
+											class="clickable"
+											v-tooltip="'Swap deck and sideboard'"
+											@click="swapDeckAndSideboard"
+										></font-awesome-icon>
+										<font-awesome-icon
+											icon="fa-solid fa-arrow-right-to-bracket"
+											class="clickable"
+											:class="{ disabled: sideboard.length === 0 }"
+											flip="horizontal"
+											v-tooltip="'Move all cards from sideboard to deck'"
+											@click="moveAllToDeck"
+										></font-awesome-icon>
+										<font-awesome-icon
+											icon="fa-solid fa-arrow-right-from-bracket"
+											class="clickable"
+											:class="{ disabled: deck.length === 0 }"
+											v-tooltip="'Move all cards from deck to sideboard'"
+											@click="moveAllToSideboard"
+										></font-awesome-icon>
+									</div>
+								</template>
 								<template v-slot:empty>
 									<h3>Your deck is currently empty!</h3>
 									<p>Click on cards in your sideboard to move them here.</p>

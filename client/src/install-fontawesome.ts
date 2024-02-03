@@ -84,6 +84,9 @@ import {
 	faUserSlash,
 	faVolumeMute,
 	faVolumeUp,
+	faArrowRightArrowLeft,
+	faArrowRightToBracket,
+	faArrowRightFromBracket,
 } from "@fortawesome/free-solid-svg-icons";
 import {
 	faApple,
@@ -178,7 +181,10 @@ library.add(
 	faUserCheck,
 	faUserSlash,
 	faVolumeMute,
-	faVolumeUp
+	faVolumeUp,
+	faArrowRightArrowLeft,
+	faArrowRightToBracket,
+	faArrowRightFromBracket
 );
 library.add(faGithub, faPaypal, faDiscord, faPatreon, faTwitter, faWindows, faApple, faYoutube);
 

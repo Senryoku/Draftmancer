@@ -108,6 +108,9 @@
 						</div>
 					</template>
 				</dropdown>
+				<div class="right-controls">
+					<slot name="right-controls"></slot>
+				</div>
 			</div>
 		</div>
 		<div class="card-pool" ref="cardcolumns" :key="forceRerender">
@@ -652,6 +655,14 @@ export default defineComponent({
 	border-radius: 10px;
 	box-shadow: inset 0 0 8px #383838;
 	padding: 0.5em;
+}
+
+.controls {
+	flex-grow: 1;
+}
+
+.right-controls {
+	margin-left: auto;
 }
 
 .card-pool .card {

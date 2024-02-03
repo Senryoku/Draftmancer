@@ -1297,11 +1297,13 @@ export default defineComponent({
 
 			this.socket.on("sealedBoosters", (boosters) => {
 				const cards = boosters.reduce((acc, val) => acc.concat(val), []);
-				this.spawnDialog(SealedPresentation, {
-					// Note: SealedPresentation has the ability to present boosters one by one, we're not using it, yet.
-					boosters: [cards.filter((c) => c.rarity !== "common" && c.rarity !== "uncommon")],
-					title: "Sealed - Rares and Mythics",
-				});
+				const notableCards = [cards.filter((c) => c.rarity !== "common" && c.rarity !== "uncommon")];
+				if (notableCards.length > 0)
+					this.spawnDialog(SealedPresentation, {
+						// Note: SealedPresentation has the ability to present boosters one by one, we're not using it, yet.
+						boosters: notableCards,
+						title: "Sealed - Rares and Mythics",
+					});
 				this.setCardPool(cards);
 			});
 
@@ -3180,6 +3182,37 @@ export default defineComponent({
 				this.sideboardDisplay?.sync();
 			}
 		},
+		swapDeckAndSideboard() {
+			const tmp = this.deck;
+			this.deck = this.sideboard;
+			this.sideboard = tmp;
+			this.emitter.emit("closecardpopup");
+			this.socket.emit("swapDeckAndSideboard");
+			this.$nextTick(() => {
+				this.deckDisplay?.sync();
+				this.sideboardDisplay?.sync();
+			});
+		},
+		moveAllToDeck() {
+			this.deck.push(...this.sideboard);
+			this.sideboard = [];
+			this.emitter.emit("closecardpopup");
+			this.socket.emit("moveAllToDeck");
+			this.$nextTick(() => {
+				this.deckDisplay?.sync();
+				this.sideboardDisplay?.sync();
+			});
+		},
+		moveAllToSideboard() {
+			this.sideboard.push(...this.deck);
+			this.deck = [];
+			this.emitter.emit("closecardpopup");
+			this.socket.emit("moveAllToSideboard");
+			this.$nextTick(() => {
+				this.deckDisplay?.sync();
+				this.sideboardDisplay?.sync();
+			});
+		},
 		clearDeck() {
 			this.deck = [];
 			this.$nextTick(() => {
@@ -3198,8 +3231,7 @@ export default defineComponent({
 
 				const targetDeckSize = this.targetDeckSize ?? 40;
 				const landToAdd = targetDeckSize - this.deck.length;
-				if (landToAdd < 0) return;
-				if (landToAdd === 0) {
+				if (landToAdd <= 0) {
 					this.lands = { W: 0, U: 0, B: 0, R: 0, G: 0 };
 					return;
 				}
