@@ -1615,7 +1615,7 @@
 										</template>
 									</dropdown>
 									<div
-										class="input-delete-icon"
+										class="deck-search input-delete-icon"
 										v-tooltip.top="
 											'Quick search for English card names and types in your deck/sideboard.'
 										"
@@ -1628,7 +1628,7 @@
 									</div>
 								</template>
 								<template v-slot:right-controls>
-									<div style="display: flex; gap: 0.75em">
+									<div class="swap-controls">
 										<font-awesome-icon
 											icon="fa-solid fa-arrow-right-arrow-left"
 											class="clickable"
@@ -1741,7 +1741,7 @@
 							:cardConditionalClasses="cardConditionalClasses"
 						>
 							<template v-slot:title> Sideboard ({{ sideboard.length }}) </template>
-							<template v-slot:controls>
+							<template v-slot:right-controls>
 								<font-awesome-icon
 									icon="fa-solid fa-columns"
 									class="clickable"

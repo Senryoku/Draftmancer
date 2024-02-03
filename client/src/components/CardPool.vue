@@ -665,6 +665,16 @@ export default defineComponent({
 	margin-left: auto;
 }
 
+@media (max-width: 1000px) {
+	.controls {
+		justify-content: space-around;
+	}
+
+	.right-controls {
+		margin-left: inherit;
+	}
+}
+
 .card-pool .card {
 	width: 100%;
 }

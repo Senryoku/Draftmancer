@@ -1305,6 +1305,21 @@ ul.player-list {
 	filter: brightness(0.5);
 }
 
+.deck-search input {
+	max-width: 8em;
+}
+
+.swap-controls {
+	display: flex;
+	gap: 0.75em;
+}
+
+@media (max-width: 1000px) {
+	.deck-search {
+		display: none;
+	}
+}
+
 .collapsed-sideboard {
 	flex: 0 0 auto;
 	margin-left: 1em;
