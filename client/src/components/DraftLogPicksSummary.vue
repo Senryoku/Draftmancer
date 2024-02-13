@@ -18,6 +18,8 @@
 								card.image_uris[language] ?? card.image_uris['en']
 							}' style='max-height: 40vh; max-width: 40vw'/>`,
 						}"
+						@contextmenu="toggleZoom($event, card)"
+						@mouseleave="mouseLeave"
 					>
 						<span class="card-mana-cost" v-html="transformManaCost(card.mana_cost)"></span>
 						{{ card.printed_names[language] ?? card.name }}
@@ -48,6 +50,14 @@ export default defineComponent({
 		getPicks(packIdx: number, pickIdx: number) {
 			const pick = this.picks[packIdx][pickIdx];
 			return pick.pick.map((card_idx) => this.carddata[pick.booster[card_idx]]);
+		},
+		toggleZoom(e: Event, card: Card) {
+			e.preventDefault();
+			this.emitter.emit("togglecardpopup", e, card);
+		},
+		mouseLeave(e: Event) {
+			e.preventDefault();
+			this.emitter.emit("closecardpopup");
 		},
 	},
 });
