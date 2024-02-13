@@ -6,7 +6,7 @@
 				<li
 					v-for="(pick, pickIdx) in pack"
 					:key="pickIdx"
-					@click="$emit('selectPick', idx, pickIdx)"
+					@click="selectPick(idx, pickIdx)"
 					class="pick clickable"
 				>
 					<div
@@ -46,6 +46,10 @@ export default defineComponent({
 	methods: {
 		transformManaCost(str: string) {
 			return replaceManaSymbols(str);
+		},
+		selectPick(packIdx: number, pickIdx: number) {
+			this.emitter.emit("closecardpopup");
+			this.$emit("selectPick", packIdx, pickIdx);
 		},
 		getPicks(packIdx: number, pickIdx: number) {
 			const pick = this.picks[packIdx][pickIdx];
