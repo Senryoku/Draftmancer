@@ -195,7 +195,7 @@
 				<template v-else-if="displayOptions.category === 'Picks Summary'">
 					<div class="log-container">
 						<draft-log-picks-summary
-							:picks="(picksPerPack as DraftPick[][])"
+							:picks="picksPerPack as DraftPick[][]"
 							:carddata="draftlog.carddata"
 							:language="language"
 							@selectPick="
@@ -449,8 +449,8 @@ export default defineComponent({
 					(this.draftlog.users[userID].decklist?.main?.length ?? 0) > 0
 						? this.colorsInCardList(this.draftlog.users[userID].decklist?.main ?? [])
 						: this.type === "Draft"
-						? this.colorsInCardList(this.draftlog.users[userID].cards)
-						: { W: 0, U: 0, B: 0, R: 0, G: 0 };
+						  ? this.colorsInCardList(this.draftlog.users[userID].cards)
+						  : { W: 0, U: 0, B: 0, R: 0, G: 0 };
 				tableSummary.push({
 					userID: userID,
 					userName: this.draftlog.users[userID].userName,
@@ -747,7 +747,9 @@ ul.player-table.six li:nth-child(5):before {
 }
 
 .player-button.clickable:not(.selected-player) {
-	box-shadow: inset 2px 2px 2px 0px rgba(255, 255, 255, 0.2), inset -2px -2px 2px 0px rgba(0, 0, 0, 0.2);
+	box-shadow:
+		inset 2px 2px 2px 0px rgba(255, 255, 255, 0.2),
+		inset -2px -2px 2px 0px rgba(0, 0, 0, 0.2);
 }
 
 .player-button.clickable:not(.selected-player):hover {
@@ -756,6 +758,8 @@ ul.player-table.six li:nth-child(5):before {
 }
 
 .player-button.clickable:not(.selected-player):active {
-	box-shadow: inset 2px 2px 2px 0px rgba(0, 0, 0, 0.2), inset -2px -2px 2px 0px rgba(255, 255, 255, 0.2);
+	box-shadow:
+		inset 2px 2px 2px 0px rgba(0, 0, 0, 0.2),
+		inset -2px -2px 2px 0px rgba(255, 255, 255, 0.2);
 }
 </style>

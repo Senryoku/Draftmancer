@@ -6,17 +6,22 @@
 				<li
 					v-for="(pick, pickIdx) in pack"
 					:key="pickIdx"
-					v-tooltip.left="{
-						html: true,
-						content: `<img src='${
-							getPick(idx, pickIdx).image_uris[language] ?? getPick(idx, pickIdx).image_uris['en']
-						}' style='max-height: 40vh; max-width: 40vw'/>`,
-					}"
 					@click="$emit('selectPick', idx, pickIdx)"
-					class="clickable"
+					class="pick clickable"
 				>
-					<span class="card-mana-cost" v-html="transformManaCost(getPick(idx, pickIdx).mana_cost)"></span>
-					{{ getPick(idx, pickIdx).printed_names[language] ?? getPick(idx, pickIdx).name }}
+					<div
+						v-for="(card, cardIdx) in getPicks(idx, pickIdx)"
+						:key="`${cardIdx}_${pickIdx}`"
+						v-tooltip.left="{
+							html: true,
+							content: `<img src='${
+								card.image_uris[language] ?? card.image_uris['en']
+							}' style='max-height: 40vh; max-width: 40vw'/>`,
+						}"
+					>
+						<span class="card-mana-cost" v-html="transformManaCost(card.mana_cost)"></span>
+						{{ card.printed_names[language] ?? card.name }}
+					</div>
 				</li>
 			</ol>
 		</div>
@@ -40,9 +45,9 @@ export default defineComponent({
 		transformManaCost(str: string) {
 			return replaceManaSymbols(str);
 		},
-		getPick(packIdx: number, pickIdx: number) {
-			const p = this.picks[packIdx][pickIdx];
-			return this.carddata[p.booster[p.pick[0]]];
+		getPicks(packIdx: number, pickIdx: number) {
+			const pick = this.picks[packIdx][pickIdx];
+			return pick.pick.map((card_idx) => this.carddata[pick.booster[card_idx]]);
 		},
 	},
 });
@@ -60,6 +65,7 @@ export default defineComponent({
 .card-mana-cost {
 	display: inline-block;
 	min-width: 3em;
+	vertical-align: middle;
 }
 
 .card-mana-cost :deep(.mana-symbol) {
