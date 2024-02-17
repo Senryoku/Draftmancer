@@ -243,6 +243,16 @@ function parseSettings(
 		settings.cardBack = parsedSettings.cardBack;
 	}
 
+	if ("cardTitleHeightFactor" in parsedSettings) {
+		if (!isNumber(parsedSettings.cardTitleHeightFactor)) {
+			return ackError({
+				title: `[Settings]`,
+				text: `'cardTitleHeightFactor' must be a number.`,
+			});
+		}
+		settings.cardTitleHeightFactor = parsedSettings.cardTitleHeightFactor;
+	}
+
 	if ("layouts" in parsedSettings) {
 		const layouts: Record<string, PackLayout> = {};
 

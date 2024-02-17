@@ -3,7 +3,11 @@
 		<div class="news">
 			<em>February 17, 2024</em>
 			<ul>
-				<li>You can now customize the card back of your uploaded custom card lists.</li>
+				<li>
+					You can now customize the card back of your uploaded custom card lists and adjust the height of the
+					card title to your liking.<br />
+					See the <a href="cubeformat.html#settings" target="_blank">Cube format</a> documentation.
+				</li>
 			</ul>
 		</div>
 		<div class="news">

@@ -1369,7 +1369,9 @@ ul.player-list {
 .card-column > .column-card-container > .card,
 .card-column > .card {
 	height: 0;
-	padding-bottom: 13.5%; /* As a percentage of the container width, used to display card name (instead of setting a height), makes its 'responsive' */
+	padding-bottom: calc(
+		var(--card-title-height-factor, 1) * 13.5%
+	); /* As a percentage of the container width, used to display card name (instead of setting a height), makes its 'responsive' */
 	margin: 0;
 	z-index: 0;
 }
@@ -1383,7 +1385,7 @@ ul.player-list {
 .card-column > .column-card-container:last-child,
 .card-column > .column-card-container:last-child > .card,
 .card-column > .card:last-child {
-	margin-bottom: calc(142.5% - 13.5%);
+	margin-bottom: calc(142.5% - var(--card-title-height-factor, 1) * 13.5%);
 }
 
 /* Only use this hover rule on desktop (hover capabilities and a mouse or equivalent device) */

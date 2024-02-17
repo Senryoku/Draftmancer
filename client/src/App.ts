@@ -3794,6 +3794,10 @@ export default defineComponent({
 				return this.customCardList?.settings?.cardBack ?? require(`./assets/img/cardback.webp`);
 			return require(`./assets/img/cardback.webp`);
 		},
+		cardTitleHeightFactor(): number {
+			if (this.useCustomCardList) return this.customCardList?.settings?.cardTitleHeightFactor ?? 1.0;
+			return 1.0;
+		},
 	},
 	async mounted() {
 		try {

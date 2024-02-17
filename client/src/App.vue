@@ -4,6 +4,7 @@
 		:style="`
 			height: ${displayFixedDeck ? fixedDeckState.mainHeight : '100vh'};
 			--card-back-image: url(${cardBackImage});
+			--card-title-height-factor: ${cardTitleHeightFactor};
 		`"
 		:class="{ 'using-fixed-deck': displayFixedDeck }"
 	>
