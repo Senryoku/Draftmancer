@@ -1,6 +1,12 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
+			<em>February 17, 2024</em>
+			<ul>
+				<li>You can now customize the card back of your uploaded custom card lists.</li>
+			</ul>
+		</div>
+		<div class="news">
 			<em>January 26, 2024</em>
 			<ul>
 				<li>

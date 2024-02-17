@@ -63,7 +63,7 @@
 				</template>
 			</clazy-load>
 			<div class="flip-back" v-else-if="renderCommonBackside">
-				<card-placeholder />
+				<card-placeholder :card="undefined" />
 			</div>
 
 			<template v-if="cardAdditionalData && displayCardText">
@@ -338,7 +338,7 @@ img {
 .layout-split-left img,
 .layout-split img {
 	max-height: calc(90vw / 1.41);
-	background-image: url("../assets/img/cardback.webp");
+	background-image: var(--card-back-image, url("../assets/img/cardback.webp"));
 	background-size: cover;
 }
 

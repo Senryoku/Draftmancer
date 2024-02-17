@@ -3788,6 +3788,12 @@ export default defineComponent({
 					this.titleNotification ? this.titleNotification.message : ""
 				}`;
 		},
+
+		cardBackImage(): string {
+			if (this.useCustomCardList)
+				return this.customCardList?.settings?.cardBack ?? require(`./assets/img/cardback.webp`);
+			return require(`./assets/img/cardback.webp`);
+		},
 	},
 	async mounted() {
 		try {

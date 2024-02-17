@@ -233,6 +233,16 @@ function parseSettings(
 		settings.name = parsedSettings.name;
 	}
 
+	if ("cardBack" in parsedSettings) {
+		if (!isString(parsedSettings.cardBack)) {
+			return ackError({
+				title: `[Settings]`,
+				text: `'cardBack' must be a string.`,
+			});
+		}
+		settings.cardBack = parsedSettings.cardBack;
+	}
+
 	if ("layouts" in parsedSettings) {
 		const layouts: Record<string, PackLayout> = {};
 

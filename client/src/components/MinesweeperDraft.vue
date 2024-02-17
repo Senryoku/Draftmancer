@@ -41,6 +41,7 @@
 								<CardPlaceholder
 									v-if="cell.state === 0"
 									:key="rowIdx * state.grid[0].length + colIdx + '_placeholder'"
+									:card="undefined"
 								/>
 								<Card
 									v-else

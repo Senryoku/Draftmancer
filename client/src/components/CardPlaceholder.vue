@@ -7,21 +7,17 @@
 	</div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import { isScryfallCard, ScryfallCard, ScryfallCardFace, isScryfallCardFace } from "../vueCardCache";
-import { defineComponent, PropType } from "vue";
+import { computed } from "vue";
 import { Card, CardFace } from "@/CardTypes";
 
-export default defineComponent({
-	name: "CardPlaceholder",
-	props: { card: { type: Object as PropType<Card | CardFace | ScryfallCard | ScryfallCardFace> } },
-	computed: {
-		typeLine() {
-			if (!this.card) return undefined;
-			if (isScryfallCard(this.card) || isScryfallCardFace(this.card)) return this.card.type_line;
-			return `${this.card.type}${this.card.subtypes?.length > 0 ? " — " : ""}${this.card.subtypes.join(" ")}`;
-		},
-	},
+const props = defineProps<{ card: Card | CardFace | ScryfallCard | ScryfallCardFace | undefined }>();
+
+const typeLine = computed(() => {
+	if (!props.card) return undefined;
+	if (isScryfallCard(props.card) || isScryfallCardFace(props.card)) return props.card.type_line;
+	return `${props.card.type}${props.card.subtypes?.length > 0 ? " — " : ""}${props.card.subtypes.join(" ")}`;
 });
 </script>
 
@@ -30,7 +26,7 @@ export default defineComponent({
 	position: relative;
 	padding-top: 140%;
 	border-radius: 5px;
-	background: url("../assets/img/cardback.webp");
+	background: var(--card-back-image, url("../assets/img/cardback.webp"));
 	background-repeat: no-repeat;
 	background-size: 100%;
 }

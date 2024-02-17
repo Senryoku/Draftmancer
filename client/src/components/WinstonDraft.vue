@@ -46,7 +46,7 @@
 									</template>
 									<template v-else>
 										<div class="card">
-											<card-placeholder></card-placeholder>
+											<card-placeholder :card="undefined"></card-placeholder>
 										</div>
 									</template>
 								</transition>

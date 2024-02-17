@@ -1,7 +1,10 @@
 <template>
 	<div
 		id="main-container"
-		:style="`height: ${displayFixedDeck ? fixedDeckState.mainHeight : '100vh'}`"
+		:style="`
+			height: ${displayFixedDeck ? fixedDeckState.mainHeight : '100vh'};
+			--card-back-image: url(${cardBackImage});
+		`"
 		:class="{ 'using-fixed-deck': displayFixedDeck }"
 	>
 		<!-- Personal Options -->

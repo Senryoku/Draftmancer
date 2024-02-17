@@ -243,8 +243,8 @@ export default defineComponent({
 			return card.image_uris
 				? card.image_uris.border_crop
 				: card.card_faces && card.card_faces[0] && card.card_faces[0].image_uris
-				? card.card_faces[0].image_uris.border_crop
-				: undefined;
+				  ? card.card_faces[0].image_uris.border_crop
+				  : undefined;
 		},
 	},
 	computed: {
@@ -380,14 +380,14 @@ export default defineComponent({
 	width: auto;
 	height: var(--image-height);
 	aspect-ratio: 100/140;
-	background-image: url("../assets/img/cardback.webp");
+	background-image: var(--card-back-image, url("../assets/img/cardback.webp"));
 	background-size: cover;
 }
 
 .related-card {
 	width: calc(0.71 * var(--image-height));
 	height: var(--image-height);
-	background: url("../assets/img/cardback.webp");
+	background: var(--card-back-image, url("../assets/img/cardback.webp"));
 	background-size: 100%;
 	border-radius: 3%;
 }
@@ -396,7 +396,7 @@ export default defineComponent({
 	width: auto;
 	height: var(--image-height);
 	border-radius: 3%;
-	background-image: url("../assets/img/cardback.webp");
+	background-image: var(--card-back-image, url("../assets/img/cardback.webp"));
 	background-size: cover;
 }
 

@@ -14,6 +14,7 @@ export type LayoutName = string;
 
 export type CCLSettings = {
 	name?: string;
+	cardBack?: string;
 	showSlots?: boolean;
 	boosterSettings?: { picks: number[]; burns: number[] }[];
 	predeterminedLayouts?: { name: LayoutName; weight: number }[][];
@@ -136,29 +137,29 @@ export function generateBoosterFromCustomCardList(
 						].name;
 				  }
 			: customCardList.settings?.layoutWithReplacement === false
-			? // Random layouts without replacement (until we have no other choice)
-			  (() => {
-					let bag: string[] = [];
-					const refill = () => {
-						bag = [];
-						for (const layoutName in layouts)
-							for (let i = 0; i < layouts[layoutName].weight; ++i) bag.push(layoutName);
-						shuffleArray(bag);
-					};
-					return (/*index: number*/): string => {
-						if (bag.length === 0) refill();
-						return bag.pop()!;
-					};
-			  })()
-			: // Random layouts
-			  (/*index: number*/): string => {
-					let randomLayout = random.real(0, layoutsTotalWeights);
-					for (const layoutName in layouts) {
-						randomLayout -= layouts[layoutName].weight;
-						if (randomLayout <= 0) return layoutName;
-					}
-					return Object.keys(layouts)[0]!;
-			  };
+			  ? // Random layouts without replacement (until we have no other choice)
+			    (() => {
+						let bag: string[] = [];
+						const refill = () => {
+							bag = [];
+							for (const layoutName in layouts)
+								for (let i = 0; i < layouts[layoutName].weight; ++i) bag.push(layoutName);
+							shuffleArray(bag);
+						};
+						return (/*index: number*/): string => {
+							if (bag.length === 0) refill();
+							return bag.pop()!;
+						};
+			    })()
+			  : // Random layouts
+			    (/*index: number*/): string => {
+						let randomLayout = random.real(0, layoutsTotalWeights);
+						for (const layoutName in layouts) {
+							randomLayout -= layouts[layoutName].weight;
+							if (randomLayout <= 0) return layoutName;
+						}
+						return Object.keys(layouts)[0]!;
+			    };
 
 		// Generate Boosters
 		const boosters: Array<UniqueCard>[] = [];
