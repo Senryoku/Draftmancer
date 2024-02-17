@@ -2327,6 +2327,11 @@
         "block": "Innistrad: Double Feature",
         "icon": "img/sets/pmid.svg"
     },
+    "pmkm": {
+        "code": "pmkm",
+        "fullName": "Murders at Karlov Manor Promos",
+        "icon": "img/sets/pmkm.svg"
+    },
     "pmmq": {
         "code": "pmmq",
         "fullName": "Mercadian Masques Promos",
@@ -2650,6 +2655,11 @@
         "fullName": "Time Spiral Promos",
         "block": "Time Spiral",
         "icon": "img/sets/ptsp.svg"
+    },
+    "ptsr": {
+        "code": "ptsr",
+        "fullName": "Time Spiral Remastered Promos",
+        "icon": "img/sets/ptsr.svg"
     },
     "puds": {
         "code": "puds",
