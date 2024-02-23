@@ -10,7 +10,7 @@
 					<img class="set-icon button-icon" src="../assets/img/mtga-icon.png" />MTGA
 				</button>
 				<button @click="downloadMTGA(true)" v-tooltip.right="'Download deck and sideboard for Arena'">
-					<FontAwesomeIcon icon="fa-solid fa-file-download" class="button-icon"></FontAwesomeIcon>
+					<font-awesome-icon icon="fa-solid fa-file-download" class="button-icon"></font-awesome-icon>
 				</button>
 			</div>
 			<div class="row">
@@ -24,7 +24,7 @@
 					@click="downloadMTGA(false)"
 					v-tooltip.right="'Download deck and sideboard without set information'"
 				>
-					<FontAwesomeIcon icon="fa-solid fa-file-download" class="button-icon"></FontAwesomeIcon>
+					<font-awesome-icon icon="fa-solid fa-file-download" class="button-icon"></font-awesome-icon>
 				</button>
 			</div>
 			<button @click="exportDeckMTGO()" v-tooltip.right="'Download .deck file for MTGO'">
@@ -37,6 +37,15 @@
 				<font-awesome-icon icon="fa-solid fa-external-link-alt" class="button-icon"></font-awesome-icon>to
 				FaBrary
 			</button>
+			<div class="row">
+				<button @click="clipboardCollectorNumber()" v-tooltip.right="'Export collector number list'">
+					<font-awesome-icon icon="fa-solid fa-clipboard" class="button-icon"></font-awesome-icon>
+					Collector #
+				</button>
+				<button @click="downloadCollectorNumber()" v-tooltip.right="'Download collector number list'">
+					<FontAwesomeIcon icon="fa-solid fa-file-download" class="button-icon"></FontAwesomeIcon>
+				</button>
+			</div>
 		</template>
 	</dropdown>
 </template>
@@ -117,6 +126,24 @@ export default defineComponent({
 			for (const cardID of cardIDs) url += `&cards=${cardID}`;
 
 			window.open(url);
+		},
+		collectorNumberList(): string {
+			let deck: Record<string, number> = {};
+			for (const card of this.deck) {
+				if (!deck[card.collector_number]) deck[card.collector_number] = 1;
+				else deck[card.collector_number]++;
+			}
+
+			let list = "";
+			for (const [key, value] of Object.entries(deck)) list += `${value} ${key}\n`;
+			return list;
+		},
+		clipboardCollectorNumber() {
+			copyToClipboard(this.collectorNumberList());
+			fireToast("success", "Deck exported to clipboard!");
+		},
+		downloadCollectorNumber() {
+			download("Deck.txt", this.collectorNumberList());
 		},
 	},
 });
