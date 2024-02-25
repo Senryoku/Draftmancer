@@ -2009,7 +2009,7 @@ class MKMBoosterFactory extends BoosterFactory {
 			common: 1.0,
 		};
 		// The first has a 1/6 chance to be a rare dual land.
-		if (random.bool(1.0 / 6.0)) {
+		if (random.bool(1.0 / 6.0) && this.rareLands.rare.count() > 0) {
 			booster.push(pickCard(this.rareLands.rare, booster));
 		} else {
 			const rarityRoll = random.realZeroToOneInclusive();
