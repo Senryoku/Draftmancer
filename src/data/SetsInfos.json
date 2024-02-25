@@ -85,6 +85,11 @@
         "fullName": "Masters 25",
         "icon": "img/sets/a25.svg"
     },
+    "acr": {
+        "code": "acr",
+        "fullName": "Assassin's Creed",
+        "icon": "img/sets/acr.svg"
+    },
     "aer": {
         "code": "aer",
         "fullName": "Aether Revolt",
@@ -188,6 +193,16 @@
         "fullName": "Battle for Zendikar",
         "block": "Battle for Zendikar",
         "icon": "img/sets/bfz.svg"
+    },
+    "big": {
+        "code": "big",
+        "fullName": "The Big Score",
+        "icon": "img/sets/big.svg"
+    },
+    "blb": {
+        "code": "blb",
+        "fullName": "Bloomburrow",
+        "icon": "img/sets/blb.svg"
     },
     "bng": {
         "code": "bng",
@@ -1368,6 +1383,11 @@
         "fullName": "Modern Horizons 2",
         "icon": "img/sets/mh2.svg"
     },
+    "mh3": {
+        "code": "mh3",
+        "fullName": "Modern Horizons 3",
+        "icon": "img/sets/mh3.svg"
+    },
     "mic": {
         "code": "mic",
         "fullName": "Midnight Hunt Commander",
@@ -1547,6 +1567,16 @@
         "fullName": "Magic Origins",
         "block": "Core Set",
         "icon": "img/sets/ori.svg"
+    },
+    "otj": {
+        "code": "otj",
+        "fullName": "Outlaws of Thunder Junction",
+        "icon": "img/sets/otj.svg"
+    },
+    "otp": {
+        "code": "otp",
+        "fullName": "Breaking News",
+        "icon": "img/sets/otp.svg"
     },
     "ovoc": {
         "code": "ovoc",
