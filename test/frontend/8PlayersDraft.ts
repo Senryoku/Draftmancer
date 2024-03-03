@@ -1,6 +1,5 @@
 import { ElementHandle } from "puppeteer";
-import chai from "chai";
-const expect = chai.expect;
+import { expect } from "chai";
 import { pickCard, PickResult, setupBrowsers, pages } from "./src/common.js";
 
 describe("Front End - 8 Players Draft", function () {

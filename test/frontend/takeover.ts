@@ -1,6 +1,5 @@
 import { ElementHandle } from "puppeteer";
-import chai from "chai";
-const expect = chai.expect;
+import { expect } from "chai";
 import { setupBrowsers, pages } from "./src/common.js";
 
 describe("Takeover request", function () {

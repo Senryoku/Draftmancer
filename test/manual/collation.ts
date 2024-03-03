@@ -1,8 +1,7 @@
 "use strict";
 
 import fs from "fs";
-import chai from "chai";
-const expect = chai.expect;
+import { expect } from "chai";
 import * as randomjs from "random-js";
 import { Cards, getCard } from "../../src/Cards.js";
 import { Session } from "../../src/Session.js";

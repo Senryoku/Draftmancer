@@ -1,6 +1,5 @@
 import { Page } from "puppeteer";
-import chai from "chai";
-const expect = chai.expect;
+import { expect } from "chai";
 import { launchMode, pages, setupBrowsers, waitAndClickXpath } from "./src/common.js";
 
 async function pickCard(page: Page, random = false) {

@@ -1,7 +1,6 @@
 import fs from "node:fs";
 import { before, after, beforeEach, afterEach, describe, it } from "mocha";
-import chai from "chai";
-const expect = chai.expect;
+import { expect } from "chai";
 import { Sessions } from "../src/Session.js";
 import { makeClients, waitForClientDisconnects, enableLogs, disableLogs, ackNoError, getUID } from "./src/common.js";
 import { CardID, OptionalOnPickDraftEffect, UniqueCard, UniqueCardID, UsableDraftEffect } from "../src/CardTypes.js";

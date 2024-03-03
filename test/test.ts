@@ -2,8 +2,7 @@
 import { v1 as uuidv1 } from "uuid";
 import { before, after, beforeEach, afterEach, describe, it } from "mocha";
 import fs from "fs";
-import chai from "chai";
-const expect = chai.expect;
+import { expect } from "chai";
 import { Cards, getCard } from "../src/Cards.js";
 import { Connections } from "../src/Connection.js";
 import { Sessions } from "../src/Session.js";
@@ -2749,8 +2748,9 @@ describe("Card line parsing", function () {
 	) {
 		expect(
 			isSocketError(r),
-			`parseLine returned an error:\n\t\t${(r as SocketError).error?.title}\n\t\t${(r as SocketError).error
-				?.text}\n\t`
+			`parseLine returned an error:\n\t\t${(r as SocketError).error?.title}\n\t\t${
+				(r as SocketError).error?.text
+			}\n\t`
 		).to.be.false;
 		if (!isSocketError(r)) {
 			expect(r.count).to.equal(count);

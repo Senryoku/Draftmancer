@@ -1,6 +1,5 @@
 import { before, after, beforeEach, afterEach, describe, it } from "mocha";
-import chai from "chai";
-const expect = chai.expect;
+import { expect } from "chai";
 import { Sessions } from "../src/Session.js";
 import { makeClients, waitForClientDisconnects, enableLogs, disableLogs, ackNoError, getUID } from "./src/common.js";
 import { CardColor, UniqueCard } from "../src/CardTypes.js";

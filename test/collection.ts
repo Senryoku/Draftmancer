@@ -1,8 +1,7 @@
 "use strict";
 
 import { describe, it, beforeEach, afterEach, before, after } from "mocha";
-import chai from "chai";
-const expect = chai.expect;
+import { expect } from "chai";
 import { getCard } from "../src/Cards.js";
 import { Sessions } from "../src/Session.js";
 import { makeClients, enableLogs, disableLogs, waitForClientDisconnects, ackNoError, getUID } from "./src/common.js";

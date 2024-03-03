@@ -1,6 +1,5 @@
-import chai from "chai";
+import { expect } from "chai";
 import fs from "fs";
-const expect = chai.expect;
 import puppeteer, { Browser, ElementHandle, Page, BoundingBox } from "puppeteer";
 import { getRandom } from "../../../src/utils.js";
 
@@ -92,7 +91,7 @@ export async function startBrowsers(count: number): Promise<[Browser[], Page[]]>
 							`--window-position=${(i % cols) * debugWindowWidth},${
 								Math.floor(i / cols) * debugWindowHeight
 							}`,
-					  ],
+						],
 			})
 		);
 	}

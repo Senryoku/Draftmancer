@@ -1,6 +1,5 @@
 import { describe, it } from "mocha";
-import chai from "chai";
-const expect = chai.expect;
+import { expect } from "chai";
 import { getSessionLink, launchMode, pages, setupBrowsers, waitAndClickXpath } from "./src/common.js";
 import { ElementHandle, Page } from "puppeteer";
 

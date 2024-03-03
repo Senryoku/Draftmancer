@@ -1,7 +1,6 @@
-import chai from "chai";
+import { expect } from "chai";
 import fs from "fs";
 import io, { Socket } from "socket.io-client";
-const expect = chai.expect;
 // eslint-disable-next-line no-unused-vars
 /// <amd-dependency path="mega" />
 import "../../src/server.js"; // Launch Server
