@@ -32,10 +32,11 @@ function exportCardToMTGA(c: Card, language: Language, full: boolean) {
 	let name = c.name;
 	if (language in c.printed_names) name = c.printed_names[language];
 	const idx = name.indexOf("//");
-	// Ravnica Splits cards needs both names to be imported, others don't
+	// Split cards need both names to be imported, but DFCs and Adventures only use the first one.
 	if (idx != -1) {
+		const setsWithSplitCards = ["grn", "rna", "mh2", "akr", "mkm"];
 		if (c.set === "akr") name = name.replace("//", "///");
-		else if (c.set != "grn" && c.set != "rna") name = name.substr(0, idx - 1);
+		else if (!setsWithSplitCards.includes(c.set)) name = name.substring(0, idx - 1);
 	}
 
 	// FIXME: Translate J21 Collector Numbers to MTGA, this should be avoidable

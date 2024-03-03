@@ -1,0 +1,27 @@
+Deck
+1 Depose // Deploy (RNA) 225
+1 Discovery // Dispersal (GRN) 223
+1 Cease // Desist (MKM) 246
+1 Fuss // Bother (MKM) 248
+1 Claim /// Fame (AKR) 229
+1 Destined /// Lead (AKR) 232
+1 Onward /// Victory (AKR) 250
+1 Fast (MH2) 123
+1 Oakhame Ranger (ELD) 212
+1 Blessed Hippogriff (HBG) 85
+1 Cosima, God of the Voyage (KHM) 50
+1 Ojer Pakpatiq, Deepest Epoch (LCI) 67
+1 Nicol Bolas, the Ravager (M19) 218
+1 Nicol Bolas, Dragon-God (WAR) 207
+1 Brutal Cathar (MID) 7
+1 Elesh Norn (MOM) 12
+1 Invasion of Gobakhan (MOM) 22
+1 Befriending the Moths (NEO) 4
+1 Hadana's Climb (RIX) 158
+1 Archangel Avacyn (SIR) 13
+1 Flamescroll Celebrant (STX) 150
+1 Voldaren Bloodcaster (VOW) 137
+1 Virtue of Loyalty (WOE) 38
+1 Virtue of Persistence (WOE) 115
+1 Brightclimb Pathway (ZNR) 259
+1 Valakut Awakening (ZNR) 174
