@@ -70,7 +70,7 @@
 		"vue-chartjs": "^5.2.0"
 	},
 	"devDependencies": {
-		"@babel/core": "^7.23.3",
+		"@babel/core": "^7.24.0",
 		"@types/chai": "^4.3.11",
 		"@types/compression": "^1.7.5",
 		"@types/cookie-parser": "^1.4.6",
