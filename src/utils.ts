@@ -106,7 +106,7 @@ export function arrayIntersect<T>(args: Array<Array<T>>) {
 // Modified to optionaly work only on the [start, end[ slice of array.
 export function shuffleArray<T>(array: Array<T>, start = 0, end = array.length) {
 	for (let i = end - 1; i > start; i--) {
-		const j = start + Math.floor(Math.random() * (i - start + 1));
+		const j = start + Math.floor(random.realZeroToOneExclusive() * (i - start + 1));
 		[array[i], array[j]] = [array[j], array[i]];
 	}
 }

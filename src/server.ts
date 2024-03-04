@@ -582,14 +582,17 @@ function startGridDraft(
 	sessionID: SessionID,
 	boosterCount: unknown,
 	twoPicksPerGrid: unknown,
+	regularBoosters: unknown,
 	ack: (result: SocketAck) => void
 ) {
 	const sess = Sessions[sessionID];
 	const localBoosterCount = !isNumber(boosterCount) ? parseInt(boosterCount as string) : boosterCount;
 	const localTwoPicksPerGrid = isBoolean(twoPicksPerGrid) ? twoPicksPerGrid : false;
+	const localRegularBoosters = isBoolean(regularBoosters) ? regularBoosters : true;
 	const r = sess.startGridDraft(
 		localBoosterCount && !isNaN(localBoosterCount) ? localBoosterCount : 18,
-		localTwoPicksPerGrid
+		localTwoPicksPerGrid,
+		localRegularBoosters
 	);
 	if (isSocketError(r)) return ack(r);
 	startPublicSession(sess);

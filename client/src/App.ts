@@ -2097,10 +2097,16 @@ export default defineComponent({
 				});
 			} else {
 				this.spawnDialog(GridDialog, {
-					onStart: (boosterCount: number, twoPicksPerGrid: boolean) => {
-						this.socket.emit("startGridDraft", boosterCount, twoPicksPerGrid, (answer: SocketAck) => {
-							if (answer.code !== 0 && answer.error) Alert.fire(answer.error);
-						});
+					onStart: (boosterCount: number, twoPicksPerGrid: boolean, regularBoosters: boolean) => {
+						this.socket.emit(
+							"startGridDraft",
+							boosterCount,
+							twoPicksPerGrid,
+							regularBoosters,
+							(answer: SocketAck) => {
+								if (answer.code !== 0 && answer.error) Alert.fire(answer.error);
+							}
+						);
 					},
 				});
 			}

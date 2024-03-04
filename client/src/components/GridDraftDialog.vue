@@ -7,9 +7,8 @@
 			<div class="dialog">
 				<p>Grid Draft is a draft variant for two to four players mostly used for drafting cubes.</p>
 				<p>
-					9-cards boosters are presented one by one in a 3x3 grid and players alternatively chooses a row or a
-					column of each booster, resulting in 2 or 3 cards being picked from each booster. The remaining
-					cards are discarded.
+					Players alternatively chooses a row or a column of a 3x3 grid of cards, resulting in 2 or 3 cards
+					being picked. The remaining cards are discarded.
 				</p>
 				<p>
 					The grid will be refilled once after the first pick at 3 or 4 players, or if 'Two Picks per Grid' is
@@ -37,6 +36,20 @@
 						/>
 						<ResetButton v-model="boosterCount" :default-value="18" />
 					</div>
+					<label for="booster-type"> Booster Type </label>
+					<div>
+						<select id="booster-type" v-model="regularBoosters">
+							<option :value="true">Regular</option>
+							<option :value="false">Grid Sized</option>
+						</select>
+					</div>
+
+					<div style="font-size: 0.8em; grid-column: span 2; width: 100%">
+						<template v-if="regularBoosters">
+							Regular: Shuffles standard boosters together to create the 3x3 grids.
+						</template>
+						<template v-else>Grid Sized: Each grid will be filled using a distinct booster.</template>
+					</div>
 				</div>
 			</div>
 		</template>
@@ -56,15 +69,16 @@ import ResetButton from "./ResetButton.vue";
 
 const boosterCount = ref(18);
 const twoPicksPerGrid = ref(false);
+const regularBoosters = ref(true);
 
 const emit = defineEmits<{
 	(e: "close"): void;
-	(e: "start", boosterCount: number, twoPicksPerGrid: boolean): void;
+	(e: "start", boosterCount: number, twoPicksPerGrid: boolean, regularBoosters: boolean): void;
 }>();
 
 const cancel = () => emit("close");
 const start = () => {
-	emit("start", boosterCount.value, twoPicksPerGrid.value);
+	emit("start", boosterCount.value, twoPicksPerGrid.value, regularBoosters.value);
 	emit("close");
 };
 </script>

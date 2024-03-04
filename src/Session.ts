@@ -1152,35 +1152,75 @@ export class Session implements IIndexable {
 	}
 
 	///////////////////// Grid Draft //////////////////////
-	startGridDraft(boosterCount: number, twoPicksPerGrid: boolean): SocketAck {
+	startGridDraft(gridCount: number, twoPicksPerGrid: boolean, regularBoosters: boolean): SocketAck {
 		if (this.drafting) return new SocketError("Already drafting.");
 		if (this.users.size < 2 || this.users.size > 4)
 			return new SocketError("Invalid Number of Players", "Grid draft is only available for 2 to 4 players.");
 		if (twoPicksPerGrid && this.users.size !== 2)
 			return new SocketError("Invalid Setting", "'Two picks per grid' is only available for 2 players.");
-		this.drafting = true;
-		// When using a custom card list with custom slots, boosters will be truncated to 9 cards by GridDraftState
-		// Use boosterContent setting only if it is valid (adds up to 9 cards)
-		const targetCardsPerBooster = Object.values(this.getBoosterContent()).reduce((val, acc) => val + acc, 0);
 
 		// Add 3 cards to each boosters when there are more than 2 players, or two picks per players: Booster will be refilled to 9 cards after the first pick.
-		const cardsPerBooster = this.users.size > 2 || twoPicksPerGrid ? 12 : 9;
-		const defaultTargets =
-			cardsPerBooster === 12 ? { rare: 1, uncommon: 3, common: 8 } : { rare: 1, uncommon: 3, common: 5 };
+		const cardsPerGrid = this.users.size > 2 || twoPicksPerGrid ? 12 : 9;
 
-		const boosters = this.generateBoosters(boosterCount, {
-			targets: targetCardsPerBooster === cardsPerBooster ? this.getBoosterContent() : defaultTargets,
-			cardsPerBooster: cardsPerBooster,
-			useCustomBoosters: true,
-			playerCount: this.users.size,
-		});
-		if (isMessageError(boosters)) {
-			this.drafting = false;
-			return new SocketAck(boosters);
+		const grids: UniqueCard[][] = [];
+
+		if (regularBoosters) {
+			// Guess how many cards per boosters generateBoosters will return. This is only an approximation, we have no guarantee.
+			const expectedCardsPerBooster = this.useCustomCardList
+				? this.customCardList.layouts
+					? Math.min(
+							...Object.values(this.customCardList.layouts).map((layout) =>
+								Object.values(layout.slots).reduce((val, acc) => val + acc, 0)
+							)
+						)
+					: this.cardsPerBooster
+				: Object.values(this.getBoosterContent()).reduce((val, acc) => val + acc, 0);
+
+			const boosters = this.generateBoosters(Math.ceil((gridCount * cardsPerGrid) / expectedCardsPerBooster), {
+				useCustomBoosters: true,
+				playerCount: this.users.size,
+			});
+
+			if (isMessageError(boosters)) return new SocketAck(boosters);
+
+			// Make sure we have enough cards. Individual set rule may generate less cards per booster than expected, and there's
+			// no garantee that all boosters have the same size anyway.
+			// NOTE: This might introduce some issues, around duplicate limits or collection limits for example, but generateBoosters
+			//       simply doesn't support this use case for now.
+			while (boosters.reduce((acc, b) => acc + b.length, 0) < gridCount * cardsPerGrid) {
+				const boosterOrError = this.generateBoosters(1, {
+					useCustomBoosters: true,
+					playerCount: this.users.size,
+				});
+				if (isMessageError(boosterOrError)) return new SocketAck(boosterOrError);
+				boosters.push(...boosterOrError);
+			}
+
+			// Turn the generated boosters into gridCount grids of cardsPerGrid cards.
+			const cardPool = boosters.flat();
+			shuffleArray(cardPool);
+			for (let i = 0; i < gridCount; ++i) grids.push(cardPool.splice(0, cardsPerGrid));
+		} else {
+			// When using a custom card list with custom slots, boosters will be truncated to 9 cards by GridDraftState
+			// Use boosterContent setting only if it is valid (adds up to 9 cards)
+			const targetCardsPerBooster = Object.values(this.getBoosterContent()).reduce((val, acc) => val + acc, 0);
+
+			const defaultTargets =
+				cardsPerGrid === 12 ? { rare: 1, uncommon: 3, common: 8 } : { rare: 1, uncommon: 3, common: 5 };
+
+			const boosters = this.generateBoosters(gridCount, {
+				targets: targetCardsPerBooster === cardsPerGrid ? this.getBoosterContent() : defaultTargets,
+				cardsPerBooster: cardsPerGrid,
+				useCustomBoosters: true,
+				playerCount: this.users.size,
+			});
+			if (isMessageError(boosters)) return new SocketAck(boosters);
+			grids.push(...boosters);
 		}
 
+		this.drafting = true;
 		this.disconnectedUsers = {};
-		this.draftState = new GridDraftState(this.getSortedHumanPlayersIDs(), boosters, twoPicksPerGrid);
+		this.draftState = new GridDraftState(this.getSortedHumanPlayersIDs(), grids, twoPicksPerGrid);
 		const s = this.draftState as GridDraftState;
 		if (isMessageError(s.error)) {
 			this.cleanDraftState();
@@ -1195,7 +1235,7 @@ export class Session implements IIndexable {
 			Connections[user].socket.emit("startGridDraft", s.syncData());
 		}
 
-		this.initLogs("Grid Draft", boosters);
+		this.initLogs("Grid Draft", grids);
 		return new SocketAck();
 	}
 

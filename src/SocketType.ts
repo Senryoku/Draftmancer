@@ -283,7 +283,12 @@ export interface ClientToServerEvents {
 	stopDraft: () => void;
 	pauseDraft: () => void;
 	resumeDraft: () => void;
-	startGridDraft: (boosterCount: number, twoPicksPerGrid: boolean, ack: (result: SocketAck) => void) => void;
+	startGridDraft: (
+		boosterCount: number,
+		twoPicksPerGrid: boolean,
+		regularBoosters: boolean,
+		ack: (result: SocketAck) => void
+	) => void;
 	startRochesterDraft: (ack: (s: SocketAck) => void) => void;
 	startRotisserieDraft: (options: RotisserieDraftStartOptions, ack: (s: SocketAck) => void) => void;
 	startWinstonDraft: (boostersPerPlayer: number, removeBasicLands: boolean, ack: (s: SocketAck) => void) => void;
