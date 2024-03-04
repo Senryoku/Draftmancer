@@ -645,10 +645,10 @@ export default defineComponent({
 				const ownerUsername = !this.sessionOwner
 					? "Session owner"
 					: this.sessionOwner in this.userByID
-					  ? this.userByID[this.sessionOwner].userName
-					  : this.sessionOwnerUsername
-					    ? this.sessionOwnerUsername
-					    : "Session owner";
+						? this.userByID[this.sessionOwner].userName
+						: this.sessionOwnerUsername
+							? this.sessionOwnerUsername
+							: "Session owner";
 
 				this.pushNotification("Are you ready?", {
 					body: `${ownerUsername} has initiated a ready check`,
@@ -2714,12 +2714,12 @@ export default defineComponent({
 									name: "Imported Cube",
 									cubeCobraID: result.value.cubeID,
 									description: `Imported from Cube Cobra: '${result.value.cubeID}'`,
-							  }
+								}
 							: {
 									name: "Imported Cube",
 									cubeArtisanID: result.value.cubeID,
 									description: `Imported from CubeArtisan: '${result.value.cubeID}'`,
-							  };
+								};
 					this.selectCube(cube, result.value.matchVersions);
 				}
 			});

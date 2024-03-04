@@ -187,14 +187,13 @@ const checkDraftAction = function (userID: UserID, sess: Session, type: string, 
 // Personnal options
 function setUserName(userID: UserID, sessionID: SessionID, userName: string) {
 	Connections[userID].userName = userName;
-	Sessions[sessionID].forUsers(
-		(uid: UserID) =>
-			Connections[uid]?.socket.emit("updateUser", {
-				userID: userID,
-				updatedProperties: {
-					userName: userName,
-				},
-			})
+	Sessions[sessionID].forUsers((uid: UserID) =>
+		Connections[uid]?.socket.emit("updateUser", {
+			userID: userID,
+			updatedProperties: {
+				userName: userName,
+			},
+		})
 	);
 }
 function setCollection(
@@ -218,14 +217,13 @@ function setCollection(
 	ack?.({ collection: processedCollection });
 
 	const hasCollection = processedCollection.size > 0;
-	Sessions[sessionID].forUsers(
-		(user) =>
-			Connections[user]?.socket.emit("updateUser", {
-				userID: userID,
-				updatedProperties: {
-					collection: hasCollection,
-				},
-			})
+	Sessions[sessionID].forUsers((user) =>
+		Connections[user]?.socket.emit("updateUser", {
+			userID: userID,
+			updatedProperties: {
+				collection: hasCollection,
+			},
+		})
 	);
 }
 
@@ -286,14 +284,13 @@ function useCollection(userID: UserID, sessionID: SessionID, useCollection: bool
 	if (!isBoolean(useCollection) || useCollection === Connections[userID].useCollection) return;
 
 	Connections[userID].useCollection = useCollection;
-	Sessions[sessionID].forUsers(
-		(user) =>
-			Connections[user]?.socket.emit("updateUser", {
-				userID: userID,
-				updatedProperties: {
-					useCollection: useCollection,
-				},
-			})
+	Sessions[sessionID].forUsers((user) =>
+		Connections[user]?.socket.emit("updateUser", {
+			userID: userID,
+			updatedProperties: {
+				useCollection: useCollection,
+			},
+		})
 	);
 }
 
@@ -928,15 +925,14 @@ function importCube(userID: UserID, sessionID: SessionID, data: unknown, ack: (r
 				if (validateResponse(response, data, ack))
 					parseCustomCardList(Sessions[sessionID], response.data, {}, ack);
 			})
-			.catch(
-				(err) =>
-					ack?.(
-						new SocketError(
-							"Error retrieving cube.",
-							`Couldn't retrieve the card list from ${data.service}.`,
-							`Full error: ${err}`
-						)
+			.catch((err) =>
+				ack?.(
+					new SocketError(
+						"Error retrieving cube.",
+						`Couldn't retrieve the card list from ${data.service}.`,
+						`Full error: ${err}`
 					)
+				)
 			);
 	};
 
@@ -958,15 +954,14 @@ function importCube(userID: UserID, sessionID: SessionID, data: unknown, ack: (r
 					else parseCustomCardList(Sessions[sessionID], converted, { fallbackToCardName: true }, ack);
 				}
 			})
-			.catch(
-				(err) =>
-					ack?.(
-						new SocketError(
-							"Error retrieving cube",
-							`Couldn't retrieve the card list from ${data.service}.`,
-							`Full error: ${err}`
-						)
+			.catch((err) =>
+				ack?.(
+					new SocketError(
+						"Error retrieving cube",
+						`Couldn't retrieve the card list from ${data.service}.`,
+						`Full error: ${err}`
 					)
+				)
 			);
 	}
 }
@@ -1684,7 +1679,7 @@ function joinSession(sessionID: SessionID, userID: UserID, defaultSessionSetting
 		const bracketLink = sess.bracket
 			? `<br />Bracket is available <a href="/bracket?session=${encodeURI(
 					sessionID
-			  )}" target="_blank" rel="noopener nofollow">here</a>.`
+				)}" target="_blank" rel="noopener nofollow">here</a>.`
 			: "";
 		// Session exists and is drafting
 		if (sess.drafting) {
@@ -1997,7 +1992,7 @@ app.get("/getSessions/:key", requireAPIKey, (req, res) => {
 			customCardList: Sessions[sid].customCardList
 				? {
 						name: Sessions[sid].customCardList.name,
-				  }
+					}
 				: null,
 			setRestriction: Sessions[sid].setRestriction,
 		};
