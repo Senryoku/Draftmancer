@@ -1876,6 +1876,11 @@
         "fullName": "Champs and States",
         "icon": "img/sets/pcmp.svg"
     },
+    "pcmr": {
+        "code": "pcmr",
+        "fullName": "Commander Legends Promos",
+        "icon": "img/sets/pcmr.svg"
+    },
     "pcns": {
         "code": "pcns",
         "fullName": "Conspiracy Promos",
@@ -3473,6 +3478,11 @@
         "fullName": "Alchemy: Innistrad",
         "block": "Alchemy 2022",
         "icon": "img/sets/ymid.svg"
+    },
+    "ymkm": {
+        "code": "ymkm",
+        "fullName": "Alchemy: Murders at Karlov Manor ",
+        "icon": "img/sets/ymkm.svg"
     },
     "yneo": {
         "code": "yneo",
