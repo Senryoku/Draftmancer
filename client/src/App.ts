@@ -71,6 +71,7 @@ import Modal from "./components/Modal.vue";
 import SetSelect from "./components/SetSelect.vue";
 import ScaleSlider from "./components/ScaleSlider.vue";
 
+const SupremeDialog = defineAsyncComponent(() => import("./components/SupremeDraftDialog.vue"));
 const GlimpseDialog = defineAsyncComponent(() => import("./components/GlimpseDraftDialog.vue"));
 const GridDialog = defineAsyncComponent(() => import("./components/GridDraftDialog.vue"));
 const HousmanDialog = defineAsyncComponent(() => import("./components/HousmanDialog.vue"));
@@ -2298,6 +2299,17 @@ export default defineComponent({
 						if (!(await this.startDraft())) {
 							[this.boostersPerPlayer, this.burnedCardsPerRound] = prev;
 						}
+					});
+				},
+			});
+		},
+		startSupremeDraft() {
+			if (this.userID !== this.sessionOwner || this.drafting) return;
+
+			this.spawnDialog(SupremeDialog, {
+				onStart: (boostersPerPlayer: number, pickedCardsPerRound: number) => {
+					this.socket.emit("startSupremeDraft", boostersPerPlayer, pickedCardsPerRound, (response) => {
+						if (response?.error) Alert.fire(response.error);
 					});
 				},
 			});

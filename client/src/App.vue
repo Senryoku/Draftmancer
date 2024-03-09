@@ -196,7 +196,7 @@
 								? 'Notifications for this domain are blocked in your browser'
 								: `Desktop Notifications: <strong>${
 										enableNotifications ? 'Enabled' : 'Disabled'
-								  }</strong>`,
+									}</strong>`,
 						html: true,
 					}"
 					@click="toggleNotifications"
@@ -468,6 +468,9 @@
 								</div>
 								<div v-tooltip.left="'Starts a Minesweeper Draft.'">
 									<button @click="startMinesweeperDraft()">Minesweeper</button>
+								</div>
+								<div v-tooltip.left="'Starts a Solo Supreme Draft.'">
+									<button @click="startSupremeDraft()">Supreme</button>
 								</div>
 							</div>
 							<div class="game-modes-cat">
@@ -901,8 +904,8 @@
 										msg.author in userByID
 											? userByID[msg.author].userName
 											: msg.author === sessionOwner && sessionOwnerUsername
-											  ? sessionOwnerUsername
-											  : "(Left)"
+												? sessionOwnerUsername
+												: "(Left)"
 									}}
 								</span>
 								<span class="chat-message">{{ msg.text }}</span>
@@ -1370,8 +1373,8 @@
 						minesweeperDraftState.currentPlayer in userByID
 							? userByID[minesweeperDraftState.currentPlayer].userName
 							: minesweeperDraftState.currentPlayer == ''
-							  ? ''
-							  : '(Disconnected)'
+								? ''
+								: '(Disconnected)'
 					"
 					:picking="userID === minesweeperDraftState.currentPlayer"
 					@pick="minesweeperDraftPick"

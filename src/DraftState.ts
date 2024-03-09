@@ -6,11 +6,14 @@ import { Connections } from "./Connection.js";
 import { IDraftState } from "./IDraftState.js";
 import { UserID } from "./IDTypes.js";
 
+export type BoosterSettings = {
+	readonly discardRemainingCardsAt: number;
+	readonly picks: number[];
+	readonly burns: number[];
+};
+
 export class DraftState extends IDraftState {
-	readonly boosterSettings: {
-		readonly picks: number[];
-		readonly burns: number[];
-	}[];
+	readonly boosterSettings: BoosterSettings[];
 
 	boosters: UniqueCard[][]; // Boosters waiting to be distributed
 	boosterNumber = 0;
@@ -40,10 +43,7 @@ export class DraftState extends IDraftState {
 		boosters: UniqueCard[][],
 		players: UserID[],
 		options: {
-			boosterSettings: {
-				picks: number[];
-				burns: number[];
-			}[];
+			boosterSettings: BoosterSettings[];
 			botCount: number;
 			simpleBots: boolean;
 			botParameters?: MTGDraftBotParameters;
@@ -90,8 +90,12 @@ export class DraftState extends IDraftState {
 		}
 	}
 
+	getBoosterSettings() {
+		return this.boosterSettings[this.boosterNumber % this.boosterSettings.length];
+	}
+
 	picksAndBurnsThisRound(userID: UserID) {
-		const settings = this.boosterSettings[this.boosterNumber % this.boosterSettings.length];
+		const settings = this.getBoosterSettings();
 		const picksThisRound = Math.min(
 			settings.picks[Math.min(this.players[userID].pickNumber, settings.picks.length - 1)],
 			this.players[userID].boosters[0]?.length ?? 0

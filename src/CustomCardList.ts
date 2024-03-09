@@ -112,7 +112,7 @@ export function generateBoosterFromCustomCardList(
 		const nextLayout = predeterminedLayouts
 			? customCardList.settings?.layoutWithReplacement === false
 				? // Predetermined layouts, without replacement
-				  (() => {
+					(() => {
 						const bags: string[][] = predeterminedLayouts.map(() => []);
 						const refill = (index: number) => {
 							const bag = [];
@@ -125,9 +125,9 @@ export function generateBoosterFromCustomCardList(
 							if (bags[index % bags.length].length === 0) refill(index % bags.length);
 							return bags[index % bags.length].pop()!;
 						};
-				  })()
+					})()
 				: // Predetermined layouts, with replacement
-				  (index: number): string => {
+					(index: number): string => {
 						const choices = predeterminedLayouts[index % predeterminedLayouts.length]!;
 						if (choices.length === 1) return choices[0].name;
 						return choices[
@@ -136,10 +136,10 @@ export function generateBoosterFromCustomCardList(
 								choices.reduce((acc, curr) => acc + curr.weight, 0)
 							)
 						].name;
-				  }
+					}
 			: customCardList.settings?.layoutWithReplacement === false
-			  ? // Random layouts without replacement (until we have no other choice)
-			    (() => {
+				? // Random layouts without replacement (until we have no other choice)
+					(() => {
 						let bag: string[] = [];
 						const refill = () => {
 							bag = [];
@@ -151,16 +151,16 @@ export function generateBoosterFromCustomCardList(
 							if (bag.length === 0) refill();
 							return bag.pop()!;
 						};
-			    })()
-			  : // Random layouts
-			    (/*index: number*/): string => {
+					})()
+				: // Random layouts
+					(/*index: number*/): string => {
 						let randomLayout = random.real(0, layoutsTotalWeights);
 						for (const layoutName in layouts) {
 							randomLayout -= layouts[layoutName].weight;
 							if (randomLayout <= 0) return layoutName;
 						}
 						return Object.keys(layouts)[0]!;
-			    };
+					};
 
 		// Generate Boosters
 		const boosters: Array<UniqueCard>[] = [];

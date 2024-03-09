@@ -560,7 +560,31 @@ function readyCheck(userID: UserID, sessionID: SessionID, ack: (result: SocketAc
 
 async function startDraft(userID: UserID, sessionID: SessionID, ack: (result: SocketAck) => void) {
 	const sess = Sessions[sessionID];
+	if (sess.users.size === 0 || sess.users.size + sess.bots < 2)
+		return ack?.(
+			new SocketError(`Not enough players`, `Can't start draft: Not enough players (min. 2 including bots).`)
+		);
 	const r = await Sessions[sessionID].startDraft();
+	if (!isSocketError(r)) startPublicSession(sess);
+	ack?.(r);
+}
+
+async function startSupremeDraft(
+	userID: UserID,
+	sessionID: SessionID,
+	boosterCount: number,
+	pickedCardsPerRound: number,
+	ack: (result: SocketAck) => void
+) {
+	const sess = Sessions[sessionID];
+	if (sess.users.size !== 1)
+		return ack?.(new SocketError(`Invalid number of players`, `Supreme draft requires exactly 1 player.`));
+	const r = await Sessions[sessionID].startDraft({
+		boostersPerPlayer: boosterCount,
+		boosterSettings: [
+			{ discardRemainingCardsAt: Number.POSITIVE_INFINITY, picks: [pickedCardsPerRound], burns: [0] },
+		],
+	});
 	if (!isSocketError(r)) startPublicSession(sess);
 	ack?.(r);
 }
@@ -1545,6 +1569,7 @@ io.on("connection", async function (socket) {
 		socket.on("stopDraft", prepareSocketCallback(stopDraft, true));
 		socket.on("pauseDraft", prepareSocketCallback(pauseDraft, true));
 		socket.on("resumeDraft", prepareSocketCallback(resumeDraft, true));
+		socket.on("startSupremeDraft", prepareSocketCallback(startSupremeDraft, true));
 		socket.on("startGridDraft", prepareSocketCallback(startGridDraft, true));
 		socket.on("startRochesterDraft", prepareSocketCallback(startRochesterDraft, true));
 		socket.on("startRotisserieDraft", prepareSocketCallback(startRotisserieDraft, true));

@@ -283,6 +283,11 @@ export interface ClientToServerEvents {
 	stopDraft: () => void;
 	pauseDraft: () => void;
 	resumeDraft: () => void;
+	startSupremeDraft: (
+		boostersPerPlayer: number,
+		pickedCardsPerRound: number,
+		ack: (result: SocketAck) => void
+	) => void;
 	startGridDraft: (
 		boosterCount: number,
 		twoPicksPerGrid: boolean,
