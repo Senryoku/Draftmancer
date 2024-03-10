@@ -1763,7 +1763,13 @@ export class Session implements IIndexable {
 	}
 
 	///////////////////// Traditional Draft Methods //////////////////////
-	startDraft(overrides?: { boostersPerPlayer?: number; boosterSettings?: BoosterSettings[] }): SocketAck {
+	startDraft(overrides?: {
+		boostersPerPlayer?: number;
+		discardRemainingCardsAt?: number;
+		doubleMastersMode?: boolean;
+		pickedCardsPerRound?: number;
+		burnedCardsPerRound?: number;
+	}): SocketAck {
 		if (this.drafting) return new SocketError("Already drafting.");
 		if (this.teamDraft && this.users.size !== 6) {
 			const verb = this.users.size < 6 ? "add" : "remove";
@@ -1776,6 +1782,10 @@ export class Session implements IIndexable {
 		if (this.randomizeSeatingOrder) this.randomizeSeating();
 
 		const boosterPerPlayer = overrides?.boostersPerPlayer ?? this.boostersPerPlayer;
+		const discardRemainingCardsAt = overrides?.discardRemainingCardsAt ?? this.discardRemainingCardsAt;
+		const doubleMastersMode = overrides?.doubleMastersMode ?? this.doubleMastersMode;
+		const pickedCardsPerRound = overrides?.pickedCardsPerRound ?? this.pickedCardsPerRound;
+		const burnedCardsPerRound = overrides?.burnedCardsPerRound ?? this.burnedCardsPerRound;
 
 		const boosterQuantity = (this.users.size + this.bots) * boosterPerPlayer;
 		console.log(`Session ${this.id}: Starting draft! (${this.users.size} players)`);
@@ -1805,19 +1815,18 @@ export class Session implements IIndexable {
 		const simpleBots = fallbackToSimpleBots([...new Set(oracleIds)], botParameters.wantedModel);
 
 		const boosterSettings =
-			overrides?.boosterSettings ??
-			(this.useCustomCardList && this.customCardList.settings?.boosterSettings
+			this.useCustomCardList && this.customCardList.settings?.boosterSettings
 				? this.customCardList.settings.boosterSettings.map((s) => ({
-						discardRemainingCardsAt: this.discardRemainingCardsAt,
+						discardRemainingCardsAt,
 						...s,
 					}))
 				: [
 						{
-							discardRemainingCardsAt: this.discardRemainingCardsAt,
-							picks: this.doubleMastersMode ? [this.pickedCardsPerRound, 1] : [this.pickedCardsPerRound],
-							burns: [this.burnedCardsPerRound],
+							discardRemainingCardsAt,
+							picks: doubleMastersMode ? [pickedCardsPerRound, 1] : [pickedCardsPerRound],
+							burns: [burnedCardsPerRound],
 						},
-					]);
+					];
 
 		this.draftState = new DraftState(boosters, this.getSortedHumanPlayersIDs(), {
 			boosterSettings,

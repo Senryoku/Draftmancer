@@ -288,6 +288,11 @@ export interface ClientToServerEvents {
 		pickedCardsPerRound: number,
 		ack: (result: SocketAck) => void
 	) => void;
+	startGlimpseDraft: (
+		boostersPerPlayer: number,
+		burnedCardsPerRound: number,
+		ack: (result: SocketAck) => void
+	) => void;
 	startGridDraft: (
 		boosterCount: number,
 		twoPicksPerGrid: boolean,

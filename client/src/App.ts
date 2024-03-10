@@ -2290,15 +2290,8 @@ export default defineComponent({
 				defaultBoostersPerPlayer: boostersPerPlayer,
 				defaultBurnedCardsPerRound: burnedCardsPerRound,
 				onStart: (boostersPerPlayer: number, burnedCardsPerRound: number) => {
-					const prev = [this.boostersPerPlayer, this.burnedCardsPerRound];
-					this.boostersPerPlayer = boostersPerPlayer;
-					this.burnedCardsPerRound = burnedCardsPerRound;
-					// Wait to make sure reactive values are correctly propagated to the server
-					this.$nextTick(async () => {
-						// Draft didn't start, restore previous values.
-						if (!(await this.startDraft())) {
-							[this.boostersPerPlayer, this.burnedCardsPerRound] = prev;
-						}
+					this.socket.emit("startGlimpseDraft", boostersPerPlayer, burnedCardsPerRound, (response) => {
+						if (response?.error) Alert.fire(response.error);
 					});
 				},
 			});
