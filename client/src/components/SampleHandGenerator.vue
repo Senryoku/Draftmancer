@@ -21,8 +21,7 @@ import type { Card as CardObject, UniqueCard } from "@/CardTypes";
 import { toUnique, CardColor } from "../../../src/CardTypes";
 import Card from "./Card.vue";
 
-import MTGACards from "../MTGACards";
-
+import BasicLands from "../SampleHandBasicLands";
 
 const props = defineProps({
 	language: { type: String as PropType<Language>, required: true },
@@ -35,14 +34,6 @@ const props = defineProps({
 	},
 });
 
-const basicLands: { [c in CardColor]: CardObject } = {
- "W" : MTGACards["72563"],
- "U" : MTGACards["72569"],
- "B" : MTGACards["72579"],
- "R" : MTGACards["72582"],
- "G" : MTGACards["72591"],
-};
-
 let library = reactive<{ value: UniqueCard[] }>({
   value: []
 });
@@ -53,7 +44,7 @@ let hand = reactive<{ value: UniqueCard[] }>({
 function getBasicLands(): UniqueCard[] {
   return Object.values(CardColor).flatMap(c => {
     const count = props.options.lands?.[c] ?? 0;
-    return new Array(count).fill(null).map(() => toUnique(basicLands[c]));
+    return new Array(count).fill(null).map(() => toUnique(BasicLands[c]));
   })
 }
 
