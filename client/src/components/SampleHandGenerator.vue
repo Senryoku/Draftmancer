@@ -2,11 +2,11 @@
   <div>
     <div class="toolbar">
       <button @click="newHand">New Hand</button>
-      <button @click="drawCard" :disabled="library.length < 1">Draw Card</button>
+      <button @click="drawCard" :disabled="library.value.length < 1">Draw Card</button>
     </div>
     <div class="hand">
       <card
-        v-for="card in hand"
+        v-for="card in hand.value"
   			:card="card"
   			:language="language"
   		></card>
@@ -14,14 +14,24 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType } from "vue";
+<script setup lang="ts">
+import { defineComponent, defineProps, reactive, onMounted, PropType } from "vue";
 import { Card as CardObject, CardColor, UniqueCard, toUnique } from "../../../src/CardTypes.ts";
 import Card from "./Card.vue";
 
 import MTGACards from "../MTGACards";
 
 
+const props = defineProps({
+	language: { type: String as PropType<Language>, required: true },
+	deck: { type: Array as PropType<UniqueCard[]>, required: true },
+	options: {
+		type: Object,
+		default: () => {
+			return { lands: null, preferredBasics: "" };
+		},
+	},
+});
 
 const basicLands: { [c in CardColor]: Card } = {
  "W" : MTGACards["72563"],
@@ -31,58 +41,48 @@ const basicLands: { [c in CardColor]: Card } = {
  "G" : MTGACards["72591"],
 };
 
-export default defineComponent({
-	props: {
-		language: { type: String as PropType<Language>, required: true },
-		deck: { type: Array as PropType<UniqueCard[]>, required: true },
-		options: {
-			type: Object,
-			default: () => {
-				return { lands: null, preferredBasics: "" };
-			},
-		},
-	},
-  data() { return {
-    library: [] as UniqueCard[],
-    hand: [] as UniqueCard[],
-  }},
-  methods: {
-    getBasicLands() {
-      return Object.values(CardColor).flatMap(c => {
-        const count = this.options.lands?.[c] ?? 0;
-        return Array.apply(null, {length: count}).map(() => toUnique(basicLands[c]));
-      })
-    },
-    drawCard() {
-      if (this.library.length == 0) return;
-      this.hand = [...this.hand, this.library.shift()];
-    },
-    newHand() {
-      // Copy library from passed deck, then shuffle it
-      this.library = [...this.deck, ...this.getBasicLands()];
-      let counter = this.library.length;
+let library = reactive<{ value: UniqueCard[] }>({
+  value: []
+});
+let hand = reactive<{ value: UniqueCard[] }>({
+  value: []
+});
 
-      while (counter > 0) {
-          let index = Math.floor(Math.random() * counter);
-          counter--;
+function getBasicLands() {
+  return Object.values(CardColor).flatMap(c => {
+    const count = props.options.lands?.[c] ?? 0;
+    return Array.apply(null, {length: count}).map(() => toUnique(basicLands[c]));
+  })
+}
 
-          let el = this.library[counter];
-          this.library[counter] = this.library[index];
-          this.library[index] = el;
-      }     
-      this.hand = [];
+function drawCard() {
+  if (library.value.length == 0) return;
+  const card = library.value.shift();
+  hand.value = [...hand.value, card];
+}
 
-      while (this.hand.length < 7 && this.library.length > 0) {
-        this.drawCard();
-      }
-    }
-  },
-  mounted() {
-    this.newHand();
-  },
-  components: {
-    Card
+function newHand() {
+  // Copy library from passed deck, then shuffle it
+  library.value = [...props.deck, ...getBasicLands()];
+  let counter = library.value.length;
+
+  while (counter > 0) {
+      let index = Math.floor(Math.random() * counter);
+      counter--;
+
+      let el = library.value[counter];
+      library.value[counter] = library.value[index];
+      library.value[index] = el;
+  }     
+  hand.value = [];
+
+  while (hand.value.length < 7 && library.value.length > 0) {
+    drawCard();
   }
+}
+
+onMounted(() => {
+  newHand();
 });
 
 </script>
