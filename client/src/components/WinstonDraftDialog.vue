@@ -5,13 +5,13 @@
 		</template>
 		<template v-slot:body>
 			<div class="dialog">
+				<p>Winston Draft is a draft variant designed for two players, but extentable to more participants.</p>
+				<p>Players take turns choosing between 3 growing piles of cards, or drawing a random one.</p>
 				<p>
-					Winston Draft is a draft variant designed for two players, but playable with more participants.
-					Players take turns choosing between 3 growing piles of cards, or drawing a random one.
-					<br />
 					<a href="https://mtg.gamepedia.com/Winston_Draft" target="_blank" rel="noopener nofollow"
-						>More information here</a
-					>.
+						><font-awesome-icon icon="fa-solid fa-external-link-alt"></font-awesome-icon> More
+						information</a
+					>
 				</p>
 				<div class="dialog-settings">
 					<label for="boosters-per-player-input">Boosters per Player</label>
