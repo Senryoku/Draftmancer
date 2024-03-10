@@ -1513,6 +1513,7 @@
 											sideboardBasics: sideboardBasics,
 										}"
 									/>
+									<div class="clickable" @click="displayedModal = 'sampleHand'">Get Sample Hand</div>
 									<div class="deck-stat-container clickable" @click="displayedModal = 'deckStats'">
 										<font-awesome-icon
 											icon="fa-solid fa-chart-pie"
@@ -2894,6 +2895,21 @@
 					@generate-double="generateDoubleBracket"
 					@lock="lockBracket"
 				></bracket-component>
+			</template>
+		</modal>
+		<modal :displayed="displayedModal === 'sampleHand'" @close="displayedModal = ''">
+			<template v-slot:header>
+				<h2>Sample Hand Generator</h2>
+			</template>
+			<template v-slot:body>
+				<sample-hand-generator
+					:language="language"
+					:deck="deck"
+					:options="{
+						lands: lands,
+						preferredBasics: preferredBasics,
+					}"
+				/>
 			</template>
 		</modal>
 		<modal :displayed="displayedModal === 'deckStats'" @close="displayedModal = ''">
