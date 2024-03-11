@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, ref, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import { Language } from "@/Types";
 import { UniqueCard, toUnique, CardColor } from "../../../src/CardTypes";
 import Card from "./Card.vue";
