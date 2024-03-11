@@ -2,16 +2,16 @@
 	<div>
 		<div class="toolbar">
 			<button @click="newHand">New Hand</button>
-			<button @click="drawCard" :disabled="library.value.length < 1">Draw Card</button>
+			<button @click="drawCard" :disabled="library.length < 1">Draw Card</button>
 		</div>
 		<div class="hand">
-			<card v-for="card in hand.value" :card="card" :language="language" :key="card.uniqueID"></card>
+			<card v-for="card in hand" :card="card" :language="language" :key="card.uniqueID"></card>
 		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
-import { defineProps, reactive, onMounted, PropType } from "vue";
+import { defineProps, ref, onMounted, PropType } from "vue";
 import { Language } from "@/Types";
 import type { UniqueCard } from "@/CardTypes";
 import { toUnique, CardColor } from "../../../src/CardTypes";
@@ -30,12 +30,8 @@ const props = defineProps({
 	},
 });
 
-let library = reactive<{ value: UniqueCard[] }>({
-	value: [],
-});
-let hand = reactive<{ value: UniqueCard[] }>({
-	value: [],
-});
+const library = ref<UniqueCard[]>([]);
+const hand = ref<UniqueCard[]>([]);
 
 function getBasicLands(): UniqueCard[] {
 	return Object.values(CardColor).flatMap((c) => {
