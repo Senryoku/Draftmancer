@@ -67,7 +67,6 @@ import CardPopup from "./components/CardPopup.vue";
 import DelayedInput from "./components/DelayedInput.vue";
 import Dropdown from "./components/Dropdown.vue";
 import ExportDropdown from "./components/ExportDropdown.vue";
-import SampleHandGenerator from "./components/SampleHandGenerator.vue";
 import Modal from "./components/Modal.vue";
 import SetSelect from "./components/SetSelect.vue";
 import ScaleSlider from "./components/ScaleSlider.vue";
@@ -187,7 +186,7 @@ export default defineComponent({
 		DraftLogPick: defineAsyncComponent(() => import("./components/DraftLogPick.vue")),
 		Dropdown,
 		ExportDropdown,
-		SampleHandGenerator,
+		SampleHandGenerator: defineAsyncComponent(() => import("./components/SampleHandGenerator.vue")),
 		GettingStarted: defineAsyncComponent(() => import("./components/GettingStarted.vue")),
 		GridDraft: defineAsyncComponent(() => import("./components/GridDraft.vue")),
 		HelpModal: defineAsyncComponent(() => import("./components/HelpModal.vue")),
