@@ -13,9 +13,9 @@
 <script setup lang="ts">
 import { defineProps, ref, onMounted, PropType } from "vue";
 import { Language } from "@/Types";
-import type { UniqueCard } from "@/CardTypes";
-import { toUnique, CardColor } from "../../../src/CardTypes";
+import { UniqueCard, toUnique, CardColor } from "../../../src/CardTypes";
 import Card from "./Card.vue";
+import { shuffleArray } from "../helper";
 
 import BasicLands from "../SampleHandBasicLands";
 
@@ -41,30 +41,15 @@ function getBasicLands(): UniqueCard[] {
 }
 
 function drawCard() {
-	if (library.value.length == 0) return;
-	const card = library.value.shift();
-	if (!card) return;
-	hand.value = [...hand.value, card];
+	if (library.value.length <= 0) return;
+	hand.value.push(library.value.shift()!);
 }
 
 function newHand() {
 	// Copy library from passed deck, then shuffle it
 	library.value = [...props.deck, ...getBasicLands()];
-	let counter = library.value.length;
-
-	while (counter > 0) {
-		let index = Math.floor(Math.random() * counter);
-		counter--;
-
-		let el = library.value[counter];
-		library.value[counter] = library.value[index];
-		library.value[index] = el;
-	}
-	hand.value = [];
-
-	while (hand.value.length < 7 && library.value.length > 0) {
-		drawCard();
-	}
+	shuffleArray(library.value);
+	hand.value = library.value.slice(0, Math.min(7, library.value.length));
 }
 
 onMounted(() => {
@@ -78,6 +63,7 @@ onMounted(() => {
 	justify-content: flex-end;
 	margin-bottom: 0.5em;
 }
+
 .hand {
 	display: flex;
 	flex-wrap: wrap;
