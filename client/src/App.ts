@@ -186,6 +186,7 @@ export default defineComponent({
 		DraftLogPick: defineAsyncComponent(() => import("./components/DraftLogPick.vue")),
 		Dropdown,
 		ExportDropdown,
+		SampleHandGenerator: defineAsyncComponent(() => import("./components/SampleHandGenerator.vue")),
 		GettingStarted: defineAsyncComponent(() => import("./components/GettingStarted.vue")),
 		GridDraft: defineAsyncComponent(() => import("./components/GridDraft.vue")),
 		HelpModal: defineAsyncComponent(() => import("./components/HelpModal.vue")),

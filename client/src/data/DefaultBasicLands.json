@@ -1,0 +1,172 @@
+{
+    "W": {
+        "id": "0a479838-b6b1-4d83-9104-0a79f3b934c7",
+        "oracle_id": "bc71ebf6-2056-41f7-be35-b2e5c34afa99",
+        "name": "Plains",
+        "mana_cost": "",
+        "set": "j22",
+        "collector_number": "98",
+        "rarity": "common",
+        "type": "Basic Land",
+        "subtypes": [
+            "Plains"
+        ],
+        "rating": 0,
+        "in_booster": false,
+        "cmc": 0,
+        "colors": [],
+        "printed_names": {
+            "zhs": "平原",
+            "it": "Pianura",
+            "ja": "平地",
+            "fr": "Plaine",
+            "es": "Llanura",
+            "de": "Ebene"
+        },
+        "image_uris": {
+            "en": "https://api.scryfall.com/cards/j22/98/en?format=image&version=border_crop",
+            "zhs": "https://api.scryfall.com/cards/j22/98/zhs?format=image&version=border_crop",
+            "it": "https://api.scryfall.com/cards/j22/98/it?format=image&version=border_crop",
+            "ja": "https://api.scryfall.com/cards/j22/98/ja?format=image&version=border_crop",
+            "fr": "https://api.scryfall.com/cards/j22/98/fr?format=image&version=border_crop",
+            "es": "https://api.scryfall.com/cards/j22/98/es?format=image&version=border_crop",
+            "de": "https://api.scryfall.com/cards/j22/98/de?format=image&version=border_crop"
+        }
+    },
+    "U": {
+        "id": "b0559d67-e151-4c6b-b8eb-5e9b5603f487",
+        "oracle_id": "b2c6aa39-2d2a-459c-a555-fb48ba993373",
+        "name": "Island",
+        "mana_cost": "",
+        "set": "j22",
+        "collector_number": "101",
+        "rarity": "common",
+        "type": "Basic Land",
+        "subtypes": [
+            "Island"
+        ],
+        "rating": 0,
+        "in_booster": false,
+        "cmc": 0,
+        "colors": [],
+        "printed_names": {
+            "ja": "島",
+            "de": "Insel",
+            "es": "Isla",
+            "zhs": "海岛",
+            "it": "Isola",
+            "fr": "Île"
+        },
+        "image_uris": {
+            "en": "https://api.scryfall.com/cards/j22/101/en?format=image&version=border_crop",
+            "zhs": "https://api.scryfall.com/cards/j22/101/zhs?format=image&version=border_crop",
+            "it": "https://api.scryfall.com/cards/j22/101/it?format=image&version=border_crop",
+            "ja": "https://api.scryfall.com/cards/j22/101/ja?format=image&version=border_crop",
+            "fr": "https://api.scryfall.com/cards/j22/101/fr?format=image&version=border_crop",
+            "es": "https://api.scryfall.com/cards/j22/101/es?format=image&version=border_crop",
+            "de": "https://api.scryfall.com/cards/j22/101/de?format=image&version=border_crop"
+        }
+    },
+    "B": {
+        "id": "42fec83d-8260-478e-a20f-94d265036e31",
+        "oracle_id": "56719f6a-1a6c-4c0a-8d21-18f7d7350b68",
+        "name": "Swamp",
+        "mana_cost": "",
+        "set": "j22",
+        "collector_number": "104",
+        "rarity": "common",
+        "type": "Basic Land",
+        "subtypes": [
+            "Swamp"
+        ],
+        "rating": 0,
+        "in_booster": false,
+        "cmc": 0,
+        "colors": [],
+        "printed_names": {
+            "fr": "Marais",
+            "de": "Sumpf",
+            "es": "Pantano",
+            "ja": "沼",
+            "it": "Palude",
+            "zhs": "沼泽"
+        },
+        "image_uris": {
+            "en": "https://api.scryfall.com/cards/j22/104/en?format=image&version=border_crop",
+            "zhs": "https://api.scryfall.com/cards/j22/104/zhs?format=image&version=border_crop",
+            "it": "https://api.scryfall.com/cards/j22/104/it?format=image&version=border_crop",
+            "ja": "https://api.scryfall.com/cards/j22/104/ja?format=image&version=border_crop",
+            "fr": "https://api.scryfall.com/cards/j22/104/fr?format=image&version=border_crop",
+            "es": "https://api.scryfall.com/cards/j22/104/es?format=image&version=border_crop",
+            "de": "https://api.scryfall.com/cards/j22/104/de?format=image&version=border_crop"
+        }
+    },
+    "R": {
+        "id": "577aff75-67f7-42c8-b31f-50026c5ba5c6",
+        "oracle_id": "a3fb7228-e76b-4e96-a40e-20b5fed75685",
+        "name": "Mountain",
+        "mana_cost": "",
+        "set": "j22",
+        "collector_number": "107",
+        "rarity": "common",
+        "type": "Basic Land",
+        "subtypes": [
+            "Mountain"
+        ],
+        "rating": 0,
+        "in_booster": false,
+        "cmc": 0,
+        "colors": [],
+        "printed_names": {
+            "it": "Montagna",
+            "fr": "Montagne",
+            "zhs": "山脉",
+            "de": "Gebirge",
+            "ja": "山",
+            "es": "Montaña"
+        },
+        "image_uris": {
+            "en": "https://api.scryfall.com/cards/j22/107/en?format=image&version=border_crop",
+            "zhs": "https://api.scryfall.com/cards/j22/107/zhs?format=image&version=border_crop",
+            "it": "https://api.scryfall.com/cards/j22/107/it?format=image&version=border_crop",
+            "ja": "https://api.scryfall.com/cards/j22/107/ja?format=image&version=border_crop",
+            "fr": "https://api.scryfall.com/cards/j22/107/fr?format=image&version=border_crop",
+            "es": "https://api.scryfall.com/cards/j22/107/es?format=image&version=border_crop",
+            "de": "https://api.scryfall.com/cards/j22/107/de?format=image&version=border_crop"
+        }
+    },
+    "G": {
+        "id": "cee97ab6-8e81-4396-a788-db0ed0da62d2",
+        "oracle_id": "b34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6",
+        "name": "Forest",
+        "mana_cost": "",
+        "set": "j22",
+        "collector_number": "110",
+        "rarity": "common",
+        "type": "Basic Land",
+        "subtypes": [
+            "Forest"
+        ],
+        "rating": 0,
+        "in_booster": false,
+        "cmc": 0,
+        "colors": [],
+        "printed_names": {
+            "zhs": "树林",
+            "de": "Wald",
+            "it": "Foresta",
+            "ja": "森",
+            "fr": "Forêt",
+            "es": "Bosque"
+        },
+        "image_uris": {
+            "en": "https://api.scryfall.com/cards/j22/110/en?format=image&version=border_crop",
+            "zhs": "https://api.scryfall.com/cards/j22/110/zhs?format=image&version=border_crop",
+            "it": "https://api.scryfall.com/cards/j22/110/it?format=image&version=border_crop",
+            "ja": "https://api.scryfall.com/cards/j22/110/ja?format=image&version=border_crop",
+            "fr": "https://api.scryfall.com/cards/j22/110/fr?format=image&version=border_crop",
+            "es": "https://api.scryfall.com/cards/j22/110/es?format=image&version=border_crop",
+            "de": "https://api.scryfall.com/cards/j22/110/de?format=image&version=border_crop"
+        }
+    }
+}

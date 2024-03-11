@@ -217,3 +217,20 @@ export function onEnterBoosterCards(e: Element) {
 		el.style.setProperty("--initial-rotation", `${rotation}deg`);
 	}
 }
+
+export function randomZeroToOne() {
+	// https://stackoverflow.com/a/34577886/3288996
+	const buffer = new ArrayBuffer(8);
+	const ints = new Int8Array(buffer);
+	window.crypto.getRandomValues(ints);
+	ints[7] = 63;
+	ints[6] |= 0xf0;
+	return new DataView(buffer).getFloat64(0, true) - 1;
+}
+
+export function shuffleArray<T>(array: Array<T>, start = 0, end = array.length) {
+	for (let i = end - 1; i > start; i--) {
+		const j = start + Math.floor(randomZeroToOne() * (i - start + 1));
+		[array[i], array[j]] = [array[j], array[i]];
+	}
+}

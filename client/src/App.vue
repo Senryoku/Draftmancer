@@ -196,7 +196,7 @@
 								? 'Notifications for this domain are blocked in your browser'
 								: `Desktop Notifications: <strong>${
 										enableNotifications ? 'Enabled' : 'Disabled'
-								  }</strong>`,
+									}</strong>`,
 						html: true,
 					}"
 					@click="toggleNotifications"
@@ -901,8 +901,8 @@
 										msg.author in userByID
 											? userByID[msg.author].userName
 											: msg.author === sessionOwner && sessionOwnerUsername
-											  ? sessionOwnerUsername
-											  : "(Left)"
+												? sessionOwnerUsername
+												: "(Left)"
 									}}
 								</span>
 								<span class="chat-message">{{ msg.text }}</span>
@@ -1370,8 +1370,8 @@
 						minesweeperDraftState.currentPlayer in userByID
 							? userByID[minesweeperDraftState.currentPlayer].userName
 							: minesweeperDraftState.currentPlayer == ''
-							  ? ''
-							  : '(Disconnected)'
+								? ''
+								: '(Disconnected)'
 					"
 					:picking="userID === minesweeperDraftState.currentPlayer"
 					@pick="minesweeperDraftPick"
@@ -1513,6 +1513,14 @@
 											sideboardBasics: sideboardBasics,
 										}"
 									/>
+									<div
+										class="clickable"
+										style="display: flex;"
+										@click="displayedModal = 'sampleHand'"
+										v-tooltip="'Draw a Sample Hand'"
+									>
+										<img src="./assets/img/cards.svg" width="24px" height="24px" />
+									</div>
 									<div class="deck-stat-container clickable" @click="displayedModal = 'deckStats'">
 										<font-awesome-icon
 											icon="fa-solid fa-chart-pie"
@@ -2894,6 +2902,14 @@
 					@generate-double="generateDoubleBracket"
 					@lock="lockBracket"
 				></bracket-component>
+			</template>
+		</modal>
+		<modal :displayed="displayedModal === 'sampleHand'" @close="displayedModal = ''">
+			<template v-slot:header>
+				<h2>Sample Hand Generator</h2>
+			</template>
+			<template v-slot:body>
+				<sample-hand-generator :language="language" :deck="deck" :lands="lands" />
 			</template>
 		</modal>
 		<modal :displayed="displayedModal === 'deckStats'" @close="displayedModal = ''">
