@@ -1,5 +1,5 @@
 {
-  "W": {
+    "W": {
         "id": "0a479838-b6b1-4d83-9104-0a79f3b934c7",
         "oracle_id": "bc71ebf6-2056-41f7-be35-b2e5c34afa99",
         "name": "Plains",
@@ -24,16 +24,16 @@
             "de": "Ebene"
         },
         "image_uris": {
-            "en": "https://cards.scryfall.io/border_crop/front/0/a/0a479838-b6b1-4d83-9104-0a79f3b934c7.jpg?1675645492",
-            "zhs": "https://cards.scryfall.io/border_crop/front/7/5/75e91988-b7a7-4a9f-9f64-6f78a7411ed3.jpg?1677129970",
-            "it": "https://cards.scryfall.io/border_crop/front/8/7/874ae837-5ef5-4cc7-bffc-226992d646a4.jpg?1677129963",
-            "ja": "https://cards.scryfall.io/border_crop/front/9/7/976f23b2-74cd-4251-8d63-5d74a30e25b2.jpg?1677129965",
-            "fr": "https://cards.scryfall.io/border_crop/front/b/7/b7a43dd2-3bc7-4806-b8a8-178297dbb17d.jpg?1677129964",
-            "es": "https://cards.scryfall.io/border_crop/front/e/c/ec593f16-cbc5-4315-8248-293e1451f9d8.jpg?1677129970",
-            "de": "https://cards.scryfall.io/border_crop/front/f/d/fddf58f4-5581-4143-8b97-879bf79cd090.jpg?1677129965"
+            "en": "https://api.scryfall.com/cards/j22/98/en?format=image&version=border_crop",
+            "zhs": "https://api.scryfall.com/cards/j22/98/zhs?format=image&version=border_crop",
+            "it": "https://api.scryfall.com/cards/j22/98/it?format=image&version=border_crop",
+            "ja": "https://api.scryfall.com/cards/j22/98/ja?format=image&version=border_crop",
+            "fr": "https://api.scryfall.com/cards/j22/98/fr?format=image&version=border_crop",
+            "es": "https://api.scryfall.com/cards/j22/98/es?format=image&version=border_crop",
+            "de": "https://api.scryfall.com/cards/j22/98/de?format=image&version=border_crop"
         }
-   },
-  "U": {
+    },
+    "U": {
         "id": "b0559d67-e151-4c6b-b8eb-5e9b5603f487",
         "oracle_id": "b2c6aa39-2d2a-459c-a555-fb48ba993373",
         "name": "Island",
@@ -58,16 +58,16 @@
             "fr": "Île"
         },
         "image_uris": {
-            "ja": "https://cards.scryfall.io/border_crop/front/6/2/62c2d14a-ee13-488e-b4c0-6bc1ac5bd4c9.jpg?1677130069",
-            "de": "https://cards.scryfall.io/border_crop/front/6/4/640d8304-2020-4b8f-a0f4-6479a85e4440.jpg?1677130071",
-            "es": "https://cards.scryfall.io/border_crop/front/6/5/65e3d302-c959-49ff-a82a-4124e875bbc3.jpg?1677130068",
-            "zhs": "https://cards.scryfall.io/border_crop/front/9/2/9227c574-95ff-4949-b1c5-dabc0a6ea0ed.jpg?1677130073",
-            "it": "https://cards.scryfall.io/border_crop/front/a/4/a4ce59dd-50a2-4759-9c14-751e6461d45e.jpg?1677130067",
-            "en": "https://cards.scryfall.io/border_crop/front/b/0/b0559d67-e151-4c6b-b8eb-5e9b5603f487.jpg?1675645528",
-            "fr": "https://cards.scryfall.io/border_crop/front/b/b/bb5dfa8e-7792-47b2-a8da-72514c51e537.jpg?1677130063"
+            "en": "https://api.scryfall.com/cards/j22/101/en?format=image&version=border_crop",
+            "zhs": "https://api.scryfall.com/cards/j22/101/zhs?format=image&version=border_crop",
+            "it": "https://api.scryfall.com/cards/j22/101/it?format=image&version=border_crop",
+            "ja": "https://api.scryfall.com/cards/j22/101/ja?format=image&version=border_crop",
+            "fr": "https://api.scryfall.com/cards/j22/101/fr?format=image&version=border_crop",
+            "es": "https://api.scryfall.com/cards/j22/101/es?format=image&version=border_crop",
+            "de": "https://api.scryfall.com/cards/j22/101/de?format=image&version=border_crop"
         }
     },
-  "B": {
+    "B": {
         "id": "42fec83d-8260-478e-a20f-94d265036e31",
         "oracle_id": "56719f6a-1a6c-4c0a-8d21-18f7d7350b68",
         "name": "Swamp",
@@ -92,16 +92,16 @@
             "zhs": "沼泽"
         },
         "image_uris": {
-            "en": "https://cards.scryfall.io/border_crop/front/4/2/42fec83d-8260-478e-a20f-94d265036e31.jpg?1675645565",
-            "fr": "https://cards.scryfall.io/border_crop/front/8/0/8044accf-d0be-4d87-9531-304abfd6063f.jpg?1677130122",
-            "de": "https://cards.scryfall.io/border_crop/front/8/e/8e9e1f52-4e30-4977-ad28-65e4918b7017.jpg?1677130117",
-            "es": "https://cards.scryfall.io/border_crop/front/c/5/c5885592-2b9e-4e0d-a539-6e1c051680e0.jpg?1677130118",
-            "ja": "https://cards.scryfall.io/border_crop/front/c/8/c83e0d18-377a-4e90-a15f-01c9d06ac821.jpg?1677130122",
-            "it": "https://cards.scryfall.io/border_crop/front/d/c/dcaf1bbe-f98a-4758-a728-eba222813848.jpg?1677130119",
-            "zhs": "https://cards.scryfall.io/border_crop/front/e/7/e73d1fa2-2456-4eac-9351-7166c2a8824d.jpg?1677130115"
+            "en": "https://api.scryfall.com/cards/j22/104/en?format=image&version=border_crop",
+            "zhs": "https://api.scryfall.com/cards/j22/104/zhs?format=image&version=border_crop",
+            "it": "https://api.scryfall.com/cards/j22/104/it?format=image&version=border_crop",
+            "ja": "https://api.scryfall.com/cards/j22/104/ja?format=image&version=border_crop",
+            "fr": "https://api.scryfall.com/cards/j22/104/fr?format=image&version=border_crop",
+            "es": "https://api.scryfall.com/cards/j22/104/es?format=image&version=border_crop",
+            "de": "https://api.scryfall.com/cards/j22/104/de?format=image&version=border_crop"
         }
-  },
-  "R": {
+    },
+    "R": {
         "id": "577aff75-67f7-42c8-b31f-50026c5ba5c6",
         "oracle_id": "a3fb7228-e76b-4e96-a40e-20b5fed75685",
         "name": "Mountain",
@@ -126,16 +126,16 @@
             "es": "Montaña"
         },
         "image_uris": {
-            "it": "https://cards.scryfall.io/border_crop/front/5/0/5098768d-845f-40e7-b3eb-b938aaac22da.jpg?1677130211",
-            "en": "https://cards.scryfall.io/border_crop/front/5/7/577aff75-67f7-42c8-b31f-50026c5ba5c6.jpg?1675645599",
-            "fr": "https://cards.scryfall.io/border_crop/front/7/1/71dc6534-875d-4e35-b635-c9da8996f064.jpg?1677130211",
-            "zhs": "https://cards.scryfall.io/border_crop/front/d/5/d5e8da23-7292-48e9-bea9-2a73ff094251.jpg?1677130213",
-            "de": "https://cards.scryfall.io/border_crop/front/d/e/de0f6c46-699e-4314-b470-510119095f0a.jpg?1677130212",
-            "ja": "https://cards.scryfall.io/border_crop/front/f/6/f631e8e0-e023-4902-93c3-156a423cf6b3.jpg?1677130220",
-            "es": "https://cards.scryfall.io/border_crop/front/f/d/fde7e166-cbf2-4e4f-b779-72fdfa0b9f45.jpg?1677130219"
+            "en": "https://api.scryfall.com/cards/j22/107/en?format=image&version=border_crop",
+            "zhs": "https://api.scryfall.com/cards/j22/107/zhs?format=image&version=border_crop",
+            "it": "https://api.scryfall.com/cards/j22/107/it?format=image&version=border_crop",
+            "ja": "https://api.scryfall.com/cards/j22/107/ja?format=image&version=border_crop",
+            "fr": "https://api.scryfall.com/cards/j22/107/fr?format=image&version=border_crop",
+            "es": "https://api.scryfall.com/cards/j22/107/es?format=image&version=border_crop",
+            "de": "https://api.scryfall.com/cards/j22/107/de?format=image&version=border_crop"
         }
-  },
-  "G": {
+    },
+    "G": {
         "id": "cee97ab6-8e81-4396-a788-db0ed0da62d2",
         "oracle_id": "b34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6",
         "name": "Forest",
@@ -160,13 +160,13 @@
             "es": "Bosque"
         },
         "image_uris": {
-            "zhs": "https://cards.scryfall.io/border_crop/front/0/0/00b26627-a76c-44ce-90fe-e8030c4dbb41.jpg?1677130313",
-            "de": "https://cards.scryfall.io/border_crop/front/1/5/1581c64c-386e-4285-af5d-b88978f188a1.jpg?1677130315",
-            "it": "https://cards.scryfall.io/border_crop/front/3/7/376c878e-c382-41a2-a5aa-7689860a3e45.jpg?1677130319",
-            "ja": "https://cards.scryfall.io/border_crop/front/3/f/3f726af8-5a1d-4259-b6e2-8094eb9e74f1.jpg?1677130314",
-            "fr": "https://cards.scryfall.io/border_crop/front/9/2/92c76b6c-a372-470b-b8ba-d97053cbb5c6.jpg?1677130311",
-            "es": "https://cards.scryfall.io/border_crop/front/9/4/949dec17-2c57-44af-9dcf-9682354df195.jpg?1677130311",
-            "en": "https://cards.scryfall.io/border_crop/front/c/e/cee97ab6-8e81-4396-a788-db0ed0da62d2.jpg?1675645631"
+            "en": "https://api.scryfall.com/cards/j22/110/en?format=image&version=border_crop",
+            "zhs": "https://api.scryfall.com/cards/j22/110/zhs?format=image&version=border_crop",
+            "it": "https://api.scryfall.com/cards/j22/110/it?format=image&version=border_crop",
+            "ja": "https://api.scryfall.com/cards/j22/110/ja?format=image&version=border_crop",
+            "fr": "https://api.scryfall.com/cards/j22/110/fr?format=image&version=border_crop",
+            "es": "https://api.scryfall.com/cards/j22/110/es?format=image&version=border_crop",
+            "de": "https://api.scryfall.com/cards/j22/110/de?format=image&version=border_crop"
         }
     }
 }
