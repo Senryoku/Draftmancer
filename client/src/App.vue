@@ -1515,6 +1515,7 @@
 									/>
 									<div
 										class="clickable"
+										style="display: flex;"
 										@click="displayedModal = 'sampleHand'"
 										v-tooltip="'Draw a Sample Hand'"
 									>
