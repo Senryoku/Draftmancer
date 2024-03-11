@@ -1,6 +1,22 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
+			<em>March, 2024</em>
+			<ul>
+				<li>New solo game mode: Supreme Draft!<br />Pick 2 cards from each booster and discard the rest.</li>
+				<li>
+					<img
+						src="../assets/img/cards.svg"
+						width="24px"
+						height="24px"
+						style="float: left; margin-right: 0.5em"
+					/>
+					Added a quick way to generate sample hands from your current deck.<br />Thanks Aritsune for the idea
+					and implementation!
+				</li>
+			</ul>
+		</div>
+		<div class="news">
 			<em>February 17, 2024</em>
 			<ul>
 				<li>
@@ -57,21 +73,6 @@
 				<li>Correctly escape special characters, like quotes, in card names for MTGO export.</li>
 				<li>Fixed session collection download.</li>
 				<li>Usual minor tweaks</li>
-			</ul>
-		</div>
-		<div class="news">
-			<em>November 29, 2023</em>
-			<ul>
-				<li>
-					Resolved an issue causing cards to disappear from the deck.<br />This should catch most cases, but
-					I'm still unsure of the root cause. Please report if you encounter a similar issue!
-				</li>
-				<li>Improved the Swiss bracket pairing algorithm and user interface.</li>
-				<li>
-					Added a download option for MTGA/Card Names exports, as an alternative to the default copy to
-					clipboard behaviour.
-				</li>
-				<li>Optimized draft logs compression and decompression speed.</li>
 			</ul>
 		</div>
 	</div>

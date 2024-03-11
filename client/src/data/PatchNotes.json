@@ -1,5 +1,12 @@
 [
 	{
+		"date": "11/03/2024",
+		"notes": [
+			"Solo game mode Supreme Draft.",
+			"Sample hand generator."
+		]
+	},
+	{
 		"date": "17/02/2024",
 		"notes": [
 			"Custom card backs support.",
