@@ -17,7 +17,7 @@ import { UniqueCard, toUnique, CardColor } from "../../../src/CardTypes";
 import Card from "./Card.vue";
 import { shuffleArray } from "../helper";
 
-import BasicLands from "../SampleHandBasicLands";
+import BasicLands from "../DefaultBasicLands";
 
 const props = defineProps<{
 	language: Language;
