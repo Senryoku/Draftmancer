@@ -196,7 +196,7 @@
 								? 'Notifications for this domain are blocked in your browser'
 								: `Desktop Notifications: <strong>${
 										enableNotifications ? 'Enabled' : 'Disabled'
-								  }</strong>`,
+									}</strong>`,
 						html: true,
 					}"
 					@click="toggleNotifications"
@@ -901,8 +901,8 @@
 										msg.author in userByID
 											? userByID[msg.author].userName
 											: msg.author === sessionOwner && sessionOwnerUsername
-											  ? sessionOwnerUsername
-											  : "(Left)"
+												? sessionOwnerUsername
+												: "(Left)"
 									}}
 								</span>
 								<span class="chat-message">{{ msg.text }}</span>
@@ -1370,8 +1370,8 @@
 						minesweeperDraftState.currentPlayer in userByID
 							? userByID[minesweeperDraftState.currentPlayer].userName
 							: minesweeperDraftState.currentPlayer == ''
-							  ? ''
-							  : '(Disconnected)'
+								? ''
+								: '(Disconnected)'
 					"
 					:picking="userID === minesweeperDraftState.currentPlayer"
 					@pick="minesweeperDraftPick"
@@ -2902,14 +2902,7 @@
 				<h2>Sample Hand Generator</h2>
 			</template>
 			<template v-slot:body>
-				<sample-hand-generator
-					:language="language"
-					:deck="deck"
-					:options="{
-						lands: lands,
-						preferredBasics: preferredBasics,
-					}"
-				/>
+				<sample-hand-generator :language="language" :deck="deck" :lands="lands" />
 			</template>
 		</modal>
 		<modal :displayed="displayedModal === 'deckStats'" @close="displayedModal = ''">

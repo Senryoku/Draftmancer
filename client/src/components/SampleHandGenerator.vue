@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, ref, onMounted, PropType } from "vue";
+import { defineProps, ref, onMounted } from "vue";
 import { Language } from "@/Types";
 import { UniqueCard, toUnique, CardColor } from "../../../src/CardTypes";
 import Card from "./Card.vue";
@@ -19,23 +19,18 @@ import { shuffleArray } from "../helper";
 
 import BasicLands from "../SampleHandBasicLands";
 
-const props = defineProps({
-	language: { type: String as PropType<Language>, required: true },
-	deck: { type: Array as PropType<UniqueCard[]>, required: true },
-	options: {
-		type: Object,
-		default: () => {
-			return { lands: null, preferredBasics: "" };
-		},
-	},
-});
+const props = defineProps<{
+	language: Language;
+	deck: UniqueCard[];
+	lands: Record<CardColor, number>;
+}>();
 
 const library = ref<UniqueCard[]>([]);
 const hand = ref<UniqueCard[]>([]);
 
 function getBasicLands(): UniqueCard[] {
 	return Object.values(CardColor).flatMap((c) => {
-		const count = props.options.lands?.[c] ?? 0;
+		const count = props.lands?.[c] ?? 0;
 		return new Array(count).fill(null).map(() => toUnique(BasicLands[c]));
 	});
 }
