@@ -1513,7 +1513,13 @@
 											sideboardBasics: sideboardBasics,
 										}"
 									/>
-									<div class="clickable" @click="displayedModal = 'sampleHand'">Get Sample Hand</div>
+									<div
+										class="clickable"
+										@click="displayedModal = 'sampleHand'"
+										v-tooltip="'Draw a Sample Hand'"
+									>
+										<img src="./assets/img/cards.svg" width="24px" height="24px" />
+									</div>
 									<div class="deck-stat-container clickable" @click="displayedModal = 'deckStats'">
 										<font-awesome-icon
 											icon="fa-solid fa-chart-pie"
