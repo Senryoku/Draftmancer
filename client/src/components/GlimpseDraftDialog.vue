@@ -6,9 +6,12 @@
 		<template v-slot:body>
 			<div class="dialog">
 				<p>
-					Glimpse Draft (or Burn Draft) is a draft variant where players remove cards from the draft
-					(typically 2) alongside each pick. It's mostly used for small and medium sized groups where a
-					regular draft makes not much sense.
+					Glimpse Draft, also known as Burn Draft, is a draft variant where players remove cards from the
+					draft (typically 2) alongside each pick.
+				</p>
+				<p>
+					This variant is well-suited for smaller to medium-sized groups, where a traditional draft might not
+					be as practical or enjoyable.
 				</p>
 				<div class="dialog-settings">
 					<label for="boosters-per-player-input">Boosters per Player</label>

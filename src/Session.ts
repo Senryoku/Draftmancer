@@ -65,7 +65,7 @@ import { MinesweeperDraftState, isMinesweeperDraftState } from "./MinesweeperDra
 import { assert } from "console";
 import { TeamSealedState, isTeamSealedState } from "./TeamSealed.js";
 import { GridDraftState, isGridDraftState } from "./GridDraft.js";
-import { DraftState, isDraftState } from "./DraftState.js";
+import { BoosterSettings, DraftState, isDraftState } from "./DraftState.js";
 import { RochesterDraftState, isRochesterDraftState } from "./RochesterDraft.js";
 import { WinstonDraftState, isWinstonDraftState } from "./WinstonDraft.js";
 import { ServerToClientEvents } from "./SocketType";
@@ -1763,7 +1763,13 @@ export class Session implements IIndexable {
 	}
 
 	///////////////////// Traditional Draft Methods //////////////////////
-	startDraft(): SocketAck {
+	startDraft(overrides?: {
+		boostersPerPlayer?: number;
+		discardRemainingCardsAt?: number;
+		doubleMastersMode?: boolean;
+		pickedCardsPerRound?: number;
+		burnedCardsPerRound?: number;
+	}): SocketAck {
 		if (this.drafting) return new SocketError("Already drafting.");
 		if (this.teamDraft && this.users.size !== 6) {
 			const verb = this.users.size < 6 ? "add" : "remove";
@@ -1772,15 +1778,16 @@ export class Session implements IIndexable {
 				`Team draft requires exactly 6 players. Please ${verb} players or disable Team Draft under Settings. Bots are not supported!`
 			);
 		}
-		if (this.users.size === 0 || this.users.size + this.bots < 2)
-			return new SocketError(
-				`Not enough players`,
-				`Can't start draft: Not enough players (min. 2 including bots).`
-			);
 
 		if (this.randomizeSeatingOrder) this.randomizeSeating();
 
-		const boosterQuantity = (this.users.size + this.bots) * this.boostersPerPlayer;
+		const boosterPerPlayer = overrides?.boostersPerPlayer ?? this.boostersPerPlayer;
+		const discardRemainingCardsAt = overrides?.discardRemainingCardsAt ?? this.discardRemainingCardsAt;
+		const doubleMastersMode = overrides?.doubleMastersMode ?? this.doubleMastersMode;
+		const pickedCardsPerRound = overrides?.pickedCardsPerRound ?? this.pickedCardsPerRound;
+		const burnedCardsPerRound = overrides?.burnedCardsPerRound ?? this.burnedCardsPerRound;
+
+		const boosterQuantity = (this.users.size + this.bots) * boosterPerPlayer;
 		console.log(`Session ${this.id}: Starting draft! (${this.users.size} players)`);
 
 		const boosters = this.generateBoosters(boosterQuantity, {
@@ -1799,7 +1806,7 @@ export class Session implements IIndexable {
 			!this.usePredeterminedBoosters &&
 			!this.useCustomCardList &&
 			this.setRestriction.length === 1 &&
-			this.boostersPerPlayer === 3 &&
+			boosterPerPlayer === 3 &&
 			this.customBoosters.every((s) => s === "" || s === this.setRestriction[0])
 		)
 			botParameters.wantedModel = this.setRestriction[0];
@@ -1809,11 +1816,15 @@ export class Session implements IIndexable {
 
 		const boosterSettings =
 			this.useCustomCardList && this.customCardList.settings?.boosterSettings
-				? this.customCardList.settings.boosterSettings
+				? this.customCardList.settings.boosterSettings.map((s) => ({
+						discardRemainingCardsAt,
+						...s,
+					}))
 				: [
 						{
-							picks: this.doubleMastersMode ? [this.pickedCardsPerRound, 1] : [this.pickedCardsPerRound],
-							burns: [this.burnedCardsPerRound],
+							discardRemainingCardsAt,
+							picks: doubleMastersMode ? [pickedCardsPerRound, 1] : [pickedCardsPerRound],
+							burns: [burnedCardsPerRound],
 						},
 					];
 
@@ -1853,7 +1864,10 @@ export class Session implements IIndexable {
 		if (!isDraftState(s)) return;
 
 		// Booster is empty or the remaining cards have to be burned
-		if (booster.length === 0 || (canDiscard && booster.length <= Math.max(0, this.discardRemainingCardsAt))) {
+		if (
+			booster.length === 0 ||
+			(canDiscard && booster.length <= Math.max(0, s.getBoosterSettings().discardRemainingCardsAt))
+		) {
 			// Don't re-insert it, and check for end of round
 			this.checkDraftRoundEnd();
 		} else {

@@ -71,6 +71,7 @@ import Modal from "./components/Modal.vue";
 import SetSelect from "./components/SetSelect.vue";
 import ScaleSlider from "./components/ScaleSlider.vue";
 
+const SupremeDialog = defineAsyncComponent(() => import("./components/SupremeDraftDialog.vue"));
 const GlimpseDialog = defineAsyncComponent(() => import("./components/GlimpseDraftDialog.vue"));
 const GridDialog = defineAsyncComponent(() => import("./components/GridDraftDialog.vue"));
 const HousmanDialog = defineAsyncComponent(() => import("./components/HousmanDialog.vue"));
@@ -2290,15 +2291,19 @@ export default defineComponent({
 				defaultBoostersPerPlayer: boostersPerPlayer,
 				defaultBurnedCardsPerRound: burnedCardsPerRound,
 				onStart: (boostersPerPlayer: number, burnedCardsPerRound: number) => {
-					const prev = [this.boostersPerPlayer, this.burnedCardsPerRound];
-					this.boostersPerPlayer = boostersPerPlayer;
-					this.burnedCardsPerRound = burnedCardsPerRound;
-					// Wait to make sure reactive values are correctly propagated to the server
-					this.$nextTick(async () => {
-						// Draft didn't start, restore previous values.
-						if (!(await this.startDraft())) {
-							[this.boostersPerPlayer, this.burnedCardsPerRound] = prev;
-						}
+					this.socket.emit("startGlimpseDraft", boostersPerPlayer, burnedCardsPerRound, (response) => {
+						if (response?.error) Alert.fire(response.error);
+					});
+				},
+			});
+		},
+		startSupremeDraft() {
+			if (this.userID !== this.sessionOwner || this.drafting) return;
+
+			this.spawnDialog(SupremeDialog, {
+				onStart: (boostersPerPlayer: number, pickedCardsPerRound: number) => {
+					this.socket.emit("startSupremeDraft", boostersPerPlayer, pickedCardsPerRound, (response) => {
+						if (response?.error) Alert.fire(response.error);
 					});
 				},
 			});

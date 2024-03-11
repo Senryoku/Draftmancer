@@ -469,6 +469,9 @@
 								<div v-tooltip.left="'Starts a Minesweeper Draft.'">
 									<button @click="startMinesweeperDraft()">Minesweeper</button>
 								</div>
+								<div v-tooltip.left="'Starts a Solo Supreme Draft.'">
+									<button @click="startSupremeDraft()">Supreme (1p.)</button>
+								</div>
 							</div>
 							<div class="game-modes-cat">
 								<span class="game-modes-cat-title">Sealed</span>

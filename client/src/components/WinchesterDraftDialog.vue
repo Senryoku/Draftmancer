@@ -5,11 +5,8 @@
 		</template>
 		<template v-slot:body>
 			<div class="dialog">
-				<p>
-					Winchester Draft is a draft variant for two players (extensible to more players) similar to Winston
-					and Rochester draft where players alternatively pick one of 4 face-up piles of cards, then add one
-					card to each pile.
-				</p>
+				<p>Winchester Draft is a draft variant similar to Winston and Rochester draft.</p>
+				<p>Players alternatively pick one of 4 face-up piles of cards, then add one card to each pile.</p>
 				<div class="dialog-settings">
 					<label for="boosters-per-player-input">Boosters per Player</label>
 					<div>
