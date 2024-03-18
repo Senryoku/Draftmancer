@@ -77,9 +77,10 @@ export default defineComponent({
 		onCardClick(event: Event, card: UniqueCard) {
 			this.$emit("pick", card.uniqueID);
 		},
-		cardConditionalClasses(card: TeamSealedCard) {
-			if (!card.owner) return [];
-			return ["card-picked", "owner-player-" + this.state.team.findIndex((t) => t === card.owner)];
+		cardConditionalClasses(card: UniqueCard) {
+			const teamSealedCard = card as TeamSealedCard;
+			if (!teamSealedCard.owner) return [];
+			return ["card-picked", "owner-player-" + this.state.team.findIndex((t) => t === teamSealedCard.owner)];
 		},
 	},
 });

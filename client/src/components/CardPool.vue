@@ -190,7 +190,7 @@ export default defineComponent({
 		cards: { type: Array as PropType<UniqueCard[]>, required: true },
 		language: { type: String as PropType<Language>, required: true },
 		group: { type: String },
-		cardConditionalClasses: { type: Function },
+		cardConditionalClasses: { type: Function as PropType<(card: UniqueCard) => string[]> },
 		/* This only serves as a mean to declare intentions and make sure the drag events are correctly bound when necessary.
 		   By design this will not prevent the user to move cards within the pool. */
 		readOnly: {
@@ -532,8 +532,8 @@ export default defineComponent({
 				this.rows && this.rows[0] && this.rows[0].length
 					? this.rows[0].length
 					: this.options.columnCount
-					  ? this.options.columnCount
-					  : 7;
+						? this.options.columnCount
+						: 7;
 			this.options.columnCount = Math.max(2, Math.min(columnCount, 32));
 			localStorage.setItem("card-pool-options", JSON.stringify(this.options));
 		},

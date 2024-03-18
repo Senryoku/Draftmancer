@@ -97,12 +97,13 @@ export default defineComponent({
 			this.$emit("pick", this.selectedCard);
 			this.selectedCard = null;
 		},
-		cardConditionalClasses(card: RotisserieDraftCard) {
+		cardConditionalClasses(card: UniqueCard) {
 			const classes: string[] = [];
 			if (card.uniqueID === this.selectedCard) classes.push("rotisserie-selected");
-			if (card.owner) {
+			const rochesterCard = card as RotisserieDraftCard;
+			if (rochesterCard.owner) {
 				classes.push("card-picked");
-				classes.push("owner-player-" + this.users.findIndex((u) => u.userID === card.owner));
+				classes.push("owner-player-" + this.users.findIndex((u) => u.userID === rochesterCard.owner));
 			}
 			return classes;
 		},

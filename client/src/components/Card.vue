@@ -1,5 +1,6 @@
 <template>
 	<div
+		ref="rootElement"
 		:class="classes"
 		:data-arena-id="card.id"
 		:data-cmc="card.cmc"
@@ -15,7 +16,7 @@
 			:lazyLoad="lazyLoad"
 			:displayCardText="displayCardText"
 			:renderCommonBackside="renderCommonBackside"
-			ref="image"
+			ref="imageElement"
 		/>
 		<div v-if="notes || notedColors" class="additional-notes">
 			{{ notes }}
@@ -28,141 +29,146 @@
 	</div>
 </template>
 
-<script lang="ts">
-import { Language } from "@/Types";
-import { defineComponent, PropType } from "vue";
+<script setup lang="ts">
+import { ref, computed, getCurrentInstance } from "vue";
+import { Language } from "../../../src/Types";
 import { UniqueCard } from "@/CardTypes";
 import { hasEffect, OnPickDraftEffect } from "../../../src/CardTypes";
 
 import CardImage from "./CardImage.vue";
 
-export default defineComponent({
-	name: "Card",
-	components: { CardImage },
-	props: {
-		card: { type: Object as PropType<UniqueCard>, required: true },
-		language: { type: String as PropType<Language>, default: "en" },
-		lazyLoad: { type: Boolean, default: false },
-		renderCommonBackside: { type: Boolean, default: false },
-		conditionalClasses: { type: Function },
-	},
-	data() {
-		return {
-			foilInterval: null,
-			displayCardText: false,
-		};
-	},
-	computed: {
-		classes() {
-			let classes = this.conditionalClasses ? this.conditionalClasses(this.card) : [];
-			classes.push("card");
-			if (this.card.foil) classes.push("foil");
-			return classes;
-		},
-		notes(): string | undefined {
-			if (!this.card?.state) return undefined;
-			if (this.card.draft_effects) {
-				if (hasEffect(this.card, "AnimusOfPredation") && this.card.state.removedCards)
-					return [...new Set(this.card.state.removedCards.map((card) => card.subtypes).flat())].join(", ");
-				if (hasEffect(this.card, "CogworkGrinder") && this.card.state.removedCards)
-					return this.card.state.removedCards.length.toString();
-				if (hasEffect(this.card, OnPickDraftEffect.NoteDraftedCards) && this.card.state.cardsDraftedThisRound)
-					return this.card.state.cardsDraftedThisRound.toString();
-				if (hasEffect(this.card, OnPickDraftEffect.NotePassingPlayer) && this.card.state.passingPlayer)
-					return this.card.state.passingPlayer;
-				if (this.card.state.cardName) return this.card.state.cardName;
-				if (this.card.state.creatureName) return this.card.state.creatureName;
-				if (this.card.state.creatureTypes) return this.card.state.creatureTypes.join(", ");
-			}
-			return undefined;
-		},
-		notedColors() {
-			return (this.card.state?.colors?.length ?? 0) > 0 ? this.card.state?.colors : undefined;
-		},
-	},
-	methods: {
-		toggleZoom(e: Event) {
-			e.preventDefault();
-			this.emitter.emit("togglecardpopup", e, this.card);
-		},
-		mouseLeave(e: Event) {
-			e.preventDefault();
+import { useEmitter } from "../appCommon";
+const { emitter } = useEmitter();
 
-			this.displayCardText = false;
-			document.removeEventListener("keydown", this.keyDown, { capture: true });
-			document.removeEventListener("keyup", this.keyUp, { capture: true });
+const props = withDefaults(
+	defineProps<{
+		card: UniqueCard;
+		language?: Language;
+		lazyLoad?: boolean;
+		renderCommonBackside?: boolean;
+		conditionalClasses?: (card: UniqueCard) => string[];
+	}>(),
+	{ language: Language.en, lazyLoad: false, renderCommonBackside: false, conditionalClasses: undefined }
+);
 
-			this.emitter.emit("closecardpopup");
+const displayCardText = ref(false);
+const rootElement = ref<HTMLElement | null>(null);
+const imageElement = ref<typeof CardImage | null>(null);
 
-			if (this.card.foil) {
-				document.removeEventListener("mousemove", this.foilEffect);
-				const el = this.$el as HTMLElement;
-				el.style.setProperty("--brightness", `100%`);
-				el.style.setProperty("--foil-initial-top", `-16%`);
-				el.style.setProperty("--foil-initial-left", `32%`);
-				el.style.setProperty("--transform-rotation-x", `0`);
-				el.style.setProperty("--transform-rotation-y", `0`);
-			}
-		},
-		mouseEnter() {
-			document.addEventListener("keydown", this.keyDown, { capture: true });
-			document.addEventListener("keyup", this.keyUp, { capture: true });
-
-			if (this.card.foil) {
-				document.addEventListener("mousemove", this.foilEffect);
-			}
-		},
-		foilEffect(e: MouseEvent) {
-			const el = this.$el as HTMLElement;
-			const bounds = this.$el.getBoundingClientRect();
-			const style = window.getComputedStyle(this.$el);
-			bounds.width += (parseInt(style.marginLeft) || 0) + (parseInt(style.marginRight) || 0);
-			bounds.height += (parseInt(style.marginTop) || 0) + (parseInt(style.marginBottom) || 0);
-			const factor = (e.clientX - bounds.left) / bounds.width;
-			const factorY = (e.clientY - bounds.top) / bounds.height;
-			if (!this.$refs.image) {
-				document.removeEventListener("mousemove", this.foilEffect);
-				return;
-			}
-			const imageBounds = (this.$refs.image as typeof CardImage).$el.getBoundingClientRect(); // Different from bounds when inside a card column
-			const ratio = imageBounds.width / imageBounds.height;
-			const rotScale = (v: number) => -20 + 40 * v;
-			el.style.setProperty("--brightness", `${100 - 50 * (factor - 0.5)}%`);
-			el.style.setProperty("--transform-rotation-x", `${rotScale(factor)}deg`);
-			el.style.setProperty("--transform-rotation-y", `${ratio * -rotScale(factorY)}deg`);
-			el.style.setProperty("--foil-initial-top", `${ratio * (-(160 * factorY) + 70)}%`);
-			el.style.setProperty("--foil-initial-left", `${-(160 * factor) + 70}%`);
-		},
-		keyDown(event: KeyboardEvent) {
-			switch (event.key) {
-				case "Alt":
-					this.displayCardText = event.altKey;
-					this.$forceUpdate();
-					break;
-				default:
-					// Ignore this event
-					return;
-			}
-			// We handled it.
-			event.stopPropagation();
-			event.preventDefault();
-		},
-		keyUp(event: KeyboardEvent) {
-			switch (event.key) {
-				case "Alt":
-					this.displayCardText = event.altKey;
-					this.$forceUpdate();
-					break;
-				default:
-					// Ignore this event
-					return;
-			}
-			// We handled it.
-			event.stopPropagation();
-			event.preventDefault();
-		},
-	},
+const classes = computed(() => {
+	let classes = props.conditionalClasses ? props.conditionalClasses(props.card) : [];
+	classes.push("card");
+	if (props.card.foil) classes.push("foil");
+	return classes;
 });
+
+const notes = computed(() => {
+	if (!props.card?.state) return undefined;
+	if (props.card.draft_effects) {
+		if (hasEffect(props.card, "AnimusOfPredation") && props.card.state.removedCards)
+			return [...new Set(props.card.state.removedCards.map((card) => card.subtypes).flat())].join(", ");
+		if (hasEffect(props.card, "CogworkGrinder") && props.card.state.removedCards)
+			return props.card.state.removedCards.length.toString();
+		if (hasEffect(props.card, OnPickDraftEffect.NoteDraftedCards) && props.card.state.cardsDraftedThisRound)
+			return props.card.state.cardsDraftedThisRound.toString();
+		if (hasEffect(props.card, OnPickDraftEffect.NotePassingPlayer) && props.card.state.passingPlayer)
+			return props.card.state.passingPlayer;
+		if (props.card.state.cardName) return props.card.state.cardName;
+		if (props.card.state.creatureName) return props.card.state.creatureName;
+		if (props.card.state.creatureTypes) return props.card.state.creatureTypes.join(", ");
+	}
+	return undefined;
+});
+
+const notedColors = computed(() => {
+	return (props.card.state?.colors?.length ?? 0) > 0 ? props.card.state?.colors : undefined;
+});
+
+function toggleZoom(e: Event) {
+	e.preventDefault();
+	emitter.emit("togglecardpopup", e, props.card);
+}
+
+function mouseLeave(e: Event) {
+	e.preventDefault();
+
+	displayCardText.value = false;
+	document.removeEventListener("keydown", keyDown, { capture: true });
+	document.removeEventListener("keyup", keyUp, { capture: true });
+
+	emitter.emit("closecardpopup");
+
+	if (props.card.foil && rootElement.value) {
+		document.removeEventListener("mousemove", foilEffect);
+		rootElement.value.style.setProperty("--brightness", `100%`);
+		rootElement.value.style.setProperty("--foil-initial-top", `-16%`);
+		rootElement.value.style.setProperty("--foil-initial-left", `32%`);
+		rootElement.value.style.setProperty("--transform-rotation-x", `0`);
+		rootElement.value.style.setProperty("--transform-rotation-y", `0`);
+	}
+}
+
+function mouseEnter() {
+	document.addEventListener("keydown", keyDown, { capture: true });
+	document.addEventListener("keyup", keyUp, { capture: true });
+
+	if (props.card.foil) {
+		document.addEventListener("mousemove", foilEffect);
+	}
+}
+
+function foilEffect(e: MouseEvent) {
+	if (!rootElement.value) return;
+
+	const bounds = rootElement.value.getBoundingClientRect();
+	const style = window.getComputedStyle(rootElement.value);
+	bounds.width += (parseInt(style.marginLeft) || 0) + (parseInt(style.marginRight) || 0);
+	bounds.height += (parseInt(style.marginTop) || 0) + (parseInt(style.marginBottom) || 0);
+	const factor = (e.clientX - bounds.left) / bounds.width;
+	const factorY = (e.clientY - bounds.top) / bounds.height;
+	if (!imageElement.value) {
+		document.removeEventListener("mousemove", foilEffect);
+		return;
+	}
+	const imageBounds = imageElement.value.$el.getBoundingClientRect(); // Different from bounds when inside a card column
+	const ratio = imageBounds.width / imageBounds.height;
+	const rotScale = (v: number) => -20 + 40 * v;
+	rootElement.value.style.setProperty("--brightness", `${100 - 50 * (factor - 0.5)}%`);
+	rootElement.value.style.setProperty("--transform-rotation-x", `${rotScale(factor)}deg`);
+	rootElement.value.style.setProperty("--transform-rotation-y", `${ratio * -rotScale(factorY)}deg`);
+	rootElement.value.style.setProperty("--foil-initial-top", `${ratio * (-(160 * factorY) + 70)}%`);
+	rootElement.value.style.setProperty("--foil-initial-left", `${-(160 * factor) + 70}%`);
+}
+
+function keyDown(event: KeyboardEvent) {
+	switch (event.key) {
+		case "Alt":
+			displayCardText.value = event.altKey;
+			getCurrentInstance()?.proxy?.$forceUpdate();
+			break;
+		default:
+			// Ignore this event
+			return;
+	}
+	// We handled it.
+	event.stopPropagation();
+	event.preventDefault();
+}
+
+function keyUp(event: KeyboardEvent) {
+	switch (event.key) {
+		case "Alt":
+			displayCardText.value = event.altKey;
+			getCurrentInstance()?.proxy?.$forceUpdate();
+			break;
+		default:
+			// Ignore this event
+			return;
+	}
+	// We handled it.
+	event.stopPropagation();
+	event.preventDefault();
+}
 </script>
 
 <style scoped>
