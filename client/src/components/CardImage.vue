@@ -108,60 +108,68 @@
 	</div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import CardText from "./CardText.vue";
 import CardPlaceholder from "./CardPlaceholder.vue";
 import ClazyLoad from "./../vue-clazy-load.vue";
-import { defineComponent, PropType } from "vue";
+
+import { computed } from "vue";
 import { Language } from "@/Types";
 import { Card, CardFace } from "@/CardTypes";
-import { ScryfallCard, isReady, ScryfallCardFace, CardCacheEntry } from "../vueCardCache";
+import { useCardCache, ScryfallCard, isReady, ScryfallCardFace, CardCacheEntry } from "../vueCardCache";
 
-export default defineComponent({
-	name: "CardImage",
-	components: { CardPlaceholder, ClazyLoad, CardText },
-	props: {
-		card: { type: Object as PropType<Card>, required: true },
-		language: { type: String as PropType<Language>, required: true },
-		lazyLoad: { type: Boolean, default: false },
-		fixedLayout: { type: Boolean, default: false },
-		displayCardText: { type: Boolean, default: false },
-		renderCommonBackside: { type: Boolean, default: true }, // Render standard card back, mostly for animation purposes.
-	},
-	computed: {
-		imageURI() {
-			if (this.language in this.card.image_uris) return this.card.image_uris[this.language];
-			return this.card.image_uris["en"];
-		},
-		hasBack() {
-			return this.card.back !== null && this.card.back !== undefined;
-		},
-		backImageURI() {
-			if (!this.hasBack) return undefined;
-			return this.language in this.card.back!.image_uris
-				? this.card.back?.image_uris[this.language]
-				: this.card.back?.image_uris["en"];
-		},
-		cardAdditionalData() {
-			if (!this.displayCardText) return false; // Don't send the requests automatically
-			if (this.card.is_custom) return { ...this.card, status: "custom" } as Card & { status: "custom" };
-			return this.$cardCache.get(this.card.id);
-		},
-		cardFrontAdditionalData(): CardCacheEntry | ScryfallCard | ScryfallCardFace | CardFace | undefined {
-			const data = this.cardAdditionalData;
-			if (!data) return undefined;
-			if (data.status === "custom") return data;
-			if (isReady(data) && data.card_faces) return data.card_faces[0];
-			else return data;
-		},
-		cardBackAdditionalData(): CardCacheEntry | ScryfallCard | ScryfallCardFace | CardFace | undefined {
-			const data = this.cardAdditionalData;
-			if (!data) return undefined;
-			if (data.status === "custom") return data.back;
-			if (isReady(data) && data.card_faces) return data.card_faces[1];
-			else return undefined;
-		},
-	},
+const cardCache = useCardCache().plugin;
+
+const props = withDefaults(
+	defineProps<{
+		card: Card;
+		language: Language;
+		lazyLoad?: boolean;
+		fixedLayout?: boolean;
+		displayCardText?: boolean;
+		renderCommonBackside?: boolean; // Render standard card back, mostly for animation purposes.
+	}>(),
+	{
+		lazyLoad: false,
+		fixedLayout: false,
+		displayCardText: false,
+		renderCommonBackside: true,
+	}
+);
+const imageURI = computed(() => {
+	if (props.language in props.card.image_uris) return props.card.image_uris[props.language];
+	return props.card.image_uris["en"];
+});
+const hasBack = computed(() => {
+	return props.card.back !== null && props.card.back !== undefined;
+});
+const backImageURI = computed(() => {
+	if (!hasBack.value) return undefined;
+	return props.language in props.card.back!.image_uris
+		? props.card.back?.image_uris[props.language]
+		: props.card.back?.image_uris["en"];
+});
+const cardAdditionalData = computed(() => {
+	if (!props.displayCardText) return false; // Don't send the requests automatically
+	if (props.card.is_custom) return { ...props.card, status: "custom" } as Card & { status: "custom" };
+	return cardCache.get(props.card.id);
+});
+
+const cardFrontAdditionalData = computed(
+	(): CardCacheEntry | ScryfallCard | ScryfallCardFace | CardFace | undefined => {
+		const data = cardAdditionalData.value;
+		if (!data) return undefined;
+		if (data.status === "custom") return data;
+		if (isReady(data) && data.card_faces) return data.card_faces[0];
+		else return data;
+	}
+);
+const cardBackAdditionalData = computed((): CardCacheEntry | ScryfallCard | ScryfallCardFace | CardFace | undefined => {
+	const data = cardAdditionalData.value;
+	if (!data) return undefined;
+	if (data.status === "custom") return data.back;
+	if (isReady(data) && data.card_faces) return data.card_faces[1];
+	else return undefined;
 });
 </script>
 

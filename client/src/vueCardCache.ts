@@ -11,8 +11,10 @@ export type ScryfallRelatedCard = {
 	uri: string;
 };
 
-export function isScryfallRelatedCard(obj: any): obj is ScryfallRelatedCard {
-	return obj?.object === "related_card";
+export function isScryfallRelatedCard(obj: unknown): obj is ScryfallRelatedCard {
+	return (
+		obj !== undefined && obj !== null && typeof obj === "object" && "object" in obj && obj.object === "related_card"
+	);
 }
 
 export type ScryfallCardFace = {
@@ -46,8 +48,10 @@ export type ScryfallCardFace = {
 	watermark?: string;
 };
 
-export function isScryfallCardFace(obj: any): obj is ScryfallCardFace {
-	return obj?.object === "card_face";
+export function isScryfallCardFace(obj: unknown): obj is ScryfallCardFace {
+	return (
+		obj !== undefined && obj !== null && typeof obj === "object" && "object" in obj && obj.object === "card_face"
+	);
 }
 
 export type ScryfallCard = {
@@ -145,8 +149,8 @@ export type ScryfallCard = {
 	"preview.source": string;
 };
 
-export function isScryfallCard(obj: any): obj is ScryfallCard {
-	return obj?.object === "card";
+export function isScryfallCard(obj: unknown): obj is ScryfallCard {
+	return obj !== undefined && obj !== null && typeof obj === "object" && "object" in obj && obj.object === "card";
 }
 
 export type CardCacheEntry = { id: CardID; status: "pending" } | (ScryfallCard & { status: "ready" });
@@ -179,7 +183,7 @@ const cardCachePlugin = {
 		}
 		return null;
 	},
-	requestBulk(cardIDs: CardID[]): Promise<any[]> | null {
+	requestBulk(cardIDs: CardID[]): Promise<unknown[]> | null {
 		cardIDs = cardIDs.filter((cid) => !this.cardCache.value[cid]); // Request only missing cards
 		if (cardIDs.length === 0) return null;
 		const promises = [];
@@ -226,7 +230,9 @@ const cardCachePlugin = {
 	},
 };
 
-declare module "vue" {
+export const useCardCache = () => ({ plugin: cardCachePlugin });
+
+declare module "@vue/runtime-core" {
 	interface ComponentCustomProperties {
 		$cardCache: typeof cardCachePlugin;
 	}
