@@ -119,7 +119,7 @@ describe("Inter client communication", function () {
 				expect(msg.text).to.equal(text);
 				done();
 			});
-			clients[ownerIdx].emit("chatMessage", { author: clients[ownerIdx].id, text: text, timestamp: Date.now() });
+			clients[ownerIdx].emit("chatMessage", { author: clients[ownerIdx].id!, text: text, timestamp: Date.now() });
 		});
 	});
 
@@ -2500,7 +2500,7 @@ describe("Jumpstart: Historic Horizons", function () {
 				expect(choices[0].length).to.equal(3);
 				expect(choices[1].length).to.equal(3);
 				for (let i = 0; i < 3; ++i) expect(choices[1][i].length).to.equal(3);
-				userData[client.id] = { packChoices: choices, ack: ack };
+				userData[client.id!] = { packChoices: choices, ack: ack };
 				++receivedPools;
 				if (receivedPools === clients.length) done();
 			});
@@ -2517,9 +2517,9 @@ describe("Jumpstart: Historic Horizons", function () {
 			}
 		});
 		for (const client of clients) {
-			const cards = userData[client.id].packChoices[0][0].cards.map((card) => card.id);
-			cards.concat(userData[client.id].packChoices[1][0][1].cards.map((card) => card.id));
-			userData[client.id].ack(getUID(client), cards);
+			const cards = userData[client.id!].packChoices[0][0].cards.map((card) => card.id);
+			cards.concat(userData[client.id!].packChoices[1][0][1].cards.map((card) => card.id));
+			userData[client.id!].ack(getUID(client), cards);
 		}
 	});
 });
@@ -2569,7 +2569,7 @@ describe("Jumpstart: Super Jump!", function () {
 				expect(choices[0].length).to.equal(3);
 				expect(choices[1].length).to.equal(3);
 				for (let i = 0; i < 3; ++i) expect(choices[1][i].length).to.equal(3);
-				userData[client.id] = { packChoices: choices, ack: ack };
+				userData[client.id!] = { packChoices: choices, ack: ack };
 				++receivedPools;
 				if (receivedPools === clients.length) done();
 			});
@@ -2586,9 +2586,9 @@ describe("Jumpstart: Super Jump!", function () {
 			}
 		});
 		for (const client of clients) {
-			const cards = userData[client.id].packChoices[0][0].cards.map((card) => card.id);
-			cards.concat(userData[client.id].packChoices[1][0][1].cards.map((card) => card.id));
-			userData[client.id].ack(getUID(client), cards);
+			const cards = userData[client.id!].packChoices[0][0].cards.map((card) => card.id);
+			cards.concat(userData[client.id!].packChoices[1][0][1].cards.map((card) => card.id));
+			userData[client.id!].ack(getUID(client), cards);
 		}
 	});
 });

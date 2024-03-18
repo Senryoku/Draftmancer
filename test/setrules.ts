@@ -270,16 +270,17 @@ describe("Set Specific Booster Rules", function () {
 			let endDraftReceived = 0;
 			const boosters: UniqueCard[][] = [];
 			for (const client of clients) {
-				pickNumber[client.id] = -1;
-				boosterNumber[client.id] = -1;
+				pickNumber[client.id!] = -1;
+				boosterNumber[client.id!] = -1;
 				client.on("draftState", (state) => {
 					if (
 						state.boosterCount > 0 &&
-						(state.boosterNumber !== boosterNumber[client.id] || state.pickNumber !== pickNumber[client.id])
+						(state.boosterNumber !== boosterNumber[client.id!] ||
+							state.pickNumber !== pickNumber[client.id!])
 					) {
 						if (state.pickNumber === 0) boosters.push(state.booster);
-						pickNumber[client.id] = state.pickNumber;
-						boosterNumber[client.id] = state.boosterNumber;
+						pickNumber[client.id!] = state.pickNumber;
+						boosterNumber[client.id!] = state.boosterNumber;
 						client.emit("pickCard", { pickedCards: [0], burnedCards: [] }, ackNoError);
 					}
 				});
