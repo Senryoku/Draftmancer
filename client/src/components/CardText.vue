@@ -1,5 +1,5 @@
 <template>
-	<div class="card-text-container">
+	<div class="card-text-container" ref="rootElement">
 		<template v-if="!face">
 			<div>
 				<font-awesome-icon icon="fa-solid fa-spinner" spin></font-awesome-icon>
@@ -32,76 +32,77 @@
 	</div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import { ScryfallCard, isScryfallCard, ScryfallCardFace, CardCacheEntry, isScryfallCardFace } from "../vueCardCache";
-import { defineComponent, PropType } from "vue";
+import { ref, computed, watch, onMounted, nextTick } from "vue";
 import { replaceManaSymbols } from "../ManaSymbols";
 import { Card, CardFace } from "@/CardTypes";
 import { fitFontSize } from "../helper";
 
 // Displays a card using Scryfall card data instead of its image.
-export default defineComponent({
-	name: "CardText",
-	props: {
-		card: { type: Object as PropType<ScryfallCard | ScryfallCardFace | CardCacheEntry | CardFace | Card> },
-		fixedLayout: { type: Boolean, default: false },
-	},
-	mounted() {
-		// This has to be called when the component is visible:
-		// We can't use v-show or mounted will be called while the element is hidden and fitAll will do nothing.
-		// There's no way to know when the element is visible becasue of v-show (apart from tracking it ourselves).
-		this.fitAll();
-	},
-	methods: {
-		fitAll() {
-			this.$nextTick(() => {
-				this.$el.querySelectorAll(".card-text .font-size-fit").forEach((div: HTMLElement) => {
-					fitFontSize(div, div, 2.5, "vh");
-				});
-			});
-		},
-		parseOracle(str: string) {
-			str = replaceManaSymbols(str);
-			// Included reminder text
-			str = str.replace(/\([^)]+\)/g, (match) => `<span class="oracle-reminder">${match}</span>`);
-			return str
-				.split("\n")
-				.map((line) => `<div>${line}</div>`)
-				.join("");
-		},
-		transformManaCost(str: string) {
-			return replaceManaSymbols(str);
-		},
-	},
-	computed: {
-		face() {
-			if (!this.card) return undefined;
-			if (isScryfallCard(this.card)) {
-				if (!this.card?.card_faces || this.card?.card_faces?.length <= 1) return this.card;
-				return this.card.card_faces[0];
-			} else if (isScryfallCardFace(this.card)) {
-				return this.card;
-			}
-			const r: Record<string, any> = {};
-			if ("name" in this.card) r.name = this.card.name;
-			if ("mana_cost" in this.card) r.mana_cost = this.card.mana_cost;
-			if ("type" in this.card) {
-				r.type_line = this.card.type;
-				if ("subtypes" in this.card && this.card.subtypes.length > 0)
-					r.type_line += " \u2013 " + this.card.subtypes;
-			}
-			if ("oracle_text" in this.card) r.oracle_text = this.card.oracle_text;
-			if ("power" in this.card) r.power = this.card.power;
-			if ("toughness" in this.card) r.toughness = this.card.toughness;
-			if ("loyalty" in this.card) r.loyalty = this.card.loyalty;
-			return r;
-		},
-	},
-	watch: {
-		card() {
-			this.fitAll();
-		},
-	},
+const props = withDefaults(
+	defineProps<{
+		card: ScryfallCard | ScryfallCardFace | CardCacheEntry | CardFace | Card;
+		fixedLayout: boolean;
+	}>(),
+	{ fixedLayout: false }
+);
+
+const rootElement = ref<HTMLElement>();
+
+onMounted(() => {
+	// This has to be called when the component is visible:
+	// We can't use v-show or mounted will be called while the element is hidden and fitAll will do nothing.
+	// There's no way to know when the element is visible becasue of v-show (apart from tracking it ourselves).
+	fitAll();
+});
+
+function fitAll() {
+	nextTick(() => {
+		rootElement.value?.querySelectorAll(".card-text .font-size-fit").forEach((div) => {
+			fitFontSize(div as HTMLElement, div as HTMLElement, 2.5, "vh");
+		});
+	});
+}
+
+function parseOracle(str: string) {
+	str = replaceManaSymbols(str);
+	// Included reminder text
+	str = str.replace(/\([^)]+\)/g, (match) => `<span class="oracle-reminder">${match}</span>`);
+	return str
+		.split("\n")
+		.map((line) => `<div>${line}</div>`)
+		.join("");
+}
+
+function transformManaCost(str: string) {
+	return replaceManaSymbols(str);
+}
+
+const face = computed(() => {
+	if (!props.card) return undefined;
+	if (isScryfallCard(props.card)) {
+		if (!props.card?.card_faces || props.card?.card_faces?.length <= 1) return props.card;
+		return props.card.card_faces[0];
+	} else if (isScryfallCardFace(props.card)) {
+		return props.card;
+	}
+	const r: Record<string, any> = {};
+	if ("name" in props.card) r.name = props.card.name;
+	if ("mana_cost" in props.card) r.mana_cost = props.card.mana_cost;
+	if ("type" in props.card) {
+		r.type_line = props.card.type;
+		if ("subtypes" in props.card && props.card.subtypes.length > 0) r.type_line += " \u2013 " + props.card.subtypes;
+	}
+	if ("oracle_text" in props.card) r.oracle_text = props.card.oracle_text;
+	if ("power" in props.card) r.power = props.card.power;
+	if ("toughness" in props.card) r.toughness = props.card.toughness;
+	if ("loyalty" in props.card) r.loyalty = props.card.loyalty;
+	return r;
+});
+
+watch(face, () => {
+	fitAll();
 });
 </script>
 

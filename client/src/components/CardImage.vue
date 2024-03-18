@@ -73,7 +73,7 @@
 					</div>
 				</template>
 				<template v-else>
-					<CardText class="flip-front alt-card-text" :card="cardFrontAdditionalData" />
+					<CardText class="flip-front alt-card-text" :card="cardFrontAdditionalData!" />
 					<CardText
 						class="flip-back alt-card-text"
 						v-if="hasBack && cardBackAdditionalData"
@@ -95,15 +95,15 @@
 	>
 		<div class="card-individual-image" :class="{ 'battle-front': card.type.includes('Battle') }">
 			<img :src="imageURI" />
-			<CardText class="alt-card-text" v-if="displayCardText" :card="cardFrontAdditionalData" />
+			<CardText class="alt-card-text" v-if="displayCardText" :card="cardFrontAdditionalData!" />
 		</div>
 		<div class="card-individual-image" v-if="hasBack">
 			<img :src="backImageURI" />
-			<CardText class="alt-card-text" v-if="displayCardText" :card="cardBackAdditionalData" />
+			<CardText class="alt-card-text" v-if="displayCardText" :card="cardBackAdditionalData!" />
 		</div>
 		<div class="card-individual-image" v-if="card.layout === 'flip'">
 			<img :src="imageURI" style="transform: rotate(180deg)" />
-			<CardText class="alt-card-text" v-if="displayCardText" :card="cardBackAdditionalData" />
+			<CardText class="alt-card-text" v-if="displayCardText" :card="cardBackAdditionalData!" />
 		</div>
 	</div>
 </template>
