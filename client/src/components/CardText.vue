@@ -43,7 +43,7 @@ import { fitFontSize } from "../helper";
 const props = withDefaults(
 	defineProps<{
 		card: ScryfallCard | ScryfallCardFace | CardCacheEntry | CardFace | Card;
-		fixedLayout: boolean;
+		fixedLayout?: boolean;
 	}>(),
 	{ fixedLayout: false }
 );
