@@ -22,7 +22,7 @@ import { ref } from "vue";
 // Input emiting a input event when unfocus, hiting return or optionally on a timeout (time without further change)
 const props = withDefaults(
 	defineProps<{
-		modelValue: any;
+		modelValue: unknown;
 		inputstyle?: string;
 		delay?: number;
 		validate?: (val: string) => string;
@@ -43,8 +43,8 @@ const props = withDefaults(
 	}
 );
 
-const timeout = ref(null as ReturnType<typeof setTimeout> | null);
-const inputEl = ref(null as HTMLInputElement | null);
+const timeout = ref<ReturnType<typeof setTimeout> | null>(null);
+const inputEl = ref<HTMLInputElement | null>(null);
 
 const emit = defineEmits<{
 	(e: "update:modelValue", value: string): void;
