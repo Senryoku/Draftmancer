@@ -1,5 +1,5 @@
 <template>
-	<Card
+	<CardComponent
 		:card="card"
 		:language="language"
 		:class="{ selected: selected, burned: burned, 'bot-picked': botpicked }"
@@ -33,53 +33,67 @@
 				<font-awesome-icon icon="fa-solid fa-ban" size="2x"></font-awesome-icon>
 			</div>
 		</template>
-	</Card>
+	</CardComponent>
 </template>
 
-<script lang="ts">
-import { Language } from "@/Types";
-import { defineComponent, PropType } from "vue";
+<script setup lang="ts">
+import { Language } from "../../../src/Types";
+import { computed } from "vue";
 import { UniqueCard } from "@/CardTypes";
 import CardComponent from "./Card.vue";
 
-export default defineComponent({
-	name: "BoosterCard",
-	components: { Card: CardComponent },
-	props: {
-		card: { type: Object as PropType<UniqueCard>, required: true },
-		language: { type: String as PropType<Language>, default: "en" },
-		selected: { type: Boolean, default: false },
-		canbeburned: { type: Boolean, default: false },
-		burned: { type: Boolean, default: false },
-		wildcardneeded: { type: Boolean, default: false },
-		hasenoughwildcards: { type: Boolean, default: true },
-		botscore: { type: Number, default: null },
-		botpicked: { type: Boolean, default: false },
-		scale: { type: Number, default: 1 },
-		renderCommonBackside: { type: Boolean, default: false },
-	},
-	methods: {
-		burnCard(e: Event) {
-			this.$emit("burn");
-			e.stopPropagation();
-			e.preventDefault();
-		},
-		restoreCard(e: Event) {
-			this.$emit("restore");
-			e.stopPropagation();
-			e.preventDefault();
-		},
-	},
-	computed: {
-		displayBotScore() {
-			if (!this.botscore) return null;
-			if (this.botscore < 0) return null;
-			return this.botscore.toFixed(1);
-		},
-		slotName() {
-			return this.card.slot;
-		},
-	},
+const props = withDefaults(
+	defineProps<{
+		card: UniqueCard;
+		language?: Language;
+		selected?: boolean;
+		canbeburned?: boolean;
+		burned?: boolean;
+		wildcardneeded?: boolean;
+		hasenoughwildcards?: boolean;
+		botscore?: number | null;
+		botpicked?: boolean;
+		scale?: number;
+		renderCommonBackside?: boolean;
+	}>(),
+	{
+		language: Language.en,
+		selected: false,
+		canbeburned: false,
+		wildcardneeded: false,
+		hasenoughwildcards: true,
+		botscore: null,
+		botpicked: false,
+		scale: 1,
+		renderCommonBackside: false,
+	}
+);
+
+const emit = defineEmits<{
+	burn: [];
+	restore: [];
+}>();
+
+function burnCard(e: Event) {
+	emit("burn");
+	e.stopPropagation();
+	e.preventDefault();
+}
+
+function restoreCard(e: Event) {
+	emit("restore");
+	e.stopPropagation();
+	e.preventDefault();
+}
+
+const displayBotScore = computed(() => {
+	if (!props.botscore) return null;
+	if (props.botscore < 0) return null;
+	return props.botscore.toFixed(1);
+});
+
+const slotName = computed(() => {
+	return props.card.slot;
 });
 </script>
 
