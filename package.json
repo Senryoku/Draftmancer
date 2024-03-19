@@ -3,7 +3,7 @@
 	"version": "1.0.0",
 	"description": "Multiplayer MTG Limited Simulator",
 	"engines": {
-		"node": "18.x"
+		"node": "20.x"
 	},
 	"main": "dist/src/server.js",
 	"type": "module",
