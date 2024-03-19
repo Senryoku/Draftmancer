@@ -1,4 +1,4 @@
-FROM node:18-alpine as builder
+FROM node:20-alpine as builder
 
 RUN mkdir /app
 WORKDIR /app
@@ -16,7 +16,7 @@ RUN npm run build-server
 COPY client client
 RUN npm run build-client
 
-FROM node:18-alpine
+FROM node:20-alpine
 
 LABEL fly_launch_runtime="nodejs"
 
