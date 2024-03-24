@@ -1518,7 +1518,7 @@
 									/>
 									<div
 										class="clickable"
-										style="display: flex;"
+										style="display: flex"
 										@click="displayedModal = 'sampleHand'"
 										v-tooltip="'Draw a Sample Hand'"
 									>
@@ -1724,7 +1724,7 @@
 											:card="element"
 											:language="language"
 											@click.exact="sideboardToDeck($event, element)"
-											:cardConditionalClasses="cardConditionalClasses"
+											:conditionalClasses="cardConditionalClasses"
 										></card>
 									</template>
 								</Sortable>
