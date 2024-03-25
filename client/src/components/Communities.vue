@@ -118,7 +118,7 @@ const communities = ref([
 			"We are a Limited Magic Community on Discord running regular tournaments played out on Arena. Each tournament uses the Gauntlet format (of our own creation) as a base: a six-week tournament where you make a 60-card sealed deck from 6 packs, play 5 matches a week against different players, and add a “punishment pack” to your pool after each loss. The Top 8 then compete in a 3-round 6-pack Megadraft for the coveted title of League Champion. We also run weekly Side-Quests which are one-time events usually run via Draftmancer trying out all kinds of different draft types.",
 		icon: "gauntlet_league_logo.webp",
 		tags: ["Sealed", "Draft", "Tournament", "Event", "MTGA"],
-		links: { discord: "https://discord.gg/Ssd6JB4GCY", website: "https://f2fleague.wordpress.com/" },
+		links: { discord: "https://discord.gg/7TuJqSAhX9", website: "https://f2fleague.wordpress.com/" },
 	},
 	{
 		name: "XMage Draft Historical Society",
