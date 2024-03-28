@@ -1568,6 +1568,11 @@
         "block": "Core Set",
         "icon": "img/sets/ori.svg"
     },
+    "otc": {
+        "code": "otc",
+        "fullName": "Outlaws of Thunder Junction Commander",
+        "icon": "img/sets/otc.svg"
+    },
     "otj": {
         "code": "otj",
         "fullName": "Outlaws of Thunder Junction",
