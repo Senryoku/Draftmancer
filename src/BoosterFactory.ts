@@ -2077,22 +2077,18 @@ class OTJBoosterFactory extends BoosterFactory {
 			updatedTargets.common = Math.max(1, updatedTargets.common - 3);
 		}
 
-		// 6th Common or The List
+		// 6th Common or The List (SPG/BIG)
 		const theListRand = random.realZeroToOneInclusive();
-		if (theListRand < OTJBoosterFactory.SPGRatio) {
+		if (theListRand < OTJBoosterFactory.ListRatio) {
 			--updatedTargets.common;
-			// Special Guests from The List
-			booster.push(pickCard(this.spg, booster));
-		} else if (theListRand < OTJBoosterFactory.ListRatio) {
-			--updatedTargets.common;
-			// Big Score
-			booster.push(pickCard(this.big, booster));
+			booster.push(pickCard(theListRand < OTJBoosterFactory.SPGRatio ? this.spg : this.big, booster));
 		}
 
-		// 1 OTP card that can be uncommon, rare, or mythic rare
+		// Breaking News (OTP) card. 1/3 Rare or Mythic Rare.
 		{
-			const bonusCardRarity = rollSpecialCardRarity(countBySlot(this.otp), updatedTargets, this.options);
-			booster.push(pickCard(this.otp[bonusCardRarity]));
+			const rarityRoll = random.realZeroToOneInclusive();
+			const rarity = rarityRoll < (1 / 7) * (1 / 3) ? "mythic" : rarityRoll < 1 / 3 ? "rare" : "uncommon";
+			booster.push(pickCard(this.otp[rarity]));
 		}
 
 		// Traditional foil card of any rarity
@@ -2116,7 +2112,11 @@ class OTJBoosterFactory extends BoosterFactory {
 					break;
 				}
 			// FIXME: You can find OTP cards here too... But rate is unknown. NOTE: There are no OTP commons.
-			const pool = rarity in this.otp && random.realZeroToOneInclusive() < 0.5 ? this.otp : this.cardPool;
+			const pool =
+				rarity in this.otp &&
+				random.realZeroToOneInclusive() < this.otp[rarity].size / this.cardPool[rarity].size
+					? this.otp
+					: this.cardPool;
 			booster.push(pickCard(pool[rarity], booster, { foil: true }));
 		}
 
