@@ -490,7 +490,7 @@ class CMRBoosterFactory extends BoosterFactory {
 						common: 13,
 						uncommon: 3,
 						rare: 1,
-				  }
+					}
 				: structuredClone(targets);
 		const legendaryCounts = countBySlot(this.legendaryCreatures);
 		// Ignore the rule if there's no legendary creatures left
@@ -611,8 +611,8 @@ class STXBoosterFactory extends BoosterFactory {
 			? mythicPromotion && rarityRoll < 0.006 && this.lessonsByRarity["mythic"].size > 0
 				? "mythic"
 				: rarityRoll < 0.08 && this.lessonsByRarity["rare"].size > 0
-				  ? "rare"
-				  : "common"
+					? "rare"
+					: "common"
 			: "common";
 
 		if (this.lessonsByRarity[pickedRarity].size <= 0)
@@ -629,8 +629,8 @@ class STXBoosterFactory extends BoosterFactory {
 				? mythicPromotion && archiveCounts["mythic"] > 0 && archiveRarityRoll < 0.066
 					? "mythic"
 					: archiveCounts["rare"] > 0 && archiveRarityRoll < 0.066 + 0.264
-					  ? "rare"
-					  : "uncommon"
+						? "rare"
+						: "uncommon"
 				: "uncommon";
 
 			if (archiveCounts[archiveRarity] <= 0)
@@ -743,7 +743,7 @@ class MIDBoosterFactory extends BoosterFactory {
 						? randomInt(
 								updatedTargets["rare"] + hasFoil,
 								updatedTargets["rare"] + updatedTargets["uncommon"] + hasFoil
-						  )
+							)
 						: 0,
 					0,
 					pickedDoubleFacedRareOrUncommon
@@ -1112,8 +1112,8 @@ class YDMUBoosterFactory extends BoosterFactory {
 					? this.options.mythicPromotion && alchemyCardsCounts["mythic"] > 0 && alchemyRarityRoll < 0.066
 						? "mythic"
 						: alchemyCardsCounts["rare"] > 0 && alchemyRarityRoll < 0.066 + 0.264
-						  ? "rare"
-						  : "uncommon"
+							? "rare"
+							: "uncommon"
 					: "uncommon";
 			const alchemyCard = pickCard(this.alchemyCards[pickedRarity], []);
 
@@ -1234,13 +1234,13 @@ class BROBoosterFactory extends BoosterFactory {
 				const pickedRarity =
 					targets["rare"] > 0
 						? this.options.mythicPromotion &&
-						  retroCardsCounts["mythic"] > 0 &&
-						  retroRarityRoll < this.RetroMythicChance
+							retroCardsCounts["mythic"] > 0 &&
+							retroRarityRoll < this.RetroMythicChance
 							? "mythic"
 							: retroCardsCounts["rare"] > 0 &&
-							    retroRarityRoll < this.RetroMythicChance + this.RetroRareChance
-							  ? "rare"
-							  : "uncommon"
+								  retroRarityRoll < this.RetroMythicChance + this.RetroRareChance
+								? "rare"
+								: "uncommon"
 						: "uncommon";
 				retroArtifacts.push(pickCard(this.retroArtifacts[pickedRarity], []));
 			}
@@ -1491,8 +1491,8 @@ class MOMBoosterFactory extends BoosterFactory {
 					this.options?.mythicPromotion && mulCounts.mythic > 0 && mulRarityRoll <= 1.0 / 15.0
 						? "mythic"
 						: mulCounts.rare > 0 && mulRarityRoll <= 5.0 / 15.0
-						  ? "rare"
-						  : "uncommon";
+							? "rare"
+							: "uncommon";
 				mulCards.push(pickCard(this.multiverseLegend[mulRarity]));
 			}
 
@@ -1576,8 +1576,8 @@ class MATBoosterFactory extends MOMBoosterFactory {
 					this.options?.mythicPromotion && matCounts.mythic > 0 && matRarityRoll <= 1.0 / 15.0
 						? "mythic"
 						: matCounts.rare > 0 && matRarityRoll <= 5.0 / 15.0
-						  ? "rare"
-						  : "uncommon";
+							? "rare"
+							: "uncommon";
 				matCards.push(pickCard(this.matPool[matRarity]));
 			}
 			const booster = super.generateBooster(targets);
@@ -1621,7 +1621,7 @@ class CMMBoosterFactory extends BoosterFactory {
 						common: 11,
 						uncommon: 4,
 						rare: 1,
-				  }
+					}
 				: structuredClone(targets);
 		const legendaryCounts = countBySlot(this.legendaryCards);
 
@@ -1723,8 +1723,8 @@ class WOEBoosterFactory extends BoosterFactory {
 					this.options?.mythicPromotion && wotCounts.mythic > 0 && wotRarityRoll <= 0.05
 						? "mythic"
 						: wotCounts.rare > 0 && wotRarityRoll <= 0.25
-						  ? "rare"
-						  : "uncommon";
+							? "rare"
+							: "uncommon";
 				wotCards.push(pickCard(this.wotPool[wotRarity]));
 			}
 			const booster = super.generateBooster(updatedTargets);
@@ -2039,6 +2039,93 @@ class MKMBoosterFactory extends BoosterFactory {
 	}
 }
 
+// Outlaws of Thunder Junction
+// You can find a card from The List in 1 out of 5 Play Boosters. The List for OTJ has 40 cards: 30 cards from The Big Score and 10 Special Guests cards (SPG). You'll find a non-foil Special Guests card in 1 out of 64 Play Boosters.
+class OTJBoosterFactory extends BoosterFactory {
+	static readonly ListRatio: number = 1 / 5;
+	static readonly SPGRatio: number = 1 / 64;
+
+	otp: SlotedCardPool; // Breaking News
+	big: CardPool; // Big Score
+	spg: CardPool; // Special Guests
+
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
+		const opt = { ...options };
+		opt.foil = false; // We'll handle the garanteed foil slot ourselves.
+		super(cardPool, landSlot, opt);
+		this.otp = {};
+		for (const c of CardsBySet["otp"]) {
+			const rarity = getCard(c).rarity;
+			if (!this.otp[rarity]) this.otp[rarity] = new CardPool();
+			this.otp[rarity].set(c, options.maxDuplicates?.[rarity] ?? DefaultMaxDuplicates);
+		}
+		this.big = new CardPool();
+		for (const c of CardsBySet["big"])
+			this.big.set(c, options.maxDuplicates?.[getCard(c).rarity] ?? DefaultMaxDuplicates);
+		this.spg = new CardPool();
+		for (const c of CardsBySet["spg"])
+			this.spg.set(c, options.maxDuplicates?.[getCard(c).rarity] ?? DefaultMaxDuplicates);
+	}
+
+	generateBooster(targets: Targets) {
+		const updatedTargets = structuredClone(targets);
+		const booster: UniqueCard[] = [];
+
+		if (targets === DefaultBoosterTargets) {
+			updatedTargets.common -= 4; // 10 -> 5 or 6
+		} else {
+			updatedTargets.common = Math.max(1, updatedTargets.common - 3);
+		}
+
+		// 6th Common or The List
+		const theListRand = random.realZeroToOneInclusive();
+		if (theListRand < OTJBoosterFactory.SPGRatio) {
+			--updatedTargets.common;
+			// Special Guests from The List
+			booster.push(pickCard(this.spg, booster));
+		} else if (theListRand < OTJBoosterFactory.ListRatio) {
+			--updatedTargets.common;
+			// Big Score
+			booster.push(pickCard(this.big, booster));
+		}
+
+		// 1 OTP card that can be uncommon, rare, or mythic rare
+		{
+			const bonusCardRarity = rollSpecialCardRarity(countBySlot(this.otp), updatedTargets, this.options);
+			booster.push(pickCard(this.otp[bonusCardRarity]));
+		}
+
+		// Traditional foil card of any rarity
+		{
+			const rarityRoll = random.realZeroToOneInclusive();
+			let rarity = "common";
+			// NOTE: This mimics the ratios of wildcard set boosters described here: https://magic.wizards.com/en/news/making-magic/set-boosters-2020-07-25
+			//         Common:   0.7
+			//         Uncommon: 0.175
+			//         Rare:     0.125
+			//       Will have to be reviewed once actual data is available.
+			const thresholds = {
+				mythic: (this.options.mythicRate ?? 1.0 / 7.0) * 0.125,
+				rare: 0.125,
+				uncommon: 0.125 + 0.175,
+				common: 1.0,
+			};
+			for (const r in thresholds)
+				if (rarityRoll <= thresholds[r as keyof typeof thresholds] && this.cardPool[rarity].size > 0) {
+					rarity = r;
+					break;
+				}
+			// FIXME: You can find OTP cards here too... But rate is unknown. NOTE: There are no OTP commons.
+			const pool = rarity in this.otp && random.realZeroToOneInclusive() < 0.5 ? this.otp : this.cardPool;
+			booster.push(pickCard(pool[rarity], booster, { foil: true }));
+		}
+
+		// Make sure there are no negative counts
+		for (const key in updatedTargets) updatedTargets[key] = Math.max(0, updatedTargets[key]);
+		return super.generateBooster(updatedTargets, booster);
+	}
+}
+
 // Set specific rules.
 // Neither DOM, WAR or ZNR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
 export const SetSpecificFactories: {
@@ -2079,6 +2166,7 @@ export const SetSpecificFactories: {
 	lci: LCIBoosterFactory,
 	rvr: RVRBoosterFactory,
 	mkm: MKMBoosterFactory,
+	otj: OTJBoosterFactory,
 };
 
 export const getBoosterFactory = function (

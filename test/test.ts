@@ -269,6 +269,7 @@ describe("Sets content", function () {
 		ktk: { common: 101, uncommon: 80, rare: 53, mythic: 15 },
 		rvr: { common: 110, uncommon: 90, rare: 71, mythic: 20 },
 		mkm: { common: 81, uncommon: 100, rare: 70, mythic: 20 },
+		otj: { common: 81, uncommon: 100, rare: 60, mythic: 20 },
 	};
 
 	beforeEach(function (done) {
@@ -698,7 +699,8 @@ describe("Single Draft (Two Players)", function () {
 							(set === "mom" && c.set === "mul") ||
 							(set === "mat" && (c.set === "mul" || c.set === "mom")) ||
 							(set === "woe" && c.set === "wot") ||
-							set === "mkm" // With the List, I give up.
+							set === "mkm" || // With the List, I give up.
+							set === "otj"
 					),
 					`All cards in booster should be of the desired set, got [${[...new Set(b.map((c) => c.set))]}].`
 				).to.be.true;
