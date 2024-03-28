@@ -78,7 +78,8 @@
         "woe",
         "lci",
         "ktk",
-        "mkm"
+        "mkm",
+        "otj"
     ],
     "AlchemySets": [
         "hbg",
@@ -97,7 +98,8 @@
         "mat",
         "woe",
         "lci",
-        "mkm"
+        "mkm",
+        "otj"
     ],
     "BasicLandNames": {
         "en": {
@@ -306,6 +308,7 @@
         }
     ],
     "PrimarySets": [
+        "otj",
         "mkm",
         "rvr",
         "lci",

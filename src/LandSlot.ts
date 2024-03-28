@@ -1,8 +1,8 @@
 "use strict";
 
 import { CardID, CardPool } from "./CardTypes.js";
-import { getUnique, getCard } from "./Cards.js";
-import { getRandomMapKey, getRandom } from "./utils.js";
+import { getUnique, getCard, CardsBySet } from "./Cards.js";
+import { random, getRandomMapKey, getRandom } from "./utils.js";
 import BasicLandIDs from "./data/BasicLandIDs.json" assert { type: "json" };
 
 export class BasicLandSlot {
@@ -33,14 +33,14 @@ export class SpecialLandSlot extends BasicLandSlot {
 	setup(commons: CardPool) {
 		for (const c of this.commonLandsIds) {
 			if (commons.has(c)) {
-				this.landsToDistribute.set(c, commons.get(c) as number);
+				this.landsToDistribute.set(c, commons.get(c)!);
 				commons.delete(c);
 			}
 		}
 	}
 
 	pick() {
-		if (Math.random() <= this.rate && this.landsToDistribute.size > 0) {
+		if (random.realZeroToOneExclusive() <= this.rate && this.landsToDistribute.size > 0) {
 			const c = getRandomMapKey(this.landsToDistribute);
 			this.landsToDistribute.removeCard(c);
 			return getUnique(c);
@@ -233,6 +233,11 @@ export const SpecialLandSlots: { [set: string]: SpecialLandSlot } = {
 			(cid: CardID) =>
 				parseInt(getCard(cid)["collector_number"]) >= 287 && parseInt(getCard(cid)["collector_number"]) <= 291
 		)
+	),
+	otj: new SpecialLandSlot(
+		"otj",
+		CardsBySet["otj"].filter((cid: CardID) => getCard(cid).type === "Land" && getCard(cid).rarity === "common"),
+		0.5
 	),
 };
 
