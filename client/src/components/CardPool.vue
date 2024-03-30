@@ -113,7 +113,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="card-pool" ref="cardcolumns" :key="forceRerender">
+		<div class="card-pool" ref="cardcolumns" :key="poolKey">
 			<div class="empty-warning" v-if="cards.length == 0">
 				<slot name="empty">
 					<h3>This card pool is currently empty!</h3>
@@ -229,14 +229,14 @@ export default defineComponent({
 			// FIXME: This is a workaround. I'm still looking for a proper fix to #623.
 			if (DOMColumn.children.length !== column.length) {
 				console.error("[CardPool] Missing card in column! Forcing a re-render...");
-				++this.forceRerender;
+				this.forceUpdate();
 			} else {
 				const DOMUIDs = [...DOMColumn.children].map((c) => parseInt((c as HTMLElement).dataset.uniqueid!));
 				const columnUIDs = column.map((c) => c.uniqueID);
 				for (let i = 0; i < DOMUIDs.length; ++i) {
 					if (DOMUIDs[i] !== columnUIDs[i]) {
 						console.error("[CardPool] Unexcepted unique card ID! Forcing a re-render...");
-						++this.forceRerender;
+						this.forceUpdate();
 						break;
 					}
 				}
@@ -539,6 +539,14 @@ export default defineComponent({
 		},
 	},
 	computed: {
+		poolKey() {
+			// Yet another workaround for #623. Previous re-render key apparently wasn't enough in every case.
+			return (
+				this.forceRerender +
+				"_" +
+				this.rows.map((row) => row.map((col) => col.map((c) => c.uniqueID).join(",")).join("|")).join(";")
+			);
+		},
 		columnNames() {
 			let r = [];
 			switch (this.options.sort) {
