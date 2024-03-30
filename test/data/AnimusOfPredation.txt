@@ -1,0 +1,19 @@
+[Settings]
+{
+	"withReplacement": true,
+	"layouts": {
+		"normal": {
+			"weight": 1,
+			"slots": {
+				"AnimusOfPredation": 1,
+				"Creatures": 9
+			}
+		}
+	}
+}
+[AnimusOfPredation]
+Animus of Predation
+[Creatures]
+Aetherborn Marauder
+Adeliz, the Cinder Wind
+Acid Web Spider

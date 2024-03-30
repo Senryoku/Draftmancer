@@ -19,7 +19,14 @@
 			ref="imageElement"
 		/>
 		<div v-if="notes || notedColors" class="additional-notes">
-			{{ notes }}
+			<template v-if="notes">
+				<template v-if="Array.isArray(notes)">
+					<div v-for="n in notes" :key="n" style="white-space: nowrap">{{ n }}</div>
+				</template>
+				<template v-else>
+					{{ notes }}
+				</template>
+			</template>
 
 			<div v-if="notedColors" class="noted-colors">
 				<img v-for="c in notedColors" :key="c" class="mana-icon" :src="`img/mana/${c}.svg`" />
@@ -65,8 +72,10 @@ const classes = computed(() => {
 const notes = computed(() => {
 	if (!props.card?.state) return undefined;
 	if (props.card.draft_effects) {
-		if (hasEffect(props.card, "AnimusOfPredation") && props.card.state.removedCards)
-			return [...new Set(props.card.state.removedCards.map((card) => card.subtypes).flat())].join(", ");
+		if (hasEffect(props.card, "TrackRemovedCardsNames") && props.card.state.removedCards)
+			return props.card.state.removedCards.map((card) => card.name);
+		if (hasEffect(props.card, "TrackRemovedCardsSubtypes") && props.card.state.removedCards)
+			return [...new Set(props.card.state.removedCards.map((card) => card.subtypes).flat())];
 		if (hasEffect(props.card, "CogworkGrinder") && props.card.state.removedCards)
 			return props.card.state.removedCards.length.toString();
 		if (hasEffect(props.card, OnPickDraftEffect.NoteDraftedCards) && props.card.state.cardsDraftedThisRound)
@@ -75,7 +84,7 @@ const notes = computed(() => {
 			return props.card.state.passingPlayer;
 		if (props.card.state.cardName) return props.card.state.cardName;
 		if (props.card.state.creatureName) return props.card.state.creatureName;
-		if (props.card.state.creatureTypes) return props.card.state.creatureTypes.join(", ");
+		if (props.card.state.creatureTypes) return props.card.state.creatureTypes;
 	}
 	return undefined;
 });

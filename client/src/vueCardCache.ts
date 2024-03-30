@@ -230,7 +230,7 @@ const cardCachePlugin = {
 	},
 };
 
-export const useCardCache = () => ({ plugin: cardCachePlugin });
+export const useCardCache = () => ({ cardCache: cardCachePlugin });
 
 declare module "@vue/runtime-core" {
 	interface ComponentCustomProperties {

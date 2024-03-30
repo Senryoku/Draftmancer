@@ -44,7 +44,8 @@ export type SimpleDraftEffectType =
 	| OnPickDraftEffect
 	| OptionalOnPickDraftEffect
 	| UsableDraftEffect
-	| "AnimusOfPredation"
+	| "TrackRemovedCardsNames"
+	| "TrackRemovedCardsSubtypes"
 	| "CogworkGrinder";
 
 export enum ParameterizedDraftEffectType {

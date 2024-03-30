@@ -118,7 +118,7 @@ import { Language } from "@/Types";
 import { Card, CardFace } from "@/CardTypes";
 import { useCardCache, ScryfallCard, isReady, ScryfallCardFace, CardCacheEntry } from "../vueCardCache";
 
-const cardCache = useCardCache().plugin;
+const { cardCache } = useCardCache();
 
 const props = withDefaults(
 	defineProps<{
