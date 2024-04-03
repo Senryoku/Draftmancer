@@ -1832,6 +1832,33 @@ class RVRBoosterFactory extends BoosterFactory {
 	}
 }
 
+function filterSPGByNumber(min: number, max: number) {
+	return CardsBySet["spg"].filter((cid) => {
+		try {
+			const cn = parseInt(getCard(cid).collector_number);
+			return cn >= min && cn <= max;
+		} catch (e) {
+			return false;
+		}
+	});
+}
+
+const SpecialGuests = {
+	mkm: [
+		"d0ae5ac7-4cd9-40d7-b3a7-e7d493f2bf7a",
+		"c754663b-8414-483f-b2b1-c2deebe60ee6",
+		"08844d76-fc69-4fe3-9c1d-118110b3eb2c",
+		"8cf5c0b7-dd26-4515-9034-1483437fbd7e",
+		"e7e7cbed-83d7-41e5-b495-9850d631ad56",
+		"6d289cdd-3afa-48dd-9c90-3d8f9df79f16",
+		"564eb8e2-e3fb-44b6-a36d-a74e2374f9ff",
+		"b3364018-aeba-4f58-8233-b0026c488dd0",
+		"03c8654e-900a-4720-a4a1-1107d6271c70",
+		"2cf97898-1e05-4c0e-896f-ba6713bf6a7b",
+	],
+	otj: filterSPGByNumber(29, 38),
+};
+
 // "Play Boosters": https://magic.wizards.com/en/news/making-magic/what-are-play-boosters
 // - 6 Commons from the set
 // - 7/8: 7th common from the set; 1/8: Random card from The List
@@ -1951,19 +1978,7 @@ class MKMBoosterFactory extends BoosterFactory {
 		}
 		this.theList = mkmTheList;
 
-		for (const cid of [
-			// Not exactly elegant, but it's only 10 cards...
-			"d0ae5ac7-4cd9-40d7-b3a7-e7d493f2bf7a",
-			"c754663b-8414-483f-b2b1-c2deebe60ee6",
-			"08844d76-fc69-4fe3-9c1d-118110b3eb2c",
-			"8cf5c0b7-dd26-4515-9034-1483437fbd7e",
-			"e7e7cbed-83d7-41e5-b495-9850d631ad56",
-			"6d289cdd-3afa-48dd-9c90-3d8f9df79f16",
-			"564eb8e2-e3fb-44b6-a36d-a74e2374f9ff",
-			"b3364018-aeba-4f58-8233-b0026c488dd0",
-			"03c8654e-900a-4720-a4a1-1107d6271c70",
-			"2cf97898-1e05-4c0e-896f-ba6713bf6a7b",
-		])
+		for (const cid of SpecialGuests.mkm)
 			this.spg.set(cid, options.maxDuplicates?.[getCard(cid).rarity] ?? DefaultMaxDuplicates);
 	}
 
@@ -2054,16 +2069,16 @@ class OTJBoosterFactory extends BoosterFactory {
 		opt.foil = false; // We'll handle the garanteed foil slot ourselves.
 		super(cardPool, landSlot, opt);
 		this.otp = {};
-		for (const c of CardsBySet["otp"]) {
+		for (const c of BoosterCardsBySet["otp"]) {
 			const rarity = getCard(c).rarity;
 			if (!this.otp[rarity]) this.otp[rarity] = new CardPool();
 			this.otp[rarity].set(c, options.maxDuplicates?.[rarity] ?? DefaultMaxDuplicates);
 		}
 		this.big = new CardPool();
-		for (const c of CardsBySet["big"])
+		for (const c of BoosterCardsBySet["big"])
 			this.big.set(c, options.maxDuplicates?.[getCard(c).rarity] ?? DefaultMaxDuplicates);
 		this.spg = new CardPool();
-		for (const c of CardsBySet["spg"])
+		for (const c of SpecialGuests.otj)
 			this.spg.set(c, options.maxDuplicates?.[getCard(c).rarity] ?? DefaultMaxDuplicates);
 	}
 
