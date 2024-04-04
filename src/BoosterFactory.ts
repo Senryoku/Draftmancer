@@ -1843,7 +1843,7 @@ function filterSPGByNumber(min: number, max: number) {
 	});
 }
 
-const SpecialGuests = {
+export const SpecialGuests = {
 	mkm: [
 		"d0ae5ac7-4cd9-40d7-b3a7-e7d493f2bf7a",
 		"c754663b-8414-483f-b2b1-c2deebe60ee6",

@@ -2,7 +2,7 @@ import { v1 as uuidv1 } from "uuid";
 import { before, after, beforeEach, afterEach, describe, it } from "mocha";
 import fs from "fs";
 import { expect } from "chai";
-import { Cards, getCard } from "../src/Cards.js";
+import { BoosterCardsBySet, Cards, getCard } from "../src/Cards.js";
 import { Connections } from "../src/Connection.js";
 import { Sessions } from "../src/Session.js";
 import { Random, nodeCrypto } from "random-js";
@@ -335,6 +335,19 @@ describe("Sets content", function () {
 			// Wait for request to arrive
 		});
 	}
+
+	it("SPG MKM", () => {
+		expect(SpecialGuests.mkm).to.have.lengthOf(10);
+	});
+	it("SPG OTJ", () => {
+		expect(SpecialGuests.otj).to.have.lengthOf(10);
+	});
+	it("Breaking News (OTP)", () => {
+		expect(BoosterCardsBySet["otp"]).to.have.lengthOf(65);
+	});
+	it("The Big Score (BIG)", () => {
+		expect(BoosterCardsBySet["big"]).to.have.lengthOf(30);
+	});
 });
 
 describe("Single Player Draft", function () {
@@ -2342,6 +2355,7 @@ import { JHHBooster } from "../src/JumpstartHistoricHorizons.js";
 import { parseLine } from "../src/parseCardList.js";
 import { SocketError, isSocketError } from "../src/Message.js";
 import { isNumber } from "../src/TypeChecks.js";
+import { SpecialGuests } from "../src/BoosterFactory.js";
 
 describe("Jumpstart", function () {
 	let clients: ReturnType<typeof makeClients> = [];
