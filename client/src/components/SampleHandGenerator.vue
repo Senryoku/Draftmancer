@@ -44,7 +44,7 @@ function newHand() {
 	// Copy library from passed deck, then shuffle it
 	library.value = [...props.deck, ...getBasicLands()];
 	shuffleArray(library.value);
-	hand.value = library.value.slice(0, Math.min(7, library.value.length));
+	hand.value = library.value.splice(0, Math.min(7, library.value.length));
 }
 
 onMounted(() => {
