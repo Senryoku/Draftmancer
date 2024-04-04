@@ -1,6 +1,8 @@
 <template>
 	<div>
 		<div class="toolbar">
+			<div>Hand: {{ hand.length }}</div>
+			<div>Deck: {{ library.length }}</div>
 			<button @click="newHand">New Hand</button>
 			<button @click="drawCard" :disabled="library.length < 1">Draw Card</button>
 		</div>
@@ -56,6 +58,8 @@ onMounted(() => {
 .toolbar {
 	display: flex;
 	justify-content: flex-end;
+	align-items: center;
+	gap: 1em;
 	margin-bottom: 0.5em;
 }
 
