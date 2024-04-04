@@ -1859,6 +1859,23 @@ const SpecialGuests = {
 	otj: filterSPGByNumber(29, 38),
 };
 
+// NOTE: This mimics the ratios of wildcard set boosters described here: https://magic.wizards.com/en/news/making-magic/set-boosters-2020-07-25
+//         Common:   0.7
+//         Uncommon: 0.175
+//         Rare:     0.125
+function rollSetBoosterWildcardRarity(pool?: SlotedCardPool, options?: BoosterFactoryOptions) {
+	const rarityRoll = random.realZeroToOneInclusive();
+	const thresholds = {
+		mythic: (options?.mythicRate ?? 1.0 / 7.0) * 0.125,
+		rare: 0.125,
+		uncommon: 0.125 + 0.175,
+		common: 1.0,
+	};
+	for (const r in thresholds)
+		if (rarityRoll <= thresholds[r as keyof typeof thresholds] && (!pool || pool[r].size > 0)) return r;
+	return "common";
+}
+
 // "Play Boosters": https://magic.wizards.com/en/news/making-magic/what-are-play-boosters
 // - 6 Commons from the set
 // - 7/8: 7th common from the set; 1/8: Random card from The List
@@ -1920,27 +1937,8 @@ class PlayBoosterFactory extends BoosterFactory {
 		}
 
 		// Two "wildcards", one nonfoil and one foil
-		for (let i = 0; i < 2; ++i) {
-			const rarityRoll = random.realZeroToOneInclusive();
-			let rarity = "common";
-			// NOTE: This mimics the ratios of wildcard set boosters described here: https://magic.wizards.com/en/news/making-magic/set-boosters-2020-07-25
-			//         Common:   0.7
-			//         Uncommon: 0.175
-			//         Rare:     0.125
-			//       Will have to be reviewed once actual data is available.
-			const thresholds = {
-				mythic: (this.options.mythicRate ?? 1.0 / 7.0) * 0.125,
-				rare: 0.125,
-				uncommon: 0.125 + 0.175,
-				common: 1.0,
-			};
-			for (const r in thresholds)
-				if (rarityRoll <= thresholds[r as keyof typeof thresholds] && this.cardPool[rarity].size > 0) {
-					rarity = r;
-					break;
-				}
-			booster.push(pickCard(this.cardPool[rarity], booster));
-		}
+		for (let i = 0; i < 2; ++i)
+			booster.push(pickCard(this.cardPool[rollSetBoosterWildcardRarity(this.cardPool, this.options)], booster));
 		booster[booster.length - 1].foil = true;
 
 		// Make sure there are no negative counts
@@ -2011,42 +2009,21 @@ class MKMBoosterFactory extends BoosterFactory {
 			}
 		}
 
-		// Two "wildcards", one nonfoil and one foil
-		// NOTE: This mimics the ratios of wildcard set boosters described here: https://magic.wizards.com/en/news/making-magic/set-boosters-2020-07-25
-		//         Common:   0.7
-		//         Uncommon: 0.175
-		//         Rare:     0.125
-		//       Will have to be reviewed once actual data is available.
-		const thresholds = {
-			mythic: (this.options.mythicRate ?? 1.0 / 7.0) * 0.125,
-			rare: 0.125,
-			uncommon: 0.125 + 0.175,
-			common: 1.0,
-		};
 		// The first has a 1/6 chance to be a rare dual land.
 		if (random.bool(1.0 / 6.0) && this.rareLands.rare.count() > 0) {
 			booster.push(pickCard(this.rareLands.rare, booster));
 		} else {
-			const rarityRoll = random.realZeroToOneInclusive();
-			let rarity = "common";
-			for (const r in thresholds)
-				if (rarityRoll <= thresholds[r as keyof typeof thresholds] && this.cardPool[rarity].size > 0) {
-					rarity = r;
-					break;
-				}
-			booster.push(pickCard(this.cardPool[rarity], booster));
+			booster.push(pickCard(this.cardPool[rollSetBoosterWildcardRarity(this.cardPool, this.options)], booster));
 		}
 
 		// Traditional foil wildcard. This one can also be a rare dual land.
-		const rarityRoll = random.realZeroToOneInclusive();
-		let rarity = "common";
-		for (const r in thresholds)
-			if (rarityRoll <= thresholds[r as keyof typeof thresholds] && this.wildcardFoilPool[rarity].size > 0) {
-				rarity = r;
-				break;
-			}
-		booster.push(pickCard(this.wildcardFoilPool[rarity], [])); // NOTE: This is probably not duplicate protected.
-		booster[booster.length - 1].foil = true;
+		booster.push(
+			pickCard(
+				this.wildcardFoilPool[rollSetBoosterWildcardRarity(this.wildcardFoilPool, this.options)],
+				[], // NOTE: This is probably not duplicate protected.
+				{ foil: true }
+			)
+		);
 
 		// Make sure there are no negative counts
 		for (const key in updatedTargets) updatedTargets[key] = Math.max(0, updatedTargets[key]);
@@ -2054,7 +2031,7 @@ class MKMBoosterFactory extends BoosterFactory {
 	}
 }
 
-// Outlaws of Thunder Junction
+// Outlaws of Thunder Junction - https://magic.wizards.com/en/news/feature/collecting-outlaws-of-thunder-junction
 // You can find a card from The List in 1 out of 5 Play Boosters. The List for OTJ has 40 cards: 30 cards from The Big Score and 10 Special Guests cards (SPG). You'll find a non-foil Special Guests card in 1 out of 64 Play Boosters.
 class OTJBoosterFactory extends BoosterFactory {
 	static readonly ListRatio: number = 1 / 5;
@@ -2099,6 +2076,9 @@ class OTJBoosterFactory extends BoosterFactory {
 			booster.push(pickCard(theListRand < OTJBoosterFactory.SPGRatio ? this.spg : this.big, booster));
 		}
 
+		// 1 Wildcard of any rarity, including OTJ Booster Fun cards (We don't care about booster fun.)
+		booster.push(pickCard(this.cardPool[rollSetBoosterWildcardRarity(this.cardPool, this.options)], booster));
+
 		// Breaking News (OTP) card. 1/3 Rare or Mythic Rare.
 		{
 			const rarityRoll = random.realZeroToOneInclusive();
@@ -2106,26 +2086,9 @@ class OTJBoosterFactory extends BoosterFactory {
 			booster.push(pickCard(this.otp[rarity]));
 		}
 
-		// Traditional foil card of any rarity
+		// Traditional foil card of any rarity - This can include Booster Fun cards and OTP cards but doesn't include cards from The List.
 		{
-			const rarityRoll = random.realZeroToOneInclusive();
-			let rarity = "common";
-			// NOTE: This mimics the ratios of wildcard set boosters described here: https://magic.wizards.com/en/news/making-magic/set-boosters-2020-07-25
-			//         Common:   0.7
-			//         Uncommon: 0.175
-			//         Rare:     0.125
-			//       Will have to be reviewed once actual data is available.
-			const thresholds = {
-				mythic: (this.options.mythicRate ?? 1.0 / 7.0) * 0.125,
-				rare: 0.125,
-				uncommon: 0.125 + 0.175,
-				common: 1.0,
-			};
-			for (const r in thresholds)
-				if (rarityRoll <= thresholds[r as keyof typeof thresholds] && this.cardPool[rarity].size > 0) {
-					rarity = r;
-					break;
-				}
+			const rarity = rollSetBoosterWildcardRarity(undefined, this.options);
 			// FIXME: You can find OTP cards here too... But rate is unknown. NOTE: There are no OTP commons.
 			const pool =
 				rarity in this.otp &&
