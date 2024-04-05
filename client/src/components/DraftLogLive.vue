@@ -82,11 +82,11 @@
 										}"
 									>
 										<template #item="{ element }">
-											<card
+											<CardComponent
 												:key="`side_card_${element.uniqueID}`"
 												:card="element"
 												:language="language"
-											></card>
+											></CardComponent>
 										</template>
 									</Sortable>
 								</div>
@@ -109,20 +109,21 @@
 import { defineComponent, PropType } from "vue";
 import DraftLogPick from "./DraftLogPick.vue";
 import CardPool from "./CardPool.vue";
-import Card from "./Card.vue";
+import CardComponent from "./Card.vue";
 import ScaleSlider from "./ScaleSlider.vue";
 import { Sortable } from "sortablejs-vue3";
 import { Language } from "@/Types";
 import { DraftLog, DraftPick, DeprecatedDraftPick } from "@/DraftLog";
-import { CardID, UniqueCard } from "@/CardTypes";
+import { CardID, Card, UniqueCard } from "@/CardTypes";
 import { UserID } from "@/IDTypes";
 import { sortableUpdate, groupPicksPerPack } from "../helper";
 
 let uniqueID = 0;
+const genUniqueCard = (card: Card): UniqueCard => Object.assign({ uniqueID: ++uniqueID }, card);
 
 export default defineComponent({
 	name: "DraftLogLive",
-	components: { DraftLogPick, Card, CardPool, ScaleSlider, Sortable },
+	components: { DraftLogPick, CardComponent, CardPool, ScaleSlider, Sortable },
 	props: {
 		show: { type: Boolean, default: true },
 		draftlog: { type: Object as PropType<DraftLog>, required: true },
@@ -150,10 +151,12 @@ export default defineComponent({
 		document.removeEventListener("keydown", this.shortcuts);
 	},
 	methods: {
+		getCard(cid: CardID) {
+			return this.draftlog.carddata[cid];
+		},
 		getCardName(cid: CardID) {
-			return this.language in this.draftlog.carddata[cid].printed_names
-				? this.draftlog.carddata[cid].printed_names[this.language]
-				: this.draftlog.carddata[cid].name;
+			const c = this.getCard(cid);
+			return this.language in c.printed_names ? c.printed_names[this.language] : c.name;
 		},
 		setPlayer(userID: UserID) {
 			if (!(userID in this.draftlog.users)) return;
@@ -192,9 +195,6 @@ export default defineComponent({
 				this.pack = this.picksPerPack.length - 1;
 				this.pick = this.picksPerPack[this.pack].length - 1;
 			}
-		},
-		generateCardArray(cardIDs: CardID[]) {
-			return cardIDs.map((cid) => Object.assign({ uniqueID: ++uniqueID }, this.draftlog.carddata[cid]));
 		},
 		shortcuts(e: KeyboardEvent) {
 			if (e.key === "ArrowLeft") {
@@ -238,15 +238,15 @@ export default defineComponent({
 		selectedPlayerCards() {
 			if (this.draftlog.users?.[this.player!]?.decklist?.main)
 				return {
-					main: this.generateCardArray(this.draftlog.users[this.player!].decklist!.main),
-					side: this.generateCardArray(this.draftlog.users[this.player!].decklist!.side),
+					main: this.draftlog.users[this.player!].decklist!.main.map(this.getCard).map(genUniqueCard),
+					side: this.draftlog.users[this.player!].decklist!.side.map(this.getCard).map(genUniqueCard),
 				};
 			return {
-				main: this.generateCardArray(
-					(this.draftlog.users[this.player!].picks as DraftPick[])
-						.map((p: DraftPick) => p.pick.map((idx) => p.booster[idx]))
-						.flat()
-				),
+				main: (this.draftlog.users[this.player!].picks as DraftPick[])
+					.map((p: DraftPick) => p.pick.map((idx) => p.booster[idx]))
+					.flat()
+					.map(this.getCard)
+					.map(genUniqueCard),
 				side: [],
 			};
 		},
