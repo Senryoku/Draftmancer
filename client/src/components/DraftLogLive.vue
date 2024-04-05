@@ -118,6 +118,8 @@ import { CardID, UniqueCard } from "@/CardTypes";
 import { UserID } from "@/IDTypes";
 import { sortableUpdate, groupPicksPerPack } from "../helper";
 
+let uniqueID = 0;
+
 export default defineComponent({
 	name: "DraftLogLive",
 	components: { DraftLogPick, Card, CardPool, ScaleSlider, Sortable },
@@ -134,7 +136,6 @@ export default defineComponent({
 			pick: 0,
 			eventListeners: [] as { element: HTMLElement; callback: () => void }[],
 			pickTransition: "right",
-			uniqueID: 0,
 			cardScale: 1,
 		};
 	},
@@ -193,7 +194,7 @@ export default defineComponent({
 			}
 		},
 		generateCardArray(cardIDs: CardID[]) {
-			return cardIDs.map((cid) => Object.assign({ uniqueID: ++this.uniqueID }, this.draftlog.carddata[cid]));
+			return cardIDs.map((cid) => Object.assign({ uniqueID: ++uniqueID }, this.draftlog.carddata[cid]));
 		},
 		shortcuts(e: KeyboardEvent) {
 			if (e.key === "ArrowLeft") {
