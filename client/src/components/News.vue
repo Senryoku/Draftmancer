@@ -1,8 +1,12 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
-			<em>March, 2024</em>
+			<em>April 4, 2024</em>
 			<ul>
+				<li>
+					<img src="img/sets/otj.svg" class="set-icon" style="--invertedness: 100%" alt="OTJ" />
+					Outlaws of Thunder Junction is now available!
+				</li>
 				<li>New solo game mode: Supreme Draft!<br />Pick 2 cards from each booster and discard the rest.</li>
 				<li>
 					<img
@@ -55,24 +59,6 @@
 					the information necessary to correctly implement it is available yet.
 				</li>
 				<li>Fixed Arena versions of cards apppearing in Khans of Tarkir boosters.</li>
-			</ul>
-		</div>
-		<div class="news">
-			<em>December 6, 2023</em>
-			<ul>
-				<li>
-					Added a
-					<a href="/draftqueue"
-						>Draft Queue for
-						<img src="img/sets/ktk.svg" class="set-icon" style="--invertedness: 100%" alt="KTK" /> Khans of
-						Tarkir</a
-					>
-					to accompany its release on MTGA!
-				</li>
-				<li>Adjusted mythics/rares ratio depending on the set.</li>
-				<li>Correctly escape special characters, like quotes, in card names for MTGO export.</li>
-				<li>Fixed session collection download.</li>
-				<li>Usual minor tweaks</li>
 			</ul>
 		</div>
 	</div>
