@@ -197,6 +197,7 @@
     "big": {
         "code": "big",
         "fullName": "The Big Score",
+        "block": "Outlaws of Thunder Junction",
         "icon": "img/sets/big.svg"
     },
     "blb": {
@@ -1571,16 +1572,19 @@
     "otc": {
         "code": "otc",
         "fullName": "Outlaws of Thunder Junction Commander",
+        "block": "Commander",
         "icon": "img/sets/otc.svg"
     },
     "otj": {
         "code": "otj",
         "fullName": "Outlaws of Thunder Junction",
+        "block": "Outlaws of Thunder Junction",
         "icon": "img/sets/otj.svg"
     },
     "otp": {
         "code": "otp",
         "fullName": "Breaking News",
+        "block": "Outlaws of Thunder Junction",
         "icon": "img/sets/otp.svg"
     },
     "ovoc": {
