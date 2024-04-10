@@ -12,6 +12,7 @@ export class BasicLandSlot {
 		this.basicLandsIds = (BasicLandIDs as { [set: string]: CardID[] })[set];
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	setup(commons: CardPool) {}
 	pick() {
 		return getUnique(getRandom(this.basicLandsIds));
@@ -236,7 +237,19 @@ export const SpecialLandSlots: { [set: string]: SpecialLandSlot } = {
 	),
 	otj: new SpecialLandSlot(
 		"otj",
-		CardsBySet["otj"].filter((cid: CardID) => getCard(cid).type === "Land" && getCard(cid).rarity === "common"),
+		// Mirage Mesa and Conduit Pylons appear in the common slot.
+		[
+			"19e96521-b4ce-4a36-a887-200e05ccc804",
+			"d61dfeb7-7f6b-4601-8396-2cbb98165489",
+			"c5523dac-7aa0-4486-89c8-3b22a1411f26",
+			"5c9d080f-28d7-41d6-a4e0-5b3e3a5ed770",
+			"4ad841eb-da0d-43d4-8b60-efe30922990b",
+			"963c100e-4e12-438f-b5ae-14391406dff6",
+			"5d809f5b-d965-4cb1-a9f8-2048f8534373",
+			"4b778b63-e5fc-4d63-a93b-4372f32cade2",
+			"988e44c5-4632-4ebb-b6ae-c3886e49d637",
+			"67daa31c-d9c4-4c22-b29c-1b8a17d577e5",
+		],
 		0.5
 	),
 };
