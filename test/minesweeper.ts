@@ -253,13 +253,13 @@ describe("Minesweeper Draft", function () {
 		revealCorners = true,
 		revealBorders = false
 	) => {
-		if (picksPerGrid === -1) picksPerGrid = clients.length * 3 + 1;
+		const _picksPerGrid = picksPerGrid === -1 ? clients.length * 3 + 1 : picksPerGrid;
 		clients[ownerIdx].emit(
 			"startMinesweeperDraft",
 			gridCount,
 			gridWidth,
 			gridHeight,
-			picksPerGrid,
+			_picksPerGrid,
 			revealCenter,
 			revealCorners,
 			revealBorders,
@@ -272,9 +272,6 @@ describe("Minesweeper Draft", function () {
 	};
 
 	describe("Parameter validation", function () {
-		it("Error if not using a cube", function (done) {
-			startDraftWithError(done);
-		});
 		selectCube();
 		it("Error on invalid gridCount", function (done) {
 			startDraftWithError(done, 0);
@@ -294,6 +291,19 @@ describe("Minesweeper Draft", function () {
 		it("Error when no cards are revealed by default", function (done) {
 			startDraftWithError(done, 3, 10, 9, -1, false, false, false);
 		});
+	});
+
+	describe("Default settings with default set", function () {
+		it("Emit Settings", function (done) {
+			const nonOwnerIdx = (ownerIdx + 1) % clients.length;
+			clients[nonOwnerIdx].once("sessionOptions", function (options) {
+				expect(options.useCustomCardList).to.be.false;
+				done();
+			});
+			clients[ownerIdx].emit("setUseCustomCardList", false);
+		});
+		startDraft();
+		endDraft();
 	});
 
 	describe("Default settings with built-in cube", function () {

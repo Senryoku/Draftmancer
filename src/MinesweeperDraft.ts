@@ -158,7 +158,7 @@ export class MinesweeperDraftState extends IDraftState implements TurnBased {
 	// Warning: this will empty the packs.
 	constructor(
 		players: Array<UserID>,
-		packs: Array<Array<UniqueCard>>,
+		grids: Array<Array<UniqueCard>>,
 		gridWidth: number,
 		gridHeight: number,
 		picksPerGrid: number,
@@ -171,8 +171,8 @@ export class MinesweeperDraftState extends IDraftState implements TurnBased {
 		this.gridWidth = gridWidth;
 		this.gridHeight = gridHeight;
 		this.picksPerGrid = picksPerGrid;
-		for (const p of packs)
-			this.grids.push(new MinesweeperGrid(p, gridWidth, gridHeight, revealCenter, revealCorners, revealBorders));
+		for (const g of grids)
+			this.grids.push(new MinesweeperGrid(g, gridWidth, gridHeight, revealCenter, revealCorners, revealBorders));
 	}
 
 	grid() {

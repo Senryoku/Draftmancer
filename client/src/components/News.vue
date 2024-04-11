@@ -1,6 +1,13 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
+			<em>April 11, 2024</em>
+			<p>
+				Reworked the way Minesweeper Draft grids are generated, allowing the use of standard MTG sets and
+				lifting some restrictions for cubes.
+			</p>
+		</div>
+		<div class="news">
 			<em>April 4, 2024</em>
 			<ul>
 				<li>
@@ -44,21 +51,6 @@
 					<a href="cubeformat.html#custom-cards" target="_blank">Cube format</a>).
 				</li>
 				<li>General maintenance.</li>
-			</ul>
-		</div>
-		<div class="news">
-			<em>December 16, 2023</em>
-			<ul>
-				<li>
-					Support for
-					<img src="img/sets/rvr.svg" class="set-icon" style="--invertedness: 100%" alt="RVR" /> Ravnica
-					Remastered! You can find it in the "<a class="clickable" @click="$emit('more-sets')"
-						>More sets... </a
-					>" menu.<br />
-					Note that the retro frame slot is not simulated. It seems really convoluted and I don't think all
-					the information necessary to correctly implement it is available yet.
-				</li>
-				<li>Fixed Arena versions of cards apppearing in Khans of Tarkir boosters.</li>
 			</ul>
 		</div>
 	</div>

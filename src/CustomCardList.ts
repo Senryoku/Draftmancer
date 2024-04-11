@@ -7,7 +7,7 @@ import { isEmpty, Options, random, weightedRandomIdx, shuffleArray } from "./uti
 
 export type PackLayout = {
 	weight: number;
-	slots: { [slot: string]: number };
+	slots: Record<string, number>;
 };
 
 export type LayoutName = string;

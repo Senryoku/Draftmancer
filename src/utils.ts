@@ -1,5 +1,3 @@
-"use strict";
-
 import { Random, nodeCrypto } from "random-js";
 export const random = new Random(nodeCrypto);
 
@@ -14,6 +12,14 @@ export function randomInt(min: number, max: number) {
 
 export function negMod(m: number, n: number) {
 	return ((m % n) + n) % n;
+}
+
+export function sum(arr: number[]): number {
+	return arr.reduce((a, b) => a + b, 0);
+}
+
+export function sumValues<T extends string | number | symbol>(obj: Record<T, number>): number {
+	return sum(Object.values(obj));
 }
 
 export function getRandom<Type>(arr: Array<Type>): Type {
