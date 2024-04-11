@@ -69,6 +69,10 @@ import { getQueueStatus, registerPlayer, unregisterPlayer } from "./draftQueue/D
 import expressStaticGzip from "express-static-gzip";
 import { parseMTGOLog } from "./parseMTGOLog.js";
 
+import MTGOAPI from "./MTGOAPI.js";
+
+MTGOAPI.init();
+
 const app = express();
 const httpServer = new http.Server(app);
 const io = new Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>(httpServer, {
