@@ -101,6 +101,11 @@ const TournamentTimer = [
 	40, // 14 cards remaining, and more
 ];
 
+// @return array of cards with the 5 original basic lands removed (does not remove Wastes, Basic Snow Lands, etc)
+function removeBasics(cards: UniqueCard[]): UniqueCard[] {
+	return cards.filter((card) => !EnglishBasicLandNames.includes(card.name));
+}
+
 export class Session implements IIndexable {
 	id: SessionID;
 	owner?: UserID;
@@ -804,11 +809,6 @@ export class Session implements IIndexable {
 		return boosters;
 	}
 
-	// @return array of cards with the 5 original basic lands removed (does not remove Wastes, Basic Snow Lands, etc)
-	removeBasicLands(cards: UniqueCard[]): UniqueCard[] {
-		return cards.filter((card) => !EnglishBasicLandNames.includes(card.name));
-	}
-
 	notifyUserChange() {
 		// Send only necessary data
 		const userInfo: Array<{
@@ -864,7 +864,7 @@ export class Session implements IIndexable {
 			playerCount: this.users.size,
 		});
 		if (isMessageError(boosters)) return new SocketAck(boosters);
-		if (removeBasicLands) boosters = boosters.map(this.removeBasicLands);
+		if (removeBasicLands) boosters = boosters.map(removeBasics);
 
 		this.drafting = true;
 		this.disconnectedUsers = {};
@@ -970,7 +970,7 @@ export class Session implements IIndexable {
 			playerCount: this.users.size,
 		});
 		if (isMessageError(boosters)) return new SocketAck(boosters);
-		if (removeBasicLands) boosters = boosters.map(this.removeBasicLands);
+		if (removeBasicLands) boosters = boosters.map(removeBasics);
 
 		this.drafting = true;
 		this.disconnectedUsers = {};
@@ -1053,7 +1053,7 @@ export class Session implements IIndexable {
 			playerCount: this.users.size,
 		});
 		if (isMessageError(boosters)) return new SocketAck(boosters);
-		if (removeBasicLands) boosters = boosters.map(this.removeBasicLands);
+		if (removeBasicLands) boosters = boosters.map(removeBasics);
 
 		const cardPool = boosters.flat();
 
@@ -1062,7 +1062,7 @@ export class Session implements IIndexable {
 			if (isMessageError(boosterOrError)) return new SocketAck(boosterOrError);
 			if (boosterOrError.length === 0 || boosterOrError[0].length === 0)
 				return new SocketError("Internal Error: Couldn't generate enough boosters.");
-			const booster = removeBasicLands ? this.removeBasicLands(boosterOrError[0]) : boosterOrError[0];
+			const booster = removeBasicLands ? removeBasics(boosterOrError[0]) : boosterOrError[0];
 			boosters.push(booster);
 			cardPool.push(...booster);
 		}
@@ -1654,7 +1654,7 @@ export class Session implements IIndexable {
 			playerCount: this.users.size,
 		});
 		if (isMessageError(boosters)) return new SocketAck(boosters);
-		if (removeBasicLands) boosters = boosters.map(this.removeBasicLands);
+		if (removeBasicLands) boosters = boosters.map(removeBasics);
 
 		const cardPool = boosters.flat();
 		while (cardPool.length < wantedCards) {
@@ -1662,7 +1662,7 @@ export class Session implements IIndexable {
 			if (isMessageError(boosterOrError)) return new SocketAck(boosterOrError);
 			if (boosterOrError.length === 0 || boosterOrError[0].length === 0)
 				return new SocketError("Internal Error: Couldn't generate enough boosters.");
-			const booster = removeBasicLands ? this.removeBasicLands(boosterOrError[0]) : boosterOrError[0];
+			const booster = removeBasicLands ? removeBasics(boosterOrError[0]) : boosterOrError[0];
 			boosters.push(booster);
 			cardPool.push(...booster);
 		}
