@@ -9,6 +9,15 @@
 					<input type="checkbox" id="lock" :checked="locked" @change="lock($event)" />
 					<label for="lock"> <font-awesome-icon icon="fa-solid fa-lock"></font-awesome-icon> Lock </label>
 				</span>
+				<span
+					v-tooltip="
+						'When enabled, the bracket will be automatically updated based on match results played on MTGO. Make sure all usernames match your MTGO screen names!'
+					"
+				>
+					<input type="checkbox" id="lock" :checked="syncMTGO" @change="syncMTGO($event)" />
+					<font-awesome-icon icon="fa-solid fa-sync"></font-awesome-icon> Sync. with MTGO matches
+				</span>
+				<div style="flex-grow: 1"></div>
 				<span>
 					Type:
 					<template v-if="teamDraft"> Team Draft</template>
@@ -23,6 +32,10 @@
 				</span>
 			</template>
 			<template v-else>
+				<span v-if="locked">
+					<font-awesome-icon icon="fa-solid fa-lock"></font-awesome-icon> Bracket is locked. Only the Session
+					Owner can enter results.
+				</span>
 				<span style="font-size: 1.5em">
 					<template v-if="isTeamBracket">Team Draft</template>
 					<template v-else-if="isDoubleBracket">Double Elimination</template>
@@ -30,10 +43,6 @@
 					<template v-else>Single Elimination</template>
 				</span>
 			</template>
-			<span v-if="!fullcontrol && locked">
-				<font-awesome-icon icon="fa-solid fa-lock"></font-awesome-icon> Bracket is locked. Only the Session
-				Owner can enter results.
-			</span>
 		</div>
 		<h2 v-if="isDoubleBracket">Upper Bracket</h2>
 		<div
@@ -134,22 +143,6 @@ import Decklist from "./Decklist.vue";
 import BracketMatch, { Match, MatchPlayerData } from "./BracketMatch.vue";
 import { isDoubleBracket, isSwissBracket, isTeamBracket } from "../../../src/Brackets";
 
-function* generatePairs<T>(arr: T[]): Generator<[T, T][]> {
-	if (arr.length < 2) return [];
-	// We assume arr length is pair.
-	const a = arr[0];
-	for (let i = 1; i < arr.length; ++i) {
-		const pair: [T, T] = [a, arr[i]];
-		const rest = arr.slice(1, i).concat(arr.slice(i + 1, arr.length));
-		const gen = generatePairs(rest);
-		let val = gen.next();
-		while (val.value) {
-			yield [pair].concat(val.value);
-			val = gen.next();
-		}
-	}
-}
-
 export default defineComponent({
 	name: "Bracket",
 	components: { Decklist, BracketMatch },
@@ -181,6 +174,9 @@ export default defineComponent({
 		lock(e: Event) {
 			this.$emit("lock", (e.target as HTMLInputElement).checked);
 		},
+		syncMTGO(e: Event) {
+			this.$emit("syncBracketMTGO", (e.target as HTMLInputElement).checked);
+		},
 		copyLink() {
 			copyToClipboard(
 				`${window.location.protocol}//${window.location.hostname}${
@@ -193,22 +189,6 @@ export default defineComponent({
 			return this.draftlog && this.draftlog.users[userID] && this.draftlog.users[userID].decklist;
 		},
 
-		winner(match: Match) {
-			if (match.players[0].empty && match.players[1].empty) return { empty: true };
-			if (match.players[0].empty) return match.players[1];
-			if (match.players[1].empty) return match.players[0];
-			if (!this.bracket.results || this.bracket.results[match.index][0] === this.bracket.results[match.index][1])
-				return { tbd: "W" + (match.index + 1) };
-			if (this.bracket.results[match.index][0] > this.bracket.results[match.index][1]) return match.players[0];
-			else return match.players[1];
-		},
-		loser(match: Match) {
-			if (match.players[0].empty || match.players[1].empty) return { empty: true };
-			if (!this.bracket.results || this.bracket.results[match.index][0] === this.bracket.results[match.index][1])
-				return { tbd: "L" + (match.index + 1) };
-			if (this.bracket.results[match.index][0] > this.bracket.results[match.index][1]) return match.players[1];
-			else return match.players[0];
-		},
 		getPlayer(idx: number): MatchPlayerData {
 			return this.bracket.players[idx]
 				? { userID: this.bracket.players[idx]!.userID, userName: this.bracket.players[idx]!.userName }

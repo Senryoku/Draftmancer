@@ -69,9 +69,9 @@ import { getQueueStatus, registerPlayer, unregisterPlayer } from "./draftQueue/D
 import expressStaticGzip from "express-static-gzip";
 import { parseMTGOLog } from "./parseMTGOLog.js";
 
-import MTGOAPI from "./MTGOAPI.js";
+import { init as MTGOAPIInit } from "./MTGOAPI.js";
 
-MTGOAPI.init();
+MTGOAPIInit();
 
 const app = express();
 const httpServer = new http.Server(app);
@@ -1355,6 +1355,12 @@ function lockBracket(userID: UserID, sessionID: SessionID, bracketLocked: boolea
 	Sessions[sessionID].emitToConnectedNonOwners("sessionOptions", { bracketLocked });
 }
 
+function syncBracketMTGO(userID: UserID, sessionID: SessionID, value: unknown) {
+	if (!isBoolean(value)) return;
+
+	Sessions[sessionID].syncBracketMTGO(value);
+}
+
 function shareDraftLog(userID: UserID, sessionID: SessionID, draftLog: DraftLog) {
 	const sess = Sessions[sessionID];
 	if (!draftLog) return;
@@ -1676,6 +1682,7 @@ io.on("connection", async function (socket) {
 		socket.on("generateSwissBracket", prepareSocketCallback(generateSwissBracket, true));
 		socket.on("generateDoubleBracket", prepareSocketCallback(generateDoubleBracket, true));
 		socket.on("lockBracket", prepareSocketCallback(lockBracket, true));
+		socket.on("syncBracketMTGO", prepareSocketCallback(syncBracketMTGO, true));
 		socket.on("shareDraftLog", prepareSocketCallback(shareDraftLog, true));
 
 		// Apply preferred session settings in case we're creating a new one, filtering out invalid ones.

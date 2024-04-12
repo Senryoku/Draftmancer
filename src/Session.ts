@@ -65,7 +65,7 @@ import {
 } from "./Message.js";
 import { InactiveSessions, logSession } from "./Persistence.js";
 import { sendDecks } from "./BotTrainingAPI.js";
-import { Bracket, TeamBracket, SwissBracket, DoubleBracket, BracketPlayer } from "./Brackets.js";
+import { IBracket, SingleBracket, TeamBracket, SwissBracket, DoubleBracket, BracketPlayer } from "./Brackets.js";
 import { CustomCardList, generateBoosterFromCustomCardList, generateCustomGetCardFunction } from "./CustomCardList.js";
 import { DraftLog, DraftPick, GridDraftPick } from "./DraftLog.js";
 import { generateJHHBooster, JHHBooster, JHHBoosterPattern } from "./JumpstartHistoricHorizons.js";
@@ -91,6 +91,8 @@ import { SolomonDraftState, isSolomonDraftState } from "./SolomonDraft.js";
 import { isSomeEnum } from "./TypeChecks.js";
 import { askColors, choosePlayer } from "./Conspiracy.js";
 import { InProduction, InTesting, TestingOnly } from "./Context.js";
+
+import { MatchResults, EventCompleted, Result } from "./MTGOAPI.js";
 
 // Tournament timer depending on the number of remaining cards in a pack.
 const TournamentTimer = [
@@ -166,7 +168,7 @@ export class Session implements IIndexable {
 	draftLogRecipients: DraftLogRecipients = "everyone";
 	draftLogUnlockTimer: number = 0; // In minutes; Zero to disable.
 	bracketLocked: boolean = false; // If set, only the owner can edit the results.
-	bracket?: Bracket = undefined;
+	bracket?: IBracket = undefined;
 
 	// Draft state
 	drafting: boolean = false;
@@ -3574,7 +3576,7 @@ export class Session implements IIndexable {
 	}
 
 	generateBracket(players: BracketPlayer[]) {
-		this.bracket = this.teamDraft ? new TeamBracket(players) : new Bracket(players);
+		this.bracket = this.teamDraft ? new TeamBracket(players) : new SingleBracket(players);
 		this.forUsers((u) => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
 	}
 
@@ -3591,6 +3593,45 @@ export class Session implements IIndexable {
 	updateBracket(results: Array<[number, number]>): void {
 		if (!this.bracket) return;
 		this.bracket.results = results;
+		this.forUsers((u) => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
+	}
+
+	syncBracketMTGO(value: boolean) {
+		if (!this.bracket || value === this.bracket.MTGOSynced) return;
+
+		this.bracket.MTGOSynced = value;
+
+		if (this.bracket.MTGOSynced)
+			this.bracket.players.forEach((p) => {
+				if (p)
+					MatchResults.subscribe(p.userName, (e: EventCompleted) => {
+						const sessID = this.id;
+						const sess = Sessions[sessID];
+						if (!sess || !sess.bracket) {
+							MatchResults.unsubscribe(p.userName);
+							return;
+						}
+
+						if (e.finalMatchResults) {
+							const results: Record<string, number> = {};
+							for (const result of e.finalMatchResults) {
+								results[result.userInfo.screenName] = 0;
+							}
+							for (const game of e.games) {
+								for (const ranking of game.playerRankings) {
+									if (ranking.ranking === Result.Win) results[ranking.userInfo.screenName] += 1;
+								}
+							}
+
+							sess.bracket.update(results);
+						}
+					});
+			});
+		else
+			this.bracket.players.forEach((p) => {
+				MatchResults.unsubscribe(p.userName);
+			});
+
 		this.forUsers((u) => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
 	}
 

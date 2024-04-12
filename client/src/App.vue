@@ -250,17 +250,18 @@
 						></font-awesome-icon>
 
 						<font-awesome-icon
+							id="bracket-button"
 							class="clickable"
 							icon="fa-solid fa-sitemap"
 							v-if="sessionOwner === userID && !bracket"
 							@click="generateBracket"
 							v-tooltip="'Generate Bracket.'"
 						></font-awesome-icon>
-
 						<font-awesome-icon
+							id="bracket-button"
 							class="clickable"
 							icon="fa-solid fa-sitemap clickable"
-							v-if="bracket"
+							v-else-if="bracket"
 							@click="displayedModal = 'bracket'"
 							v-tooltip="'Display Bracket.'"
 						></font-awesome-icon>

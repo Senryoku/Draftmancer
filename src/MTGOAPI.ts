@@ -33,20 +33,43 @@ const ValidEvents = [
 	8, // Constructed Games - Tournament Practice
 ];
 
-type EventCompleted = {
+export enum MatchEndType {
+	NotSet = "NS",
+	CompletedNormal = "CN",
+	CompletedConcede = "CC",
+	CompletedDisconnect = "CD",
+	CompletedDoubleDisconnect = "DD",
+}
+
+export enum Result {
+	Win = 2,
+	Loss = 3,
+}
+
+export type Game = {
+	playerRankings: {
+		ranking: Result;
+		loginID: string;
+		userInfo: {
+			screenName: string;
+		};
+	}[];
+};
+
+export type EventCompleted = {
 	eventId: number;
 	eventToken: string;
 	description: string;
 	parentChannel: number;
-	gameStructure: string;
+	games: Game[];
 
 	finalMatchResults?: {
 		loginID: number;
 		userInfo: {
 			screenName: string;
 		};
-		finalPlace: number;
-		matchEndType: string;
+		finalPlace: Result;
+		matchEndType: MatchEndType;
 	}[];
 };
 
@@ -57,7 +80,7 @@ export function handleEvent(e: EventCompleted) {
 	}
 }
 
-function init() {
+export function init() {
 	if (MTGBOT_GRAPHQL_ENDPOINT && MTGBOT_APIKEY) {
 		// TODO: Reconnect on error, query list of events we may have missed during the disconnect.
 		client = createClient({
@@ -76,9 +99,14 @@ function init() {
 							parentChannel
 
 							... on Match {
-								gameStructure {
-									description
-									gameStructureCd
+								games {
+									playerRankings {
+										ranking
+										loginID
+										userInfo {
+											screenName
+										}
+									}
 								}
 
 								finalMatchResults {
@@ -114,8 +142,7 @@ function unsubscribe(userName: string) {
 	Subscriptions.delete(userName);
 }
 
-export default {
-	init,
+export const MatchResults = {
 	subscribe,
 	unsubscribe,
 };
