@@ -131,7 +131,7 @@
 </template>
 
 <script lang="ts">
-import { Bracket } from "@/Brackets";
+import { IBracket, Match, PlayerPlaceholder } from "@/Brackets";
 import { DraftLog } from "@/DraftLog";
 import { Language } from "@/Types";
 import { UserID } from "@/IDTypes";
@@ -140,27 +140,25 @@ import { defineComponent, PropType } from "vue";
 import { copyToClipboard } from "../helper";
 import { fireToast } from "../alerts";
 import Decklist from "./Decklist.vue";
-import BracketMatch, { Match, MatchPlayerData } from "./BracketMatch.vue";
-import { isDoubleBracket, isSwissBracket, isTeamBracket } from "../../../src/Brackets";
+import BracketMatch, { MatchPlayerData } from "./BracketMatch.vue";
+import { BracketType, isSingleBracket, isDoubleBracket, isSwissBracket, isTeamBracket } from "../../../src/Brackets";
+
+function isValid(m: Match) {
+	return m.players[0] >= 0 && m.players[1] >= 0;
+}
 
 export default defineComponent({
 	name: "Bracket",
 	components: { Decklist, BracketMatch },
 	data(inst) {
-		const type = !inst.bracket
-			? "single"
-			: isDoubleBracket(inst.bracket)
-				? "double"
-				: isSwissBracket(inst.bracket)
-					? "swiss"
-					: "single";
+		const type = !inst.bracket ? BracketType.Single : inst.bracket.type;
 		return {
 			selectedUser: null,
 			typeToGenerate: type,
 		} as { selectedUser: MatchPlayerData | null; typeToGenerate: string };
 	},
 	props: {
-		bracket: { type: Object as PropType<Bracket>, required: true },
+		bracket: { type: Object as PropType<IBracket>, required: true },
 		displayControls: { type: Boolean, default: true },
 		editable: { type: Boolean, default: false },
 		locked: { type: Boolean, default: false },
@@ -210,199 +208,41 @@ export default defineComponent({
 	},
 	computed: {
 		type() {
-			return !this.bracket
-				? "single"
-				: isDoubleBracket(this.bracket)
-					? "double"
-					: isSwissBracket(this.bracket)
-						? "swiss"
-						: "single";
-		},
-		matches() {
-			let m: Match[][] = [[], [], []];
-			const getPlayer = this.getPlayer;
-			const winner = this.winner;
-
-			if (isSwissBracket(this.bracket)) {
-				if (![6, 8, 10].includes(this.realPlayerCount())) return m;
-
-				const alreadyPaired = [];
-				for (let i = 0; i < this.bracket.players.length / 2; ++i) {
-					const match = new Match(i, [getPlayer(2 * i), getPlayer(2 * i + 1)]);
-					m[0].push(match);
-					alreadyPaired.push([match.players[0].userID, match.players[1].userID]);
-					alreadyPaired.push([match.players[1].userID, match.players[0].userID]);
-				}
-
-				const records: { [userID: UserID]: number } = {};
-				const scores: { [userID: UserID]: number } = {};
-
-				for (let player of this.bracket.players)
-					if (player) {
-						scores[player.userID] = 0;
-						records[player.userID] = 0;
-					}
-
-				let groupPairingFallback = this.realPlayerCount() != 8;
-
-				for (let round = 0; round < 2; ++round) {
-					for (let i = 0; i < m[round].length; ++i) {
-						const match = m[round][i];
-						const result = this.bracket.results[match.index];
-
-						if (result[0] === result[1]) {
-							// Match has not been played yet.
-							if (result[0] === 0) return m;
-							// We have a draw, group pairing might not be possible, we'll fallback to a single group pairing by score.
-							groupPairingFallback = true;
-						} else records[match.players[result[0] > result[1] ? 0 : 1].userID!] += 1;
-						// Compute fine scores
-						for (let i = 0; i < m[round].length; ++i) {
-							const match = m[round][i];
-							const diff = this.bracket.results[match.index][0] - this.bracket.results[match.index][1];
-							scores[match.players[0].userID!] += diff;
-							scores[match.players[1].userID!] -= diff;
-						}
-					}
-
-					const groups: UserID[][] = [];
-					if (!groupPairingFallback) {
-						for (let record of [...new Set(Object.values(records))]) {
-							groups[record] = Object.keys(records).filter((uid) => records[uid] === record);
-						}
-						groups.reverse();
-					} else groups.push(this.bracket.players.map((p) => p!.userID!));
-
-					for (const players of groups) {
-						const alreadyPairedBackup = [...alreadyPaired]; // In case the fast algorithm fails and we have to start over.
-						const sortedPlayers = structuredClone(players).sort((lhs, rhs) => scores[rhs] - scores[lhs]);
-
-						let group_matches: Match[] = [];
-						while (sortedPlayers.length > 0) {
-							const firstPlayer = sortedPlayers.shift();
-							let index = 0;
-							// Find the player with the closest score which firstPlayer did not encountered yet
-							while (
-								index < sortedPlayers.length &&
-								alreadyPaired.find((el) => el[0] === firstPlayer && el[1] === sortedPlayers[index])
-							)
-								++index;
-							if (index < sortedPlayers.length) {
-								const secondPlayer = sortedPlayers[index];
-								sortedPlayers.splice(index, 1);
-								group_matches.push(
-									new Match(m[0].length + m[1].length + m[2].length + group_matches.length, [
-										this.bracket.players.find((p) => p?.userID === firstPlayer)!,
-										this.bracket.players.find((p) => p?.userID === secondPlayer)!,
-									])
-								);
-								alreadyPaired.push([firstPlayer, secondPlayer]);
-								alreadyPaired.push([secondPlayer, firstPlayer]);
-							} else {
-								// We are out of undisputed matches because of the order of assignments, revert to a failsafe but less optimal algorithm in this case.
-								group_matches = [];
-								const matchesMatrix: number[][] = [];
-								for (let i = 0; i < players.length; ++i) {
-									const row = [];
-									for (let j = 0; j < players.length; ++j) {
-										let val = alreadyPairedBackup.find(
-											(el) => el[0] === players[i] && el[1] === players[j]
-										)
-											? 99999
-											: 0;
-										val += Math.abs(scores[players[i]] - scores[players[j]]);
-										row.push(val);
-									}
-									matchesMatrix.push(row);
-								}
-								let minValue = 10000000;
-								let bestPermutation = undefined;
-								// Enumerate all possible permutations and keep the "best" one.
-								const permutations = generatePairs([...Array(players.length).keys()]);
-								let perm = permutations.next();
-								while (perm.value) {
-									const val = perm.value.reduce(
-										(sum: number, pair: [number, number]) => sum + matchesMatrix[pair[0]][pair[1]],
-										0
-									);
-									if (val < minValue) {
-										minValue = val;
-										bestPermutation = perm.value;
-									}
-									perm = permutations.next();
-								}
-								// Finally generate the matches
-								for (let pair of bestPermutation) {
-									group_matches.push(
-										new Match(m[0].length + m[1].length + m[2].length + group_matches.length, [
-											this.bracket.players.find((p) => p?.userID === players[pair[0]])!,
-											this.bracket.players.find((p) => p?.userID === players[pair[1]])!,
-										])
-									);
-								}
-								break;
-							}
-						}
-						m[round + 1].push(...group_matches);
-					}
-				}
-				return m;
-			}
-
-			if (isTeamBracket(this.bracket)) {
-				m[0].push(new Match(0, [getPlayer(0), getPlayer(3)]));
-				m[0].push(new Match(1, [getPlayer(2), getPlayer(5)]));
-				m[0].push(new Match(2, [getPlayer(4), getPlayer(1)]));
-				m[1].push(new Match(3, [getPlayer(0), getPlayer(5)]));
-				m[1].push(new Match(4, [getPlayer(2), getPlayer(1)]));
-				m[1].push(new Match(5, [getPlayer(4), getPlayer(3)]));
-				m[2].push(new Match(6, [getPlayer(0), getPlayer(1)]));
-				m[2].push(new Match(7, [getPlayer(2), getPlayer(3)]));
-				m[2].push(new Match(8, [getPlayer(4), getPlayer(5)]));
-				return m;
-			}
-
-			for (let i = 0; i < 4; ++i) m[0].push(new Match(i, [getPlayer(2 * i), getPlayer(2 * i + 1)]));
-
-			m[1].push(new Match(4, [winner(m[0][0]), winner(m[0][1])]));
-			m[1].push(new Match(5, [winner(m[0][2]), winner(m[0][3])]));
-			m[2].push(new Match(6, [winner(m[1][0]), winner(m[1][1])]));
-			return m;
+			return this.bracket.type;
 		},
 		lowerBracket() {
 			if (!isDoubleBracket(this.bracket)) return [];
-			let m: Match[][] = [[], [], [], []];
-			for (let i = 0; i < 2; ++i) {
-				m[0].push(
-					new Match(7 + i, [this.loser(this.matches[0][2 * i]), this.loser(this.matches[0][2 * i + 1])])
-				);
-				m[1].push(new Match(9 + i, [this.winner(m[0][i]), this.loser(this.matches[1][i])]));
-			}
-			m[2].push(new Match(11, [this.winner(m[1][0]), this.winner(m[1][1])]));
-			m[3].push(new Match(12, [this.winner(m[2][0]), this.loser(this.matches[2][0])]));
-			return m;
+			return this.bracket.lowerBracket;
 		},
 		final() {
 			if (!isDoubleBracket(this.bracket)) return null;
-			return new Match(13, [this.winner(this.matches[2][0]), this.winner(this.lowerBracket[3][0])]);
+			return this.bracket.matches[3][0];
 		},
 		records() {
 			let r: { [userID: UserID]: { wins: number; losses: number } } = {};
 			for (let p of this.bracket.players) if (p) r[p.userID] = { wins: 0, losses: 0 };
 
 			const countMatch = (m: Match) => {
-				if (m.isValid() && this.bracket.results[m.index][0] !== this.bracket.results[m.index][1]) {
-					let winIdx = this.bracket.results[m.index][0] > this.bracket.results[m.index][1] ? 0 : 1;
-					r[m.players[winIdx].userID!].wins += 1;
-					r[m.players[(winIdx + 1) % 2].userID!].losses += 1;
-				} else if (m.players[1].empty && !m.players[0].empty && !m.players[0].tbd) {
-					r[m.players[0].userID!].wins += 1;
-				} else if (m.players[0].empty && !m.players[1].empty && !m.players[1].tbd) {
-					r[m.players[1].userID!].wins += 1;
+				if (isValid(m) && m.results[0] !== m.results[1]) {
+					let winIdx = m.results[0] > m.results[1] ? 0 : 1;
+					r[m.players[winIdx]].wins += 1;
+					r[m.players[(winIdx + 1) % 2]].losses += 1;
+				} else if (
+					m.players[1] === PlayerPlaceholder.Empty &&
+					m.players[0] !== PlayerPlaceholder.Empty &&
+					m.players[0] !== PlayerPlaceholder.TBD
+				) {
+					r[m.players[0]].wins += 1;
+				} else if (
+					m.players[0] === PlayerPlaceholder.Empty &&
+					m.players[1] !== PlayerPlaceholder.Empty &&
+					m.players[1] !== PlayerPlaceholder.TBD
+				) {
+					r[m.players[1]].wins += 1;
 				}
 			};
 
-			for (let col of this.matches) for (let m of col) countMatch(m);
+			for (let col of this.bracket.matches) for (let m of col) countMatch(m);
 			if (isDoubleBracket(this.bracket)) {
 				for (let col of this.lowerBracket) for (let m of col) countMatch(m);
 				countMatch(this.final!);
@@ -412,7 +252,7 @@ export default defineComponent({
 		},
 		teamRecords() {
 			let r = [0, 0];
-			for (let col of this.matches) {
+			for (let col of this.bracket.matches) {
 				for (let m of col) {
 					if (m.isValid() && this.bracket.results[m.index][0] !== this.bracket.results[m.index][1]) {
 						const teamIdx = this.bracket.results[m.index][0] > this.bracket.results[m.index][1] ? 0 : 1;
@@ -426,6 +266,9 @@ export default defineComponent({
 			if (this.selectedUser?.userID)
 				return this.draftlog?.users?.[this.selectedUser?.userID].decklist ?? undefined;
 			return undefined;
+		},
+		isSingleBracket() {
+			return isSingleBracket(this.bracket);
 		},
 		isSwissBracket() {
 			return isSwissBracket(this.bracket);

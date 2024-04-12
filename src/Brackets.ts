@@ -54,7 +54,7 @@ function loser(m: Match): PlayerIndex | PlayerPlaceholder {
 	return m.players[0];
 }
 
-export class IBracket {
+export abstract class IBracket {
 	type: BracketType;
 	players: BracketPlayer[];
 	matches: Match[][] = [];
@@ -65,6 +65,8 @@ export class IBracket {
 		this.type = type;
 		this.players = players;
 	}
+
+	abstract generateMatches(results: Array<[number, number]>): void;
 }
 
 export class SingleBracket extends IBracket {
@@ -149,11 +151,15 @@ function* generatePairs<T>(arr: T[]): Generator<[T, T][]> {
 export class SwissBracket extends IBracket {
 	constructor(players: BracketPlayer[]) {
 		super(BracketType.Swiss, players);
+		this.generateMatches([]);
 	}
 
-	generateMatches(playerCount: number, results: Array<[number, number]>) {
+	generateMatches(_results: Array<[number, number]>) {
+		const playerCount = this.players.length;
 		if ([6, 8, 10].indexOf(playerCount) === -1) return new MessageError("Invalid player count");
 		const matchCount = { 6: 9, 8: 12, 10: 15 }[playerCount]!;
+		let results = _results;
+		if (results.length === 0) results = Array(matchCount).fill([0, 0]);
 		if (results.length !== matchCount) return new MessageError("Invalid result count");
 
 		const m: Match[][] = [[], [], []];
