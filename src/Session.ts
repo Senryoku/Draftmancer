@@ -1576,9 +1576,11 @@ export class Session implements IIndexable {
 		if (isMessageError(boosters)) return new SocketAck(boosters);
 
 		const cardPool = boosters.flat();
-		shuffleArray(cardPool);
 		const grids: UniqueCard[][] = [];
-		for (let i = 0; i < gridCount; i++) grids.push(cardPool.splice(0, gridWidth * gridHeight));
+		for (let i = 0; i < gridCount; i++) {
+			grids.push(cardPool.splice(0, gridWidth * gridHeight));
+			shuffleArray(grids[i]);
+		}
 
 		this.drafting = true;
 		this.initLogs("Minesweeper Draft", boosters);
