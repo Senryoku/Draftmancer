@@ -390,6 +390,7 @@ export interface ClientToServerEvents {
 		ack: (result: SocketAck) => void
 	) => void;
 	lockBracket: (bracketLocked: boolean) => void;
+	syncBracketMTGO: (value: boolean) => void;
 	shareDraftLog: (draftLog: DraftLog) => void;
 	distributeSealed: (
 		boostersPerPlayer: number,
