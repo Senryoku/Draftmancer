@@ -59,7 +59,7 @@
 </template>
 
 <script lang="ts">
-import { Bracket } from "@/Brackets";
+import { IBracket, Match } from "@/Brackets";
 import { DraftLog } from "@/DraftLog";
 import { UserID } from "@/IDTypes";
 
@@ -73,25 +73,12 @@ export type MatchPlayerData = {
 	empty?: boolean;
 };
 
-export class Match {
-	index: number;
-	players: MatchPlayerData[];
-
-	constructor(index: number, players: MatchPlayerData[]) {
-		this.index = index;
-		this.players = players;
-	}
-	isValid() {
-		return !this.players[0].empty && !this.players[1].empty && !this.players[0].tbd && !this.players[1].tbd;
-	}
-}
-
 export default defineComponent({
 	props: {
 		result: { type: Array as PropType<number[]>, required: true },
 		editable: { type: Boolean, default: false },
 		match: { type: Object as PropType<Match>, required: true },
-		bracket: { type: Object as PropType<Bracket>, required: true },
+		bracket: { type: Object as PropType<IBracket>, required: true },
 		records: { type: Object, required: true },
 		teamrecords: { type: Array as PropType<number[]>, required: true },
 		draftlog: { type: Object as PropType<DraftLog>, default: null },

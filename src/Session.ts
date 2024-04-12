@@ -3590,7 +3590,7 @@ export class Session implements IIndexable {
 
 	updateBracket(results: Array<[number, number]>): void {
 		if (!this.bracket) return;
-		this.bracket.results = results;
+		this.bracket.generateMatches(results);
 		this.forUsers((u) => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
 	}
 
@@ -3621,7 +3621,7 @@ export class Session implements IIndexable {
 								}
 							}
 
-							sess.bracket.update(results);
+							sess.bracket.generateMatches(results);
 						}
 					});
 			});
