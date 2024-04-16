@@ -254,7 +254,7 @@
 							class="clickable"
 							icon="fa-solid fa-sitemap"
 							v-if="sessionOwner === userID && !bracket"
-							@click="generateBracket"
+							@click="generateBracket('Single')"
 							v-tooltip="'Generate Bracket.'"
 						></font-awesome-icon>
 						<font-awesome-icon
@@ -2902,8 +2902,6 @@
 					:draftlog="currentDraftLog"
 					@updated="updateBracket"
 					@generate="generateBracket"
-					@generate-swiss="generateSwissBracket"
-					@generate-double="generateDoubleBracket"
 					@lock="lockBracket"
 				></bracket-component>
 			</template>

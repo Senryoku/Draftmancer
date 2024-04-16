@@ -38,8 +38,7 @@ import { WinchesterDraftState } from "./WinchesterDraft.js";
 import { HousmanDraftState } from "./HousmanDraft.js";
 import { SolomonDraftState } from "./SolomonDraft.js";
 import { sendLog } from "./BotTrainingAPI.js";
-import { deserialize } from "v8";
-import { deserializeBracket } from "./Brackets.js";
+import { deserializeBracket } from "./BracketSerialization.js";
 
 const PersistenceLocalPath = process.env.PERSISTENCE_LOCAL_PATH ?? ".";
 const LocalPersitenceDirectory = "tmp";

@@ -31,6 +31,7 @@ import { WinchesterDraftSyncData } from "./WinchesterDraft";
 import { HousmanDraftSyncData } from "./HousmanDraft";
 import { SolomonDraftSyncData } from "./SolomonDraft";
 import { QueueID } from "./draftQueue/QueueDescription";
+import { BracketType } from "./Brackets";
 
 export type LoaderOptions = { title: string };
 
@@ -380,15 +381,7 @@ export interface ClientToServerEvents {
 	setDescription: (description: string) => void;
 	replaceDisconnectedPlayers: () => void;
 	distributeJumpstart: (set: string, ack: (result: SocketAck) => void) => void;
-	generateBracket: (players: Array<{ userID: UserID; userName: string }>, ack: (result: SocketAck) => void) => void;
-	generateSwissBracket: (
-		players: Array<{ userID: UserID; userName: string }>,
-		ack: (result: SocketAck) => void
-	) => void;
-	generateDoubleBracket: (
-		players: Array<{ userID: UserID; userName: string }>,
-		ack: (result: SocketAck) => void
-	) => void;
+	generateBracket: (type: BracketType, ack: (result: SocketAck) => void) => void;
 	lockBracket: (bracketLocked: boolean) => void;
 	syncBracketMTGO: (value: boolean) => void;
 	shareDraftLog: (draftLog: DraftLog) => void;

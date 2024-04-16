@@ -14,18 +14,18 @@
 						'When enabled, the bracket will be automatically updated based on match results played on MTGO. Make sure all usernames match your MTGO screen names!'
 					"
 				>
-					<input type="checkbox" id="lock" :checked="syncMTGO" @change="syncMTGO($event)" />
+					<input type="checkbox" id="lock" :checked="bracket.MTGOSynced" @change="syncMTGO($event)" />
 					<font-awesome-icon icon="fa-solid fa-sync"></font-awesome-icon> Sync. with MTGO matches
 				</span>
 				<div style="flex-grow: 1"></div>
 				<span>
 					Type:
-					<template v-if="teamDraft"> Team Draft</template>
+					<template v-if="teamDraft"><div>Team Draft</div></template>
 					<template v-else>
 						<select v-model="typeToGenerate">
-							<option value="single">Single Elimination</option>
-							<option value="double">Double Elimination</option>
-							<option value="swiss">3-Round Swiss</option>
+							<option value="Single">Single Elimination</option>
+							<option value="Double">Double Elimination</option>
+							<option value="Swiss">3-Round Swiss</option>
 						</select>
 					</template>
 					<button @click="regenerate">Re-Generate</button>
@@ -47,11 +47,11 @@
 		<h2 v-if="isDoubleBracket">Upper Bracket</h2>
 		<div
 			class="bracket-columns"
-			:style="`--column-count: ${isDoubleBracket ? matches.length + 1 : matches.length}`"
+			:style="`--column-count: ${isDoubleBracket ? bracket.matches.length + 1 : bracket.matches.length}`"
 		>
-			<div class="bracket-column" v-for="(col, colIndex) in matches" :key="colIndex">
+			<div class="bracket-column" v-for="(col, colIndex) in bracket.matches" :key="colIndex">
 				<!-- Previous round of Swiss isn't done yet -->
-				<template v-if="matches[colIndex].length === 0">
+				<template v-if="bracket.matches[colIndex].length === 0">
 					<div style="text-align: center; padding: 1em; max-width: 200px; margin: auto">
 						<strong>Round {{ colIndex + 1 }}: TBD</strong><br />
 						<small>(Will unlock when all the results of the previous round are entered.)</small>
@@ -59,42 +59,36 @@
 				</template>
 				<template v-else>
 					<BracketMatch
-						v-for="m in col"
-						:key="m.index"
-						:match="m"
-						:result="bracket.results[m.index]"
-						:bracket="bracket"
-						:records="records"
-						:teamrecords="teamRecords"
+						v-for="(m, mIdx) in col"
+						:key="`${colIndex}_${mIdx}`"
+						:matchID="m.id"
+						:players="[getPlayer(m, 0), getPlayer(m, 1)]"
 						:draftlog="draftlog"
 						:final="!isDoubleBracket && colIndex === 2"
 						:editable="
 							editable &&
 							!(
-								type === 'swiss' &&
-								colIndex < matches.length - 1 &&
-								matches[colIndex + 1].some(
-									(m) => bracket.results[m.index][0] !== 0 || bracket.results[m.index][1] !== 0
-								)
+								type === 'Swiss' &&
+								colIndex < col.length - 1 &&
+								bracket.matches[colIndex + 1].some((m) => m.results[0] !== 0 || m.results[1] !== 0)
 							)
 						"
-						@updated="(index, value) => $emit('updated', m.index, index, value)"
+						:bracketType="bracket.type"
+						@updated="(index, value) => $emit('updated', m.id, index, value) /*FIXME*/"
 						@selectuser="(user) => (selectedUser = user)"
 					/>
 				</template>
 			</div>
 			<div class="bracket-column" v-if="isDoubleBracket">
 				<BracketMatch
-					:key="final!.index"
-					:match="final!"
-					:result="bracket.results[final!.index]"
-					:bracket="bracket"
-					:records="records"
-					:teamrecords="teamRecords"
+					:key="'final'"
+					:matchID="final!.id"
+					:players="[getPlayer(final!, 0), getPlayer(final!, 1)]"
+					:bracketType="bracket.type"
 					:draftlog="draftlog"
 					:final="true"
 					:editable="editable"
-					@updated="(index, value) => $emit('updated', final!.index, index, value)"
+					@updated="(index, value) => $emit('updated', final!.id, index, value) /*FIXME*/"
 					@selectuser="(user) => (selectedUser = user)"
 				/>
 			</div>
@@ -103,16 +97,14 @@
 		<div class="bracket-columns" v-if="isDoubleBracket" :style="`--column-count: ${lowerBracket.length}`">
 			<div class="bracket-column" v-for="(col, colIndex) in lowerBracket" :key="colIndex">
 				<BracketMatch
-					v-for="m in col"
-					:key="m.index"
-					:match="m"
-					:result="bracket.results[m.index]"
-					:bracket="bracket"
-					:records="records"
-					:teamrecords="teamRecords"
+					v-for="(m, mIdx) in col"
+					:key="`${colIndex}_${mIdx}`"
+					:matchID="m.id"
+					:players="[getPlayer(m, 0), getPlayer(m, 1)]"
+					:bracketType="bracket.type"
 					:draftlog="draftlog"
 					:editable="editable"
-					@updated="(index, value) => $emit('updated', m.index, index, value)"
+					@updated="(index, value) => $emit('updated', m.id, index, value) /*FIXME*/"
 					@selectuser="(user) => (selectedUser = user)"
 				/>
 			</div>
@@ -131,7 +123,6 @@
 </template>
 
 <script lang="ts">
-import { IBracket, Match, PlayerPlaceholder } from "@/Brackets";
 import { DraftLog } from "@/DraftLog";
 import { Language } from "@/Types";
 import { UserID } from "@/IDTypes";
@@ -140,22 +131,25 @@ import { defineComponent, PropType } from "vue";
 import { copyToClipboard } from "../helper";
 import { fireToast } from "../alerts";
 import Decklist from "./Decklist.vue";
-import BracketMatch, { MatchPlayerData } from "./BracketMatch.vue";
-import { BracketType, isSingleBracket, isDoubleBracket, isSwissBracket, isTeamBracket } from "../../../src/Brackets";
+import BracketMatch, { MatchPlayer } from "./BracketMatch.vue";
+import { BracketType, DoubleBracket, IBracket, Match, PlayerPlaceholder } from "../../../src/Brackets";
 
 function isValid(m: Match) {
 	return m.players[0] >= 0 && m.players[1] >= 0;
+}
+function isPlaceholder(p: number) {
+	return p < 0;
 }
 
 export default defineComponent({
 	name: "Bracket",
 	components: { Decklist, BracketMatch },
 	data(inst) {
-		const type = !inst.bracket ? BracketType.Single : inst.bracket.type;
+		const type: BracketType = !inst.bracket ? BracketType.Single : inst.bracket.type;
 		return {
 			selectedUser: null,
 			typeToGenerate: type,
-		} as { selectedUser: MatchPlayerData | null; typeToGenerate: string };
+		} as { selectedUser: MatchPlayer | null; typeToGenerate: BracketType };
 	},
 	props: {
 		bracket: { type: Object as PropType<IBracket>, required: true },
@@ -187,19 +181,17 @@ export default defineComponent({
 			return this.draftlog && this.draftlog.users[userID] && this.draftlog.users[userID].decklist;
 		},
 
-		getPlayer(idx: number): MatchPlayerData {
-			return this.bracket.players[idx]
-				? { userID: this.bracket.players[idx]!.userID, userName: this.bracket.players[idx]!.userName }
-				: { empty: true };
+		getPlayer(m: Match, idx: number): MatchPlayer | PlayerPlaceholder {
+			if (m.players[idx] < 0) return m.players[idx];
+			return {
+				userID: this.bracket.players[m.players[idx]]!.userID,
+				userName: this.bracket.players[m.players[idx]]!.userName,
+				result: m.results[idx],
+				record: this.records[idx],
+			};
 		},
 		regenerate() {
-			if (this.teamDraft || this.typeToGenerate === "single") {
-				this.$emit("generate");
-			} else if (this.typeToGenerate === "double") {
-				this.$emit("generate-double");
-			} else if (this.typeToGenerate === "swiss") {
-				this.$emit("generate-swiss");
-			}
+			this.$emit("generate", this.teamDraft ? BracketType.Team : this.typeToGenerate);
 		},
 
 		realPlayerCount() {
@@ -211,39 +203,30 @@ export default defineComponent({
 			return this.bracket.type;
 		},
 		lowerBracket() {
-			if (!isDoubleBracket(this.bracket)) return [];
-			return this.bracket.lowerBracket;
+			if (!this.isDoubleBracket) return [];
+			return (this.bracket as DoubleBracket).lowerBracket;
 		},
 		final() {
-			if (!isDoubleBracket(this.bracket)) return null;
+			if (!this.isDoubleBracket) return null;
 			return this.bracket.matches[3][0];
 		},
 		records() {
-			let r: { [userID: UserID]: { wins: number; losses: number } } = {};
-			for (let p of this.bracket.players) if (p) r[p.userID] = { wins: 0, losses: 0 };
+			let r: { wins: number; losses: number }[] = Array(this.bracket.players.length).fill({ wins: 0, losses: 0 });
 
 			const countMatch = (m: Match) => {
 				if (isValid(m) && m.results[0] !== m.results[1]) {
 					let winIdx = m.results[0] > m.results[1] ? 0 : 1;
 					r[m.players[winIdx]].wins += 1;
 					r[m.players[(winIdx + 1) % 2]].losses += 1;
-				} else if (
-					m.players[1] === PlayerPlaceholder.Empty &&
-					m.players[0] !== PlayerPlaceholder.Empty &&
-					m.players[0] !== PlayerPlaceholder.TBD
-				) {
+				} else if (m.players[1] === PlayerPlaceholder.Empty && !isPlaceholder(m.players[0])) {
 					r[m.players[0]].wins += 1;
-				} else if (
-					m.players[0] === PlayerPlaceholder.Empty &&
-					m.players[1] !== PlayerPlaceholder.Empty &&
-					m.players[1] !== PlayerPlaceholder.TBD
-				) {
+				} else if (m.players[0] === PlayerPlaceholder.Empty && !isPlaceholder(m.players[1])) {
 					r[m.players[1]].wins += 1;
 				}
 			};
 
 			for (let col of this.bracket.matches) for (let m of col) countMatch(m);
-			if (isDoubleBracket(this.bracket)) {
+			if (this.isDoubleBracket) {
 				for (let col of this.lowerBracket) for (let m of col) countMatch(m);
 				countMatch(this.final!);
 			}
@@ -254,8 +237,8 @@ export default defineComponent({
 			let r = [0, 0];
 			for (let col of this.bracket.matches) {
 				for (let m of col) {
-					if (m.isValid() && this.bracket.results[m.index][0] !== this.bracket.results[m.index][1]) {
-						const teamIdx = this.bracket.results[m.index][0] > this.bracket.results[m.index][1] ? 0 : 1;
+					if (isValid(m) && m.results[0] !== m.results[1]) {
+						const teamIdx = m.results[0] > m.results[1] ? 0 : 1;
 						r[teamIdx] += 1;
 					}
 				}
@@ -268,16 +251,16 @@ export default defineComponent({
 			return undefined;
 		},
 		isSingleBracket() {
-			return isSingleBracket(this.bracket);
+			return this.bracket.type === BracketType.Single;
 		},
 		isSwissBracket() {
-			return isSwissBracket(this.bracket);
+			return this.bracket.type === BracketType.Swiss;
 		},
 		isTeamBracket() {
-			return isTeamBracket(this.bracket);
+			return this.bracket.type === BracketType.Team;
 		},
 		isDoubleBracket() {
-			return isDoubleBracket(this.bracket);
+			return this.bracket.type === BracketType.Double;
 		},
 	},
 });
