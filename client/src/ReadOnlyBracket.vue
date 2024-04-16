@@ -31,20 +31,19 @@
 <script lang="ts">
 import type { SessionID } from "@/IDTypes";
 import type { DraftLog } from "@/DraftLog";
-import { Bracket } from "@/Brackets";
 
 import { defineComponent } from "vue";
 import { getUrlVars } from "./helper";
 import BracketComponent from "./components/Bracket.vue";
 import "floating-vue/dist/style.css";
 import { Language } from "../../src/Types";
-import { isDoubleBracket, isSwissBracket, isTeamBracket } from "../../src/Brackets";
+import { IBracket, BracketType } from "../../src/Brackets";
 
 export default defineComponent({
 	components: { Bracket: BracketComponent },
 	data: () => {
 		return {
-			bracket: null as Bracket | null,
+			bracket: null as IBracket | null,
 			sessionID: null as SessionID | null,
 			response: null as Response | null,
 			error: null as string | null,
@@ -74,14 +73,17 @@ export default defineComponent({
 		}
 	},
 	computed: {
+		isSingleBracket() {
+			return this.bracket?.type === BracketType.Single;
+		},
 		isSwissBracket() {
-			return this.bracket && isSwissBracket(this.bracket);
+			return this.bracket?.type === BracketType.Swiss;
 		},
 		isTeamBracket() {
-			return this.bracket && isTeamBracket(this.bracket);
+			return this.bracket?.type === BracketType.Team;
 		},
 		isDoubleBracket() {
-			return this.bracket && isDoubleBracket(this.bracket);
+			return this.bracket?.type === BracketType.Double;
 		},
 	},
 });

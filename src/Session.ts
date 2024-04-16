@@ -1,4 +1,4 @@
-"use strict";
+import { assert } from "console";
 import { UserID, SessionID } from "./IDTypes.js";
 import {
 	shuffleArray,
@@ -65,14 +65,21 @@ import {
 } from "./Message.js";
 import { InactiveSessions, logSession } from "./Persistence.js";
 import { sendDecks } from "./BotTrainingAPI.js";
-import { IBracket, SingleBracket, TeamBracket, SwissBracket, DoubleBracket, BracketPlayer } from "./Brackets.js";
+import {
+	IBracket,
+	SingleBracket,
+	TeamBracket,
+	SwissBracket,
+	DoubleBracket,
+	BracketPlayer,
+	BracketType,
+} from "./Brackets.js";
 import { CustomCardList, generateBoosterFromCustomCardList, generateCustomGetCardFunction } from "./CustomCardList.js";
 import { DraftLog, DraftPick, GridDraftPick } from "./DraftLog.js";
 import { generateJHHBooster, JHHBooster, JHHBoosterPattern } from "./JumpstartHistoricHorizons.js";
 import { IDraftState } from "./IDraftState.js";
 import { MinesweeperCellState } from "./MinesweeperDraftTypes.js";
 import { MinesweeperDraftState, isMinesweeperDraftState } from "./MinesweeperDraft.js";
-import { assert } from "console";
 import { TeamSealedState, isTeamSealedState } from "./TeamSealed.js";
 import { GridDraftState, isGridDraftState } from "./GridDraft.js";
 import { DraftState, isDraftState } from "./DraftState.js";
@@ -3575,18 +3582,35 @@ export class Session implements IIndexable {
 		);
 	}
 
-	generateBracket(players: BracketPlayer[]) {
-		this.bracket = this.teamDraft ? new TeamBracket(players) : new SingleBracket(players);
-		this.forUsers((u) => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
+	prepareBracketPlayers() {
+		return this.userOrder.map((uid) => {
+			const u = Connections[uid];
+			return { userID: u.userID, userName: u.userName };
+		});
 	}
 
-	generateSwissBracket(players: BracketPlayer[]) {
-		this.bracket = new SwissBracket(players);
-		this.forUsers((u) => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
-	}
-
-	generateDoubleBracket(players: BracketPlayer[]) {
-		this.bracket = new DoubleBracket(players);
+	generateBracket(type: BracketType): void | MessageError {
+		const playerData = this.prepareBracketPlayers();
+		switch (type) {
+			case BracketType.Single: {
+				this.bracket = new SingleBracket(playerData);
+				break;
+			}
+			case BracketType.Team: {
+				if (this.userOrder.length !== 6) return new MessageError("Invalid number of players");
+				this.bracket = new TeamBracket(playerData);
+				break;
+			}
+			case BracketType.Swiss: {
+				if ([6, 8, 10].indexOf(playerData.length) === -1) return new MessageError("Invalid player count");
+				this.bracket = new SwissBracket(playerData);
+				break;
+			}
+			case BracketType.Double: {
+				this.bracket = new DoubleBracket(playerData);
+				break;
+			}
+		}
 		this.forUsers((u) => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
 	}
 
@@ -3623,13 +3647,15 @@ export class Session implements IIndexable {
 								}
 							}
 
-							sess.bracket.generateMatches(results);
+							// TODO
+
+							// sess.bracket.generateMatches(results);
 						}
 					});
 			});
 		else
 			this.bracket.players.forEach((p) => {
-				MatchResults.unsubscribe(p.userName);
+				MatchResults.unsubscribe(p!.userName);
 			});
 
 		this.forUsers((u) => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));

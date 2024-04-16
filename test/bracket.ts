@@ -2,6 +2,7 @@ import { before, after, beforeEach, afterEach, describe, it } from "mocha";
 import { expect } from "chai";
 import { Sessions } from "../src/Session.js";
 import { makeClients, waitForClientDisconnects, enableLogs, disableLogs, ackNoError, getUID } from "./src/common.js";
+import { BracketType } from "../src/Brackets.js";
 
 describe("Brackets", function () {
 	let clients: ReturnType<typeof makeClients> = [];
@@ -45,13 +46,7 @@ describe("Brackets", function () {
 			expect(data.bracket).to.not.be.null;
 			done();
 		});
-		clients[ownerIdx].emit(
-			"generateBracket",
-			clients.map((c) => {
-				return { userID: (c as any).query.userID, userName: (c as any).query.userName };
-			}),
-			ackNoError
-		);
+		clients[ownerIdx].emit("generateBracket", BracketType.Single, ackNoError);
 	});
 
 	it(`Generate swiss bracket, should receive a new bracket.`, function (done) {
@@ -59,13 +54,7 @@ describe("Brackets", function () {
 			expect(data.bracket).to.not.be.null;
 			done();
 		});
-		clients[ownerIdx].emit(
-			"generateSwissBracket",
-			clients.map((c) => {
-				return { userID: (c as any).query.userID, userName: (c as any).query.userName };
-			}),
-			ackNoError
-		);
+		clients[ownerIdx].emit("generateBracket", BracketType.Swiss, ackNoError);
 	});
 
 	it(`Generate double bracket, should receive a new bracket.`, function (done) {
@@ -73,12 +62,6 @@ describe("Brackets", function () {
 			expect(data.bracket).to.not.be.null;
 			done();
 		});
-		clients[ownerIdx].emit(
-			"generateDoubleBracket",
-			clients.map((c) => {
-				return { userID: (c as any).query.userID, userName: (c as any).query.userName };
-			}),
-			ackNoError
-		);
+		clients[ownerIdx].emit("generateBracket", BracketType.Double, ackNoError);
 	});
 });
