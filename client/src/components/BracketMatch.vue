@@ -1,6 +1,6 @@
 <template>
 	<div class="bracket-match">
-		<!-- <td class="bracket-match-num">{{ match.index + 1 }}</td> -->
+		<td class="bracket-match-num">{{ matchID + 1 }}</td>
 		<td class="bracket-match-players">
 			<div v-for="(p, index) in players" :key="index">
 				<div class="bracket-player bracket-empty" v-if="isEmpty(p)">(Empty)</div>
@@ -31,7 +31,7 @@
 					</template>
 					<div
 						class="bracket-player-name"
-						v-tooltip="`Current record: ${recordString(p)}`"
+						v-tooltip="`Current record: ${p.record.wins} - ${p.record.losses}`"
 						:class="{ clickable: draftlog }"
 						@click="if (draftlog) $emit('selectuser', p);"
 					>
@@ -116,12 +116,6 @@ export default defineComponent({
 				return this.final && p.record < p2.record;
 			}
 			return !this.isTeamBracket && p.record.wins === 2;
-		},
-		recordString() {
-			const p0 = this.players[0];
-			const p1 = this.players[1];
-			if (this.isPlayerPlaceholder(p0) || this.isPlayerPlaceholder(p1)) return "";
-			return `${p0.record} - ${p1.record}`;
 		},
 		update(event: Event, index: number) {
 			this.$emit("updated", this.matchID, index, parseInt((event.target as HTMLInputElement)?.value));
