@@ -16,6 +16,8 @@ export const enum PlayerPlaceholder {
 	Empty = -2,
 }
 
+export type MatchID = number;
+
 export type Match = {
 	id: number;
 	players: [PlayerIndex | PlayerPlaceholder, PlayerIndex | PlayerPlaceholder];
@@ -33,7 +35,7 @@ function winner(m: Match): PlayerIndex | PlayerPlaceholder {
 }
 
 function loser(m: Match): PlayerIndex | PlayerPlaceholder {
-	if (m.players[0] === PlayerPlaceholder.Empty && m.players[1] === PlayerPlaceholder.Empty)
+	if (m.players[0] === PlayerPlaceholder.Empty || m.players[1] === PlayerPlaceholder.Empty)
 		return PlayerPlaceholder.Empty;
 	if (m.results[0] === m.results[1]) return PlayerPlaceholder.TBD;
 	if (m.results[0] > m.results[1]) return m.players[1];
@@ -42,14 +44,15 @@ function loser(m: Match): PlayerIndex | PlayerPlaceholder {
 
 function reorder<T>(arr: T[], pairingOrder: number[]): (T | null)[] {
 	const r = Array(Math.max(arr.length, pairingOrder.length)).fill(null);
-	for (let i = 0; i < Math.min(arr.length, pairingOrder.length); ++i) r[i] = arr[pairingOrder[i]];
+	for (let i = 0; i < Math.min(arr.length, pairingOrder.length); ++i) r[pairingOrder[i]] = arr[i];
 	return r;
 }
 
 export abstract class IBracket {
 	type: BracketType;
 	players: (BracketPlayer | null)[];
-	matches: Match[][] = [];
+	matches: Match[] = [];
+	bracket: MatchID[][] = [];
 
 	MTGOSynced: boolean = false;
 
@@ -59,6 +62,19 @@ export abstract class IBracket {
 	}
 
 	abstract generateMatches(results: Array<[number, number]>): void;
+	abstract updatePairings(): void;
+
+	addMatch(data: Omit<Match, "id" | "results">): MatchID {
+		const id = this.matches.length;
+		this.matches.push({ id: id, ...data, results: [0, 0] });
+		for (let i = 0; i < this.matches[id].players.length; ++i)
+			if (
+				this.matches[id].players[i] >= 0 &&
+				(this.matches[id].players[i] >= this.players.length || !this.players[this.matches[id].players[i]])
+			)
+				this.matches[id].players[i] = PlayerPlaceholder.Empty;
+		return id;
+	}
 }
 
 export class SingleBracket extends IBracket {
@@ -69,27 +85,32 @@ export class SingleBracket extends IBracket {
 	}
 
 	generateMatches() {
-		const m: Match[][] = [[], [], []];
-		let mID = 0;
+		this.bracket = [[], [], []];
 		for (let i = 0; i < 4; ++i)
-			m[0].push({
-				id: mID++,
-				players: [
-					2 * i < this.players.length && this.players[2 * i] ? 2 * i : PlayerPlaceholder.Empty,
-					2 * i + 1 < this.players.length && this.players[2 * i + 1] ? 2 * i + 1 : PlayerPlaceholder.Empty,
-				],
-				results: [0, 0],
-			});
-		m[1].push({ id: mID++, players: [winner(m[0][0]), winner(m[0][1])], results: [0, 0] });
-		m[1].push({ id: mID++, players: [winner(m[0][2]), winner(m[0][3])], results: [0, 0] });
-		m[2].push({ id: mID++, players: [winner(m[1][0]), winner(m[1][1])], results: [0, 0] });
-		this.matches = m;
+			this.bracket[0].push(
+				this.addMatch({
+					players: [2 * i, 2 * i + 1],
+				})
+			);
+		this.bracket[1].push(this.addMatch({ players: [PlayerPlaceholder.TBD, PlayerPlaceholder.TBD] }));
+		this.bracket[1].push(this.addMatch({ players: [PlayerPlaceholder.TBD, PlayerPlaceholder.TBD] }));
+		this.bracket[2].push(this.addMatch({ players: [PlayerPlaceholder.TBD, PlayerPlaceholder.TBD] }));
+		this.updatePairings();
 	}
 
 	updatePairings() {
-		this.matches[1][0].players = [winner(this.matches[0][0]), winner(this.matches[0][1])];
-		this.matches[1][1].players = [winner(this.matches[0][2]), winner(this.matches[0][3])];
-		this.matches[2][0].players = [winner(this.matches[1][0]), winner(this.matches[1][1])];
+		this.matches[this.bracket[1][0]].players = [
+			winner(this.matches[this.bracket[0][0]]),
+			winner(this.matches[this.bracket[0][1]]),
+		];
+		this.matches[this.bracket[1][1]].players = [
+			winner(this.matches[this.bracket[0][2]]),
+			winner(this.matches[this.bracket[0][3]]),
+		];
+		this.matches[this.bracket[2][0]].players = [
+			winner(this.matches[this.bracket[1][0]]),
+			winner(this.matches[this.bracket[1][1]]),
+		];
 	}
 }
 
@@ -101,18 +122,16 @@ export class TeamBracket extends IBracket {
 	}
 
 	generateMatches() {
-		const m: Match[][] = [[], [], []];
-		let mID = 0;
-		m[0].push({ id: mID++, players: [0, 3], results: [0, 0] });
-		m[0].push({ id: mID++, players: [2, 5], results: [0, 0] });
-		m[0].push({ id: mID++, players: [4, 1], results: [0, 0] });
-		m[1].push({ id: mID++, players: [0, 5], results: [0, 0] });
-		m[1].push({ id: mID++, players: [2, 1], results: [0, 0] });
-		m[1].push({ id: mID++, players: [4, 3], results: [0, 0] });
-		m[2].push({ id: mID++, players: [0, 1], results: [0, 0] });
-		m[2].push({ id: mID++, players: [2, 3], results: [0, 0] });
-		m[2].push({ id: mID++, players: [4, 5], results: [0, 0] });
-		this.matches = m;
+		this.bracket = [[], [], []];
+		this.bracket[0].push(this.addMatch({ players: [0, 3] }));
+		this.bracket[0].push(this.addMatch({ players: [2, 5] }));
+		this.bracket[0].push(this.addMatch({ players: [4, 1] }));
+		this.bracket[1].push(this.addMatch({ players: [0, 5] }));
+		this.bracket[1].push(this.addMatch({ players: [2, 1] }));
+		this.bracket[1].push(this.addMatch({ players: [4, 3] }));
+		this.bracket[2].push(this.addMatch({ players: [0, 1] }));
+		this.bracket[2].push(this.addMatch({ players: [2, 3] }));
+		this.bracket[2].push(this.addMatch({ players: [4, 5] }));
 	}
 
 	updatePairings() {}
@@ -146,24 +165,22 @@ export class SwissBracket extends IBracket {
 
 	generateMatches() {
 		const playerCount = this.players.length;
-		const m: Match[][] = [[], [], []];
-		let mID = 0;
+		this.bracket = [[], [], []];
+		for (let i = 0; i < playerCount / 2; ++i) this.bracket[0].push(this.addMatch({ players: [2 * i, 2 * i + 1] }));
 		for (let i = 0; i < playerCount / 2; ++i)
-			m[0].push({ id: mID++, players: [2 * i, 2 * i + 1], results: [0, 0] });
+			this.bracket[1].push(this.addMatch({ players: [PlayerPlaceholder.TBD, PlayerPlaceholder.TBD] }));
 		for (let i = 0; i < playerCount / 2; ++i)
-			m[1].push({ id: mID++, players: [PlayerPlaceholder.TBD, PlayerPlaceholder.TBD], results: [0, 0] });
-		for (let i = 0; i < playerCount / 2; ++i)
-			m[2].push({ id: mID++, players: [PlayerPlaceholder.TBD, PlayerPlaceholder.TBD], results: [0, 0] });
-		this.matches = m;
+			this.bracket[2].push(this.addMatch({ players: [PlayerPlaceholder.TBD, PlayerPlaceholder.TBD] }));
 	}
 
 	updatePairings() {
 		const playerCount = this.players.length;
 
-		const rounds = structuredClone(this.matches);
+		const rounds = this.bracket;
 
 		const alreadyPaired = [];
-		for (const match of this.matches[0]) {
+		for (const matchID of this.bracket[0]) {
+			const match = this.matches[matchID];
 			alreadyPaired.push([match.players[0], match.players[1]]);
 			alreadyPaired.push([match.players[1], match.players[0]]);
 		}
@@ -182,7 +199,8 @@ export class SwissBracket extends IBracket {
 		let lastCompleteRound = -1;
 		for (let i = 0; i < rounds.length; ++i) {
 			let complete = true;
-			for (const match of rounds[i]) {
+			for (const matchID of rounds[i]) {
+				const match = this.matches[matchID];
 				// Accumulate results from previous round.
 				if (match.results[0] === match.results[1]) {
 					// We have a draw, group pairing might not be possible, we'll fallback to a single group pairing by score.
@@ -203,7 +221,7 @@ export class SwissBracket extends IBracket {
 			if (complete) lastCompleteRound = i;
 		}
 
-		if (firstUncompleteRound === lastCompleteRound + 1) {
+		if (firstUncompleteRound > 0 && firstUncompleteRound === lastCompleteRound + 1) {
 			// All previous matches have results, we can compute the next round.
 			const playerIndices = [...Array(playerCount).keys()];
 
@@ -232,7 +250,7 @@ export class SwissBracket extends IBracket {
 					if (index < sortedPlayers.length) {
 						const secondPlayer = sortedPlayers[index];
 						sortedPlayers.splice(index, 1);
-						rounds[firstUncompleteRound][matchIdx].players = [firstPlayer, secondPlayer];
+						this.matches[rounds[firstUncompleteRound][matchIdx++]].players = [firstPlayer, secondPlayer];
 						alreadyPaired.push([firstPlayer, secondPlayer]);
 						alreadyPaired.push([secondPlayer, firstPlayer]);
 					} else {
@@ -268,21 +286,20 @@ export class SwissBracket extends IBracket {
 						}
 						// Finally generate the matches
 						for (const pair of bestPermutation) {
-							rounds[firstUncompleteRound][matchIdx++].players = [pair[0], pair[1]];
+							this.matches[rounds[firstUncompleteRound][matchIdx++]].players = [pair[0], pair[1]];
 						}
 						break;
 					}
 				}
 			}
-
-			this.matches = rounds;
 		}
 		return;
 	}
 }
 
 export class DoubleBracket extends IBracket {
-	lowerBracket: Match[][] = [];
+	lowerBracket: MatchID[][] = [];
+	final: MatchID = -1;
 
 	constructor(players: BracketPlayer[]) {
 		const orderedPlayers = reorder(players, [0, 4, 2, 6, 1, 5, 3, 7]);
@@ -291,36 +308,123 @@ export class DoubleBracket extends IBracket {
 	}
 
 	generateMatches() {
-		let mID = 0;
 		{
-			const m: Match[][] = [[], [], []];
-			for (let i = 0; i < 4; ++i) m[0].push({ id: mID++, players: [2 * i, 2 * i + 1], results: [0, 0] });
-			m[1].push({ id: mID++, players: [winner(m[0][0]), winner(m[0][1])], results: [0, 0] });
-			m[1].push({ id: mID++, players: [winner(m[0][2]), winner(m[0][3])], results: [0, 0] });
-			m[2].push({ id: mID++, players: [winner(m[1][0]), winner(m[1][1])], results: [0, 0] });
-			this.matches = m;
+			this.bracket = [[], [], []];
+			for (let i = 0; i < 4; ++i) this.bracket[0].push(this.addMatch({ players: [2 * i, 2 * i + 1] }));
+			this.bracket[1].push(
+				this.addMatch({
+					players: [winner(this.matches[this.bracket[0][0]]), winner(this.matches[this.bracket[0][1]])],
+				})
+			);
+			this.bracket[1].push(
+				this.addMatch({
+					players: [winner(this.matches[this.bracket[0][2]]), winner(this.matches[this.bracket[0][3]])],
+				})
+			);
+			this.bracket[2].push(
+				this.addMatch({
+					players: [winner(this.matches[this.bracket[1][0]]), winner(this.matches[this.bracket[1][1]])],
+				})
+			);
 		}
 		{
-			const m: Match[][] = [[], [], [], []];
+			this.lowerBracket = [[], [], [], []];
 			for (let i = 0; i < 2; ++i) {
-				m[0].push({
-					id: mID++,
-					players: [loser(this.matches[0][2 * i]), loser(this.matches[0][2 * i + 1])],
-					results: [0, 0],
-				});
-				m[1].push({
-					id: mID++,
-					players: [winner(m[0][i]), loser(this.matches[1][i])],
-					results: [0, 0],
-				});
+				this.lowerBracket[0].push(
+					this.addMatch({
+						players: [
+							loser(this.matches[this.bracket[0][2 * i]]),
+							loser(this.matches[this.bracket[0][2 * i + 1]]),
+						],
+					})
+				);
+				this.lowerBracket[1].push(
+					this.addMatch({
+						players: [
+							winner(this.matches[this.lowerBracket[0][i]]),
+							loser(this.matches[this.bracket[1][i]]),
+						],
+					})
+				);
 			}
-			m[2].push({ id: mID++, players: [winner(m[1][0]), winner(m[1][1])], results: [0, 0] });
-			m[3].push({ id: mID++, players: [winner(m[2][0]), loser(this.matches[2][0])], results: [0, 0] });
-			this.lowerBracket = m;
+			this.lowerBracket[2].push(
+				this.addMatch({
+					players: [
+						winner(this.matches[this.lowerBracket[1][0]]),
+						winner(this.matches[this.lowerBracket[1][1]]),
+					],
+				})
+			);
+			this.lowerBracket[3].push(
+				this.addMatch({
+					players: [winner(this.matches[this.lowerBracket[2][0]]), loser(this.matches[this.bracket[2][0]])],
+				})
+			);
 		}
 
-		this.matches.push([
-			{ id: mID++, players: [winner(this.matches[2][0]), winner(this.lowerBracket[3][0])], results: [0, 0] },
-		]);
+		this.final = this.addMatch({
+			players: [winner(this.matches[this.bracket[2][0]]), winner(this.matches[this.lowerBracket[3][0]])],
+		});
+
+		this.updatePairings();
 	}
+
+	updatePairings() {
+		// Upper Bracket
+		this.matches[this.bracket[1][0]].players = [
+			winner(this.matches[this.bracket[0][0]]),
+			winner(this.matches[this.bracket[0][1]]),
+		];
+		this.matches[this.bracket[1][1]].players = [
+			winner(this.matches[this.bracket[0][2]]),
+			winner(this.matches[this.bracket[0][3]]),
+		];
+		this.matches[this.bracket[2][0]].players = [
+			winner(this.matches[this.bracket[1][0]]),
+			winner(this.matches[this.bracket[1][1]]),
+		];
+
+		// Lower Bracket
+		for (let i = 0; i < 2; ++i) {
+			this.matches[this.lowerBracket[0][i]].players = [
+				loser(this.matches[this.bracket[0][2 * i]]),
+				loser(this.matches[this.bracket[0][2 * i + 1]]),
+			];
+			this.matches[this.lowerBracket[1][i]].players = [
+				winner(this.matches[this.lowerBracket[0][i]]),
+				loser(this.matches[this.bracket[1][i]]),
+			];
+		}
+		this.matches[this.lowerBracket[2][0]].players = [
+			winner(this.matches[this.lowerBracket[1][0]]),
+			winner(this.matches[this.lowerBracket[1][1]]),
+		];
+
+		this.matches[this.lowerBracket[3][0]].players = [
+			winner(this.matches[this.lowerBracket[2][0]]),
+			loser(this.matches[this.bracket[2][0]]),
+		];
+
+		// Final
+		this.matches[this.final].players = [
+			winner(this.matches[this.bracket[2][0]]),
+			winner(this.matches[this.lowerBracket[3][0]]),
+		];
+	}
+}
+
+export function isSwissBracket(obj: IBracket): obj is SwissBracket {
+	return obj.type === BracketType.Swiss;
+}
+
+export function isDoubleBracket(obj: IBracket): obj is DoubleBracket {
+	return obj.type === BracketType.Double;
+}
+
+export function isSingleBracket(obj: IBracket): obj is SingleBracket {
+	return obj.type === BracketType.Single;
+}
+
+export function isTeamBracket(obj: IBracket): obj is TeamBracket {
+	return obj.type === BracketType.Team;
 }

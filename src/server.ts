@@ -479,9 +479,9 @@ function teamSealedPick(
 	ack?.(r);
 }
 
-function updateBracket(userID: UserID, sessionID: SessionID, results: Array<[number, number]>) {
+function updateBracket(userID: UserID, sessionID: SessionID, matchIndex: number, playerIndex: number, value: number) {
 	if (Sessions[sessionID].owner !== userID && Sessions[sessionID].bracketLocked) return;
-	Sessions[sessionID].updateBracket(results);
+	Sessions[sessionID].updateBracket(matchIndex, playerIndex, value);
 }
 
 function updateDeckLands(userID: UserID, sessionID: SessionID, lands: DeckBasicLands) {

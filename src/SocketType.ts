@@ -263,7 +263,7 @@ export interface ClientToServerEvents {
 	solomonDraftConfirmPiles: (ack: (result: SocketAck) => void) => void;
 	solomonDraftPick: (pile: 0 | 1, ack: (result: SocketAck) => void) => void;
 	teamSealedPick: (uniqueCardID: UniqueCardID, ack: (result: SocketAck) => void) => void;
-	updateBracket: (results: Array<[number, number]>) => void;
+	updateBracket: (matchIndex: number, playerIndex: number, value: number) => void;
 	updateDeckLands: (lands: DeckBasicLands) => void;
 	moveCard: (uniqueID: UniqueCardID, destStr: string) => void;
 	swapDeckAndSideboard: () => void;

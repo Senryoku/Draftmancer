@@ -11,12 +11,12 @@ import type { GridDraftSyncData } from "@/GridDraft";
 import type { RochesterDraftSyncData } from "@/RochesterDraft";
 import type { RotisserieDraftStartOptions, RotisserieDraftSyncData } from "@/RotisserieDraft";
 import type { TeamSealedSyncData } from "@/TeamSealed";
-import type { Bracket, BracketType } from "@/Brackets";
 import type { SocketAck } from "@/Message";
 import type { Options } from "@/utils";
 import type { JHHBooster } from "@/JumpstartHistoricHorizons";
 import type { CustomCardList } from "@/CustomCardList";
 import type SessionsSettingsProps from "@/Session/SessionProps";
+import { IBracket, BracketType } from "../../src/Brackets";
 import { MinesweeperSyncData } from "@/MinesweeperDraftTypes";
 import { HousmanDraftSyncData } from "@/HousmanDraft";
 import { minesweeperApplyDiff } from "../../src/MinesweeperDraftTypes";
@@ -282,6 +282,7 @@ export default defineComponent({
 			GameState: GameState,
 			ReadyState,
 			PassingOrder,
+			BracketType,
 
 			sortableUpdate,
 
@@ -353,7 +354,7 @@ export default defineComponent({
 			draftLogs: [] as DraftLog[],
 			currentDraftLog: null as DraftLog | null,
 			draftLogLive: null as DraftLog | null,
-			bracket: null as Bracket | null,
+			bracket: null as IBracket | null,
 			virtualPlayersData: null as UsersData | null,
 
 			botScores: null as BotScores | null,
@@ -3069,10 +3070,9 @@ export default defineComponent({
 				else if (answer.error) Alert.fire(answer.error);
 			});
 		},
-		updateBracket(matchIndex: number, index: number, value: number) {
-			if (!this.bracket || (this.userID != this.sessionOwner && this.bracketLocked)) return;
-			this.bracket.results[matchIndex][index] = value;
-			this.socket.emit("updateBracket", this.bracket.results);
+		updateBracket(matchIndex: number, playerIndex: number, value: number) {
+			if (!this.bracket || (this.userID !== this.sessionOwner && this.bracketLocked)) return;
+			this.socket.emit("updateBracket", matchIndex, playerIndex, value);
 		},
 		lockBracket(val: boolean) {
 			if (this.userID != this.sessionOwner) return;

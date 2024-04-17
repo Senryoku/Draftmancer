@@ -3580,15 +3580,14 @@ export class Session implements IIndexable {
 		);
 	}
 
-	prepareBracketPlayers() {
-		return this.userOrder.map((uid) => {
-			const u = Connections[uid];
-			return { userID: u.userID, userName: u.userName };
-		});
-	}
-
 	generateBracket(type: BracketType): void | MessageError {
-		const playerData = this.prepareBracketPlayers();
+		const playerData = this.userOrder
+			.filter((uid) => this.ownerIsPlayer || uid !== this.owner)
+			.map((uid) => {
+				const u = Connections[uid];
+				return { userID: u.userID, userName: u.userName };
+			});
+		console.log(playerData);
 		switch (type) {
 			case BracketType.Single: {
 				this.bracket = new SingleBracket(playerData);
@@ -3600,7 +3599,8 @@ export class Session implements IIndexable {
 				break;
 			}
 			case BracketType.Swiss: {
-				if ([6, 8, 10].indexOf(playerData.length) === -1) return new MessageError("Invalid player count");
+				if ([6, 8, 10].indexOf(playerData.length) === -1)
+					return new MessageError("Invalid player count", "Player must be exactly 6, 8 or 10.");
 				this.bracket = new SwissBracket(playerData);
 				break;
 			}
@@ -3612,9 +3612,10 @@ export class Session implements IIndexable {
 		this.forUsers((u) => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
 	}
 
-	updateBracket(results: Array<[number, number]>): void {
+	updateBracket(matchIndex: number, playerIndex: number, value: number): void {
 		if (!this.bracket) return;
-		this.bracket.generateMatches(results);
+		this.bracket.matches[matchIndex].results[playerIndex] = value;
+		this.bracket.updatePairings();
 		this.forUsers((u) => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
 	}
 

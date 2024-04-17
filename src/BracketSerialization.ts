@@ -1,5 +1,5 @@
 import { copyPODProps } from "./Persistence.js";
-import { isObject, hasProperty, isSomeEnum, isArrayOf, isString, isInteger } from "./TypeChecks.js";
+import { isObject, hasProperty, isSomeEnum, isArrayOf, isString, isInteger, isNumber } from "./TypeChecks.js";
 import {
 	BracketPlayer,
 	BracketType,
@@ -23,27 +23,12 @@ export function isMatch(obj: unknown): obj is Match {
 	);
 }
 
-export function isSwissBracket(obj: IBracket): obj is SwissBracket {
-	return obj.type === BracketType.Swiss;
-}
-
-export function isDoubleBracket(obj: IBracket): obj is DoubleBracket {
-	return obj.type === BracketType.Double;
-}
-
-export function isSingleBracket(obj: IBracket): obj is SingleBracket {
-	return obj.type === BracketType.Single;
-}
-
-export function isTeamBracket(obj: IBracket): obj is TeamBracket {
-	return obj.type === BracketType.Team;
-}
-
 export function deserializeBracket(data: unknown): IBracket | undefined {
 	if (!isObject(data)) return;
 	if (!hasProperty("type", isSomeEnum(BracketType))(data)) return;
 	if (!hasProperty("players", isArrayOf(isBracketPlayer))(data)) return;
-	if (!hasProperty("matches", isArrayOf(isArrayOf(isMatch)))(data)) return;
+	if (!hasProperty("matches", isArrayOf(isMatch))(data)) return;
+	if (!hasProperty("bracket", isArrayOf(isArrayOf(isNumber)))(data)) return;
 	switch (data.type) {
 		case BracketType.Single: {
 			const b = new SingleBracket(data.players);
@@ -61,6 +46,8 @@ export function deserializeBracket(data: unknown): IBracket | undefined {
 			return b;
 		}
 		case BracketType.Double: {
+			if (!hasProperty("lowerBracket", isArrayOf(isArrayOf(isNumber)))(data)) return;
+			if (!hasProperty("final", isNumber)(data)) return;
 			const b = new DoubleBracket(data.players);
 			copyPODProps(data, b);
 			return b;
