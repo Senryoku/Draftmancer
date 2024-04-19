@@ -1748,7 +1748,7 @@ function joinSession(sessionID: SessionID, userID: UserID, defaultSessionSetting
 		}
 
 		const bracketLink = sess.bracket
-			? `<br />Bracket is available <a href="/bracket?session=${encodeURI(
+			? `<br />Bracket is available <a href="/bracket?session=${encodeURIComponent(
 					sessionID
 				)}" target="_blank" rel="noopener nofollow">here</a>.`
 			: "";

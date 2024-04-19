@@ -157,10 +157,10 @@ export default defineComponent({
 		const type = !inst.bracket
 			? "single"
 			: isDoubleBracket(inst.bracket)
-			  ? "double"
-			  : isSwissBracket(inst.bracket)
-			    ? "swiss"
-			    : "single";
+				? "double"
+				: isSwissBracket(inst.bracket)
+					? "swiss"
+					: "single";
 		return {
 			selectedUser: null,
 			typeToGenerate: type,
@@ -185,7 +185,7 @@ export default defineComponent({
 			copyToClipboard(
 				`${window.location.protocol}//${window.location.hostname}${
 					window.location.port ? ":" + window.location.port : ""
-				}/bracket?session=${encodeURI(this.sessionID!)}`
+				}/bracket?session=${encodeURIComponent(this.sessionID!)}`
 			);
 			fireToast("success", "Bracket Link copied to clipboard!");
 		},
@@ -233,10 +233,10 @@ export default defineComponent({
 			return !this.bracket
 				? "single"
 				: isDoubleBracket(this.bracket)
-				  ? "double"
-				  : isSwissBracket(this.bracket)
-				    ? "swiss"
-				    : "single";
+					? "double"
+					: isSwissBracket(this.bracket)
+						? "swiss"
+						: "single";
 		},
 		matches() {
 			let m: Match[][] = [[], [], []];

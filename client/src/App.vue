@@ -1950,7 +1950,10 @@
 											'Download the intersection of the collections of players in the session in text format.'
 										"
 									>
-										<a :href="encodeURI(`/getCollectionPlainText/${sessionID}`)" target="_blank">
+										<a
+											:href="encodeURIComponent(`/getCollectionPlainText/${sessionID}`)"
+											target="_blank"
+										>
 											<font-awesome-icon icon="fa-solid fa-file-download"></font-awesome-icon>
 											Download Session Collection
 										</a>

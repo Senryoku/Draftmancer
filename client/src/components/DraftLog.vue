@@ -320,7 +320,7 @@ export default defineComponent({
 					"Content-Type": "application/x-www-form-urlencoded",
 				},
 				referrer: "https://draftmancer.com",
-				body: `draft=${encodeURI(
+				body: `draft=${encodeURIComponent(
 					helper.exportToMagicProTools(this.draftlog, id)
 				)}&apiKey=yitaOuTvlngqlKutnKKfNA&platform=mtgadraft`,
 				method: "POST",
@@ -449,8 +449,8 @@ export default defineComponent({
 					(this.draftlog.users[userID].decklist?.main?.length ?? 0) > 0
 						? this.colorsInCardList(this.draftlog.users[userID].decklist?.main ?? [])
 						: this.type === "Draft"
-						  ? this.colorsInCardList(this.draftlog.users[userID].cards)
-						  : { W: 0, U: 0, B: 0, R: 0, G: 0 };
+							? this.colorsInCardList(this.draftlog.users[userID].cards)
+							: { W: 0, U: 0, B: 0, R: 0, G: 0 };
 				tableSummary.push({
 					userID: userID,
 					userName: this.draftlog.users[userID].userName,

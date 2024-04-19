@@ -125,7 +125,7 @@ export default defineComponent({
 					promise?.then(() => {
 						const cardData = this.$cardCache.get(card.id) as ScryfallCard;
 						if (!(card.name in this.spellbooks)) {
-							const url = `https://api.scryfall.com/cards/search?q=spellbook%3A%22${encodeURI(
+							const url = `https://api.scryfall.com/cards/search?q=spellbook%3A%22${encodeURIComponent(
 								cardData.name
 							)}%22&unique=cards`;
 							axios
@@ -243,8 +243,8 @@ export default defineComponent({
 			return card.image_uris
 				? card.image_uris.border_crop
 				: card.card_faces && card.card_faces[0] && card.card_faces[0].image_uris
-				  ? card.card_faces[0].image_uris.border_crop
-				  : undefined;
+					? card.card_faces[0].image_uris.border_crop
+					: undefined;
 		},
 	},
 	computed: {
