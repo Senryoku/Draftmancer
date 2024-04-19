@@ -3582,12 +3582,11 @@ export class Session implements IIndexable {
 
 	generateBracket(type: BracketType): void | MessageError {
 		const playerData = this.userOrder
-			.filter((uid) => this.ownerIsPlayer || uid !== this.owner)
+			.filter((uid) => this.users.has(uid) && (this.ownerIsPlayer || uid !== this.owner))
 			.map((uid) => {
 				const u = Connections[uid];
 				return { userID: u.userID, userName: u.userName };
 			});
-		console.log(playerData);
 		switch (type) {
 			case BracketType.Single: {
 				this.bracket = new SingleBracket(playerData);

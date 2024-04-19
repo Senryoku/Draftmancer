@@ -18,24 +18,25 @@
 					<font-awesome-icon icon="fa-solid fa-sync"></font-awesome-icon> Sync. with MTGO matches
 				</span>
 				<div style="flex-grow: 1"></div>
-				<span>
-					Type:
-					<template v-if="teamDraft"><div>Team Draft</div></template>
-					<template v-else>
-						<select v-model="typeToGenerate">
-							<option value="Single">Single Elimination</option>
-							<option value="Double">Double Elimination</option>
-							<option value="Swiss">3-Round Swiss</option>
-						</select>
-					</template>
-					<button @click="regenerate">Re-Generate</button>
-				</span>
+				<template v-if="teamDraft"><span>Team Draft</span></template>
+				<template v-else>
+					<select v-model="typeToGenerate">
+						<option value="Single">Single Elimination</option>
+						<option value="Double">Double Elimination</option>
+						<option value="Swiss">3-Round Swiss</option>
+					</select>
+				</template>
+				<button @click="regenerate">Re-Generate</button>
 			</template>
 			<template v-else>
 				<span v-if="locked">
 					<font-awesome-icon icon="fa-solid fa-lock"></font-awesome-icon> Bracket is locked. Only the Session
 					Owner can enter results.
 				</span>
+				<span v-if="bracket.MTGOSynced">
+					<font-awesome-icon icon="fa-solid fa-sync"></font-awesome-icon> Synced with MTGO
+				</span>
+				<div style="flex-grow: 1"></div>
 				<span style="font-size: 1.5em">
 					<template v-if="isTeamBracket">Team Draft</template>
 					<template v-else-if="isDoubleBracket">Double Elimination</template>
