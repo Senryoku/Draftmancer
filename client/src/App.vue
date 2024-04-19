@@ -2903,6 +2903,7 @@
 					@updated="updateBracket"
 					@generate="generateBracket"
 					@lock="lockBracket"
+					@syncBracketMTGO="syncBracketMTGO"
 				></bracket-component>
 			</template>
 		</modal>

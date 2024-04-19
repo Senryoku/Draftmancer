@@ -46,6 +46,7 @@
 					<template v-if="isValid">
 						<input
 							v-if="editable"
+							:id="`result-input-${matchID}-${index}`"
 							class="result-input"
 							type="number"
 							:value="p.result"
