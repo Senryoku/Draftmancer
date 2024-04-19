@@ -85,6 +85,7 @@ export default defineComponent({
 			type: Array as PropType<(PlayerPlaceholder | MatchPlayer)[]>,
 			required: true,
 		},
+		teamRecords: { type: Array as PropType<number[]>, required: false },
 
 		draftlog: { type: Object as PropType<DraftLog>, default: null },
 		final: { type: Boolean, default: false },
@@ -98,7 +99,7 @@ export default defineComponent({
 			if (this.isPlayerPlaceholder(p)) return false;
 
 			if (this.isTeamBracket) {
-				return p.record.wins >= 5;
+				return this.teamRecords![player % 2] >= 5;
 			} else if (this.isDoubleBracket) {
 				const p2 = this.players[(player + 1) % 2];
 				if (this.isPlayerPlaceholder(p2)) return false;

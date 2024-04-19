@@ -189,14 +189,14 @@ label {
 .bracket-player.teama,
 .player-list > .teama,
 ul.player-table > li.teama {
-	background: #21402e;
+	background: #21402e !important;
 }
 
 .teamb,
 .bracket-player.teamb,
 .player-list > .teamb,
 ul.player-table > li.teamb {
-	background: #222440;
+	background: #222440 !important;
 }
 
 .message {

@@ -3594,13 +3594,20 @@ export class Session implements IIndexable {
 				break;
 			}
 			case BracketType.Team: {
-				if (this.userOrder.length !== 6) return new MessageError("Invalid number of players");
+				if (this.userOrder.length !== 6)
+					return new MessageError(
+						"Invalid player count",
+						"Team Draft tournaments require exactly 6 players."
+					);
 				this.bracket = new TeamBracket(playerData);
 				break;
 			}
 			case BracketType.Swiss: {
 				if ([6, 8, 10].indexOf(playerData.length) === -1)
-					return new MessageError("Invalid player count", "Player must be exactly 6, 8 or 10.");
+					return new MessageError(
+						"Invalid player count",
+						"Swiss tournaments require exactly 6, 8 or 10 players."
+					);
 				this.bracket = new SwissBracket(playerData);
 				break;
 			}
