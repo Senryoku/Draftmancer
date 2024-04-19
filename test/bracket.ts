@@ -2,7 +2,7 @@ import { before, after, beforeEach, afterEach, describe, it } from "mocha";
 import { expect } from "chai";
 import { Sessions } from "../src/Session.js";
 import { makeClients, waitForClientDisconnects, enableLogs, disableLogs, ackNoError, getUID } from "./src/common.js";
-import { BracketType } from "../src/Brackets.js";
+import { BracketType, Match, PlayerPlaceholder } from "../src/Brackets.js";
 
 describe("Brackets", function () {
 	let clients: ReturnType<typeof makeClients> = [];
@@ -24,7 +24,7 @@ describe("Brackets", function () {
 		for (let i = 0; i < 8; ++i)
 			queries.push({
 				sessionID: sessionID,
-				userName: "DontCare",
+				userName: `Player_${i}`,
 			});
 		clients = makeClients(queries, () => {
 			ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
@@ -44,17 +44,122 @@ describe("Brackets", function () {
 	it(`Generate bracket, should receive a new bracket.`, function (done) {
 		clients[ownerIdx].once("sessionOptions", function (data) {
 			expect(data.bracket).to.not.be.null;
+			for (let m = 0; m < 4; ++m) {
+				expect(data.bracket!.matches[m].players[0]).to.equal(2 * m + 0);
+				expect(data.bracket!.matches[m].players[1]).to.equal(2 * m + 1);
+			}
 			done();
 		});
 		clients[ownerIdx].emit("generateBracket", BracketType.Single, ackNoError);
 	});
 
+	it(`Update match results.`, function (done) {
+		clients[ownerIdx].once("sessionOptions", function (data) {
+			expect(data.bracket).to.not.be.null;
+			expect(data.bracket!.matches[0].results[0]).to.equal(2);
+			expect(data.bracket!.matches[4].players[0]).to.equal(0);
+			expect(data.bracket!.matches[4].players[1]).to.equal(PlayerPlaceholder.TBD);
+			done();
+		});
+		clients[ownerIdx].emit("updateBracket", 0, 0, 2);
+	});
+
+	it(`Update match results.`, function (done) {
+		clients[ownerIdx].once("sessionOptions", function (data) {
+			expect(data.bracket).to.not.be.null;
+			expect(data.bracket!.matches[1].results[1]).to.equal(2);
+			expect(data.bracket!.matches[4].players[0]).to.equal(0);
+			expect(data.bracket!.matches[4].players[1]).to.equal(3);
+			done();
+		});
+		clients[ownerIdx].emit("updateBracket", 1, 1, 2);
+	});
+
 	it(`Generate swiss bracket, should receive a new bracket.`, function (done) {
 		clients[ownerIdx].once("sessionOptions", function (data) {
 			expect(data.bracket).to.not.be.null;
+			for (let m = 0; m < 8; ++m) {
+				expect(data.bracket!.matches[4 + m].players[0]).to.equal(PlayerPlaceholder.TBD);
+				expect(data.bracket!.matches[4 + m].players[1]).to.equal(PlayerPlaceholder.TBD);
+			}
 			done();
 		});
 		clients[ownerIdx].emit("generateBracket", BracketType.Swiss, ackNoError);
+	});
+
+	it(`Update match results.`, function (done) {
+		clients[ownerIdx].once("sessionOptions", function (data) {
+			expect(data.bracket).to.not.be.null;
+			expect(data.bracket!.matches[0].results[0]).to.equal(2);
+			for (let m = 0; m < 8; ++m) {
+				expect(data.bracket!.matches[4 + m].players[0]).to.equal(PlayerPlaceholder.TBD);
+				expect(data.bracket!.matches[4 + m].players[1]).to.equal(PlayerPlaceholder.TBD);
+			}
+			done();
+		});
+		clients[ownerIdx].emit("updateBracket", 0, 0, 2);
+	});
+
+	it(`Fill first round.`, function (done) {
+		let updates = 1;
+
+		clients[ownerIdx].on("sessionOptions", function (data) {
+			expect(data.bracket).to.not.be.null;
+			expect(data.bracket!.matches[0].results[0]).to.equal(2);
+			updates += 1;
+			if (updates < 4) {
+				for (let m = 0; m < 8; ++m) {
+					expect(data.bracket!.matches[4 + m].players[0]).to.equal(PlayerPlaceholder.TBD);
+					expect(data.bracket!.matches[4 + m].players[1]).to.equal(PlayerPlaceholder.TBD);
+				}
+			} else {
+				for (let m = 0; m < 4; ++m) {
+					expect(data.bracket!.matches[4 + m].players[0]).to.not.equal(PlayerPlaceholder.TBD);
+					expect(data.bracket!.matches[4 + m].players[1]).to.not.equal(PlayerPlaceholder.TBD);
+				}
+				for (let m = 0; m < 4; ++m) {
+					expect(data.bracket!.matches[8 + m].players[0]).to.equal(PlayerPlaceholder.TBD);
+					expect(data.bracket!.matches[8 + m].players[1]).to.equal(PlayerPlaceholder.TBD);
+				}
+				clients[ownerIdx].removeListener("sessionOptions");
+				done();
+			}
+		});
+		clients[ownerIdx].emit("updateBracket", 1, 0, 2);
+		clients[ownerIdx].emit("updateBracket", 2, 0, 2);
+		clients[ownerIdx].emit("updateBracket", 3, 0, 2);
+	});
+
+	it(`Fill second round.`, function (done) {
+		let updates = 0;
+
+		clients[ownerIdx].on("sessionOptions", function (data) {
+			expect(data.bracket).to.not.be.null;
+			expect(data.bracket!.matches[0].results[0]).to.equal(2);
+			updates += 1;
+			if (updates < 4) {
+				for (let m = 0; m < 4; ++m) {
+					expect(data.bracket!.matches[8 + m].players[0]).to.equal(PlayerPlaceholder.TBD);
+					expect(data.bracket!.matches[8 + m].players[1]).to.equal(PlayerPlaceholder.TBD);
+				}
+			} else {
+				for (let m = 0; m < 12; ++m) {
+					expect(data.bracket!.matches[m].players[0]).to.not.equal(PlayerPlaceholder.TBD);
+					expect(data.bracket!.matches[m].players[1]).to.not.equal(PlayerPlaceholder.TBD);
+				}
+
+				// No duplicate matches
+				const pairings = data.bracket!.matches.map((m: Match) => m.players.toSorted().toString());
+				expect(new Set(pairings).size).to.equal(data.bracket!.matches.length);
+
+				clients[ownerIdx].removeListener("sessionOptions");
+				done();
+			}
+		});
+		clients[ownerIdx].emit("updateBracket", 4, 0, 2);
+		clients[ownerIdx].emit("updateBracket", 5, 0, 2);
+		clients[ownerIdx].emit("updateBracket", 6, 0, 2);
+		clients[ownerIdx].emit("updateBracket", 7, 0, 2);
 	});
 
 	it(`Generate double bracket, should receive a new bracket.`, function (done) {
