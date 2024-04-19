@@ -88,9 +88,13 @@ export function exportToMagicProTools(draftLog: DraftLog, userID: UserID) {
 	str += "\n";
 
 	const boosterHeader =
-		draftLog.setRestriction && draftLog.setRestriction.length === 1
+		draftLog.setRestriction &&
+		draftLog.setRestriction.length === 1 &&
+		// Assume this is a cube if less than 50% of cards are actually from the listed set (Margin of error due to increasing number of bonus sheets with a different set).
+		Object.values(draftLog.carddata).filter((card) => card.set === draftLog.setRestriction[0]).length >=
+			0.5 * Object.values(draftLog.carddata).length
 			? `------ ${draftLog.setRestriction[0].toUpperCase()} ------\n\n`
-			: `------ THB ------\n\n`;
+			: `------ Cube ------\n\n`;
 
 	if (draftLog.version === "2.0") {
 		let boosterNumber = 0;
