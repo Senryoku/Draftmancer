@@ -254,7 +254,7 @@
 							class="clickable"
 							icon="fa-solid fa-sitemap"
 							v-if="sessionOwner === userID && !bracket"
-							@click="generateBracket(BracketType.Single)"
+							@click="generateBracket(teamDraft ? BracketType.Team : BracketType.Single)"
 							v-tooltip="'Generate Bracket.'"
 						></font-awesome-icon>
 						<font-awesome-icon

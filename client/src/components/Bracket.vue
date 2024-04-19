@@ -63,6 +63,7 @@
 						:key="`${colIndex}_${mIdx}`"
 						:matchID="mID"
 						:players="[getPlayer(bracket.matches[mID], 0), getPlayer(bracket.matches[mID], 1)]"
+						:teamRecords="teamRecords"
 						:draftlog="draftlog"
 						:final="!isDoubleBracket && colIndex === 2"
 						:editable="
