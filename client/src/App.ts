@@ -3075,9 +3075,13 @@ export default defineComponent({
 			this.socket.emit("updateBracket", matchIndex, playerIndex, value);
 		},
 		lockBracket(val: boolean) {
-			if (this.userID != this.sessionOwner) return;
+			if (this.userID !== this.sessionOwner) return;
 			this.bracketLocked = val;
 			this.socket.emit("lockBracket", this.bracketLocked);
+		},
+		syncBracketMTGO(val: boolean) {
+			if (this.userID !== this.sessionOwner) return;
+			this.socket.emit("syncBracketMTGO", val);
 		},
 		// Deck/Sideboard management
 		addToDeck(card: UniqueCard | UniqueCard[], options: { event?: MouseEvent } | undefined = undefined) {

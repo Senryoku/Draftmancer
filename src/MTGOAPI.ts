@@ -49,7 +49,7 @@ export enum Result {
 export type Game = {
 	playerRankings: {
 		ranking: Result;
-		loginID: string;
+		loginID: number;
 		userInfo: {
 			screenName: string;
 		};

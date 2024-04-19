@@ -63,7 +63,7 @@ import { ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketDa
 import { IIndexable, SetCode } from "./Types.js";
 import { SessionsSettingsProps } from "./Session/SessionProps.js";
 import { isRotisserieDraftState, RotisserieDraftStartOptions } from "./RotisserieDraft.js";
-import { BracketPlayer, BracketType } from "./Brackets.js";
+import { BracketType } from "./Brackets.js";
 import { getQueueStatus, registerPlayer, unregisterPlayer } from "./draftQueue/DraftQueue.js";
 
 import expressStaticGzip from "express-static-gzip";
@@ -71,7 +71,7 @@ import { parseMTGOLog } from "./parseMTGOLog.js";
 
 import { init as MTGOAPIInit } from "./MTGOAPI.js";
 
-//MTGOAPIInit();
+MTGOAPIInit();
 
 const app = express();
 const httpServer = new http.Server(app);

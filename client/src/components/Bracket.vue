@@ -14,7 +14,7 @@
 						'When enabled, the bracket will be automatically updated based on match results played on MTGO. Make sure all usernames match your MTGO screen names!'
 					"
 				>
-					<input type="checkbox" id="lock" :checked="bracket.MTGOSynced" @change="syncMTGO($event)" />
+					<input type="checkbox" id="mtgo-sync" :checked="bracket.MTGOSynced" @change="syncMTGO($event)" />
 					<font-awesome-icon icon="fa-solid fa-sync"></font-awesome-icon> Sync. with MTGO matches
 				</span>
 				<div style="flex-grow: 1"></div>
