@@ -1,9 +1,8 @@
-import { ElementHandle } from "puppeteer";
 import { expect } from "chai";
 import { setupBrowsers, pages, replaceInput, waitAndClickSelector } from "./src/common.js";
-import { MatchEndType, Result, handleEvent } from "../../src/MTGOAPI.js";
 import { Sessions } from "../../src/Session.js";
 import { Connections } from "../../src/Connection.js";
+import { simulateMTGOResult } from "../src/MTGOResult.js";
 
 function waitFor(ms: number) {
 	return new Promise((resolve) => setTimeout(resolve, ms));
@@ -18,7 +17,7 @@ async function checkResult(matchID: number, index: number, result: number) {
 	}
 }
 
-describe.only("Front End - MTGO Bracket", function () {
+describe("Front End - MTGO Bracket", function () {
 	this.timeout(200000);
 	setupBrowsers(4);
 	it(`Setup player names`, async function () {
@@ -64,56 +63,7 @@ describe.only("Front End - MTGO Bracket", function () {
 	});
 
 	it(`Simulate receiving a match result from MTGO.`, async function () {
-		handleEvent({
-			eventId: 0,
-			eventToken: "fake-token",
-			description: "description",
-			parentChannel: 7,
-			games: [
-				{
-					playerRankings: [
-						{
-							ranking: Result.Win,
-							loginID: 0,
-							userInfo: { screenName: "Player_0" },
-						},
-						{
-							ranking: Result.Loss,
-							loginID: 1,
-							userInfo: { screenName: "Player_2" },
-						},
-					],
-				},
-				{
-					playerRankings: [
-						{
-							ranking: Result.Win,
-							loginID: 0,
-							userInfo: { screenName: "Player_0" },
-						},
-						{
-							ranking: Result.Loss,
-							loginID: 1,
-							userInfo: { screenName: "Player_2" },
-						},
-					],
-				},
-			],
-			finalMatchResults: [
-				{
-					loginID: 0,
-					userInfo: { screenName: "Player_0" },
-					finalPlace: Result.Win,
-					matchEndType: MatchEndType.CompletedConcede,
-				},
-				{
-					loginID: 1,
-					userInfo: { screenName: "Player_2" },
-					finalPlace: Result.Loss,
-					matchEndType: MatchEndType.CompletedConcede,
-				},
-			],
-		});
+		simulateMTGOResult(["Player_0", "Player_2"], [2, 0]);
 
 		await waitFor(200);
 
@@ -122,70 +72,7 @@ describe.only("Front End - MTGO Bracket", function () {
 	});
 
 	it(`Simulate receiving a match result from MTGO.`, async function () {
-		handleEvent({
-			eventId: 0,
-			eventToken: "fake-token",
-			description: "description",
-			parentChannel: 7,
-			games: [
-				{
-					playerRankings: [
-						{
-							ranking: Result.Win,
-							loginID: 0,
-							userInfo: { screenName: "Player_3" },
-						},
-						{
-							ranking: Result.Loss,
-							loginID: 1,
-							userInfo: { screenName: "Player_1" },
-						},
-					],
-				},
-				{
-					playerRankings: [
-						{
-							ranking: Result.Loss,
-							loginID: 0,
-							userInfo: { screenName: "Player_3" },
-						},
-						{
-							ranking: Result.Win,
-							loginID: 1,
-							userInfo: { screenName: "Player_1" },
-						},
-					],
-				},
-				{
-					playerRankings: [
-						{
-							ranking: Result.Win,
-							loginID: 0,
-							userInfo: { screenName: "Player_3" },
-						},
-						{
-							ranking: Result.Loss,
-							loginID: 1,
-							userInfo: { screenName: "Player_1" },
-						},
-					],
-				},
-			],
-			finalMatchResults: [
-				{
-					loginID: 0,
-					userInfo: { screenName: "Player_3" },
-					finalPlace: Result.Win,
-					matchEndType: MatchEndType.CompletedConcede,
-				},
-				{
-					loginID: 1,
-					userInfo: { screenName: "Player_1" },
-					finalPlace: Result.Loss,
-					matchEndType: MatchEndType.CompletedConcede,
-				},
-			],
-		});
+		simulateMTGOResult(["Player_3", "Player_1"], [2, 1]);
 
 		await waitFor(200);
 
@@ -194,70 +81,7 @@ describe.only("Front End - MTGO Bracket", function () {
 	});
 
 	it(`Simulate receiving a match result from MTGO.`, async function () {
-		handleEvent({
-			eventId: 0,
-			eventToken: "fake-token",
-			description: "description",
-			parentChannel: 7,
-			games: [
-				{
-					playerRankings: [
-						{
-							ranking: Result.Win,
-							loginID: 0,
-							userInfo: { screenName: "Player_0" },
-						},
-						{
-							ranking: Result.Loss,
-							loginID: 1,
-							userInfo: { screenName: "Player_3" },
-						},
-					],
-				},
-				{
-					playerRankings: [
-						{
-							ranking: Result.Loss,
-							loginID: 0,
-							userInfo: { screenName: "Player_0" },
-						},
-						{
-							ranking: Result.Win,
-							loginID: 1,
-							userInfo: { screenName: "Player_3" },
-						},
-					],
-				},
-				{
-					playerRankings: [
-						{
-							ranking: Result.Loss,
-							loginID: 0,
-							userInfo: { screenName: "Player_0" },
-						},
-						{
-							ranking: Result.Win,
-							loginID: 1,
-							userInfo: { screenName: "Player_3" },
-						},
-					],
-				},
-			],
-			finalMatchResults: [
-				{
-					loginID: 0,
-					userInfo: { screenName: "Player_0" },
-					finalPlace: Result.Loss,
-					matchEndType: MatchEndType.CompletedConcede,
-				},
-				{
-					loginID: 1,
-					userInfo: { screenName: "Player_3" },
-					finalPlace: Result.Win,
-					matchEndType: MatchEndType.CompletedConcede,
-				},
-			],
-		});
+		simulateMTGOResult(["Player_0", "Player_3"], [2, 1]);
 
 		await waitFor(200);
 

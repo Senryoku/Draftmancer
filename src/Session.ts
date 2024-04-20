@@ -65,15 +65,7 @@ import {
 } from "./Message.js";
 import { InactiveSessions, logSession } from "./Persistence.js";
 import { sendDecks } from "./BotTrainingAPI.js";
-import {
-	IBracket,
-	SingleBracket,
-	TeamBracket,
-	SwissBracket,
-	DoubleBracket,
-	BracketPlayer,
-	BracketType,
-} from "./Brackets.js";
+import { IBracket, SingleBracket, TeamBracket, SwissBracket, DoubleBracket, BracketType } from "./Brackets.js";
 import { CustomCardList, generateBoosterFromCustomCardList, generateCustomGetCardFunction } from "./CustomCardList.js";
 import { DraftLog, DraftPick, GridDraftPick } from "./DraftLog.js";
 import { generateJHHBooster, JHHBooster, JHHBoosterPattern } from "./JumpstartHistoricHorizons.js";
@@ -205,6 +197,10 @@ export class Session implements IIndexable {
 		if (this.sendDecklogTimeout) this.sendDecklog();
 		if (isDraftState(this.draftState) && this.draftState.pendingTimeout)
 			clearTimeout(this.draftState.pendingTimeout);
+		if (this.bracket?.MTGOSynced)
+			this.bracket.players.forEach((p) => {
+				if (p) MatchResults.unsubscribe(p!.userName);
+			});
 	}
 
 	addUser(userID: UserID) {
@@ -3581,6 +3577,8 @@ export class Session implements IIndexable {
 	}
 
 	generateBracket(type: BracketType): void | MessageError {
+		const previousBracket = this.bracket;
+
 		const playerData = this.userOrder
 			.filter((uid) => this.users.has(uid) && (this.ownerIsPlayer || uid !== this.owner))
 			.map((uid) => {
@@ -3615,6 +3613,12 @@ export class Session implements IIndexable {
 				break;
 			}
 		}
+
+		if (previousBracket?.MTGOSynced)
+			previousBracket.players.forEach((p) => {
+				if (p) MatchResults.unsubscribe(p!.userName);
+			});
+
 		this.forUsers((u) => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
 	}
 
