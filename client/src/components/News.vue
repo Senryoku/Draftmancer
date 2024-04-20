@@ -3,8 +3,8 @@
 		<div class="news">
 			<em>April 20, 2024</em>
 			<p>
-				I rewrote the tournament bracket system to be more robust and maintainable. Please me let me know if you
-				encounter any regression!
+				<font-awesome-icon icon="fa-solid fa-trophy"></font-awesome-icon> I rewrote the tournament bracket
+				system to be more robust and maintainable. Please me let me know if you encounter any regression!
 			</p>
 			<p>
 				As a first improvement to the tournament brackets and thanks to the help of Danbopes from

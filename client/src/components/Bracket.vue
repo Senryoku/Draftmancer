@@ -15,7 +15,9 @@
 					"
 				>
 					<input type="checkbox" id="mtgo-sync" :checked="bracket.MTGOSynced" @change="syncMTGO($event)" />
-					<font-awesome-icon icon="fa-solid fa-sync"></font-awesome-icon> Sync. with MTGO matches
+					<label for="mtgo-sync">
+						<font-awesome-icon icon="fa-solid fa-sync"></font-awesome-icon> Sync. with MTGO matches
+					</label>
 				</span>
 				<div style="flex-grow: 1"></div>
 				<template v-if="teamDraft"><span>Team Draft</span></template>
