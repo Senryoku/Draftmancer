@@ -1,4 +1,3 @@
-import { inspect } from "util";
 import { WebSocket } from "ws";
 import { createClient } from "graphql-ws";
 
@@ -82,7 +81,8 @@ export function handleEvent(e: EventCompleted) {
 
 export function init() {
 	if (MTGBOT_GRAPHQL_ENDPOINT && MTGBOT_APIKEY) {
-		// TODO: Reconnect on error, query list of events we may have missed during the disconnect.
+		// NOTE: Afaik, graphql-ws will reconnect and resubscribe automatically if the connection closes for any reason.
+		//       However we may still miss some events in this case. We might want to handle this in the future (see activeEvents endpoint).
 		client = createClient({
 			webSocketImpl: WebSocketWithBearer,
 			url: MTGBOT_GRAPHQL_ENDPOINT,
@@ -124,7 +124,6 @@ export function init() {
 
 				for await (const event of subscription) {
 					const e = event.data?.eventCompleted as EventCompleted;
-					console.log(inspect(e, false, null, true));
 					handleEvent(e);
 				}
 			} catch (e) {
