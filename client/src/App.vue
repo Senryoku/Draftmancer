@@ -252,18 +252,18 @@
 						<font-awesome-icon
 							id="bracket-button"
 							class="clickable"
-							icon="fa-solid fa-sitemap"
+							icon="fa-solid fa-trophy"
 							v-if="sessionOwner === userID && !bracket"
 							@click="generateBracket(teamDraft ? BracketType.Team : BracketType.Single)"
-							v-tooltip="'Generate Bracket.'"
+							v-tooltip="'Generate tournament bracket.'"
 						></font-awesome-icon>
 						<font-awesome-icon
 							id="bracket-button"
 							class="clickable"
-							icon="fa-solid fa-sitemap clickable"
+							icon="fa-solid fa-trophy"
 							v-else-if="bracket"
 							@click="displayedModal = 'bracket'"
-							v-tooltip="'Display Bracket.'"
+							v-tooltip="'Display tournament bracket.'"
 						></font-awesome-icon>
 
 						<font-awesome-icon
