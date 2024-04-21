@@ -20,7 +20,9 @@
 					</label>
 				</span>
 				<div style="flex-grow: 1"></div>
-				<template v-if="teamDraft"><span>Team Draft</span></template>
+				<template v-if="teamDraft">
+					<span>Team Draft</span><span>{{ teamRecords[0] }} - {{ teamRecords[1] }}</span>
+				</template>
 				<template v-else>
 					<select v-model="typeToGenerate">
 						<option value="Single">Single Elimination</option>
@@ -40,7 +42,9 @@
 				</span>
 				<div style="flex-grow: 1"></div>
 				<span style="font-size: 1.5em">
-					<template v-if="isTeamBracket">Team Draft</template>
+					<template v-if="isTeamBracket">
+						Team Draft <span>{{ teamRecords[0] }} - {{ teamRecords[1] }}</span>
+					</template>
 					<template v-else-if="isDoubleBracket">Double Elimination</template>
 					<template v-else-if="isSwissBracket">3-Round Swiss</template>
 					<template v-else>Single Elimination</template>
@@ -67,8 +71,9 @@
 						:matchID="mID"
 						:players="[getPlayer(bracket.matches[mID], 0), getPlayer(bracket.matches[mID], 1)]"
 						:teamRecords="teamRecords"
+						:teamWinThreshold="bracket.players.length > 6 ? 7 : 5"
 						:draftlog="draftlog"
-						:final="!isDoubleBracket && colIndex === 2"
+						:final="!isDoubleBracket && colIndex === bracket.bracket.length - 1"
 						:editable="
 							editable &&
 							!(

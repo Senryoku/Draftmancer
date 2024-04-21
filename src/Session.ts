@@ -389,16 +389,12 @@ export class Session implements IIndexable {
 		if (this.teamDraft !== teamDraft) {
 			this.teamDraft = teamDraft;
 			if (teamDraft) {
-				this.maxPlayers = 6;
 				this.bots = 0;
-			} else {
-				this.maxPlayers = 8;
 			}
 
 			this.forUsers((u) =>
 				Connections[u]?.socket.emit("sessionOptions", {
 					teamDraft: this.teamDraft,
-					maxPlayers: this.maxPlayers,
 					bots: this.bots,
 				})
 			);
@@ -1794,13 +1790,6 @@ export class Session implements IIndexable {
 		burnedCardsPerRound?: number;
 	}): SocketAck {
 		if (this.drafting) return new SocketError("Already drafting.");
-		if (this.teamDraft && this.users.size !== 6) {
-			const verb = this.users.size < 6 ? "add" : "remove";
-			return new SocketError(
-				`Wrong player count`,
-				`Team draft requires exactly 6 players. Please ${verb} players or disable Team Draft under Settings. Bots are not supported!`
-			);
-		}
 
 		if (this.randomizeSeatingOrder) this.randomizeSeating();
 
@@ -3593,10 +3582,10 @@ export class Session implements IIndexable {
 				break;
 			}
 			case BracketType.Team: {
-				if (this.userOrder.length !== 6)
+				if (playerData.length % 2 !== 0)
 					return new MessageError(
 						"Invalid player count",
-						"Team Draft tournaments require exactly 6 players."
+						"Team Draft tournaments require an even number of players."
 					);
 				this.bracket = new TeamBracket(playerData);
 				break;

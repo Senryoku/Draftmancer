@@ -99,7 +99,10 @@ export default defineComponent({
 			if (this.isPlayerPlaceholder(p)) return false;
 
 			if (this.isTeamBracket) {
-				return this.teamRecords![player % 2] >= 5;
+				return (
+					this.teamRecords![player % 2] >= 5 &&
+					this.teamRecords![player % 2] > this.teamRecords![(player + 1) % 2]
+				);
 			} else if (this.isDoubleBracket) {
 				const p2 = this.players[(player + 1) % 2];
 				if (this.isPlayerPlaceholder(p2)) return false;

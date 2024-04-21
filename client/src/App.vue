@@ -2218,7 +2218,7 @@
 								/>
 							</div>
 						</div>
-						<div class="line" v-bind:class="{ disabled: teamDraft }">
+						<div class="line">
 							<label for="max-players">Maximum Players</label>
 							<div class="right">
 								<input
@@ -2471,7 +2471,7 @@
 							v-tooltip.right="{
 								popperClass: 'option-tooltip',
 								content:
-									'<p>Team Draft, which is a 6-player, 3v3 mode where teams alternate seats.</p><p>This creates a bracket where you face each player on the other team.</p>',
+									'<p>Team Draft, which is a 6-player, 3v3 mode where teams alternate seats.</p><p>This setting is mostly visual, but creates an appropriate bracket tournament where each player will only play players from the other team.</p>',
 								html: true,
 							}"
 						>

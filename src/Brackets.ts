@@ -116,22 +116,26 @@ export class SingleBracket extends IBracket {
 
 export class TeamBracket extends IBracket {
 	constructor(players: BracketPlayer[]) {
-		const orderedPlayers = reorder(players, [0, 3, 2, 5, 4, 1]);
-		super(BracketType.Team, orderedPlayers);
+		super(BracketType.Team, players);
 		this.generateMatches();
 	}
 
 	generateMatches() {
-		this.bracket = [[], [], []];
-		this.bracket[0].push(this.addMatch({ players: [0, 3] }));
-		this.bracket[0].push(this.addMatch({ players: [2, 5] }));
-		this.bracket[0].push(this.addMatch({ players: [4, 1] }));
-		this.bracket[1].push(this.addMatch({ players: [0, 5] }));
-		this.bracket[1].push(this.addMatch({ players: [2, 1] }));
-		this.bracket[1].push(this.addMatch({ players: [4, 3] }));
-		this.bracket[2].push(this.addMatch({ players: [0, 1] }));
-		this.bracket[2].push(this.addMatch({ players: [2, 3] }));
-		this.bracket[2].push(this.addMatch({ players: [4, 5] }));
+		if (this.players.length % 2 === 1) throw Error("TeamBracket: Odd number of players");
+		const rounds = this.players.length / 2;
+		this.bracket = [];
+
+		let offset = this.players.length / 2;
+		if (offset % 2 === 0) offset += 1; // Make sure we pair with an player from the other team (always odd).
+
+		for (let round = 0; round < rounds; ++round) {
+			this.bracket.push([]);
+			for (let i = 0; i < rounds; ++i) {
+				this.bracket[round].push(
+					this.addMatch({ players: [2 * i, (2 * i + offset + 2 * round) % this.players.length] })
+				);
+			}
+		}
 	}
 
 	updatePairings() {}
