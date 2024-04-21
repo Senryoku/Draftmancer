@@ -10,8 +10,8 @@
 				As a first improvement to the tournament brackets and thanks to the help of Danbopes from
 				<a href="https://mtgbot.tv/donate" target="_blank">MTGBot</a>, you can now enable the experimental
 				"Sync. with MTGO matches" setting in your tournament bracket and Draftmancer will automatically populate
-				it with you match results!<br />Make sure everyone use their MTGO screen names for this to work properly
-				;)
+				it with your match results!<br />Make sure everyone use their MTGO screen names for this to work
+				properly ;)
 			</p>
 		</div>
 		<div class="news">
