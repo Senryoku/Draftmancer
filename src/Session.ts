@@ -3670,6 +3670,13 @@ export class Session implements IIndexable {
 				this.bracket.matches[mID].results = results;
 				this.bracket.updatePairings();
 				this.forUsers((u) => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
+
+				const winnerIdx = results[0] > results[1] ? 0 : 1;
+				const loserIdx = (winnerIdx + 1) % 2;
+				const msg = new ToastMessage(
+					`${this.bracket.players[this.bracket.matches[mID].players[winnerIdx]]?.userName} won their match against ${this.bracket.players[this.bracket.matches[mID].players[loserIdx]]?.userName} ${results[winnerIdx]}-${results[loserIdx]}`
+				);
+				this.forUsers((uid) => Connections[uid]?.socket?.emit("message", msg));
 			}
 		}
 	}
