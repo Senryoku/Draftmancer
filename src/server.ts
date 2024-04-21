@@ -1274,7 +1274,8 @@ function distributeJumpstart(userID: UserID, sessionID: SessionID, set: unknown,
 	ack?.(Sessions[sessionID].distributeJumpstart(set));
 }
 
-function generateBracket(userID: UserID, sessionID: SessionID, type: BracketType, ack: (result: SocketAck) => void) {
+function generateBracket(userID: UserID, sessionID: SessionID, type: unknown, ack: (result: SocketAck) => void) {
+	if (!isSomeEnum(BracketType)(type)) return ack?.(new SocketError("Invalid parameter 'type'."));
 	const r = Sessions[sessionID].generateBracket(type);
 	if (isMessageError(r)) ack?.(new SocketAck(r));
 	else ack?.(new SocketAck());
