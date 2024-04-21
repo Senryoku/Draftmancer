@@ -1,3 +1,4 @@
+import { inspect } from "util";
 import { WebSocket } from "ws";
 import { createClient } from "graphql-ws";
 
@@ -123,11 +124,16 @@ export function init() {
 				});
 
 				for await (const event of subscription) {
-					const e = event.data?.eventCompleted as EventCompleted;
-					handleEvent(e);
+					const ev = event.data?.eventCompleted as EventCompleted;
+					try {
+						handleEvent(ev);
+					} catch (e) {
+						console.error("Error handling MTGO event:", e);
+						console.error(inspect(ev));
+					}
 				}
 			} catch (e) {
-				console.error(e);
+				console.error("Error subscribing to MTGO events:", e);
 			}
 		})();
 	}

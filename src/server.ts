@@ -71,7 +71,7 @@ import { parseMTGOLog } from "./parseMTGOLog.js";
 
 import { init as MTGOAPIInit } from "./MTGOAPI.js";
 
-MTGOAPIInit();
+if (process.env.NODE_ENV === "production") MTGOAPIInit();
 
 const app = express();
 const httpServer = new http.Server(app);
