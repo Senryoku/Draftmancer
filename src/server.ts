@@ -63,11 +63,15 @@ import { ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketDa
 import { IIndexable, SetCode } from "./Types.js";
 import { SessionsSettingsProps } from "./Session/SessionProps.js";
 import { isRotisserieDraftState, RotisserieDraftStartOptions } from "./RotisserieDraft.js";
-import { BracketPlayer } from "./Brackets.js";
+import { BracketType } from "./Brackets.js";
 import { getQueueStatus, registerPlayer, unregisterPlayer } from "./draftQueue/DraftQueue.js";
 
 import expressStaticGzip from "express-static-gzip";
 import { parseMTGOLog } from "./parseMTGOLog.js";
+
+import { init as MTGOAPIInit } from "./MTGOAPI.js";
+
+if (process.env.NODE_ENV === "production") MTGOAPIInit();
 
 const app = express();
 const httpServer = new http.Server(app);
@@ -475,9 +479,9 @@ function teamSealedPick(
 	ack?.(r);
 }
 
-function updateBracket(userID: UserID, sessionID: SessionID, results: Array<[number, number]>) {
+function updateBracket(userID: UserID, sessionID: SessionID, matchIndex: number, playerIndex: number, value: number) {
 	if (Sessions[sessionID].owner !== userID && Sessions[sessionID].bracketLocked) return;
-	Sessions[sessionID].updateBracket(results);
+	Sessions[sessionID].updateBracket(matchIndex, playerIndex, value);
 }
 
 function updateDeckLands(userID: UserID, sessionID: SessionID, lands: DeckBasicLands) {
@@ -1270,77 +1274,10 @@ function distributeJumpstart(userID: UserID, sessionID: SessionID, set: unknown,
 	ack?.(Sessions[sessionID].distributeJumpstart(set));
 }
 
-function validateBracketPlayersType(players: unknown, ack: (result: SocketAck) => void) {
-	if (!Array.isArray(players)) {
-		ack?.(new SocketError("Invalid parameter 'players'", "'players' must be an array."));
-		return false;
-	}
-	if (players.some((obj) => obj !== null && (!isString(obj.userID) || !isString(obj.userName)))) {
-		ack?.(
-			new SocketError(
-				"Invalid parameter 'players'",
-				"'players' type must be Array<{ userID: UserID; userName: string } | null>."
-			)
-		);
-		return false;
-	}
-	return true;
-}
-
-function generateBracket(
-	userID: UserID,
-	sessionID: SessionID,
-	players: BracketPlayer[],
-	ack: (result: SocketAck) => void
-) {
-	if (!validateBracketPlayersType(players, ack)) return;
-	if (
-		!(
-			(players.length === 8 && !Sessions[sessionID].teamDraft) ||
-			(players.length === 6 && Sessions[sessionID].teamDraft)
-		)
-	) {
-		ack?.(new SocketError("Invalid number of players"));
-		return;
-	}
-	Sessions[sessionID].generateBracket(players);
-	ack?.(new SocketAck());
-}
-
-function generateSwissBracket(
-	userID: UserID,
-	sessionID: SessionID,
-	players: BracketPlayer[],
-	ack: (result: SocketAck) => void
-) {
-	if (!validateBracketPlayersType(players, ack)) return;
-	const realPlayerCount = players.filter((u) => u).length;
-	if (![6, 8, 10].includes(realPlayerCount)) {
-		ack?.(
-			new SocketError(
-				"Error generating Swiss bracket",
-				"Swiss brackets are only available for pools of 6, 8 or 10 players exactly."
-			)
-		);
-		return;
-	}
-	Sessions[sessionID].generateSwissBracket(players);
-	ack?.(new SocketAck());
-}
-
-function generateDoubleBracket(
-	userID: UserID,
-	sessionID: SessionID,
-	players: BracketPlayer[],
-	ack: (result: SocketAck) => void
-) {
-	if (!validateBracketPlayersType(players, ack)) return;
-	if (players.length !== 8) {
-		ack?.(new SocketError("Invalid number of players", "Expected exactly 8 players."));
-		return;
-	}
-	Sessions[sessionID].generateDoubleBracket(players);
-	ack?.(new SocketAck());
+function generateBracket(userID: UserID, sessionID: SessionID, type: BracketType, ack: (result: SocketAck) => void) {
+	const r = Sessions[sessionID].generateBracket(type);
+	if (isMessageError(r)) ack?.(new SocketAck(r));
+	else ack?.(new SocketAck());
 }
 
 function lockBracket(userID: UserID, sessionID: SessionID, bracketLocked: boolean) {
@@ -1349,6 +1286,12 @@ function lockBracket(userID: UserID, sessionID: SessionID, bracketLocked: boolea
 
 	Sessions[sessionID].bracketLocked = bracketLocked;
 	Sessions[sessionID].emitToConnectedNonOwners("sessionOptions", { bracketLocked });
+}
+
+function syncBracketMTGO(userID: UserID, sessionID: SessionID, value: unknown) {
+	if (!isBoolean(value)) return;
+
+	Sessions[sessionID].syncBracketMTGO(value);
 }
 
 function shareDraftLog(userID: UserID, sessionID: SessionID, draftLog: DraftLog) {
@@ -1669,9 +1612,8 @@ io.on("connection", async function (socket) {
 		socket.on("setDescription", prepareSocketCallback(setDescription, true));
 		socket.on("replaceDisconnectedPlayers", prepareSocketCallback(replaceDisconnectedPlayers, true));
 		socket.on("generateBracket", prepareSocketCallback(generateBracket, true));
-		socket.on("generateSwissBracket", prepareSocketCallback(generateSwissBracket, true));
-		socket.on("generateDoubleBracket", prepareSocketCallback(generateDoubleBracket, true));
 		socket.on("lockBracket", prepareSocketCallback(lockBracket, true));
+		socket.on("syncBracketMTGO", prepareSocketCallback(syncBracketMTGO, true));
 		socket.on("shareDraftLog", prepareSocketCallback(shareDraftLog, true));
 
 		// Apply preferred session settings in case we're creating a new one, filtering out invalid ones.

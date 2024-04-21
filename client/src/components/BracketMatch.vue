@@ -1,35 +1,37 @@
 <template>
 	<div class="bracket-match">
-		<td class="bracket-match-num">{{ match.index + 1 }}</td>
+		<td class="bracket-match-num">{{ matchID + 1 }}</td>
 		<td class="bracket-match-players">
-			<div v-for="(p, index) in match.players" :key="index">
-				<div class="bracket-player bracket-empty" v-if="p.empty">(Empty)</div>
-				<div class="bracket-player bracket-tbd" v-else-if="p.tbd">(TBD {{ p.tbd }})</div>
+			<div v-for="(p, index) in players" :key="index">
+				<div class="bracket-player bracket-empty" v-if="isEmpty(p)">(Empty)</div>
+				<div class="bracket-player bracket-tbd" v-else-if="isTBD(p)">(TBD)</div>
 				<div
 					class="bracket-player"
 					:class="{
-						'bracket-winner': result[index] > result[(index + 1) % 2],
+						'bracket-winner':
+							!isPlayerPlaceholder(players[(index + 1) % 2]) &&
+							p.result > (players[(index + 1) % 2] as MatchPlayer).result,
 						teama: isTeamBracket && index % 2 === 0,
 						teamb: isTeamBracket && index % 2 === 1,
 					}"
-					v-else
+					v-else-if="!isPlayerPlaceholder(p)"
 				>
 					<template v-if="final">
 						<font-awesome-icon
 							icon="fa-solid fa-trophy"
-							v-if="isGold(p, index)"
+							v-if="isGold(index)"
 							class="trophy gold"
 						></font-awesome-icon>
 						<font-awesome-icon
 							icon="fa-solid fa-trophy"
-							v-else-if="isSilver(p, index)"
+							v-else-if="isSilver(index)"
 							class="trophy silver"
 						></font-awesome-icon>
 						<div v-else class="trophy"></div>
 					</template>
 					<div
 						class="bracket-player-name"
-						v-tooltip="`Current record: ${recordString(p)}`"
+						v-tooltip="`Current record: ${p.record.wins} - ${p.record.losses}`"
 						:class="{ clickable: draftlog }"
 						@click="if (draftlog) $emit('selectuser', p);"
 					>
@@ -41,16 +43,17 @@
 							v-tooltip.top="`${p.userName} submitted their deck. Click to review it.`"
 						></font-awesome-icon>
 					</div>
-					<template v-if="match.isValid()">
+					<template v-if="isValid">
 						<input
 							v-if="editable"
+							:id="`result-input-${matchID}-${index}`"
 							class="result-input"
 							type="number"
-							:value="result[index]"
+							:value="p.result"
 							min="0"
 							@change="update($event, index)"
 						/>
-						<div class="bracket-result" v-else>{{ result[index] }}</div>
+						<div class="bracket-result" v-else>{{ p.result }}</div>
 					</template>
 				</div>
 			</div>
@@ -59,41 +62,31 @@
 </template>
 
 <script lang="ts">
-import { Bracket } from "@/Brackets";
 import { DraftLog } from "@/DraftLog";
 import { UserID } from "@/IDTypes";
 
 import { defineComponent, PropType } from "vue";
-import { isDoubleBracket, isTeamBracket } from "../../../src/Brackets";
+import { BracketType, PlayerPlaceholder } from "../../../src/Brackets";
 
-export type MatchPlayerData = {
-	userID?: UserID;
-	userName?: string;
-	tbd?: string;
-	empty?: boolean;
+export type MatchPlayer = {
+	userID: string;
+	userName: string;
+	result: number;
+	record: { wins: number; losses: number };
 };
-
-export class Match {
-	index: number;
-	players: MatchPlayerData[];
-
-	constructor(index: number, players: MatchPlayerData[]) {
-		this.index = index;
-		this.players = players;
-	}
-	isValid() {
-		return !this.players[0].empty && !this.players[1].empty && !this.players[0].tbd && !this.players[1].tbd;
-	}
-}
 
 export default defineComponent({
 	props: {
-		result: { type: Array as PropType<number[]>, required: true },
 		editable: { type: Boolean, default: false },
-		match: { type: Object as PropType<Match>, required: true },
-		bracket: { type: Object as PropType<Bracket>, required: true },
-		records: { type: Object, required: true },
-		teamrecords: { type: Array as PropType<number[]>, required: true },
+		bracketType: { type: String as PropType<BracketType>, required: true },
+
+		matchID: { type: Number, required: true },
+		players: {
+			type: Array as PropType<(PlayerPlaceholder | MatchPlayer)[]>,
+			required: true,
+		},
+		teamRecords: { type: Array as PropType<number[]>, required: false },
+
 		draftlog: { type: Object as PropType<DraftLog>, default: null },
 		final: { type: Boolean, default: false },
 	},
@@ -101,29 +94,61 @@ export default defineComponent({
 		hasDeckList(userID: UserID | undefined) {
 			return this.draftlog && userID && this.draftlog.users[userID] && this.draftlog.users[userID].decklist;
 		},
-		isGold(p: MatchPlayerData, index: number) {
-			if (isTeamBracket(this.bracket)) {
-				return this.teamrecords[index] >= 5;
-			} else if (isDoubleBracket(this.bracket)) {
-				return this.final && this.result[index] > this.result[(index + 1) % 2];
+		isGold(player: number) {
+			const p = this.players[player];
+			if (this.isPlayerPlaceholder(p)) return false;
+
+			if (this.isTeamBracket) {
+				return this.teamRecords![player % 2] >= 5;
+			} else if (this.isDoubleBracket) {
+				const p2 = this.players[(player + 1) % 2];
+				if (this.isPlayerPlaceholder(p2)) return false;
+				return this.final && p.record > p2.record;
 			} else {
-				return this.records[p.userID!].wins === 3;
+				return p.record.wins === 3;
 			}
 		},
-		isSilver(p: MatchPlayerData, index: number) {
-			if (isDoubleBracket(this.bracket)) return this.final && this.result[index] < this.result[(index + 1) % 2];
-			return !isTeamBracket(this.bracket) && this.records[p.userID!].wins === 2;
-		},
-		recordString(p: MatchPlayerData) {
-			return `${this.records[p.userID!].wins} - ${this.records[p.userID!].losses}`;
+		isSilver(player: number) {
+			const p = this.players[player];
+			if (this.isPlayerPlaceholder(p)) return false;
+
+			if (this.isDoubleBracket) {
+				const p2 = this.players[(player + 1) % 2];
+				if (this.isPlayerPlaceholder(p2)) return false;
+				return this.final && p.record < p2.record;
+			}
+			return !this.isTeamBracket && p.record.wins === 2;
 		},
 		update(event: Event, index: number) {
-			this.$emit("updated", index, parseInt((event.target as HTMLInputElement)?.value));
+			this.$emit("updated", this.matchID, index, parseInt((event.target as HTMLInputElement)?.value));
+		},
+		isEmpty(p: PlayerPlaceholder | { userName: string; result: number; record: { wins: number; losses: number } }) {
+			return p === PlayerPlaceholder.Empty;
+		},
+		isTBD(p: PlayerPlaceholder | { userName: string; result: number; record: { wins: number; losses: number } }) {
+			return p === PlayerPlaceholder.TBD;
+		},
+		isPlayerPlaceholder(p: unknown): p is PlayerPlaceholder {
+			return Number.isInteger(p);
 		},
 	},
 	computed: {
+		isValid() {
+			const p0 = this.players[0];
+			const p1 = this.players[1];
+			return !this.isPlayerPlaceholder(p0) && !this.isPlayerPlaceholder(p1);
+		},
+		isSingleBracket() {
+			return this.bracketType === BracketType.Single;
+		},
+		isSwissBracket() {
+			return this.bracketType === BracketType.Swiss;
+		},
 		isTeamBracket() {
-			return isTeamBracket(this.bracket);
+			return this.bracketType === BracketType.Team;
+		},
+		isDoubleBracket() {
+			return this.bracketType === BracketType.Double;
 		},
 	},
 });

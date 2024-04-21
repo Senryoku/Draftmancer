@@ -250,19 +250,20 @@
 						></font-awesome-icon>
 
 						<font-awesome-icon
+							id="bracket-button"
 							class="clickable"
-							icon="fa-solid fa-sitemap"
+							icon="fa-solid fa-trophy"
 							v-if="sessionOwner === userID && !bracket"
-							@click="generateBracket"
-							v-tooltip="'Generate Bracket.'"
+							@click="generateBracket(teamDraft ? BracketType.Team : BracketType.Single)"
+							v-tooltip="'Generate tournament bracket.'"
 						></font-awesome-icon>
-
 						<font-awesome-icon
+							id="bracket-button"
 							class="clickable"
-							icon="fa-solid fa-sitemap clickable"
-							v-if="bracket"
+							icon="fa-solid fa-trophy"
+							v-else-if="bracket"
 							@click="displayedModal = 'bracket'"
-							v-tooltip="'Display Bracket.'"
+							v-tooltip="'Display tournament bracket.'"
 						></font-awesome-icon>
 
 						<font-awesome-icon
@@ -2904,9 +2905,8 @@
 					:draftlog="currentDraftLog"
 					@updated="updateBracket"
 					@generate="generateBracket"
-					@generate-swiss="generateSwissBracket"
-					@generate-double="generateDoubleBracket"
 					@lock="lockBracket"
+					@syncBracketMTGO="syncBracketMTGO"
 				></bracket-component>
 			</template>
 		</modal>

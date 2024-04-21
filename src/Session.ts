@@ -1,4 +1,4 @@
-"use strict";
+import { assert } from "console";
 import { UserID, SessionID } from "./IDTypes.js";
 import {
 	shuffleArray,
@@ -65,14 +65,13 @@ import {
 } from "./Message.js";
 import { InactiveSessions, logSession } from "./Persistence.js";
 import { sendDecks } from "./BotTrainingAPI.js";
-import { Bracket, TeamBracket, SwissBracket, DoubleBracket, BracketPlayer } from "./Brackets.js";
+import { IBracket, SingleBracket, TeamBracket, SwissBracket, DoubleBracket, BracketType } from "./Brackets.js";
 import { CustomCardList, generateBoosterFromCustomCardList, generateCustomGetCardFunction } from "./CustomCardList.js";
 import { DraftLog, DraftPick, GridDraftPick } from "./DraftLog.js";
 import { generateJHHBooster, JHHBooster, JHHBoosterPattern } from "./JumpstartHistoricHorizons.js";
 import { IDraftState } from "./IDraftState.js";
 import { MinesweeperCellState } from "./MinesweeperDraftTypes.js";
 import { MinesweeperDraftState, isMinesweeperDraftState } from "./MinesweeperDraft.js";
-import { assert } from "console";
 import { TeamSealedState, isTeamSealedState } from "./TeamSealed.js";
 import { GridDraftState, isGridDraftState } from "./GridDraft.js";
 import { DraftState, isDraftState } from "./DraftState.js";
@@ -91,6 +90,8 @@ import { SolomonDraftState, isSolomonDraftState } from "./SolomonDraft.js";
 import { isSomeEnum } from "./TypeChecks.js";
 import { askColors, choosePlayer } from "./Conspiracy.js";
 import { InProduction, InTesting, TestingOnly } from "./Context.js";
+
+import { MatchResults, EventCompleted, Result } from "./MTGOAPI.js";
 
 // Tournament timer depending on the number of remaining cards in a pack.
 const TournamentTimer = [
@@ -166,7 +167,7 @@ export class Session implements IIndexable {
 	draftLogRecipients: DraftLogRecipients = "everyone";
 	draftLogUnlockTimer: number = 0; // In minutes; Zero to disable.
 	bracketLocked: boolean = false; // If set, only the owner can edit the results.
-	bracket?: Bracket = undefined;
+	bracket?: IBracket = undefined;
 
 	// Draft state
 	drafting: boolean = false;
@@ -196,6 +197,10 @@ export class Session implements IIndexable {
 		if (this.sendDecklogTimeout) this.sendDecklog();
 		if (isDraftState(this.draftState) && this.draftState.pendingTimeout)
 			clearTimeout(this.draftState.pendingTimeout);
+		if (this.bracket?.MTGOSynced)
+			this.bracket.players.forEach((p) => {
+				if (p) MatchResults.unsubscribe(p!.userName);
+			});
 	}
 
 	addUser(userID: UserID) {
@@ -3573,24 +3578,137 @@ export class Session implements IIndexable {
 		);
 	}
 
-	generateBracket(players: BracketPlayer[]) {
-		this.bracket = this.teamDraft ? new TeamBracket(players) : new Bracket(players);
+	generateBracket(type: BracketType): void | MessageError {
+		const previousBracket = this.bracket;
+
+		const playerData = this.userOrder
+			.filter((uid) => this.users.has(uid) && (this.ownerIsPlayer || uid !== this.owner))
+			.map((uid) => {
+				const u = Connections[uid];
+				return { userID: u.userID, userName: u.userName };
+			});
+		switch (type) {
+			case BracketType.Single: {
+				this.bracket = new SingleBracket(playerData);
+				break;
+			}
+			case BracketType.Team: {
+				if (this.userOrder.length !== 6)
+					return new MessageError(
+						"Invalid player count",
+						"Team Draft tournaments require exactly 6 players."
+					);
+				this.bracket = new TeamBracket(playerData);
+				break;
+			}
+			case BracketType.Swiss: {
+				if ([6, 8, 10].indexOf(playerData.length) === -1)
+					return new MessageError(
+						"Invalid player count",
+						"Swiss tournaments require exactly 6, 8 or 10 players."
+					);
+				this.bracket = new SwissBracket(playerData);
+				break;
+			}
+			case BracketType.Double: {
+				this.bracket = new DoubleBracket(playerData);
+				break;
+			}
+		}
+
+		if (previousBracket?.MTGOSynced)
+			previousBracket.players.forEach((p) => {
+				if (p) MatchResults.unsubscribe(p!.userName);
+			});
+
 		this.forUsers((u) => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
 	}
 
-	generateSwissBracket(players: BracketPlayer[]) {
-		this.bracket = new SwissBracket(players);
-		this.forUsers((u) => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
-	}
-
-	generateDoubleBracket(players: BracketPlayer[]) {
-		this.bracket = new DoubleBracket(players);
-		this.forUsers((u) => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
-	}
-
-	updateBracket(results: Array<[number, number]>): void {
+	updateBracket(matchIndex: number, playerIndex: number, value: number): void {
 		if (!this.bracket) return;
-		this.bracket.results = results;
+		this.bracket.matches[matchIndex].results[playerIndex] = value;
+		this.bracket.updatePairings();
+		this.forUsers((u) => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
+	}
+
+	handleMTGOEvent(e: EventCompleted) {
+		if (!this.bracket || !this.bracket.MTGOSynced) return;
+
+		if (e.finalMatchResults) {
+			let mID: number | null = null;
+			for (const m of this.bracket.matches) {
+				if (
+					((this.bracket.players[m.players[0]]?.userName === e.finalMatchResults[0].userInfo.screenName &&
+						this.bracket.players[m.players[1]]?.userName === e.finalMatchResults[1].userInfo.screenName) ||
+						(this.bracket.players[m.players[1]]?.userName === e.finalMatchResults[0].userInfo.screenName &&
+							this.bracket.players[m.players[0]]?.userName ===
+								e.finalMatchResults[1].userInfo.screenName)) &&
+					m.results[0] === 0 &&
+					m.results[1] === 0
+				) {
+					mID = m.id;
+					break;
+				}
+			}
+
+			if (mID) {
+				const playerNameToIndex = {
+					[this.bracket.players[this.bracket.matches[mID].players[0]]!.userName]: 0,
+					[this.bracket.players[this.bracket.matches[mID].players[1]]!.userName]: 1,
+				};
+
+				const results: [number, number] = [0, 0];
+				for (const game of e.games) {
+					for (const playerRanking of game.playerRankings) {
+						if (playerRanking.ranking === Result.Win) {
+							const idx = playerNameToIndex[playerRanking.userInfo.screenName];
+							results[idx] += 1;
+						}
+					}
+				}
+
+				this.bracket.matches[mID].results = results;
+				this.bracket.updatePairings();
+				this.forUsers((u) => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
+
+				const winnerIdx = results[0] > results[1] ? 0 : 1;
+				const loserIdx = (winnerIdx + 1) % 2;
+				const msg = new ToastMessage(
+					`${this.bracket.players[this.bracket.matches[mID].players[winnerIdx]]?.userName} won their match against ${this.bracket.players[this.bracket.matches[mID].players[loserIdx]]?.userName} ${results[winnerIdx]}-${results[loserIdx]}`
+				);
+				this.forUsers((uid) => Connections[uid]?.socket?.emit("message", msg));
+			}
+		}
+	}
+
+	syncBracketMTGO(value: boolean) {
+		if (!this.bracket || value === this.bracket.MTGOSynced) return;
+
+		this.bracket.MTGOSynced = value;
+
+		if (this.bracket.MTGOSynced) {
+			this.bracket.players.forEach((p) => {
+				if (p) {
+					MatchResults.subscribe(
+						p.userName,
+						((sessionID, userName) => {
+							return (e: EventCompleted) => {
+								const sess = Sessions[sessionID];
+								if (!sess || !sess.bracket || !sess.bracket.MTGOSynced) {
+									MatchResults.unsubscribe(userName);
+								} else {
+									sess.handleMTGOEvent(e);
+								}
+							};
+						})(this.id, p.userName)
+					);
+				}
+			});
+		} else {
+			this.bracket.players.forEach((p) => {
+				if (p) MatchResults.unsubscribe(p.userName);
+			});
+		}
 		this.forUsers((u) => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
 	}
 

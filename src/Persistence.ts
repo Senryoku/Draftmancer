@@ -19,7 +19,7 @@ const MixInstance = MixPanelToken
 	? mixpanel.init(MixPanelToken, {
 			//debug: process.env.NODE_ENV !== "production",
 			protocol: "https",
-	  })
+		})
 	: null;
 
 //                                      Explicitly disabled
@@ -38,6 +38,7 @@ import { WinchesterDraftState } from "./WinchesterDraft.js";
 import { HousmanDraftState } from "./HousmanDraft.js";
 import { SolomonDraftState } from "./SolomonDraft.js";
 import { sendLog } from "./BotTrainingAPI.js";
+import { deserializeBracket } from "./BracketSerialization.js";
 
 const PersistenceLocalPath = process.env.PERSISTENCE_LOCAL_PATH ?? ".";
 const LocalPersitenceDirectory = "tmp";
@@ -199,6 +200,10 @@ export function restoreSession(s: any, owner: UserID) {
 				r.drafting = false;
 			}
 		}
+	}
+
+	if (s.bracket) {
+		r.bracket = deserializeBracket(s.bracket);
 	}
 
 	return r;

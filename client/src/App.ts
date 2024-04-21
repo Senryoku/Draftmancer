@@ -11,12 +11,12 @@ import type { GridDraftSyncData } from "@/GridDraft";
 import type { RochesterDraftSyncData } from "@/RochesterDraft";
 import type { RotisserieDraftStartOptions, RotisserieDraftSyncData } from "@/RotisserieDraft";
 import type { TeamSealedSyncData } from "@/TeamSealed";
-import type { Bracket } from "@/Brackets";
 import type { SocketAck } from "@/Message";
 import type { Options } from "@/utils";
 import type { JHHBooster } from "@/JumpstartHistoricHorizons";
 import type { CustomCardList } from "@/CustomCardList";
 import type SessionsSettingsProps from "@/Session/SessionProps";
+import { IBracket, BracketType } from "../../src/Brackets";
 import { MinesweeperSyncData } from "@/MinesweeperDraftTypes";
 import { HousmanDraftSyncData } from "@/HousmanDraft";
 import { minesweeperApplyDiff } from "../../src/MinesweeperDraftTypes";
@@ -282,6 +282,7 @@ export default defineComponent({
 			GameState: GameState,
 			ReadyState,
 			PassingOrder,
+			BracketType,
 
 			sortableUpdate,
 
@@ -353,7 +354,7 @@ export default defineComponent({
 			draftLogs: [] as DraftLog[],
 			currentDraftLog: null as DraftLog | null,
 			draftLogLive: null as DraftLog | null,
-			bracket: null as Bracket | null,
+			bracket: null as IBracket | null,
 			virtualPlayersData: null as UsersData | null,
 
 			botScores: null as BotScores | null,
@@ -3062,43 +3063,25 @@ export default defineComponent({
 			return players;
 		},
 		// Bracket (Server communication)
-		generateBracket() {
+		generateBracket(type: BracketType) {
 			if (this.userID != this.sessionOwner) return;
-			const players = this.prepareBracketPlayers(this.teamDraft ? [0, 3, 2, 5, 4, 1] : [0, 4, 2, 6, 1, 5, 3, 7]);
-			this.socket.emit("generateBracket", players, (answer) => {
+			this.socket.emit("generateBracket", type, (answer) => {
 				if (answer.code === 0) this.displayedModal = "bracket";
 				else if (answer.error) Alert.fire(answer.error);
 			});
 		},
-		generateSwissBracket() {
-			if (this.userID != this.sessionOwner) return;
-			const pairings = { 6: [0, 3, 1, 4, 2, 5], 8: [0, 4, 2, 6, 1, 5, 3, 7], 10: [0, 5, 1, 6, 2, 7, 3, 8, 4, 9] }[
-				this.sessionUsers.length
-			];
-			if (!pairings) return;
-			const players = this.prepareBracketPlayers(pairings);
-			this.socket.emit("generateSwissBracket", players, (answer) => {
-				if (answer.code === 0) this.displayedModal = "bracket";
-				else if (answer.error) Alert.fire(answer.error);
-			});
-		},
-		generateDoubleBracket() {
-			if (this.userID != this.sessionOwner || this.teamDraft) return;
-			const players = this.prepareBracketPlayers([0, 4, 2, 6, 1, 5, 3, 7]);
-			this.socket.emit("generateDoubleBracket", players, (answer) => {
-				if (answer.code === 0) this.displayedModal = "bracket";
-				else if (answer.error) Alert.fire(answer.error);
-			});
-		},
-		updateBracket(matchIndex: number, index: number, value: number) {
-			if (!this.bracket || (this.userID != this.sessionOwner && this.bracketLocked)) return;
-			this.bracket.results[matchIndex][index] = value;
-			this.socket.emit("updateBracket", this.bracket.results);
+		updateBracket(matchIndex: number, playerIndex: number, value: number) {
+			if (!this.bracket || (this.userID !== this.sessionOwner && this.bracketLocked)) return;
+			this.socket.emit("updateBracket", matchIndex, playerIndex, value);
 		},
 		lockBracket(val: boolean) {
-			if (this.userID != this.sessionOwner) return;
+			if (this.userID !== this.sessionOwner) return;
 			this.bracketLocked = val;
 			this.socket.emit("lockBracket", this.bracketLocked);
+		},
+		syncBracketMTGO(val: boolean) {
+			if (this.userID !== this.sessionOwner) return;
+			this.socket.emit("syncBracketMTGO", val);
 		},
 		// Deck/Sideboard management
 		addToDeck(card: UniqueCard | UniqueCard[], options: { event?: MouseEvent } | undefined = undefined) {

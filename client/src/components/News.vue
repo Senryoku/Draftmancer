@@ -1,6 +1,20 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
+			<em>April 20, 2024</em>
+			<p>
+				<font-awesome-icon icon="fa-solid fa-trophy"></font-awesome-icon> I rewrote the tournament bracket
+				system to be more robust and maintainable. Please me let me know if you encounter any regression!
+			</p>
+			<p>
+				As a first improvement to the tournament brackets and thanks to the help of Danbopes from
+				<a href="https://mtgbot.tv/donate" target="_blank">MTGBot</a>, you can now enable the experimental
+				"Sync. with MTGO matches" setting in your tournament bracket and Draftmancer will automatically populate
+				it with you match results!<br />Make sure everyone use their MTGO screen names for this to work properly
+				;)
+			</p>
+		</div>
+		<div class="news">
 			<em>April 11, 2024</em>
 			<p>
 				Reworked the way Minesweeper Draft grids are generated, allowing the use of standard MTG sets and
