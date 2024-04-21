@@ -3631,6 +3631,49 @@ export class Session implements IIndexable {
 		this.forUsers((u) => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
 	}
 
+	handleMTGOEvent(e: EventCompleted) {
+		if (!this.bracket || !this.bracket.MTGOSynced) return;
+
+		if (e.finalMatchResults) {
+			let mID: number | null = null;
+			for (const m of this.bracket.matches) {
+				if (
+					((this.bracket.players[m.players[0]]?.userName === e.finalMatchResults[0].userInfo.screenName &&
+						this.bracket.players[m.players[1]]?.userName === e.finalMatchResults[1].userInfo.screenName) ||
+						(this.bracket.players[m.players[1]]?.userName === e.finalMatchResults[0].userInfo.screenName &&
+							this.bracket.players[m.players[0]]?.userName ===
+								e.finalMatchResults[1].userInfo.screenName)) &&
+					m.results[0] === 0 &&
+					m.results[1] === 0
+				) {
+					mID = m.id;
+					break;
+				}
+			}
+
+			if (mID) {
+				const playerNameToIndex = {
+					[this.bracket.players[this.bracket.matches[mID].players[0]]!.userName]: 0,
+					[this.bracket.players[this.bracket.matches[mID].players[1]]!.userName]: 1,
+				};
+
+				const results: [number, number] = [0, 0];
+				for (const game of e.games) {
+					for (const playerRanking of game.playerRankings) {
+						if (playerRanking.ranking === Result.Win) {
+							const idx = playerNameToIndex[playerRanking.userInfo.screenName];
+							results[idx] += 1;
+						}
+					}
+				}
+
+				this.bracket.matches[mID].results = results;
+				this.bracket.updatePairings();
+				this.forUsers((u) => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
+			}
+		}
+	}
+
 	syncBracketMTGO(value: boolean) {
 		if (!this.bracket || value === this.bracket.MTGOSynced) return;
 
@@ -3638,65 +3681,27 @@ export class Session implements IIndexable {
 
 		if (this.bracket.MTGOSynced) {
 			this.bracket.players.forEach((p) => {
-				if (p)
-					MatchResults.subscribe(p.userName, (e: EventCompleted) => {
-						const sessID = this.id;
-						const sess = Sessions[sessID];
-						if (!sess || !sess.bracket) {
-							MatchResults.unsubscribe(p.userName);
-							return;
-						}
-
-						if (e.finalMatchResults) {
-							let mID: number | null = null;
-							for (const m of sess.bracket.matches) {
-								if (
-									((sess.bracket.players[m.players[0]]?.userName ===
-										e.finalMatchResults[0].userInfo.screenName &&
-										sess.bracket.players[m.players[1]]?.userName ===
-											e.finalMatchResults[1].userInfo.screenName) ||
-										(sess.bracket.players[m.players[1]]?.userName ===
-											e.finalMatchResults[0].userInfo.screenName &&
-											sess.bracket.players[m.players[0]]?.userName ===
-												e.finalMatchResults[1].userInfo.screenName)) &&
-									m.results[0] === 0 &&
-									m.results[1] === 0
-								) {
-									mID = m.id;
-									break;
+				if (p) {
+					MatchResults.subscribe(
+						p.userName,
+						((sessionID, userName) => {
+							return (e: EventCompleted) => {
+								const sess = Sessions[sessionID];
+								if (!sess || !sess.bracket || !sess.bracket.MTGOSynced) {
+									MatchResults.unsubscribe(userName);
+								} else {
+									sess.handleMTGOEvent(e);
 								}
-							}
-
-							if (mID) {
-								const playerNameToIndex = {
-									[sess.bracket.players[sess.bracket.matches[mID].players[0]]!.userName]: 0,
-									[sess.bracket.players[sess.bracket.matches[mID].players[1]]!.userName]: 1,
-								};
-
-								const results: [number, number] = [0, 0];
-								for (const game of e.games) {
-									for (const playerRanking of game.playerRankings) {
-										if (playerRanking.ranking === Result.Win) {
-											const idx = playerNameToIndex[playerRanking.userInfo.screenName];
-											results[idx] += 1;
-										}
-									}
-								}
-
-								sess.bracket.matches[mID].results = results;
-								sess.bracket.updatePairings();
-								sess.forUsers((u) =>
-									Connections[u]?.socket.emit("sessionOptions", { bracket: sess.bracket })
-								);
-							}
-						}
-					});
+							};
+						})(this.id, p.userName)
+					);
+				}
 			});
-		} else
+		} else {
 			this.bracket.players.forEach((p) => {
-				if (p) MatchResults.unsubscribe(p!.userName);
+				if (p) MatchResults.unsubscribe(p.userName);
 			});
-
+		}
 		this.forUsers((u) => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
 	}
 
