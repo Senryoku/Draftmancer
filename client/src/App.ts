@@ -3054,14 +3054,6 @@ export default defineComponent({
 				fireToast("success", "Shared draft log with session!");
 			}
 		},
-		prepareBracketPlayers(pairingOrder: number[]) {
-			const playerInfos = this.sessionUsers.map((u) => {
-				return { userID: u.userID, userName: u.userName };
-			});
-			const players = [];
-			for (let i = 0; i < pairingOrder.length; ++i) players[i] = playerInfos[pairingOrder[i]];
-			return players;
-		},
 		// Bracket (Server communication)
 		generateBracket(type: BracketType) {
 			if (this.userID != this.sessionOwner) return;
