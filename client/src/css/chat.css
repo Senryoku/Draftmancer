@@ -114,21 +114,33 @@
 }
 
 .chat-history ol {
-	list-style: none;
+	display: flex;
+	flex-direction: column;
+	min-width: 20vw;
+	max-height: 60vh;
 	margin: 0;
 	padding: 0;
-	width: 100%;
-	max-height: 60vh;
+	list-style: none;
 	overflow-y: scroll;
 	white-space: initial;
 }
 
+@media (orientation: landscape) {
+	.chat-history ol {
+		max-width: 60vw;
+	}
+}
+
+@media (orientation: portrait) {
+	.chat-history ol {
+		max-width: 90vw;
+	}
+}
 .chat-history li {
 	display: inline-flex;
 	align-items: stretch;
 	background: white;
 	border-radius: 0.25em;
-	width: calc(100% - 2 * 0.2em);
 	margin: 0.2em;
 }
 
@@ -141,7 +153,11 @@
 	background: #444;
 	color: #ddd;
 	font-weight: bold;
-	word-wrap: anywhere;
+	white-space: nowrap;
+	min-width: 18ch;
+	max-width: 18ch;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .chat-history li .chat-message {

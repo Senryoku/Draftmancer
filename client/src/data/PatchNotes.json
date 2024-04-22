@@ -1,5 +1,11 @@
 [
 	{
+		"date": "22/04/2024",
+		"notes": [
+			"Added the ability to mute players, hidding their messages in the session chat."
+		]
+	},
+	{
 		"date": "20/04/2024",
 		"notes": [
 			"Rewrote tournament bracket system.",

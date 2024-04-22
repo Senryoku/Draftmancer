@@ -901,6 +901,24 @@
 								:key="msg.timestamp"
 							>
 								<span class="chat-author">
+									<template v-if="msg.author !== userID">
+										<template v-if="!mutedUsers.has(msg.author)">
+											<font-awesome-icon
+												class="clickable"
+												icon="fa-solid fa-comment-slash"
+												@click="mutedUsers.add(msg.author)"
+												v-tooltip="`Mute this user.`"
+											></font-awesome-icon>
+										</template>
+										<template v-else>
+											<font-awesome-icon
+												class="clickable"
+												icon="fa-solid fa-comment"
+												@click="mutedUsers.delete(msg.author)"
+												v-tooltip="`Unmute this user.`"
+											></font-awesome-icon>
+										</template>
+									</template>
 									{{
 										msg.author in userByID
 											? userByID[msg.author].userName
@@ -909,7 +927,10 @@
 												: "(Left)"
 									}}
 								</span>
-								<span class="chat-message">{{ msg.text }}</span>
+								<span class="chat-message">
+									<template v-if="!mutedUsers.has(msg.author)">{{ msg.text }}</template>
+									<template v-else><em>(Muted)</em></template>
+								</span>
 							</li>
 						</ol>
 					</template>

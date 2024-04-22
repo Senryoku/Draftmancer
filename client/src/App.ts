@@ -448,6 +448,7 @@ export default defineComponent({
 				text: string;
 				timestamp: number;
 			}[],
+			mutedUsers: new Set<UserID>(),
 		};
 	},
 	methods: {
@@ -504,9 +505,8 @@ export default defineComponent({
 
 			this.socket.on("chatMessage", (message) => {
 				this.messagesHistory.push(message);
-				// TODO: Cleanup this?
 				const bubbleEl = document.querySelector("#chat-bubble-" + message.author);
-				if (bubbleEl) {
+				if (bubbleEl && !this.mutedUsers.has(message.author)) {
 					const bubble = bubbleEl as HTMLElement & { timeoutHandler: number };
 					bubble.innerText = message.text;
 					bubble.style.opacity = "1";
