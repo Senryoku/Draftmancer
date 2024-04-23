@@ -112,7 +112,7 @@ export function exportToMagicProTools(draftLog: DraftLog, userID: UserID, setAnd
 			for (const [idx, cid] of dp.booster.entries()) {
 				str += dp.pick.includes(idx) ? `--> ` : `    `;
 				if (setAndCollectorNumber)
-					str += `${draftLog.carddata[cid].name} (${draftLog.carddata[cid].set}) ${draftLog.carddata[cid].collector_number}\n`;
+					str += `${draftLog.carddata[cid].name} (${draftLog.carddata[cid].set.toUpperCase()}) ${draftLog.carddata[cid].collector_number}\n`;
 				else str += `${draftLog.carddata[cid].name}\n`;
 			}
 			str += "\n";
@@ -128,7 +128,7 @@ export function exportToMagicProTools(draftLog: DraftLog, userID: UserID, setAnd
 				for (const [idx, cid] of pick.booster.entries()) {
 					str += pick.pick.includes(idx) ? `--> ` : `    `;
 					if (setAndCollectorNumber)
-						str += `${draftLog.carddata[cid].name} (${draftLog.carddata[cid].set}) ${draftLog.carddata[cid].collector_number}\n`;
+						str += `${draftLog.carddata[cid].name} (${draftLog.carddata[cid].set.toUpperCase()}) ${draftLog.carddata[cid].collector_number}\n`;
 					else str += `${draftLog.carddata[cid].name}\n`;
 				}
 				str += "\n";
