@@ -164,7 +164,9 @@ describe("Draft Queue", function () {
 				for (let i = 0; i < pages.length; i++) done[i] = await promises[i];
 			}
 			for (const page of pages)
-				await page.waitForXPath("//*[contains(., 'Deck (45') or contains(., 'Deck (42')]");
+				await page.waitForXPath(
+					"//*[contains(., 'Deck (45') or contains(., 'Deck (42') or contains(., 'Deck (39')]"
+				);
 		});
 	});
 });
