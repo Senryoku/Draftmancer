@@ -2688,7 +2688,7 @@ export default defineComponent({
 		},
 		// FIXME: Use a stricter type than 'string' for services.
 		importCube(service: string) {
-			const defaultMatchCardVersions = localStorage.getItem("import-match-versions") === "true";
+			const defaultMatchCardVersions = (localStorage.getItem("import-match-versions") ?? "true") === "true";
 			const defaultCubeID = localStorage.getItem("import-cubeID") ?? "";
 			Alert.fire({
 				title: `Import from ${service}`,
