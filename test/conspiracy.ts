@@ -12,7 +12,7 @@ describe("Conspiracy Draft Matters Cards", () => {
 	let clients: ReturnType<typeof makeClients> = [];
 	let ownerIdx = 0;
 	const states: {
-		booster: UniqueCard[];
+		booster?: UniqueCard[];
 		boosterCount: number;
 		boosterNumber: number;
 		pickNumber: number;
@@ -102,7 +102,7 @@ describe("Conspiracy Draft Matters Cards", () => {
 
 		it("Each player picks a Cogwork Librarian", (done) => {
 			for (const s of states)
-				expect(s.booster.filter((c) => c.oracle_id === CogworkLibrarianOracleID)).to.have.length(1);
+				expect(s.booster?.filter((c) => c.oracle_id === CogworkLibrarianOracleID)).to.have.length(1);
 			let eventReceived = 0;
 			let messageReceived = 0;
 			const checkDone = () => {
@@ -126,13 +126,13 @@ describe("Conspiracy Draft Matters Cards", () => {
 						++eventReceived;
 						states[i] = state;
 						expect(
-							states[i].booster.filter((c) => c.oracle_id === CogworkLibrarianOracleID)
+							states[i].booster?.filter((c) => c.oracle_id === CogworkLibrarianOracleID)
 						).to.have.length(0);
 						checkDone();
 					}
 				});
-				const idx = states[i].booster.findIndex((c) => c.oracle_id === CogworkLibrarianOracleID);
-				cogworkLibrarians[i] = states[i].booster[idx].uniqueID;
+				const idx = states[i].booster!.findIndex((c) => c.oracle_id === CogworkLibrarianOracleID);
+				cogworkLibrarians[i] = states[i].booster![idx].uniqueID;
 				clients[i].emit(
 					"pickCard",
 					{
@@ -194,8 +194,8 @@ describe("Conspiracy Draft Matters Cards", () => {
 
 		it("Cogwork Librarians should be back in the boosters", (done) => {
 			for (let i = 0; i < states.length; ++i) {
-				expect(states[i].booster.filter((c) => c.oracle_id === CogworkLibrarianOracleID)).to.have.length(1);
-				expect(states[i].booster.filter((c) => c.oracle_id === CogworkLibrarianOracleID)[0].uniqueID).to.eql(
+				expect(states[i].booster!.filter((c) => c.oracle_id === CogworkLibrarianOracleID)).to.have.length(1);
+				expect(states[i].booster!.filter((c) => c.oracle_id === CogworkLibrarianOracleID)[0].uniqueID).to.eql(
 					cogworkLibrarians[(i + 1) % 2]
 				);
 			}
@@ -210,7 +210,7 @@ describe("Conspiracy Draft Matters Cards", () => {
 		after(stopDraft);
 
 		it("Each player picks a Lore Seeker, using its abilty", (done) => {
-			for (const s of states) expect(s.booster.filter((c) => c.name === "Lore Seeker")).to.have.length(1);
+			for (const s of states) expect(s.booster!.filter((c) => c.name === "Lore Seeker")).to.have.length(1);
 			let eventReceived = 0;
 			let messageReceived = 0;
 			const checkDone = () => {
@@ -238,17 +238,17 @@ describe("Conspiracy Draft Matters Cards", () => {
 						// This should be a new pack
 						expect(states[i].booster).to.have.length(10);
 						expect(
-							states[i].booster.filter((c) => c.name === "Lore Seeker"),
+							states[i].booster!.filter((c) => c.name === "Lore Seeker"),
 							"New booster should have a Lore Seeker"
 						).to.have.length(1);
 						expect(loreSeekers, "should be a new lore seeker").not.to.include(
-							states[i].booster.filter((c) => c.name === "Lore Seeker")[0].uniqueID
+							states[i].booster!.filter((c) => c.name === "Lore Seeker")[0].uniqueID
 						);
 						checkDone();
 					}
 				});
-				const idx = states[i].booster.findIndex((c) => c.name === "Lore Seeker");
-				loreSeekers[i] = states[i].booster[idx].uniqueID;
+				const idx = states[i].booster!.findIndex((c) => c.name === "Lore Seeker");
+				loreSeekers[i] = states[i].booster![idx].uniqueID;
 				clients[i].emit(
 					"pickCard",
 					{
@@ -265,7 +265,7 @@ describe("Conspiracy Draft Matters Cards", () => {
 		});
 
 		it("Each player picks a Lore Seeker, not using its abilty", (done) => {
-			for (const s of states) expect(s.booster.filter((c) => c.name === "Lore Seeker")).to.have.length(1);
+			for (const s of states) expect(s.booster!.filter((c) => c.name === "Lore Seeker")).to.have.length(1);
 			let eventReceived = 0;
 			let messageReceived = 0;
 			const checkDone = () => {
@@ -292,14 +292,14 @@ describe("Conspiracy Draft Matters Cards", () => {
 						states[i] = s;
 						expect(states[i].booster).to.have.length(9);
 						expect(
-							states[i].booster.filter((c) => c.name === "Lore Seeker"),
+							states[i].booster!.filter((c) => c.name === "Lore Seeker"),
 							"Already opened should not have a Lore Seeker"
 						).to.have.length(0);
 						checkDone();
 					}
 				});
-				const idx = states[i].booster.findIndex((c) => c.name === "Lore Seeker");
-				loreSeekers[i] = states[i].booster[idx].uniqueID;
+				const idx = states[i].booster!.findIndex((c) => c.name === "Lore Seeker");
+				loreSeekers[i] = states[i].booster![idx].uniqueID;
 				clients[i].emit(
 					"pickCard",
 					{
@@ -319,7 +319,7 @@ describe("Conspiracy Draft Matters Cards", () => {
 		after(stopDraft);
 
 		it("Each player picks a Lore Seeker, using its abilty", (done) => {
-			for (const s of states) expect(s.booster.filter((c) => c.name === "Lore Seeker")).to.have.length(1);
+			for (const s of states) expect(s.booster!.filter((c) => c.name === "Lore Seeker")).to.have.length(1);
 			let eventReceived = 0;
 			let messageReceived = 0;
 			const checkDone = () => {
@@ -335,7 +335,7 @@ describe("Conspiracy Draft Matters Cards", () => {
 					checkDone();
 				});
 				clients[i].on("draftState", (state) => {
-					for (const card of states[i].booster)
+					for (const card of states[i].booster!)
 						if (card.name !== "Lore Seeker") seenCards[card.uniqueID] = card.id;
 					const s = state as {
 						booster: UniqueCard[];
@@ -349,17 +349,17 @@ describe("Conspiracy Draft Matters Cards", () => {
 						// This should be a new pack
 						expect(states[i].booster).to.have.length(2);
 						expect(
-							states[i].booster.filter((c) => c.name === "Lore Seeker"),
+							states[i].booster!.filter((c) => c.name === "Lore Seeker"),
 							"New booster should have a Lore Seeker"
 						).to.have.length(1);
 						expect(loreSeekers, "should be a new lore seeker").not.to.include(
-							states[i].booster.filter((c) => c.name === "Lore Seeker")[0].uniqueID
+							states[i].booster!.filter((c) => c.name === "Lore Seeker")[0].uniqueID
 						);
 						checkDone();
 					}
 				});
-				const idx = states[i].booster.findIndex((c) => c.name === "Lore Seeker");
-				loreSeekers[i] = states[i].booster[idx].uniqueID;
+				const idx = states[i].booster!.findIndex((c) => c.name === "Lore Seeker");
+				loreSeekers[i] = states[i].booster![idx].uniqueID;
 				clients[i].emit(
 					"pickCard",
 					{
@@ -387,7 +387,7 @@ describe("Conspiracy Draft Matters Cards", () => {
 					const s = _s as ReturnType<DraftState["syncData"]>;
 					if (s.pickNumber !== states[i].pickNumber && s.boosterCount > 0) {
 						states[i] = s;
-						for (const card of states[i].booster)
+						for (const card of states[i].booster!)
 							if (card.name !== "Lore Seeker") seenCards[card.uniqueID] = card.id;
 						clients[i].emit("pickCard", { pickedCards: [0], burnedCards: [] }, ackNoError);
 					}

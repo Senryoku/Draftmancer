@@ -144,7 +144,7 @@ export class DraftState extends IDraftState {
 			.map((p) => p[0]);
 	}
 
-	syncData(userID: UserID) {
+	syncData(userID: UserID): DraftSyncData {
 		const { picksThisRound, burnsThisRound } = this.picksAndBurnsThisRound(userID);
 		return {
 			booster: this.players[userID].boosters[0],
@@ -160,7 +160,15 @@ export class DraftState extends IDraftState {
 	}
 }
 
-export type DraftSyncData = ReturnType<DraftState["syncData"]>;
+export type DraftSyncData = {
+	booster?: UniqueCard[];
+	boosterCount: number;
+	boosterNumber: number;
+	pickNumber: number;
+	picksThisRound: number;
+	burnsThisRound: number;
+	skipPick: boolean;
+};
 
 export function isDraftState(obj: unknown): obj is DraftState {
 	return obj instanceof DraftState;

@@ -10,7 +10,7 @@ describe("Custom Draft Effect", () => {
 	let clients: ReturnType<typeof makeClients> = [];
 	let ownerIdx = 0;
 	const states: {
-		booster: UniqueCard[];
+		booster?: UniqueCard[];
 		boosterCount: number;
 		boosterNumber: number;
 		pickNumber: number;

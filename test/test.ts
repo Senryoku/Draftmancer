@@ -525,7 +525,7 @@ describe("Single Draft (Two Players)", function () {
 
 				c.once("draftState", (s) => {
 					expect(s.booster).to.exist;
-					boosterValidation?.(s.booster);
+					boosterValidation?.(s.booster!);
 					clientStates[getUID(c)] = { state: s, pickedCards: [] };
 					receivedBoosters += 1;
 					if (connectedClients === clients.length && receivedBoosters === clients.length) done();
@@ -542,9 +542,9 @@ describe("Single Draft (Two Players)", function () {
 				client.on("draftState", function (s) {
 					const clientState = clientStates[getUID(client)];
 					if (s.pickNumber !== clientState.state.pickNumber && s.boosterCount > 0) {
-						if (s.pickNumber === 0) boosterValidation?.(s.booster);
+						if (s.pickNumber === 0) boosterValidation?.(s.booster!);
 						++receivedBoosters;
-						expect(s.booster.length).to.equal(clientState.state.booster.length - 1);
+						expect(s.booster!.length).to.equal(clientState.state.booster!.length - 1);
 						clientState.state = s;
 						if (receivedBoosters === clients.length) {
 							for (const c2 of clients) c2.removeListener("draftState");
@@ -554,7 +554,7 @@ describe("Single Draft (Two Players)", function () {
 				});
 			}
 			for (const client of clients) {
-				clientStates[getUID(client)].pickedCards.push(clientStates[getUID(client)].state.booster[0]);
+				clientStates[getUID(client)].pickedCards.push(clientStates[getUID(client)].state.booster![0]);
 				client.emit("pickCard", { pickedCards: [0], burnedCards: [] }, ackNoError);
 			}
 		});
@@ -569,20 +569,20 @@ describe("Single Draft (Two Players)", function () {
 					if (s.pickNumber !== clientState.state.pickNumber && s.boosterCount > 0) {
 						if (s.pickNumber === 0) {
 							expect(
-								s.booster.every((card) => card !== undefined),
+								s.booster!.every((card) => card !== undefined),
 								"Booster should not hold any undefined value."
 							).to.be.true;
 							expect(
-								s.booster.every((card) => card.image_uris["en"] !== undefined),
-								`All cards in booster should have a valid image.\n${s.booster
-									.filter((card) => card.image_uris["en"] === undefined)
+								s.booster!.every((card) => card.image_uris["en"] !== undefined),
+								`All cards in booster should have a valid image.\n${s
+									.booster!.filter((card) => card.image_uris["en"] === undefined)
 									.map((card) => `${card.name} (${card.id})`)
 									.join("\n")}`
 							).to.be.true;
-							boosterValidation?.(s.booster);
+							boosterValidation?.(s.booster!);
 						}
-						const choice = Math.floor(Math.random() * s.booster.length);
-						clientState.pickedCards.push(s.booster[choice]);
+						const choice = Math.floor(Math.random() * s.booster!.length);
+						clientState.pickedCards.push(s.booster![choice]);
 						clientState.state = s;
 						client.emit("pickCard", { pickedCards: [choice], burnedCards: [] }, ackNoError);
 					}
@@ -597,8 +597,8 @@ describe("Single Draft (Two Players)", function () {
 			}
 			for (const client of clients) {
 				const clientState = clientStates[getUID(client)];
-				const choice = Math.floor(Math.random() * clientState.state.booster.length);
-				clientState.pickedCards.push(clientState.state.booster[choice]);
+				const choice = Math.floor(Math.random() * clientState.state.booster!.length);
+				clientState.pickedCards.push(clientState.state.booster![choice]);
 				client.emit("pickCard", { pickedCards: [choice], burnedCards: [] }, ackNoError);
 			}
 		});
@@ -797,13 +797,13 @@ describe("Single Draft (Two Players)", function () {
 					if (s.pickNumber !== clientState.state.pickNumber && s.boosterCount > 0) {
 						clients[c].removeListener("draftState");
 						receivedBoosters += 1;
-						expect(s.booster.length).to.equal(cardsPerPack);
+						expect(s.booster!.length).to.equal(cardsPerPack);
 						expect(s.boosterNumber).to.equal(1);
 						clientState.state = s;
 						if (receivedBoosters === clients.length) done();
 					}
 				});
-				clientState.pickedCards.push(clientState.state.booster[0]);
+				clientState.pickedCards.push(clientState.state.booster![0]);
 				clients[c].emit("pickCard", { pickedCards: [0], burnedCards: [] }, ackNoError);
 			}
 		});
@@ -937,14 +937,14 @@ describe("Single Draft (Two Players)", function () {
 				clients[ownerIdx].on("draftState", function (s) {
 					const clientState = clientStates[getUID(clients[ownerIdx])];
 					if (s.pickNumber !== clientState.state.pickNumber && s.boosterCount > 0) {
-						expect(s.booster.length).to.equal(clientState.state.booster.length - 1);
+						expect(s.booster!.length).to.equal(clientState.state.booster!.length - 1);
 						clientState.state = s;
 						clients[ownerIdx].removeListener("draftState");
 						done();
 					}
 				});
 				clientStates[getUID(clients[ownerIdx])].pickedCards.push(
-					clientStates[getUID(clients[ownerIdx])].state.booster[0]
+					clientStates[getUID(clients[ownerIdx])].state.booster![0]
 				);
 				clients[ownerIdx].emit("pickCard", { pickedCards: [0], burnedCards: [] }, ackNoError);
 			});
@@ -974,7 +974,7 @@ describe("Single Draft (Two Players)", function () {
 				});
 			}
 			clientStates[getUID(clients[ownerIdx])].pickedCards.push(
-				clientStates[getUID(clients[ownerIdx])].state.booster[0]
+				clientStates[getUID(clients[ownerIdx])].state.booster![0]
 			);
 			clients[ownerIdx].emit("pickCard", { pickedCards: [0], burnedCards: [] }, ackNoError);
 		});
@@ -1045,13 +1045,13 @@ describe("Single Draft (Two Players)", function () {
 				if (s.pickNumber !== clientState.state.pickNumber && s.boosterCount > 0) {
 					clientState.state = s;
 					clientStates[getUID(clients[ownerIdx])].pickedCards.push(
-						clientStates[getUID(clients[ownerIdx])].state.booster[0]
+						clientStates[getUID(clients[ownerIdx])].state.booster![0]
 					);
 					clients[ownerIdx].emit("pickCard", { pickedCards: [0], burnedCards: [] }, ackNoError);
 				}
 			});
 			clientStates[getUID(clients[ownerIdx])].pickedCards.push(
-				clientStates[getUID(clients[ownerIdx])].state.booster[0]
+				clientStates[getUID(clients[ownerIdx])].state.booster![0]
 			);
 			clients[ownerIdx].emit("pickCard", { pickedCards: [0], burnedCards: [] }, ackNoError);
 		});
@@ -1105,14 +1105,14 @@ describe("Single Draft (Two Players)", function () {
 			const clientState = clientStates[getUID(clients[nonOwnerIdx])];
 			clients[nonOwnerIdx].on("draftState", function (s) {
 				if (s.pickNumber !== clientState.state.pickNumber && s.boosterCount > 0) {
-					expect(s.booster.length).to.equal(clientState.state.booster.length - 1);
+					expect(s.booster!.length).to.equal(clientState.state.booster!.length - 1);
 					clientState.state = s;
 					clients[nonOwnerIdx].removeListener("draftState");
 					done();
 				}
 			});
-			lastPickedCardUID = clientState.state.booster[0].uniqueID;
-			clientState.pickedCards.push(clientState.state.booster[0]);
+			lastPickedCardUID = clientState.state.booster![0].uniqueID;
+			clientState.pickedCards.push(clientState.state.booster![0]);
 			clients[nonOwnerIdx].emit("pickCard", { pickedCards: [0], burnedCards: [] }, ackNoError);
 		});
 
@@ -1154,8 +1154,8 @@ describe("Single Draft (Two Players)", function () {
 			const clientState = clientStates[getUID(clients[nonOwnerIdx])];
 			clients[nonOwnerIdx].on("draftState", function (s) {
 				if (s.pickNumber !== clientState.state.pickNumber && s.boosterCount > 0) {
-					const choice = Math.floor(Math.random() * s.booster.length);
-					clientState.pickedCards.push(s.booster[choice]);
+					const choice = Math.floor(Math.random() * s.booster!.length);
+					clientState.pickedCards.push(s.booster![choice]);
 					clientState.state = s;
 					clients[nonOwnerIdx].emit("pickCard", { pickedCards: [choice], burnedCards: [] }, ackNoError);
 				}
@@ -1165,8 +1165,8 @@ describe("Single Draft (Two Players)", function () {
 				done();
 			});
 
-			const choice = Math.floor(Math.random() * clientState.state.booster.length);
-			clientState.pickedCards.push(clientState.state.booster[choice]);
+			const choice = Math.floor(Math.random() * clientState.state.booster!.length);
+			clientState.pickedCards.push(clientState.state.booster![choice]);
 			clients[nonOwnerIdx].emit("pickCard", { pickedCards: [choice], burnedCards: [] }, ackNoError);
 		});
 
@@ -1379,9 +1379,9 @@ describe("Single Draft (Two Players)", function () {
 					clientStates[getUID(clients[ownerIdx])].state,
 					clientStates[getUID(clients[nonOwnerIdx])].state,
 				].map((s) => s.booster)) {
-					expect(Sets).to.include(b[0].set);
-					if (!(b[0].set in counts)) counts[b[0].set] = 0;
-					++counts[b[0].set];
+					expect(Sets).to.include(b![0].set);
+					if (!(b![0].set in counts)) counts[b![0].set] = 0;
+					++counts[b![0].set];
 				}
 			});
 			endDraft((b) => {
@@ -1674,7 +1674,7 @@ describe("Single Draft (Two Players)", function () {
 						clientState.state = s;
 						clients[c].emit(
 							"pickCard",
-							{ pickedCards: [Math.floor(Math.random() * s.booster.length)], burnedCards: [] },
+							{ pickedCards: [Math.floor(Math.random() * s.booster!.length)], burnedCards: [] },
 							ackNoError
 						);
 					}
@@ -1692,7 +1692,7 @@ describe("Single Draft (Two Players)", function () {
 				const clientState = clientStates[getUID(clients[c])];
 				clients[c].emit(
 					"pickCard",
-					{ pickedCards: [Math.floor(Math.random() * clientState.state.booster.length)], burnedCards: [] },
+					{ pickedCards: [Math.floor(Math.random() * clientState.state.booster!.length)], burnedCards: [] },
 					ackNoError
 				);
 			}
@@ -1751,9 +1751,9 @@ describe("Single Draft (Two Players)", function () {
 					if (s.pickNumber !== clientState.state.pickNumber && s.boosterCount > 0) {
 						clientState.state = s;
 						const burned = [];
-						for (let cidx = 1; cidx < 1 + burnedCardsPerRound && cidx < s.booster.length; ++cidx)
+						for (let cidx = 1; cidx < 1 + burnedCardsPerRound && cidx < s.booster!.length; ++cidx)
 							burned.push(cidx);
-						clientState.pickedCards.push(clientState.state.booster[0]);
+						clientState.pickedCards.push(clientState.state.booster![0]);
 						c.emit("pickCard", { pickedCards: [0], burnedCards: burned }, ackNoError);
 					}
 				});
@@ -1766,9 +1766,9 @@ describe("Single Draft (Two Players)", function () {
 			for (const c of clients) {
 				const burned = [];
 				const clientState = clientStates[getUID(c)];
-				for (let cidx = 1; cidx < 1 + burnedCardsPerRound && cidx < clientState.state.booster.length; ++cidx)
+				for (let cidx = 1; cidx < 1 + burnedCardsPerRound && cidx < clientState.state.booster!.length; ++cidx)
 					burned.push(cidx);
-				clientState.pickedCards.push(clientState.state.booster[0]);
+				clientState.pickedCards.push(clientState.state.booster![0]);
 				c.emit("pickCard", { pickedCards: [0], burnedCards: burned }, ackNoError);
 			}
 		});
@@ -1827,9 +1827,9 @@ describe("Single Draft (Two Players)", function () {
 
 						c.once("draftState", function (s) {
 							expect(s.booster).to.exist;
-							expect(s.picksThisRound).to.equal(Math.min(s.booster.length, pickPerRound));
+							expect(s.picksThisRound).to.equal(Math.min(s.booster!.length, pickPerRound));
 							expect(s.burnsThisRound).to.equal(
-								Math.min(Math.max(s.booster.length - pickPerRound, 0), burnPerRound)
+								Math.min(Math.max(s.booster!.length - pickPerRound, 0), burnPerRound)
 							);
 							clientStates[getUID(c)] = { pickedCards: [], state: s };
 							receivedBoosters += 1;
@@ -1847,16 +1847,16 @@ describe("Single Draft (Two Players)", function () {
 						clients[c].on("draftState", function (s) {
 							if (s.pickNumber !== clientState.state.pickNumber && s.boosterCount > 0) {
 								expect(s.booster).to.exist;
-								expect(s.picksThisRound).to.equal(Math.min(s.booster.length, pickPerRound));
+								expect(s.picksThisRound).to.equal(Math.min(s.booster!.length, pickPerRound));
 								expect(s.burnsThisRound).to.equal(
-									Math.min(Math.max(s.booster.length - pickPerRound, 0), burnPerRound)
+									Math.min(Math.max(s.booster!.length - pickPerRound, 0), burnPerRound)
 								);
 								clientState.state = s;
 								let cidx = 0;
 								const picked = [];
-								while (cidx < pickPerRound && cidx < s.booster.length) picked.push(cidx++);
+								while (cidx < pickPerRound && cidx < s.booster!.length) picked.push(cidx++);
 								const burned = [];
-								while (burned.length < burnPerRound && cidx < s.booster.length) burned.push(cidx++);
+								while (burned.length < burnPerRound && cidx < s.booster!.length) burned.push(cidx++);
 								clients[c].emit("pickCard", { pickedCards: picked, burnedCards: burned }, ackNoError);
 							}
 						});
@@ -1870,9 +1870,9 @@ describe("Single Draft (Two Players)", function () {
 						const clientState = clientStates[getUID(clients[c])];
 						let cidx = 0;
 						const picked = [];
-						while (cidx < pickPerRound && cidx < clientState.state.booster.length) picked.push(cidx++);
+						while (cidx < pickPerRound && cidx < clientState.state.booster!.length) picked.push(cidx++);
 						const burned = [];
-						while (burned.length < burnPerRound && cidx < clientState.state.booster.length)
+						while (burned.length < burnPerRound && cidx < clientState.state.booster!.length)
 							burned.push(cidx++);
 						clients[c].emit("pickCard", { pickedCards: picked, burnedCards: burned }, ackNoError);
 					}
@@ -1924,7 +1924,7 @@ describe("Single Draft (Two Players)", function () {
 					const settings = expectedboosterSettings[s.boosterNumber];
 					expect(s.picksThisRound).to.equal(
 						Math.min(
-							s.booster.length,
+							s.booster!.length,
 							isNumber(settings.picks)
 								? settings.picks
 								: settings.picks[Math.min(s.pickNumber, settings.picks.length - 1)]
@@ -1932,7 +1932,7 @@ describe("Single Draft (Two Players)", function () {
 					);
 					expect(s.burnsThisRound).to.equal(
 						Math.min(
-							Math.max(s.booster.length - s.picksThisRound, 0),
+							Math.max(s.booster!.length - s.picksThisRound, 0),
 							isNumber(settings.burns)
 								? settings.burns
 								: settings.burns[Math.min(s.pickNumber, settings.burns.length - 1)]
@@ -1962,7 +1962,7 @@ describe("Single Draft (Two Players)", function () {
 						const settings = expectedboosterSettings[s.boosterNumber];
 						expect(s.picksThisRound).to.equal(
 							Math.min(
-								s.booster.length,
+								s.booster!.length,
 								isNumber(settings.picks)
 									? settings.picks
 									: settings.picks[Math.min(s.pickNumber, settings.picks.length - 1)]
@@ -1970,7 +1970,7 @@ describe("Single Draft (Two Players)", function () {
 						);
 						expect(s.burnsThisRound).to.equal(
 							Math.min(
-								Math.max(s.booster.length - s.picksThisRound, 0),
+								Math.max(s.booster!.length - s.picksThisRound, 0),
 								isNumber(settings.burns)
 									? settings.burns
 									: settings.burns[Math.min(s.pickNumber, settings.burns.length - 1)]
@@ -1979,9 +1979,9 @@ describe("Single Draft (Two Players)", function () {
 						clientState.state = s;
 						let cidx = 0;
 						const picked = [];
-						while (cidx < s.picksThisRound && cidx < s.booster.length) picked.push(cidx++);
+						while (cidx < s.picksThisRound && cidx < s.booster!.length) picked.push(cidx++);
 						const burned = [];
-						while (burned.length < s.burnsThisRound && cidx < s.booster.length) burned.push(cidx++);
+						while (burned.length < s.burnsThisRound && cidx < s.booster!.length) burned.push(cidx++);
 						clients[c].emit("pickCard", { pickedCards: picked, burnedCards: burned }, ackNoError);
 					}
 				});
@@ -1995,10 +1995,10 @@ describe("Single Draft (Two Players)", function () {
 				const clientState = clientStates[getUID(clients[c])];
 				let cidx = 0;
 				const picked = [];
-				while (cidx < clientState.state.picksThisRound && cidx < clientState.state.booster.length)
+				while (cidx < clientState.state.picksThisRound && cidx < clientState.state.booster!.length)
 					picked.push(cidx++);
 				const burned = [];
-				while (burned.length < clientState.state.burnsThisRound && cidx < clientState.state.booster.length)
+				while (burned.length < clientState.state.burnsThisRound && cidx < clientState.state.booster!.length)
 					burned.push(cidx++);
 				clients[c].emit("pickCard", { pickedCards: picked, burnedCards: burned }, ackNoError);
 			}
@@ -2207,7 +2207,7 @@ describe("Multiple Drafts", function () {
 
 					c.socket.once("draftState", function (s) {
 						c.state = s;
-						boosters.push(s.booster);
+						boosters.push(s.booster!);
 						if (
 							sessionsCorrectlyStartedDrafting === sessionCount &&
 							boosters.length === playersPerSession * sessionCount

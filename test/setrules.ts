@@ -278,7 +278,7 @@ describe("Set Specific Booster Rules", function () {
 						(state.boosterNumber !== boosterNumber[client.id!] ||
 							state.pickNumber !== pickNumber[client.id!])
 					) {
-						if (state.pickNumber === 0) boosters.push(state.booster);
+						if (state.pickNumber === 0) boosters.push(state.booster!);
 						pickNumber[client.id!] = state.pickNumber;
 						boosterNumber[client.id!] = state.boosterNumber;
 						client.emit("pickCard", { pickedCards: [0], burnedCards: [] }, ackNoError);

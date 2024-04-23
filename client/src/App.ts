@@ -1588,6 +1588,7 @@ export default defineComponent({
 				const state = this.draftState ?? this.rochesterDraftState;
 				if (
 					state &&
+					state.booster &&
 					this.selectedCards.length === this.cardsToPick &&
 					this.selectedCards.length + this.cardsToBurnThisRound === state.booster.length
 				) {
@@ -1723,16 +1724,17 @@ export default defineComponent({
 				if (!this.draftState && !this.rochesterDraftState) return;
 
 				const state = this.draftState ?? this.rochesterDraftState!;
+				if (!state.booster) return;
 
 				const selectedCards = this.selectedCards;
 				const burningCards = this.burningCards;
 				const toSideboard = options?.toSideboard;
 
 				const pickedCardIndices = selectedCards.map((cuid) =>
-					state!.booster.findIndex((c) => cuid === c.uniqueID)
+					state!.booster!.findIndex((c) => cuid === c.uniqueID)
 				);
 				const burnedCardIndices = burningCards.map((cuid) =>
-					state!.booster.findIndex((c) => cuid === c.uniqueID)
+					state!.booster!.findIndex((c) => cuid === c.uniqueID)
 				);
 
 				// Was probably triggered on a previous pack, ignore it. Can probably only be possible during front end testing.
@@ -1867,6 +1869,7 @@ export default defineComponent({
 			if (this.draftState?.skipPick) return this.passBooster();
 
 			const state = this.draftState ?? this.rochesterDraftState!;
+			if (!state.booster) return;
 
 			// Uses botScores to automatically select picks if available
 			if (this.botScores) {
@@ -3531,7 +3534,7 @@ export default defineComponent({
 			return null;
 		},
 		cardsToPick(): number {
-			if (!this.draftState) return 1;
+			if (!this.draftState || !this.draftState.booster) return 1;
 			let picksThisRound: number = this.draftState.picksThisRound;
 
 			if (
@@ -3544,7 +3547,7 @@ export default defineComponent({
 			return Math.min(picksThisRound, this.draftState.booster.length);
 		},
 		cardsToBurnThisRound(): number {
-			if (!this.draftState) return 0;
+			if (!this.draftState || !this.draftState.booster) return 0;
 			return Math.max(
 				0,
 				Math.min(this.draftState.burnsThisRound, this.draftState.booster.length - this.cardsToPick)
@@ -3682,7 +3685,7 @@ export default defineComponent({
 								].includes(effect.type as UsableDraftEffect)) ||
 							// Disallow Cogwork Librarian effect if there's not enough cards in the pack.
 							(effect.type === UsableDraftEffect.CogworkLibrarian &&
-								this.draftState.booster.length <= this.pickedCardsPerRound)
+								(this.draftState.booster?.length ?? 0) <= this.pickedCardsPerRound)
 						)
 							continue;
 						r.push({
