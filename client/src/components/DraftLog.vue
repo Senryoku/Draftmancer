@@ -321,7 +321,7 @@ export default defineComponent({
 				},
 				referrer: "https://draftmancer.com",
 				body: `draft=${encodeURIComponent(
-					helper.exportToMagicProTools(this.draftlog, id)
+					helper.exportToMagicProTools(this.draftlog, id, true)
 				)}&apiKey=yitaOuTvlngqlKutnKKfNA&platform=mtgadraft`,
 				method: "POST",
 				mode: "cors",
