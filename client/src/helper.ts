@@ -75,7 +75,7 @@ export function groupPicksPerPack(picks: DraftPick[]) {
 	return r;
 }
 
-export function exportToMagicProTools(draftLog: DraftLog, userID: UserID) {
+export function exportToMagicProTools(draftLog: DraftLog, userID: UserID, setAndCollectorNumber: boolean = false) {
 	let str = "";
 	str += `Event #: ${draftLog.sessionID}_${draftLog.time}\n`;
 	str += `Time: ${new Date(draftLog.time).toUTCString()}\n`;
@@ -109,9 +109,12 @@ export function exportToMagicProTools(draftLog: DraftLog, userID: UserID) {
 			}
 			lastLength = dp.booster.length;
 			str += `Pack ${boosterNumber} pick ${pickNumber}:\n`;
-			for (const [idx, cid] of dp.booster.entries())
-				if (dp.pick.includes(idx)) str += `--> ${draftLog.carddata[cid].name}\n`;
-				else str += `    ${draftLog.carddata[cid].name}\n`;
+			for (const [idx, cid] of dp.booster.entries()) {
+				str += dp.pick.includes(idx) ? `--> ` : `    `;
+				if (setAndCollectorNumber)
+					str += `${draftLog.carddata[cid].name} (${draftLog.carddata[cid].set.toUpperCase()}) ${draftLog.carddata[cid].collector_number}\n`;
+				else str += `${draftLog.carddata[cid].name}\n`;
+			}
 			str += "\n";
 			pickNumber += 1;
 		}
@@ -122,9 +125,12 @@ export function exportToMagicProTools(draftLog: DraftLog, userID: UserID) {
 			str += boosterHeader;
 			for (const pick of pack) {
 				str += `Pack ${pick.packNum + 1} pick ${pick.pickNum + 1}:\n`;
-				for (const [idx, cid] of pick.booster.entries())
-					if (pick.pick.includes(idx)) str += `--> ${draftLog.carddata[cid].name}\n`;
-					else str += `    ${draftLog.carddata[cid].name}\n`;
+				for (const [idx, cid] of pick.booster.entries()) {
+					str += pick.pick.includes(idx) ? `--> ` : `    `;
+					if (setAndCollectorNumber)
+						str += `${draftLog.carddata[cid].name} (${draftLog.carddata[cid].set.toUpperCase()}) ${draftLog.carddata[cid].collector_number}\n`;
+					else str += `${draftLog.carddata[cid].name}\n`;
+				}
 				str += "\n";
 			}
 		}
