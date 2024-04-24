@@ -1694,11 +1694,6 @@
         "fullName": "30th Anniversary Misc Promos",
         "icon": "img/sets/p30m.svg"
     },
-    "p30t": {
-        "code": "p30t",
-        "fullName": "30th Anniversary Celebration Tokyo",
-        "icon": "img/sets/p30t.svg"
-    },
     "p5dn": {
         "code": "p5dn",
         "fullName": "Fifth Dawn Promos",
@@ -1863,6 +1858,11 @@
         "code": "pca",
         "fullName": "Planechase Anthology",
         "icon": "img/sets/pca.svg"
+    },
+    "pcbb": {
+        "code": "pcbb",
+        "fullName": "Cowboy Bebop",
+        "icon": "img/sets/pcbb.svg"
     },
     "pcel": {
         "code": "pcel",
