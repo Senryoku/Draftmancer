@@ -2458,6 +2458,11 @@
         "fullName": "Magic Origins Promos",
         "icon": "img/sets/pori.svg"
     },
+    "potj": {
+        "code": "potj",
+        "fullName": "Outlaws of Thunder Junction Promos",
+        "icon": "img/sets/potj.svg"
+    },
     "ppcy": {
         "code": "ppcy",
         "fullName": "Prophecy Promos",
