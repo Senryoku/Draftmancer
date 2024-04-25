@@ -225,7 +225,14 @@ export class SwissBracket extends IBracket {
 			if (complete) lastCompleteRound = i;
 		}
 
-		if (firstUncompleteRound > 0 && firstUncompleteRound === lastCompleteRound + 1) {
+		if (
+			firstUncompleteRound > 0 &&
+			firstUncompleteRound === lastCompleteRound + 1 &&
+			// Do not recompute pairings for this round if results started coming in.
+			rounds[firstUncompleteRound].every(
+				(mID) => this.matches[mID].results[0] === 0 && this.matches[mID].results[1] === 0
+			)
+		) {
 			// All previous matches have results, we can compute the next round.
 			const playerIndices = [...Array(playerCount).keys()];
 
@@ -295,6 +302,13 @@ export class SwissBracket extends IBracket {
 						break;
 					}
 				}
+			}
+		}
+
+		for (let i = lastCompleteRound + 2; i < rounds.length; ++i) {
+			for (let j = 0; j < rounds[i].length; ++j) {
+				this.matches[rounds[i][j]].players = [PlayerPlaceholder.TBD, PlayerPlaceholder.TBD];
+				this.matches[rounds[i][j]].results = [0, 0];
 			}
 		}
 		return;
