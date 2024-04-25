@@ -34,7 +34,7 @@ export function isSimpleDraftEffectType(str: unknown): str is SimpleDraftEffectT
 		(isSomeEnum(OnPickDraftEffect)(str) ||
 			isSomeEnum(OptionalOnPickDraftEffect)(str) ||
 			isSomeEnum(UsableDraftEffect)(str) ||
-			["AnimusOfPredation", "CogworkGrinder"].includes(str))
+			["TrackRemovedCardsNames", "TrackRemovedCardsSubtypes", "CogworkGrinder"].includes(str))
 	);
 }
 

@@ -185,7 +185,7 @@ export function validateCustomCard(inputCard: any): SocketError | Card {
 				if (!isSimpleDraftEffectType(entry))
 					return valErr(
 						`Invalid Property`,
-						`Invalid entry in 'draft_effects' of custom card, must be a valid DraftEffect.`
+						`Invalid entry '${entry}' in 'draft_effects' of custom card, must be a valid DraftEffect.`
 					);
 				card.draft_effects.push({ type: entry });
 			} else {

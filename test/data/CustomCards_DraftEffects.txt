@@ -9,7 +9,189 @@
 			"en": "http://fake.dmn/img.jpg"
 		},
 		"draft_effects": ["FaceUp", "CogworkLibrarian"]
-	}
+	},
+	{	
+		"name": "Reveal",
+		"rarity": "mythic",
+		"mana_cost": "{1}{B}",
+		"type": "Creature",
+		"image_uris": {
+			"en": "http://fake.dmn/img.jpg"
+		},
+		"draft_effects": ["FaceUp", "Reveal"]
+	},
+	{	
+		"name": "NotePassingPlayer",
+		"rarity": "mythic",
+		"mana_cost": "{1}{B}",
+		"type": "Creature",
+		"image_uris": {
+			"en": "http://fake.dmn/img.jpg"
+		},
+		"draft_effects": ["FaceUp", "NotePassingPlayer"]
+	},
+	{	
+		"name": "NoteDraftedCards",
+		"rarity": "mythic",
+		"mana_cost": "{1}{B}",
+		"type": "Creature",
+		"image_uris": {
+			"en": "http://fake.dmn/img.jpg"
+		},
+		"draft_effects": ["FaceUp", "NoteDraftedCards"]
+	},
+	{	
+		"name": "ChooseColors",
+		"rarity": "mythic",
+		"mana_cost": "{1}{B}",
+		"type": "Creature",
+		"image_uris": {
+			"en": "http://fake.dmn/img.jpg"
+		},
+		"draft_effects": ["FaceUp", "ChooseColors"]
+	},
+	{	
+		"name": "CanalDredger",
+		"rarity": "mythic",
+		"mana_cost": "{1}{B}",
+		"type": "Creature",
+		"image_uris": {
+			"en": "http://fake.dmn/img.jpg"
+		},
+		"draft_effects": ["FaceUp", "CanalDredger"]
+	},
+	{	
+		"name": "AetherSearcher",
+		"rarity": "mythic",
+		"mana_cost": "{1}{B}",
+		"type": "Creature",
+		"image_uris": {
+			"en": "http://fake.dmn/img.jpg"
+		},
+		"draft_effects": ["FaceUp", "AetherSearcher"]
+	},
+	{	
+		"name": "ArchdemonOfPaliano",
+		"rarity": "mythic",
+		"mana_cost": "{1}{B}",
+		"type": "Creature",
+		"image_uris": {
+			"en": "http://fake.dmn/img.jpg"
+		},
+		"draft_effects": ["FaceUp", "ArchdemonOfPaliano"]
+	},
+	{	
+		"name": "LoreSeeker",
+		"rarity": "mythic",
+		"mana_cost": "{1}{B}",
+		"type": "Creature",
+		"image_uris": {
+			"en": "http://fake.dmn/img.jpg"
+		},
+		"draft_effects": ["FaceUp", "LoreSeeker"]
+	},
+	{	
+		"name": "RemoveDraftCard",
+		"rarity": "mythic",
+		"mana_cost": "{1}{B}",
+		"type": "Creature",
+		"image_uris": {
+			"en": "http://fake.dmn/img.jpg"
+		},
+		"draft_effects": ["FaceUp", "RemoveDraftCard"]
+	},
+	{	
+		"name": "CogworkLibrarian",
+		"rarity": "mythic",
+		"mana_cost": "{1}{B}",
+		"type": "Creature",
+		"image_uris": {
+			"en": "http://fake.dmn/img.jpg"
+		},
+		"draft_effects": ["FaceUp", "CogworkLibrarian"]
+	},
+	{	
+		"name": "AgentOfAcquisitions",
+		"rarity": "mythic",
+		"mana_cost": "{1}{B}",
+		"type": "Creature",
+		"image_uris": {
+			"en": "http://fake.dmn/img.jpg"
+		},
+		"draft_effects": ["FaceUp", "AgentOfAcquisitions"]
+	},
+	{	
+		"name": "LeovoldsOperative",
+		"rarity": "mythic",
+		"mana_cost": "{1}{B}",
+		"type": "Creature",
+		"image_uris": {
+			"en": "http://fake.dmn/img.jpg"
+		},
+		"draft_effects": ["FaceUp", "LeovoldsOperative"]
+	},
+	{	
+		"name": "NoteCardName",
+		"rarity": "mythic",
+		"mana_cost": "{1}{B}",
+		"type": "Creature",
+		"image_uris": {
+			"en": "http://fake.dmn/img.jpg"
+		},
+		"draft_effects": ["FaceUp", "NoteCardName"]
+	},
+	{	
+		"name": "NoteCreatureName",
+		"rarity": "mythic",
+		"mana_cost": "{1}{B}",
+		"type": "Creature",
+		"image_uris": {
+			"en": "http://fake.dmn/img.jpg"
+		},
+		"draft_effects": ["FaceUp", "NoteCreatureName"]
+	},
+	{	
+		"name": "NoteCreatureTypes",
+		"rarity": "mythic",
+		"mana_cost": "{1}{B}",
+		"type": "Creature",
+		"image_uris": {
+			"en": "http://fake.dmn/img.jpg"
+		},
+		"draft_effects": ["FaceUp", "NoteCreatureTypes"]
+	},
+	{	
+		"name": "TrackRemovedCardsNames",
+		"rarity": "mythic",
+		"mana_cost": "{1}{B}",
+		"type": "Creature",
+		"image_uris": {
+			"en": "http://fake.dmn/img.jpg"
+		},
+		"draft_effects": ["FaceUp", "TrackRemovedCardsNames"]
+	},
+	{	
+		"name": "TrackRemovedCardsSubtypes",
+		"rarity": "mythic",
+		"mana_cost": "{1}{B}",
+		"type": "Creature",
+		"image_uris": {
+			"en": "http://fake.dmn/img.jpg"
+		},
+		"draft_effects": ["FaceUp", "TrackRemovedCardsSubtypes"]
+	},
+	{	
+		"name": "CogworkGrinder",
+		"rarity": "mythic",
+		"mana_cost": "{1}{B}",
+		"type": "Creature",
+		"image_uris": {
+			"en": "http://fake.dmn/img.jpg"
+		},
+		"draft_effects": ["FaceUp", "CogworkGrinder"]
+	},
 ]
 [Common]
 999 My Fake Cogwork
+999 TrackRemovedCardsSubtypes
+999 TrackRemovedCardsNames
