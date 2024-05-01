@@ -1,8 +1,3 @@
-import { config as dotenvConfig } from "dotenv";
-if (process.env.NODE_ENV !== "production") {
-	dotenvConfig();
-}
-
 import axios, { AxiosError } from "axios";
 
 import { arrayIntersect } from "./utils.js";

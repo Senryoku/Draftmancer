@@ -1,8 +1,6 @@
 "use strict";
 
 import { InTesting, TestingOnly } from "./Context.js";
-import { config as dotenvConfig } from "dotenv";
-if (process.env.NODE_ENV !== "production") dotenvConfig();
 
 import crypto from "crypto";
 import fs from "fs";

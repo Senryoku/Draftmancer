@@ -8,8 +8,8 @@
 	"main": "dist/src/server.js",
 	"type": "module",
 	"scripts": {
-		"start": "node --experimental-json-modules .",
-		"start-dev": "nodemon --signal SIGINT --experimental-json-modules --watch dist/src .",
+		"start": "node --env-file=.env --experimental-json-modules .",
+		"start-dev": "nodemon --signal SIGINT --env-file=.env --experimental-json-modules --watch dist/src .",
 		"build": "concurrently \"tsc\" \"npx webpack --config client/webpack.config.prod.cjs --mode=production\"",
 		"build-server": "tsc",
 		"build-server-dev": "tsc --watch",
@@ -48,7 +48,6 @@
 		"chart.js": "^4.4.2",
 		"compression": "^1.7.4",
 		"cookie-parser": "^1.4.6",
-		"dotenv": "^16.4.5",
 		"express": "^4.19.2",
 		"express-static-gzip": "^2.1.7",
 		"floating-vue": "^5.2.2",

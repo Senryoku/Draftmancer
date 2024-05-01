@@ -1,10 +1,5 @@
 import "source-map-support/register.js";
 
-import dotenv from "dotenv";
-if (process.env.NODE_ENV !== "production") {
-	dotenv.config();
-}
-
 const port = process.env.PORT || 3000;
 import fs from "fs";
 import axios, { AxiosResponse } from "axios";
