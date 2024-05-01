@@ -1,6 +1,7 @@
 import "source-map-support/register.js";
 
-const port = process.env.PORT || 3000;
+export const DraftmancerPort = process.env.PORT || 3000;
+
 import fs from "fs";
 import axios, { AxiosResponse } from "axios";
 import compression from "compression";
@@ -1921,14 +1922,28 @@ app.get("/getBracket/:sessionID", (req, res) => {
 	}
 });
 
-app.get("/getDraftLog/:sessionID", (req, res) => {
-	if (!req.params.sessionID) {
+app.get(["/getDraftLog/:sessionID", "/api/getDraftLog/:sessionID"], (req, res) => {
+	const sessionID = req.params.sessionID;
+	if (!sessionID) {
 		res.sendStatus(400);
-	} else if (req.params.sessionID in Sessions && Sessions[req.params.sessionID].draftLog) {
-		if (Sessions[req.params.sessionID].draftLog?.delayed) res.json(Sessions[req.params.sessionID].getStrippedLog());
-		else res.json(Sessions[req.params.sessionID].draftLog);
 	} else {
-		res.sendStatus(404);
+		const sess = Sessions[sessionID];
+		if (!sess) {
+			res.sendStatus(404);
+		} else if (sess.drafting) {
+			res.sendStatus(403);
+		} else if (!sess.draftLog) {
+			res.sendStatus(404);
+		} else {
+			// NOTE: Session draftLogRecipients can be changed after the fact. The restriction should be saved within the log on creation to be perfectly accurate.
+			if (sess.draftLogRecipients === "none" || sess.draftLogRecipients === "owner") {
+				res.sendStatus(403);
+			} else if (sess.draftLog.delayed) {
+				res.json(sess.getStrippedLog());
+			} else {
+				res.json(sess.draftLog);
+			}
+		}
 	}
 });
 
@@ -2013,8 +2028,8 @@ app.get("/api/getDraftQueueStatus", (req, res) => {
 });
 
 Promise.all([InactiveConnections, InactiveSessions]).then(() => {
-	httpServer.listen(port, () => {
-		console.log(`Listening on port ${port} (ready in ${process.uptime().toFixed(2)}s)`);
+	httpServer.listen(DraftmancerPort, () => {
+		console.log(`Listening on port ${DraftmancerPort} (ready in ${process.uptime().toFixed(2)}s)`);
 	});
 });
 
