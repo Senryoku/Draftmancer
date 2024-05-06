@@ -61,11 +61,11 @@
 	</div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import { DraftLog } from "@/DraftLog";
 import { UserID } from "@/IDTypes";
 
-import { defineComponent, PropType } from "vue";
+import { computed } from "vue";
 import { BracketType, PlayerPlaceholder } from "../../../src/Brackets";
 
 export type MatchPlayer = {
@@ -75,86 +75,85 @@ export type MatchPlayer = {
 	record: { wins: number; losses: number };
 };
 
-export default defineComponent({
-	props: {
-		editable: { type: Boolean, default: false },
-		bracketType: { type: String as PropType<BracketType>, required: true },
+const props = withDefaults(
+	defineProps<{
+		editable: boolean;
+		bracketType: BracketType;
 
-		matchID: { type: Number, required: true },
-		players: {
-			type: Array as PropType<(PlayerPlaceholder | MatchPlayer)[]>,
-			required: true,
-		},
-		teamRecords: { type: Array as PropType<number[]>, required: false },
+		matchID: number;
+		players: (PlayerPlaceholder | MatchPlayer)[];
+		teamRecords?: number[];
 
-		draftlog: { type: Object as PropType<DraftLog>, default: null },
-		final: { type: Boolean, default: false },
-	},
-	methods: {
-		hasDeckList(userID: UserID | undefined) {
-			return this.draftlog && userID && this.draftlog.users[userID] && this.draftlog.users[userID].decklist;
-		},
-		isGold(player: number) {
-			const p = this.players[player];
-			if (this.isPlayerPlaceholder(p)) return false;
+		draftlog?: DraftLog;
+		final: boolean;
+	}>(),
+	{
+		editable: false,
+		teamRecords: undefined,
+		draftlog: undefined,
+		final: false,
+	}
+);
 
-			if (this.isTeamBracket) {
-				return (
-					this.teamRecords![player % 2] >= 5 &&
-					this.teamRecords![player % 2] > this.teamRecords![(player + 1) % 2]
-				);
-			} else if (this.isDoubleBracket) {
-				const p2 = this.players[(player + 1) % 2];
-				if (this.isPlayerPlaceholder(p2)) return false;
-				return this.final && p.record > p2.record;
-			} else {
-				return p.record.wins === 3;
-			}
-		},
-		isSilver(player: number) {
-			const p = this.players[player];
-			if (this.isPlayerPlaceholder(p)) return false;
+const emit = defineEmits<{
+	(e: "updated", matchID: number, index: number, value: number): void;
+	(e: "selectuser", p: MatchPlayer): void;
+}>();
 
-			if (this.isDoubleBracket) {
-				const p2 = this.players[(player + 1) % 2];
-				if (this.isPlayerPlaceholder(p2)) return false;
-				return this.final && p.record < p2.record;
-			}
-			return !this.isTeamBracket && p.record.wins === 2;
-		},
-		update(event: Event, index: number) {
-			this.$emit("updated", this.matchID, index, parseInt((event.target as HTMLInputElement)?.value));
-		},
-		isEmpty(p: PlayerPlaceholder | { userName: string; result: number; record: { wins: number; losses: number } }) {
-			return p === PlayerPlaceholder.Empty;
-		},
-		isTBD(p: PlayerPlaceholder | { userName: string; result: number; record: { wins: number; losses: number } }) {
-			return p === PlayerPlaceholder.TBD;
-		},
-		isPlayerPlaceholder(p: unknown): p is PlayerPlaceholder {
-			return Number.isInteger(p);
-		},
-	},
-	computed: {
-		isValid() {
-			const p0 = this.players[0];
-			const p1 = this.players[1];
-			return !this.isPlayerPlaceholder(p0) && !this.isPlayerPlaceholder(p1);
-		},
-		isSingleBracket() {
-			return this.bracketType === BracketType.Single;
-		},
-		isSwissBracket() {
-			return this.bracketType === BracketType.Swiss;
-		},
-		isTeamBracket() {
-			return this.bracketType === BracketType.Team;
-		},
-		isDoubleBracket() {
-			return this.bracketType === BracketType.Double;
-		},
-	},
-});
+function hasDeckList(userID: UserID): boolean {
+	return !!props.draftlog?.users[userID]?.decklist;
+}
+
+function isGold(player: number) {
+	const p = props.players[player];
+	if (isPlayerPlaceholder(p)) return false;
+
+	if (isTeamBracket.value) {
+		return (
+			props.teamRecords![player] >= 5 &&
+			props.teamRecords![player] > props.teamRecords![(player + 1) % props.players.length]
+		);
+	}
+	if (isDoubleBracket.value) {
+		const p2 = props.players[(player + 1) % props.players.length];
+		if (isPlayerPlaceholder(p2)) return false;
+		return props.final && p.record > p2.record;
+	}
+	return p.record.wins === 3;
+}
+
+function isSilver(player: number) {
+	const p = props.players[player];
+	if (isPlayerPlaceholder(p)) return false;
+
+	if (isDoubleBracket.value) {
+		const p2 = props.players[(player + 1) % props.players.length];
+		if (isPlayerPlaceholder(p2)) return false;
+		return props.final && p.record < p2.record;
+	}
+	return !isTeamBracket.value && p.record.wins === 2;
+}
+
+function update(event: Event, index: number) {
+	emit("updated", props.matchID, index, parseInt((event.target as HTMLInputElement)?.value));
+}
+
+function isEmpty(p: PlayerPlaceholder | MatchPlayer): p is PlayerPlaceholder {
+	return p === PlayerPlaceholder.Empty;
+}
+
+function isTBD(p: PlayerPlaceholder | MatchPlayer): p is PlayerPlaceholder {
+	return p === PlayerPlaceholder.TBD;
+}
+
+function isPlayerPlaceholder(p: unknown): p is PlayerPlaceholder {
+	return Number.isInteger(p);
+}
+
+const isValid = computed(() => !isPlayerPlaceholder(props.players[0]) && !isPlayerPlaceholder(props.players[1]));
+
+const isTeamBracket = computed(() => props.bracketType === BracketType.Team);
+const isDoubleBracket = computed(() => props.bracketType === BracketType.Double);
 </script>
 
 <style scoped>
