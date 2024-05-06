@@ -16,19 +16,12 @@
 					}"
 					v-else-if="!isPlayerPlaceholder(p)"
 				>
-					<template v-if="final">
+					<div v-if="final && (isGold(index) || isSilver(index))" class="trophy">
 						<font-awesome-icon
 							icon="fa-solid fa-trophy"
-							v-if="isGold(index)"
-							class="trophy gold"
+							:class="{ gold: isGold(index), silver: isSilver(index) }"
 						></font-awesome-icon>
-						<font-awesome-icon
-							icon="fa-solid fa-trophy"
-							v-else-if="isSilver(index)"
-							class="trophy silver"
-						></font-awesome-icon>
-						<div v-else class="trophy"></div>
-					</template>
+					</div>
 					<div
 						class="bracket-player-name"
 						v-tooltip="`Current record: ${p.record.wins} - ${p.record.losses}`"
@@ -138,19 +131,11 @@ function update(event: Event, index: number) {
 	emit("updated", props.matchID, index, parseInt((event.target as HTMLInputElement)?.value));
 }
 
-function isEmpty(p: PlayerPlaceholder | MatchPlayer): p is PlayerPlaceholder {
-	return p === PlayerPlaceholder.Empty;
-}
+const isEmpty = (p: PlayerPlaceholder | MatchPlayer): p is PlayerPlaceholder => p === PlayerPlaceholder.Empty;
+const isTBD = (p: PlayerPlaceholder | MatchPlayer): p is PlayerPlaceholder => p === PlayerPlaceholder.TBD;
+const isPlayerPlaceholder = (p: PlayerPlaceholder | MatchPlayer): p is PlayerPlaceholder => Number.isInteger(p);
 
-function isTBD(p: PlayerPlaceholder | MatchPlayer): p is PlayerPlaceholder {
-	return p === PlayerPlaceholder.TBD;
-}
-
-function isPlayerPlaceholder(p: unknown): p is PlayerPlaceholder {
-	return Number.isInteger(p);
-}
-
-const isValid = computed(() => !isPlayerPlaceholder(props.players[0]) && !isPlayerPlaceholder(props.players[1]));
+const isValid = computed(() => props.players.every((p) => !isPlayerPlaceholder(p)));
 
 const isTeamBracket = computed(() => props.bracketType === BracketType.Team);
 const isDoubleBracket = computed(() => props.bracketType === BracketType.Double);
@@ -210,7 +195,7 @@ const isDoubleBracket = computed(() => props.bracketType === BracketType.Double)
 
 .trophy {
 	height: 32px;
-	width: 32px;
+	width: 36px;
 	font-size: 32px;
 }
 
