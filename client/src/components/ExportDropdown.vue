@@ -66,6 +66,7 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 const FaBAlwaysAvailableCards = {
 	EVO: ["EVO008", "EVO003", "EVO006", "EVO009", "EVO022", "EVO023", "EVO024", "EVO025"],
 	HVY: ["HVY002", "HVY005", "HVY005", "HVY049", "HVY094", "HVY094"],
+	MST: ["MST002", "MST003", "MST003", "MST130", "MST159"],
 };
 
 export default defineComponent({
