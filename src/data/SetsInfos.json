@@ -380,6 +380,7 @@
     "cmm": {
         "code": "cmm",
         "fullName": "Commander Masters",
+        "block": "Commander",
         "icon": "img/sets/cmm.svg"
     },
     "cmr": {
@@ -1227,6 +1228,7 @@
     "lcc": {
         "code": "lcc",
         "fullName": "The Lost Caverns of Ixalan Commander",
+        "block": "Commander",
         "icon": "img/sets/lcc.svg"
     },
     "lci": {
@@ -1328,6 +1330,11 @@
         "block": "Core Set",
         "icon": "img/sets/m21.svg"
     },
+    "m3c": {
+        "code": "m3c",
+        "fullName": "Modern Horizons 3 Commander",
+        "icon": "img/sets/m3c.svg"
+    },
     "mat": {
         "code": "mat",
         "fullName": "March of the Machine: The Aftermath",
@@ -1410,6 +1417,7 @@
     "mkc": {
         "code": "mkc",
         "fullName": "Murders at Karlov Manor Commander",
+        "block": "Commander",
         "icon": "img/sets/mkc.svg"
     },
     "mkm": {
@@ -2788,6 +2796,11 @@
         "fullName": "War of the Spark Promos",
         "icon": "img/sets/pwar.svg"
     },
+    "pwcs": {
+        "code": "pwcs",
+        "fullName": "Planeswalker Championship Promos",
+        "icon": "img/sets/pwcs.svg"
+    },
     "pwoe": {
         "code": "pwoe",
         "fullName": "Wilds of Eldraine Promos",
@@ -3484,7 +3497,7 @@
     "ylci": {
         "code": "ylci",
         "fullName": "Alchemy: Ixalan",
-        "block": "Alchemy 2023",
+        "block": "Alchemy 2024",
         "icon": "img/sets/ylci.svg"
     },
     "ymid": {
@@ -3496,6 +3509,7 @@
     "ymkm": {
         "code": "ymkm",
         "fullName": "Alchemy: Murders at Karlov Manor ",
+        "block": "Alchemy 2024",
         "icon": "img/sets/ymkm.svg"
     },
     "yneo": {
@@ -3510,6 +3524,12 @@
         "block": "Alchemy 2023",
         "icon": "img/sets/yone.svg"
     },
+    "yotj": {
+        "code": "yotj",
+        "fullName": "Alchemy: Outlaws of Thunder Junction",
+        "block": "Alchemy 2024",
+        "icon": "img/sets/yotj.svg"
+    },
     "ysnc": {
         "code": "ysnc",
         "fullName": "Alchemy: New Capenna",
@@ -3519,7 +3539,7 @@
     "ywoe": {
         "code": "ywoe",
         "fullName": "Alchemy: Wilds of Eldraine",
-        "block": "Alchemy 2023",
+        "block": "Alchemy 2024",
         "icon": "img/sets/ywoe.svg"
     },
     "zen": {

@@ -67,7 +67,7 @@ MTGADataFolder = f"{MTGAFolder}MTGA_Data\\Downloads\\Raw\\"
 MTGACardDBFiles = glob.glob(f"{MTGADataFolder}Raw_CardDatabase_*.mtga")
 
 db_age = min([(datetime.datetime.now() - datetime.datetime.fromtimestamp(os.path.getmtime(x))).days for x in MTGACardDBFiles])
-print(colored(f"\n  Don't forget to update Arena itself!", "yellow"), colored(f" (Last update {db_age} days ago)\n", "dark_grey"))
+print(colored(f"\n  Don't forget to update Arena itself!", "yellow"), colored(f" (Last update {db_age} days ago)\n", "blue"))
 
 CardsCollectorNumberAndSet = {}
 CardNameToArenaIDForJumpstart = {}
