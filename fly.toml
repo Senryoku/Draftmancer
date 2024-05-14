@@ -4,7 +4,7 @@
 #
 
 app = "draftmancer"
-primary_region = "dfw"
+primary_region = "den"
 kill_signal = "SIGINT"
 kill_timeout = "5s"
 
@@ -25,6 +25,10 @@ kill_timeout = "5s"
 [mounts]
   source = "draftmancer_data"
   destination = "/persistence"
+  initial_size = "1gb"
+
+[[vm]]
+  memory = "1gb"
 
 [experimental]
   auto_rollback = true

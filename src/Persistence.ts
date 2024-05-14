@@ -89,7 +89,7 @@ async function loadSavedConnections() {
 }
 
 async function loadSavedSessions() {
-	const InactiveSessions: Record<SessionID, any> = {};
+	const InactiveSessions: Record<SessionID, unknown> = {};
 
 	if (fs.existsSync(LocalSessionsFile)) {
 		const promise = new Promise((resolve) => {
@@ -422,6 +422,10 @@ if (!DisablePersistence) {
 		dumpToDisk(true);
 	});
 
-	InactiveConnections = await loadSavedConnections();
-	InactiveSessions = await loadSavedSessions();
+	try {
+		InactiveConnections = await loadSavedConnections();
+		InactiveSessions = await loadSavedSessions();
+	} catch (err) {
+		console.error("Error loading persistence data: ", err);
+	}
 }
