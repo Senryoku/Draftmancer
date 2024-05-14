@@ -27,6 +27,7 @@ export const ValidCubes: { [name: string]: string } = {
 	DOMLayoutExample: fs.readFileSync(`./test/data/DOMLayoutExample.txt`, "utf8"),
 	CustomCards_RelatedCards: fs.readFileSync(`./test/data/CustomCards_RelatedCards.txt`, "utf8"),
 	CustomCards_DraftEffects: fs.readFileSync(`./test/data/CustomCards_DraftEffects.txt`, "utf8"),
+	CustomCards_Props: fs.readFileSync(`./test/data/CustomCards_Props.txt`, "utf8"),
 	ZRWK: fs.readFileSync(`./test/data/ZRWK_draftmancer_showslots.txt`, "utf8"),
 };
 

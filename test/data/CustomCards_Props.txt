@@ -1,0 +1,33 @@
+[CustomCards]
+[
+	{
+		"name": "Creature",
+		"rarity": "mythic",
+		"mana_cost": "{1}{B}",
+		"type": "Creature",
+		"image_uris": {
+			"en": "http://fake.dmn/img.jpg"
+		},
+		"oracle_text": "Emerge {6}{R}{R} (You may cast this spell by sacrificing a creature and paying the emerge cost reduced by that creature's mana value.)\nWhen you cast this spell, you may exile your hand. If you do, draw three cards.\nFlying\nEach creature spell you cast has emerge. The emerge cost is equal to its mana cost.",
+		"power": 5,
+		"toughness": 2,
+	},
+	{
+		"name": "Planeswalker",
+		"rarity": "mythic",
+		"mana_cost": "{1}{B}",
+		"type": "Planeswalker",
+		"image_uris": {
+			"en": "http://fake.dmn/img.jpg"
+		},
+		"oracle_text": "+1: Put a +1/+1 counter on each of up to two target creatures.\n−2: Return target creature card with mana value 2 or less from your graveyard to the battlefield.\n−7: You get an emblem with \"At the beginning of your end step, create three 1/1 white Cat creature tokens with lifelink.\"",
+		"loyalty": 3,
+	}
+]
+[Settings]
+{
+	"withReplacement": true,
+}
+[Common]
+Creature
+Planeswalker

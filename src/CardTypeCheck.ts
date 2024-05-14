@@ -84,7 +84,11 @@ export function isCard(obj: unknown): obj is Card {
 		hasOptionalProperty("back", isCardFace)(obj) &&
 		hasOptionalProperty("is_custom", isBoolean)(obj) &&
 		hasOptionalProperty("related_cards", isArrayOf(isUnion(isString, isCardFace)))(obj) &&
-		hasOptionalProperty("draft_effects", isArrayOf(isDraftEffect))(obj)
+		hasOptionalProperty("draft_effects", isArrayOf(isDraftEffect))(obj) &&
+		hasOptionalProperty("oracle_text", isString)(obj) &&
+		hasOptionalProperty("power", isUnion(isNumber, isString))(obj) &&
+		hasOptionalProperty("toughness", isUnion(isNumber, isString))(obj) &&
+		hasOptionalProperty("loyalty", isUnion(isNumber, isString))(obj)
 	);
 }
 

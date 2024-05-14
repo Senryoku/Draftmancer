@@ -8,9 +8,11 @@ import {
 	hasProperty,
 	isArrayOf,
 	isInteger,
+	isNumber,
 	isObject,
 	isRecord,
 	isString,
+	isUnion,
 	isUnknown,
 } from "./TypeChecks.js";
 import { genCustomCardID } from "./CustomCardID.js";
@@ -34,9 +36,17 @@ function checkPropertyType(card: Record<string, unknown>, prop: string, type: st
 	return null;
 }
 
-function checkPropertyTypeOrUndefined(card: Record<string, unknown>, prop: string, type: string) {
+function checkPropertyTypeOrUndefined(card: Record<string, unknown>, prop: string, type: string | string[]) {
 	if (!Object.hasOwn(card, prop)) return null;
-	return checkPropertyType(card, prop, type);
+
+	if (isString(type)) return checkPropertyType(card, prop, type as string);
+
+	for (const t of type) if (checkPropertyType(card, prop, t)) return null;
+	return errorWithJSON(
+		`Invalid Card Property`,
+		`Property '${prop}' should be of one of the following types: '${type}'`,
+		card
+	);
 }
 
 function checkPropertyIsArrayOrUndefined(card: Record<string, unknown>, prop: string) {
@@ -91,7 +101,11 @@ export function validateCustomCard(inputCard: any): SocketError | Card {
 		checkPropertyTypeOrUndefined(inputCard, "layout", "string") ??
 		checkPropertyTypeOrUndefined(inputCard, "printed_names", "object") ??
 		checkPropertyTypeOrUndefined(inputCard, "collector_number", "string") ??
-		checkPropertyTypeOrUndefined(inputCard, "foil", "boolean");
+		checkPropertyTypeOrUndefined(inputCard, "foil", "boolean") ??
+		checkPropertyTypeOrUndefined(inputCard, "oracle_text", "string") ??
+		checkPropertyTypeOrUndefined(inputCard, "power", ["number", "string"]) ??
+		checkPropertyTypeOrUndefined(inputCard, "toughness", ["number", "string"]) ??
+		checkPropertyTypeOrUndefined(inputCard, "loyalty", ["number", "string"]);
 	if (typeError) return typeError;
 
 	const valErr = validationError.bind(null, inputCard);
@@ -150,6 +164,10 @@ export function validateCustomCard(inputCard: any): SocketError | Card {
 	card.printed_names = inputCard.printed_names ?? { en: inputCard.name };
 	card.image_uris = inputCard.image_uris;
 	card.foil = inputCard.foil;
+	card.oracle_text = inputCard.oracle_text;
+	card.power = inputCard.power;
+	card.toughness = inputCard.toughness;
+	card.loyalty = inputCard.loyalty;
 
 	if ("back" in inputCard) {
 		const ret = validateCustomCardFace(inputCard.back);

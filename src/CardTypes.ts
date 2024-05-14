@@ -93,6 +93,11 @@ export class Card {
 	draft_effects?: Array<DraftEffect>;
 	is_custom?: boolean;
 	foil?: boolean; // Allows specifying a card as foil by default (Mostly useful for cubes). For standard cards available in both formats, see UniqueCard.foil.
+	// The following fields aren't directly available for official cards but might be specified in custom cards.
+	oracle_text?: string;
+	power?: number | string;
+	toughness?: number | string;
+	loyalty?: number | string; // Planeswalker starting loyalty.
 }
 
 export type DeckBasicLands = { [key in CardColor]: number };
