@@ -92,7 +92,7 @@ describe("Rotisserie Draft", function () {
 	const checkCardCount = (cardCount: number) => {
 		it(`Each player should end up with ${cardCount} cards.`, (done) => {
 			for (const client of clients) {
-				expect(PlayerCards[(client as any).query.userID].length).to.equal(cardCount);
+				expect(PlayerCards[getUID(client)].length).to.equal(cardCount);
 			}
 			done();
 		});
@@ -102,7 +102,7 @@ describe("Rotisserie Draft", function () {
 		it("When session owner launch Rotisserie draft, everyone should receive a startRotisserieDraft event", (done) => {
 			let connectedClients = 0;
 			for (const c of clients) {
-				PlayerCards[(c as any).query.userID] = [];
+				PlayerCards[getUID(c)] = [];
 				c.once("startRotisserieDraft", (state) => {
 					connectedClients += 1;
 					if (options.singleton) {
@@ -130,7 +130,7 @@ describe("Rotisserie Draft", function () {
 				const card = getRandom(state.cards.filter((c) => c.owner === null));
 				if (card) {
 					clients
-						.find((c) => (c as any).query.userID === state.currentPlayer)!
+						.find((c) => getUID(c) === state.currentPlayer)!
 						.emit("rotisserieDraftPick", card.uniqueID, ackNoError);
 					PlayerCards[state.currentPlayer].push(card);
 				}
