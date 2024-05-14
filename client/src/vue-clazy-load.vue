@@ -127,15 +127,17 @@ function observe() {
 }
 
 onMounted(() => {
-	// Immediatly load if visible
-	if (isVisible() || props.forceLoad) {
-		img.value!.src = props.src;
-		loaded.value = img.value!.complete; // The image may already be in cache
-		if (!loaded.value) load();
-		getCurrentInstance()?.proxy?.$forceUpdate();
-	} else {
-		// Start observing the element visibility
-		nextTick(observe);
+	if (props.src !== "") {
+		// Immediatly load if visible
+		if (isVisible() || props.forceLoad) {
+			img.value!.src = props.src;
+			loaded.value = img.value!.complete; // The image may already be in cache
+			if (!loaded.value) load();
+			getCurrentInstance()?.proxy?.$forceUpdate();
+		} else {
+			// Start observing the element visibility
+			nextTick(observe);
+		}
 	}
 });
 

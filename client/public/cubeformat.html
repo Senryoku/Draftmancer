@@ -399,9 +399,7 @@ Card Name 6
 		"subtypes": [
 			"God"
 		],
-		"image_uris": {
-			"en": "https://domain.com/URL/to/image.png"
-		}
+		"image": "https://domain.com/URL/to/image.png"
 	},	
 	{	
 		"name": "My 2nd Custom Card",
@@ -455,32 +453,24 @@ Card Name 6
 		"set": "ltr",
 		"collector_number": "100", 
 		"type": "Creature",
-		"image_uris": {
-			"en": "https://cards.scryfall.io/large/front/8/3/833936c6-9381-4c0b-a81c-4a938be95040.jpg?1686968640"
-		}
+		"image": "https://cards.scryfall.io/large/front/8/3/833936c6-9381-4c0b-a81c-4a938be95040.jpg?1686968640"
 	},
 	{
 		"name": "Nazgûl",
 		"collector_number": "332",
-		"image_uris": {
-			"en": "https://cards.scryfall.io/large/front/c/e/ce65226a-12cd-416a-bb60-12e9b35f609b.jpg?1686971256"
-		}
+		"image": "https://cards.scryfall.io/large/front/c/e/ce65226a-12cd-416a-bb60-12e9b35f609b.jpg?1686971256"
 	},
 	{
 		"name": "Nazgûl",
 		"collector_number": "333",
-		"image_uris": {
-			"en": "https://cards.scryfall.io/large/front/6/9/69b32f90-b32f-41a6-af0c-1c967ec49b73.jpg?1686971268"
-		},
+		"image": "https://cards.scryfall.io/large/front/6/9/69b32f90-b32f-41a6-af0c-1c967ec49b73.jpg?1686971268"
 	},
 	{
 		"name": "Card related to Nazgûl somehow",
 		"rarity": "uncommon",
 		"mana_cost": "",
 		"type": "Emblem",
-		"image_uris": {
-			"en": "https://cards.scryfall.io/large/front/7/2/7215460e-8c06-47d0-94e5-d1832d0218af.jpg?1688215133"
-		},
+		"image": "https://cards.scryfall.io/large/front/7/2/7215460e-8c06-47d0-94e5-d1832d0218af.jpg?1688215133",
 		"related_cards": [
 			"Nazgûl",
 			"Nazgûl (LTR) 100",
@@ -501,7 +491,8 @@ Card related to Nazgûl somehow
 				<pre>
 CardFace {
 	name: <type>string</type>;
-	image_uris: <type>{ [lang: string]: URL }</type>;
+	image_uris?: <type>{ [lang: string]: URL }</type>; <comment>// Images for the card for each language.</comment>
+	image?: <type>URL</type>; <comment>// Shortcut for image_uris.en. Use it instead of image_uris if you don't need to support multiple languages.</comment>
 	type: <type>string</type>;
 	printed_names?: <type>{ [lang: string]: string }</type>;
 	subtypes?: <type>Array&lt;string&gt;</type>;
@@ -515,7 +506,8 @@ CustomCard {
 	name: <type>string</type>;
 	mana_cost: <type>string</type>;
 	type: <type>string</type>;
-	image_uris?: <type>{ [lang: string]: URL }</type>; <comment>// Images for the card. Only optional if </comment>
+	image_uris?: <type>{ [lang: string]: URL }</type>; <comment>// Images for the card for each language.</comment>
+	image?: <type>URL</type>; <comment>// Shortcut for image_uris.en. Use it instead of image_uris if you don't need to support multiple languages.</comment>
 	printed_names?: <type>{ [lang: string]: string }</type>;
 	colors?: <type>Array&lt;"W" | "U" | "B" | "R" | "G"&gt;</type>;
 	set?: <type>string</type>;	

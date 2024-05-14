@@ -61,8 +61,14 @@ export function validateCustomCardFace(face: unknown): SocketError | CardFace {
 		return errorWithJSON(`Invalid Name`, `Face property 'name' should be a string`, face);
 	if (!hasProperty("type", isString)(face))
 		return errorWithJSON(`Invalid Type`, `Face property 'type' should be a string`, face);
-	if (!hasProperty("image_uris", isRecord(isString, isString))(face))
-		return errorWithJSON(`Invalid Images`, `Face property 'image_uris' should be a Record<string, string>`, face);
+
+	const image_uris =
+		hasProperty("image_uris", isRecord(isString, isString))(face) && Object.keys(face["image_uris"]).length > 0
+			? face.image_uris
+			: hasProperty("image", isString)(face)
+				? { en: face.image }
+				: { en: "" };
+
 	const printed_names = hasProperty("printed_names", isRecord(isString, isString))(face)
 		? face.printed_names
 		: { en: face.name };
@@ -79,7 +85,7 @@ export function validateCustomCardFace(face: unknown): SocketError | CardFace {
 	return {
 		name: face.name,
 		type: face.type,
-		image_uris: face.image_uris,
+		image_uris: image_uris,
 		printed_names: printed_names,
 		subtypes: subtypes,
 		oracle_text: face.oracle_text,
@@ -97,16 +103,13 @@ function validationError(inputCard: unknown, title: string, msg: string) {
 export function validateCustomCard(inputCard: any): SocketError | Card {
 	// Check mandatory fields
 	const missing =
-		checkProperty(inputCard, "name") ??
-		checkProperty(inputCard, "mana_cost") ??
-		checkProperty(inputCard, "type") ??
-		checkProperty(inputCard, "image_uris");
+		checkProperty(inputCard, "name") ?? checkProperty(inputCard, "mana_cost") ?? checkProperty(inputCard, "type");
 	if (missing) return missing;
 	const typeError =
 		checkPropertyType(inputCard, "name", "string") ??
 		checkPropertyType(inputCard, "mana_cost", "string") ??
 		checkPropertyType(inputCard, "type", "string") ??
-		checkPropertyType(inputCard, "image_uris", "object") ??
+		checkPropertyTypeOrUndefined(inputCard, "image_uris", "object") ??
 		checkPropertyTypeOrUndefined(inputCard, "set", "string") ??
 		checkPropertyTypeOrUndefined(inputCard, "rarity", "string") ??
 		checkPropertyTypeOrUndefined(inputCard, "rating", "number") ??
@@ -123,17 +126,28 @@ export function validateCustomCard(inputCard: any): SocketError | Card {
 
 	const valErr = validationError.bind(null, inputCard);
 
-	if (Object.keys(inputCard["image_uris"]).length === 0)
-		return valErr(
-			`Invalid Property`,
-			`Invalid mandatory property 'image_uris' in custom card: Should have at least one entry.`
-		);
-	if (!Object.keys(inputCard["image_uris"]).includes("en")) {
-		return valErr(
-			`Invalid Property`,
-			`Invalid mandatory property 'image_uris' in custom card: Missing 'en' property.`
-		);
+	if ("image_uris" in inputCard && "image" in inputCard)
+		return valErr("Invalid Property", "Only one of 'image_uris' or 'image' can be used.");
+
+	if ("image_uris" in inputCard) {
+		if (Object.keys(inputCard["image_uris"]).length === 0)
+			return valErr(
+				`Invalid Property`,
+				`Invalid property 'image_uris' in custom card: Should have at least one entry.`
+			);
+		if (!Object.keys(inputCard["image_uris"]).includes("en")) {
+			return valErr(`Invalid Property`, `Invalid property 'image_uris' in custom card: Missing 'en' property.`);
+		}
+	} else if ("image" in inputCard) {
+		// Shortcut for specifying a single image
+		if (!isString(inputCard.image))
+			return valErr("Invalid Property", "Invalid  property 'image' in custom card, must be a string.");
+		inputCard.image_uris = { en: inputCard.image };
+	} else {
+		inputCard.image_uris = { en: "" }; // Defaults to an invalid image. The client will display a placeholder.
+		// This might seem odd, but the client will always have to handle the case where the image is invalid or unreachable anyway.
 	}
+
 	if ("colors" in inputCard) {
 		if (!Array.isArray(inputCard.colors) || inputCard.colors.some((c: CardColor) => !"WUBRG".includes(c))) {
 			return valErr(
