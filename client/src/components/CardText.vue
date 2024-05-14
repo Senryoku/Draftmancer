@@ -87,7 +87,7 @@ const face = computed(() => {
 	} else if (isScryfallCardFace(props.card)) {
 		return props.card;
 	}
-	const r: Record<string, any> = {};
+	const r: Partial<ScryfallCardFace> = {};
 	if ("name" in props.card) r.name = props.card.name;
 	if ("mana_cost" in props.card) r.mana_cost = props.card.mana_cost;
 	if ("type" in props.card) {
@@ -95,9 +95,9 @@ const face = computed(() => {
 		if ("subtypes" in props.card && props.card.subtypes.length > 0) r.type_line += " \u2013 " + props.card.subtypes;
 	}
 	if ("oracle_text" in props.card) r.oracle_text = props.card.oracle_text;
-	if ("power" in props.card) r.power = props.card.power;
-	if ("toughness" in props.card) r.toughness = props.card.toughness;
-	if ("loyalty" in props.card) r.loyalty = props.card.loyalty;
+	if ("power" in props.card) r.power = props.card.power?.toString();
+	if ("toughness" in props.card) r.toughness = props.card.toughness?.toString();
+	if ("loyalty" in props.card) r.loyalty = props.card.loyalty?.toString();
 	return r;
 });
 
@@ -130,7 +130,20 @@ watch(face, () => {
 }
 
 .card-text-container {
+	position: absolute;
+	aspect-ratio: 100/140;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
 	display: flex;
+}
+
+.battle-front .card-text-container {
+	top: 0;
+	left: 14.5%;
+	right: auto;
+	bottom: 0;
 }
 
 .card-text-container > * {
@@ -140,6 +153,8 @@ watch(face, () => {
 .card-text {
 	position: relative;
 	aspect-ratio: 100/140;
+	z-index: 10;
+
 	border-radius: 3%;
 	background-color: #00000060;
 	direction: ltr;

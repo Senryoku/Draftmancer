@@ -66,6 +66,11 @@ export type CardFace = {
 	image_uris: { [lang: string]: string };
 	type: string;
 	subtypes: Array<string>;
+	// The following fields aren't directly available for official cards but might be specified in custom cards.
+	oracle_text?: string;
+	power?: number | string;
+	toughness?: number | string;
+	loyalty?: number | string; // Planeswalker starting loyalty.
 };
 
 export type CardRarity = string;

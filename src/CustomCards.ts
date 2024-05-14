@@ -67,12 +67,25 @@ export function validateCustomCardFace(face: unknown): SocketError | CardFace {
 		? face.printed_names
 		: { en: face.name };
 	const subtypes = hasProperty("subtypes", isArrayOf(isString))(face) ? face.subtypes : [];
+	if (!hasOptionalProperty("oracle_text", isString)(face))
+		return errorWithJSON(`Invalid Oracle Text`, `Face property 'oracle_text' must be a string.`, face);
+	if (!hasOptionalProperty("power", isUnion(isNumber, isString))(face))
+		return errorWithJSON(`Invalid Oracle Text`, `Face property 'power' must be a string.`, face);
+	if (!hasOptionalProperty("toughness", isUnion(isNumber, isString))(face))
+		return errorWithJSON(`Invalid Oracle Text`, `Face property 'toughness' must be a string.`, face);
+	if (!hasOptionalProperty("loyalty", isUnion(isNumber, isString))(face))
+		return errorWithJSON(`Invalid Oracle Text`, `Face property 'loyalty' must be a string.`, face);
+
 	return {
 		name: face.name,
 		type: face.type,
 		image_uris: face.image_uris,
 		printed_names: printed_names,
 		subtypes: subtypes,
+		oracle_text: face.oracle_text,
+		power: face.power,
+		toughness: face.toughness,
+		loyalty: face.loyalty,
 	};
 }
 

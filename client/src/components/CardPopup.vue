@@ -331,13 +331,17 @@ export default defineComponent({
 
 .carousel {
 	position: relative;
-	width: 50vw;
+	width: 60vw;
 	height: var(--image-height);
 	pointer-events: none;
 }
 
 .carousel > .carousel-item {
 	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
 	z-index: -2000;
 	transition: all 0.4s ease-out;
 	transform-origin: left center;
@@ -471,14 +475,5 @@ export default defineComponent({
 	transform: translateX(-50%);
 	display: flex;
 	gap: 0.25em;
-}
-
-.alt-card-text {
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	z-index: 10;
 }
 </style>

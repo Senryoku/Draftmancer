@@ -43,6 +43,16 @@
 				:forceLoad="!lazyLoad"
 				:class="{ 'flip-front': hasBack || renderCommonBackside }"
 			>
+				<template v-if="cardAdditionalData && displayCardText">
+					<template v-if="cardAdditionalData.status === 'pending'">
+						<div class="pending-alt-card-text">
+							<font-awesome-icon icon="fa-solid fa-spinner" spin></font-awesome-icon>
+						</div>
+					</template>
+					<template v-else>
+						<CardText :card="cardFrontAdditionalData!" />
+					</template>
+				</template>
 				<img class="front-image" :src="imageURI" />
 				<template v-slot:placeholder>
 					<card-placeholder :card="card"></card-placeholder>
@@ -57,30 +67,22 @@
 				:forceLoad="!lazyLoad"
 				v-if="hasBack"
 			>
-				<img class="back-image" :src="backImageURI" />
-				<template v-slot:placeholder>
-					<card-placeholder :card="card.back"></card-placeholder>
+				<template v-if="cardAdditionalData && displayCardText">
+					<template v-if="cardAdditionalData.status === 'pending'">
+						<div class="pending-alt-card-text">
+							<font-awesome-icon icon="fa-solid fa-spinner" spin></font-awesome-icon>
+						</div>
+					</template>
+					<template v-else>
+						<CardText v-if="hasBack && cardBackAdditionalData" :card="cardBackAdditionalData" />
+					</template>
 				</template>
+				<img class="back-image" :src="backImageURI" />
+				<template v-slot:placeholder><CardPlaceholder :card="card.back" /></template>
 			</clazy-load>
 			<div class="flip-back" v-else-if="renderCommonBackside">
-				<card-placeholder :card="undefined" />
+				<CardPlaceholder :card="undefined" />
 			</div>
-
-			<template v-if="cardAdditionalData && displayCardText">
-				<template v-if="cardAdditionalData.status === 'pending'">
-					<div class="alt-card-text pending-alt-card-text">
-						<font-awesome-icon icon="fa-solid fa-spinner" spin></font-awesome-icon>
-					</div>
-				</template>
-				<template v-else>
-					<CardText class="flip-front alt-card-text" :card="cardFrontAdditionalData!" />
-					<CardText
-						class="flip-back alt-card-text"
-						v-if="hasBack && cardBackAdditionalData"
-						:card="cardBackAdditionalData"
-					/>
-				</template>
-			</template>
 		</div>
 	</div>
 	<div
@@ -93,18 +95,45 @@
 			'layout-split-left': card.layout === 'split-left',
 		}"
 	>
-		<div class="card-individual-image" :class="{ 'battle-front': card.type.includes('Battle') }">
+		<clazy-load
+			:src="imageURI"
+			loadingClass="card-loading"
+			:forceLoad="!lazyLoad"
+			class="card-individual-image"
+			:class="{ 'battle-front': card.type.includes('Battle') }"
+		>
 			<img :src="imageURI" />
-			<CardText class="alt-card-text" v-if="displayCardText" :card="cardFrontAdditionalData!" />
-		</div>
-		<div class="card-individual-image" v-if="hasBack">
+			<CardText v-if="displayCardText" :card="cardFrontAdditionalData!" />
+			<template v-slot:placeholder>
+				<CardPlaceholder :card="card" />
+			</template>
+		</clazy-load>
+		<clazy-load
+			:src="backImageURI!"
+			loadingClass="card-loading"
+			:forceLoad="!lazyLoad"
+			class="card-individual-image"
+			v-if="hasBack"
+		>
 			<img :src="backImageURI" />
-			<CardText class="alt-card-text" v-if="displayCardText" :card="cardBackAdditionalData!" />
-		</div>
-		<div class="card-individual-image" v-if="card.layout === 'flip'">
+			<CardText v-if="displayCardText" :card="cardBackAdditionalData!" />
+			<template v-slot:placeholder>
+				<CardPlaceholder :card="card.back" />
+			</template>
+		</clazy-load>
+		<clazy-load
+			:src="imageURI"
+			loadingClass="card-loading"
+			:forceLoad="!lazyLoad"
+			class="card-individual-image"
+			v-if="card.layout === 'flip'"
+		>
 			<img :src="imageURI" style="transform: rotate(180deg)" />
-			<CardText class="alt-card-text" v-if="displayCardText" :card="cardBackAdditionalData!" />
-		</div>
+			<CardText v-if="displayCardText" :card="cardBackAdditionalData!" />
+			<template v-slot:placeholder>
+				<CardPlaceholder :card="card" />
+			</template>
+		</clazy-load>
 	</div>
 </template>
 
@@ -182,6 +211,10 @@ const cardBackAdditionalData = computed((): CardCacheEntry | ScryfallCard | Scry
 	background-color: transparent;
 	perspective: 1000px;
 	border-radius: 3%;
+}
+
+.card-individual-image {
+	aspect-ratio: 100/140;
 }
 
 img {
@@ -320,6 +353,7 @@ img {
 /* Fixed Layouts (Used by CardPopup) */
 .fixed-layout {
 	width: 100%;
+	height: 100%;
 	transform-origin: center;
 }
 
@@ -362,29 +396,12 @@ img {
 	transform: translateX(-20.5%) rotate(90deg);
 }
 
-.alt-card-text {
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	height: auto;
-	aspect-ratio: 100/140;
-	z-index: 10;
-}
-
-.battle-front .alt-card-text {
-	top: 0;
-	left: 14.5%;
-	right: auto;
-	bottom: 0;
-}
-
 .pending-alt-card-text {
 	position: absolute;
 	top: 0;
 	left: 0;
 	right: 0;
-	bottom: 0;
+	aspect-ratio: 100/140;
 	background-color: #00000060;
 	display: flex;
 	align-items: center;
