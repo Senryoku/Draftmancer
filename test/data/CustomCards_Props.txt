@@ -3,7 +3,7 @@
 	{
 		"name": "Creature",
 		"rarity": "mythic",
-		"mana_cost": "{1}{B}",
+		"mana_cost": "{1}{W}",
 		"type": "Creature",
 		"image_uris": {
 			"en": "http://fake.dmn/img.jpg"
@@ -13,9 +13,21 @@
 		"toughness": 2,
 	},
 	{
+		"name": "MCreature",
+		"rarity": "mythic",
+		"mana_cost": "{1}{W}{B}",
+		"type": "Creature",
+		"image_uris": {
+			"en": "http://fake.dmn/img.jpg"
+		},
+		"oracle_text": "Vigilance",
+		"power": 5,
+		"toughness": 2,
+	},
+	{
 		"name": "Planeswalker",
 		"rarity": "mythic",
-		"mana_cost": "{1}{B}",
+		"mana_cost": "{1}{U}",
 		"type": "Planeswalker",
 		"image_uris": {
 			"en": "http://fake.dmn/img.jpg"
@@ -45,7 +57,7 @@
 	{
 		"name": "Double Faced",
 		"rarity": "mythic",
-		"mana_cost": "{1}{B}",
+		"mana_cost": "{1}{R}",
 		"type": "Creature",
 		"image_uris": {
 			"en": "http://fake.dmn/img.jpg"
@@ -83,7 +95,7 @@
 	{
 		"name": "Double Faced No Image",
 		"rarity": "mythic",
-		"mana_cost": "{1}{B}",
+		"mana_cost": "{1}{G}",
 		"type": "Creature",
 		"oracle_text": "Emerge {6}{R}{R} (You may cast this spell by sacrificing a creature and paying the emerge cost reduced by that creature's mana value.)\nWhen you cast this spell, you may exile your hand. If you do, draw three cards.\nFlying\nEach creature spell you cast has emerge. The emerge cost is equal to its mana cost.",
 		"power": 5,
@@ -101,6 +113,7 @@
 }
 [Common]
 Creature
+MCreature
 Planeswalker
 Double Faced
 Lightning Bolt

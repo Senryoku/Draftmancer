@@ -6,7 +6,7 @@
 			</div>
 		</template>
 		<template v-else>
-			<div class="card-text">
+			<div class="card-text" :class="'color-' + backColor">
 				<div class="card-top-line" v-if="face.name">
 					<div class="card-top-line-inner">
 						<div class="card-name font-size-fit">{{ face.name }}</div>
@@ -79,6 +79,23 @@ function transformManaCost(str: string) {
 	return replaceManaSymbols(str);
 }
 
+const colors = computed(() => {
+	if (!props.card) return undefined;
+	if (isScryfallCard(props.card)) {
+		return props.card.colors;
+	} else if (isScryfallCardFace(props.card)) {
+		return props.card.colors;
+	}
+	if ("colors" in props.card) return props.card.colors;
+	return undefined;
+});
+
+const backColor = computed(() => {
+	if (!colors.value) return undefined;
+	if (colors.value?.length === 1) return colors.value[0];
+	return "M";
+});
+
 const face = computed(() => {
 	if (!props.card) return undefined;
 	if (isScryfallCard(props.card)) {
@@ -137,6 +154,9 @@ watch(face, () => {
 	right: 0;
 	bottom: 0;
 	display: flex;
+
+	--bg-opacity: 0.3;
+	--bg-color: rgba(0, 0, 0, var(--bg-opacity));
 }
 
 .battle-front .card-text-container {
@@ -150,13 +170,33 @@ watch(face, () => {
 	flex: 1;
 }
 
+.color-W {
+	--bg-color: rgba(230, 231, 225, var(--bg-opacity));
+}
+.color-U {
+	--bg-color: rgba(14, 104, 171, var(--bg-opacity));
+}
+.color-B {
+	--bg-color: rgba(20, 10, 0, var(--bg-opacity));
+}
+.color-R {
+	--bg-color: rgba(160, 12, 22, var(--bg-opacity));
+}
+.color-G {
+	--bg-color: rgba(0, 110, 57, var(--bg-opacity));
+}
+.color-M {
+	--bg-color: rgba(0, 0, 0, var(--bg-opacity));
+	/* --bg-color: rgba(134, 88, 0, var(--bg-opacity)); */
+}
+
 .card-text {
 	position: relative;
 	aspect-ratio: 100/140;
 	z-index: 10;
 
 	border-radius: 3%;
-	background-color: #00000060;
+	background: radial-gradient(circle at 50% 35%, rgba(0, 0, 0, 0) 10%, var(--bg-color) 80%);
 	direction: ltr;
 	-webkit-user-select: none;
 	-moz-user-select: none;
