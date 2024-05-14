@@ -332,7 +332,7 @@ export function logSession(type: string, session: Session) {
 	}
 
 	if (!MixInstance) return;
-	const mixdata: Record<string, any> = {
+	const mixdata: Record<string, unknown> = {
 		distinct_id: process.env.NODE_ENV || "development",
 		playerCount: session.users.size,
 		playersWithCollection: [...session.users].filter((uid) => Connections[uid]?.collection.size > 0).length,

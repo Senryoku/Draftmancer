@@ -39,8 +39,8 @@ export function matchCardVersion(
 		name in CardVersionsByName
 			? CardVersionsByName[name]
 			: name.split(" //")[0] in CardVersionsByName // If not found, try double faced cards before giving up!
-			  ? CardVersionsByName[name.split(" //")[0]]
-			  : []
+				? CardVersionsByName[name.split(" //")[0]]
+				: []
 	).map((cid) => getCard(cid));
 
 	candidates = candidates.filter(
