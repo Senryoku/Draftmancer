@@ -5,6 +5,10 @@
 		"rarity": "mythic",
 		"mana_cost": "{1}{W}",
 		"type": "Creature",
+		"subtypes": [
+			"SUB0",
+			"SUB1"
+		],
 		"image_uris": {
 			"en": "http://fake.dmn/img.jpg"
 		},

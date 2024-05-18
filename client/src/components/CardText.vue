@@ -109,7 +109,8 @@ const face = computed(() => {
 	if ("mana_cost" in props.card) r.mana_cost = props.card.mana_cost;
 	if ("type" in props.card) {
 		r.type_line = props.card.type;
-		if ("subtypes" in props.card && props.card.subtypes.length > 0) r.type_line += " \u2013 " + props.card.subtypes;
+		if ("subtypes" in props.card && props.card.subtypes.length > 0)
+			r.type_line += " \u2013 " + props.card.subtypes.join(" ");
 	}
 	if ("oracle_text" in props.card) r.oracle_text = props.card.oracle_text;
 	if ("power" in props.card) r.power = props.card.power?.toString();
