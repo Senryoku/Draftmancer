@@ -1,5 +1,12 @@
 [
 	{
+		"date": "18/05/2024",
+		"notes": [
+			"Custom cards: Added 'oracle_text', 'power', 'toughness', 'loyalty' and 'image' fields.",
+			"Allow image-less custom cards and display CardText as a fallback."
+		]
+	},
+	{
 		"date": "22/04/2024",
 		"notes": [
 			"Added the ability to mute players, hidding their messages in the session chat."

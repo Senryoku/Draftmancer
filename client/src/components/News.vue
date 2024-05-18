@@ -1,6 +1,29 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
+			<em>May 18, 2024</em>
+			<p>Custom cards update:</p>
+			<ul>
+				<li>
+					New <code>oracle_text</code>, <code>power</code>, <code>toughness</code> and
+					<code>loyalty</code> fields.
+				</li>
+				<li>New <code>image</code> field: A shortcut for <code>image_uris</code> with a single image.</li>
+				<li>
+					The system will now accept cards without images, allowing you to quickly prototype and test your
+					custom cards without having to generate or host images!
+				</li>
+			</ul>
+			<p>
+				See the
+				<a href="cubeformat.html#custom-cards" target="_blank">
+					<font-awesome-icon icon="fa-solid fa-external-link-alt"></font-awesome-icon> Cube format
+					documentation
+				</a>
+				for more information.
+			</p>
+		</div>
+		<div class="news">
 			<em>April 20, 2024</em>
 			<p>
 				<font-awesome-icon icon="fa-solid fa-trophy"></font-awesome-icon> I rewrote the tournament bracket
@@ -49,22 +72,6 @@
 					card title to your liking.<br />
 					See the <a href="cubeformat.html#settings" target="_blank">Cube format</a> documentation.
 				</li>
-			</ul>
-		</div>
-		<div class="news">
-			<em>January 26, 2024</em>
-			<ul>
-				<li>
-					<img src="img/sets/mkm.svg" class="set-icon" style="--invertedness: 100%" alt="MKM" /> Murders at
-					Karlov Manor is now available! <br />
-					As always, new set, new boosters, there might be issues, I'll try to fix them as soon as possible!
-				</li>
-				<li>Bots will now join inactive draft queues to help them start more often.</li>
-				<li>
-					New "AddCard" draft effect (See
-					<a href="cubeformat.html#custom-cards" target="_blank">Cube format</a>).
-				</li>
-				<li>General maintenance.</li>
 			</ul>
 		</div>
 	</div>
