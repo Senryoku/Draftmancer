@@ -118,13 +118,22 @@ const winstonCanSkipPile = computed(() => {
 	justify-content: space-around;
 	position: relative;
 	padding: 0.75em;
-	min-height: 354.2px;
 }
 
 .winston-pile {
 	margin: 0 1em 0 1em;
-	padding: 0.5em;
-	width: 250px;
+	padding: 0 0.5em;
+	--card-width: 250px;
+	width: var(--card-width);
+}
+
+@media screen and (min-width: 1000px) {
+	.winston-pile .card-column {
+		/* Enough space for At least 1 full card and 2 titles */
+		min-height: calc(
+			1.425 * var(--card-width) + 2 * var(--card-title-height-factor, 1) * 0.135 * var(--card-width)
+		);
+	}
 }
 
 .winston-pile .card {
@@ -138,14 +147,16 @@ const winstonCanSkipPile = computed(() => {
 	box-shadow: 0px 0px 5px 5px #555;
 }
 
+.winston-pile-status,
 .winston-current-pile-options {
+	min-height: 67px;
 	display: flex;
 	flex-direction: column;
+	justify-content: center;
 }
 
 .winston-pile-status {
 	box-sizing: border-box;
-	width: 100%;
 	padding: 0.5em;
 	text-align: center;
 }
