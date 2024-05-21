@@ -270,6 +270,7 @@ describe("Sets content", function () {
 		rvr: { common: 110, uncommon: 90, rare: 71, mythic: 20 },
 		mkm: { common: 81, uncommon: 100, rare: 70, mythic: 20 },
 		otj: { common: 91, uncommon: 100, rare: 60, mythic: 20 },
+		mh3: { common: 80, uncommon: 101, rare: 60, mythic: 20 },
 	};
 
 	beforeEach(function (done) {
