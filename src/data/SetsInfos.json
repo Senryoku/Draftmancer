@@ -1010,6 +1010,11 @@
         "fullName": "Modern Horizons 1 Timeshifts",
         "icon": "img/sets/h1r.svg"
     },
+    "h2r": {
+        "code": "h2r",
+        "fullName": "Modern Horizons 2 Timeshifts",
+        "icon": "img/sets/h2r.svg"
+    },
     "ha1": {
         "code": "ha1",
         "fullName": "Historic Anthology 1",
