@@ -955,9 +955,11 @@ export class Session implements IIndexable {
 		}
 	}
 
-	winstonSkipPile(): SocketAck {
+	winstonSkipPile(num: number): SocketAck {
 		const s = this.draftState;
 		if (!this.drafting || !isWinstonDraftState(s)) return new SocketError("This session is not drafting.");
+		if (s.currentPile !== num) return new SocketError("Invalid pile number.");
+
 		// If the card pool is empty, make sure there is another pile to pick
 		if (
 			!s.cardPool.length &&
@@ -983,16 +985,18 @@ export class Session implements IIndexable {
 			this.winstonNextRound();
 		} else {
 			++s.currentPile;
-			if (s.piles[s.currentPile].length === 0) this.winstonSkipPile();
+			if (s.piles[s.currentPile].length === 0) this.winstonSkipPile(s.currentPile);
 			else for (const uid of this.users) Connections[uid].socket.emit("winstonDraftSync", s.syncData(uid));
 		}
 
 		return new SocketAck();
 	}
 
-	winstonTakePile() {
+	winstonTakePile(num: number): SocketAck {
 		const s = this.draftState;
-		if (!this.drafting || !isWinstonDraftState(s)) return false;
+		if (!this.drafting || !isWinstonDraftState(s)) return new SocketError("This session is not drafting.");
+		if (s.currentPile !== num) return new SocketError("Invalid pile number.");
+
 		this.draftLog?.users[s.currentPlayer()].picks.push({
 			pickedPile: s.currentPile,
 			piles: [...s.piles.map((p, idx) => p.slice(0, idx < s.currentPile ? -1 : undefined).map((c) => c.id))],
@@ -1001,7 +1005,8 @@ export class Session implements IIndexable {
 		if (s.cardPool.length > 0) s.piles[s.currentPile] = [s.cardPool.pop()!];
 		else s.piles[s.currentPile] = [];
 		this.winstonNextRound();
-		return true;
+
+		return new SocketAck();
 	}
 	///////////////////// Winston Draft End //////////////////////
 

@@ -12,8 +12,7 @@ import {
 	ackNoError,
 	getUID,
 } from "./src/common.js";
-import { WinstonDraftState } from "../src/WinstonDraft.js";
-import { SocketAck } from "../src/Message.js";
+import { WinstonDraftState, WinstonDraftSyncData } from "../src/WinstonDraft.js";
 
 describe(`Winston Draft`, function () {
 	for (let playerCount = 2; playerCount <= 4; ++playerCount)
@@ -63,7 +62,7 @@ describe(`Winston Draft`, function () {
 				done();
 			});
 
-			let states: any[] = [];
+			const states: WinstonDraftSyncData[] = [];
 			it("When session owner launch Winston draft, everyone should receive a startWinstonDraft event", function (done) {
 				ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
 				nonOwnerIdx = 1 - ownerIdx;
@@ -78,7 +77,7 @@ describe(`Winston Draft`, function () {
 
 					(() => {
 						const _idx = index;
-						c.once("winstonDraftNextRound", function (state) {
+						c.once("winstonDraftSync", function (state) {
 							states[_idx] = state;
 							receivedState += 1;
 							if (connectedClients == clients.length && receivedState == clients.length) done();
@@ -97,35 +96,31 @@ describe(`Winston Draft`, function () {
 			});
 
 			it("Non-owner reconnects, draft restarts.", function (done) {
-				clients[nonOwnerIdx].once("rejoinWinstonDraft", function () {
-					done();
-				});
+				clients[nonOwnerIdx].once("rejoinWinstonDraft", () => done());
 				clients[nonOwnerIdx].connect();
 			});
 
 			it("Every player takes the first pile possible and the draft should end.", function (done) {
 				let draftEnded = 0;
 				for (let c = 0; c < clients.length; ++c) {
+					clients[c].on("winstonDraftSync", (data) => (states[c] = data));
 					clients[c].on("winstonDraftNextRound", function (userID) {
 						if (userID === getUID(clients[c]))
-							clients[c].emit("winstonDraftTakePile", (r: SocketAck) => {
-								expect(r.code).to.equal(0);
-							});
+							clients[c].emit("winstonDraftTakePile", states[c].currentPile, ackNoError);
 					});
 					clients[c].once("winstonDraftEnd", function () {
 						draftEnded += 1;
+						clients[c].removeListener("winstonDraftSync");
 						clients[c].removeListener("winstonDraftNextRound");
 						if (draftEnded == clients.length) done();
 					});
 				}
-				getCurrentPlayer().emit("winstonDraftTakePile", ackNoError);
+				getCurrentPlayer().emit("winstonDraftTakePile", 0, ackNoError);
 			});
 
 			it("When session owner launch Winston draft, everyone should receive a startWinstonDraft event", function (done) {
-				states = [];
 				let connectedClients = 0;
 				let receivedState = 0;
-				let index = 0;
 				for (const c of clients) {
 					c.once("startWinstonDraft", function () {
 						connectedClients += 1;
@@ -133,14 +128,11 @@ describe(`Winston Draft`, function () {
 					});
 
 					(() => {
-						const _idx = index;
-						c.once("winstonDraftNextRound", function (state) {
-							states[_idx] = state;
+						c.once("winstonDraftNextRound", function () {
 							receivedState += 1;
 							if (connectedClients == clients.length && receivedState == clients.length) done();
 						});
 					})();
-					++index;
 				}
 				clients[ownerIdx].emit("startWinstonDraft", 6, true, ackNoError);
 			});
@@ -153,7 +145,7 @@ describe(`Winston Draft`, function () {
 						if (nextRound == clients.length) done();
 					});
 				}
-				getCurrentPlayer().emit("winstonDraftTakePile", ackNoError);
+				getCurrentPlayer().emit("winstonDraftTakePile", 0, ackNoError);
 			});
 
 			it("Skiping, then taking pile.", function (done) {
@@ -164,8 +156,8 @@ describe(`Winston Draft`, function () {
 						if (nextRound == clients.length) done();
 					});
 				}
-				getCurrentPlayer().emit("winstonDraftSkipPile", ackNoError);
-				getCurrentPlayer().emit("winstonDraftTakePile", ackNoError);
+				getCurrentPlayer().emit("winstonDraftSkipPile", 0, ackNoError);
+				getCurrentPlayer().emit("winstonDraftTakePile", 1, ackNoError);
 			});
 
 			it("Skiping, skiping, then taking pile.", function (done) {
@@ -176,9 +168,9 @@ describe(`Winston Draft`, function () {
 						if (nextRound == clients.length) done();
 					});
 				}
-				getCurrentPlayer().emit("winstonDraftSkipPile", ackNoError);
-				getCurrentPlayer().emit("winstonDraftSkipPile", ackNoError);
-				getCurrentPlayer().emit("winstonDraftTakePile", ackNoError);
+				getCurrentPlayer().emit("winstonDraftSkipPile", 0, ackNoError);
+				getCurrentPlayer().emit("winstonDraftSkipPile", 1, ackNoError);
+				getCurrentPlayer().emit("winstonDraftTakePile", 2, ackNoError);
 			});
 
 			it("Skiping, skiping and skiping.", function (done) {
@@ -190,28 +182,31 @@ describe(`Winston Draft`, function () {
 						if (receivedRandomCard && nextRound == clients.length) done();
 					});
 				}
-				getCurrentPlayer().on("winstonDraftRandomCard", function (card) {
+				getCurrentPlayer().once("winstonDraftRandomCard", function (card) {
 					if (card) receivedRandomCard = true;
 				});
-				getCurrentPlayer().emit("winstonDraftSkipPile", ackNoError);
-				getCurrentPlayer().emit("winstonDraftSkipPile", ackNoError);
-				getCurrentPlayer().emit("winstonDraftSkipPile", ackNoError);
+				getCurrentPlayer().emit("winstonDraftSkipPile", 0, ackNoError);
+				getCurrentPlayer().emit("winstonDraftSkipPile", 1, ackNoError);
+				getCurrentPlayer().emit("winstonDraftSkipPile", 2, ackNoError);
 			});
 
 			it("Every player takes the first pile possible and the draft should end.", function (done) {
 				this.timeout(2000);
 				let draftEnded = 0;
 				for (let c = 0; c < clients.length; ++c) {
+					clients[c].on("winstonDraftSync", (data) => (states[c] = data));
 					clients[c].on("winstonDraftNextRound", function (userID) {
-						if (userID === getUID(clients[c])) clients[c].emit("winstonDraftTakePile", ackNoError);
+						if (userID === getUID(clients[c]))
+							clients[c].emit("winstonDraftTakePile", states[c].currentPile, ackNoError);
 					});
 					clients[c].once("winstonDraftEnd", function () {
 						draftEnded += 1;
+						clients[c].removeListener("winstonDraftSync");
 						clients[c].removeListener("winstonDraftNextRound");
 						if (draftEnded == clients.length) done();
 					});
 				}
-				getCurrentPlayer().emit("winstonDraftTakePile", ackNoError);
+				getCurrentPlayer().emit("winstonDraftTakePile", 0, ackNoError);
 			});
 		});
 });

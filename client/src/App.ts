@@ -1972,13 +1972,14 @@ export default defineComponent({
 		winstonDraftTakePile() {
 			if (!this.winstonDraftState) return;
 			const cards = this.winstonDraftState.piles[this.winstonDraftState.currentPile] as UniqueCard[];
-			this.socket.emit("winstonDraftTakePile", (answer) => {
+			this.socket.emit("winstonDraftTakePile", this.winstonDraftState.currentPile, (answer) => {
 				if (answer.code === 0) for (const c of cards) this.addToDeck(c);
 				else console.error(answer);
 			});
 		},
 		winstonDraftSkipPile() {
-			this.socket.emit("winstonDraftSkipPile", (answer) => {
+			if (!this.winstonDraftState) return;
+			this.socket.emit("winstonDraftSkipPile", this.winstonDraftState.currentPile, (answer) => {
 				if (answer.code !== 0) {
 					console.error(answer);
 				}

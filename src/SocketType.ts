@@ -254,8 +254,8 @@ export interface ClientToServerEvents {
 	gridDraftPick: (choice: number, ack: (result: SocketAck) => void) => void;
 	rochesterDraftPick: (choices: Array<number>, ack: (result: SocketAck) => void) => void;
 	rotisserieDraftPick: (uniqueCardID: UniqueCardID, ack: (result: SocketAck) => void) => void;
-	winstonDraftTakePile: (ack: (result: SocketAck) => void) => void;
-	winstonDraftSkipPile: (ack: (result: SocketAck) => void) => void;
+	winstonDraftTakePile: (num: number, ack: (result: SocketAck) => void) => void;
+	winstonDraftSkipPile: (num: number, ack: (result: SocketAck) => void) => void;
 	winchesterDraftPick: (pickedColumn: number, ack: (result: SocketAck) => void) => void;
 	housmanDraftPick: (handIndex: number, revealedCardsIndex: number, ack: (result: SocketAck) => void) => void;
 	minesweeperDraftPick: (row: number, col: number, ack: (result: SocketAck) => void) => void;

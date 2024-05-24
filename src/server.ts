@@ -391,19 +391,17 @@ function rotisserieDraftPick(
 }
 
 // Winston Draft
-function winstonDraftTakePile(userID: UserID, sessionID: SessionID, ack: (result: SocketAck) => void) {
+function winstonDraftTakePile(userID: UserID, sessionID: SessionID, num: number, ack: (result: SocketAck) => void) {
 	if (!checkDraftAction(userID, Sessions[sessionID], "winston", ack)) return;
 
-	const r = Sessions[sessionID].winstonTakePile();
-
-	if (!r) ack?.(new SocketError("Internal error."));
-	else ack?.(new SocketAck());
+	const r = Sessions[sessionID].winstonTakePile(num);
+	ack?.(r);
 }
 
-function winstonDraftSkipPile(userID: UserID, sessionID: SessionID, ack: (result: SocketAck) => void) {
+function winstonDraftSkipPile(userID: UserID, sessionID: SessionID, num: number, ack: (result: SocketAck) => void) {
 	if (!checkDraftAction(userID, Sessions[sessionID], "winston", ack)) return;
 
-	const r = Sessions[sessionID].winstonSkipPile();
+	const r = Sessions[sessionID].winstonSkipPile(num);
 	ack?.(r);
 }
 
