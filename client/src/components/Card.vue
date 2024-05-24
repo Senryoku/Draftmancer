@@ -111,7 +111,7 @@ function mouseLeave(e: Event) {
 		document.removeEventListener("mousemove", foilEffect);
 		rootElement.value.style.setProperty("--brightness", `100%`);
 		rootElement.value.style.setProperty("--foil-initial-top", `-16%`);
-		rootElement.value.style.setProperty("--foil-initial-left", `32%`);
+		rootElement.value.style.setProperty("--foil-initial-left", `8%`);
 		rootElement.value.style.setProperty("--transform-rotation-x", `0`);
 		rootElement.value.style.setProperty("--transform-rotation-y", `0`);
 	}
@@ -145,8 +145,8 @@ function foilEffect(e: MouseEvent) {
 	rootElement.value.style.setProperty("--brightness", `${100 - 50 * (factor - 0.5)}%`);
 	rootElement.value.style.setProperty("--transform-rotation-x", `${rotScale(factor)}deg`);
 	rootElement.value.style.setProperty("--transform-rotation-y", `${ratio * -rotScale(factorY)}deg`);
-	rootElement.value.style.setProperty("--foil-initial-top", `${ratio * (-(160 * factorY) + 70)}%`);
-	rootElement.value.style.setProperty("--foil-initial-left", `${-(160 * factor) + 70}%`);
+	rootElement.value.style.setProperty("--foil-initial-top", `${ratio * (-(160 * factorY) + 53)}%`);
+	rootElement.value.style.setProperty("--foil-initial-left", `${-(160 * factor) + 88}%`);
 }
 
 function keyDown(event: KeyboardEvent) {
