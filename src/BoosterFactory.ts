@@ -2108,7 +2108,7 @@ class OTJBoosterFactory extends BoosterFactory {
 
 // Modern Horizons 3 - https://magic.wizards.com/en/news/feature/collecting-modern-horizons-3
 class MH3BoosterFactory extends BoosterFactory {
-	static Filter = (min: number, max: number) =>
+	static readonly Filter = (min: number, max: number) =>
 		CardsBySet["mh3"].filter((cid) => {
 			try {
 				const cn = parseInt(getCard(cid).collector_number);
@@ -2119,6 +2119,7 @@ class MH3BoosterFactory extends BoosterFactory {
 		});
 
 	static readonly SPGRatio: number = 1 / 64;
+
 	static readonly RetroFrame = MH3BoosterFactory.Filter(384, 441); // FIXME - Don't know if this should include the 'new to modern' cards.
 	static readonly BorderlessFramebreak = MH3BoosterFactory.Filter(320, 361); // FIXME - Don't know if this should include the 'new to modern' cards.
 	static readonly BorderlessProfile = MH3BoosterFactory.Filter(362, 383); // FIXME - Don't know if this should include the 'new to modern' cards.
@@ -2129,9 +2130,17 @@ class MH3BoosterFactory extends BoosterFactory {
 	]; // FIXME
 
 	static readonly NewToModern = MH3BoosterFactory.Filter(262, 303); // FIXME
-	static readonly NewToModernBorderlessFramebreak = MH3BoosterFactory.Filter(402, 361); // FIXME - Mixed with other retro frame, I think.
-	static readonly NewToModernBorderlessProfile = MH3BoosterFactory.Filter(362, 381); // FIXME - Mixed with other retro frame, I think.
-	static readonly NewToModernRetroFrame = MH3BoosterFactory.Filter(362, 433); // FIXME - Mixed with other retro frame, I think.
+	static readonly NewToModernNames = MH3BoosterFactory.NewToModern.map((c) => getCard(c).name);
+	static readonly NewToModernFilter = (arr: CardID[]) =>
+		arr.filter((cid) => MH3BoosterFactory.NewToModernNames.includes(getCard(cid).name));
+	static readonly NewToModernBorderlessFramebreak = MH3BoosterFactory.NewToModernFilter(
+		MH3BoosterFactory.Filter(402, 361)
+	); // FIXME - Mixed with other retro frame, I think.
+	static readonly NewToModernBorderlessProfile = MH3BoosterFactory.NewToModernFilter(
+		MH3BoosterFactory.Filter(362, 381)
+	); // FIXME - Mixed with other retro frame, I think.
+	static readonly NewToModernRetroFrame = MH3BoosterFactory.NewToModernFilter(MH3BoosterFactory.Filter(362, 433)); // FIXME - Mixed with other retro frame, I think.
+
 	static readonly CommanderMythics = MH3BoosterFactory.Filter(362, 381); // FIXME
 	static readonly Basics = MH3BoosterFactory.Filter(310, 319);
 	static readonly FullartBasics = MH3BoosterFactory.Filter(304, 308);

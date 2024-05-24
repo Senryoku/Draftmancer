@@ -487,6 +487,12 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
             except:
                 selection['in_booster'] = False
 
+        if c['set'] == "mh3":
+            try:
+                selection['in_booster'] = int(c['collector_number']) > 0 and int(c['collector_number']) <= 261
+            except:
+                selection['in_booster'] = False
+
         if c['layout'] == "split":
             if 'Aftermath' in c['keywords']:
                 selection['layout'] = 'split-left'
