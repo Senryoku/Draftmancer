@@ -2122,11 +2122,13 @@ class MH3BoosterFactory extends BoosterFactory {
 
 	static readonly RetroFrame = MH3BoosterFactory.Filter(384, 441); // FIXME - Don't know if this should include the 'new to modern' cards.
 	static readonly BorderlessFramebreak = MH3BoosterFactory.Filter(320, 361); // FIXME - Don't know if this should include the 'new to modern' cards.
-	static readonly BorderlessProfile = MH3BoosterFactory.Filter(362, 383); // FIXME - Don't know if this should include the 'new to modern' cards.
+	static readonly BorderlessProfile = MH3BoosterFactory.Filter(362, 380); // FIXME - Don't know if this should include the 'new to modern' cards.
+	static readonly EldraziConcept = MH3BoosterFactory.Filter(381, 383);
 	static readonly Borderless = [
 		...MH3BoosterFactory.BorderlessFramebreak,
 		...MH3BoosterFactory.BorderlessProfile,
-		...MH3BoosterFactory.Filter(320, 361),
+		...MH3BoosterFactory.EldraziConcept,
+		...MH3BoosterFactory.Filter(442, 446), // Borderless DFC Planeswalkers
 	]; // FIXME
 
 	static readonly NewToModern = MH3BoosterFactory.Filter(262, 303); // FIXME
@@ -2141,7 +2143,7 @@ class MH3BoosterFactory extends BoosterFactory {
 	); // FIXME - Mixed with other retro frame, I think.
 	static readonly NewToModernRetroFrame = MH3BoosterFactory.NewToModernFilter(MH3BoosterFactory.Filter(362, 433)); // FIXME - Mixed with other retro frame, I think.
 
-	static readonly CommanderMythics = MH3BoosterFactory.Filter(362, 381); // FIXME
+	static readonly CommanderMythics = MH3BoosterFactory.Filter(485, 494); // FIXME
 	static readonly Basics = MH3BoosterFactory.Filter(310, 319);
 	static readonly FullartBasics = MH3BoosterFactory.Filter(304, 308);
 
@@ -2185,6 +2187,50 @@ class MH3BoosterFactory extends BoosterFactory {
 			this.spg.set(c, options.maxDuplicates?.[getCard(c).rarity] ?? DefaultMaxDuplicates);
 		for (const c of MH3BoosterFactory.CommanderMythics)
 			this.commanderMythics.set(c, options.maxDuplicates?.[getCard(c).rarity] ?? DefaultMaxDuplicates);
+
+		// TEMP CHECKS
+		if (this.retroFrame["rare"].size !== 24)
+			console.warn(`MH3: Incorrect number of retro frame rares (${this.retroFrame["rare"].size}, should be 24)`);
+		if (this.retroFrame["mythic"].size !== 12)
+			console.warn(
+				`MH3: Incorrect number of retro frame mythics (${this.retroFrame["mythic"].size}, should be 12)`
+			);
+		if (this.newToModern["uncommon"].size !== 20)
+			console.warn(
+				`MH3: Incorrect number of new to modern uncommons (${this.newToModern["uncommon"].size}, should be 20)`
+			);
+		if (this.newToModern["rare"].size !== 18)
+			console.warn(
+				`MH3: Incorrect number of new to modern rares (${this.newToModern["rare"].size}, should be 18)`
+			);
+		if (this.newToModern["mythic"].size !== 4)
+			console.warn(
+				`MH3: Incorrect number of new to modern mythics (${this.newToModern["mythic"].size}, should be 4)`
+			);
+		if (this.newToModernBorderlessFramebreak["rare"]?.size !== 6)
+			console.warn(
+				`MH3: Incorrect number of new to modern borderless framebreak rares (${this.newToModernBorderlessFramebreak["rare"]?.size}, should be 6)`
+			);
+		if (this.newToModernBorderlessFramebreak["mythic"]?.size !== 1)
+			console.warn(
+				`MH3: Incorrect number of new to modern borderless framebreak mythics (${this.newToModernBorderlessFramebreak["mythic"]?.size}, should be 1)`
+			);
+		if (this.newToModernBorderlessProfile["rare"]?.size !== 2)
+			console.warn(
+				`MH3: Incorrect number of new to modern borderless profile rares (${this.newToModernBorderlessProfile["rare"]?.size}, should be 2)`
+			);
+		if (this.newToModernBorderlessProfile["mythic"]?.size !== 2)
+			console.warn(
+				`MH3: Incorrect number of new to modern borderless profile mythics (${this.newToModernBorderlessProfile["mythic"]?.size}, should be 2)`
+			);
+		if (this.newToModernRetroFrame["rare"]?.size !== 2)
+			console.warn(
+				`MH3: Incorrect number of new to modern retro frame rares (${this.newToModernRetroFrame["rare"]?.size}, should be 2)`
+			);
+		if (this.newToModernRetroFrame["mythic"]?.size !== 1)
+			console.warn(
+				`MH3: Incorrect number of new to modern retro frame mythics (${this.newToModernRetroFrame["mythic"]?.size}, should be 1)`
+			);
 	}
 
 	generateBooster(targets: Targets) {
@@ -2207,16 +2253,20 @@ class MH3BoosterFactory extends BoosterFactory {
 		// 1 Rare or mythic rare, including Booster Fun, double-faced, and retro frame cards
 		// Here you can get any of the 60 MH3 rares (79.8%) or 20 mythic rares, including DFC planeswalkers (13.0%), retro frame cards (24 rares, 8 mythic rares [2.1% in total]),
 		// or a Booster Fun borderless card, including fetch lands, concept Eldrazi, DFC planeswalkers, frame break cards, profile cards, and other borderless rares or mythic rares (5.1% in total).
+		updatedTargets.rare = Math.max(0, updatedTargets.rare - 1);
 		const rarePoolRoll = random.realZeroToOneInclusive();
 		if (rarePoolRoll < 0.798) {
 			booster.push(pickCard(this.cardPool["rare"], booster));
 		} else if (rarePoolRoll < 0.798 + 0.13) {
 			booster.push(pickCard(this.cardPool["mythic"], booster));
 		} else if (rarePoolRoll < 0.798 + 0.13 + 0.021) {
+			// Retro frame
 			const rarity = random.realZeroToOneInclusive() < 1.0 / 7.0 ? "mythic" : "rare";
 			booster.push(pickCard(this.retroFrame[rarity], booster));
 		} else {
-			// TODO: Booster Fun, omfg...
+			// "Booster Fun borderless"
+			const rarity = random.realZeroToOneInclusive() < 1.0 / 7.0 ? "mythic" : "rare";
+			booster.push(pickCard(this.borderless[rarity], booster));
 		}
 
 		// 1 New-to-Modern card
