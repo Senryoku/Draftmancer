@@ -22,6 +22,8 @@ import { Constants } from "../src/Constants.js";
 import type { DistributionMode } from "../src/Session/SessionTypes";
 import { ReadyState } from "../src/Session/SessionTypes.js";
 
+import { SpecialGuests, MH3BoosterFactory } from "../src/BoosterFactory.js";
+
 const clientStates: {
 	[uid: UserID]: { pickedCards: UniqueCard[]; state: ReturnType<DraftState["syncData"]> };
 } = {};
@@ -348,6 +350,30 @@ describe("Sets content", function () {
 	});
 	it("The Big Score (BIG)", () => {
 		expect(BoosterCardsBySet["big"]).to.have.lengthOf(30);
+	});
+
+	describe("Modern Horizons 3 (MH3)", function () {
+		const check = (name: string, pool: CardID[], expected: { [rarity: string]: number }) => {
+			const cards = pool.map((cid) => getCard(cid));
+			describe(name, () => {
+				for (const rarity in expected) {
+					it(`${expected[rarity]} ${rarity}`, () => {
+						expect(cards.filter((c) => c.rarity === rarity).length).to.equal(expected[rarity]);
+					});
+				}
+			});
+		};
+		check("Retro Frame", MH3BoosterFactory.RetroFrame, { rare: 24, mythic: 12 });
+		check("New-to-Modern", MH3BoosterFactory.NewToModern, { uncommon: 20, rare: 18, mythic: 4 });
+		check("New-to-Modern Borderless Framebreak", MH3BoosterFactory.NewToModernBorderlessFramebreak, {
+			rare: 6,
+			mythic: 1,
+		});
+		check("New-to-Modern Borderless Profile", MH3BoosterFactory.NewToModernBorderlessProfile, {
+			rare: 2,
+			mythic: 2,
+		});
+		check("New-to-Modern Retro Frame", MH3BoosterFactory.NewToModernRetroFrame, { rare: 2, mythic: 1 });
 	});
 });
 
@@ -2346,7 +2372,7 @@ describe("Sealed", function () {
 
 import JumpstartBoosters from "../src/data/JumpstartBoosters.json" assert { type: "json" };
 import Jumpstart2022Boosters from "../src/data/Jumpstart2022Boosters.json" assert { type: "json" };
-import { Card, CardColor, DeckList, UniqueCard } from "../src/CardTypes.js";
+import { Card, CardColor, CardID, DeckList, UniqueCard } from "../src/CardTypes.js";
 import { SessionID, UserID } from "../src/IDTypes.js";
 import { SetCode } from "../src/Types.js";
 import { DraftState } from "../src/DraftState.js";
@@ -2356,7 +2382,6 @@ import { JHHBooster } from "../src/JumpstartHistoricHorizons.js";
 import { parseLine } from "../src/parseCardList.js";
 import { SocketError, isSocketError } from "../src/Message.js";
 import { isNumber } from "../src/TypeChecks.js";
-import { SpecialGuests } from "../src/BoosterFactory.js";
 
 describe("Jumpstart", function () {
 	let clients: ReturnType<typeof makeClients> = [];

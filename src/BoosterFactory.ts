@@ -2107,7 +2107,7 @@ class OTJBoosterFactory extends BoosterFactory {
 }
 
 // Modern Horizons 3 - https://magic.wizards.com/en/news/feature/collecting-modern-horizons-3
-class MH3BoosterFactory extends BoosterFactory {
+export class MH3BoosterFactory extends BoosterFactory {
 	static readonly Filter = (min: number, max: number) =>
 		CardsBySet["mh3"].filter((cid) => {
 			try {
