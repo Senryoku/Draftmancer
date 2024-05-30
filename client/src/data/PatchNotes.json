@@ -1,5 +1,11 @@
 [
 	{
+		"date": "30/05/2024",
+		"notes": [
+			"Modern Horizons 3 (MH3) support."
+		]
+	},
+	{
 		"date": "18/05/2024",
 		"notes": [
 			"Custom cards: Added 'oracle_text', 'power', 'toughness', 'loyalty' and 'image' fields.",
