@@ -363,7 +363,13 @@ describe("Sets content", function () {
 				}
 			});
 		};
-		check("Retro Frame", MH3BoosterFactory.RetroFrame, { common: 7, uncommon: 16, rare: 26, mythic: 9 }); // FIXME: The article contradicts itself... (Between the description of the Retro Frame and the description of the Play Booster content)
+		check("Retro Frame", MH3BoosterFactory.RetroFrame, { common: 7, uncommon: 16, rare: 26, mythic: 9 });
+		check("Retro Frame Wildcard", MH3BoosterFactory.RetroFrameWildcard, {
+			common: 7,
+			uncommon: 16,
+			rare: 24,
+			mythic: 8,
+		});
 		check("Borderless Framebreak", MH3BoosterFactory.BorderlessFramebreak, {
 			rare: 26,
 			mythic: 4,

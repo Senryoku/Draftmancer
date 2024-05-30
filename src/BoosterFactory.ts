@@ -2125,25 +2125,29 @@ export class MH3BoosterFactory extends BoosterFactory {
 		...MH3BoosterFactory.Filter(350, 351), // Borderless Lands
 		...MH3BoosterFactory.Filter(442, 446), // Borderless DFC Planeswalkers
 		...MH3BoosterFactory.Filter(352, 361), // Borderless Fetch lands
-	]; // FIXME
+	];
 
-	static readonly NewToModern = MH3BoosterFactory.Filter(262, 303); // FIXME
+	static readonly NewToModern = MH3BoosterFactory.Filter(262, 303);
 	static readonly NewToModernNames = MH3BoosterFactory.NewToModern.map((cid) => getCard(cid).name);
 	static readonly NewToModernFilter = (arr: CardID[]) =>
 		arr.filter((cid) => MH3BoosterFactory.NewToModernNames.includes(getCard(cid).name));
+	static readonly RetroFrameWildcard = MH3BoosterFactory.RetroFrame.filter(
+		(cid) => getCard(cid).rarity === "uncommon" || !MH3BoosterFactory.NewToModernNames.includes(getCard(cid).name)
+	); // Retro frames, including new-to-modern uncommons for the wildcard slot.
 	static readonly NewToModernBorderlessFramebreak = MH3BoosterFactory.NewToModernFilter(
 		MH3BoosterFactory.BorderlessFramebreak
-	); // FIXME - Mixed with other Borderless Framebreak, I think.
+	);
 	static readonly NewToModernBorderlessProfile = MH3BoosterFactory.NewToModernFilter(
 		MH3BoosterFactory.BorderlessProfile
-	); // FIXME - Mixed with other Borderless Profile, I think.
-	static readonly NewToModernRetroFrame = MH3BoosterFactory.NewToModernFilter(MH3BoosterFactory.RetroFrame); // FIXME - Mixed with other retro frame, I think.
+	);
+	static readonly NewToModernRetroFrame = MH3BoosterFactory.NewToModernFilter(MH3BoosterFactory.RetroFrame);
 
 	static readonly CommanderMythics = filterSetByNumber("m3c", 136, 143);
 	static readonly Basics = MH3BoosterFactory.Filter(310, 319);
 	static readonly FullartBasics = MH3BoosterFactory.Filter(304, 308);
 
 	retroFrame: SlotedCardPool = {};
+	retroFrameWildcard: SlotedCardPool = {};
 	borderlessFramebreak: SlotedCardPool = {};
 	borderlessProfile: SlotedCardPool = {};
 	borderless: SlotedCardPool = {};
@@ -2165,6 +2169,7 @@ export class MH3BoosterFactory extends BoosterFactory {
 		// Populate specials slots.
 		for (const [source, dest] of [
 			[MH3BoosterFactory.RetroFrame, this.retroFrame],
+			[MH3BoosterFactory.RetroFrameWildcard, this.retroFrameWildcard],
 			[MH3BoosterFactory.BorderlessFramebreak, this.borderlessFramebreak],
 			[MH3BoosterFactory.BorderlessProfile, this.borderlessProfile],
 			[MH3BoosterFactory.Borderless, this.borderless],
@@ -2266,17 +2271,34 @@ export class MH3BoosterFactory extends BoosterFactory {
 		// This contains a traditional foil version of the new-to-Modern cards, retro frame new-to-Modern cards (all rarities), and traditional foil versions of the wildcard slot
 		// (except for Special Guests; traditional foil versions are only in Collector Boosters)
 		{
-			const probabilities = cumulativeSum([0.417, 0.334, 0.083, 0.067, 0.004, 0.042, 0.042]);
+			const probabilities = cumulativeSum([
+				0.417,
+				0.334 + 0.083,
+				0.067,
+				0.011, // Despite the wording, I'm pretty sure the 1.1% is not only for the DFC planeswalkers, but all mythics.
+				0.004,
+				0.042,
+				0.042,
+			]);
 			for (let i = 0; i < 2; i++) {
 				const wildcardPool = random.realZeroToOneInclusive();
-				if (wildcardPool < probabilities[0]) {
-					booster.push(pickCard(this.cardPool["common"], booster));
-				} else if (wildcardPool < probabilities[1]) {
-					booster.push(pickCard(this.cardPool["uncommon"], booster));
-				} else if (wildcardPool < probabilities[2]) {
-					booster.push(pickCard(this.cardPool["rare"], booster));
-				} else if (wildcardPool < probabilities[3]) {
-					booster.push(pickCard(this.cardPool["mythic"], booster));
+				if (wildcardPool < probabilities[3]) {
+					const rarity =
+						wildcardPool < probabilities[0]
+							? "common"
+							: wildcardPool < probabilities[1]
+								? "uncommon"
+								: wildcardPool < probabilities[2]
+									? "rare"
+									: "mythic";
+					const pool =
+						i === 1 &&
+						this.newToModern[rarity] &&
+						random.realZeroToOneInclusive() <
+							this.newToModern[rarity].size / (this.newToModern[rarity].size + this.cardPool[rarity].size)
+							? this.newToModern[rarity] // Foil slot includes new-to-modern cards
+							: this.cardPool[rarity];
+					booster.push(pickCard(pool, booster));
 				} else if (wildcardPool < probabilities[4]) {
 					// Borderless cards
 					const rarity = random.realZeroToOneInclusive() < 1.0 / 7.0 ? "mythic" : "rare";
@@ -2284,7 +2306,8 @@ export class MH3BoosterFactory extends BoosterFactory {
 				} else if (wildcardPool < probabilities[5]) {
 					// MH3 retro frame cards
 					const rarity = rollSetBoosterWildcardRarity(this.retroFrame, this.options);
-					booster.push(pickCard(this.retroFrame[rarity], booster));
+					// Non-foils only includes uncommons new-to-modern reprints
+					booster.push(pickCard((i === 0 ? this.retroFrameWildcard : this.retroFrame)[rarity], booster));
 				} else if (wildcardPool < probabilities[6]) {
 					// Commander mythic rares
 					booster.push(pickCard(this.commanderMythics, booster));
