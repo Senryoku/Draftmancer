@@ -1,6 +1,17 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
+			<em>May 30, 2024</em>
+			<p>
+				<img src="img/sets/mh3.svg" class="set-icon" style="--invertedness: 100%" alt="MH3" />
+				Modern Horizons 3 is now available!
+			</p>
+			<p>
+				Pack content is particularly confusing this time around, it is very possible I made some mistakes.
+				Please let me know if you find any :)
+			</p>
+		</div>
+		<div class="news">
 			<em>May 18, 2024</em>
 			<p>Custom cards update:</p>
 			<ul>
@@ -43,36 +54,6 @@
 				Reworked the way Minesweeper Draft grids are generated, allowing the use of standard MTG sets and
 				lifting some restrictions for cubes.
 			</p>
-		</div>
-		<div class="news">
-			<em>April 4, 2024</em>
-			<ul>
-				<li>
-					<img src="img/sets/otj.svg" class="set-icon" style="--invertedness: 100%" alt="OTJ" />
-					Outlaws of Thunder Junction is now available!
-				</li>
-				<li>New solo game mode: Supreme Draft!<br />Pick 2 cards from each booster and discard the rest.</li>
-				<li>
-					<img
-						src="../assets/img/cards.svg"
-						width="24px"
-						height="24px"
-						style="float: left; margin-right: 0.5em"
-					/>
-					Added a quick way to generate sample hands from your current deck.<br />Thanks Aritsune for the idea
-					and implementation!
-				</li>
-			</ul>
-		</div>
-		<div class="news">
-			<em>February 17, 2024</em>
-			<ul>
-				<li>
-					You can now customize the card back of your uploaded custom card lists and adjust the height of the
-					card title to your liking.<br />
-					See the <a href="cubeformat.html#settings" target="_blank">Cube format</a> documentation.
-				</li>
-			</ul>
 		</div>
 	</div>
 </template>
