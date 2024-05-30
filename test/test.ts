@@ -363,7 +363,15 @@ describe("Sets content", function () {
 				}
 			});
 		};
-		check("Retro Frame", MH3BoosterFactory.RetroFrame, { rare: 24, mythic: 12 });
+		check("Retro Frame", MH3BoosterFactory.RetroFrame, { common: 7, uncommon: 16, rare: 26, mythic: 9 }); // FIXME: The article contradicts itself... (Between the description of the Retro Frame and the description of the Play Booster content)
+		check("Borderless Framebreak", MH3BoosterFactory.BorderlessFramebreak, {
+			rare: 26,
+			mythic: 4,
+		});
+		check("Borderless Profile", MH3BoosterFactory.BorderlessProfile, {
+			rare: 12,
+			mythic: 7,
+		});
 		check("New-to-Modern", MH3BoosterFactory.NewToModern, { uncommon: 20, rare: 18, mythic: 4 });
 		check("New-to-Modern Borderless Framebreak", MH3BoosterFactory.NewToModernBorderlessFramebreak, {
 			rare: 6,
@@ -374,6 +382,9 @@ describe("Sets content", function () {
 			mythic: 2,
 		});
 		check("New-to-Modern Retro Frame", MH3BoosterFactory.NewToModernRetroFrame, { rare: 2, mythic: 1 });
+		it("Commander Mythic Borderless Profile", () => {
+			expect(MH3BoosterFactory.CommanderMythics.length).to.equal(8);
+		});
 	});
 });
 
@@ -740,7 +751,8 @@ describe("Single Draft (Two Players)", function () {
 							(set === "mat" && (c.set === "mul" || c.set === "mom")) ||
 							(set === "woe" && c.set === "wot") ||
 							set === "mkm" || // With the List, I give up.
-							set === "otj"
+							set === "otj" ||
+							(set === "mh3" && (c.set === "spg" || c.set === "m3c"))
 					),
 					`All cards in booster should be of the desired set, got [${[...new Set(b.map((c) => c.set))]}].`
 				).to.be.true;

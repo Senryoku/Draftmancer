@@ -18,6 +18,12 @@ export function sum(arr: number[]): number {
 	return arr.reduce((a, b) => a + b, 0);
 }
 
+export function cumulativeSum(arr: number[]): number[] {
+	const res = [arr[0]];
+	for (let i = 1; i < arr.length; ++i) res.push(arr[i] + res[i - 1]);
+	return res;
+}
+
 export function sumValues<T extends string | number | symbol>(obj: Record<T, number>): number {
 	return sum(Object.values(obj));
 }

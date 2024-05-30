@@ -1,13 +1,15 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
-			<em>May, 2024</em>
-			<ul>
-				<li>
-					<img src="img/sets/mh3.svg" class="set-icon" style="--invertedness: 100%" alt="MH3" />
-					Modern Horizons 3 is now available!
-				</li>
-			</ul>
+			<em>May 30, 2024</em>
+			<p>
+				<img src="img/sets/mh3.svg" class="set-icon" style="--invertedness: 100%" alt="MH3" />
+				Modern Horizons 3 is now available!
+			</p>
+			<p>
+				Pack content is particularly confusing this time around, it is very possible I made some mistakes.
+				Please let me know if you find any :)
+			</p>
 		</div>
 		<div class="news">
 			<em>May 18, 2024</em>
