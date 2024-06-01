@@ -80,7 +80,7 @@ import { WinstonDraftState, isWinstonDraftState } from "./WinstonDraft.js";
 import { ServerToClientEvents } from "./SocketType";
 import { Constants, EnglishBasicLandNames } from "./Constants.js";
 import { SessionsSettingsProps } from "./Session/SessionProps.js";
-import { DistributionMode, DraftLogRecipients, DisconnectedUser, UsersData } from "./Session/SessionTypes.js";
+import { DistributionMode, DraftLogRecipients, DisconnectedUser, UserData } from "./Session/SessionTypes.js";
 import { IIndexable, SetCode } from "./Types.js";
 import { isRotisserieDraftState, RotisserieDraftStartOptions, RotisserieDraftState } from "./RotisserieDraft.js";
 import { parseLine } from "./parseCardList.js";
@@ -1876,9 +1876,12 @@ export class Session implements IIndexable {
 	}
 
 	// Pass a booster to the next player at the table
-	passBooster(booster: Array<UniqueCard>, to: UserID, canDiscard: boolean = true) {
+	passBooster(booster: Array<UniqueCard>, from: UserID | null, to: UserID) {
 		const s = this.draftState;
 		if (!isDraftState(s)) return;
+
+		const canDiscard = from !== null;
+		const statesToUpdate = from !== null ? [from] : [];
 
 		// Booster is empty or the remaining cards have to be burned
 		if (
@@ -1890,6 +1893,7 @@ export class Session implements IIndexable {
 		} else {
 			// Re-insert the booster back for the next player
 			s.players[to].boosters.push(booster);
+			statesToUpdate.push(to);
 
 			// Player is currently randomly picking (Archdemon of Paliano effect), immediately pick and return.
 			if (s.players[to].effect?.randomPicks !== undefined && s.players[to].effect!.randomPicks! > 0) {
@@ -1919,13 +1923,11 @@ export class Session implements IIndexable {
 			}
 		}
 
-		// Update player states
-		const virtualPlayersData = this.getSortedVirtualPlayerData();
-		this.forUsers((uid) =>
-			Connections[uid]?.socket.emit("sessionOptions", {
-				virtualPlayersData: virtualPlayersData,
-			})
-		);
+		// Send updated player states to all users
+		const virtualPlayerDataUpdate: Record<UserID, Partial<UserData>> = {};
+		for (const uid of statesToUpdate)
+			virtualPlayerDataUpdate[uid] = { boosterCount: s.players[uid].boosters.length };
+		this.emitToConnectedUsers("virtualPlayersDataUpdate", virtualPlayerDataUpdate);
 	}
 
 	// Pass the current booster without picking (Agent of Acquisitions; Leovold's Operative)
@@ -1955,7 +1957,7 @@ export class Session implements IIndexable {
 		this.stopCountdown(userID);
 		const booster = s.players[userID].boosters.splice(0, 1)[0];
 
-		this.passBooster(booster, nextPlayer);
+		this.passBooster(booster, userID, nextPlayer);
 
 		this.sendDraftState(userID);
 		if (s.players[userID].boosters.length > 0) {
@@ -2373,7 +2375,7 @@ export class Session implements IIndexable {
 
 		++s.players[userID].pickNumber;
 
-		this.passBooster(booster, nextPlayer);
+		this.passBooster(booster, userID, nextPlayer);
 
 		this.sendDraftState(userID);
 		if (updatedCardStates.length > 0) Connections[userID]?.socket?.emit("updateCardState", updatedCardStates);
@@ -2541,7 +2543,7 @@ export class Session implements IIndexable {
 			const playersWithCanalDedger = s.getPlayersWithCanalDredger();
 			if (playersWithCanalDedger.length > 0) nextPlayer = getRandom(playersWithCanalDedger);
 		}
-		this.passBooster(booster, nextPlayer);
+		this.passBooster(booster, userID, nextPlayer);
 
 		// Chain calls as long as we have boosters left
 		if (s.players[userID].boosters.length > 0) {
@@ -2616,7 +2618,7 @@ export class Session implements IIndexable {
 				assert(p.boosters.length === 0, `distributeBoosters: ${userID} boosters.length ${p.boosters.length}`);
 
 				p.pickNumber = 0;
-				this.passBooster(boosters[boosterIndex], userID, false);
+				this.passBooster(boosters[boosterIndex], null, userID);
 				++boosterIndex;
 			}
 
@@ -3524,7 +3526,7 @@ export class Session implements IIndexable {
 	}
 
 	getSortedHumanPlayerData() {
-		const tmp: UsersData = {};
+		const tmp: Record<UserID, UserData> = {};
 		for (const userID of this.getSortedHumanPlayersIDs()) {
 			tmp[userID] = {
 				userID: userID,
@@ -3542,7 +3544,7 @@ export class Session implements IIndexable {
 
 	getSortedVirtualPlayerData() {
 		if (isDraftState(this.draftState)) {
-			const r: UsersData = {};
+			const r: Record<UserID, UserData> = {};
 			for (const userID in this.draftState.players) {
 				r[userID] = {
 					userID: userID,
@@ -3719,15 +3721,14 @@ export class Session implements IIndexable {
 		eventKey: T,
 		...args: Parameters<ServerToClientEvents[T]>
 	) {
-		for (const uid of this.users) if (uid in Connections) Connections[uid].socket.emit(eventKey, ...args);
+		for (const uid of this.users) Connections[uid]?.socket.emit(eventKey, ...args);
 	}
 
 	emitToConnectedNonOwners<T extends keyof ServerToClientEvents>(
 		eventKey: T,
 		...args: Parameters<ServerToClientEvents[T]>
 	) {
-		for (const uid of this.users)
-			if (uid in Connections && uid !== this.owner) Connections[uid].socket.emit(eventKey, ...args);
+		for (const uid of this.users) if (uid !== this.owner) Connections[uid]?.socket.emit(eventKey, ...args);
 	}
 }
 

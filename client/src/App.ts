@@ -1,7 +1,7 @@
 import type { ClientToServerEvents, LoaderOptions, ServerToClientEvents } from "@/SocketType";
 import type { UserID } from "@/IDTypes";
 import type { SetCode, IIndexable, Language } from "@/Types";
-import { DistributionMode, DraftLogRecipients, ReadyState, UserData, UsersData } from "../../src/Session/SessionTypes";
+import { DistributionMode, DraftLogRecipients, ReadyState, UserData } from "../../src/Session/SessionTypes";
 import { ArenaID, Card, CardID, DeckList, PlainCollection, UniqueCard, UniqueCardID } from "@/CardTypes";
 import type { DraftLog } from "@/DraftLog";
 import type { BotScores } from "@/Bot";
@@ -355,7 +355,7 @@ export default defineComponent({
 			currentDraftLog: null as DraftLog | null,
 			draftLogLive: null as DraftLog | null,
 			bracket: null as IBracket | null,
-			virtualPlayersData: null as UsersData | null,
+			virtualPlayersData: null as Record<UserID, UserData> | null,
 
 			botScores: null as BotScores | null,
 
@@ -574,6 +574,23 @@ export default defineComponent({
 				// FIXME: Use accurate key type once we have it.
 				for (const prop in sessionOptions)
 					(this as IIndexable)[prop as keyof typeof SessionsSettingsProps] = sessionOptions[prop];
+			});
+
+			this.socket.on("virtualPlayersDataUpdate", (virtualPlayersData) => {
+				if (!this.virtualPlayersData) return;
+				// NOTE: This is very inefficient when starting a draft with a lot of bots: We get a ton of updates
+				// for each bot in a very short time, and we have to re-render the whole virtual player list each time.
+				// I did not find a way to improve the situation yet, and it's still okayish with a reasonable number of bots (e.g. 7),
+				// but this might be worth optimizing in the future.
+				for (const uid in virtualPlayersData) {
+					if (this.virtualPlayersData[uid]) {
+						for (const prop in virtualPlayersData[uid]) {
+							if (this.virtualPlayersData[uid][prop as keyof UserData] !== undefined)
+								(this.virtualPlayersData[uid] as { [prop: string]: unknown })[prop] =
+									virtualPlayersData[uid][prop as keyof UserData];
+						}
+					}
+				}
 			});
 
 			this.socket.on("sessionOwner", (ownerID, ownerUserName) => {

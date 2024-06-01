@@ -2,7 +2,7 @@ import { GridDraftSyncData } from "./GridDraft";
 import { WinstonDraftSyncData } from "./WinstonDraft";
 import { SessionID, UserID } from "./IDTypes";
 import { Message, SocketAck, SocketError } from "./Message";
-import { DistributionMode, DraftLogRecipients, ReadyState, UsersData } from "./Session/SessionTypes";
+import { DistributionMode, DraftLogRecipients, ReadyState, UserData } from "./Session/SessionTypes";
 import { Options } from "./utils";
 import { SetCode } from "./Types";
 import { DraftLog, DraftPick } from "./DraftLog";
@@ -105,7 +105,7 @@ export interface ServerToClientEvents {
 	timer: (data: { countdown: number }) => void;
 	disableTimer: () => void;
 
-	startDraft: (userData: UsersData) => void;
+	startDraft: (userData: Record<UserID, UserData>) => void;
 	draftState: (state: DraftSyncData) => void;
 	"draftState:boosterCount": (boosterCount: number) => void;
 	startReviewPhase: (timer: number) => void;
@@ -117,6 +117,7 @@ export interface ServerToClientEvents {
 		botScores: BotScores;
 		state: ReturnType<DraftState["syncData"]>;
 	}) => void;
+	virtualPlayersDataUpdate: (data: Record<UserID, Partial<UserData>>) => void;
 
 	startWinstonDraft: (state: WinstonDraftSyncData) => void;
 	winstonDraftSync: (syncData: WinstonDraftSyncData) => void;

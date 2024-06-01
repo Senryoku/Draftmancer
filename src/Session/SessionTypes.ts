@@ -17,10 +17,6 @@ export type UserData = {
 	boosterCount?: number;
 };
 
-export type UsersData = {
-	[uid: UserID]: UserData;
-};
-
 export type DistributionMode = "regular" | "shufflePlayerBoosters" | "shuffleBoosterPool";
 export type DraftLogRecipients = "none" | "owner" | "delayed" | "everyone";
 

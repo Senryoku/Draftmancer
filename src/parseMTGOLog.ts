@@ -1,6 +1,6 @@
 import { Card, CardID } from "./CardTypes";
 import { UserID } from "./IDTypes";
-import { UsersData } from "./Session/SessionTypes";
+import { UserData } from "./Session/SessionTypes";
 import { Constants } from "./Constants.js";
 import { DraftLog, DraftPick } from "./DraftLog.js";
 import { matchCardVersion } from "./parseCardList.js";
@@ -102,7 +102,7 @@ export function parseMTGOLog(userID: UserID, txt: string): SocketError | DraftLo
 		const carddata: Record<string, Card> = {};
 		for (const pick of picks) for (const cid of pick.booster) if (!carddata[cid]) carddata[cid] = getCard(cid);
 
-		const players: UsersData = {};
+		const players: Record<UserID, UserData> = {};
 		players[userID] = {
 			userID: userID,
 			userName: playerName,

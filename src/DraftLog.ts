@@ -1,7 +1,7 @@
 import { Card, CardID, DeckList } from "./CardTypes.js";
 import { SessionID, UserID } from "./IDTypes.js";
 import { Session } from "./Session.js";
-import { UsersData } from "./Session/SessionTypes.js";
+import { UserData } from "./Session/SessionTypes.js";
 
 // Used in DraftLogs Version 2.0, used in the client for backwards compatibility.
 export type DeprecatedDraftPick = { pick: number[]; burn?: number[]; booster: CardID[] };
@@ -75,7 +75,7 @@ export class DraftLog {
 			  },
 		carddata: { [cid: string]: Card },
 		boosters: CardID[][],
-		virtualPlayers: UsersData
+		virtualPlayers: Record<UserID, UserData>
 	) {
 		this.type = type;
 		this.sessionID = session.id;
