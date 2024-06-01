@@ -170,6 +170,7 @@ export default defineComponent({
 		CardPool,
 		CardPopup,
 		CardStats: defineAsyncComponent(() => import("./components/CardStats.vue")),
+		ChatHistory: defineAsyncComponent(() => import("./components/ChatHistory.vue")),
 		CollectionComponent: defineAsyncComponent({
 			loader: () => import("./components/Collection.vue"),
 			loadingComponent: LoadingComponent,
