@@ -899,7 +899,7 @@ export class Session implements IIndexable {
 	}
 
 	///////////////////// Winston Draft //////////////////////
-	startWinstonDraft(boostersPerPlayer: number, removeBasicLands: boolean): SocketAck {
+	startWinstonDraft(boosterCount: number, removeBasicLands: boolean): SocketAck {
 		if (this.drafting) return new SocketError("Already drafting.");
 		if (this.users.size < 2)
 			return new SocketError(
@@ -907,7 +907,7 @@ export class Session implements IIndexable {
 				`Winston Draft can only be played with 2 or more players. Bots are not supported!`
 			);
 
-		let boosters = this.generateBoosters(this.users.size * boostersPerPlayer, {
+		let boosters = this.generateBoosters(boosterCount, {
 			useCustomBoosters: true,
 			playerCount: this.users.size,
 		});

@@ -1978,11 +1978,12 @@ export default defineComponent({
 				});
 			} else {
 				this.spawnDialog(WinstonDialog, {
-					onStart: (boostersPerPlayer: number) => {
-						this.socket.emit("startWinstonDraft", boostersPerPlayer, true, (answer: SocketAck) => {
+					onStart: (boosterCount: number) => {
+						this.socket.emit("startWinstonDraft", boosterCount, true, (answer: SocketAck) => {
 							if (answer.code !== 0 && answer.error) Alert.fire(answer.error);
 						});
 					},
+					defaultBoosterCount: 3 * this.sessionUsers.length,
 				});
 			}
 		},

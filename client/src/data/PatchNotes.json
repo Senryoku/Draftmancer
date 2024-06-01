@@ -1,5 +1,11 @@
 [
 	{
+		"date": "01/06/2024",
+		"notes": [
+			"Allow specifying the number of booster in the Winston Draft main stack, instead of the number of boosters per player."
+		]
+	},
+	{
 		"date": "30/05/2024",
 		"notes": [
 			"Modern Horizons 3 (MH3) support."

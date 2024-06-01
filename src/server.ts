@@ -685,16 +685,14 @@ function startRotisserieDraft(
 function startWinstonDraft(
 	userID: UserID,
 	sessionID: SessionID,
-	boostersPerPlayer: unknown,
+	boosterCount: unknown,
 	removeBasicLands: unknown,
 	ack: (s: SocketAck) => void
 ) {
 	const sess = Sessions[sessionID];
-	const localBoostersPerPlayer = !isNumber(boostersPerPlayer)
-		? parseInt(boostersPerPlayer as string)
-		: boostersPerPlayer;
+	const localBoosterCount = !isNumber(boosterCount) ? parseInt(boosterCount as string) : boosterCount;
 	const localRemoveBasicLands = isBoolean(removeBasicLands) ? removeBasicLands : true;
-	const r = sess.startWinstonDraft(localBoostersPerPlayer || 6, localRemoveBasicLands);
+	const r = sess.startWinstonDraft(localBoosterCount ?? 6, localRemoveBasicLands);
 	if (!isSocketError(r)) startPublicSession(sess);
 	ack(r);
 }
@@ -709,7 +707,7 @@ function startWinchesterDraft(
 	const sess = Sessions[sessionID];
 	const localBoosterPerPlayer = !isNumber(boosterPerPlayer) ? parseInt(boosterPerPlayer as string) : boosterPerPlayer;
 	const localRemoveBasicLands = isBoolean(removeBasicLands) ? removeBasicLands : true;
-	const r = sess.startWinchesterDraft(localBoosterPerPlayer || 6, localRemoveBasicLands);
+	const r = sess.startWinchesterDraft(localBoosterPerPlayer ?? 6, localRemoveBasicLands);
 	if (!isSocketError(r)) startPublicSession(sess);
 	ack(r);
 }
