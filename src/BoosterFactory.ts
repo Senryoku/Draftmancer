@@ -2198,7 +2198,7 @@ export class MH3BoosterFactory extends BoosterFactory {
 			0.011, // Despite the wording, I'm pretty sure the 1.1% is not only for the DFC planeswalkers, but all mythics.
 			0.004,
 			0.042,
-			0.042,
+			0.0415, // Adjusted from 0.042 to allow Full-art Snow-Covered Wastes to appear (rounding was making that basically impossible)
 		]);
 		const wildcardPool = random.realZeroToOneInclusive();
 		if (wildcardPool < probabilities[3]) {
