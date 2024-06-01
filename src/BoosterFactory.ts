@@ -2333,7 +2333,7 @@ export class MH3BoosterFactory extends BoosterFactory {
 			const probabilities = cumulativeSum([0.5, 0.2, 0.133, 0.1]);
 			const landRoll = random.realZeroToOneInclusive();
 			if (landRoll < probabilities[0]) {
-				booster.push(pickCard(this.cardPool["common"], specialSlots));
+				booster.push(pickCard(this.cardPool["common"], booster));
 			} else if (landRoll < probabilities[1]) {
 				// Basic lands
 				booster.push(getUnique(getRandom(MH3BoosterFactory.Basics)));
