@@ -2142,7 +2142,7 @@ export class MH3BoosterFactory extends BoosterFactory {
 	);
 	static readonly NewToModernRetroFrame = MH3BoosterFactory.NewToModernFilter(MH3BoosterFactory.RetroFrame);
 
-	static readonly CommanderMythics = filterSetByNumber("m3c", 136, 143);
+	static readonly CommanderMythics = filterSetByNumber("m3c", 9, 16);
 	static readonly Basics = MH3BoosterFactory.Filter(310, 319);
 	static readonly FullartBasics = MH3BoosterFactory.Filter(304, 308);
 

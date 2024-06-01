@@ -3178,11 +3178,21 @@
         "fullName": "Kaldheim Tokens",
         "icon": "img/sets/tkhm.svg"
     },
+    "tm3c": {
+        "code": "tm3c",
+        "fullName": "Modern Horizons 3 Commander Tokens",
+        "icon": "img/sets/tm3c.svg"
+    },
     "tmbs": {
         "code": "tmbs",
         "fullName": "Mirrodin Besieged Tokens",
         "block": "Scars of Mirrodin",
         "icon": "img/sets/tmbs.svg"
+    },
+    "tmh3": {
+        "code": "tmh3",
+        "fullName": "Modern Horizons 3 Tokens",
+        "icon": "img/sets/tmh3.svg"
     },
     "tmp": {
         "code": "tmp",
