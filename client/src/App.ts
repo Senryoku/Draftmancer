@@ -1,6 +1,7 @@
 import type { ClientToServerEvents, LoaderOptions, ServerToClientEvents } from "@/SocketType";
 import type { UserID } from "@/IDTypes";
 import type { SetCode, IIndexable, Language } from "@/Types";
+import { PassingOrder } from "./common";
 import { DistributionMode, DraftLogRecipients, ReadyState, UserData } from "../../src/Session/SessionTypes";
 import { ArenaID, Card, CardID, DeckList, PlainCollection, UniqueCard, UniqueCardID } from "@/CardTypes";
 import type { DraftLog } from "@/DraftLog";
@@ -70,6 +71,7 @@ import ExportDropdown from "./components/ExportDropdown.vue";
 import Modal from "./components/Modal.vue";
 import SetSelect from "./components/SetSelect.vue";
 import ScaleSlider from "./components/ScaleSlider.vue";
+import Player from "./components/Player.vue";
 
 const SupremeDialog = defineAsyncComponent(() => import("./components/SupremeDraftDialog.vue"));
 const GlimpseDialog = defineAsyncComponent(() => import("./components/GlimpseDraftDialog.vue"));
@@ -109,13 +111,6 @@ enum GameState {
 	MinesweeperPicking = "MinesweeperPicking",
 	MinesweeperWaiting = "MinesweeperWaiting",
 	TeamSealed = "TeamSealed",
-}
-
-enum PassingOrder {
-	None,
-	Left,
-	Right,
-	Repeat,
 }
 
 export const Sounds: { [name: string]: HTMLAudioElement } = {
@@ -199,6 +194,7 @@ export default defineComponent({
 		Communities,
 		PatchNotes: defineAsyncComponent(() => import("./components/PatchNotes.vue")),
 		PickSummary: defineAsyncComponent(() => import("./components/PickSummary.vue")),
+		Player,
 		DraftQueue: defineAsyncComponent(() => import("./components/DraftQueue.vue")),
 		RotisserieDraft: defineAsyncComponent(() => import("./components/RotisserieDraft.vue")),
 		ScaleSlider,
@@ -578,15 +574,12 @@ export default defineComponent({
 
 			this.socket.on("virtualPlayersDataUpdate", (virtualPlayersData) => {
 				if (!this.virtualPlayersData) return;
-				// NOTE: This is very inefficient when starting a draft with a lot of bots: We get a ton of updates
-				// for each bot in a very short time, and we have to re-render the whole virtual player list each time.
-				// I did not find a way to improve the situation yet, and it's still okayish with a reasonable number of bots (e.g. 7),
-				// but this might be worth optimizing in the future.
+
 				for (const uid in virtualPlayersData) {
 					if (this.virtualPlayersData[uid]) {
 						for (const prop in virtualPlayersData[uid]) {
 							if (this.virtualPlayersData[uid][prop as keyof UserData] !== undefined)
-								(this.virtualPlayersData[uid] as { [prop: string]: unknown })[prop] =
+								(this.virtualPlayersData[uid] as IIndexable)[prop] =
 									virtualPlayersData[uid][prop as keyof UserData];
 						}
 					}

@@ -635,7 +635,7 @@
 								<div class="player-name" v-tooltip="userByID[element].userName">
 									{{ userByID[element].userName }}
 								</div>
-								<template v-if="userID == sessionOwner">
+								<template v-if="userID === sessionOwner">
 									<font-awesome-icon
 										icon="fa-solid fa-chevron-left"
 										class="clickable move-player move-player-left"
@@ -748,127 +748,22 @@
 			<template v-else>
 				<div class="player-list-container">
 					<ul class="player-list">
-						<li
+						<Player
 							v-for="(user, idx) in virtualPlayers"
+							:key="user.userID"
+							:user="user"
+							:userID="userID"
+							:sessionOwner="sessionOwner"
+							:passingOrder="passingOrder"
+							:isCurrentPlayer="currentPlayer === user.userID"
 							:class="{
 								teama: teamDraft && idx % 2 === 0,
 								teamb: teamDraft && idx % 2 === 1,
 								self: userID === user.userID,
-								bot: user.isBot,
-								'current-player': currentPlayer === user.userID,
 							}"
-							:data-userid="user.userID"
-							:key="user.userID"
-						>
-							<font-awesome-icon
-								icon="fa-solid fa-circle"
-								size="xs"
-								class="passing-order-repeat"
-								v-if="passingOrder === PassingOrder.Repeat"
-								v-tooltip="'Passing order'"
-							></font-awesome-icon>
-							<font-awesome-icon
-								icon="fa-solid fa-angle-double-left"
-								class="passing-order-left"
-								v-else-if="passingOrder === PassingOrder.Left"
-								v-tooltip="'Passing order'"
-							></font-awesome-icon>
-							<font-awesome-icon
-								icon="fa-solid fa-angle-double-right"
-								class="passing-order-right"
-								v-else-if="passingOrder === PassingOrder.Right"
-								v-tooltip="'Passing order'"
-							></font-awesome-icon>
-							<div class="player-name" v-tooltip="user.userName">{{ user.userName }}</div>
-							<div class="status-icons">
-								<template v-if="!user.isBot && !user.isDisconnected">
-									<font-awesome-icon
-										v-if="user.userID === sessionOwner"
-										icon="fa-solid fa-crown"
-										class="subtle-gold"
-										v-tooltip="`${user.userName} is the session's owner.`"
-									></font-awesome-icon>
-									<template v-if="userID === sessionOwner && user.userID !== sessionOwner">
-										<img
-											src="./assets/img/pass_ownership.svg"
-											class="clickable"
-											:class="{ 'opaque-disabled': user.userID in disconnectedUsers }"
-											style="height: 18px; margin-top: -4px"
-											v-tooltip="`Give session ownership to ${user.userName}`"
-											@click="setSessionOwner(user.userID)"
-										/>
-										<font-awesome-icon
-											icon="fa-solid fa-user-slash"
-											class="clickable red"
-											:class="{ 'opaque-disabled': user.userID in disconnectedUsers }"
-											v-tooltip="`Remove ${user.userName} from the session`"
-											@click="removePlayer(user.userID)"
-										></font-awesome-icon>
-									</template>
-									<font-awesome-icon
-										v-if="user.isDisconnected"
-										icon="fa-solid fa-times"
-										class="red"
-										v-tooltip="user.userName + ' is disconnected.'"
-									></font-awesome-icon>
-									<template v-if="!user.isDisconnected && currentPlayer !== null">
-										<font-awesome-icon
-											v-show="user.userID === currentPlayer"
-											icon="fa-solid fa-spinner"
-											spin
-											v-tooltip="user.userName + ' is thinking...'"
-										></font-awesome-icon>
-									</template>
-								</template>
-								<font-awesome-icon
-									v-if="user.isBot || user.isReplaced"
-									icon="fa-solid fa-robot"
-								></font-awesome-icon>
-								<template v-if="user.boosterCount !== undefined">
-									<div
-										v-tooltip="`${user.userName} has ${user.boosterCount} boosters.`"
-										v-if="user.boosterCount > 0"
-										class="booster-count"
-									>
-										<template v-if="user.boosterCount === 1">
-											<img src="./assets/img/booster.svg" />
-										</template>
-										<template v-else-if="user.boosterCount === 2">
-											<img
-												src="./assets/img/booster.svg"
-												style="transform: translate(-50%, -50%) rotate(10deg)"
-											/>
-											<img
-												src="./assets/img/booster.svg"
-												style="transform: translate(-50%, -50%) rotate(-10deg)"
-											/>
-										</template>
-										<template v-else-if="user.boosterCount > 2">
-											<img
-												src="./assets/img/booster.svg"
-												style="transform: translate(-50%, -50%) rotate(10deg)"
-											/>
-											<img
-												src="./assets/img/booster.svg"
-												style="transform: translate(-50%, -50%) rotate(-10deg)"
-											/>
-											<img src="./assets/img/booster.svg" />
-											<div>
-												{{ user.boosterCount }}
-											</div>
-										</template>
-									</div>
-
-									<font-awesome-icon
-										icon="fa-solid fa-spinner"
-										spin
-										v-tooltip="user.userName + ' is waiting...'"
-										v-else
-									></font-awesome-icon>
-								</template>
-							</div>
-							<div class="chat-bubble" :id="'chat-bubble-' + user.userID"></div>
-						</li>
+							@removePlayer="removePlayer"
+							@setSessionOwner="setSessionOwner"
+						/>
 					</ul>
 				</div>
 			</template>
