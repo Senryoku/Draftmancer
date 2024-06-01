@@ -1895,7 +1895,7 @@ export class Session implements IIndexable {
 			s.players[to].boosters.push(booster);
 			statesToUpdate.push(to);
 
-			// Player is currently randomly picking (Archdemon of Paliano effect), immediately pick and return.
+			// Player is currently randomly picking (Archdemon of Paliano effect), immediately pick at random.
 			if (s.players[to].effect?.randomPicks !== undefined && s.players[to].effect!.randomPicks! > 0) {
 				assert(
 					s.players[to].boosters.length === 1,
@@ -1904,21 +1904,20 @@ export class Session implements IIndexable {
 				this.randomPick(to).then((picks) =>
 					Connections[to]?.socket.emit("addCards", "You randomly picked:", picks)
 				);
-				return;
-			}
-
-			// Synchronize concerned users
-			if (s.players[to].isBot || (this.isDisconnected(to) && this.disconnectedUsers[to].replaced)) {
-				this.startBotPickChain(to);
-			} else if (!this.isDisconnected(to)) {
-				// This user was waiting for a booster
-				if (s.players[to].boosters.length === 1) {
-					this.sendDraftState(to);
-					this.startCountdown(to);
-					this.requestBotRecommendation(to);
-				} else {
-					// Only send the updated boosterCount (Nothing else should have changed.)
-					Connections[to]?.socket.emit("draftState:boosterCount", s.syncData(to).boosterCount);
+			} else {
+				// Synchronize concerned users
+				if (s.players[to].isBot || (this.isDisconnected(to) && this.disconnectedUsers[to].replaced)) {
+					this.startBotPickChain(to);
+				} else if (!this.isDisconnected(to)) {
+					// This user was waiting for a booster
+					if (s.players[to].boosters.length === 1) {
+						this.sendDraftState(to);
+						this.startCountdown(to);
+						this.requestBotRecommendation(to);
+					} else {
+						// Only send the updated boosterCount (Nothing else should have changed.)
+						Connections[to]?.socket.emit("draftState:boosterCount", s.syncData(to).boosterCount);
+					}
 				}
 			}
 		}
