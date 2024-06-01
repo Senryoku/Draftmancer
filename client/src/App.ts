@@ -162,6 +162,7 @@ const ChoosePlayerComponent = defineAsyncComponent(() => import("./components/Ch
 
 export default defineComponent({
 	components: {
+		About: defineAsyncComponent(() => import("./components/About.vue")),
 		BoosterCard,
 		BracketComponent: defineAsyncComponent(() => import("./components/Bracket.vue")),
 		Card: CardComponent,
@@ -193,7 +194,6 @@ export default defineComponent({
 		Modal,
 		News,
 		Communities,
-		PatchNotes: defineAsyncComponent(() => import("./components/PatchNotes.vue")),
 		PickSummary: defineAsyncComponent(() => import("./components/PickSummary.vue")),
 		Player,
 		DraftQueue: defineAsyncComponent(() => import("./components/DraftQueue.vue")),
