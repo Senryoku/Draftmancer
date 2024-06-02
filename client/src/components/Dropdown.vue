@@ -1,5 +1,5 @@
 <template>
-	<span class="dropdown-container" @mouseenter="updateHeight" :class="{ 'forced-open': forcedOpen }">
+	<span class="dropdown-container" @mouseenter="updateHeight" :class="{ 'forced-open': forcedOpen }" ref="element">
 		<div class="handle" @pointerdown="toggleKeepOpen"><slot name="handle"></slot></div>
 		<div class="dropdown">
 			<div class="content" ref="content">
@@ -9,51 +9,56 @@
 	</span>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
+<script setup lang="ts">
+import { ref, onMounted } from "vue";
 
-export default defineComponent({
-	data() {
-		return { forcedOpen: false };
-	},
-	props: {
-		minwidth: { type: String, default: "12em" },
-	},
-	mounted() {
-		this.updateHeight();
-	},
-	methods: {
-		updateHeight() {
-			this.$el.setAttribute(
-				"style",
-				`--unrolled-height: calc(1em + ${(this.$refs.content as HTMLElement).clientHeight}px); --min-width: ${
-					this.minwidth
-				}`
-			);
-		},
-		toggleKeepOpen() {
-			this.setKeepOpen(!this.forcedOpen);
-		},
-		setKeepOpen(open: boolean) {
-			if (this.forcedOpen === open) return;
-			this.forcedOpen = open;
-			if (this.forcedOpen) {
-				this.$el.addEventListener("pointerdown", this.stopPropagation);
-				document.addEventListener("pointerdown", this.onOutsideClick, { once: true });
-			} else {
-				this.$el.removeEventListener("pointerdown", this.stopPropagation);
-				document.removeEventListener("pointerdown", this.onOutsideClick);
-			}
-			this.updateHeight();
-		},
-		onOutsideClick() {
-			this.setKeepOpen(false);
-		},
-		stopPropagation(e: Event) {
-			e.stopPropagation();
-		},
-	},
+defineExpose({
+	updateHeight,
 });
+
+const props = withDefaults(defineProps<{ minwidth?: string }>(), {
+	minwidth: "12em",
+});
+
+const forcedOpen = ref(false);
+const element = ref<HTMLElement>();
+const content = ref<HTMLElement>();
+
+onMounted(() => {
+	updateHeight();
+});
+
+function updateHeight() {
+	element.value?.setAttribute(
+		"style",
+		`--unrolled-height: calc(1em + ${content.value?.clientHeight}px); --min-width: ${props.minwidth}`
+	);
+}
+
+function toggleKeepOpen() {
+	setKeepOpen(!forcedOpen.value);
+}
+
+function setKeepOpen(open: boolean) {
+	if (forcedOpen.value === open) return;
+	forcedOpen.value = open;
+	if (forcedOpen.value) {
+		element.value?.addEventListener("pointerdown", stopPropagation);
+		document.addEventListener("pointerdown", onOutsideClick, { once: true });
+	} else {
+		element.value?.removeEventListener("pointerdown", stopPropagation);
+		document.removeEventListener("pointerdown", onOutsideClick);
+	}
+	updateHeight();
+}
+
+function onOutsideClick() {
+	setKeepOpen(false);
+}
+
+function stopPropagation(e: Event) {
+	e.stopPropagation();
+}
 </script>
 
 <style scoped>
