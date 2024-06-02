@@ -60,18 +60,13 @@ import parseCSV from "./parseCSV";
 import LoadingComponent from "./components/LoadingComponent.vue";
 import News from "./components/News.vue";
 import Communities from "./components/Communities.vue";
-import BoosterCard from "./components/BoosterCard.vue";
 import CardComponent from "./components/Card.vue";
 import CardPlaceholder from "./components/CardPlaceholder.vue";
 import CardPool from "./components/CardPool.vue";
-import CardPopup from "./components/CardPopup.vue";
 import DelayedInput from "./components/DelayedInput.vue";
 import Dropdown from "./components/Dropdown.vue";
-import ExportDropdown from "./components/ExportDropdown.vue";
 import Modal from "./components/Modal.vue";
 import SetSelect from "./components/SetSelect.vue";
-import ScaleSlider from "./components/ScaleSlider.vue";
-import Player from "./components/Player.vue";
 
 const SupremeDialog = defineAsyncComponent(() => import("./components/SupremeDraftDialog.vue"));
 const GlimpseDialog = defineAsyncComponent(() => import("./components/GlimpseDraftDialog.vue"));
