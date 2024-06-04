@@ -363,17 +363,17 @@ img {
 	gap: 5px;
 }
 
-.layout-split {
+.layout-split img {
 	transform: translate(50%) scale(1.41) rotateZ(90deg);
 }
-.right .layout-split {
+.right .layout-split img {
 	transform: translate(-50%) scale(1.41) rotateZ(90deg);
 }
 
-.layout-split-left {
+.layout-split-left img {
 	transform: translate(50%) scale(1.41) rotateZ(-90deg);
 }
-.right .layout-split-left {
+.right .layout-split-left img {
 	transform: translate(-50%) scale(1.41) rotateZ(-90deg);
 }
 
