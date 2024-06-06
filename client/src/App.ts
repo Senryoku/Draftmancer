@@ -60,6 +60,7 @@ import parseCSV from "./parseCSV";
 import LoadingComponent from "./components/LoadingComponent.vue";
 import News from "./components/News.vue";
 import Communities from "./components/Communities.vue";
+import BoosterCard from "./components/BoosterCard.vue";
 import CardComponent from "./components/Card.vue";
 import CardPlaceholder from "./components/CardPlaceholder.vue";
 import CardPool from "./components/CardPool.vue";
@@ -158,7 +159,7 @@ const ChoosePlayerComponent = defineAsyncComponent(() => import("./components/Ch
 export default defineComponent({
 	components: {
 		About: defineAsyncComponent(() => import("./components/About.vue")),
-		BoosterCard: defineAsyncComponent(() => import("./components/BoosterCard.vue")),
+		BoosterCard,
 		BracketComponent: defineAsyncComponent(() => import("./components/Bracket.vue")),
 		Card: defineAsyncComponent(() => import("./components/Card.vue")),
 		CardList: defineAsyncComponent(() => import("./components/CardList.vue")),
