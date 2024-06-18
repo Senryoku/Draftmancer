@@ -4,22 +4,22 @@ import { getSessionLink, launchMode, pages, setupBrowsers, waitAndClickXpath } f
 import { ElementHandle, Page } from "puppeteer";
 
 async function pickWinston(page: Page, forceDepth?: number) {
-	const drafting = await page.$x("//h2[contains(., 'Winston Draft')]");
+	const drafting = await page.$$("xpath/.//h2[contains(., 'Winston Draft')]");
 	if (drafting.length === 0) return true;
 
-	const next = await page.waitForXPath(
-		"//div[contains(., 'Done drafting!')] | //span[contains(., 'Your turn to pick a pile of cards!')] | //span[contains(., 'Waiting for')]"
+	const next = await page.waitForSelector(
+		"xpath/.//div[contains(., 'Done drafting!')] | //span[contains(., 'Your turn to pick a pile of cards!')] | //span[contains(., 'Waiting for')]"
 	);
 	const text = await page.evaluate((next) => (next as HTMLElement).innerText, next);
 	if (text === "Done drafting!") return true;
 	if (text.includes("Waiting for")) return false;
 
 	const pickOrSkip = async (depth = 0) => {
-		const pickXPath = "//button[contains(., 'Take Pile')]";
-		const skipXPath = "//button[contains(., 'Skip Pile')]";
-		const pick = await page.waitForXPath(pickXPath);
+		const pickXPath = "xpath/.//button[contains(., 'Take Pile')]";
+		const skipXPath = "xpath/.//button[contains(., 'Skip Pile')]";
+		const pick = await page.waitForSelector(pickXPath);
 		expect(pick).to.be.not.null;
-		const skip = await page.$x(skipXPath);
+		const skip = await page.$$(skipXPath);
 		if (
 			skip.length === 0 ||
 			(forceDepth !== undefined && forceDepth === depth) ||
@@ -33,7 +33,7 @@ async function pickWinston(page: Page, forceDepth?: number) {
 			if (depth < 2) {
 				await pickOrSkip(depth + 1);
 			} else {
-				const swalOK = await page.waitForXPath("//button[contains(., 'OK')]");
+				const swalOK = await page.waitForSelector("xpath/.//button[contains(., 'OK')]");
 				(swalOK as ElementHandle<HTMLElement>).click(); // Dismiss card popup
 			}
 		}
@@ -55,7 +55,7 @@ describe("Winston Draft", function () {
 
 				await Promise.all(
 					pages.map((page) =>
-						page.waitForXPath("//h2[contains(., 'Winston Draft')]", {
+						page.waitForSelector("xpath/.//h2[contains(., 'Winston Draft')]", {
 							visible: true,
 						})
 					)
@@ -100,7 +100,7 @@ describe("Winston Draft", function () {
 
 			await Promise.all(
 				pages.map((page) =>
-					page.waitForXPath("//h2[contains(., 'Winston Draft')]", {
+					page.waitForSelector("xpath/.//h2[contains(., 'Winston Draft')]", {
 						visible: true,
 					})
 				)
@@ -116,7 +116,7 @@ describe("Winston Draft", function () {
 		it("Player 0 refreshes the page", async function () {
 			await pages[0].goto("about:blank", { waitUntil: ["domcontentloaded"] });
 			await pages[0].goto(sessionLink, { waitUntil: ["domcontentloaded"] });
-			await pages[0].waitForXPath("//div[contains(., 'Reconnected')]", {
+			await pages[0].waitForSelector("xpath/.//div[contains(., 'Reconnected')]", {
 				hidden: true,
 			});
 		});
@@ -129,7 +129,7 @@ describe("Winston Draft", function () {
 
 		it("Player 1 refreshes the page", async function () {
 			await pages[1].reload({ waitUntil: ["domcontentloaded"] });
-			await pages[1].waitForXPath("//div[contains(., 'Reconnected')]", {
+			await pages[1].waitForSelector("xpath/.//div[contains(., 'Reconnected')]", {
 				hidden: true,
 			});
 		});
@@ -146,11 +146,11 @@ describe("Winston Draft", function () {
 			await new Promise((r) => setTimeout(r, 100));
 
 			await pages[0].goto(sessionLink, { waitUntil: ["domcontentloaded"] });
-			await pages[0].waitForXPath("//div[contains(., 'Reconnected')]", {
+			await pages[0].waitForSelector("xpath/.//div[contains(., 'Reconnected')]", {
 				hidden: true,
 			});
 			await pages[1].goto(sessionLink, { waitUntil: ["domcontentloaded"] });
-			await pages[1].waitForXPath("//div[contains(., 'Reconnected')]", {
+			await pages[1].waitForSelector("xpath/.//div[contains(., 'Reconnected')]", {
 				hidden: true,
 			});
 		});

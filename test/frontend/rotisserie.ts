@@ -3,7 +3,9 @@ import { expect } from "chai";
 import { waitAndClickSelector, waitAndClickXpath, setupBrowsers, pages, launchMode } from "./src/common.js";
 
 async function pickCard(page: Page) {
-	const next = await page.waitForXPath("//div[contains(., 'Done drafting!')] | //div[contains(., 'Pick a card')]");
+	const next = await page.waitForSelector(
+		"xpath/.//div[contains(., 'Done drafting!')] | //div[contains(., 'Pick a card')]"
+	);
 	const text = await page.evaluate((next) => (next as HTMLElement).innerText, next);
 	if (text === "Done drafting!") return true;
 
@@ -25,7 +27,7 @@ describe("Rotisserie Draft - Singleton", function () {
 
 		await Promise.all(
 			pages.map((page) =>
-				page.waitForXPath("//div[contains(., 'Draft Started!')]", {
+				page.waitForSelector("xpath/.//div[contains(., 'Draft Started!')]", {
 					hidden: true,
 				})
 			)
@@ -63,7 +65,7 @@ describe("Rotisserie Draft - Standard", function () {
 
 		await Promise.all(
 			pages.map((page) =>
-				page.waitForXPath("//div[contains(., 'Draft Started!')]", {
+				page.waitForSelector("xpath/.//div[contains(., 'Draft Started!')]", {
 					hidden: true,
 				})
 			)

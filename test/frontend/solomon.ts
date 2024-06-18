@@ -50,7 +50,7 @@ function launch(cardCount: number = 8, roundCount: number = 10) {
 
 		await Promise.all([
 			...pages.map((page) =>
-				page.waitForXPath("//*[contains(., 'Draft Started!')]", {
+				page.waitForSelector("xpath/.//*[contains(., 'Draft Started!')]", {
 					hidden: true,
 				})
 			),
@@ -117,7 +117,7 @@ describe("Solomon Draft", function () {
 		it("Player 0 refreshes the page", async function () {
 			await pages[0].goto("about:blank", { waitUntil: ["domcontentloaded"] });
 			await pages[0].goto(sessionLink, { waitUntil: ["domcontentloaded"] });
-			await pages[0].waitForXPath("//*[contains(., 'Reconnected')]", {
+			await pages[0].waitForSelector("xpath/.//*[contains(., 'Reconnected')]", {
 				hidden: true,
 			});
 		});
@@ -132,7 +132,7 @@ describe("Solomon Draft", function () {
 
 		it("Player 1 refreshes the page", async function () {
 			await pages[1].reload({ waitUntil: ["domcontentloaded"] });
-			await pages[1].waitForXPath("//*[contains(., 'Reconnected')]", {
+			await pages[1].waitForSelector("xpath/.//*[contains(., 'Reconnected')]", {
 				hidden: true,
 			});
 		});
@@ -154,7 +154,7 @@ describe("Solomon Draft", function () {
 			await pages[1].goto(sessionLink, { waitUntil: ["domcontentloaded"] });
 			await Promise.all(
 				pages.map((p) =>
-					p.waitForXPath("//*[contains(., 'Reconnected')]", {
+					p.waitForSelector("xpath/.//*[contains(., 'Reconnected')]", {
 						hidden: true,
 					})
 				)

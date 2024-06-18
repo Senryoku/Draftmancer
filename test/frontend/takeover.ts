@@ -13,14 +13,14 @@ describe("Takeover request", function () {
 			await button!.click();
 
 			for (let i = 2; i < pages.length; i++) {
-				const yes = (await pages[i].waitForXPath("//*[text() = 'Yes']", {
+				const yes = (await pages[i].waitForSelector("xpath/.//*[text() = 'Yes']", {
 					visible: true,
 				})) as ElementHandle<Element>;
 				yes?.click();
 			}
 
-			await pages[0].waitForXPath("//*[text()[contains(., 'Removed from session')]]");
-			await pages[1].waitForXPath("//*[text()[contains(., 'Takeover request succeeded!')]]");
+			await pages[0].waitForSelector("xpath/.//*[text()[contains(., 'Removed from session')]]");
+			await pages[1].waitForSelector("xpath/.//*[text()[contains(., 'Takeover request succeeded!')]]");
 		});
 	});
 
@@ -33,19 +33,19 @@ describe("Takeover request", function () {
 			expect(button).to.exist;
 			await button!.click();
 
-			const no = (await pages[2].waitForXPath("//*[text() = 'No']", {
+			const no = (await pages[2].waitForSelector("xpath/.//*[text() = 'No']", {
 				visible: true,
 			})) as ElementHandle<Element>;
 			no?.click();
 
 			for (let i = 3; i < pages.length; i++) {
-				const yes = (await pages[i].waitForXPath("//*[text() = 'Yes']", {
+				const yes = (await pages[i].waitForSelector("xpath/.//*[text() = 'Yes']", {
 					visible: true,
 				})) as ElementHandle<Element>;
 				yes?.click();
 			}
 
-			await pages[1].waitForXPath("//*[text()[contains(., 'Takeover request refused')]]");
+			await pages[1].waitForSelector("xpath/.//*[text()[contains(., 'Takeover request refused')]]");
 		});
 	});
 });

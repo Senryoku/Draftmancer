@@ -1,12 +1,11 @@
 import { describe, it } from "mocha";
-import { expect } from "chai";
 import { getSessionLink, launchMode, pages, setupBrowsers, waitAndClickXpath } from "./src/common.js";
 import { Page } from "puppeteer";
 import { getRandom } from "../../src/utils.js";
 
 async function pickWinchester(page: Page) {
-	const next = await page.waitForXPath(
-		"//span[contains(., 'Your turn to pick a pile of cards!')] | //span[contains(., 'Waiting for')]"
+	const next = await page.waitForSelector(
+		"xpath/.//span[contains(., 'Your turn to pick a pile of cards!')] | //span[contains(., 'Waiting for')]"
 	);
 	const text = await page.evaluate((next) => (next as HTMLElement).innerText, next);
 	if (text.includes("Waiting for")) return false;
@@ -30,12 +29,12 @@ describe("Winchester Draft", function () {
 
 			await Promise.all([
 				...pages.map((page) =>
-					page.waitForXPath("//h2[contains(., 'Winchester Draft')]", {
+					page.waitForSelector("xpath/.//h2[contains(., 'Winchester Draft')]", {
 						visible: true,
 					})
 				),
 				...pages.map((page) =>
-					page.waitForXPath("//*[contains(., 'Draft Started')]", {
+					page.waitForSelector("xpath/.//*[contains(., 'Draft Started')]", {
 						hidden: true,
 					})
 				),
@@ -61,12 +60,12 @@ describe("Winchester Draft", function () {
 
 			await Promise.all([
 				...pages.map((page) =>
-					page.waitForXPath("//h2[contains(., 'Winchester Draft')]", {
+					page.waitForSelector("xpath/.//h2[contains(., 'Winchester Draft')]", {
 						visible: true,
 					})
 				),
 				...pages.map((page) =>
-					page.waitForXPath("//*[contains(., 'Draft Started')]", {
+					page.waitForSelector("xpath/.//*[contains(., 'Draft Started')]", {
 						hidden: true,
 					})
 				),
@@ -95,12 +94,12 @@ describe("Winchester Draft", function () {
 
 			await Promise.all([
 				...pages.map((page) =>
-					page.waitForXPath("//h2[contains(., 'Winchester Draft')]", {
+					page.waitForSelector("xpath/.//h2[contains(., 'Winchester Draft')]", {
 						visible: true,
 					})
 				),
 				...pages.map((page) =>
-					page.waitForXPath("//*[contains(., 'Draft Started')]", {
+					page.waitForSelector("xpath/.//*[contains(., 'Draft Started')]", {
 						hidden: true,
 					})
 				),
@@ -118,7 +117,7 @@ describe("Winchester Draft", function () {
 		it("Player 0 refreshes the page", async function () {
 			await pages[0].goto("about:blank", { waitUntil: ["domcontentloaded"] });
 			await pages[0].goto(sessionLink, { waitUntil: ["domcontentloaded"] });
-			await pages[0].waitForXPath("//*[contains(., 'Reconnected')]", {
+			await pages[0].waitForSelector("xpath/.//*[contains(., 'Reconnected')]", {
 				hidden: true,
 			});
 		});
@@ -133,7 +132,7 @@ describe("Winchester Draft", function () {
 
 		it("Player 1 refreshes the page", async function () {
 			await pages[1].reload({ waitUntil: ["domcontentloaded"] });
-			await pages[1].waitForXPath("//*[contains(., 'Reconnected')]", {
+			await pages[1].waitForSelector("xpath/.//*[contains(., 'Reconnected')]", {
 				hidden: true,
 			});
 		});
@@ -155,7 +154,7 @@ describe("Winchester Draft", function () {
 			await pages[1].goto(sessionLink, { waitUntil: ["domcontentloaded"] });
 			await Promise.all(
 				pages.map((p) =>
-					p.waitForXPath("//*[contains(., 'Reconnected')]", {
+					p.waitForSelector("xpath/.//*[contains(., 'Reconnected')]", {
 						hidden: true,
 					})
 				)

@@ -31,7 +31,7 @@ describe("Minesweeper Draft", function () {
 		await waitAndClickXpath(pages[0], "//button[contains(., 'Load Cube')]");
 		await dismissToast(pages[0]);
 		await pages[0].keyboard.press("Escape"); // Close settings modal
-		await pages[0].waitForXPath("//h2[contains(., 'Session Settings')]", {
+		await pages[0].waitForSelector("xpath/.//h2[contains(., 'Session Settings')]", {
 			hidden: true,
 		});
 	});
@@ -41,11 +41,11 @@ describe("Minesweeper Draft", function () {
 		await waitAndClickXpath(pages[0], "//button[contains(., 'Start Minesweeper Draft')]");
 
 		for (let i = 0; i < pages.length; ++i)
-			await pages[i].waitForXPath("//h2[contains(., 'Minesweeper Draft')]", {
+			await pages[i].waitForSelector("xpath/.//h2[contains(., 'Minesweeper Draft')]", {
 				visible: true,
 			});
 		for (let i = 0; i < pages.length; ++i)
-			await pages[i].waitForXPath("//div[contains(., 'Draft Started!')]", {
+			await pages[i].waitForSelector("xpath/.//div[contains(., 'Draft Started!')]", {
 				hidden: true,
 			});
 	});

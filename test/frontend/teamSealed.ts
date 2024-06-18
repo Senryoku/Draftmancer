@@ -3,8 +3,8 @@ import { expect } from "chai";
 import { launchMode, pages, setupBrowsers, waitAndClickXpath } from "./src/common.js";
 
 async function pickCard(page: Page, random = false) {
-	const next = await page.waitForXPath(
-		"//div[contains(., 'Team Sealed stopped!')] | //span[contains(., 'Card Pool')]"
+	const next = await page.waitForSelector(
+		"xpath/.//div[contains(., 'Team Sealed stopped!')] | //span[contains(., 'Card Pool')]"
 	);
 	const text = await page.evaluate((next) => (next as HTMLElement).innerText, next);
 	if (text === "Team Sealed stopped!") return true;
@@ -33,14 +33,14 @@ describe("Front End - Team Sealed", function () {
 
 		await Promise.all(
 			pages.map((page) =>
-				page.waitForXPath("//h2[contains(., 'Card Pool')]", {
+				page.waitForSelector("xpath/.//h2[contains(., 'Card Pool')]", {
 					visible: true,
 				})
 			)
 		);
 		await Promise.all(
 			pages.map((page) =>
-				page.waitForXPath("//div[contains(., 'Team Sealed started!')]", {
+				page.waitForSelector("xpath/.//div[contains(., 'Team Sealed started!')]", {
 					hidden: true,
 				})
 			)
@@ -60,11 +60,11 @@ describe("Front End - Team Sealed", function () {
 		const card = cards[1]; // Should have been picked by the next player
 		expect(card).to.exist;
 		await card.click();
-		await pages[0].waitForXPath("//h2[contains(., 'Card Unavailable')]", {
+		await pages[0].waitForSelector("xpath/.//h2[contains(., 'Card Unavailable')]", {
 			visible: true,
 		});
 		await waitAndClickXpath(pages[0], "//button[contains(., 'OK')]");
-		await pages[0].waitForXPath("//h2[contains(., 'Card Unavailable')]", {
+		await pages[0].waitForSelector("xpath/.//h2[contains(., 'Card Unavailable')]", {
 			hidden: true,
 		});
 	});
@@ -89,7 +89,7 @@ describe("Front End - Team Sealed", function () {
 		const promises = [];
 		for (let i = 0; i < pages.length; i++) {
 			promises.push(
-				pages[i].waitForXPath("//div[contains(., 'Team Sealed stopped!')]", {
+				pages[i].waitForSelector("xpath/.//div[contains(., 'Team Sealed stopped!')]", {
 					visible: true,
 				})
 			);

@@ -7,19 +7,19 @@ describe("Front End - 8 Players Draft", function () {
 	setupBrowsers(8);
 
 	it(`Launch Draft`, async function () {
-		const [button] = (await pages[0].$x("//button[contains(., 'Start')]")) as ElementHandle<Element>[];
+		const [button] = (await pages[0].$$("xpath/.//button[contains(., 'Start')]")) as ElementHandle<Element>[];
 		expect(button).to.exist;
 		await button!.click();
 
 		const promises = [];
 		for (let i = 0; i < pages.length; i++) {
 			promises.push(
-				pages[i].waitForXPath("//h2[contains(., 'Your Booster')]", {
+				pages[i].waitForSelector("xpath/.//h2[contains(., 'Your Booster')]", {
 					visible: true,
 				})
 			);
 			promises.push(
-				pages[i].waitForXPath("//div[contains(., 'Draft Started!')]", {
+				pages[i].waitForSelector("xpath/.//div[contains(., 'Draft Started!')]", {
 					hidden: true,
 				})
 			);

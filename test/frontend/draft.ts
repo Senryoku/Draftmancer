@@ -18,17 +18,17 @@ import { latestSetCardPerBooster } from "../src/common.js";
 
 async function clickDraft(page: Page) {
 	// Click 'Start' button
-	const [button] = (await page.$x("//button[contains(., 'Start')]")) as ElementHandle<Element>[];
+	const [button] = (await page.$$("xpath/.//button[contains(., 'Start')]")) as ElementHandle<Element>[];
 	expect(button).to.exist;
 	await button.click();
 }
 
 async function deckHasNCard(page: Page | ElementHandle<Element>, n: number) {
-	await page.waitForXPath(`//h2[contains(., 'Deck (${n}')]`, { timeout: 2000 });
+	await page.waitForSelector(`xpath/.//h2[contains(., 'Deck (${n}')]`, { timeout: 2000 });
 }
 
 async function sideHasNCard(page: Page | ElementHandle<Element>, n: number) {
-	await page.waitForXPath(`//h2[contains(., 'Sideboard (${n})')]`, { timeout: 2000 });
+	await page.waitForSelector(`xpath/.//h2[contains(., 'Sideboard (${n})')]`, { timeout: 2000 });
 }
 
 describe("Front End - Solo", function () {
@@ -39,16 +39,16 @@ describe("Front End - Solo", function () {
 		await clickDraft(pages[0]);
 
 		// On popup, choose 'Draft alone with bots'
-		const [button2] = (await pages[0].$x(
-			"//button[contains(., 'Draft alone with 7 bots')]"
+		const [button2] = (await pages[0].$$(
+			"xpath/.//button[contains(., 'Draft alone with 7 bots')]"
 		)) as ElementHandle<Element>[];
 		expect(button2).to.exist;
 		await button2.click();
 
-		await pages[0].waitForXPath("//h2[contains(., 'Your Booster')]", {
+		await pages[0].waitForSelector("xpath/.//h2[contains(., 'Your Booster')]", {
 			visible: true,
 		});
-		await pages[0].waitForXPath("//div[contains(., 'Draft Started!')]", {
+		await pages[0].waitForSelector("xpath/.//div[contains(., 'Draft Started!')]", {
 			hidden: true,
 		});
 	});
@@ -153,7 +153,9 @@ describe("Front End - Solo", function () {
 	});
 
 	it(`Should have received a game log.`, async function () {
-		const gameLogs = (await pages[0].waitForXPath(`//button[contains(., 'Game Logs')]`)) as ElementHandle<Element>;
+		const gameLogs = (await pages[0].waitForSelector(
+			`xpath/.//button[contains(., 'Game Logs')]`
+		)) as ElementHandle<Element>;
 		expect(gameLogs).to.exist;
 		await gameLogs.click();
 
@@ -179,16 +181,16 @@ describe("Front End - Multi", function () {
 
 	it(`Launch Draft`, async function () {
 		await clickDraft(pages[0]);
-		await pages[0].waitForXPath("//h2[contains(., 'Your Booster')]", {
+		await pages[0].waitForSelector("xpath/.//h2[contains(., 'Your Booster')]", {
 			visible: true,
 		});
-		await pages[1].waitForXPath("//h2[contains(., 'Your Booster')]", {
+		await pages[1].waitForSelector("xpath/.//h2[contains(., 'Your Booster')]", {
 			visible: true,
 		});
-		await pages[0].waitForXPath("//div[contains(., 'Draft Started!')]", {
+		await pages[0].waitForSelector("xpath/.//div[contains(., 'Draft Started!')]", {
 			hidden: true,
 		});
-		await pages[1].waitForXPath("//div[contains(., 'Draft Started!')]", {
+		await pages[1].waitForSelector("xpath/.//div[contains(., 'Draft Started!')]", {
 			hidden: true,
 		});
 	});
@@ -215,20 +217,20 @@ describe("Front End - Multi, Tournament Timer", function () {
 
 	it(`Launch Draft`, async function () {
 		await clickDraft(pages[0]);
-		await pages[0].waitForXPath("//h2[contains(., 'Your Booster')]", {
+		await pages[0].waitForSelector("xpath/.//h2[contains(., 'Your Booster')]", {
 			visible: true,
 		});
-		await pages[1].waitForXPath("//h2[contains(., 'Your Booster')]", {
+		await pages[1].waitForSelector("xpath/.//h2[contains(., 'Your Booster')]", {
 			visible: true,
 		});
 		// Timer should start at 40
-		await pages[0].waitForXPath("//span[contains(., '40')]", {
+		await pages[0].waitForSelector("xpath/.//span[contains(., '40')]", {
 			visible: true,
 		});
-		await pages[0].waitForXPath("//div[contains(., 'Draft Started!')]", {
+		await pages[0].waitForSelector("xpath/.//div[contains(., 'Draft Started!')]", {
 			hidden: true,
 		});
-		await pages[1].waitForXPath("//div[contains(., 'Draft Started!')]", {
+		await pages[1].waitForSelector("xpath/.//div[contains(., 'Draft Started!')]", {
 			hidden: true,
 		});
 	});
@@ -259,16 +261,16 @@ describe("Front End - Multi, Review Timer", function () {
 
 	it(`Launch Draft`, async function () {
 		await clickDraft(pages[0]);
-		await pages[0].waitForXPath("//h2[contains(., 'Your Booster')]", {
+		await pages[0].waitForSelector("xpath/.//h2[contains(., 'Your Booster')]", {
 			visible: true,
 		});
-		await pages[1].waitForXPath("//h2[contains(., 'Your Booster')]", {
+		await pages[1].waitForSelector("xpath/.//h2[contains(., 'Your Booster')]", {
 			visible: true,
 		});
-		await pages[0].waitForXPath("//div[contains(., 'Draft Started!')]", {
+		await pages[0].waitForSelector("xpath/.//div[contains(., 'Draft Started!')]", {
 			hidden: true,
 		});
-		await pages[1].waitForXPath("//div[contains(., 'Draft Started!')]", {
+		await pages[1].waitForSelector("xpath/.//div[contains(., 'Draft Started!')]", {
 			hidden: true,
 		});
 	});
@@ -283,11 +285,11 @@ describe("Front End - Multi, Review Timer", function () {
 
 	it("We should now be in a review phase", async function () {
 		this.timeout(10000);
-		await pages[1].waitForXPath("//*[contains(., 'Review Phase')]", {
+		await pages[1].waitForSelector("xpath/.//*[contains(., 'Review Phase')]", {
 			hidden: false,
 		});
 		// Wait for it to end
-		await pages[1].waitForXPath("//*[contains(., 'Review Phase')]", {
+		await pages[1].waitForSelector("xpath/.//*[contains(., 'Review Phase')]", {
 			hidden: true,
 		});
 	});
@@ -301,7 +303,7 @@ describe("Front End - Multi, Review Timer", function () {
 	});
 
 	it("We should now be in a review phase", async function () {
-		await pages[1].waitForXPath("//*[contains(., 'Review Phase')]", {
+		await pages[1].waitForSelector("xpath/.//*[contains(., 'Review Phase')]", {
 			hidden: false,
 		});
 	});
@@ -310,18 +312,18 @@ describe("Front End - Multi, Review Timer", function () {
 		await pages[1].goto("about:blank", { waitUntil: ["networkidle0", "domcontentloaded"] });
 		await new Promise((r) => setTimeout(r, 250));
 		await pages[1].goto(sessionLink, { waitUntil: ["networkidle0", "domcontentloaded"] });
-		await pages[1].waitForXPath("//div[contains(., 'Reconnected')]", {
+		await pages[1].waitForSelector("xpath/.//div[contains(., 'Reconnected')]", {
 			hidden: true,
 		});
 	});
 
 	it("We should still be in a review phase", async function () {
 		this.timeout(10000);
-		await pages[1].waitForXPath("//*[contains(., 'Review Phase')]", {
+		await pages[1].waitForSelector("xpath/.//*[contains(., 'Review Phase')]", {
 			hidden: false,
 		});
 		// Wait for it to end
-		await pages[1].waitForXPath("//*[contains(., 'Review Phase')]", {
+		await pages[1].waitForSelector("xpath/.//*[contains(., 'Review Phase')]", {
 			hidden: true,
 		});
 	});
@@ -335,7 +337,7 @@ describe("Front End - Multi, Review Timer", function () {
 	});
 
 	it("We should now be in a review phase", async function () {
-		await pages[1].waitForXPath("//*[contains(., 'Review Phase')]", {
+		await pages[1].waitForSelector("xpath/.//*[contains(., 'Review Phase')]", {
 			hidden: false,
 		});
 	});
@@ -349,21 +351,21 @@ describe("Front End - Multi, Review Timer", function () {
 		await pages[0].goto(sessionLink, { waitUntil: ["networkidle0", "domcontentloaded"] });
 		await pages[1].goto(sessionLink, { waitUntil: ["networkidle0", "domcontentloaded"] });
 
-		await pages[0].waitForXPath("//div[contains(., 'Reconnected')]", {
+		await pages[0].waitForSelector("xpath/.//div[contains(., 'Reconnected')]", {
 			hidden: true,
 		});
-		await pages[1].waitForXPath("//div[contains(., 'Reconnected')]", {
+		await pages[1].waitForSelector("xpath/.//div[contains(., 'Reconnected')]", {
 			hidden: true,
 		});
 	});
 
 	it("We should still be in a review phase", async function () {
 		this.timeout(10000);
-		await pages[1].waitForXPath("//*[contains(., 'Review Phase')]", {
+		await pages[1].waitForSelector("xpath/.//*[contains(., 'Review Phase')]", {
 			hidden: false,
 		});
 		// Wait for it to end
-		await pages[1].waitForXPath("//*[contains(., 'Review Phase')]", {
+		await pages[1].waitForSelector("xpath/.//*[contains(., 'Review Phase')]", {
 			hidden: true,
 		});
 	});
@@ -377,7 +379,7 @@ describe("Front End - Multi, Review Timer", function () {
 	});
 
 	it("We should now be in a review phase", async function () {
-		await pages[1].waitForXPath("//*[contains(., 'Review Phase')]", {
+		await pages[1].waitForSelector("xpath/.//*[contains(., 'Review Phase')]", {
 			hidden: false,
 		});
 	});
@@ -390,11 +392,11 @@ describe("Front End - Multi, Review Timer", function () {
 
 	it("We should still be in a review phase", async function () {
 		this.timeout(10000);
-		await pages[1].waitForXPath("//*[contains(., 'Review Phase')]", {
+		await pages[1].waitForSelector("xpath/.//*[contains(., 'Review Phase')]", {
 			hidden: false,
 		});
 		// Wait for it to end
-		await pages[1].waitForXPath("//*[contains(., 'Review Phase')]", {
+		await pages[1].waitForSelector("xpath/.//*[contains(., 'Review Phase')]", {
 			hidden: true,
 		});
 	});
@@ -421,16 +423,16 @@ describe("Front End - Multi, with bots", function () {
 
 	it(`Launch Draft`, async function () {
 		await clickDraft(pages[0]);
-		await pages[0].waitForXPath("//h2[contains(., 'Your Booster')]", {
+		await pages[0].waitForSelector("xpath/.//h2[contains(., 'Your Booster')]", {
 			visible: true,
 		});
-		await pages[1].waitForXPath("//h2[contains(., 'Your Booster')]", {
+		await pages[1].waitForSelector("xpath/.//h2[contains(., 'Your Booster')]", {
 			visible: true,
 		});
-		await pages[0].waitForXPath("//div[contains(., 'Draft Started!')]", {
+		await pages[0].waitForSelector("xpath/.//div[contains(., 'Draft Started!')]", {
 			hidden: true,
 		});
-		await pages[1].waitForXPath("//div[contains(., 'Draft Started!')]", {
+		await pages[1].waitForSelector("xpath/.//div[contains(., 'Draft Started!')]", {
 			hidden: true,
 		});
 	});
@@ -463,10 +465,10 @@ describe("Front End - Multi, with Spectator", function () {
 
 	it(`Launch Draft`, async function () {
 		await clickDraft(pages[0]);
-		await pages[1].waitForXPath("//h2[contains(., 'Your Booster')]", {
+		await pages[1].waitForSelector("xpath/.//h2[contains(., 'Your Booster')]", {
 			visible: true,
 		});
-		await pages[1].waitForXPath("//div[contains(., 'Draft Started!')]", {
+		await pages[1].waitForSelector("xpath/.//div[contains(., 'Draft Started!')]", {
 			hidden: true,
 		});
 	});
@@ -496,14 +498,14 @@ describe("Front End - Multi, with disconnects", function () {
 		await clickDraft(pages[0]);
 		await Promise.all(
 			pages.map((page) =>
-				page.waitForXPath("//h2[contains(., 'Your Booster')]", {
+				page.waitForSelector("xpath/.//h2[contains(., 'Your Booster')]", {
 					visible: true,
 				})
 			)
 		);
 		await Promise.all(
 			pages.map((page) =>
-				page.waitForXPath("//div[contains(., 'Draft Started!')]", {
+				page.waitForSelector("xpath/.//div[contains(., 'Draft Started!')]", {
 					hidden: true,
 				})
 			)
@@ -517,7 +519,7 @@ describe("Front End - Multi, with disconnects", function () {
 
 	it("Owner refreshes the page", async function () {
 		await pages[0].goto(sessionLink, { waitUntil: ["networkidle0", "domcontentloaded"] });
-		await pages[0].waitForXPath("//div[contains(., 'Reconnected')]", {
+		await pages[0].waitForSelector("xpath/.//div[contains(., 'Reconnected')]", {
 			hidden: true,
 		});
 	});
@@ -529,7 +531,7 @@ describe("Front End - Multi, with disconnects", function () {
 
 	it("Player refreshes the page", async function () {
 		await pages[1].reload({ waitUntil: ["networkidle0", "domcontentloaded"] });
-		await pages[1].waitForXPath("//div[contains(., 'Reconnected')]", {
+		await pages[1].waitForSelector("xpath/.//div[contains(., 'Reconnected')]", {
 			hidden: true,
 		});
 	});
@@ -548,10 +550,10 @@ describe("Front End - Multi, with disconnects", function () {
 		await pages[0].goto(sessionLink, { waitUntil: ["networkidle0", "domcontentloaded"] });
 		await pages[1].goto(sessionLink, { waitUntil: ["networkidle0", "domcontentloaded"] });
 
-		await pages[0].waitForXPath("//div[contains(., 'Reconnected')]", {
+		await pages[0].waitForSelector("xpath/.//div[contains(., 'Reconnected')]", {
 			hidden: true,
 		});
-		await pages[1].waitForXPath("//div[contains(., 'Reconnected')]", {
+		await pages[1].waitForSelector("xpath/.//div[contains(., 'Reconnected')]", {
 			hidden: true,
 		});
 	});
@@ -576,7 +578,7 @@ describe("Front End - Multi, with disconnects", function () {
 
 	it("Player reconnects", async function () {
 		await pages[1].goto(sessionLink, { waitUntil: ["networkidle0", "domcontentloaded"] });
-		await pages[1].waitForXPath("//div[contains(., 'Reconnected')]", {
+		await pages[1].waitForSelector("xpath/.//div[contains(., 'Reconnected')]", {
 			hidden: true,
 		});
 	});

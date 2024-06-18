@@ -15,7 +15,7 @@ import { getRandom } from "../../src/utils.js";
 
 async function clickDraft(page: Page) {
 	// Click 'Start' button
-	const [button] = (await page.$x("//button[contains(., 'Start')]")) as ElementHandle<Element>[];
+	const [button] = (await page.$$("xpath/.//button[contains(., 'Start')]")) as ElementHandle<Element>[];
 	expect(button).to.exist;
 	await button.click();
 }
@@ -26,7 +26,7 @@ function selectCube(name: string) {
 		const cardListInput = (await pages[0].$("#card-list-input")) as ElementHandle<HTMLInputElement>;
 
 		await cardListInput.uploadFile(`./test/data/${name}.txt`);
-		await pages[0].waitForXPath("//*[contains(., 'Card list uploaded')]");
+		await pages[0].waitForSelector("xpath/.//*[contains(., 'Card list uploaded')]");
 		await dismissToast(pages[0]);
 		await pages[0].keyboard.press("Escape");
 	});
@@ -37,14 +37,14 @@ function launchDraft() {
 		await clickDraft(pages[0]);
 
 		// On popup, choose 'Draft alone with bots'
-		const [button2] = (await pages[0].$x(
-			"//button[contains(., 'Draft alone with 7 bots')]"
+		const [button2] = (await pages[0].$$(
+			"xpath/.//button[contains(., 'Draft alone with 7 bots')]"
 		)) as ElementHandle<Element>[];
 		expect(button2).to.exist;
 		await button2.click();
 
-		await pages[0].waitForXPath("//h2[contains(., 'Your Booster')]");
-		await pages[0].waitForXPath("//div[contains(., 'Draft Started!')]", {
+		await pages[0].waitForSelector("xpath/.//h2[contains(., 'Your Booster')]");
+		await pages[0].waitForSelector("xpath/.//div[contains(., 'Draft Started!')]", {
 			hidden: true,
 		});
 	});
@@ -72,12 +72,12 @@ describe("Conspiracy", function () {
 		it(`Should be able to pick two cards and still have only two in deck afterwards.`, async function () {
 			const pickSelector = (await pages[0].waitForSelector("#pick-effect")) as ElementHandle<HTMLSelectElement>;
 			pickSelector.select("Cogwork Librarian");
-			await pages[0].waitForXPath("//span[contains(., 'Pick 2')]");
+			await pages[0].waitForSelector("xpath/.//span[contains(., 'Pick 2')]");
 			const cards = await pages[0].$$(".card");
 			await cards![0]!.click();
 			await cards![1]!.click();
 			await waitAndClickSelector(pages[0], 'input[value="Confirm Pick"]');
-			await pages[0].waitForXPath("//h2[contains(., 'Deck (2')]");
+			await pages[0].waitForSelector("xpath/.//h2[contains(., 'Deck (2')]");
 		});
 	});
 
@@ -102,8 +102,8 @@ describe("Conspiracy", function () {
 
 		it(`Pick the Lore Seeker, next pack should be brand new`, async function () {
 			await waitAndClickSelector(pages[0], 'input[value="Confirm Pick"]');
-			await pages[0].waitForXPath("//h2[contains(., 'Deck (1')]");
-			await pages[0].waitForXPath("//h2[contains(., 'Booster (10')]");
+			await pages[0].waitForSelector("xpath/.//h2[contains(., 'Deck (1')]");
+			await pages[0].waitForSelector("xpath/.//h2[contains(., 'Booster (10')]");
 		});
 
 		it(`Pick the Lore Seeker, but don't activate effect.`, async function () {
@@ -114,8 +114,8 @@ describe("Conspiracy", function () {
 			)) as ElementHandle<HTMLSelectElement>;
 			pickSelector.select("Do not use");
 			await waitAndClickSelector(pages[0], 'input[value="Confirm Pick"]');
-			await pages[0].waitForXPath("//h2[contains(., 'Deck (2')]");
-			await pages[0].waitForXPath("//h2[contains(., 'Booster (9')]");
+			await pages[0].waitForSelector("xpath/.//h2[contains(., 'Deck (2')]");
+			await pages[0].waitForSelector("xpath/.//h2[contains(., 'Booster (9')]");
 		});
 	});
 
@@ -143,15 +143,15 @@ describe("Conspiracy", function () {
 			const pickSelector = (await pages[0].waitForSelector("#pick-effect")) as ElementHandle<HTMLSelectElement>;
 			pickSelector.select("Agent of Acquisitions");
 			await waitAndClickSelector(pages[0], 'input[value="Confirm Pick"]');
-			await pages[0].waitForXPath("//h2[contains(., 'Deck (10')]");
+			await pages[0].waitForSelector("xpath/.//h2[contains(., 'Deck (10')]");
 			for (let i = 0; i < 8; ++i) {
-				await pages[0].waitForXPath(`//*[contains(., 'Pick #${i + 3}')]`);
+				await pages[0].waitForSelector(`xpath/.//*[contains(., 'Pick #${i + 3}')]`);
 				await waitAndClickXpath(pages[0], '//button[contains(., "Pass Booster")]');
 			}
 		});
 
 		it(`Next booster; should be able to pick again.`, async function () {
-			await pages[0].waitForXPath("//*[contains(., 'Pick a card')]");
+			await pages[0].waitForSelector("xpath/.//*[contains(., 'Pick a card')]");
 			const card = await pages[0].$(".card");
 			await card!.click();
 			await waitAndClickSelector(pages[0], 'input[value="Confirm Pick"]');
@@ -169,7 +169,7 @@ describe("Conspiracy", function () {
 				const nameInput = await pages[i].$(`#user-name`);
 				await replaceInput(`Player ${i}`)(nameInput);
 				await nameInput!.press("Enter");
-				const el = (await pages[0].$x(`//li[div[contains(., 'Player ${i}')]]`))[0];
+				const el = (await pages[0].$$(`xpath/.//li[div[contains(., 'Player ${i}')]]`))[0];
 				let pos = await el.evaluate((e) => Array.prototype.indexOf.call(e.parentNode!.children, e));
 				while (pos !== i) {
 					(await el.$(".move-player-left"))!.click();
@@ -181,8 +181,8 @@ describe("Conspiracy", function () {
 
 		it(`Launch Draft`, async function () {
 			await clickDraft(pages[0]);
-			await pages[0].waitForXPath("//h2[contains(., 'Your Booster')]");
-			await pages[0].waitForXPath("//div[contains(., 'Draft Started!')]", {
+			await pages[0].waitForSelector("xpath/.//h2[contains(., 'Your Booster')]");
+			await pages[0].waitForSelector("xpath/.//div[contains(., 'Draft Started!')]", {
 				hidden: true,
 			});
 		});
@@ -242,7 +242,7 @@ describe("Conspiracy", function () {
 					await Promise.all(promises);
 					for (let i = 0; i < pages.length; i++) done[i] = await promises[i];
 				}
-				for (const page of pages) await page.waitForXPath("//h2[contains(., 'Deck (30')]");
+				for (const page of pages) await page.waitForSelector("xpath/.//h2[contains(., 'Deck (30')]");
 			});
 		});
 
@@ -252,8 +252,8 @@ describe("Conspiracy", function () {
 			selectCube("Archdemon of Paliano");
 			it(`Launch Draft`, async function () {
 				await clickDraft(pages[0]);
-				await pages[0].waitForXPath("//h2[contains(., 'Your Booster')]");
-				await pages[0].waitForXPath("//div[contains(., 'Draft Started!')]", {
+				await pages[0].waitForSelector("xpath/.//h2[contains(., 'Your Booster')]");
+				await pages[0].waitForSelector("xpath/.//div[contains(., 'Draft Started!')]", {
 					hidden: true,
 				});
 			});
@@ -275,7 +275,7 @@ describe("Conspiracy", function () {
 					await Promise.all(promises);
 					for (let i = 0; i < pages.length; i++) done[i] = await promises[i];
 				}
-				for (const page of pages) await page.waitForXPath("//h2[contains(., 'Deck (30')]");
+				for (const page of pages) await page.waitForSelector("xpath/.//h2[contains(., 'Deck (30')]");
 			});
 		});
 
@@ -291,8 +291,8 @@ describe("Conspiracy", function () {
 				await pages[0].keyboard.press("Enter");
 
 				await clickDraft(pages[0]);
-				await pages[0].waitForXPath("//h2[contains(., 'Your Booster')]");
-				await pages[0].waitForXPath("//div[contains(., 'Draft Started!')]", {
+				await pages[0].waitForSelector("xpath/.//h2[contains(., 'Your Booster')]");
+				await pages[0].waitForSelector("xpath/.//div[contains(., 'Draft Started!')]", {
 					hidden: true,
 				});
 			});
@@ -314,7 +314,7 @@ describe("Conspiracy", function () {
 					await Promise.all(promises);
 					for (let i = 0; i < pages.length; i++) done[i] = await promises[i];
 				}
-				for (const page of pages) await page.waitForXPath("//h2[contains(., 'Deck (30')]");
+				for (const page of pages) await page.waitForSelector("xpath/.//h2[contains(., 'Deck (30')]");
 			});
 		});
 	});

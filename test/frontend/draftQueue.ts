@@ -131,7 +131,7 @@ describe("Draft Queue", function () {
 			await Promise.all(pages.map((page) => waitAndClickSelector(page, ".ready-button")));
 			await Promise.all(
 				pages.map((page) =>
-					page.waitForXPath("//div[contains(., 'Draft Started!')]", {
+					page.waitForSelector("xpath/.//div[contains(., 'Draft Started!')]", {
 						hidden: true,
 					})
 				)
@@ -164,8 +164,8 @@ describe("Draft Queue", function () {
 				for (let i = 0; i < pages.length; i++) done[i] = await promises[i];
 			}
 			for (const page of pages)
-				await page.waitForXPath(
-					"//*[contains(., 'Deck (45') or contains(., 'Deck (42') or contains(., 'Deck (39')]"
+				await page.waitForSelector(
+					"xpath/.//*[contains(., 'Deck (45') or contains(., 'Deck (42') or contains(., 'Deck (39')]"
 				);
 		});
 	});

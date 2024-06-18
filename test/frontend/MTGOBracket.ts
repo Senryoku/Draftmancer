@@ -29,7 +29,9 @@ describe("Front End - MTGO Bracket", function () {
 		await Promise.all(
 			pages.map((p) =>
 				Promise.all(
-					[...Array(pages.length).keys()].map((i) => p.waitForXPath(`//div[contains(., 'Player_${i}')]`))
+					[...Array(pages.length).keys()].map((i) =>
+						p.waitForSelector(`xpath/.//div[contains(., 'Player_${i}')]`)
+					)
 				)
 			)
 		);
@@ -47,14 +49,14 @@ describe("Front End - MTGO Bracket", function () {
 
 	it(`Generate Bracket`, async function () {
 		waitAndClickSelector(pages[0], "#bracket-button");
-		await pages[0].waitForXPath("//h2[contains(., 'Bracket')]");
+		await pages[0].waitForSelector("xpath/.//h2[contains(., 'Bracket')]");
 	});
 
 	it(`Open Bracket`, async function () {
 		const promises = [];
 		for (let i = 1; i < pages.length; i++) promises.push(waitAndClickSelector(pages[i], "#bracket-button"));
 		await Promise.all(promises);
-		await Promise.all(pages.map((p) => p.waitForXPath("//h2[contains(., 'Bracket')]")));
+		await Promise.all(pages.map((p) => p.waitForSelector("xpath/.//h2[contains(., 'Bracket')]")));
 	});
 
 	it(`Activate MTGO sync.`, async function () {

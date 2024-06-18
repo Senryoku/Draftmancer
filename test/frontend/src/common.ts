@@ -33,7 +33,7 @@ afterEach(async function () {
 });
 
 export async function waitAndClickXpath(page: Page, xpath: string) {
-	const element = await page.waitForXPath(xpath, {
+	const element = await page.waitForSelector(xpath.startsWith("xpath/.") ? xpath : `xpath/.${xpath}`, {
 		visible: true,
 	});
 	expect(element).to.exist;
@@ -82,7 +82,7 @@ export async function startBrowsers(count: number): Promise<[Browser[], Page[]]>
 	for (let i = 0; i < count; i++) {
 		promises.push(
 			puppeteer.launch({
-				headless: Headless,
+				headless: Headless ? "shell" : false, // NOTE: Chrome changed their headless mode. "shell" reverts to old behavior, which is currently way faster but not as accurate. Many tests fails using the new default, probably for performance reasons. See https://pptr.dev/guides/headless-modes
 				defaultViewport: { width: 1366, height: 768 },
 				args: Headless
 					? puppeteerArgs
@@ -148,7 +148,7 @@ export async function getSessionLink(page: Page): Promise<string> {
 	const clipboard = await page.evaluate(() => navigator.clipboard.readText());
 	expect(clipboard).to.match(/^http:\/\/localhost:(\d+)\/\?session=/);
 	await dismissToast(page);
-	await page.waitForXPath("//div[contains(., 'Session link copied to clipboard!')]", {
+	await page.waitForSelector("xpath/.//div[contains(., 'Session link copied to clipboard!')]", {
 		hidden: true,
 	});
 	return clipboard;
@@ -291,7 +291,7 @@ export async function pickCard(page: Page): Promise<PickResult> {
 	const draftInProgress = await page.$("#booster-controls");
 	if (draftInProgress === null) return PickResult.Done;
 
-	const done = await page.$$("xpath///h2[contains(., 'Done drafting!')]");
+	const done = await page.$$("xpath/.//h2[contains(., 'Done drafting!')]");
 	if (done.length > 0) return PickResult.Done;
 
 	const waiting = await page.$$(".booster-waiting");

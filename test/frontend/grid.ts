@@ -4,13 +4,13 @@ import { waitAndClickSelector, waitAndClickXpath, setupBrowsers, pages, launchMo
 import { getRandom } from "../../src/utils.js";
 
 async function pickCard(page: Page) {
-	const draftInProgress = await page.$x("//div[contains(., 'Grid Draft')]");
+	const draftInProgress = await page.$$("xpath/.//div[contains(., 'Grid Draft')]");
 	if (draftInProgress.length === 0) return true;
 
 	let next;
 	try {
-		next = await page.waitForXPath(
-			"//div[contains(., 'Done drafting!')] | //span[contains(., 'your turn')] | //span[contains(., 'Advancing')]",
+		next = await page.waitForSelector(
+			"xpath/.//div[contains(., 'Done drafting!')] | //span[contains(., 'your turn')] | //span[contains(., 'Advancing')]",
 			{ timeout: 1000 }
 		);
 	} catch (e) {
@@ -22,8 +22,8 @@ async function pickCard(page: Page) {
 
 	while (text.includes("Advancing")) {
 		await new Promise((r) => setTimeout(r, 10));
-		next = await page.waitForXPath(
-			"//div[contains(., 'Done drafting!')] | //span[contains(., 'your turn')] | //span[contains(., 'Advancing')]"
+		next = await page.waitForSelector(
+			"xpath/.//div[contains(., 'Done drafting!')] | //span[contains(., 'your turn')] | //span[contains(., 'Advancing')]"
 		);
 		text = await page.evaluate((next) => (next as HTMLElement).innerText, next);
 	}
@@ -51,13 +51,13 @@ describe("Grid Draft", () => {
 			await waitAndClickXpath(pages[0], "//button[contains(., 'Start Grid Draft')]");
 
 			await Promise.all(
-				pages.map((page) => page.waitForXPath("//h2[contains(., 'Grid Draft')]", { timeout: 3000 }))
+				pages.map((page) => page.waitForSelector("xpath/.//h2[contains(., 'Grid Draft')]", { timeout: 3000 }))
 			);
 			const promises = [];
 			for (const page of pages) {
-				if ((await page.$x("//div[contains(., 'Draft Started!')]")).length > 0)
+				if ((await page.$$("xpath/.//div[contains(., 'Draft Started!')]")).length > 0)
 					promises.push(
-						page.waitForXPath("//div[contains(., 'Draft Started!')]", {
+						page.waitForSelector("xpath/.//div[contains(., 'Draft Started!')]", {
 							hidden: true,
 							timeout: 10000,
 						})
@@ -91,13 +91,13 @@ describe("Grid Draft", () => {
 			await waitAndClickXpath(pages[0], "//button[contains(., 'Start Grid Draft')]");
 
 			await Promise.all(
-				pages.map((page) => page.waitForXPath("//h2[contains(., 'Grid Draft')]", { timeout: 3000 }))
+				pages.map((page) => page.waitForSelector("xpath/.//h2[contains(., 'Grid Draft')]", { timeout: 3000 }))
 			);
 			const promises = [];
 			for (const page of pages) {
-				if ((await page.$x("//div[contains(., 'Draft Started!')]")).length > 0)
+				if ((await page.$$("xpath/.//div[contains(., 'Draft Started!')]")).length > 0)
 					promises.push(
-						page.waitForXPath("//div[contains(., 'Draft Started!')]", {
+						page.waitForSelector("xpath/.//div[contains(., 'Draft Started!')]", {
 							hidden: true,
 							timeout: 10000,
 						})
@@ -132,7 +132,7 @@ describe("Grid Draft", () => {
 			const promises = [];
 			for (const page of pages)
 				promises.push(
-					page.waitForXPath("//div[contains(., 'Draft Started!')]", {
+					page.waitForSelector("xpath/.//div[contains(., 'Draft Started!')]", {
 						hidden: true,
 						timeout: 10000,
 					})
@@ -166,7 +166,7 @@ describe("Grid Draft", () => {
 			const promises = [];
 			for (const page of pages)
 				promises.push(
-					page.waitForXPath("//div[contains(., 'Draft Started!')]", {
+					page.waitForSelector("xpath/.//div[contains(., 'Draft Started!')]", {
 						hidden: true,
 						timeout: 10000,
 					})

@@ -34,14 +34,14 @@ describe("Rochester", function () {
 
 		await Promise.all(
 			pages.map((p) =>
-				p.waitForXPath("//h2[contains(., 'Rochester Draft')]", {
+				p.waitForSelector("xpath/.//h2[contains(., 'Rochester Draft')]", {
 					visible: true,
 				})
 			)
 		);
 		await Promise.all(
 			pages.map((p) =>
-				p.waitForXPath("//div[contains(., 'Draft Started!')]", {
+				p.waitForSelector("xpath/.//div[contains(., 'Draft Started!')]", {
 					hidden: true,
 				})
 			)

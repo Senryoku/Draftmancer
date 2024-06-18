@@ -35,7 +35,9 @@ describe("Drag and Drop", () => {
 			await replaceInput("1")(await pages[0].$("#input-boostersPerPlayer"));
 			await waitAndClickSelector(pages[0], "button.confirm");
 
-			await Promise.all(pages.map((page) => page.waitForXPath("//h2[contains(., 'Deck')]", { timeout: 3000 })));
+			await Promise.all(
+				pages.map((page) => page.waitForSelector("xpath/.//h2[contains(., 'Deck')]", { timeout: 3000 }))
+			);
 			cardCount = await cardsInPool();
 		});
 
