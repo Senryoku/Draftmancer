@@ -65,7 +65,7 @@
 		"sortablejs-vue3": "^1.2.11",
 		"sweetalert2": "^11.10.1",
 		"threads": "^1.7.0",
-		"uuid": "^9.0.1",
+		"uuid": "^10.0.0",
 		"vue": "^3.4.26",
 		"vue-chartjs": "^5.2.0"
 	},
