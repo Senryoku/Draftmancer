@@ -199,7 +199,7 @@
 							:carddata="draftlog.carddata"
 							:language="language"
 							@selectPick="
-								(pack, pick) => {
+								(pack: number, pick: number) => {
 									displayOptions.pack = pack;
 									displayOptions.pick = pick;
 									displayOptions.category = 'Picks';

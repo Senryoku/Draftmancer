@@ -150,8 +150,8 @@
 						selectedClass: 'multi-drag-selected',
 						multiDragKey: 'ctrl',
 					}"
-					@add="(evt) => addToColumn(evt, column)"
-					@remove="(evt) => removeFromColumn(evt, column)"
+					@add="(evt: SortableEvent) => addToColumn(evt, column)"
+					@remove="(evt: SortableEvent) => removeFromColumn(evt, column)"
 					@update="sortableUpdate($event, column)"
 				>
 					<template #item="{ element }">

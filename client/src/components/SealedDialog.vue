@@ -16,8 +16,8 @@
 									class="team-drag-target"
 									:list="team"
 									:item-key="(uid: UserID) => uid"
-									@add="(evt) => teamAdd(evt, team)"
-									@remove="(evt) => teamRemove(evt, team)"
+									@add="(evt: SortableEvent) => teamAdd(evt, team)"
+									@remove="(evt: SortableEvent) => teamRemove(evt, team)"
 									@update="sortableUpdate($event, team)"
 									:options="{ group: 'teams', animation: '200' }"
 								>

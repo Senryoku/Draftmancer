@@ -85,8 +85,8 @@
 							)
 						"
 						:bracketType="bracket.type"
-						@updated="(mID, index, value) => $emit('updated', mID, index, value)"
-						@selectuser="(user) => (selectedUser = user)"
+						@updated="(mID: number, index: number, value: number) => $emit('updated', mID, index, value)"
+						@selectuser="(user: MatchPlayer) => (selectedUser = user)"
 					/>
 				</template>
 			</div>
@@ -99,8 +99,8 @@
 					:draftlog="draftlog"
 					:final="true"
 					:editable="editable"
-					@updated="(mID, index, value) => $emit('updated', mID, index, value)"
-					@selectuser="(user) => (selectedUser = user)"
+					@updated="(mID: number, index: number, value: number) => $emit('updated', mID, index, value)"
+					@selectuser="(user: MatchPlayer) => (selectedUser = user)"
 				/>
 			</div>
 		</div>
@@ -115,8 +115,8 @@
 					:bracketType="bracket.type"
 					:draftlog="draftlog"
 					:editable="editable"
-					@updated="(mID, index, value) => $emit('updated', mID, index, value)"
-					@selectuser="(user) => (selectedUser = user)"
+					@updated="(mID: number, index: number, value: number) => $emit('updated', mID, index, value)"
+					@selectuser="(user: MatchPlayer) => (selectedUser = user)"
 				/>
 			</div>
 		</div>
