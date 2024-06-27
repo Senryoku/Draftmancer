@@ -603,6 +603,11 @@
         "fullName": "The Dark",
         "icon": "img/sets/drk.svg"
     },
+    "dsk": {
+        "code": "dsk",
+        "fullName": "Duskmourn: House of Horror",
+        "icon": "img/sets/dsk.svg"
+    },
     "dst": {
         "code": "dst",
         "fullName": "Darksteel",
