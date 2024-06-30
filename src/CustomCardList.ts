@@ -65,7 +65,7 @@ export function generateBoosterFromCustomCardList(
 	const duplicateProtection = customCardList.settings?.duplicateProtection ?? true;
 	if (options.colorBalance === undefined) options.colorBalance = false;
 	if (options.withReplacement === undefined) options.withReplacement = false;
-	const pickOptions: Options = {
+	const pickOptions = {
 		uniformAll: true,
 		withReplacement: options.withReplacement,
 		getCard: generateCustomGetCardFunction(customCardList),
@@ -178,21 +178,30 @@ export function generateBoosterFromCustomCardList(
 				const useColorBalance =
 					options.colorBalance &&
 					slotName === colorBalancedSlots[pickedLayoutName] &&
-					pickedLayout.slots[slotName] >= 5 &&
+					pickedLayout.slots[slotName] > ColorBalancedSlot.CardCountThreshold &&
 					colorBalancedSlotGenerators[slotName];
 				// Checking the card count beforehand is tricky, we'll rely on pickCard throwing an exception if we run out of cards to pick.
 				try {
 					let pickedCards: UniqueCard[] = [];
 
-					if (useColorBalance)
+					if (useColorBalance) {
 						pickedCards = colorBalancedSlotGenerators[slotName].generate(
 							pickedLayout.slots[slotName],
 							booster,
 							pickOptions
 						);
-					else
-						for (let i = 0; i < pickedLayout.slots[slotName]; ++i)
-							pickedCards.push(pickCard(cardsBySlot[slotName], booster.concat(pickedCards), pickOptions));
+					} else {
+						for (let i = 0; i < pickedLayout.slots[slotName]; ++i) {
+							const pickedCard = pickCard(
+								cardsBySlot[slotName],
+								booster.concat(pickedCards),
+								pickOptions
+							);
+							pickedCards.push(pickedCard);
+							if (colorBalancedSlotGenerators[slotName] && !pickOptions.withReplacement)
+								colorBalancedSlotGenerators[slotName].cache.removeCard(pickedCard);
+						}
+					}
 
 					if (customCardList.settings?.showSlots) for (const card of pickedCards) card.slot = slotName;
 

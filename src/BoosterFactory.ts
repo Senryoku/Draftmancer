@@ -102,6 +102,13 @@ class ColorBalancedSlotCache {
 			.map((k) => this.byColor[k]))
 			for (const [cid, val] of cardPool.entries()) this.others.set(cid, val);
 	}
+
+	// Signals the supplied card has been picked and has to be removed from the internal cache.
+	removeCard(pickedCard: Card) {
+		this.byColor[pickedCard.colors.join()].removeCard(pickedCard.id);
+		if (pickedCard.colors.length === 1) this.monocolored.removeCard(pickedCard.id);
+		else this.others.removeCard(pickedCard.id);
+	}
 }
 
 import TheListMKM from "./data/TheList/MKM_TheList.json" assert { type: "json" };
@@ -114,19 +121,14 @@ const TheList = {
  Provides color balancing for the supplied cardPool
 */
 export class ColorBalancedSlot {
+	static CardCountThreshold = 5;
+
 	cardPool: CardPool;
 	cache: ColorBalancedSlotCache;
 
 	constructor(_cardPool: CardPool, options: Options = {}) {
 		this.cardPool = _cardPool;
 		this.cache = new ColorBalancedSlotCache(_cardPool, options);
-	}
-
-	// Signals the supplied card has been picked and has to be removed from the internal cache.
-	syncCache(pickedCard: Card) {
-		this.cache.byColor[pickedCard.colors.join()].removeCard(pickedCard.id);
-		if (pickedCard.colors.length === 1) this.cache.monocolored.removeCard(pickedCard.id);
-		else this.cache.others.removeCard(pickedCard.id);
 	}
 
 	// Returns cardCount color balanced cards picked from cardPool.
@@ -137,12 +139,30 @@ export class ColorBalancedSlot {
 		options: Parameters<typeof pickCard>[2] = {}
 	) {
 		const pickedCards: UniqueCard[] = [];
+		const withReplacement = options?.withReplacement ?? false;
+
+		// Requested card count is too low to color balance, skip it.
+		// NOTE: cardCount === 5 might not be enough, as it would exclude colorless and multicolored cards entirely.
+		if (
+			cardCount < ColorBalancedSlot.CardCountThreshold ||
+			(cardCount === ColorBalancedSlot.CardCountThreshold && this.cache.others.count() > 0)
+		) {
+			for (let i = 0; i < cardCount; ++i) {
+				const pickedCard = pickCard(this.cardPool, pickedCards.concat(duplicateProtection), options);
+				pickedCards.push(pickedCard);
+				if (!withReplacement) {
+					this.cache.removeCard(pickedCard);
+				}
+			}
+			return pickedCards;
+		}
+
 		for (const c of "WUBRG") {
 			if (this.cache.byColor[c] && this.cache.byColor[c].size > 0) {
 				const pickedCard = pickCard(this.cache.byColor[c], pickedCards.concat(duplicateProtection), options);
 				pickedCards.push(pickedCard);
 
-				if (options?.withReplacement !== true) {
+				if (!withReplacement) {
 					this.cardPool.removeCard(pickedCard.id);
 					if (pickedCard.colors.length === 1) this.cache.monocolored.removeCard(pickedCard.id);
 					else this.cache.others.removeCard(pickedCard.id);
@@ -174,7 +194,7 @@ export class ColorBalancedSlot {
 			);
 			pickedCards.push(pickedCard);
 
-			if (options?.withReplacement !== true) {
+			if (!withReplacement) {
 				this.cardPool.removeCard(pickedCard.id);
 				this.cache.byColor[pickedCard.colors.join()].removeCard(pickedCard.id);
 			}
@@ -229,11 +249,10 @@ export class BoosterFactory implements IBoosterFactory {
 			const foilCardPool: SlotedCardPool = this.options.foilCardPool ?? this.cardPool;
 			for (const r in foilRarityRates)
 				if (rarityCheck <= foilRarityRates[r] && foilCardPool[r].size > 0) {
-					const pickedCard = pickCard(foilCardPool[r]);
+					const pickedCard = pickCard(foilCardPool[r], [], { foil: true });
 					// Synchronize color balancing dictionary
 					if (this.options.colorBalance && this.colorBalancedSlot && pickedCard.rarity === "common")
-						this.colorBalancedSlot.syncCache(pickedCard);
-					pickedCard.foil = true;
+						this.colorBalancedSlot.cache.removeCard(pickedCard);
 					booster.push(pickedCard);
 					addedFoils += 1;
 					break;
@@ -261,12 +280,15 @@ export class BoosterFactory implements IBoosterFactory {
 
 		// Color balance the booster by adding one common of each color if possible
 		let pickedCommons = [];
-		if (this.options.colorBalance && this.colorBalancedSlot && targets["common"] - addedFoils >= 5) {
-			pickedCommons = this.colorBalancedSlot.generate(targets["common"] - addedFoils, booster);
+		const commonCount = targets["common"] - addedFoils;
+		if (this.options.colorBalance && this.colorBalancedSlot && commonCount > ColorBalancedSlot.CardCountThreshold) {
+			pickedCommons = this.colorBalancedSlot.generate(commonCount, booster);
 		} else {
-			for (let i = pickedCommons.length; i < targets["common"] - addedFoils; ++i) {
+			for (let i = pickedCommons.length; i < commonCount; ++i) {
 				const pickedCard = pickCard(this.cardPool["common"], pickedCommons);
 				pickedCommons.push(pickedCard);
+				// commonCount might change (because of foils, or other future collation oddities) between packs, make sure cache is up to date.
+				if (this.colorBalancedSlot) this.colorBalancedSlot.cache.removeCard(pickedCard);
 			}
 		}
 		booster = booster.concat(pickedCommons);
