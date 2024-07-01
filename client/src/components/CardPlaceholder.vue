@@ -1,6 +1,6 @@
 <template>
 	<div class="card-placeholder">
-		<CardText class="alt-card-text" v-if="card" :card="card!" />
+		<CardText class="alt-card-text" v-if="card" :card="card!" :delayTextFit="true" />
 	</div>
 </template>
 

@@ -34,7 +34,7 @@
 
 <script setup lang="ts">
 import { ScryfallCard, isScryfallCard, ScryfallCardFace, CardCacheEntry, isScryfallCardFace } from "../vueCardCache";
-import { ref, computed, watch, onMounted, nextTick } from "vue";
+import { ref, computed, watch, onMounted, nextTick, onUnmounted } from "vue";
 import { replaceManaSymbols } from "../ManaSymbols";
 import { Card, CardFace } from "@/CardTypes";
 import { fitFontSize } from "../helper";
@@ -44,23 +44,32 @@ const props = withDefaults(
 	defineProps<{
 		card: ScryfallCard | ScryfallCardFace | CardCacheEntry | CardFace | Card;
 		fixedLayout?: boolean;
+		delayTextFit?: boolean;
 	}>(),
-	{ fixedLayout: false }
+	{ fixedLayout: false, delayTextFit: false }
 );
 
 const rootElement = ref<HTMLElement>();
+
+let idleRequest: number | undefined = undefined;
 
 onMounted(() => {
 	// This has to be called when the component is visible:
 	// We can't use v-show or mounted will be called while the element is hidden and fitAll will do nothing.
 	// There's no way to know when the element is visible becasue of v-show (apart from tracking it ourselves).
-	fitAll();
+	// NOTE: Fitting a lot of cards simultaneously is very slow in Chrome (e.g. for a cube list). delayTextFit is a hack to stagger these calls and not block the main thread.
+	if (props.delayTextFit) idleRequest = window.requestIdleCallback(fitAll, { timeout: 3000 });
+	else fitAll();
+});
+
+onUnmounted(() => {
+	if (idleRequest) window.cancelIdleCallback(idleRequest);
 });
 
 function fitAll() {
 	nextTick(() => {
 		rootElement.value?.querySelectorAll(".card-text .font-size-fit").forEach((div) => {
-			fitFontSize(div as HTMLElement, div as HTMLElement, 2.5, "vh");
+			fitFontSize(div as HTMLElement, 2.5, "vh");
 		});
 	});
 }

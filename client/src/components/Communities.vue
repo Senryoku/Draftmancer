@@ -91,7 +91,7 @@ function shuffleArray<T>(array: Array<T>, start = 0, end = array.length) {
 const communitiesEl = ref();
 onMounted(() => {
 	communitiesEl.value.querySelectorAll(".community").forEach((c: HTMLElement) => {
-		fitFontSize(c.querySelector(".description")!, c);
+		fitFontSize(c.querySelector(".description")!);
 	});
 });
 

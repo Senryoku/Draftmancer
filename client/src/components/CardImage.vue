@@ -55,7 +55,7 @@
 				</template>
 				<img class="front-image" :src="imageURI" />
 				<template v-slot:placeholder>
-					<card-placeholder :card="card"></card-placeholder>
+					<CardPlaceholder :card="card"></CardPlaceholder>
 				</template>
 			</clazy-load>
 			<clazy-load

@@ -195,20 +195,39 @@ export function checkOverflow(el: HTMLElement) {
 	return isOverflowing;
 }
 
-export function fitFontSize(
-	target: HTMLElement,
-	container: HTMLElement | undefined = undefined,
-	initial_size = 1,
-	unit = "em"
-) {
-	if (!container) container = target;
+export function fitFontSize(target: HTMLElement, initial_size = 1, unit = "em") {
 	target.classList.add("fitting");
+
+	const curOverflow = target.style.overflow;
+	if (!curOverflow || curOverflow === "visible") target.style.overflow = "hidden";
+
 	let curr_font_size = initial_size;
 	target.style.fontSize = curr_font_size + unit;
-	while (checkOverflow(container) && curr_font_size > 0.1) {
-		curr_font_size *= 0.9;
-		target.style.fontSize = curr_font_size + unit;
+
+	if (getComputedStyle(target).whiteSpace === "nowrap") {
+		// Wrapping won't change, we can fit one axis at a time.
+		while (target.clientHeight < target.scrollHeight && curr_font_size > 0.1) {
+			const ratio = Math.min(0.95, target.clientHeight / target.scrollHeight);
+			curr_font_size *= ratio;
+			target.style.fontSize = curr_font_size + unit;
+		}
+		while (target.clientWidth < target.scrollWidth && curr_font_size > 0.1) {
+			const ratio = Math.min(0.95, target.clientWidth / target.scrollWidth);
+			curr_font_size *= ratio;
+			target.style.fontSize = curr_font_size + unit;
+		}
+	} else {
+		while (
+			(target.clientWidth < target.scrollWidth || target.clientHeight < target.scrollHeight) &&
+			curr_font_size > 0.1
+		) {
+			curr_font_size *= 0.9;
+			target.style.fontSize = curr_font_size + unit;
+		}
 	}
+
+	target.style.overflow = curOverflow;
+
 	target.classList.remove("fitting");
 }
 
