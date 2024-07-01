@@ -19,6 +19,7 @@ const MTGASetConversions: { [key: string]: string } = {
 	YMAT: "Y23",
 	YWOE: "Y24",
 	YLCI: "Y24",
+	YOTJ: "Y24",
 };
 
 export function fixSetCode(set: SetCode) {
@@ -84,8 +85,8 @@ export function exportToMTGA(
 					? 0
 					: -1
 				: b.subtypes.includes("Lesson")
-				  ? 1
-				  : 0
+					? 1
+					: 0
 		);
 		for (const c of sideboard) str += exportCardToMTGA(c, language, options.full);
 		// Add some basic lands to the sideboard
