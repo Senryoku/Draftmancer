@@ -205,6 +205,11 @@
         "fullName": "Bloomburrow",
         "icon": "img/sets/blb.svg"
     },
+    "blc": {
+        "code": "blc",
+        "fullName": "Bloomburrow Commander",
+        "icon": "img/sets/blc.svg"
+    },
     "bng": {
         "code": "bng",
         "fullName": "Born of the Gods",
@@ -805,6 +810,11 @@
         "code": "fdmu",
         "fullName": "Dominaria United Jumpstart Front Cards",
         "icon": "img/sets/fdmu.svg"
+    },
+    "fdn": {
+        "code": "fdn",
+        "fullName": "Foundations",
+        "icon": "img/sets/fdn.svg"
     },
     "fem": {
         "code": "fem",
