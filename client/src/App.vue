@@ -1674,7 +1674,7 @@
 							<a href="/draftqueue">
 								<div class="draft-queue-banner">
 									<img
-										src="./assets/img/mh3_draft_queue_banner.webp"
+										src="./assets/img/blb_draft_queue_banner.webp"
 										alt="Practice Modern Horizons 3 draft with human players right now in the Draft Queue!"
 										width="500"
 										height="260"

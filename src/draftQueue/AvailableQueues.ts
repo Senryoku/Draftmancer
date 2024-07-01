@@ -1,9 +1,10 @@
 import { QueueDescription } from "./QueueDescription";
 
 export const AvailableQueues: readonly QueueDescription[] = [
+	{ id: "blb", name: "Bloomburrow", playerCount: 8, setCode: "blb" },
 	{ id: "mh3", name: "Modern Horizons 3", playerCount: 8, setCode: "mh3" },
 	{ id: "otj", name: "Outlaws of Thunder Junction", playerCount: 8, setCode: "otj" },
-	{ id: "mkm", name: "Murders at Karlov Manor", playerCount: 8, setCode: "mkm" },
+	// { id: "mkm", name: "Murders at Karlov Manor", playerCount: 8, setCode: "mkm" },
 	// { id: "ktk", name: "Khans of Tarkir", playerCount: 8, setCode: "ktk" },
 	// { id: "lci", name: "The Lost Caverns of Ixalan", playerCount: 8, setCode: "lci" },
 	// { id: "woe", name: "Wilds of Eldraine", playerCount: 8, setCode: "woe" },
