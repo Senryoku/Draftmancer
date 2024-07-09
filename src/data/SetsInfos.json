@@ -205,6 +205,11 @@
         "fullName": "Bloomburrow",
         "icon": "img/sets/blb.svg"
     },
+    "blc": {
+        "code": "blc",
+        "fullName": "Bloomburrow Commander",
+        "icon": "img/sets/blc.svg"
+    },
     "bng": {
         "code": "bng",
         "fullName": "Born of the Gods",
@@ -805,6 +810,11 @@
         "code": "fdmu",
         "fullName": "Dominaria United Jumpstart Front Cards",
         "icon": "img/sets/fdmu.svg"
+    },
+    "fdn": {
+        "code": "fdn",
+        "fullName": "Foundations",
+        "icon": "img/sets/fdn.svg"
     },
     "fem": {
         "code": "fem",
@@ -2279,6 +2289,11 @@
         "fullName": "Love Your LGS 2022",
         "icon": "img/sets/plg22.svg"
     },
+    "plg24": {
+        "code": "plg24",
+        "fullName": "Love Your LGS 2024",
+        "icon": "img/sets/plg24.svg"
+    },
     "plgm": {
         "code": "plgm",
         "fullName": "DCI Legend Membership",
@@ -2382,6 +2397,11 @@
         "code": "pmh2",
         "fullName": "Modern Horizons 2 Promos",
         "icon": "img/sets/pmh2.svg"
+    },
+    "pmh3": {
+        "code": "pmh3",
+        "fullName": "Modern Horizons 3 Promos",
+        "icon": "img/sets/pmh3.svg"
     },
     "pmid": {
         "code": "pmid",

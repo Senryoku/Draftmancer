@@ -1883,6 +1883,7 @@ export const SpecialGuests = {
 	],
 	otj: filterSetByNumber("spg", 29, 38),
 	mh3: filterSetByNumber("spg", 39, 48),
+	blb: filterSetByNumber("spg", 49, 58),
 };
 
 // NOTE: This mimics the ratios of wildcard set boosters described here: https://magic.wizards.com/en/news/making-magic/set-boosters-2020-07-25
@@ -2379,6 +2380,52 @@ export class MH3BoosterFactory extends BoosterFactory {
 	}
 }
 
+// Bloomburrow - https://magic.wizards.com/en/news/feature/collecting-bloomburrow
+//   NOTE/TODO: Both wildcards (foil and non foil) can be "booster fun" (Woodland Frame or Borderless Field Notes), however the rate is unknown.
+//              It's very possible that this will have no bearing on the gameplay, and thus could be safely ignored.
+class BLBBoosterFactory extends BoosterFactory {
+	static readonly SPGRatio: number = 0.015;
+
+	spg: CardPool; // Special Guests
+
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
+		const opt = { ...options };
+		opt.foil = false; // We'll handle the garanteed foil slot ourselves.
+		super(cardPool, landSlot, opt);
+		this.spg = new CardPool();
+		for (const c of SpecialGuests.blb)
+			this.spg.set(c, options.maxDuplicates?.[getCard(c).rarity] ?? DefaultMaxDuplicates);
+	}
+
+	generateBooster(targets: Targets) {
+		const updatedTargets = structuredClone(targets);
+		const booster: UniqueCard[] = [];
+
+		// 10 -> 6 or 7
+		updatedTargets.common = Math.max(0, updatedTargets.common - 3);
+
+		// 6th Common or Special Guest
+		if (random.realZeroToOneInclusive() < BLBBoosterFactory.SPGRatio) {
+			--updatedTargets.common;
+			booster.push(pickCard(this.spg, booster));
+		}
+
+		// 1 Wildcard of any rarity
+		booster.push(pickCard(this.cardPool[rollSetBoosterWildcardRarity(this.cardPool, this.options)], booster));
+
+		// Traditional foil card of any rarity - This can include Booster Fun cards and OTP cards but doesn't include cards from The List.
+		booster.push(
+			pickCard(this.cardPool[rollSetBoosterWildcardRarity(this.cardPool, this.options)], booster, { foil: true })
+		);
+
+		// TODO: Seasonal full-art basic land... or not?
+
+		// Make sure there are no negative counts
+		for (const key in updatedTargets) updatedTargets[key] = Math.max(0, updatedTargets[key]);
+		return super.generateBooster(updatedTargets, booster);
+	}
+}
+
 // Set specific rules.
 // Neither DOM, WAR or ZNR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
 export const SetSpecificFactories: {
@@ -2421,6 +2468,7 @@ export const SetSpecificFactories: {
 	mkm: MKMBoosterFactory,
 	otj: OTJBoosterFactory,
 	mh3: MH3BoosterFactory,
+	blb: BLBBoosterFactory,
 };
 
 export const getBoosterFactory = function (
