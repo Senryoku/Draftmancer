@@ -10,7 +10,7 @@ body {
 #main-container {
 	background: url("../assets/img/background.webp");
 	background-color: rgb(32, 32, 32);
-	background-position: 100% 0;
+	background-position: calc(100vw - 680px) 0;
 	background-repeat: no-repeat;
 	background-attachment: local;
 }
