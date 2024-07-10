@@ -29,7 +29,13 @@ async function checkMTGDraftBotsAPIAvailability() {
 					`${MTGDraftBotsAPI.domain}/oracle-ids?auth_token=${MTGDraftBotsAPI.authToken}&model_type=${model}`,
 					{ timeout: 2000 }
 				);
-				if (isArrayOf(isString)(oracles.data.oracleIds)) modelKnownOracles[model] = oracles.data.oracleIds;
+				if (isArrayOf(isString)(oracles.data.oracleIds)) {
+					// Many MDFCs have a "-2" appended to their oracle IDs, chop it off.
+					oracles.data.oracleIds = oracles.data.oracleIds.map((s: string) =>
+						s.endsWith("-2") ? s.slice(0, -2) : s
+					);
+					modelKnownOracles[model] = oracles.data.oracleIds;
+				}
 			}
 			MTGDraftBotsAPI.available = true;
 			MTGDraftBotsAPI.models = models;
