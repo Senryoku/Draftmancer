@@ -131,7 +131,7 @@ export function fallbackToSimpleBots(oracleIds: Array<OracleID>, wantedModel?: s
 	if (MTGDraftBotsAPI.available) {
 		// At this point only the MTGDraftBots prod model is suitable, make sure it knows most of the requested cards.
 		const intersection = arrayIntersect([oracleIds, MTGDraftBotsAPI.modelKnownOracles["prod"] ?? []]);
-		if (intersection.length / oracleIds.length > 0.9) return false;
+		if (intersection.length / oracleIds.length >= 0.8) return false;
 	}
 
 	return true;
