@@ -64,9 +64,7 @@
 						:class="{ 'selected-set': selected(s.code) }"
 						@click="toggle(s.code)"
 					>
-						<span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap"
-							><img :src="s.icon" class="set-icon" /> {{ s.fullName }}</span
-						>
+						<span><img :src="s.icon" class="set-icon" /> {{ s.fullName }}</span>
 					</div>
 				</div>
 			</div>
@@ -74,9 +72,8 @@
 	</div>
 </template>
 
-<script lang="ts">
-import { PropType, defineComponent } from "vue";
-
+<script setup lang="ts">
+import { ref, onMounted } from "vue";
 import constants from "../../../src/Constants";
 import { SetInfo, SetsInfos } from "../../../src/SetInfos";
 import { SetCode } from "@/Types";
@@ -84,103 +81,107 @@ import { SetCode } from "@/Types";
 const FilteredBlocks = ["Innistrad: Double Feature", "Shadows over Innistrad Remastered"];
 const PreCycleSets = ["arn", "atq", "leg", "drk", "fem", "ice", "hml", "all"];
 
-export default defineComponent({
-	data() {
-		return {
-			SetsInfos: SetsInfos,
-			blocks: [
-				{ name: "MtG: Arena", sets: constants.MTGASets.map((s) => SetsInfos[s]).reverse() },
-				{ name: "Alchemy", sets: constants.AlchemySets.map((s) => SetsInfos[s]).reverse() },
-				{ name: "Un-sets", sets: ["unf", "und", "ust", "unh", "ugl"].map((s) => SetsInfos[s]) },
-				{
-					name: "Shadows over Innistrad Remastered",
-					sets: ["sir0", "sir1", "sir2", "sir3"].map((s) => SetsInfos[s]),
-				}, // Manually added to hoist it
-				{
-					name: "Masters",
-					sets: [
-						"tsr",
-						"2xm",
-						"uma",
-						"a25",
-						"ima",
-						"mm3",
-						"ema",
-						"mm2",
-						"tpr",
-						"vma",
-						"mma",
-						"me4",
-						"me3",
-						"me2",
-						"me1", // Is 'med' in MTGA and MTGO
-					].map((s) => SetsInfos[s]),
-				},
-			],
-		};
+const blocks = ref([
+	{ name: "MtG: Arena", sets: constants.MTGASets.map((s) => SetsInfos[s]).reverse() },
+	{ name: "Alchemy", sets: constants.AlchemySets.map((s) => SetsInfos[s]).reverse() },
+	{ name: "Un-sets", sets: ["unf", "und", "ust", "unh", "ugl"].map((s) => SetsInfos[s]) },
+	{
+		name: "Shadows over Innistrad Remastered",
+		sets: ["sir0", "sir1", "sir2", "sir3"].map((s) => SetsInfos[s]),
+	}, // Manually added to hoist it
+	{
+		name: "Masters",
+		sets: [
+			"tsr",
+			"2xm",
+			"uma",
+			"a25",
+			"ima",
+			"mm3",
+			"ema",
+			"mm2",
+			"tpr",
+			"vma",
+			"mma",
+			"me4",
+			"me3",
+			"me2",
+			"me1", // Is 'med' in MTGA and MTGO
+		].map((s) => SetsInfos[s]),
 	},
-	props: {
-		modelValue: { type: Array as PropType<SetCode[]>, required: true },
-	},
-	mounted() {
-		const assigned = this.blocks
-			.map((b) => b.sets)
-			.flat()
-			.map((s) => s.code);
-		let blocks: { [code: SetCode]: SetInfo[] } = {};
-		for (let s of constants.PrimarySets.map((s) => SetsInfos[s])) {
-			let b = s.block;
-			if (b && FilteredBlocks.includes(b)) continue;
-			if (PreCycleSets.includes(s.code)) continue;
-			if (!b && assigned.includes(s.code)) continue;
-			if (!b) b = "Others";
-			if (!(b in blocks)) blocks[b] = [];
-			blocks[b].push(s);
-		}
-		for (let b in blocks) if (blocks[b].length > 1) this.blocks.push({ name: b, sets: blocks[b] });
-		this.blocks.push({ name: "Pre-Cycle", sets: PreCycleSets.map((s) => SetsInfos[s]) });
-	},
-	methods: {
-		update(newVal: SetCode[]) {
-			this.$emit("update:modelValue", newVal);
-		},
-		addAll() {
-			this.update([...constants.PrimarySets]);
-		},
-		clear() {
-			this.update([]);
-		},
-		remove(arr: SetCode[]) {
-			const newVal = [...this.modelValue];
-			for (let s of arr) {
-				const index = newVal.indexOf(s);
-				if (index !== -1) newVal.splice(index, 1);
-			}
-			this.update(newVal);
-		},
-		add(arr: SetCode[]) {
-			const newVal = [...this.modelValue];
-			for (let s of arr) {
-				const index = newVal.indexOf(s);
-				if (index === -1) newVal.push(s);
-			}
-			this.update(newVal);
-		},
-		toggle(s: SetCode) {
-			const newVal = [...this.modelValue];
-			const index = newVal.indexOf(s);
-			if (index !== -1) {
-				newVal.splice(index, 1);
-			} else {
-				newVal.push(s);
-			}
-			this.update(newVal);
-		},
-		selected(s: SetCode) {
-			return this.modelValue.includes(s);
-		},
-	},
+]);
+
+const props = defineProps<{ modelValue: SetCode[] }>();
+
+const emit = defineEmits<{
+	"update:modelValue": [sets: SetCode[]];
+}>();
+
+onMounted(() => {
+	const assigned = blocks.value
+		.map((b) => b.sets)
+		.flat()
+		.map((s) => s.code);
+
+	let unsortedBlocks: { [code: SetCode]: SetInfo[] } = {};
+	for (let s of constants.PrimarySets.map((s) => SetsInfos[s])) {
+		let b = s.block;
+		if (b && FilteredBlocks.includes(b)) continue;
+		if (PreCycleSets.includes(s.code)) continue;
+		if (!b && assigned.includes(s.code)) continue;
+		if (!b) b = "Others";
+		if (!(b in unsortedBlocks)) unsortedBlocks[b] = [];
+		unsortedBlocks[b].push(s);
+	}
+	for (let b in unsortedBlocks)
+		if (unsortedBlocks[b].length > 1) blocks.value.push({ name: b, sets: unsortedBlocks[b] });
+	blocks.value.push({ name: "Pre-Cycle", sets: PreCycleSets.map((s) => SetsInfos[s]) });
 });
+
+function update(newVal: SetCode[]) {
+	emit("update:modelValue", newVal);
+}
+
+function addAll() {
+	update([...constants.PrimarySets]);
+}
+
+function clear() {
+	update([]);
+}
+
+function remove(arr: SetCode[]) {
+	const newVal = [...props.modelValue];
+	for (let s of arr) {
+		const index = newVal.indexOf(s);
+		if (index !== -1) newVal.splice(index, 1);
+	}
+	update(newVal);
+}
+
+function add(arr: SetCode[]) {
+	const newVal = [...props.modelValue];
+	for (let s of arr) {
+		const index = newVal.indexOf(s);
+		if (index === -1) newVal.push(s);
+	}
+	update(newVal);
+}
+
+function toggle(s: SetCode) {
+	const newVal = [...props.modelValue];
+	const index = newVal.indexOf(s);
+	if (index !== -1) {
+		newVal.splice(index, 1);
+	} else {
+		newVal.push(s);
+	}
+	update(newVal);
+}
+
+function selected(s: SetCode) {
+	return props.modelValue.includes(s);
+}
 </script>
 
 <style scoped>
@@ -240,6 +241,12 @@ export default defineComponent({
 	--invertedness: 100%;
 	vertical-align: text-bottom;
 	margin-right: 0.25em;
+}
+
+.set-selection span {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .set-button {
