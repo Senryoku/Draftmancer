@@ -2834,7 +2834,7 @@
 			</span>
 			<span>
 				Made by
-				<a href="http://senryoku.github.io/" target="_blank" rel="noopener nofollow">Senryoku</a>
+				<a href="https://github.com/sponsors/Senryoku" target="_blank" rel="noopener nofollow">Senryoku</a>
 			</span>
 			<span>
 				<span class="link" @click="displayedModal = 'donation'">
