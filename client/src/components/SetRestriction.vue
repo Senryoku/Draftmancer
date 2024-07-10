@@ -2,12 +2,12 @@
 	<div>
 		<div class="state">
 			<button @click="addAll()" class="clickable">
-				<font-awesome-icon icon="fa-solid fa-plus-square" style="margin-right: 0.5em"></font-awesome-icon>Select
-				All
+				<font-awesome-icon icon="fa-solid fa-plus-square" style="margin-right: 0.5em"></font-awesome-icon>
+				Select All
 			</button>
 			<button @click="clear()" class="clickable">
-				<font-awesome-icon icon="fa-solid fa-minus-square" style="margin-right: 0.5em"></font-awesome-icon
-				>Deselect All
+				<font-awesome-icon icon="fa-solid fa-minus-square" style="margin-right: 0.5em"></font-awesome-icon>
+				Deselect All
 			</button>
 			Current Selection:
 			<span v-if="modelValue.length === 0">No set restriction (All cards)</span>
@@ -81,6 +81,9 @@ import constants from "../../../src/Constants";
 import { SetInfo, SetsInfos } from "../../../src/SetInfos";
 import { SetCode } from "@/Types";
 
+const FilteredBlocks = ["Innistrad: Double Feature", "Shadows over Innistrad Remastered"];
+const PreCycleSets = ["arn", "atq", "leg", "drk", "fem", "ice", "hml", "all"];
+
 export default defineComponent({
 	data() {
 		return {
@@ -89,6 +92,10 @@ export default defineComponent({
 				{ name: "MtG: Arena", sets: constants.MTGASets.map((s) => SetsInfos[s]).reverse() },
 				{ name: "Alchemy", sets: constants.AlchemySets.map((s) => SetsInfos[s]).reverse() },
 				{ name: "Un-sets", sets: ["unf", "und", "ust", "unh", "ugl"].map((s) => SetsInfos[s]) },
+				{
+					name: "Shadows over Innistrad Remastered",
+					sets: ["sir0", "sir1", "sir2", "sir3"].map((s) => SetsInfos[s]),
+				}, // Manually added to hoist it
 				{
 					name: "Masters",
 					sets: [
@@ -120,17 +127,18 @@ export default defineComponent({
 			.map((b) => b.sets)
 			.flat()
 			.map((s) => s.code);
-		let blocks: { [code: SetCode]: SetInfo[] } = {
-			"Shadows over Innistrad Remastered": [], // Manually added to hoist it
-		};
+		let blocks: { [code: SetCode]: SetInfo[] } = {};
 		for (let s of constants.PrimarySets.map((s) => SetsInfos[s])) {
 			let b = s.block;
+			if (b && FilteredBlocks.includes(b)) continue;
+			if (PreCycleSets.includes(s.code)) continue;
 			if (!b && assigned.includes(s.code)) continue;
 			if (!b) b = "Others";
 			if (!(b in blocks)) blocks[b] = [];
 			blocks[b].push(s);
 		}
-		for (let b in blocks) this.blocks.push({ name: b, sets: blocks[b] });
+		for (let b in blocks) if (blocks[b].length > 1) this.blocks.push({ name: b, sets: blocks[b] });
+		this.blocks.push({ name: "Pre-Cycle", sets: PreCycleSets.map((s) => SetsInfos[s]) });
 	},
 	methods: {
 		update(newVal: SetCode[]) {
@@ -189,27 +197,43 @@ export default defineComponent({
 .block-container {
 	display: flex;
 	flex-wrap: wrap;
+	gap: 1em 2em;
+	padding-left: 1em;
+	padding-right: 1em;
+	padding-bottom: 5em;
 }
 
 .set-block {
-	margin: 0.5em;
-	flex-grow: 1;
 }
 
-.small-block {
-	flex-basis: 30%;
+.section-title {
+	white-space: nowrap;
 }
 
 .set-selection {
 	display: flex;
 	flex-wrap: wrap;
-	width: 100%;
+	gap: 0.5em;
 }
 
 .set-selection > div {
-	flex-basis: 16em;
+	flex-basis: max(16em, 13%);
 	display: flex;
 	align-items: center;
+}
+
+.small-block {
+	flex-grow: 0;
+	flex-basis: 22em;
+}
+
+.small-block .set-selection {
+	flex-direction: column;
+	flex-wrap: nowrap;
+}
+
+.small-block .set-selection > div {
+	flex-basis: auto;
 }
 
 .set-selection .set-icon {
@@ -220,7 +244,6 @@ export default defineComponent({
 
 .set-button {
 	position: relative;
-	margin: 0.25em;
 	padding: 0.5em;
 	border-radius: 0.3em;
 	background-color: #282828;
@@ -233,4 +256,3 @@ export default defineComponent({
 	box-shadow: 0 0 5px 2px green;
 }
 </style>
-../../../src/SetInfos
