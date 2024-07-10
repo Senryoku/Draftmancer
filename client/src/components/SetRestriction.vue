@@ -73,15 +73,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
 import constants from "../../../src/Constants";
 import { SetInfo, SetsInfos } from "../../../src/SetInfos";
 import { SetCode } from "@/Types";
 
+const props = defineProps<{ modelValue: SetCode[] }>();
+
+const emit = defineEmits<{
+	"update:modelValue": [sets: SetCode[]];
+}>();
+
 const FilteredBlocks = ["Innistrad: Double Feature", "Shadows over Innistrad Remastered"];
 const PreCycleSets = ["arn", "atq", "leg", "drk", "fem", "ice", "hml", "all"];
 
-const blocks = ref([
+const blocks = [
 	{ name: "MtG: Arena", sets: constants.MTGASets.map((s) => SetsInfos[s]).reverse() },
 	{ name: "Alchemy", sets: constants.AlchemySets.map((s) => SetsInfos[s]).reverse() },
 	{ name: "Un-sets", sets: ["unf", "und", "ust", "unh", "ugl"].map((s) => SetsInfos[s]) },
@@ -109,34 +114,32 @@ const blocks = ref([
 			"me1", // Is 'med' in MTGA and MTGO
 		].map((s) => SetsInfos[s]),
 	},
-]);
+];
 
-const props = defineProps<{ modelValue: SetCode[] }>();
+const assigned = blocks
+	.map((b) => b.sets)
+	.flat()
+	.map((s) => s.code)
+	.concat(PreCycleSets);
 
-const emit = defineEmits<{
-	"update:modelValue": [sets: SetCode[]];
-}>();
-
-onMounted(() => {
-	const assigned = blocks.value
-		.map((b) => b.sets)
-		.flat()
-		.map((s) => s.code);
-
-	let unsortedBlocks: { [code: SetCode]: SetInfo[] } = {};
-	for (let s of constants.PrimarySets.map((s) => SetsInfos[s])) {
-		let b = s.block;
-		if (b && FilteredBlocks.includes(b)) continue;
-		if (PreCycleSets.includes(s.code)) continue;
-		if (!b && assigned.includes(s.code)) continue;
-		if (!b) b = "Others";
-		if (!(b in unsortedBlocks)) unsortedBlocks[b] = [];
-		unsortedBlocks[b].push(s);
+let unsortedBlocks: { [code: SetCode]: SetInfo[] } = {};
+for (let s of constants.PrimarySets.map((s) => SetsInfos[s])) {
+	let b = s.block;
+	if (b && FilteredBlocks.includes(b)) continue;
+	if (!b && assigned.includes(s.code)) continue;
+	if (!b) b = "Others";
+	if (!(b in unsortedBlocks)) unsortedBlocks[b] = [];
+	unsortedBlocks[b].push(s);
+}
+for (let b in unsortedBlocks) {
+	if (unsortedBlocks[b].length === 1) {
+		unsortedBlocks["Others"].push(unsortedBlocks[b][0]);
+		delete unsortedBlocks[b];
 	}
-	for (let b in unsortedBlocks)
-		if (unsortedBlocks[b].length > 1) blocks.value.push({ name: b, sets: unsortedBlocks[b] });
-	blocks.value.push({ name: "Pre-Cycle", sets: PreCycleSets.map((s) => SetsInfos[s]) });
-});
+}
+for (let b in unsortedBlocks) blocks.push({ name: b, sets: unsortedBlocks[b] });
+
+blocks.push({ name: "Pre-Cycle", sets: PreCycleSets.map((s) => SetsInfos[s]) });
 
 function update(newVal: SetCode[]) {
 	emit("update:modelValue", newVal);
