@@ -30,6 +30,20 @@
 						/>
 						<ResetButton v-model="boosterCount" :default-value="defaultBoosterCount" />
 					</div>
+					<label for="piles-count-input">Number of piles</label>
+					<div>
+						<input
+							id="piles-count-input"
+							type="number"
+							min="2"
+							max="8"
+							step="1"
+							placeholder="Piles Count"
+							class="small-number-input"
+							v-model.number="pileCount"
+						/>
+						<ResetButton v-model="pileCount" :default-value="defaultPileCount" />
+					</div>
 				</div>
 			</div>
 		</template>
@@ -49,20 +63,22 @@ import ResetButton from "./ResetButton.vue";
 
 const props = defineProps<{
 	defaultBoosterCount: number;
+	defaultPileCount: number;
 }>();
 
 const boosterCount = ref(props.defaultBoosterCount);
+const pileCount = ref(props.defaultPileCount);
 
 const emit = defineEmits<{
 	(e: "close"): void;
-	(e: "start", boostersPerPlayer: number): void;
+	(e: "start", boostersPerPlayer: number, pileCount: number): void;
 }>();
 
 const cancel = () => {
 	emit("close");
 };
 const start = () => {
-	emit("start", boosterCount.value);
+	emit("start", boosterCount.value, pileCount.value);
 	emit("close");
 };
 </script>
