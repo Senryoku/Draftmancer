@@ -695,13 +695,15 @@ function startWinstonDraft(
 	userID: UserID,
 	sessionID: SessionID,
 	boosterCount: unknown,
+	pileCount: unknown,
 	removeBasicLands: unknown,
 	ack: (s: SocketAck) => void
 ) {
 	const sess = Sessions[sessionID];
 	const localBoosterCount = !isNumber(boosterCount) ? parseInt(boosterCount as string) : boosterCount;
+	const localPileCount = Math.min(8, Math.max(2, !isNumber(pileCount) ? parseInt(pileCount as string) : pileCount));
 	const localRemoveBasicLands = isBoolean(removeBasicLands) ? removeBasicLands : true;
-	const r = sess.startWinstonDraft(localBoosterCount ?? 6, localRemoveBasicLands);
+	const r = sess.startWinstonDraft(localBoosterCount ?? 6, localPileCount ?? 3, localRemoveBasicLands);
 	if (!isSocketError(r)) startPublicSession(sess);
 	ack(r);
 }

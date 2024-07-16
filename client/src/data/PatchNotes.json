@@ -1,5 +1,11 @@
 [
 	{
+		"date": "16/07/2024",
+		"notes": [
+			"Winston draft: The number of piles is now customizable."
+		]
+	},
+	{
 		"date": "01/07/2024",
 		"notes": [
 			"Bugfix: Custom Card List Review should now be usable again in Chrome, instead of being unbearably slow.",

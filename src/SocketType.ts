@@ -303,7 +303,12 @@ export interface ClientToServerEvents {
 	) => void;
 	startRochesterDraft: (ack: (s: SocketAck) => void) => void;
 	startRotisserieDraft: (options: RotisserieDraftStartOptions, ack: (s: SocketAck) => void) => void;
-	startWinstonDraft: (boostersPerPlayer: number, removeBasicLands: boolean, ack: (s: SocketAck) => void) => void;
+	startWinstonDraft: (
+		boostersPerPlayer: number,
+		pileCount: number,
+		removeBasicLands: boolean,
+		ack: (s: SocketAck) => void
+	) => void;
 	startWinchesterDraft: (boosterPerPlayer: number, removeBasicLands: boolean, ack: (s: SocketAck) => void) => void;
 	startHousmanDraft: (
 		handSize: number,
