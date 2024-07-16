@@ -91,6 +91,15 @@ app.use(cookieParser());
 app.use(ExpressJSON());
 app.use(ExpressText({ type: "text/*" }));
 
+// Redirect www to non-www.
+app.use((req, res, next) => {
+	if (req.headers.host?.slice(0, 4) === "www.") {
+		const newHost = req.headers.host.slice(4);
+		return res.redirect(301, req.protocol + "://" + newHost + req.originalUrl);
+	}
+	next();
+});
+
 function shortguid() {
 	function s4() {
 		return Math.floor((1 + Math.random()) * 0x10000)
@@ -686,13 +695,15 @@ function startWinstonDraft(
 	userID: UserID,
 	sessionID: SessionID,
 	boosterCount: unknown,
+	pileCount: unknown,
 	removeBasicLands: unknown,
 	ack: (s: SocketAck) => void
 ) {
 	const sess = Sessions[sessionID];
 	const localBoosterCount = !isNumber(boosterCount) ? parseInt(boosterCount as string) : boosterCount;
+	const localPileCount = Math.min(8, Math.max(2, !isNumber(pileCount) ? parseInt(pileCount as string) : pileCount));
 	const localRemoveBasicLands = isBoolean(removeBasicLands) ? removeBasicLands : true;
-	const r = sess.startWinstonDraft(localBoosterCount ?? 6, localRemoveBasicLands);
+	const r = sess.startWinstonDraft(localBoosterCount ?? 6, localPileCount ?? 3, localRemoveBasicLands);
 	if (!isSocketError(r)) startPublicSession(sess);
 	ack(r);
 }

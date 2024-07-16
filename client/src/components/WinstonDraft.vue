@@ -59,7 +59,7 @@
 						<button class="confirm" @click="take">Take Pile</button>
 						<button class="stop" @click="skip" v-if="winstonCanSkipPile">
 							Skip Pile
-							<span v-show="index === 2">and Draw</span>
+							<span v-show="index === winstonDraftState.piles.length - 1">and Draw</span>
 						</button>
 					</div>
 					<div class="winston-pile-status" v-else>
@@ -103,12 +103,12 @@ const skip = () => {
 
 const winstonCanSkipPile = computed(() => {
 	const s = props.winstonDraftState;
-	return !(
-		!s.remainingCards &&
-		((s.currentPile === 0 && !s.piles[1].length && !s.piles[2].length) ||
-			(s.currentPile === 1 && !s.piles[2].length) ||
-			s.currentPile === 2)
-	);
+	if (s.remainingCards) return true;
+	// Are there any more cards in the next piles?
+	for (let i = s.currentPile + 1; i < s.piles.length; i++) {
+		if (s.piles[i].length > 0) return true;
+	}
+	return false;
 });
 </script>
 

@@ -29,7 +29,13 @@ async function checkMTGDraftBotsAPIAvailability() {
 					`${MTGDraftBotsAPI.domain}/oracle-ids?auth_token=${MTGDraftBotsAPI.authToken}&model_type=${model}`,
 					{ timeout: 2000 }
 				);
-				if (isArrayOf(isString)(oracles.data.oracleIds)) modelKnownOracles[model] = oracles.data.oracleIds;
+				if (isArrayOf(isString)(oracles.data.oracleIds)) {
+					// Many MDFCs have a "-2" appended to their oracle IDs, chop it off.
+					oracles.data.oracleIds = oracles.data.oracleIds.map((s: string) =>
+						s.endsWith("-2") ? s.slice(0, -2) : s
+					);
+					modelKnownOracles[model] = oracles.data.oracleIds;
+				}
 			}
 			MTGDraftBotsAPI.available = true;
 			MTGDraftBotsAPI.models = models;
@@ -131,7 +137,7 @@ export function fallbackToSimpleBots(oracleIds: Array<OracleID>, wantedModel?: s
 	if (MTGDraftBotsAPI.available) {
 		// At this point only the MTGDraftBots prod model is suitable, make sure it knows most of the requested cards.
 		const intersection = arrayIntersect([oracleIds, MTGDraftBotsAPI.modelKnownOracles["prod"] ?? []]);
-		if (intersection.length / oracleIds.length > 0.9) return false;
+		if (intersection.length / oracleIds.length >= 0.8) return false;
 	}
 
 	return true;

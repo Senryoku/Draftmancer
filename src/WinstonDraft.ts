@@ -7,18 +7,22 @@ export class WinstonDraftState extends IDraftState implements TurnBased {
 	players: Array<UserID>;
 	round = -1; // Will be immediately incremented
 	cardPool: Array<UniqueCard> = [];
-	piles: [Array<UniqueCard>, Array<UniqueCard>, Array<UniqueCard>] = [[], [], []];
+	piles: UniqueCard[][] = [];
 	currentPile: number = 0;
 
-	constructor(players: Array<UserID>, boosters: Array<Array<UniqueCard>>) {
+	constructor(players: Array<UserID>, boosters: UniqueCard[][], pileCount: number) {
 		super("winston");
 		this.players = players;
 		if (boosters) {
 			for (const booster of boosters) this.cardPool.push(...booster);
 			shuffleArray(this.cardPool);
 		}
-		if (this.cardPool.length >= 3)
-			this.piles = [[this.cardPool.pop()!], [this.cardPool.pop()!], [this.cardPool.pop()!]];
+		for (let i = 0; i < pileCount; ++i) this.piles.push([]);
+		if (this.cardPool.length >= pileCount) {
+			for (let i = 0; i < pileCount; ++i) {
+				this.piles[i].push(this.cardPool.pop()!);
+			}
+		}
 	}
 
 	currentPlayer() {

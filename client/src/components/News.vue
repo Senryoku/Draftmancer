@@ -1,6 +1,10 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
+			<em>July, 2024</em>
+			<p>Winston Draft: The number of piles can now be customized.</p>
+		</div>
+		<div class="news">
 			<em>May 30, 2024</em>
 			<p>
 				<img src="img/sets/mh3.svg" class="set-icon" style="--invertedness: 100%" alt="MH3" />

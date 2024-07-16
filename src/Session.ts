@@ -899,7 +899,7 @@ export class Session implements IIndexable {
 	}
 
 	///////////////////// Winston Draft //////////////////////
-	startWinstonDraft(boosterCount: number, removeBasicLands: boolean): SocketAck {
+	startWinstonDraft(boosterCount: number, pileCount: number, removeBasicLands: boolean): SocketAck {
 		if (this.drafting) return new SocketError("Already drafting.");
 		if (this.users.size < 2)
 			return new SocketError(
@@ -916,7 +916,7 @@ export class Session implements IIndexable {
 
 		this.drafting = true;
 		this.disconnectedUsers = {};
-		this.draftState = new WinstonDraftState(this.getSortedHumanPlayersIDs(), boosters);
+		this.draftState = new WinstonDraftState(this.getSortedHumanPlayersIDs(), boosters, pileCount);
 		for (const uid of this.users) {
 			Connections[uid].pickedCards = { main: [], side: [] };
 			Connections[uid].socket.emit("sessionOptions", {
@@ -944,8 +944,8 @@ export class Session implements IIndexable {
 		if (!this.drafting || !isWinstonDraftState(s)) return;
 		++s.round;
 		s.currentPile = 0;
-		while (s.currentPile < 3 && !s.piles[s.currentPile].length) ++s.currentPile;
-		if (s.currentPile >= 3) {
+		while (s.currentPile < s.piles.length && !s.piles[s.currentPile].length) ++s.currentPile;
+		if (s.currentPile >= s.piles.length) {
 			this.endWinstonDraft();
 		} else {
 			for (const uid of this.users) {
@@ -962,19 +962,19 @@ export class Session implements IIndexable {
 
 		// If the card pool is empty, make sure there is another pile to pick
 		if (
-			!s.cardPool.length &&
-			((s.currentPile === 0 && !s.piles[1].length && !s.piles[2].length) ||
-				(s.currentPile === 1 && !s.piles[2].length) ||
-				s.currentPile === 2)
-		) {
+			s.cardPool.length == 0 &&
+			s.piles
+				.map((p) => p.length)
+				.slice(s.currentPile + 1)
+				.every((c) => c === 0)
+		)
 			return new SocketError("This is your only choice!");
-		}
 
 		// Add a new card to skipped pile. (Make sure there's enough cards for the player to draw if this is the last pile)
-		if (s.cardPool.length > 1 || (s.currentPile < 2 && s.cardPool.length > 0))
+		if (s.cardPool.length > 1 || (s.currentPile < s.piles.length - 1 && s.cardPool.length > 0))
 			s.piles[s.currentPile].push(s.cardPool.pop()!);
 		// Give a random card from the card pool if this was the last pile
-		if (s.currentPile === 2) {
+		if (s.currentPile === s.piles.length - 1) {
 			const card = s.cardPool.pop()!;
 			Connections[s.currentPlayer()].pickedCards.main.push(card);
 			Connections[s.currentPlayer()].socket.emit("winstonDraftRandomCard", card);

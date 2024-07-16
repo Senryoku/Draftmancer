@@ -1968,12 +1968,13 @@ export default defineComponent({
 				});
 			} else {
 				this.spawnDialog(WinstonDialog, {
-					onStart: (boosterCount: number) => {
-						this.socket.emit("startWinstonDraft", boosterCount, true, (answer: SocketAck) => {
+					onStart: (boosterCount: number, pileCount: number) => {
+						this.socket.emit("startWinstonDraft", boosterCount, pileCount, true, (answer: SocketAck) => {
 							if (answer.code !== 0 && answer.error) Alert.fire(answer.error);
 						});
 					},
 					defaultBoosterCount: 3 * this.sessionUsers.length,
+					defaultPileCount: 3,
 				});
 			}
 		},

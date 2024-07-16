@@ -143,7 +143,7 @@ export function restoreSession(s: any, owner: UserID) {
 				return r;
 			}
 			case "winston": {
-				r.draftState = new WinstonDraftState([], []);
+				r.draftState = new WinstonDraftState([], [], 3);
 				copyPODProps(s.draftState, r.draftState);
 				return r;
 			}
