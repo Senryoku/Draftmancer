@@ -2401,8 +2401,13 @@ class BLBBoosterFactory extends BoosterFactory {
 		const updatedTargets = structuredClone(targets);
 		const booster: UniqueCard[] = [];
 
-		// 10 -> 6 or 7
-		updatedTargets.common = Math.max(0, updatedTargets.common - 3);
+		if (targets === DefaultBoosterTargets) {
+			// 10 -> 6 or 7
+			updatedTargets.common = Math.max(0, updatedTargets.common - 3);
+		} else {
+			// Two commons will be replaced by wildcards.
+			updatedTargets.common = Math.max(0, updatedTargets.common - 2);
+		}
 
 		// 6th Common or Special Guest
 		if (random.realZeroToOneInclusive() < BLBBoosterFactory.SPGRatio) {

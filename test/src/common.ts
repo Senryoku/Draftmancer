@@ -147,6 +147,9 @@ export const waitForClientDisconnects = (done: Mocha.Done) => {
 
 export function ackNoError(r: SocketAck) {
 	if (r.code !== 0) console.error(r);
-	expect(r.code, `Ack code should be 0. Got ${r.code}: ${r.error?.title}`).to.equal(0);
+	expect(
+		r.code,
+		`Ack code should be 0. Got ${r.code}:\n  Title:    ${r.error?.title}\n  Message:    ${r.error?.text}\n`
+	).to.equal(0);
 	expect(r.error, "ack function should return without error.").not.to.exist;
 }
