@@ -77,6 +77,15 @@ const io = new Server<ClientToServerEvents, ServerToClientEvents, InterServerEve
 	perMessageDeflate: true,
 });
 
+// Redirect www to non-www.
+app.use((req, res, next) => {
+	if (req.headers.host?.slice(0, 4) === "www.") {
+		const newHost = req.headers.host.slice(4);
+		return res.redirect(301, req.protocol + "://" + newHost + req.originalUrl);
+	}
+	next();
+});
+
 // Serve pre-compressed files from the dist directory in production
 if (process.env.NODE_ENV === "production")
 	app.use("/", expressStaticGzip("./client/dist/", { enableBrotli: true, orderPreference: ["br", "gz"] }));
@@ -90,15 +99,6 @@ app.use("/draftqueue", ExpressStatic("./client/dist/index.html"));
 app.use(cookieParser());
 app.use(ExpressJSON());
 app.use(ExpressText({ type: "text/*" }));
-
-// Redirect www to non-www.
-app.use((req, res, next) => {
-	if (req.headers.host?.slice(0, 4) === "www.") {
-		const newHost = req.headers.host.slice(4);
-		return res.redirect(301, req.protocol + "://" + newHost + req.originalUrl);
-	}
-	next();
-});
 
 function shortguid() {
 	function s4() {
