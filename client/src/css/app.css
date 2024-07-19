@@ -1747,10 +1747,20 @@ See: https://stackoverflow.com/questions/52937708/why-does-applying-a-css-filter
 }
 
 .draft-queue-banner img {
-	border-radius: 10px;
+	border-radius: 12px;
 	box-shadow:
 		0 4px 8px 0 rgba(0, 0, 0, 0.2),
 		0 6px 20px 0 rgba(0, 0, 0, 0.19);
 	max-width: 100%;
 	height: auto;
+	transition: all 0.2s;
+}
+
+.draft-queue-banner:hover img {
+	box-shadow:
+		0 0 4px 0px rgba(255, 255, 255, 0.8),
+		0 0 20px 0px #72a7ff,
+		0 4px 8px 0 rgba(0, 0, 0, 0.2),
+		0 6px 20px 0 rgba(0, 0, 0, 0.19);
+	filter: saturate(1.2);
 }

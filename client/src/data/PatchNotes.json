@@ -1,5 +1,11 @@
 [
 	{
+		"date": "18/07/2024",
+		"notes": [
+			"Bloomburrow (BLB) support."
+		]
+	},
+	{
 		"date": "16/07/2024",
 		"notes": [
 			"Winston draft: The number of piles is now customizable."

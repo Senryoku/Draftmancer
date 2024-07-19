@@ -20,6 +20,7 @@ const MTGASetConversions: { [key: string]: string } = {
 	YWOE: "Y24",
 	YLCI: "Y24",
 	YOTJ: "Y24",
+	YBLB: "Y24",
 };
 
 export function fixSetCode(set: SetCode) {

@@ -80,7 +80,8 @@
         "ktk",
         "mkm",
         "otj",
-        "mh3"
+        "mh3",
+        "blb"
     ],
     "AlchemySets": [
         "hbg",
@@ -100,7 +101,8 @@
         "woe",
         "lci",
         "mkm",
-        "otj"
+        "otj",
+        "blb"
     ],
     "BasicLandNames": {
         "en": {
@@ -309,6 +311,7 @@
         }
     ],
     "PrimarySets": [
+        "blb",
         "mh3",
         "otj",
         "mkm",

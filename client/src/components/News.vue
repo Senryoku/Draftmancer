@@ -1,7 +1,11 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
-			<em>July, 2024</em>
+			<em>July 18, 2024</em>
+			<p>
+				<img src="img/sets/blb.svg" class="set-icon" style="--invertedness: 100%" alt="BLB" />
+				Bloomburrom is now available!
+			</p>
 			<p>Winston Draft: The number of piles can now be customized.</p>
 		</div>
 		<div class="news">
@@ -50,13 +54,6 @@
 				"Sync. with MTGO matches" setting in your tournament bracket and Draftmancer will automatically populate
 				it with your match results!<br />Make sure everyone use their MTGO screen names for this to work
 				properly ;)
-			</p>
-		</div>
-		<div class="news">
-			<em>April 11, 2024</em>
-			<p>
-				Reworked the way Minesweeper Draft grids are generated, allowing the use of standard MTG sets and
-				lifting some restrictions for cubes.
 			</p>
 		</div>
 	</div>
