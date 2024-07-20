@@ -1883,7 +1883,7 @@ export const SpecialGuests = {
 	],
 	otj: filterSetByNumber("spg", 29, 38),
 	mh3: filterSetByNumber("spg", 39, 48),
-	blb: filterSetByNumber("spg", 49, 58),
+	blb: filterSetByNumber("spg", 54, 63),
 };
 
 // NOTE: This mimics the ratios of wildcard set boosters described here: https://magic.wizards.com/en/news/making-magic/set-boosters-2020-07-25
