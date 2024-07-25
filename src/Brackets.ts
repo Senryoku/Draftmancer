@@ -182,13 +182,7 @@ export class SwissBracket extends IBracket {
 
 		const rounds = this.bracket;
 
-		const alreadyPaired = [];
-		for (const matchID of this.bracket[0]) {
-			const match = this.matches[matchID];
-			alreadyPaired.push([match.players[0], match.players[1]]);
-			alreadyPaired.push([match.players[1], match.players[0]]);
-		}
-
+		let alreadyPaired: [PlayerIndex, PlayerIndex][] = [];
 		const records: number[] = [];
 		const scores: number[] = [];
 
@@ -203,12 +197,13 @@ export class SwissBracket extends IBracket {
 		let lastCompleteRound = -1;
 		for (let i = 0; i < rounds.length; ++i) {
 			let complete = true;
+			let hasDraw = false;
 			for (const matchID of rounds[i]) {
 				const match = this.matches[matchID];
 				// Accumulate results from previous round.
 				if (match.results[0] === match.results[1]) {
 					// We have a draw, group pairing might not be possible, we'll fallback to a single group pairing by score.
-					groupPairingFallback = true;
+					hasDraw = true;
 				} else records[match.players[match.results[0] > match.results[1] ? 0 : 1]] += 1;
 
 				const diff = match.results[0] - match.results[1];
@@ -222,7 +217,15 @@ export class SwissBracket extends IBracket {
 					}
 				}
 			}
-			if (complete) lastCompleteRound = i;
+			if (complete) {
+				for (const matchID of rounds[i]) {
+					const match = this.matches[matchID];
+					alreadyPaired.push([match.players[0], match.players[1]]);
+					alreadyPaired.push([match.players[1], match.players[0]]);
+				}
+				lastCompleteRound = i;
+				if (hasDraw) groupPairingFallback = true;
+			}
 		}
 
 		if (
@@ -244,11 +247,13 @@ export class SwissBracket extends IBracket {
 				groups.reverse();
 			} else groups.push(playerIndices);
 
+			let matchIdx = 0;
 			for (const players of groups) {
 				const alreadyPairedBackup = [...alreadyPaired]; // In case the fast algorithm fails and we have to start over.
+				const startingMatchIdx = matchIdx;
+
 				const sortedPlayers = structuredClone(players).sort((lhs, rhs) => scores[rhs] - scores[lhs]);
 
-				let matchIdx = 0;
 				while (sortedPlayers.length > 0) {
 					const firstPlayer = sortedPlayers.shift()!;
 					let index = 0;
@@ -266,14 +271,17 @@ export class SwissBracket extends IBracket {
 						alreadyPaired.push([secondPlayer, firstPlayer]);
 					} else {
 						// We are out of undisputed matches because of the order of assignments, revert to a failsafe but less optimal algorithm in this case.
-						matchIdx = 0;
+						matchIdx = startingMatchIdx;
+						alreadyPaired = alreadyPairedBackup;
+
 						const matchesMatrix: number[][] = [];
 						for (let i = 0; i < players.length; ++i) {
 							const row = [];
 							for (let j = 0; j < players.length; ++j) {
-								let val = alreadyPairedBackup.find((el) => el[0] === players[i] && el[1] === players[j])
+								let val = alreadyPaired.find((el) => el[0] === players[i] && el[1] === players[j])
 									? 99999
 									: 0;
+								val += 10 * Math.abs(records[players[i]] - records[players[j]]);
 								val += Math.abs(scores[players[i]] - scores[players[j]]);
 								row.push(val);
 							}
@@ -297,7 +305,10 @@ export class SwissBracket extends IBracket {
 						}
 						// Finally generate the matches
 						for (const pair of bestPermutation) {
-							this.matches[rounds[firstUncompleteRound][matchIdx++]].players = [pair[0], pair[1]];
+							this.matches[rounds[firstUncompleteRound][matchIdx++]].players = [
+								players[pair[0]],
+								players[pair[1]],
+							];
 						}
 						break;
 					}
