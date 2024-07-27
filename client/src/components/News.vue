@@ -4,7 +4,7 @@
 			<em>July 18, 2024</em>
 			<p>
 				<img src="img/sets/blb.svg" class="set-icon" style="--invertedness: 100%" alt="BLB" />
-				Bloomburrom is now available!
+				Bloomburrow is now available!
 			</p>
 			<p>Winston Draft: The number of piles can now be customized.</p>
 		</div>
