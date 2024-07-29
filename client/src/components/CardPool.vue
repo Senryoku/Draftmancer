@@ -146,9 +146,11 @@
 						group: group,
 						animation: 200,
 						ghostClass: 'ghost',
-						multiDrag: true,
+						multiDrag: !isTouchDevice(),
 						selectedClass: 'multi-drag-selected',
 						multiDragKey: 'ctrl',
+						delay: 100,
+						delayOnTouchOnly: true,
 					}"
 					@add="(evt: SortableEvent) => addToColumn(evt, column)"
 					@remove="(evt: SortableEvent) => removeFromColumn(evt, column)"
@@ -219,6 +221,9 @@ export default defineComponent({
 		this.sync();
 	},
 	methods: {
+		isTouchDevice() {
+			return "ontouchstart" in window || navigator.maxTouchPoints > 0;
+		},
 		forceUpdate() {
 			// Forces a re-render of the whole component.
 			// Used to workaround some de-sync issues (see #623). Might be a bug in sortablejs-vue3.
