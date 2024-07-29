@@ -668,6 +668,8 @@ export default defineComponent({
 	border-radius: 10px;
 	box-shadow: inset 0 0 8px #383838;
 	padding: 0.5em;
+
+	user-select: none;
 }
 
 .controls {
@@ -678,9 +680,15 @@ export default defineComponent({
 	margin-left: auto;
 }
 
-@media (max-width: 1000px) {
+@media (max-width: 1250px) {
+	.section-title {
+		flex-wrap: wrap;
+	}
+
 	.controls {
 		justify-content: space-around;
+		gap: 0 0.5em;
+		margin-left: 0;
 	}
 
 	.right-controls {
