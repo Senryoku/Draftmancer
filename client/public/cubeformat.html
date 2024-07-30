@@ -214,7 +214,9 @@ Card Name 6
 	cardBack: <type>string</type>;                   <comment>// URL to a custom card back.</comment>
 	cardTitleHeightFactor: <type>number</type>;      <comment>// Allows you to adjust the height of the card title when stacked in a column. Defaults to 1.</comment>
 	duplicateProtection: <type>boolean</type>;       <comment>// Enable or disable Duplicate Protection within a booster (defaults to true).</comment>
-	showSlots: <type>boolean</type>;                 <comment>// If layouts are used, will display what sheet slot generated which card.</comment>
+	showSlots: <type>boolean</type>;                 <comment>// If layouts are used, will display what sheet slot generated which card.
+	                                    //   If you want multiple slots to be displayed with the same name, use "##" to add a hidden identifier.
+		                                //   For example, "Rare" and "Rare##Legendary" will both be displayed as "Rare".</comment>
 	
 	<comment>// The following properties provide default values for some session settings, applied when the list is uploaded.
 	// They can still be overridden by the user via the UI.</comment>

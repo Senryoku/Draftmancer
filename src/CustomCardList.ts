@@ -203,7 +203,10 @@ export function generateBoosterFromCustomCardList(
 						}
 					}
 
-					if (customCardList.settings?.showSlots) for (const card of pickedCards) card.slot = slotName;
+					if (customCardList.settings?.showSlots) {
+						const displaySlotName = slotName.split("##")[0]; // Remove potential 'hidden id' after '##' delimiter.
+						for (const card of pickedCards) card.slot = displaySlotName;
+					}
 
 					booster.push(...pickedCards);
 				} catch (e) {

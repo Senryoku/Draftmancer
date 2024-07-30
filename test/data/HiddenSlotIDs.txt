@@ -1,0 +1,28 @@
+[Settings]
+{
+	"name": "Hidden Slot IDs",
+	"withReplacement": true,
+	"showSlots": true,
+	"layouts": {
+		"NonLegendary": {
+			"weight": 1,
+			"slots": {
+  				"Common": 1,
+  				"Rare": 1,
+			}
+		},
+		"Legendary": {
+			"weight": 1,
+			"slots": {
+  				"Common": 1,
+  				"Rare##Legendary": 1,
+			}
+		}
+	}
+}
+[Common]
+Kitesail Cleric
+[Rare]
+Archivist of Oghma
+[Rare##Legendary]
+Tymna the Weaver
