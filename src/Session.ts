@@ -1470,8 +1470,8 @@ export class Session implements IIndexable {
 		if (options.singleton) {
 			let cardPool: CardID[] = [];
 			if (this.useCustomCardList) {
-				for (const slot in this.customCardList.slots)
-					cardPool.push(...Object.keys(this.customCardList.slots[slot]));
+				for (const slotName in this.customCardList.slots)
+					cardPool.push(...Object.keys(this.customCardList.slots[slotName].cards));
 				cardPool = [...new Set(cardPool)];
 			} else {
 				cardPool = [...this.cardPool().keys()];
@@ -2288,7 +2288,7 @@ export class Session implements IIndexable {
 								const pid = s.previousPlayer(userID);
 								card.state.passingPlayer = s.players[pid].isBot
 									? s.players[pid].botInstance.name
-									: Connections[pid]?.userName ?? pid;
+									: (Connections[pid]?.userName ?? pid);
 								updatedCardStates.push({ cardID: card.uniqueID, state: card.state });
 							}
 							break;
@@ -3531,7 +3531,7 @@ export class Session implements IIndexable {
 				userID: userID,
 				userName: this.isDisconnected(userID)
 					? this.disconnectedUsers[userID].userName
-					: Connections[userID]?.userName ?? "(Unknown)",
+					: (Connections[userID]?.userName ?? "(Unknown)"),
 				isBot: false,
 				isReplaced: this.isDisconnected(userID) && this.disconnectedUsers[userID].replaced === true,
 				isDisconnected: this.isDisconnected(userID),
@@ -3551,7 +3551,7 @@ export class Session implements IIndexable {
 						? this.draftState.players[userID].botInstance.name
 						: this.isDisconnected(userID)
 							? this.disconnectedUsers[userID].userName
-							: Connections[userID]?.userName ?? "(Unknown)",
+							: (Connections[userID]?.userName ?? "(Unknown)"),
 					isBot: this.draftState.players[userID].isBot,
 					isReplaced: this.isDisconnected(userID) && this.disconnectedUsers[userID].replaced === true,
 					isDisconnected: this.isDisconnected(userID),

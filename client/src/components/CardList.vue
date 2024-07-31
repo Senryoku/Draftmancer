@@ -91,7 +91,7 @@ export default defineComponent({
 		rowsBySlot() {
 			if (this.defaultLayout || !this.cards) return {};
 			let rowsBySlot: { [slot: string]: { [s: string]: CardWithCount[] }[] } = {};
-			for (let slot in this.cardlist.slots) rowsBySlot[slot] = this.rowsByColor(this.cards[slot]);
+			for (let slotName in this.cardlist.slots) rowsBySlot[slotName] = this.rowsByColor(this.cards[slotName]);
 			return rowsBySlot;
 		},
 		checkCollection() {
@@ -136,10 +136,14 @@ export default defineComponent({
 					for (let slot in l.slots) str += `  ${l.slots[slot]} ${slot}\n`;
 				}
 			}
-			for (let slot in this.cardlist.slots) {
-				str += `[${slot}]\n`;
-				for (let card in this.cardlist.slots[slot]) {
-					str += `${this.cardlist.slots[slot][card]} ${this.cards[slot].find((c) => c.id === card)!.name}\n`;
+			for (let [slotName, slot] of Object.entries(this.cardlist.slots)) {
+				let slotSettings = "";
+				if (slot.collation) {
+					slotSettings = ` {"collation":"${slot.collation}"}`;
+				}
+				str += `[${slotName}${slotSettings}]\n`;
+				for (let [cardID, count] of Object.entries(slot.cards)) {
+					str += `${count} ${this.cards[slotName].find((c) => c.id === cardID)!.name}\n`;
 				}
 			}
 			download(this.cardlist.name ?? "Cube" + ".txt", str);
@@ -166,16 +170,16 @@ export default defineComponent({
 			if (!this.cardlist || !this.cardlist.slots) return;
 			let cards: typeof this.cards = {};
 			let tofetch: { [slot: string]: CardID[] } = {};
-			for (let slot in this.cardlist.slots) {
-				cards[slot] = [];
-				tofetch[slot] = [];
-				for (let cid in this.cardlist.slots[slot]) {
+			for (let slotName in this.cardlist.slots) {
+				cards[slotName] = [];
+				tofetch[slotName] = [];
+				for (let [cid, count] of Object.entries(this.cardlist.slots[slotName].cards)) {
 					if (this.cardlist.customCards && cid in this.cardlist.customCards)
-						cards[slot].push({
+						cards[slotName].push({
 							...this.cardlist.customCards[cid],
-							count: this.cardlist.slots[slot][cid],
+							count: count,
 						});
-					else tofetch[slot].push(cid);
+					else tofetch[slotName].push(cid);
 				}
 			}
 
@@ -197,7 +201,7 @@ export default defineComponent({
 					for (let slot in json) {
 						for (let card of json[slot]) {
 							cards[slot].push(card);
-							card.count = this.cardlist.slots[slot][card.id];
+							card.count = this.cardlist.slots[slot].cards[card.id];
 						}
 					}
 				}

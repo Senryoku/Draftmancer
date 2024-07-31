@@ -159,7 +159,7 @@ describe("Statistical color balancing tests", function () {
 			return;
 		}
 		SessionInst.setCustomCardList(list);
-		const trackedCards = Object.keys(SessionInst.customCardList.slots.Common).reduce(
+		const trackedCards = Object.keys(SessionInst.customCardList.slots.Common.cards).reduce(
 			(o, key) => ({ ...o, [key]: 0 }),
 			{}
 		);

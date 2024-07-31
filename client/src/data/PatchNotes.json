@@ -1,5 +1,11 @@
 [
 	{
+		"date": "31/07/2024",
+		"notes": [
+			"Experimental print run collation for cubes."
+		]
+	},
+	{
 		"date": "18/07/2024",
 		"notes": [
 			"Bloomburrow (BLB) support."

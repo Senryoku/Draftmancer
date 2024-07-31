@@ -1,0 +1,79 @@
+[Settings]
+{ 
+	"withReplacement": true,
+	"layouts": {
+		"normal": {
+			"weight": 1,
+			"slots": {
+				"MainSlot": 4,
+			}
+		}
+	}
+} 
+[CustomCards]
+[
+	{
+		"name": "One",
+		"rarity": "rare",
+		"mana_cost": "1",
+		"type": "Creature",
+	},
+	{
+		"name": "Two",
+		"rarity": "rare",
+		"mana_cost": "2",
+		"type": "Creature",
+	},
+	{
+		"name": "Three",
+		"rarity": "rare",
+		"mana_cost": "3",
+		"type": "Creature",
+	},
+	{
+		"name": "Four",
+		"rarity": "rare",
+		"mana_cost": "4",
+		"type": "Creature",
+	},
+	{
+		"name": "Five",
+		"rarity": "rare",
+		"mana_cost": "5",
+		"type": "Creature",
+	},
+	{
+		"name": "Six",
+		"rarity": "rare",
+		"mana_cost": "6",
+		"type": "Creature",
+	},
+	{
+		"name": "Seven",
+		"rarity": "rare",
+		"mana_cost": "7",
+		"type": "Creature",
+	},
+	{
+		"name": "Eight",
+		"rarity": "rare",
+		"mana_cost": "8",
+		"type": "Creature",
+	},
+	{
+		"name": "Nine",
+		"rarity": "rare",
+		"mana_cost": "9",
+		"type": "Creature",
+	},
+]
+[MainSlot {"collation":"printRun"}]
+One
+Two
+Three
+Four
+Five
+Six
+Seven
+Eight
+Nine
