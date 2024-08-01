@@ -69,17 +69,16 @@ export function pickCard(
 
 export function pickPrintRun(
 	count: number,
-	cardPool: CardPool,
+	printRun: CardID[],
 	options?: {
 		getCard?: (cid: CardID) => Card;
 	}
 ): UniqueCard[] {
-	const keys = [...cardPool.keys()];
-	const start_idx = random.integer(0, keys.length - 1);
+	const start_idx = random.integer(0, printRun.length - 1);
 	const cids: CardID[] = [];
 	for (let i = 0; i < count; ++i) {
-		const idx = (start_idx + i) % keys.length;
-		cids.push(keys[idx]);
+		const idx = (start_idx + i) % printRun.length;
+		cids.push(printRun[idx]);
 	}
 	return cids.map((cid) => getUnique(cid, options));
 }

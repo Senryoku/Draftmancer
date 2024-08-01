@@ -8,7 +8,9 @@ import { isEmpty, random, weightedRandomIdx, shuffleArray } from "./utils.js";
 export type SlotName = string;
 export type LayoutName = string;
 
-export type Slot = { collation?: CollationType; cards: Record<CardID, number> };
+export type Slot =
+	| { collation?: Exclude<CollationType, "printRun">; cards: Record<CardID, number> }
+	| { collation: "printRun"; printRun: CardID[] };
 
 export type PackLayout = {
 	weight: number;
@@ -63,7 +65,11 @@ export function generateBoosterFromCustomCardList(
 	if (
 		!customCardList.slots ||
 		Object.keys(customCardList.slots).length === 0 ||
-		Object.values(customCardList.slots).every((slot) => Object.keys(slot.cards).length === 0)
+		Object.values(customCardList.slots).every(
+			(slot) =>
+				(slot.collation === "printRun" && slot.printRun.length === 0) ||
+				(slot.collation !== "printRun" && Object.keys(slot.cards).length === 0)
+		)
 	) {
 		return new MessageError("Error generating boosters", "No custom card list provided.");
 	}
@@ -84,10 +90,11 @@ export function generateBoosterFromCustomCardList(
 		const layoutsTotalWeights = Object.keys(layouts).reduce((acc, key) => acc + layouts[key].weight, 0);
 
 		const cardsBySlot: SlotedCardPool = {};
-		for (const slotName in customCardList.slots) {
-			cardsBySlot[slotName] = new CardPool();
-			for (const [cardID, count] of Object.entries(customCardList.slots[slotName].cards))
-				cardsBySlot[slotName].set(cardID, count);
+		for (const [slotName, slot] of Object.entries(customCardList.slots)) {
+			if (slot.collation !== "printRun") {
+				cardsBySlot[slotName] = new CardPool();
+				for (const [cardID, count] of Object.entries(slot.cards)) cardsBySlot[slotName].set(cardID, count);
+			}
 		}
 
 		// Workaround to handle the LoreSeeker draft effect with a limited number of cards
@@ -109,7 +116,9 @@ export function generateBoosterFromCustomCardList(
 				);
 			}
 			for (const slotName of new Set(Object.values(colorBalancedSlots))) {
-				colorBalancedSlotGenerators[slotName] = new ColorBalancedSlot(cardsBySlot[slotName], pickOptions);
+				if (customCardList.slots[slotName].collation !== "printRun") {
+					colorBalancedSlotGenerators[slotName] = new ColorBalancedSlot(cardsBySlot[slotName], pickOptions);
+				}
 			}
 		}
 
@@ -191,7 +200,7 @@ export function generateBoosterFromCustomCardList(
 					let pickedCards: UniqueCard[] = [];
 
 					if (customCardList.slots[slotName].collation === "printRun") {
-						pickedCards = pickPrintRun(cardCount, cardsBySlot[slotName], pickOptions);
+						pickedCards = pickPrintRun(cardCount, customCardList.slots[slotName].printRun, pickOptions);
 					} else if (useColorBalance) {
 						pickedCards = colorBalancedSlotGenerators[slotName].generate(cardCount, booster, pickOptions);
 					} else {

@@ -142,8 +142,14 @@ export default defineComponent({
 					slotSettings = ` {"collation":"${slot.collation}"}`;
 				}
 				str += `[${slotName}${slotSettings}]\n`;
-				for (let [cardID, count] of Object.entries(slot.cards)) {
-					str += `${count} ${this.cards[slotName].find((c) => c.id === cardID)!.name}\n`;
+				if (slot.collation === "printRun") {
+					for (let cardID of slot.printRun) {
+						str += `${this.cards[slotName].find((c) => c.id === cardID)!.name}\n`;
+					}
+				} else {
+					for (let [cardID, count] of Object.entries(slot.cards)) {
+						str += `${count} ${this.cards[slotName].find((c) => c.id === cardID)!.name}\n`;
+					}
 				}
 			}
 			download(this.cardlist.name ?? "Cube" + ".txt", str);
@@ -170,16 +176,27 @@ export default defineComponent({
 			if (!this.cardlist || !this.cardlist.slots) return;
 			let cards: typeof this.cards = {};
 			let tofetch: { [slot: string]: CardID[] } = {};
-			for (let slotName in this.cardlist.slots) {
+			for (let [slotName, slot] of Object.entries(this.cardlist.slots)) {
 				cards[slotName] = [];
 				tofetch[slotName] = [];
-				for (let [cid, count] of Object.entries(this.cardlist.slots[slotName].cards)) {
-					if (this.cardlist.customCards && cid in this.cardlist.customCards)
-						cards[slotName].push({
-							...this.cardlist.customCards[cid],
-							count: count,
-						});
-					else tofetch[slotName].push(cid);
+				if (slot.collation === "printRun") {
+					for (let cid of slot.printRun) {
+						if (this.cardlist.customCards && cid in this.cardlist.customCards)
+							cards[slotName].push({
+								...this.cardlist.customCards[cid],
+								count: 1,
+							});
+						else tofetch[slotName].push(cid);
+					}
+				} else {
+					for (let [cid, count] of Object.entries(slot.cards)) {
+						if (this.cardlist.customCards && cid in this.cardlist.customCards)
+							cards[slotName].push({
+								...this.cardlist.customCards[cid],
+								count: count,
+							});
+						else tofetch[slotName].push(cid);
+					}
 				}
 			}
 
@@ -198,10 +215,11 @@ export default defineComponent({
 				});
 				if (response.status === 200) {
 					const json = await response.json();
-					for (let slot in json) {
-						for (let card of json[slot]) {
-							cards[slot].push(card);
-							card.count = this.cardlist.slots[slot].cards[card.id];
+					for (let slotName in json) {
+						const slot = this.cardlist.slots[slotName];
+						for (let card of json[slotName]) {
+							cards[slotName].push(card);
+							card.count = slot.collation === "printRun" ? 1 : slot.cards[card.id];
 						}
 					}
 				}

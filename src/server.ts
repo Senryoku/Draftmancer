@@ -249,6 +249,10 @@ function parseCollection(
 		ack?.(cardList);
 		return;
 	}
+	if (cardList.slots["default"].collation === "printRun") {
+		ack?.(new SocketError("Unexpected collection."));
+		return;
+	}
 
 	const ret: SocketAck & { collection?: PlainCollection } = new SocketAck();
 

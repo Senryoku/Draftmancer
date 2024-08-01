@@ -1470,8 +1470,13 @@ export class Session implements IIndexable {
 		if (options.singleton) {
 			let cardPool: CardID[] = [];
 			if (this.useCustomCardList) {
-				for (const slotName in this.customCardList.slots)
-					cardPool.push(...Object.keys(this.customCardList.slots[slotName].cards));
+				for (const slot of Object.values(this.customCardList.slots)) {
+					if (slot.collation === "printRun") {
+						cardPool.push(...slot.printRun);
+					} else {
+						cardPool.push(...Object.keys(slot.cards));
+					}
+				}
 				cardPool = [...new Set(cardPool)];
 			} else {
 				cardPool = [...this.cardPool().keys()];

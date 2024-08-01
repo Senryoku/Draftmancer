@@ -711,7 +711,7 @@ export function parseCardList(
 					lineIdx += layoutsOrError.advance;
 					cardList.layouts = layoutsOrError.layouts;
 				} else {
-					const slot: Slot = { cards: {} };
+					let slot: Slot = { cards: {} };
 					let slotName = header;
 					const match =
 						/(?<name>[a-zA-Z0-9# ]*[a-zA-Z0-9#])\s*(?<count>\(\d+\))?\s*(?<settings>\{.*\})?/.exec(header);
@@ -736,11 +736,10 @@ export function parseCardList(
 						if (settings) {
 							const parsed = JSON.parse(settings);
 							if (parsed.collation === "printRun") {
-								slot.collation = "printRun";
+								slot = { collation: "printRun", printRun: [] };
 							}
 						}
 					}
-					cardList.slots[slotName] = slot;
 					while (lineIdx < lines.length && lines[lineIdx][0] !== "[") {
 						if (lines[lineIdx]) {
 							const result = parseLine(lines[lineIdx], localOptions);
@@ -750,14 +749,19 @@ export function parseCardList(
 								else return result;
 							} else {
 								const { count, cardID } = result;
-								// Merge duplicate declarations
-								if (Object.prototype.hasOwnProperty.call(cardList.slots[slotName].cards, cardID))
-									cardList.slots[slotName].cards[cardID] += count;
-								else cardList.slots[slotName].cards[cardID] = count;
+								if (slot.collation === "printRun") {
+									slot.printRun.push(cardID);
+								} else {
+									// Merge duplicate declarations
+									if (Object.prototype.hasOwnProperty.call(slot.cards, cardID))
+										slot.cards[cardID] += count;
+									else slot.cards[cardID] = count;
+								}
 							}
 						}
 						++lineIdx;
 					}
+					cardList.slots[slotName] = slot;
 				}
 			}
 			// Check layout declarations
@@ -820,7 +824,13 @@ export function parseCardList(
 			cardList.layouts = false;
 		}
 		if (options?.name) cardList.name = options.name;
-		if (Object.values(cardList.slots).every((slot) => Object.keys(slot.cards).length === 0))
+		if (
+			Object.values(cardList.slots).every(
+				(slot) =>
+					(slot.collation === "printRun" && slot.printRun.length === 0) ||
+					(slot.collation !== "printRun" && Object.keys(slot.cards).length === 0)
+			)
+		)
 			return ackError({
 				title: "Empty List",
 				text: `Supplied card list is empty.`,
