@@ -2,7 +2,7 @@ import { genCustomCardID } from "./CustomCardID.js";
 import { validateCustomCard } from "./CustomCards.js";
 import { Card, CardID, ParameterizedDraftEffectType } from "./CardTypes.js";
 import { CardsByName, CardVersionsByName, getCard, isValidCardID } from "./Cards.js";
-import { CCLSettings, CustomCardList, PackLayout } from "./CustomCardList.js";
+import { CCLSettings, CustomCardList, PackLayout, Slot } from "./CustomCardList.js";
 import { escapeHTML } from "./utils.js";
 import { ackError, isSocketError, SocketError } from "./Message.js";
 import {
@@ -711,22 +711,45 @@ export function parseCardList(
 					lineIdx += layoutsOrError.advance;
 					cardList.layouts = layoutsOrError.layouts;
 				} else {
+					let slot: Slot = { cards: {} };
 					let slotName = header;
-					// Header with card count: Default layout.
-					const match = header.match(/([a-zA-Z]+)\s*\((\d+)\)/);
+					const match =
+						/(?<name>[a-zA-Z0-9# ]*[a-zA-Z0-9#])\s*(?<count>\(\d+\))?\s*(?<settings>\{.*\})?/.exec(header);
 					if (match) {
-						if (cardList.layouts && !cardList.layouts["default"]) {
-							return ackError({
-								title: `Parsing Error`,
-								text: `Default layout (defining slot sizes in their headers) and custom layouts should not be mixed.`,
-							});
+						const { name, count, settings } = match.groups!;
+						slotName = name;
+						// Header with card count: Default layout.
+						if (count) {
+							if (cardList.layouts && !cardList.layouts["default"]) {
+								return ackError({
+									title: `Parsing Error`,
+									text: `Default layout (defining slot sizes in their headers) and custom layouts should not be mixed.`,
+								});
+							}
+							if (!cardList.layouts) cardList.layouts = {};
+							if (!cardList.layouts["default"]) cardList.layouts["default"] = { weight: 1, slots: {} };
+							cardList.layouts["default"].slots[slotName] = parseInt(
+								count.substring(1, count.length - 1)
+							);
 						}
-						if (!cardList.layouts) cardList.layouts = {};
-						if (!cardList.layouts["default"]) cardList.layouts["default"] = { weight: 1, slots: {} };
-						slotName = match[1];
-						cardList.layouts["default"].slots[slotName] = parseInt(match[2]);
+						// Additional options
+						if (settings) {
+							const parsed = JSON.parse(settings);
+							if (!hasOptionalProperty("collation", isString)(parsed))
+								return ackError({
+									title: `Parsing Error`,
+									text: `Invalid 'collation' setting for slot '${slotName}'.`,
+								});
+							if (parsed.collation === "printRun") {
+								if (!hasOptionalProperty("groupSize", isNumber)(parsed))
+									return ackError({
+										title: `Parsing Error`,
+										text: `Invalid 'groupSize' setting for slot '${slotName}'.`,
+									});
+								slot = { collation: "printRun", printRun: [], groupSize: parsed.groupSize ?? 1 };
+							}
+						}
 					}
-					cardList.slots[slotName] = {};
 					while (lineIdx < lines.length && lines[lineIdx][0] !== "[") {
 						if (lines[lineIdx]) {
 							const result = parseLine(lines[lineIdx], localOptions);
@@ -736,35 +759,37 @@ export function parseCardList(
 								else return result;
 							} else {
 								const { count, cardID } = result;
-								// Merge duplicate declarations
-								if (Object.prototype.hasOwnProperty.call(cardList.slots[slotName], cardID))
-									cardList.slots[slotName][cardID] += count;
-								else cardList.slots[slotName][cardID] = count;
+								if (slot.collation === "printRun") {
+									for (let i = 0; i < count; ++i) slot.printRun.push(cardID);
+								} else {
+									// Merge duplicate declarations
+									if (Object.prototype.hasOwnProperty.call(slot.cards, cardID))
+										slot.cards[cardID] += count;
+									else slot.cards[cardID] = count;
+								}
 							}
 						}
 						++lineIdx;
 					}
+					cardList.slots[slotName] = slot;
 				}
 			}
 			// Check layout declarations
 			if (cardList.layouts) {
 				for (const layoutName in cardList.layouts) {
 					let packSize = 0;
-					for (const slotName in cardList.layouts[layoutName].slots) {
+					for (const [slotName, cardCount] of Object.entries(cardList.layouts[layoutName].slots)) {
 						if (!Object.prototype.hasOwnProperty.call(cardList.slots, slotName))
 							return ackError({
 								title: `Parsing Error`,
 								text: `Layout '${layoutName}' refers to slot '${slotName}' which is not defined.`,
 							});
-						if (
-							!isInteger(cardList.layouts[layoutName].slots[slotName]) ||
-							cardList.layouts[layoutName].slots[slotName] <= 0
-						)
+						if (!isInteger(cardCount) || cardCount <= 0)
 							return ackError({
 								title: `Parsing Error`,
-								text: `Layout '${layoutName}' slot '${slotName}' value is invalid, must be a positive integer (got '${cardList.layouts[layoutName].slots[slotName]}').`,
+								text: `Layout '${layoutName}' slot '${slotName}' value is invalid, must be a positive integer (got '${cardCount}').`,
 							});
-						packSize += cardList.layouts[layoutName].slots[slotName];
+						packSize += cardCount;
 					}
 					if (packSize <= 0)
 						return ackError({
@@ -787,7 +812,9 @@ export function parseCardList(
 			}
 		} else {
 			// Simple list (one card name per line)
-			cardList.slots["default"] = {};
+			cardList.slots["default"] = {
+				cards: {},
+			};
 			for (const line of lines) {
 				if (line) {
 					const result = parseLine(line, options);
@@ -798,16 +825,22 @@ export function parseCardList(
 					} else {
 						const { count, cardID } = result;
 						// Merge duplicate declarations
-						if (Object.prototype.hasOwnProperty.call(cardList.slots["default"], cardID))
-							cardList.slots["default"][cardID] += count;
-						else cardList.slots["default"][cardID] = count;
+						if (Object.prototype.hasOwnProperty.call(cardList.slots["default"].cards, cardID))
+							cardList.slots["default"].cards[cardID] += count;
+						else cardList.slots["default"].cards[cardID] = count;
 					}
 				}
 			}
 			cardList.layouts = false;
 		}
 		if (options?.name) cardList.name = options.name;
-		if (Object.keys(cardList.slots).every((key) => cardList.slots[key].length === 0))
+		if (
+			Object.values(cardList.slots).every(
+				(slot) =>
+					(slot.collation === "printRun" && slot.printRun.length === 0) ||
+					(slot.collation !== "printRun" && Object.keys(slot.cards).length === 0)
+			)
+		)
 			return ackError({
 				title: "Empty List",
 				text: `Supplied card list is empty.`,

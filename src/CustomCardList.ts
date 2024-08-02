@@ -1,16 +1,21 @@
 import { ColorBalancedSlot } from "./BoosterFactory.js";
 import { CardID, Card, SlotedCardPool, UniqueCard, CardPool } from "./CardTypes.js";
 import { getCard } from "./Cards.js";
-import { pickCard } from "./cardUtils.js";
+import { pickCard, pickPrintRun } from "./cardUtils.js";
 import { MessageError } from "./Message.js";
-import { isEmpty, Options, random, weightedRandomIdx, shuffleArray } from "./utils.js";
+import { isEmpty, random, weightedRandomIdx, shuffleArray } from "./utils.js";
+
+export type SlotName = string;
+export type LayoutName = string;
+
+export type Slot =
+	| { collation?: Exclude<CollationType, "printRun">; cards: Record<CardID, number> }
+	| { collation: "printRun"; printRun: CardID[]; groupSize: number };
 
 export type PackLayout = {
 	weight: number;
-	slots: Record<string, number>;
+	slots: Record<SlotName, number>;
 };
-
-export type LayoutName = string;
 
 export type CCLSettings = {
 	name?: string;
@@ -27,11 +32,13 @@ export type CCLSettings = {
 	colorBalance?: boolean;
 };
 
+export type CollationType = "random" | "printRun";
+
 export type CustomCardList = {
 	name?: string;
-	slots: Record<string, Record<CardID, number>>;
+	slots: Record<SlotName, Slot>;
 	layouts: Record<LayoutName, PackLayout> | false;
-	customCards: Record<string, Card> | null;
+	customCards: Record<CardID, Card> | null;
 	settings?: CCLSettings;
 };
 
@@ -57,7 +64,12 @@ export function generateBoosterFromCustomCardList(
 ): MessageError | Array<UniqueCard>[] {
 	if (
 		!customCardList.slots ||
-		Object.keys(customCardList.slots).every((key) => customCardList.slots[key].length === 0)
+		Object.keys(customCardList.slots).length === 0 ||
+		Object.values(customCardList.slots).every(
+			(slot) =>
+				(slot.collation === "printRun" && slot.printRun.length === 0) ||
+				(slot.collation !== "printRun" && Object.keys(slot.cards).length === 0)
+		)
 	) {
 		return new MessageError("Error generating boosters", "No custom card list provided.");
 	}
@@ -78,10 +90,11 @@ export function generateBoosterFromCustomCardList(
 		const layoutsTotalWeights = Object.keys(layouts).reduce((acc, key) => acc + layouts[key].weight, 0);
 
 		const cardsBySlot: SlotedCardPool = {};
-		for (const slotName in customCardList.slots) {
-			cardsBySlot[slotName] = new CardPool();
-			for (const cardId in customCardList.slots[slotName])
-				cardsBySlot[slotName].set(cardId, customCardList.slots[slotName][cardId]);
+		for (const [slotName, slot] of Object.entries(customCardList.slots)) {
+			if (slot.collation !== "printRun") {
+				cardsBySlot[slotName] = new CardPool();
+				for (const [cardID, count] of Object.entries(slot.cards)) cardsBySlot[slotName].set(cardID, count);
+			}
 		}
 
 		// Workaround to handle the LoreSeeker draft effect with a limited number of cards
@@ -103,7 +116,9 @@ export function generateBoosterFromCustomCardList(
 				);
 			}
 			for (const slotName of new Set(Object.values(colorBalancedSlots))) {
-				colorBalancedSlotGenerators[slotName] = new ColorBalancedSlot(cardsBySlot[slotName], pickOptions);
+				if (customCardList.slots[slotName].collation !== "printRun") {
+					colorBalancedSlotGenerators[slotName] = new ColorBalancedSlot(cardsBySlot[slotName], pickOptions);
+				}
 			}
 		}
 
@@ -174,7 +189,7 @@ export function generateBoosterFromCustomCardList(
 				return new MessageError("Error generating boosters", `Invalid layout '${pickedLayoutName}'.`);
 			const pickedLayout = layouts[pickedLayoutName];
 
-			for (const slotName in pickedLayout.slots) {
+			for (const [slotName, cardCount] of Object.entries(pickedLayout.slots)) {
 				const useColorBalance =
 					options.colorBalance &&
 					slotName === colorBalancedSlots[pickedLayoutName] &&
@@ -184,14 +199,17 @@ export function generateBoosterFromCustomCardList(
 				try {
 					let pickedCards: UniqueCard[] = [];
 
-					if (useColorBalance) {
-						pickedCards = colorBalancedSlotGenerators[slotName].generate(
-							pickedLayout.slots[slotName],
-							booster,
+					if (customCardList.slots[slotName].collation === "printRun") {
+						pickedCards = pickPrintRun(
+							cardCount,
+							customCardList.slots[slotName].printRun,
+							customCardList.slots[slotName].groupSize,
 							pickOptions
 						);
+					} else if (useColorBalance) {
+						pickedCards = colorBalancedSlotGenerators[slotName].generate(cardCount, booster, pickOptions);
 					} else {
-						for (let i = 0; i < pickedLayout.slots[slotName]; ++i) {
+						for (let i = 0; i < cardCount; ++i) {
 							const pickedCard = pickCard(
 								cardsBySlot[slotName],
 								booster.concat(pickedCards),
@@ -237,14 +255,20 @@ export function generateBoosterFromCustomCardList(
 
 		const defaultSlot = Object.values(customCardList.slots)[0];
 
+		if (defaultSlot.collation === "printRun")
+			return new MessageError(
+				"Error generating boosters",
+				`Print run collation is not supported when a single slot is defined.`
+			);
+
 		// Generate fully random 15-cards booster for cube (not considering rarity)
 		// Getting custom card list
 		const localCollection: CardPool = new CardPool();
 
 		let cardCount = 0;
-		for (const cardId in defaultSlot) {
-			localCollection.set(cardId, defaultSlot[cardId]);
-			cardCount += defaultSlot[cardId];
+		for (const [cardID, count] of Object.entries(defaultSlot.cards)) {
+			localCollection.set(cardID, count);
+			cardCount += count;
 		}
 		const cardsPerBooster = options.cardsPerBooster ?? 15;
 

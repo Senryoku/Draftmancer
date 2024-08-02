@@ -1,6 +1,6 @@
 "use strict";
 
-import { CardID, Card, CardPool } from "./CardTypes.js";
+import { CardID, Card, CardPool, UniqueCard } from "./CardTypes.js";
 import { getUnique } from "./Cards.js";
 import { getRandomMapKey, random } from "./utils.js";
 
@@ -35,7 +35,7 @@ export function pickCard(
 		duplicateProtection?: boolean;
 		getCard?: (cid: CardID) => Card;
 	}
-) {
+): UniqueCard {
 	if (cardPool.size === 0) {
 		console.trace(`Called pickCard on an empty card pool.`);
 		throw `Called pickCard on an empty card pool.`;
@@ -65,4 +65,21 @@ export function pickCard(
 	}
 	if (options?.withReplacement !== true) cardPool.removeCard(cid);
 	return getUnique(cid, options);
+}
+
+export function pickPrintRun(
+	count: number,
+	printRun: CardID[],
+	groupSize: number,
+	options?: {
+		getCard?: (cid: CardID) => Card;
+	}
+): UniqueCard[] {
+	const start_idx = groupSize * random.integer(0, (printRun.length - 1) / groupSize);
+	const cids: CardID[] = [];
+	for (let i = 0; i < count; ++i) {
+		const idx = (start_idx + i) % printRun.length;
+		cids.push(printRun[idx]);
+	}
+	return cids.map((cid) => getUnique(cid, options));
 }
