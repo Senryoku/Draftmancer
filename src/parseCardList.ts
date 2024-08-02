@@ -735,8 +735,18 @@ export function parseCardList(
 						// Additional options
 						if (settings) {
 							const parsed = JSON.parse(settings);
+							if (!hasOptionalProperty("collation", isString)(parsed))
+								return ackError({
+									title: `Parsing Error`,
+									text: `Invalid 'collation' setting for slot '${slotName}'.`,
+								});
 							if (parsed.collation === "printRun") {
-								slot = { collation: "printRun", printRun: [] };
+								if (!hasOptionalProperty("groupSize", isNumber)(parsed))
+									return ackError({
+										title: `Parsing Error`,
+										text: `Invalid 'groupSize' setting for slot '${slotName}'.`,
+									});
+								slot = { collation: "printRun", printRun: [], groupSize: parsed.groupSize ?? 1 };
 							}
 						}
 					}

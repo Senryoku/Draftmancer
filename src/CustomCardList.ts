@@ -10,7 +10,7 @@ export type LayoutName = string;
 
 export type Slot =
 	| { collation?: Exclude<CollationType, "printRun">; cards: Record<CardID, number> }
-	| { collation: "printRun"; printRun: CardID[] };
+	| { collation: "printRun"; printRun: CardID[]; groupSize: number };
 
 export type PackLayout = {
 	weight: number;
@@ -200,7 +200,12 @@ export function generateBoosterFromCustomCardList(
 					let pickedCards: UniqueCard[] = [];
 
 					if (customCardList.slots[slotName].collation === "printRun") {
-						pickedCards = pickPrintRun(cardCount, customCardList.slots[slotName].printRun, pickOptions);
+						pickedCards = pickPrintRun(
+							cardCount,
+							customCardList.slots[slotName].printRun,
+							customCardList.slots[slotName].groupSize,
+							pickOptions
+						);
 					} else if (useColorBalance) {
 						pickedCards = colorBalancedSlotGenerators[slotName].generate(cardCount, booster, pickOptions);
 					} else {

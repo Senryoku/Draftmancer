@@ -70,11 +70,12 @@ export function pickCard(
 export function pickPrintRun(
 	count: number,
 	printRun: CardID[],
+	groupSize: number,
 	options?: {
 		getCard?: (cid: CardID) => Card;
 	}
 ): UniqueCard[] {
-	const start_idx = random.integer(0, printRun.length - 1);
+	const start_idx = groupSize * random.integer(0, (printRun.length - 1) / groupSize);
 	const cids: CardID[] = [];
 	for (let i = 0; i < count; ++i) {
 		const idx = (start_idx + i) % printRun.length;
