@@ -760,7 +760,7 @@ export function parseCardList(
 							} else {
 								const { count, cardID } = result;
 								if (slot.collation === "printRun") {
-									slot.printRun.push(cardID);
+									for (let i = 0; i < count; ++i) slot.printRun.push(cardID);
 								} else {
 									// Merge duplicate declarations
 									if (Object.prototype.hasOwnProperty.call(slot.cards, cardID))
