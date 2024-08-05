@@ -853,6 +853,7 @@ setinfos["mb1"] = {"code": "mb1",
                                    "icon": "img/sets/mb1.svg",
                                    "isPrimary": True,
                                    }
+PrimarySets.append("mb1")
 setinfos["mb1_convention_2019"] = {"code": "mb1_convention_2019",
                                    "fullName": "Mystery Booster Convention 2019",
                                    "icon": "img/sets/mb1.svg",
