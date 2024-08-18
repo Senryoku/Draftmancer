@@ -635,6 +635,8 @@ function parsePackLayoutsDeprecated(
 	return { advance: lineIdx - startIdx, layouts };
 }
 
+const CommentDelimiter = "#";
+
 // options:
 //   - name: string, specify name of returned card list.
 //   - fallbackToCardName: boolean
@@ -817,6 +819,13 @@ export function parseCardList(
 			};
 			for (const line of lines) {
 				if (line) {
+					if (line.startsWith(CommentDelimiter)) {
+						// Ignore everything after maybeboard header output by CubeCobra exporter.
+						if (line === "# maybeboard") break;
+						// Otherwise just skip the line.
+						continue;
+					}
+
 					const result = parseLine(line, options);
 					if (isSocketError(result)) {
 						// Just ignore the missing card and add it to the list of errors
