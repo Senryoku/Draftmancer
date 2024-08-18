@@ -821,6 +821,11 @@
         "fullName": "Fallen Empires",
         "icon": "img/sets/fem.svg"
     },
+    "ffdn": {
+        "code": "ffdn",
+        "fullName": "Foundations Front Cards",
+        "icon": "img/sets/ffdn.svg"
+    },
     "fj22": {
         "code": "fj22",
         "fullName": "Jumpstart 2022 Front Cards",
@@ -1360,6 +1365,11 @@
         "fullName": "March of the Machine: The Aftermath",
         "icon": "img/sets/mat.svg"
     },
+    "mb2": {
+        "code": "mb2",
+        "fullName": "Mystery Booster 2",
+        "icon": "img/sets/mb2.svg"
+    },
     "mbs": {
         "code": "mbs",
         "fullName": "Mirrodin Besieged",
@@ -1855,6 +1865,11 @@
         "fullName": "Battle for Zendikar Promos",
         "block": "Battle for Zendikar",
         "icon": "img/sets/pbfz.svg"
+    },
+    "pblb": {
+        "code": "pblb",
+        "fullName": "Bloomburrow Promos",
+        "icon": "img/sets/pblb.svg"
     },
     "pbng": {
         "code": "pbng",
@@ -3020,6 +3035,11 @@
         "code": "slx",
         "fullName": "Universes Within",
         "icon": "img/sets/slx.svg"
+    },
+    "smh3": {
+        "code": "smh3",
+        "fullName": "Modern Horizons 3 Substitute Cards",
+        "icon": "img/sets/smh3.svg"
     },
     "smid": {
         "code": "smid",
