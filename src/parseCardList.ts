@@ -147,51 +147,6 @@ export function parseLine(
 	});
 }
 
-function findNthLine(str: string, n: number): number {
-	let index = 0;
-	for (let i = 0; i < n; i++) {
-		index = str.indexOf("\n", index);
-		if (index === -1) return -1;
-		++index; // Skip \n
-	}
-	return index;
-}
-
-// Find 'closing' (e.g. ')', ']', '}'...) character in str matching the 'opening' character (e.g. '(', '[', '{'...) found at str[start] and returns its index.
-// Ignores lines starting with a comment delimiter.
-// Returns -1 if not found or if the string doesn't start with the opening character.
-function findMatchingIgnoringComments_TMP(str: string, opening: string, closing: string, start: number = 0): number {
-	if (str[start] !== opening) return -1;
-	let opened = 1;
-	let index = start + 1;
-	while (index < str.length && opened > 0) {
-		if (str[index] === opening) {
-			++opened;
-			++index;
-		} else if (str[index] === closing) {
-			--opened;
-			++index;
-		} else if (str[index] === "\n") {
-			// New line
-			++index;
-			// Trim whitespace
-			while (index < str.length && /\s/.test(str[index])) {
-				++index;
-			}
-			// Ignore comments
-			if (str[index] === CommentDelimiter) {
-				while (index < str.length && str[index] !== "\n") {
-					++index;
-				}
-			}
-		} else {
-			++index;
-		}
-	}
-	if (opened !== 0) return -1;
-	return index;
-}
-
 function findMatchingIgnoringComments(
 	lines: string[],
 	opening: string,
