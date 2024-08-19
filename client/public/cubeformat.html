@@ -246,11 +246,12 @@ Card Name 6
 	<comment>// Specify the exact order of the pack layouts rather than picking them randomly, useful for block drafts. 
 	//   Array of layout names, array of arrays of layout names (weights inherited from the layout declaration) 
 	//   or array of Record&lt;string, number&gt; to override the weights.</comment>
-	predeterminedLayouts: <type>string[] | string[][] | Record&lt;string, number&gt;[]</type>;
+	predeterminedLayouts: <type>string[] | string[][] | Record&lt;string, number&gt;[] | {name: string, weight: number}[][]</type>;
 	<comment>// Examples:</comment>
 	"predeterminedLayouts": ["SheetA", "SheetB", "SheetC"],
 	"predeterminedLayouts": [["Set1_Rare", "Set1_Mythic"], ["Set2_Rare", "Set2_Mythic"]]
 	"predeterminedLayouts": [{"Set1_Rare": 7, "Set1_Mythic": 1}, {"Set2_Rare": 7, "Set2_Mythic": 1}]
+	"predeterminedLayouts": [[{"name": "Set1_Rare", "weight": 7}, {"name": "Set1_Mythic", "weight": 1}], [{"name": "Set2_Rare", "weight": 7}, {"name": "Set2_Mythic", "weight": 1}]]
 
 	<comment>// Specify if the layouts are randomly picked with or without replacement (default: true).</comment>
 	layoutWithReplacement: <type>boolean</type>;    

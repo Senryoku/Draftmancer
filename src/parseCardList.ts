@@ -7,6 +7,7 @@ import { escapeHTML } from "./utils.js";
 import { ackError, isSocketError, SocketError } from "./Message.js";
 import {
 	hasOptionalProperty,
+	hasProperty,
 	isAny,
 	isArrayOf,
 	isBoolean,
@@ -331,8 +332,23 @@ function parseSettings(
 				for (const [name, weight] of Object.entries(list)) layouts.push({ name: name, weight: weight });
 				settings.predeterminedLayouts.push(layouts);
 			}
+		} else if (isArrayOf(isArrayOf(isObject))(parsedSettings.predeterminedLayouts)) {
+			settings.predeterminedLayouts = [];
+			for (const list of parsedSettings.predeterminedLayouts) {
+				const layouts = [];
+				for (const layout of list) {
+					if (!hasProperty("name", isString)(layout) || !hasProperty("weight", isInteger)(layout))
+						return err(
+							`Invalid entry in 'predeterminedLayouts': each entry must be of type {name: string, weight: number}.`
+						);
+					layouts.push({ name: layout.name, weight: layout.weight });
+				}
+				settings.predeterminedLayouts.push(layouts);
+			}
 		} else {
-			return err(`'predeterminedLayouts' must be an string[] | string[][] | Record<string, number>[], .`);
+			return err(
+				`'predeterminedLayouts' must be a (string[] | string[][] | Record<string, number>[] | {name: string, weight: number}[][]).`
+			);
 		}
 	}
 
