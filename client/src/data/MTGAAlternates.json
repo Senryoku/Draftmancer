@@ -158,10 +158,12 @@
         73134,
         78642,
         87024,
+        73648,
         77479,
         76391,
         51829,
         81183,
+        81899,
         91827,
         73135,
         75025,
@@ -280,6 +282,7 @@
         89208,
         82775,
         83974,
+        72578,
         77470,
         78647,
         74157,
@@ -309,6 +312,7 @@
         89209,
         80428,
         65379,
+        73646,
         34716,
         68743,
         72087,
@@ -350,6 +354,7 @@
         81181,
         90793,
         76387,
+        81897,
         74643,
         91819,
         68226,
@@ -380,6 +385,7 @@
         73125,
         75868,
         67612,
+        81896,
         65369,
         79725,
         91834,
@@ -534,6 +540,7 @@
         91816,
         79093,
         83978,
+        73645,
         74133,
         73137,
         66511,
@@ -629,6 +636,7 @@
     ],
     "Duress": [
         66175,
+        77571,
         83792,
         71878,
         77508,
@@ -679,6 +687,7 @@
         84594,
         67604,
         91832,
+        90234,
         86341,
         68204,
         72081,
@@ -696,6 +705,7 @@
         58437,
         72564,
         72558,
+        81895,
         79116,
         72559,
         74641,
@@ -743,6 +753,7 @@
         87578,
         75337,
         73486,
+        73644,
         79723,
         91301,
         76841,
@@ -993,6 +1004,7 @@
         76388,
         34742,
         79739,
+        73647,
         90621,
         82393,
         91825,
@@ -1141,6 +1153,7 @@
         87583,
         73132,
         82474,
+        81898,
         87460,
         70411,
         86349,
@@ -1485,7 +1498,8 @@
         67136
     ],
     "Weather the Storm": [
-        77537
+        77537,
+        77600
     ],
     "Detection Tower": [
         68180
@@ -1707,6 +1721,7 @@
     ],
     "Faithless Looting": [
         86653,
+        77580,
         77517
     ],
     "Archon of Justice": [
@@ -1801,6 +1816,10 @@
     "Dreadhorde Invasion": [
         69537
     ],
+    "Blue Sun's Zenith": [
+        77554,
+        77491
+    ],
     "Curious Obsession": [
         72210,
         66687
@@ -1861,6 +1880,15 @@
     "Branchloft Pathway // Boulderloft Pathway": [
         73470,
         74683
+    ],
+    "Thrill of Possibility": [
+        77588,
+        83851,
+        82200,
+        70670,
+        77525,
+        70293,
+        71947
     ],
     "Bogstomper": [
         67854,
@@ -2019,7 +2047,8 @@
         66003
     ],
     "Tezzeret's Gambit": [
-        77500
+        77500,
+        77563
     ],
     "Auger Spree": [
         72511
@@ -2357,7 +2386,8 @@
         90147
     ],
     "Gift of Estates": [
-        77485
+        77485,
+        77548
     ],
     "Wishclaw Talisman": [
         70257
@@ -2523,7 +2553,8 @@
         79382
     ],
     "Electrolyze": [
-        77539
+        77539,
+        77602
     ],
     "Serum Visionary": [
         90918
@@ -2641,7 +2672,8 @@
     ],
     "Agonizing Remorse": [
         70594,
-        77503
+        77503,
+        77566
     ],
     "Druid Class": [
         77285
@@ -3595,7 +3627,8 @@
         70034
     ],
     "Channel": [
-        77529
+        77529,
+        77592
     ],
     "Resilient Khenra": [
         73994
@@ -3780,7 +3813,8 @@
         90546
     ],
     "Sign in Blood": [
-        77511
+        77511,
+        77574
     ],
     "Ophiomancer": [
         83143,
@@ -3854,7 +3888,8 @@
         77191
     ],
     "Compulsive Research": [
-        77493
+        77493,
+        77556
     ],
     "Temple of Silence": [
         72037,
@@ -3912,7 +3947,8 @@
     "Village Rites": [
         75159,
         71908,
-        77514
+        77514,
+        77577
     ],
     "Fangorn, Tree Shepherd": [
         84858
@@ -4191,7 +4227,8 @@
         81703
     ],
     "Crystalline Giant": [
-        71301
+        71301,
+        73651
     ],
     "Vantress Transmuter // Croaking Curse": [
         86766
@@ -4274,7 +4311,8 @@
         90717
     ],
     "Brainstorm": [
-        77492
+        77492,
+        77555
     ],
     "Warbriar Blessing": [
         70715
@@ -4341,6 +4379,7 @@
     ],
     "Urabrask, Heretic Praetor": [
         80470,
+        80519,
         80280
     ],
     "Death-Priest of Myrkul": [
@@ -4471,7 +4510,8 @@
     "Snakeskin Veil": [
         90527,
         77536,
-        75241
+        75241,
+        77599
     ],
     "Birthing Boughs": [
         71562,
@@ -4498,6 +4538,10 @@
     "So Shiny": [
         76949,
         76949
+    ],
+    "Memory Lapse": [
+        77558,
+        77495
     ],
     "Celestial Mantle": [
         72158
@@ -4762,6 +4806,10 @@
     "Path to the Festival": [
         78551
     ],
+    "Tendrils of Agony": [
+        77576,
+        77513
+    ],
     "Thriving Bluff": [
         72136
     ],
@@ -4955,7 +5003,8 @@
         69840
     ],
     "Abundant Harvest": [
-        77527
+        77527,
+        77590
     ],
     "Vampire Neonate": [
         67928,
@@ -5873,6 +5922,7 @@
         59771,
         91870,
         80863,
+        77552,
         77489
     ],
     "Puncturing Light": [
@@ -6311,14 +6361,6 @@
     "Runed Crown": [
         75292
     ],
-    "Thrill of Possibility": [
-        83851,
-        82200,
-        70670,
-        77525,
-        70293,
-        71947
-    ],
     "Viashino Branchrider": [
         82202
     ],
@@ -6459,6 +6501,11 @@
     "Bojuka Bog": [
         35515,
         35515
+    ],
+    "Claim the Firstborn": [
+        77579,
+        77516,
+        70265
     ],
     "Rienne, Angel of Rebirth": [
         70139
@@ -6657,7 +6704,8 @@
     ],
     "Dark Ritual": [
         80867,
-        77505
+        77505,
+        77568
     ],
     "Electric Revelation": [
         78482
@@ -6791,6 +6839,10 @@
     "Gruesome Realization": [
         82587
     ],
+    "Regrowth": [
+        77598,
+        77535
+    ],
     "Homicide Investigator": [
         89001
     ],
@@ -6881,7 +6933,8 @@
     ],
     "Lightning Helix": [
         77541,
-        89131
+        89131,
+        77604
     ],
     "Shivan Dragon": [
         70119,
@@ -7420,7 +7473,8 @@
         71841,
         66091,
         77498,
-        70206
+        70206,
+        77561
     ],
     "Bloodline Keeper // Lord of Lineage": [
         86639
@@ -7808,6 +7862,7 @@
     ],
     "Approach of the Second Sun": [
         73776,
+        77543,
         77480
     ],
     "Topple the Statue": [
@@ -7905,7 +7960,8 @@
         78698
     ],
     "Teferi's Protection": [
-        77490
+        77490,
+        77553
     ],
     "Argivian Avenger": [
         82717
@@ -7959,6 +8015,7 @@
     ],
     "Strategic Planning": [
         75116,
+        77562,
         73857,
         77499
     ],
@@ -8021,6 +8078,7 @@
     ],
     "Shock": [
         89059,
+        77586,
         69945,
         71941,
         77523,
@@ -9053,7 +9111,8 @@
         73339
     ],
     "Demonic Tutor": [
-        77506
+        77506,
+        77569
     ],
     "Bone Saw": [
         82869,
@@ -9156,6 +9215,7 @@
     ],
     "Adventurous Impulse": [
         71209,
+        77591,
         77528,
         67410
     ],
@@ -9258,7 +9318,8 @@
     "Cultivate": [
         74649,
         71959,
-        77530
+        77530,
+        77593
     ],
     "Tribute to Urborg": [
         82165
@@ -9305,6 +9366,7 @@
     "Negate": [
         66705,
         69854,
+        77560,
         82110,
         77497,
         84330,
@@ -9559,7 +9621,8 @@
     ],
     "Despark": [
         69762,
-        77538
+        77538,
+        77601
     ],
     "Boggart Brute": [
         67942,
@@ -9932,6 +9995,10 @@
     ],
     "Get a Leg Up": [
         89075
+    ],
+    "Time Warp": [
+        77564,
+        77501
     ],
     "Bontu the Glorified": [
         73871
@@ -10489,7 +10556,8 @@
         88998
     ],
     "Putrefy": [
-        77542
+        77542,
+        77605
     ],
     "Gloom Stalker": [
         77121
@@ -10750,6 +10818,7 @@
     ],
     "Defiant Strike": [
         57951,
+        77545,
         71797,
         77482,
         69460
@@ -10868,13 +10937,15 @@
     ],
     "Primal Command": [
         77534,
-        90729
+        90729,
+        77597
     ],
     "Eerie Ultimatum": [
         71251
     ],
     "Revitalize": [
         75060,
+        77551,
         71813,
         67750,
         77488
@@ -11200,9 +11271,6 @@
     ],
     "Sun-Crowned Hunters": [
         66293
-    ],
-    "Blue Sun's Zenith": [
-        77491
     ],
     "World Shaper": [
         75551,
@@ -13333,7 +13401,8 @@
         91661
     ],
     "Natural Order": [
-        77533
+        77533,
+        77596
     ],
     "Storm Sculptor": [
         72241,
@@ -13364,7 +13433,8 @@
     "Lightning Bolt": [
         81656,
         77521,
-        80872
+        80872,
+        77584
     ],
     "Wilson, Fearsome Bear": [
         81606
@@ -13459,7 +13529,8 @@
         73808
     ],
     "Tainted Pact": [
-        77512
+        77512,
+        77575
     ],
     "Battlewise Hoplite": [
         54701,
@@ -14731,6 +14802,11 @@
     "Isolation at Orthanc": [
         84749
     ],
+    "Gods Willing": [
+        77549,
+        77486,
+        69804
+    ],
     "Dawnhart Wardens": [
         78709,
         78579
@@ -15204,10 +15280,6 @@
     "Molten Psyche": [
         38365
     ],
-    "Gods Willing": [
-        77486,
-        69804
-    ],
     "Dalakos, Crafter of Wonders": [
         70723
     ],
@@ -15417,7 +15489,8 @@
     ],
     "Dirge Bat": [
         71151,
-        73662
+        73662,
+        73650
     ],
     "Hero's Downfall": [
         54503,
@@ -15674,7 +15747,8 @@
     ],
     "Divine Gambit": [
         77483,
-        75043
+        75043,
+        77546
     ],
     "Candlestick": [
         88962
@@ -15863,7 +15937,8 @@
         77134
     ],
     "Day of Judgment": [
-        77481
+        77481,
+        77544
     ],
     "Scour All Possibilities": [
         71408,
@@ -16626,6 +16701,10 @@
         54163,
         54163
     ],
+    "Urza's Rage": [
+        77589,
+        77526
+    ],
     "Highspire Mantis": [
         58291
     ],
@@ -17129,6 +17208,10 @@
     "Epic Downfall": [
         70232
     ],
+    "Mizzix's Mastery": [
+        77585,
+        77522
+    ],
     "Dour Port-Mage": [
         91583
     ],
@@ -17386,9 +17469,6 @@
     "Humble the Brute": [
         86069
     ],
-    "Tendrils of Agony": [
-        77513
-    ],
     "Encroaching Mycosynth": [
         83747
     ],
@@ -17427,6 +17507,11 @@
     ],
     "Hellkite Whelp": [
         68567
+    ],
+    "Eliminate": [
+        77572,
+        77509,
+        71879
     ],
     "Mauhúr, Uruk-hai Captain": [
         84906
@@ -17684,6 +17769,12 @@
     ],
     "Mystic Repeal": [
         70691
+    ],
+    "Infuriate": [
+        77583,
+        77520,
+        69930,
+        70652
     ],
     "Courage in Crisis": [
         69609
@@ -18425,7 +18516,8 @@
         75106
     ],
     "Chaos Warp": [
-        77515
+        77515,
+        77578
     ],
     "Thinking Cap": [
         89179
@@ -18614,9 +18706,6 @@
     "Boulderbranch Golem": [
         82682
     ],
-    "Time Warp": [
-        77501
-    ],
     "Vile Manifestation": [
         73910
     ],
@@ -18662,7 +18751,8 @@
         69622
     ],
     "Increasing Vengeance": [
-        77519
+        77519,
+        77582
     ],
     "Dual Strike": [
         75175
@@ -19070,11 +19160,6 @@
     ],
     "Alloy Animist": [
         82651
-    ],
-    "Infuriate": [
-        77520,
-        69930,
-        70652
     ],
     "King Harald's Revenge": [
         75226
@@ -19635,6 +19720,10 @@
     "Double Vision": [
         71924
     ],
+    "Mind's Desire": [
+        77559,
+        77496
+    ],
     "Carrier Thrall": [
         79282
     ],
@@ -19721,7 +19810,8 @@
     ],
     "Doom Blade": [
         54017,
-        77507
+        77507,
+        77570
     ],
     "Enchantress's Presence": [
         18187,
@@ -20207,6 +20297,11 @@
     "Nissa's Triumph": [
         69621
     ],
+    "Whirlwind Denial": [
+        77565,
+        70592,
+        77502
+    ],
     "Kazandu Nectarpot": [
         74675,
         73398
@@ -20531,7 +20626,8 @@
         66983
     ],
     "Ephemerate": [
-        77484
+        77484,
+        77547
     ],
     "Hellkite Punisher": [
         71933
@@ -20617,7 +20713,8 @@
     ],
     "Growth Spiral": [
         69306,
-        77540
+        77540,
+        77603
     ],
     "Goggles of Night": [
         81706
@@ -21282,6 +21379,10 @@
     ],
     "Agency Outfitter": [
         88957
+    ],
+    "Counterspell": [
+        77557,
+        77494
     ],
     "Heartflame Duelist // Heartflame Slash": [
         86946
@@ -22452,9 +22553,6 @@
     "Brinebarrow Intruder": [
         75087
     ],
-    "Mizzix's Mastery": [
-        77522
-    ],
     "Foundry Beetle": [
         81098
     ],
@@ -22471,6 +22569,10 @@
     ],
     "A-Sprouting Goblin": [
         91342
+    ],
+    "Mana Tithe": [
+        77550,
+        77487
     ],
     "Cankerbloom": [
         83861
@@ -24208,9 +24310,6 @@
     "Strict Proctor": [
         76426
     ],
-    "Mind's Desire": [
-        77496
-    ],
     "Boros Guildgate": [
         68725,
         68724
@@ -24608,9 +24707,6 @@
     ],
     "One with the Stars": [
         70570
-    ],
-    "Memory Lapse": [
-        77495
     ],
     "Surgical Skullbomb": [
         83943
@@ -25288,15 +25384,12 @@
         75131,
         75407
     ],
-    "Whirlwind Denial": [
-        70592,
-        77502
-    ],
     "Wretched Gryff": [
         86609
     ],
     "Harmonize": [
-        77531
+        77531,
+        77594
     ],
     "Careful Cultivation": [
         79612
@@ -26429,6 +26522,10 @@
     "Collected Company": [
         73966
     ],
+    "Inquisition of Kozilek": [
+        77573,
+        77510
+    ],
     "Incubation Sac": [
         83871
     ],
@@ -27267,6 +27364,10 @@
     "Crippling Chill": [
         58007
     ],
+    "Crux of Fate": [
+        77567,
+        77504
+    ],
     "Martyr for the Cause": [
         69474
     ],
@@ -27580,9 +27681,6 @@
     ],
     "Protocol Knight": [
         84337
-    ],
-    "Regrowth": [
-        77535
     ],
     "Involuntary Employment": [
         80261
@@ -28836,7 +28934,8 @@
         85626
     ],
     "Grapeshot": [
-        77518
+        77518,
+        77581
     ],
     "Cartographer's Survey": [
         79000
@@ -29504,6 +29603,10 @@
     "Makindi Ox": [
         74661,
         73209
+    ],
+    "Krosan Grip": [
+        77595,
+        77532
     ],
     "Slick Sequence": [
         90579
@@ -30240,10 +30343,6 @@
     ],
     "Creosote Heath": [
         90601
-    ],
-    "Eliminate": [
-        77509,
-        71879
     ],
     "Disciplined Duelist": [
         80482,
@@ -31206,7 +31305,8 @@
         84309
     ],
     "Mysterious Egg": [
-        71070
+        71070,
+        73649
     ],
     "Sowing Mycospawn": [
         91020
@@ -31702,6 +31802,10 @@
     "Eidolon of Philosophy": [
         70559
     ],
+    "Stone Rain": [
+        77587,
+        77524
+    ],
     "Righteousness": [
         70174
     ],
@@ -31888,9 +31992,6 @@
     ],
     "Hornbash Mentor": [
         71226
-    ],
-    "Inquisition of Kozilek": [
-        77510
     ],
     "Vampire Champion": [
         67027
@@ -32323,9 +32424,6 @@
     ],
     "Famished Paladin": [
         66633
-    ],
-    "Urza's Rage": [
-        77526
     ],
     "Aethersphere Harvester": [
         75796
@@ -33644,10 +33742,6 @@
     "Restless Anchorage": [
         87446
     ],
-    "Claim the Firstborn": [
-        77516,
-        70265
-    ],
     "Faceless Haven": [
         75305
     ],
@@ -34090,9 +34184,6 @@
     ],
     "Dragonkin Berserker": [
         75174
-    ],
-    "Mana Tithe": [
-        77487
     ],
     "Bomat Courier": [
         75802
@@ -35436,9 +35527,6 @@
     "Shimmerwing Chimera": [
         70575
     ],
-    "Crux of Fate": [
-        77504
-    ],
     "Ill-Tempered Loner // Howlpack Avenger": [
         78966
     ],
@@ -35684,9 +35772,6 @@
     ],
     "Mouth // Feed": [
         73982
-    ],
-    "Stone Rain": [
-        77524
     ],
     "Lava Coil": [
         68569
@@ -36004,9 +36089,6 @@
     ],
     "Crackling Doom": [
         58279
-    ],
-    "Krosan Grip": [
-        77532
     ],
     "Flunk": [
         76464
@@ -36815,9 +36897,6 @@
     ],
     "Pillar of Flame": [
         72417
-    ],
-    "Counterspell": [
-        77494
     ],
     "Born to Drive": [
         79424

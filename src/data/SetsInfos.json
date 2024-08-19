@@ -38,6 +38,11 @@
         "block": "Commander",
         "icon": "img/sets/40k.svg"
     },
+    "4bb": {
+        "code": "4bb",
+        "fullName": "Fourth Edition Foreign Black Border",
+        "icon": "img/sets/4bb.svg"
+    },
     "4ed": {
         "code": "4ed",
         "fullName": "Fourth Edition",
@@ -187,6 +192,11 @@
         "code": "bbd",
         "fullName": "Battlebond",
         "icon": "img/sets/bbd.svg"
+    },
+    "bchr": {
+        "code": "bchr",
+        "fullName": "Chronicles Foreign Black Border",
+        "icon": "img/sets/bchr.svg"
     },
     "bfz": {
         "code": "bfz",
@@ -795,6 +805,12 @@
         "fullName": "Friday Night Magic 2017",
         "block": "Friday Night Magic",
         "icon": "img/sets/f17.svg"
+    },
+    "fbb": {
+        "code": "fbb",
+        "fullName": "Foreign Black Border",
+        "block": "Core Set",
+        "icon": "img/sets/fbb.svg"
     },
     "fbro": {
         "code": "fbro",
@@ -1733,6 +1749,11 @@
         "fullName": "30th Anniversary Misc Promos",
         "icon": "img/sets/p30m.svg"
     },
+    "p30t": {
+        "code": "p30t",
+        "fullName": "30th Anniversary Celebration Tokyo",
+        "icon": "img/sets/p30t.svg"
+    },
     "p5dn": {
         "code": "p5dn",
         "fullName": "Fifth Dawn Promos",
@@ -1831,6 +1852,12 @@
         "code": "pana",
         "fullName": "MTG Arena Promos",
         "icon": "img/sets/pana.svg"
+    },
+    "papc": {
+        "code": "papc",
+        "fullName": "Apocalypse Promos",
+        "block": "Invasion",
+        "icon": "img/sets/papc.svg"
     },
     "parb": {
         "code": "parb",
@@ -2177,6 +2204,11 @@
         "block": "Heroes of the Realm",
         "icon": "img/sets/ph22.svg"
     },
+    "phj": {
+        "code": "phj",
+        "fullName": "Hobby Japan Promos",
+        "icon": "img/sets/phj.svg"
+    },
     "phou": {
         "code": "phou",
         "fullName": "Hour of Devastation Promos",
@@ -2209,6 +2241,12 @@
         "fullName": "Ikoria: Lair of Behemoths Promos",
         "icon": "img/sets/piko.svg"
     },
+    "pinv": {
+        "code": "pinv",
+        "fullName": "Invasion Promos",
+        "block": "Invasion",
+        "icon": "img/sets/pinv.svg"
+    },
     "pip": {
         "code": "pip",
         "fullName": "Fallout",
@@ -2231,6 +2269,11 @@
         "fullName": "Junior APAC Series",
         "icon": "img/sets/pjas.svg"
     },
+    "pjjt": {
+        "code": "pjjt",
+        "fullName": "Japan Junior Tournament",
+        "icon": "img/sets/pjjt.svg"
+    },
     "pjou": {
         "code": "pjou",
         "fullName": "Journey into Nyx Promos",
@@ -2241,6 +2284,12 @@
         "code": "pjse",
         "fullName": "Junior Series Europe",
         "icon": "img/sets/pjse.svg"
+    },
+    "pjud": {
+        "code": "pjud",
+        "fullName": "Judgment Promos",
+        "block": "Odyssey",
+        "icon": "img/sets/pjud.svg"
     },
     "pkhm": {
         "code": "pkhm",
@@ -2399,6 +2448,11 @@
         "block": "Scars of Mirrodin",
         "icon": "img/sets/pmbs.svg"
     },
+    "pmda": {
+        "code": "pmda",
+        "fullName": "Magic × Duel Masters Promos",
+        "icon": "img/sets/pmda.svg"
+    },
     "pmei": {
         "code": "pmei",
         "fullName": "Media Inserts",
@@ -2452,6 +2506,41 @@
         "block": "Lorwyn",
         "icon": "img/sets/pmor.svg"
     },
+    "pmps": {
+        "code": "pmps",
+        "fullName": "Magic Premiere Shop 2005",
+        "icon": "img/sets/pmps.svg"
+    },
+    "pmps06": {
+        "code": "pmps06",
+        "fullName": "Magic Premiere Shop 2006",
+        "icon": "img/sets/pmps06.svg"
+    },
+    "pmps07": {
+        "code": "pmps07",
+        "fullName": "Magic Premiere Shop 2007",
+        "icon": "img/sets/pmps07.svg"
+    },
+    "pmps08": {
+        "code": "pmps08",
+        "fullName": "Magic Premiere Shop 2008",
+        "icon": "img/sets/pmps08.svg"
+    },
+    "pmps09": {
+        "code": "pmps09",
+        "fullName": "Magic Premiere Shop 2009",
+        "icon": "img/sets/pmps09.svg"
+    },
+    "pmps10": {
+        "code": "pmps10",
+        "fullName": "Magic Premiere Shop 2010",
+        "icon": "img/sets/pmps10.svg"
+    },
+    "pmps11": {
+        "code": "pmps11",
+        "fullName": "Magic Premiere Shop 2011",
+        "icon": "img/sets/pmps11.svg"
+    },
     "pmrd": {
         "code": "pmrd",
         "fullName": "Mirrodin Promos",
@@ -2484,6 +2573,12 @@
         "fullName": "New Phyrexia Promos",
         "block": "Scars of Mirrodin",
         "icon": "img/sets/pnph.svg"
+    },
+    "pody": {
+        "code": "pody",
+        "fullName": "Odyssey Promos",
+        "block": "Odyssey",
+        "icon": "img/sets/pody.svg"
     },
     "pogw": {
         "code": "pogw",
@@ -2530,6 +2625,12 @@
         "block": "Time Spiral",
         "icon": "img/sets/pplc.svg"
     },
+    "ppls": {
+        "code": "ppls",
+        "fullName": "Planeshift Promos",
+        "block": "Invasion",
+        "icon": "img/sets/ppls.svg"
+    },
     "ppp1": {
         "code": "ppp1",
         "fullName": "M20 Promo Packs",
@@ -2562,6 +2663,11 @@
         "code": "prcq",
         "fullName": "Regional Championship Qualifiers 2022",
         "icon": "img/sets/prcq.svg"
+    },
+    "pred": {
+        "code": "pred",
+        "fullName": "Redemption Program",
+        "icon": "img/sets/pred.svg"
     },
     "pres": {
         "code": "pres",
@@ -2609,6 +2715,11 @@
         "block": "Guilds of Ravnica",
         "icon": "img/sets/prwk.svg"
     },
+    "ps11": {
+        "code": "ps11",
+        "fullName": "Salvat 2011",
+        "icon": "img/sets/ps11.svg"
+    },
     "ps14": {
         "code": "ps14",
         "fullName": "San Diego Comic-Con 2014",
@@ -2639,6 +2750,11 @@
         "fullName": "San Diego Comic-Con 2019",
         "icon": "img/sets/ps19.svg"
     },
+    "psal": {
+        "code": "psal",
+        "fullName": "Salvat 2005",
+        "icon": "img/sets/psal.svg"
+    },
     "pscg": {
         "code": "pscg",
         "fullName": "Scourge Promos",
@@ -2649,6 +2765,11 @@
         "code": "psdc",
         "fullName": "San Diego Comic-Con 2013",
         "icon": "img/sets/psdc.svg"
+    },
+    "psdg": {
+        "code": "psdg",
+        "fullName": "Sega Dreamcast Cards",
+        "icon": "img/sets/psdg.svg"
     },
     "pshm": {
         "code": "pshm",
@@ -2717,6 +2838,11 @@
         "fullName": "Junior Super Series",
         "icon": "img/sets/psus.svg"
     },
+    "psvc": {
+        "code": "psvc",
+        "fullName": "Summer Vacation Promos 2022",
+        "icon": "img/sets/psvc.svg"
+    },
     "ptc": {
         "code": "ptc",
         "fullName": "Pro Tour Collector Set",
@@ -2755,6 +2881,12 @@
         "fullName": "Tempest Promos",
         "block": "Tempest",
         "icon": "img/sets/ptmp.svg"
+    },
+    "ptor": {
+        "code": "ptor",
+        "fullName": "Torment Promos",
+        "block": "Odyssey",
+        "icon": "img/sets/ptor.svg"
     },
     "ptsp": {
         "code": "ptsp",
@@ -2915,10 +3047,20 @@
         "block": "Ravnica",
         "icon": "img/sets/rav.svg"
     },
+    "ren": {
+        "code": "ren",
+        "fullName": "Renaissance",
+        "icon": "img/sets/ren.svg"
+    },
     "rex": {
         "code": "rex",
         "fullName": "Jurassic World Collection",
         "icon": "img/sets/rex.svg"
+    },
+    "rin": {
+        "code": "rin",
+        "fullName": "Rinascimento",
+        "icon": "img/sets/rin.svg"
     },
     "rix": {
         "code": "rix",

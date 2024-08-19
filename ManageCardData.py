@@ -152,7 +152,7 @@ if not os.path.isfile(ManaSymbolsFile) or ForceSymbology:
                 "colors": s["colors"]
             }
     with open(ManaSymbolsFile, 'w', encoding="utf8") as outfile:
-        json.dump(mana_symbols, outfile)
+        json.dump(mana_symbols, outfile, indent=4)
 
 ManaSymbols = json.load(open(ManaSymbolsFile, 'r'))
 
@@ -575,12 +575,11 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
     # Handle cards with no English translation
     print(f"{len(NonProcessedCards)} cards with no English translation.")
     for key, c in NonProcessedCards.items():
-        if c['set'] == "khm" or c['set'] == "neo" or c['set'] == "one":
-            print(f" -> Non-english card: {c['name']} ({c['set']}), {c['lang']} {c['booster']}")
-            #c['image_uris'][c['lang']] = Translations[key]['image_uris'][c['lang']]
-            #c['image_uris']['en'] = Translations[key]['image_uris'][c['lang']]
-            Translations[key]['image_uris']['en'] = Translations[key]['image_uris'][c['lang']]
-            addCard(c)
+        print(f" -> Non-english card: {c['name']} ({c['set']}), {c['lang']} {c['booster']}")
+        #c['image_uris'][c['lang']] = Translations[key]['image_uris'][c['lang']]
+        #c['image_uris']['en'] = Translations[key]['image_uris'][c['lang']]
+        Translations[key]['image_uris']['en'] = Translations[key]['image_uris'][c['lang']]
+        addCard(c)
 
     MTGACards = {}
     MTGACardsAlternates = {}
@@ -606,6 +605,11 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
 
     # Select the "best" (most recent, non special) printing of each card
     def selectCard(a, b):
+        # Avoid non-english cards
+        if (a['name'], a['set'], a['collector_number']) in NonProcessedCards and (b['name'], b['set'], b['collector_number']) not in NonProcessedCards :
+            return b
+        if (a['name'], a['set'], a['collector_number']) not in NonProcessedCards and (b['name'], b['set'], b['collector_number']) in NonProcessedCards :
+            return a
         # Special case for conjure-only cards from J21 that should be avoided.
         if a['set'] == 'j21' and int(a['collector_number']) >= 777:
             return b
@@ -681,14 +685,14 @@ for f in DBFiles:
 # Retrieve basic land ids for each set
 BasicLandIDs = {}
 for cid in cards:
-    if cards[cid]["type"].startswith("Basic"):
+    if cards[cid]["type"].startswith("Basic") and (cards[cid]['name'], cards[cid]['set'], cards[cid]['collector_number']) not in NonProcessedCards:
         if (cards[cid]["set"] not in BasicLandIDs):
             BasicLandIDs[cards[cid]["set"]] = []
         BasicLandIDs[cards[cid]["set"]].append(cid)
     for mtgset in BasicLandIDs:
         BasicLandIDs[mtgset].sort()
 with open(BasicLandIDsPath, 'w+', encoding="utf8") as basiclandidsfile:
-    json.dump(BasicLandIDs, basiclandidsfile, ensure_ascii=False)
+    json.dump(BasicLandIDs, basiclandidsfile, ensure_ascii=False, indent=4)
 
 ###############################################################################
 # Generate Jumpstart pack data
