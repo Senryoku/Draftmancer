@@ -537,44 +537,44 @@ CustomCard {
 				<code>draft_effects</code>
 				field. Here are the implemented effects:
 				<pre>
-<comment>// On pick effects:</comment>
-FaceUp              <comment>// Reveal the card to other players and mark the card as face up. <strong>Important note</strong>: Necessary for most 'UsableEffects" to function correctly!.</comment>
-Reveal              <comment>// Reveal the card to other players</comment>
-NotePassingPlayer   <comment>// Note the previous player's name on the card.</comment>
-NoteDraftedCards    <comment>// Note the number of cards drafted this round, including this card.</comment>
-ChooseColors        <comment>// Note colors chosen by your neighbors and you.</comment>
-AetherSearcher      <comment>// Reveal and note the next drafted card.</comment>
-CanalDredger        <comment>// The last card of each booster is passed to you.</comment>
-ArchdemonOfPaliano  <comment>// Pick the next 3 cards randomly.</comment>
-<comment>// Optional on pick effects:</comment>
-LoreSeeker          <comment>// "You may add a booster pack to the draft".</comment>
-<comment>// Usable effects (when the card is already in the player's pool):</comment>
-RemoveDraftCard     <comment>// Remove the picked card(s) from the draft and associate them with the card.</comment>
-CogworkLibrarian    <comment>// Replace this card in a pack for an additional pick.</comment>
-AgentOfAcquisitions <comment>// Pick the whole booster, skip until next round.</comment>
-LeovoldsOperative   <comment>// Pick an additional card, skip the next booster.</comment>
-NoteCardName        <comment>// Note the picked card's name on the card.</comment>
-NoteCreatureName    <comment>// Note the picked creature's name on the card.</comment>
-NoteCreatureTypes   <comment>// Note the picked creature's types on the card.</comment>
-<comment>// Other:</comment>
-TrackRemovedCardsNames     <comment>// Will display the names of cards removed by the 'RemoveDraftCard' effect.</comment>
-TrackRemovedCardsSubtypes  <comment>// Will display the unique subtypes of cards removed by the 'RemoveDraftCard' effect.</comment>
-CogworkGrinder             <comment>// Will display the number of cards removed by the 'RemoveDraftCard' effect.</comment>
+<comment># On pick effects:</comment>
+FaceUp              <comment># Reveal the card to other players and mark the card as face up. <strong>Important note</strong>: Necessary for most 'UsableEffects" to function correctly!.</comment>
+Reveal              <comment># Reveal the card to other players</comment>
+NotePassingPlayer   <comment># Note the previous player's name on the card.</comment>
+NoteDraftedCards    <comment># Note the number of cards drafted this round, including this card.</comment>
+ChooseColors        <comment># Note colors chosen by your neighbors and you.</comment>
+AetherSearcher      <comment># Reveal and note the next drafted card.</comment>
+CanalDredger        <comment># The last card of each booster is passed to you.</comment>
+ArchdemonOfPaliano  <comment># Pick the next 3 cards randomly.</comment>
+<comment># Optional on pick effects:</comment>
+LoreSeeker          <comment># "You may add a booster pack to the draft".</comment>
+<comment># Usable effects (when the card is already in the player's pool):</comment>
+RemoveDraftCard     <comment># Remove the picked card(s) from the draft and associate them with the card.</comment>
+CogworkLibrarian    <comment># Replace this card in a pack for an additional pick.</comment>
+AgentOfAcquisitions <comment># Pick the whole booster, skip until next round.</comment>
+LeovoldsOperative   <comment># Pick an additional card, skip the next booster.</comment>
+NoteCardName        <comment># Note the picked card's name on the card.</comment>
+NoteCreatureName    <comment># Note the picked creature's name on the card.</comment>
+NoteCreatureTypes   <comment># Note the picked creature's types on the card.</comment>
+<comment># Other:</comment>
+TrackRemovedCardsNames     <comment># Will display the names of cards removed by the 'RemoveDraftCard' effect.</comment>
+TrackRemovedCardsSubtypes  <comment># Will display the unique subtypes of cards removed by the 'RemoveDraftCard' effect.</comment>
+CogworkGrinder             <comment># Will display the number of cards removed by the 'RemoveDraftCard' effect.</comment>
 
-<comment>// Example value for Cogwork Librarian</comment>
+<comment># Example value for Cogwork Librarian</comment>
 "draft_effects": [
 	"FaceUp",
 	"CogworkLibrarian"
 ]
 
-<comment>// The following effects are custom and do not match official Conspiracy effects.</comment>
-AddCards            <comment>// Adds additional cards to your draft pool.</comment>
+<comment># The following effects are custom and do not match official Conspiracy effects.</comment>
+AddCards            <comment># Adds additional cards to your draft pool.</comment>
 
-<comment>// Example value for AddCards</comment>
+<comment># Example value for AddCards</comment>
 "draft_effects": [
 	{
 		"type": "AddCards",
-		"count": 1, <comment>// Optional, if omitted, all cards from the following array will be added. Otherwise, 'count' random cards will be added to your pool.</comment>
+		"count": 1, <comment># Optional, if omitted, all cards from the following array will be added. Otherwise, 'count' random cards will be added to your pool.</comment>
 		"cards": ["Card Name 1", "Card Name 2"...]
 	}
 ]
@@ -583,6 +583,25 @@ AddCards            <comment>// Adds additional cards to your draft pool.</comme
 				supported official cards on
 				<a href="https://github.com/Senryoku/Draftmancer/wiki/Conspiracy-cards-support" target="_blank">this page of the GitHub wiki</a>
 				.
+			</section>
+			<section>
+				<h2 id="comments">Comments</h2>
+				<p>
+					Comments starts with
+					<code>#</code>
+					and must be on their own line. They're ignored by the application and can be used to document your file.
+				</p>
+				<pre>
+<comment># Cube File by Myself</comment>
+<comment># Written on this day</comment>
+[Settings]
+{
+	<comment># This enables picking with replacement</comment>
+	"withReplacement": true
+}
+<comment># This slot contains all the cards because this is just an example of how to use comments!</comment>
+[DefaultSlot]
+Lightning Bolt</pre>
 			</section>
 		</div>
 	</body>
