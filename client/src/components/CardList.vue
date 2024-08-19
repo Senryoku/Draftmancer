@@ -58,7 +58,7 @@ import CardOrder from "../cardorder";
 import CardListColumn from "./CardListColumn.vue";
 import { Language } from "@/Types";
 import { CustomCardList } from "@/CustomCardList";
-import { defineComponent, PropType } from "vue";
+import { defineComponent, PropType, toRaw } from "vue";
 import { Card, CardID, PlainCollection } from "@/CardTypes";
 
 type CardWithCount = Card & { count: number };
@@ -118,23 +118,17 @@ export default defineComponent({
 		download() {
 			if (!this.cards) return;
 			let str = "";
-			if (this.cardlist.settings) {
-				str += "[Settings]\n";
-				str += JSON.stringify(this.cardlist.settings, null, 2);
-				str += "\n";
+			const settings: Record<string, unknown> = structuredClone(toRaw(this.cardlist.settings) ?? {});
+			if (this.cardlist.layouts !== false) {
+				settings.layouts = this.cardlist.layouts;
 			}
+			str += "[Settings]\n";
+			str += JSON.stringify(settings, null, 2);
+			str += "\n";
 			if (this.cardlist.customCards) {
 				str += "[CustomCards]\n";
 				str += JSON.stringify(Object.values(this.cardlist.customCards), null, 2);
 				str += "\n";
-			}
-			if (this.cardlist.layouts !== false) {
-				str += `[Layouts]\n`;
-				for (let layout in this.cardlist.layouts) {
-					const l = this.cardlist.layouts[layout];
-					str += `- ${layout} (${l.weight})\n`;
-					for (let slot in l.slots) str += `  ${l.slots[slot]} ${slot}\n`;
-				}
 			}
 			for (let [slotName, slot] of Object.entries(this.cardlist.slots)) {
 				let slotSettings = "";
