@@ -3,7 +3,8 @@
 		"date": "19/08/2024",
 		"notes": [
 			"Support for comments in Cube files.",
-			"Ignore '# maybeboard' from Cube Cobra default text export."
+			"Ignore '# maybeboard' from Cube Cobra default text export.",
+			"Misc. bug fixing around cube files."
 		]
 	},
 	{
