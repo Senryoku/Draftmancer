@@ -1,0 +1,204 @@
+
+
+
+# A Comment
+  # A Comment    
+
+
+
+				# A Comment    	## 			# A Comment    			
+
+
+				# A Comment  
+[CustomCards]
+# A Comment [ "JSON Array in a comment" ]
+  # A Comment    { "JSONObject": ["In", "a", "comment"] }
+				# A Comment    	## 			# A Comment    			 
+				# A Comment  { "JSONObject": ["In", "a", "comment"] }
+[
+# A Comment
+  # A Comment    { "JSONObject": ["In", "a", "comment"] }
+				# A Comment    	## 			# A Comment    			
+				# A Comment  
+	{
+		"name": "Creature",
+		"rarity": "mythic",
+		"mana_cost": "{1}{W}",
+		"type": "Creature",
+		"subtypes": [
+			"SUB0",
+				# A Comment    	## 			# A Comment    		{ "JSONObject": ["In", "a", "comment"] }
+			"SUB1"
+		],
+		"image_uris": {
+			"en": "http://fake.dmn/img.jpg"
+		},
+		"oracle_text": "Emerge {6}{R}{R} (You may cast this spell by sacrificing a creature and paying the emerge cost reduced by that creature's mana value.)\nWhen you cast this spell, you may exile your hand. If you do, draw three cards.\nFlying\nEach creature spell you cast has emerge. The emerge cost is equal to its mana cost.",
+		"power": 5,
+# A Comment
+  # A Comment    { "JSONObject": ["In", "a", "comment"] }
+				# A Comment    	## 			# A Comment    			
+				# A Comment  { "JSONObject": ["In", "a", "comment"] }
+		"toughness": 2,
+	},
+	{
+		"name": "MCreature",
+		"rarity": "mythic",
+		"mana_cost": "{1}{W}{B}",
+		"type": "Creature",
+		"image_uris": {
+			# COMMENT
+			"en": "http://fake.dmn/img.jpg"
+		},
+		"oracle_text": "Vigilance",
+# A Comment{ "JSONObject": ["In", "a", "comment"] }
+  # A Comment    
+		"power": 5,
+		"toughness": 2,
+				# A Comment    	## 			# A Comment    			
+				# A Comment  
+	},
+	{
+		"name": "Planeswalker",
+		"rarity": "mythic",
+		"mana_cost": "{1}{U}",
+		"type": "Planeswalker",
+		"image_uris": {
+			"en": "http://fake.dmn/img.jpg"
+		},
+		"oracle_text": "+1: Put a +1/+1 counter on each of up to two target creatures.\n−2: Return target creature card with mana value 2 or less from your graveyard to the battlefield.\n−7: You get an emblem with \"At the beginning of your end step, create three 1/1 white Cat creature tokens with lifelink.\"",
+		"loyalty": 3,
+	}
+# A Comment{ "JSONObject": ["In", "a", "comment"] }
+  # A Comment    { "JSONObject": ["In", "a", "comment"] }
+				# A Comment    	## 			# A Comment    			
+				# A Comment  
+				,
+	{
+		"name": "Planeswalker MDFC",
+		"rarity": "mythic",
+		"mana_cost": "{1}{B}",
+		"type": "Planeswalker",
+		"image_uris": {
+			"en": "http://fake.dmn/img.jpg"
+		},
+		"oracle_text": "+1: Put a +1/+1 counter on each of up to two target creatures.\n−2: Return target creature card with mana value 2 or less from your graveyard to the battlefield.\n−7: You get an emblem with \"At the beginning of your end step, create three 1/1 white Cat creature tokens with lifelink.\"",
+		"loyalty": 3,
+		"back": {
+			"name": "Planeswalker Back Face",
+				# A Comment    	## 			# A Comment    		
+			"type": "Planeswalker",
+			"image_uris": {
+				"en": "http://fake.dmn/img.jpg"
+			},
+			"loyalty": 3,
+		}
+	},
+# A Comment
+  # A Comment    
+				# A Comment    	## 			# A Comment    			
+				# A Comment  
+	{
+		"name": "Double Faced",
+		"rarity": "mythic",
+		"mana_cost": "{1}{R}",
+		"type": "Creature",
+		"image_uris": {
+			"en": "http://fake.dmn/img.jpg"
+		},
+		"oracle_text": "Emerge {6}{R}{R} (You may cast this spell by sacrificing a creature and paying the emerge cost reduced by that creature's mana value.)\nWhen you cast this spell, you may exile your hand. If you do, draw three cards.\nFlying\nEach creature spell you cast has emerge. The emerge cost is equal to its mana cost.",
+		"power": 5,
+		"toughness": 2,
+# A Comment
+  # A Comment    { "JSONObject": ["In", "a", "comment"] }
+				# A Comment    	## 			# A Comment    			
+				# A Comment  
+		"back": {
+			"name": "Back Face",
+			"type": "Land",
+			"image_uris": {
+				"en": "http://fake.dmn/img.jpg"
+			},
+			"oracle_text": "Back Face enters the battlefield tapped.\n{T}: Add {U}.",
+		}
+	},
+	{
+		"name": "Double Faced Shortcut",
+		"rarity": "mythic",
+		"mana_cost": "{1}{B}",
+		"type": "Creature",
+# A Comment
+  # A Comment    { "JSONObject": ["In", "a", "comment"] }
+				# A Comment    	## 			# A Comment    			
+				# A Comment  
+		"image": "https://cards.scryfall.io/large/front/d/4/d49fd832-1185-4eb5-8bd3-bccc8835dbee.jpg?1714508255",
+		"oracle_text": "Emerge {6}{R}{R} (You may cast this spell by sacrificing a creature and paying the emerge cost reduced by that creature's mana value.)\nWhen you cast this spell, you may exile your hand. If you do, draw three cards.\nFlying\nEach creature spell you cast has emerge. The emerge cost is equal to its mana cost.",
+		"power": 5,
+		"toughness": 2,
+		"back": {
+			"name": "Back Face Shortcut",
+			"type": "Land",
+			"image": "https://cards.scryfall.io/large/back/5/f/5f411f08-45dd-4d73-8894-daf51c175150.jpg?1604193600",
+			"oracle_text": "Back Face enters the battlefield tapped.\n{T}: Add {U}.",
+			"power": "*",
+			"toughness": "*"
+		}
+	},
+	{
+		"name": "Double Faced No Image",
+		"rarity": "mythic",
+# A Comment{ "JSONObject": ["In", "a", "comment"] }
+  # A Comment    
+				# A Comment    	## 			# A Comment    			
+				# A Comment  
+		"mana_cost": "{1}{G}",
+		"type": "Creature",
+		"oracle_text": "Emerge {6}{R}{R} (You may cast this spell by sacrificing a creature and paying the emerge cost reduced by that creature's mana value.)\nWhen you cast this spell, you may exile your hand. If you do, draw three cards.\nFlying\nEach creature spell you cast has emerge. The emerge cost is equal to its mana cost.",
+		"power": 5,
+		"toughness": 2,
+		"back": {
+			"name": "Back Face No Image",
+			"type": "Land",
+# A Comment
+  # A Comment{ "JSONObject": ["In", "a", "comment"] }    
+				# A Comment { "JSONObject": ["In", "a", "comment"] }   	## 			# A Comment    			
+				# A Comment  
+			"oracle_text": "Back Face enters the battlefield tapped.\n{T}: Add {U}.",
+		}
+	}
+				# A Comment    	## 			# A Comment    		
+]
+[Settings]
+# A Comment{ "JSONObject": ["In", "a", "comment"] }
+{
+				# A Comment { "JSONObject": ["In", "a", "comment"] }   	## 			# A Comment    		
+	"withReplacement": true,
+				# A Comment   { "JSONObject": ["In", "a", "comment"] } 	## 			# A Comment    		
+}
+				# A Comment    	## 			# A Comment    	
+[Common]
+				# A Comment   { "JSONObject": ["In", "a", "comment"] } 	## 			# A Comment    	
+Creature
+				# A Comment    	## 			# A Comment    	
+MCreature
+# A Comment
+Planeswalker
+Double Faced
+# A Comment
+  # A Comment  { "JSONObject": ["In", "a", "comment"] }  
+				# A Comment    	## 			# A Comment    			
+				# A Comment  
+Lightning Bolt
+Invasion of Amonkhet 
+				# A Comment    	## 			# A Comment    			
+				# A Comment    					
+Ondu Inversion
+Double Faced Shortcut
+Double Faced No Image
+Planeswalker MDFC
+				# A Comment    	## 			# A Comment    	
+# A Comment
+# A Comment { "JSONObject": ["In", "a", "comment"] }
+# A Comment
+# A Comment
+				# A Comment    	## 			# A Comment    	

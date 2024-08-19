@@ -20,10 +20,16 @@ import {
 const lineRegex =
 	/^(?:(?<count>\d+)\s+)?(?<name>[^\v\n]+?)(?:\s\((?<set>\w+)\)(?:\s+(?<number>[^+\s()]+))?)?(?:\s+\+?(F))?$/;
 
+const CommentDelimiter = "#";
+const commentRegex = /^\s*#.*$/gm;
 const trailingCommasRegex = /(?<=(true|false|null|["\d}\]])\s*),(?=\s*[\]}])/g;
 
-function removeJSONTrailingCommas(str: string): string {
-	return str.replaceAll(trailingCommasRegex, "");
+// Turn JSON with # comments and trailing commas into a valid JSON string.
+function cleanLooseJSON(str: string): string {
+	// Remove comments
+	const noComments = str.replaceAll(commentRegex, "");
+	// Remove trailing commas
+	return noComments.replaceAll(trailingCommasRegex, "");
 }
 
 export function matchCardVersion(
@@ -152,18 +158,79 @@ function findNthLine(str: string, n: number): number {
 }
 
 // Find 'closing' (e.g. ')', ']', '}'...) character in str matching the 'opening' character (e.g. '(', '[', '{'...) found at str[start] and returns its index.
+// Ignores lines starting with a comment delimiter.
 // Returns -1 if not found or if the string doesn't start with the opening character.
-function findMatching(str: string, opening: string, closing: string, start: number = 0): number {
-	let index = start;
-	if (str[index] !== opening) return -1;
+function findMatchingIgnoringComments_TMP(str: string, opening: string, closing: string, start: number = 0): number {
+	if (str[start] !== opening) return -1;
 	let opened = 1;
+	let index = start + 1;
 	while (index < str.length && opened > 0) {
-		++index;
-		if (str[index] === opening) ++opened;
-		else if (str[index] === closing) --opened;
+		if (str[index] === opening) {
+			++opened;
+			++index;
+		} else if (str[index] === closing) {
+			--opened;
+			++index;
+		} else if (str[index] === "\n") {
+			// New line
+			++index;
+			// Trim whitespace
+			while (index < str.length && /\s/.test(str[index])) {
+				++index;
+			}
+			// Ignore comments
+			if (str[index] === CommentDelimiter) {
+				while (index < str.length && str[index] !== "\n") {
+					++index;
+				}
+			}
+		} else {
+			++index;
+		}
 	}
 	if (opened !== 0) return -1;
 	return index;
+}
+
+function findMatchingIgnoringComments(
+	lines: string[],
+	opening: string,
+	closing: string
+): { str: string; linesToSkip: number } | null {
+	let start: { line: number; cidx: number } = { line: 0, cidx: 0 };
+	let line = 0;
+	let opened = 0;
+	while (line < lines.length) {
+		if (lines[line].startsWith(CommentDelimiter)) {
+			line++;
+			continue;
+		}
+		for (let cidx = opened === 0 ? lines[0].indexOf(opening) : 0; cidx < lines[line].length; cidx++) {
+			if (lines[line][cidx] === opening) {
+				if (opened === 0) {
+					start = { line: line, cidx };
+				}
+				opened++;
+			} else if (lines[line][cidx] === closing) {
+				opened--;
+				if (opened < 0) return null;
+				if (opened === 0) {
+					if (start.line === line)
+						return { str: lines[start.line].substring(start.cidx, cidx + 1), linesToSkip: 1 };
+					return {
+						str: [
+							lines[start.line].substring(start.cidx, lines[start.line].length),
+							...lines.slice(start.line + 1, line).filter((l) => !l.startsWith(CommentDelimiter)),
+							lines[line].substring(0, cidx + 1), // NOTE: Here we assume there's nothing else of interest on this line.
+						].join("\n"),
+						linesToSkip: line + 1,
+					};
+				}
+			}
+		}
+		line++;
+	}
+	return null;
 }
 
 function jsonParsingErrorMessage(e: { message: string }, jsonStr: string): string {
@@ -183,42 +250,29 @@ function jsonParsingErrorMessage(e: { message: string }, jsonStr: string): strin
 function parseSettings(
 	lines: string[],
 	startIdx: number,
-	txtcardlist: string,
 	customCardList: CustomCardList
 ): SocketError | { advance: number; settings: CCLSettings } {
-	const lineIdx = startIdx;
-	if (lines.length <= lineIdx)
+	if (lines.length <= startIdx)
 		return ackError({
 			title: `[Settings]`,
 			text: `Expected a settings object, got end-of-file.`,
 		});
-	if (lines[lineIdx][0] !== "{") {
+	const r = findMatchingIgnoringComments(lines.slice(startIdx), "{", "}");
+	if (r === null)
 		return ackError({
 			title: `[Settings]`,
-			text: `Settings section must be a JSON Object. Line ${lineIdx + 1}: Expected '{', got '${
-				lines[lineIdx + 1]
-			}'.`,
-		});
-	}
-
-	let index = findNthLine(txtcardlist, lineIdx);
-	while (txtcardlist[index] !== "{") ++index;
-	const start = index;
-	const end = findMatching(txtcardlist, "{", "}", start);
-	if (end === -1)
-		return ackError({
-			title: `[Settings]`,
-			text: `Expected '}', got end-of-file.`,
+			text: `Expected a settings Object, got end-of-file.`,
 		});
 	let parsedSettings = {};
-	const settingsStr = removeJSONTrailingCommas(txtcardlist.substring(start, end + 1));
+	const rawSettingStr = r.str;
+	const cleanedStr = cleanLooseJSON(rawSettingStr);
 	try {
-		parsedSettings = JSON.parse(settingsStr);
+		parsedSettings = JSON.parse(cleanedStr);
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	} catch (e: any) {
 		return ackError({
 			title: `[Settings]`,
-			html: jsonParsingErrorMessage(e, settingsStr),
+			html: jsonParsingErrorMessage(e, cleanedStr),
 		});
 	}
 	const settings: CCLSettings = {};
@@ -474,46 +528,43 @@ function parseSettings(
 	}
 
 	return {
-		advance: (settingsStr.match(/\r?\n/g)?.length ?? 0) + 1, // Skip this section's lines
+		advance: r.linesToSkip,
 		settings: settings,
 	};
 }
 
-function parseCustomCards(lines: string[], startIdx: number, txtcardlist: string) {
-	const lineIdx = startIdx;
-	if (lines.length <= lineIdx)
+function parseCustomCards(lines: string[], startIdx: number) {
+	if (lines.length <= startIdx)
 		return ackError({
 			title: `[CustomCards]`,
 			text: `Expected a list of custom cards, got end-of-file.`,
 		});
 	// Custom cards must be a JSON array
-	if (lines[lineIdx][0] !== "[") {
+	if (lines[startIdx][0] !== "[") {
 		return ackError({
 			title: `[CustomCards]`,
-			text: `Custom cards section must be a JSON Array. Line ${lineIdx + 1}: Expected '[', got '${
-				lines[lineIdx + 1]
+			text: `Custom cards section must be a JSON Array. Line ${startIdx + 1}: Expected '[', got '${
+				lines[startIdx + 1]
 			}'.`,
 		});
 	}
 	// Search for the section (matching closing bracket)
-	let index = findNthLine(txtcardlist, lineIdx);
-	while (txtcardlist[index] !== "[") ++index;
-	const start = index;
-	const end = findMatching(txtcardlist, "[", "]", start);
-	if (end === -1)
+	const r = findMatchingIgnoringComments(lines.slice(startIdx), "[", "]");
+	if (!r)
 		return ackError({
 			title: `[CustomCards]`,
 			text: `Expected ']', got end-of-file.`,
 		});
+	const { str, linesToSkip } = r;
 	let parsedCustomCards = [];
-	const customCardsStr = removeJSONTrailingCommas(txtcardlist.substring(start, end + 1));
+	const customCardsStr = cleanLooseJSON(str);
 	try {
 		parsedCustomCards = JSON.parse(customCardsStr);
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	} catch (e: any) {
 		return ackError({
 			title: `[CustomCards]`,
-			html: jsonParsingErrorMessage(e, customCardsStr),
+			html: jsonParsingErrorMessage(e, str),
 		});
 	}
 
@@ -593,7 +644,7 @@ function parseCustomCards(lines: string[], startIdx: number, txtcardlist: string
 	}
 
 	return {
-		advance: (customCardsStr.match(/\r?\n/g)?.length ?? 0) + 1, // Skip this section's lines
+		advance: linesToSkip,
 		customCards: customCards,
 	};
 }
@@ -635,8 +686,6 @@ function parsePackLayoutsDeprecated(
 	return { advance: lineIdx - startIdx, layouts };
 }
 
-const CommentDelimiter = "#";
-
 // options:
 //   - name: string, specify name of returned card list.
 //   - fallbackToCardName: boolean
@@ -655,7 +704,14 @@ export function parseCardList(
 			slots: {},
 		};
 		let lineIdx = 0;
-		while (lines[lineIdx] === "") ++lineIdx; // Skip heading empty lines
+
+		const skipEmptyLinesAndComments = () => {
+			while (lines[lineIdx] === "" || lines[lineIdx].startsWith(CommentDelimiter)) {
+				++lineIdx;
+				if (lineIdx >= lines.length) throw new Error(`Unexpected end-of-file.`);
+			}
+		};
+		skipEmptyLinesAndComments();
 		// List has to start with a header if it has custom slots
 		if (lines[lineIdx][0] === "[") {
 			const localOptions: typeof options & {
@@ -674,14 +730,18 @@ export function parseCardList(
 				const header = lines[lineIdx].substring(1, lines[lineIdx].length - 1).trim();
 				const lowerCaseHeader = header.toLowerCase();
 				++lineIdx;
+				skipEmptyLinesAndComments();
+
 				if (lowerCaseHeader === "settings") {
-					const settingsOrError = parseSettings(lines, lineIdx, txtcardlist, cardList);
+					const settingsOrError = parseSettings(lines, lineIdx, cardList);
 					if (isSocketError(settingsOrError)) return settingsOrError;
 					cardList.settings = settingsOrError.settings;
 					if (settingsOrError.settings.name) cardList.name = settingsOrError.settings.name;
 					lineIdx += settingsOrError.advance;
+					console.error("settingsOrError:", settingsOrError);
+					skipEmptyLinesAndComments();
 				} else if (lowerCaseHeader === "customcards") {
-					const cardsOrError = parseCustomCards(lines, lineIdx, txtcardlist);
+					const cardsOrError = parseCustomCards(lines, lineIdx);
 					if (isSocketError(cardsOrError)) return cardsOrError;
 					if (!cardList.customCards) cardList.customCards = {};
 
@@ -701,6 +761,7 @@ export function parseCardList(
 							localOptions.customCards.nameCache.set(customCard.name, customCard);
 					}
 					lineIdx += cardsOrError.advance;
+					skipEmptyLinesAndComments();
 				} else if (lowerCaseHeader === "layouts") {
 					if (cardList.layouts) {
 						return ackError({
@@ -712,6 +773,7 @@ export function parseCardList(
 					if (isSocketError(layoutsOrError)) return layoutsOrError;
 					lineIdx += layoutsOrError.advance;
 					cardList.layouts = layoutsOrError.layouts;
+					skipEmptyLinesAndComments();
 				} else {
 					let slot: Slot = { cards: {} };
 					let slotName = header;
@@ -753,7 +815,7 @@ export function parseCardList(
 						}
 					}
 					while (lineIdx < lines.length && lines[lineIdx][0] !== "[") {
-						if (lines[lineIdx]) {
+						if (lines[lineIdx] && lines[lineIdx] !== "" && !lines[lineIdx].startsWith(CommentDelimiter)) {
 							const result = parseLine(lines[lineIdx], localOptions);
 							if (isSocketError(result)) {
 								// Just ignore the missing card and add it to the list of errors
