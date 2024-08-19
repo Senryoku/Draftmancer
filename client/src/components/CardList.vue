@@ -228,8 +228,8 @@ export default defineComponent({
 
 <style scoped>
 .card-list {
-	margin-left: 3em;
-	margin-right: 3em;
+	margin-left: auto;
+	margin-right: auto;
 }
 
 .category-wrapper {
