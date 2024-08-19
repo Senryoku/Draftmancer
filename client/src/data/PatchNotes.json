@@ -1,5 +1,12 @@
 [
 	{
+		"date": "19/08/2024",
+		"notes": [
+			"Support for comments in Cube files.",
+			"Ignore '# maybeboard' from Cube Cobra default text export."
+		]
+	},
+	{
 		"date": "31/07/2024",
 		"notes": [
 			"Experimental print run collation for cubes."
