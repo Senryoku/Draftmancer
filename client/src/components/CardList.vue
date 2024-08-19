@@ -153,11 +153,12 @@ export default defineComponent({
 			let a = cards.reduce(
 				(acc, item) => {
 					const c: string = item.colors.sort().join();
-					if (c in acc[0]) {
+					if (c.length <= 1) {
 						acc[0][c].push(item);
 					} else {
-						if (!acc[1][c]) acc[1][c] = [];
-						acc[1][c].push(item);
+						if (!acc[c.length - 1]) acc[c.length - 1] = {};
+						if (!acc[c.length - 1][c]) acc[c.length - 1][c] = [];
+						acc[c.length - 1][c].push(item);
 					}
 					return acc;
 				},
