@@ -450,10 +450,16 @@ function parseCustomCards(lines: string[], startIdx: number) {
 	const inputsByName = new Map<string, object>(); // Track declared card names to spot duplicates (and inherit properties between printings).
 	const customCardsNameCache = new Map<string, Card>();
 	for (const input of parsedCustomCards) {
-		// When a second printing of a card (with the same name) is detected, copies all information from the first one.
-		// This allows users to only specify a full card once and only update the related fields in other printings.
-		const c = inputsByName.has(input.name) ? Object.assign({ ...inputsByName.get(input.name) }, input) : input;
-
+		let c = input;
+		if (inputsByName.has(input.name)) {
+			// When a second printing of a card (with the same name) is detected, copies all information from the first one.
+			// This allows users to only specify a full card once and only update the related fields in other printings.
+			const prev = { ...inputsByName.get(input.name) };
+			// "image" and "image_uris" map to the same property. If both are present, use the updated one (i.e. ignore the previous one).
+			if ("image" in input && "image_uris" in prev) delete prev.image_uris;
+			if ("image_uris" in input && "image" in prev) delete prev.image;
+			c = Object.assign(prev, input);
+		}
 		const cardOrError = validateCustomCard(c);
 		if (isSocketError(cardOrError)) return cardOrError;
 		if (cardOrError.id in customCardsIDs)

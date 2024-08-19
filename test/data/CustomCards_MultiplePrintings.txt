@@ -31,6 +31,14 @@
 		]	
 	},
 	{
+		"name": "Nazgûl",
+		"collector_number": "334",
+		"image": "https://cards.scryfall.io/large/front/5/e/5e9c9901-c329-4a68-96ab-f33d7c12aefe.jpg?1686971280",
+		"related_cards": [
+			"Nazgûl"
+		]
+	},
+	{
 		"name": "Card related to Nazgûl somehow",
 		"rarity": "uncommon",
 		"mana_cost": "",
@@ -42,13 +50,34 @@
 			"Nazgûl",
 			"Nazgûl (LTR) 100",
 			"Nazgûl (LTR) 332",
-			"Nazgûl (LTR) 333"
+			"Nazgûl (LTR) 333",
+			"Nazgûl (LTR) 334"
 		]
-	}
+	},
+	{
+		"name": "Image Prop.",
+		"rarity": "uncommon",
+		"mana_cost": "5B",
+		"set": "ltr",
+		"collector_number": "729", 
+		"type": "Creature",
+		"image":  "https://cards.scryfall.io/large/front/8/b/8bb48b87-8ed9-41b2-80ca-5d37cf24455a.jpg?1695422137",
+	},
+	{
+		"name": "Image Prop.",
+		"collector_number": "730",
+		"image_uris": {
+			"en": "https://cards.scryfall.io/large/front/b/9/b9b6ec63-7df4-450e-b849-920121fe245c.jpg?1695422185"
+		},
+	},
 ]
 [DefaultSlot]
 Nazgûl
 Nazgûl (LTR) 100
 Nazgûl (LTR) 332
 Nazgûl (LTR) 333
+Nazgûl (LTR) 334
+Image Prop.
+Image Prop. (LTR) 729
+Image Prop. (LTR) 730
 Card related to Nazgûl somehow
