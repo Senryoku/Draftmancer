@@ -161,7 +161,7 @@ export default defineComponent({
 					}
 					return acc;
 				},
-				[{ "": [], W: [], U: [], B: [], R: [], G: [] } as { [s: string]: CardWithCount[] }, {}]
+				[{ W: [], U: [], B: [], R: [], G: [], "": [] } as { [s: string]: CardWithCount[] }, {}]
 			);
 			for (let row of a) for (let col in row) CardOrder.orderByArenaInPlace(row[col]);
 			return a;
