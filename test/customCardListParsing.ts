@@ -236,4 +236,31 @@ describe("Custom Card List Parsing", function () {
 		expect(session.boostersPerPlayer).to.be.equal(42);
 		expect(session.colorBalance).to.be.false;
 	});
+
+	it(`should ignore comments in complex lists.`, () => {
+		const list = parseCardList(fs.readFileSync(`./test/data/WithRandomComments.txt`, "utf8"), {});
+		if (isSocketError(list)) {
+			expect(isSocketError(list), `Got ${JSON.stringify((list as SocketError).error)}`).to.be.false;
+			return;
+		}
+		expect(list.slots["Common"]).to.exist;
+		expect(list.settings?.withReplacement).to.be.true;
+		expect(list.customCards).to.not.be.null;
+	});
+
+	it(`should ignore Cube Cobra's maybeboard.`, () => {
+		const list = parseCardList(fs.readFileSync(`./test/data/CubeCobraExport.txt`, "utf8"), {});
+		if (isSocketError(list)) {
+			expect(isSocketError(list), `Got ${JSON.stringify((list as SocketError).error)}`).to.be.false;
+			return;
+		}
+		expect(list.slots["default"]).to.exist;
+		expect(list.slots["default"].collation).to.be.undefined;
+		if (!list.slots["default"].collation) {
+			expect(list.slots["default"].cards).to.exist;
+			expect(Object.keys(list.slots["default"].cards).length).to.equal(246);
+			expect(Object.values(list.slots["default"].cards).every((v) => v === 1)).to.be.true;
+			expect(list.slots["default"].cards["Nomads en-Kor"]).to.be.undefined;
+		}
+	});
 });
