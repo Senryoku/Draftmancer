@@ -12,6 +12,7 @@ import {
 	isBoolean,
 	isInteger,
 	isNumber,
+	isObject,
 	isRecord,
 	isString,
 	isUnknown,
@@ -202,100 +203,88 @@ function jsonParsingErrorMessage(e: { message: string }, jsonStr: string): strin
 	return msg;
 }
 
+function extractJSON(
+	lines: string[],
+	startIdx: number,
+	opening: string,
+	closing: string
+): { json: unknown; linesToSkip: number } | SocketError {
+	if (lines.length <= startIdx)
+		return ackError({
+			title: `Unexpected End-of-File`,
+			text: `Expected a JSON ${opening === "[" ? "Array" : "Object"}, got end-of-file.`,
+		});
+	if (lines[startIdx][0] !== opening) {
+		return ackError({
+			title: `Unexpected Character`,
+			text: `Expected a JSON ${opening === "[" ? "Array" : "Object"}. Line ${startIdx + 1}: Expected '${opening}', got '${
+				lines[startIdx + 1]
+			}'.`,
+		});
+	}
+	// Search for the section (matching closing bracket)
+	const r = findMatchingIgnoringComments(lines.slice(startIdx), opening, closing);
+	if (!r)
+		return ackError({
+			title: `Unexpected End-of-File`,
+			text: `Expected '${closing}', got end-of-file.`,
+		});
+	const str = cleanLooseJSON(r.str);
+	try {
+		return { json: JSON.parse(str), linesToSkip: r.linesToSkip };
+	} catch (e) {
+		return ackError({
+			title: `JSON Parsing Error`,
+			html: jsonParsingErrorMessage(e as { message: string }, r.str),
+		});
+	}
+}
+
 function parseSettings(
 	lines: string[],
 	startIdx: number,
 	customCardList: CustomCardList
 ): SocketError | { advance: number; settings: CCLSettings } {
-	if (lines.length <= startIdx)
-		return ackError({
-			title: `[Settings]`,
-			text: `Expected a settings object, got end-of-file.`,
-		});
-	const r = findMatchingIgnoringComments(lines.slice(startIdx), "{", "}");
-	if (r === null)
-		return ackError({
-			title: `[Settings]`,
-			text: `Expected a settings Object, got end-of-file.`,
-		});
-	let parsedSettings = {};
-	const rawSettingStr = r.str;
-	const cleanedStr = cleanLooseJSON(rawSettingStr);
-	try {
-		parsedSettings = JSON.parse(cleanedStr);
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	} catch (e: any) {
-		return ackError({
-			title: `[Settings]`,
-			html: jsonParsingErrorMessage(e, cleanedStr),
-		});
-	}
+	const r = extractJSON(lines, startIdx, "{", "}");
+	if (isSocketError(r)) return r;
+	const parsedSettings = r.json;
+
+	const err = (text: string) => ackError({ title: `[Settings]`, text });
+
+	if (!isObject(parsedSettings))
+		return err(
+			`Settings must be an object. Refer to <a href="https://draftmancer.com/cubeformat.html">the documentation</a> for more information.`
+		);
+
 	const settings: CCLSettings = {};
 
 	if ("name" in parsedSettings) {
-		if (!isString(parsedSettings.name)) {
-			return ackError({
-				title: `[Settings]`,
-				text: `'name' must be a string.`,
-			});
-		}
+		if (!isString(parsedSettings.name)) return err(`'name' must be a string.`);
 		settings.name = parsedSettings.name;
 	}
 
 	if ("cardBack" in parsedSettings) {
-		if (!isString(parsedSettings.cardBack)) {
-			return ackError({
-				title: `[Settings]`,
-				text: `'cardBack' must be a string.`,
-			});
-		}
+		if (!isString(parsedSettings.cardBack)) return err(`'cardBack' must be a string.`);
 		settings.cardBack = parsedSettings.cardBack;
 	}
 
 	if ("cardTitleHeightFactor" in parsedSettings) {
-		if (!isNumber(parsedSettings.cardTitleHeightFactor)) {
-			return ackError({
-				title: `[Settings]`,
-				text: `'cardTitleHeightFactor' must be a number.`,
-			});
-		}
+		if (!isNumber(parsedSettings.cardTitleHeightFactor)) return err(`'cardTitleHeightFactor' must be a number.`);
 		settings.cardTitleHeightFactor = parsedSettings.cardTitleHeightFactor;
 	}
 
 	if ("layouts" in parsedSettings) {
 		const layouts: Record<string, PackLayout> = {};
 
-		if (!isRecord(isString, isRecord(isString, isUnknown))(parsedSettings.layouts)) {
-			return ackError({
-				title: `[Settings]`,
-				text: `'layouts' must be an object.`,
-			});
-		}
+		if (!isRecord(isString, isRecord(isString, isUnknown))(parsedSettings.layouts))
+			return err(`'layouts' must be an object.`);
+
 		for (const [key, value] of Object.entries(parsedSettings.layouts)) {
-			if (!("weight" in value)) {
-				return ackError({
-					title: `[Settings]`,
-					text: `Layout '${key}'  must have a 'weight' property.`,
-				});
-			}
-			if (!isInteger(value.weight)) {
-				return ackError({
-					title: `[Settings]`,
-					text: `'weight' must be an integer.`,
-				});
-			}
-			if (!("slots" in value)) {
-				return ackError({
-					title: `[Settings]`,
-					text: `Layout '${key}' must have a 'slots' property.`,
-				});
-			}
-			if (!isRecord(isString, isInteger)(value["slots"])) {
-				return ackError({
-					title: `[Settings]`,
-					text: `'slots' must be a Record<string, number>.`,
-				});
-			}
+			if (!("weight" in value)) err(`Layout '${key}'  must have a 'weight' property.`);
+			if (!isInteger(value.weight)) return err(`'weight' must be an integer.`);
+			if (!("slots" in value)) return err(`Layout '${key}' must have a 'slots' property.`);
+			if (!isRecord(isString, isInteger)(value["slots"])) return err(`'slots' must be a Record<string, number>.`);
+
 			layouts[key] = {
 				weight: value.weight,
 				slots: value.slots,
@@ -306,22 +295,12 @@ function parseSettings(
 	}
 
 	if ("withReplacement" in parsedSettings) {
-		if (!isBoolean(parsedSettings.withReplacement)) {
-			return ackError({
-				title: `[Settings]`,
-				text: `'withReplacement' must be a boolean.`,
-			});
-		}
+		if (!isBoolean(parsedSettings.withReplacement)) return err(`'withReplacement' must be a boolean.`);
 		settings.withReplacement = parsedSettings.withReplacement;
 	}
 
 	if ("showSlots" in parsedSettings) {
-		if (!isBoolean(parsedSettings.showSlots)) {
-			return ackError({
-				title: `[Settings]`,
-				text: `'showSlots' must be a boolean.`,
-			});
-		}
+		if (!isBoolean(parsedSettings.showSlots)) return err(`'showSlots' must be a boolean.`);
 		settings.showSlots = parsedSettings.showSlots;
 	}
 
@@ -331,21 +310,16 @@ function parseSettings(
 				return [{ name: name, weight: 1 }];
 			});
 		} else if (isArrayOf(isArrayOf(isString))(parsedSettings.predeterminedLayouts)) {
-			if (!customCardList.layouts) {
-				return ackError({
-					title: `[Settings]`,
-					text: `'layouts' must be declared before being referenced in 'predeterminedLayouts'.`,
-				});
-			}
+			if (!customCardList.layouts)
+				return err(`'layouts' must be declared before being referenced in 'predeterminedLayouts'.`);
 			settings.predeterminedLayouts = [];
 			for (const list of parsedSettings.predeterminedLayouts) {
 				const layouts = [];
 				for (const name of list) {
 					if (!(name in customCardList.layouts))
-						return ackError({
-							title: `[Settings]`,
-							text: `Layout '${name}' must be declared before being referenced in 'predeterminedLayouts'.`,
-						});
+						return err(
+							`Layout '${name}' must be declared before being referenced in 'predeterminedLayouts'.`
+						);
 					layouts.push({ name: name, weight: customCardList.layouts[name].weight });
 				}
 				settings.predeterminedLayouts.push(layouts);
@@ -358,38 +332,25 @@ function parseSettings(
 				settings.predeterminedLayouts.push(layouts);
 			}
 		} else {
-			return ackError({
-				title: `[Settings]`,
-				text: `'predeterminedLayouts' must be an string[] | string[][] | Record<string, number>[], .`,
-			});
+			return err(`'predeterminedLayouts' must be an string[] | string[][] | Record<string, number>[], .`);
 		}
 	}
 
 	if ("boosterSettings" in parsedSettings) {
-		if (!isArrayOf(isRecord(isString, isUnknown))(parsedSettings.boosterSettings)) {
-			return ackError({
-				title: `[Settings]`,
-				text: `Invalid 'boosterSettings' format.`,
-			});
-		}
+		if (!isArrayOf(isRecord(isString, isUnknown))(parsedSettings.boosterSettings))
+			return err(`Invalid 'boosterSettings' format.`);
 		const boosterSettings = [];
 		for (const boosterSetting of parsedSettings.boosterSettings) {
 			if (
 				!hasOptionalProperty("picks", isInteger)(boosterSetting) &&
 				!hasOptionalProperty("picks", isArrayOf(isInteger))(boosterSetting)
 			)
-				return ackError({
-					title: `[Settings]`,
-					text: `'boosterSettings.picks' must be a positive integer, or an array of positive integers.`,
-				});
+				return err(`'boosterSettings.picks' must be a positive integer, or an array of positive integers.`);
 			if (
 				!hasOptionalProperty("burns", isInteger)(boosterSetting) &&
 				!hasOptionalProperty("burns", isArrayOf(isInteger))(boosterSetting)
 			)
-				return ackError({
-					title: `[Settings]`,
-					text: `'boosterSettings.burns' must be a positive integer, or an array of positive integers.`,
-				});
+				return err(`'boosterSettings.burns' must be a positive integer, or an array of positive integers.`);
 
 			let picks = [1];
 			let burns = [0];
@@ -401,15 +362,11 @@ function parseSettings(
 				else burns = boosterSetting.burns;
 
 			if (picks.some((pick) => pick < 1))
-				return ackError({
-					title: `[Settings]`,
-					text: `'boosterSettings.picks' must be a strictly positive integer, or an array of strictly positive integers.`,
-				});
+				return err(
+					`'boosterSettings.picks' must be a strictly positive integer, or an array of strictly positive integers.`
+				);
 			if (burns.some((burn) => burn < 0))
-				return ackError({
-					title: `[Settings]`,
-					text: `'boosterSettings.burns' must be a positive integer, or an array of positive integers.`,
-				});
+				return err(`'boosterSettings.burns' must be a positive integer, or an array of positive integers.`);
 
 			boosterSettings.push({
 				picks,
@@ -421,59 +378,31 @@ function parseSettings(
 	}
 
 	if ("layoutWithReplacement" in parsedSettings) {
-		if (!isBoolean(parsedSettings.layoutWithReplacement)) {
-			return ackError({
-				title: `[Settings]`,
-				text: `'layoutWithReplacement' must be a boolean.`,
-			});
-		}
+		if (!isBoolean(parsedSettings.layoutWithReplacement)) return err(`'layoutWithReplacement' must be a boolean.`);
 		settings.layoutWithReplacement = parsedSettings.layoutWithReplacement;
 	}
 
 	if ("boostersPerPlayer" in parsedSettings) {
-		if (!isInteger(parsedSettings.boostersPerPlayer)) {
-			return ackError({
-				title: `[Settings]`,
-				text: `'boostersPerPlayer' must be a integer.`,
-			});
-		}
+		if (!isInteger(parsedSettings.boostersPerPlayer)) return err(`'boostersPerPlayer' must be a integer.`);
 		settings.boostersPerPlayer = parsedSettings.boostersPerPlayer;
 	}
 
 	if ("duplicateProtection" in parsedSettings) {
-		if (!isBoolean(parsedSettings.duplicateProtection)) {
-			return ackError({
-				title: `[Settings]`,
-				text: `'duplicateProtection' must be a boolean.`,
-			});
-		}
+		if (!isBoolean(parsedSettings.duplicateProtection)) return err(`'duplicateProtection' must be a boolean.`);
 		settings.duplicateProtection = parsedSettings.duplicateProtection;
 	}
 
 	if ("colorBalance" in parsedSettings) {
-		if (!isBoolean(parsedSettings.colorBalance)) {
-			return ackError({
-				title: `[Settings]`,
-				text: `'colorBalance' must be a boolean.`,
-			});
-		}
+		if (!isBoolean(parsedSettings.colorBalance)) return err(`'colorBalance' must be a boolean.`);
 		settings.colorBalance = parsedSettings.colorBalance;
 	}
 
 	if (settings.predeterminedLayouts) {
-		if (!customCardList.layouts) {
-			return ackError({
-				title: `[Settings]`,
-				text: `Layouts must be declared before setting 'predeterminedLayouts'.`,
-			});
-		}
+		if (!customCardList.layouts) return err(`Layouts must be declared before setting 'predeterminedLayouts'.`);
 		for (const list of settings.predeterminedLayouts) {
 			for (const layout of list) {
 				if (!(layout.name in customCardList.layouts)) {
-					return ackError({
-						title: `[Settings]`,
-						text: `Layout '${layout.name}' in 'predeterminedLayouts' has not been declared.`,
-					});
+					return err(`Layout '${layout.name}' in 'predeterminedLayouts' has not been declared.`);
 				}
 			}
 		}
@@ -489,46 +418,16 @@ function parseSettings(
 }
 
 function parseCustomCards(lines: string[], startIdx: number) {
-	if (lines.length <= startIdx)
-		return ackError({
-			title: `[CustomCards]`,
-			text: `Expected a list of custom cards, got end-of-file.`,
-		});
-	// Custom cards must be a JSON array
-	if (lines[startIdx][0] !== "[") {
-		return ackError({
-			title: `[CustomCards]`,
-			text: `Custom cards section must be a JSON Array. Line ${startIdx + 1}: Expected '[', got '${
-				lines[startIdx + 1]
-			}'.`,
-		});
-	}
-	// Search for the section (matching closing bracket)
-	const r = findMatchingIgnoringComments(lines.slice(startIdx), "[", "]");
-	if (!r)
-		return ackError({
-			title: `[CustomCards]`,
-			text: `Expected ']', got end-of-file.`,
-		});
-	const { str, linesToSkip } = r;
-	let parsedCustomCards = [];
-	const customCardsStr = cleanLooseJSON(str);
-	try {
-		parsedCustomCards = JSON.parse(customCardsStr);
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	} catch (e: any) {
-		return ackError({
-			title: `[CustomCards]`,
-			html: jsonParsingErrorMessage(e, str),
-		});
-	}
+	const r = extractJSON(lines, startIdx, "[", "]");
+	if (isSocketError(r)) return r;
 
-	if (!isArrayOf(isRecord(isString, isAny))(parsedCustomCards)) {
+	const parsedCustomCards = r.json;
+
+	if (!isArrayOf(isRecord(isString, isAny))(parsedCustomCards))
 		return ackError({
 			title: `[CustomCards]`,
 			html: `Custom cards must be an array of card objects. Refer to <a href="https://draftmancer.com/cubeformat.html">the documentation</a> for more information.`,
 		});
-	}
 
 	const customCards: Card[] = [];
 	const customCardsIDs: Record<CardID, Card> = {};
@@ -599,7 +498,7 @@ function parseCustomCards(lines: string[], startIdx: number) {
 	}
 
 	return {
-		advance: linesToSkip,
+		advance: r.linesToSkip,
 		customCards: customCards,
 	};
 }
@@ -693,7 +592,6 @@ export function parseCardList(
 					cardList.settings = settingsOrError.settings;
 					if (settingsOrError.settings.name) cardList.name = settingsOrError.settings.name;
 					lineIdx += settingsOrError.advance;
-					console.error("settingsOrError:", settingsOrError);
 					skipEmptyLinesAndComments();
 				} else if (lowerCaseHeader === "customcards") {
 					const cardsOrError = parseCustomCards(lines, lineIdx);
