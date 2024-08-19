@@ -253,7 +253,7 @@ function parseSettings(
 
 	if (!isObject(parsedSettings))
 		return err(
-			`Settings must be an object. Refer to <a href="https://draftmancer.com/cubeformat.html">the documentation</a> for more information.`
+			`Settings must be an object. Refer to <a href="https://draftmancer.com/cubeformat.html" target="_blank">the documentation</a> for more information.`
 		);
 
 	const settings: CCLSettings = {};
@@ -426,7 +426,7 @@ function parseCustomCards(lines: string[], startIdx: number) {
 	if (!isArrayOf(isRecord(isString, isAny))(parsedCustomCards))
 		return ackError({
 			title: `[CustomCards]`,
-			html: `Custom cards must be an array of card objects. Refer to <a href="https://draftmancer.com/cubeformat.html">the documentation</a> for more information.`,
+			html: `Custom cards must be an array of card objects. Refer to <a href="https://draftmancer.com/cubeformat.html" target="_blank">the documentation</a> for more information.`,
 		});
 
 	const customCards: Card[] = [];
@@ -566,6 +566,7 @@ export function parseCardList(
 			}
 		};
 		skipEmptyLinesAndComments();
+
 		// List has to start with a header if it has custom slots
 		if (lines[lineIdx][0] === "[") {
 			const localOptions: typeof options & {
