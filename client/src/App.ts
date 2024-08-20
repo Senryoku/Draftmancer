@@ -2832,6 +2832,17 @@ export default defineComponent({
 				}
 			});
 		},
+		setBoosters(boosters: string) {
+			if (this.sessionOwner !== this.userID)
+				return fireToast("error", "Only the session owner can set the boosters!");
+			this.socket.emit("setBoosters", boosters, (response) => {
+				if (response?.error) {
+					Alert.fire(response.error);
+				} else {
+					fireToast("success", "Boosters successfuly uploaded!");
+				}
+			});
+		},
 		shuffleUploadedBoosters() {
 			if (this.sessionOwner !== this.userID) return;
 			this.socket.emit("shuffleBoosters", (response) => {

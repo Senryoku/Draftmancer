@@ -12,6 +12,12 @@
 		>
 			<div>Click on a player to display more information.</div>
 			<div>
+				<button
+					@click="reloadBoosters"
+					v-tooltip="`Set 'Predetermined Boosters' to boosters from this game to replay it.`"
+				>
+					<font-awesome-icon :icon="['fas', 'rotate-left']" /> Reload Boosters
+				</button>
 				<button type="button" @click="exportBoosters" v-tooltip="'Export boosters to clipboard.'">
 					<font-awesome-icon icon="fa-solid fa-clipboard-check"></font-awesome-icon> Export Boosters
 				</button>
@@ -325,19 +331,23 @@ export default defineComponent({
 		}
 	},
 	methods: {
+		boosterStr() {
+			return this.draftlog.boosters
+				.map((b) =>
+					b
+						.map(
+							(c) =>
+								`${this.draftlog.carddata[c].name} (${this.draftlog.carddata[c].set}) ${this.draftlog.carddata[c].collector_number}`
+						)
+						.join("\n")
+				)
+				.join("\n\n");
+		},
+		reloadBoosters() {
+			this.$emit("reloadBoosters", this.boosterStr());
+		},
 		exportBoosters() {
-			helper.copyToClipboard(
-				this.draftlog.boosters
-					.map((b) =>
-						b
-							.map(
-								(c) =>
-									`${this.draftlog.carddata[c].name} (${this.draftlog.carddata[c].set}) ${this.draftlog.carddata[c].collector_number}`
-							)
-							.join("\n")
-					)
-					.join("\n\n")
-			);
+			helper.copyToClipboard(this.boosterStr());
 			fireToast("success", "Boosters copied to clipboard");
 		},
 		downloadMPT(id: UserID) {

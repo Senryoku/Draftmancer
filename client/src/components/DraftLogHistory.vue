@@ -123,6 +123,7 @@
 					:userName="userName"
 					@storelogs="$emit('storelogs')"
 					@loadDeck="(log: DraftLog, uid: UserID) => $emit('loadDeck', log, uid)"
+					@reloadBoosters="(str: string) => $emit('reloadBoosters', str)"
 				></draft-log>
 			</transition>
 		</div>
@@ -131,7 +132,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
-import { ButtonColor, Alert, fireToast } from "../alerts";
+import { ButtonColor, Alert } from "../alerts";
 import * as helper from "../helper";
 import Dropdown from "./Dropdown.vue";
 import DraftLogComponent from "./DraftLog.vue";

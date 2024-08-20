@@ -2004,6 +2004,7 @@
 					@storelogs="storeDraftLogs"
 					@loadDeck="loadDeckFromLogs"
 					@importMTGOLog="importMTGOLog"
+					@reloadBoosters="(str: string) => setBoosters(str)"
 				></draft-log-history>
 			</template>
 		</modal>
