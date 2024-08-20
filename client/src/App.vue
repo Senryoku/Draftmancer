@@ -2618,7 +2618,7 @@
 									/>
 								</div>
 								<div
-									v-tooltip.left="{
+									v-tooltip.up="{
 										popperClass: 'option-tooltip',
 										content:
 											'<p>If checked, picked cards will be replaced in the card pool, meaning there\'s an unlimited supply of each card in the list.</p>',
@@ -2632,10 +2632,8 @@
 									/>
 									<label for="custom-card-list-with-replacement">With Replacement</label>
 								</div>
-							</div>
-							<div>
 								<div
-									v-tooltip.left="{
+									v-tooltip.up="{
 										popperClass: 'option-tooltip',
 										content:
 											'<p>When enabled, duplicates of the exact same card in a booster will be avoided as much as possible.</p>',
@@ -2650,7 +2648,10 @@
 									<label for="custom-card-list-duplicate-protection">Duplicate Protection</label>
 								</div>
 							</div>
-							<div v-if="customCardList?.slots && Object.keys(customCardList?.slots).length > 0">
+							<div
+								v-if="customCardList?.slots && Object.keys(customCardList?.slots).length > 0"
+								class="option-cube-settings-2"
+							>
 								<font-awesome-icon
 									icon="fa-solid fa-check"
 									class="green"

@@ -498,11 +498,17 @@ div:where(.swal2-container) .swal2-checkbox {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+	gap: 1.5em;
 }
 .option-cube-settings-1 {
 	display: flex;
 	align-items: center;
 	gap: 1.5em;
+}
+.option-cube-settings-2 {
+	display: flex;
+	align-items: center;
+	gap: 0.5em;
 }
 
 .option-cube-import {
@@ -534,6 +540,7 @@ div:where(.swal2-container) .swal2-checkbox {
 	.option-cube-import {
 		flex-direction: column;
 	}
+	.option-cube-settings,
 	.option-cube-settings-1 {
 		gap: 0;
 	}
