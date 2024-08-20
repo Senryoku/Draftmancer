@@ -3,10 +3,7 @@
 		<template v-slot:handle>Export</template>
 		<template v-slot:dropdown>
 			<div class="row">
-				<button
-					@click="clipboardMTGA(true)"
-					v-tooltip.right="'Export deck and sideboard for Arena to clipboard'"
-				>
+				<button @click="clipboardMTGA(true)" v-tooltip.top="'Export deck and sideboard for Arena to clipboard'">
 					<img class="set-icon button-icon" src="../assets/img/mtga-icon.png" />MTGA
 				</button>
 				<button @click="downloadMTGA(true)" v-tooltip.right="'Download deck and sideboard for Arena'">
@@ -16,7 +13,7 @@
 			<div class="row">
 				<button
 					@click="clipboardMTGA(false)"
-					v-tooltip.right="'Export deck and sideboard without set information to clipboard'"
+					v-tooltip.top="'Export deck and sideboard without set information to clipboard'"
 				>
 					<font-awesome-icon icon="fa-solid fa-clipboard" class="button-icon"></font-awesome-icon>Card Names
 				</button>
@@ -38,7 +35,7 @@
 				FaBrary
 			</button>
 			<div class="row">
-				<button @click="clipboardCollectorNumber()" v-tooltip.right="'Export collector number list'">
+				<button @click="clipboardCollectorNumber()" v-tooltip.top="'Export collector number list'">
 					<font-awesome-icon icon="fa-solid fa-clipboard" class="button-icon"></font-awesome-icon>
 					Collector #
 				</button>

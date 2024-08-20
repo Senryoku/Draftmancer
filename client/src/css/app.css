@@ -1701,6 +1701,10 @@ See: https://stackoverflow.com/questions/52937708/why-does-applying-a-css-filter
 	margin-top: 0.25em;
 }
 
+.v-popper__popper {
+	pointer-events: none;
+}
+
 .v-popper--theme-dropdown .v-popper__inner {
 	background: #404040;
 	color: #ddd;
