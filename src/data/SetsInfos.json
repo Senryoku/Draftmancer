@@ -3683,6 +3683,12 @@
         "block": "Ixalan",
         "icon": "img/sets/xln.svg"
     },
+    "yblb": {
+        "code": "yblb",
+        "fullName": "Alchemy: Bloomburrow",
+        "block": "Alchemy 2024",
+        "icon": "img/sets/yblb.svg"
+    },
     "ybro": {
         "code": "ybro",
         "fullName": "Alchemy: The Brothers' War",
