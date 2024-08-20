@@ -1,8 +1,24 @@
 <template>
 	<div v-if="draftlog.version === '2.0' || draftlog.version === '2.1'">
+		<div
+			v-if="!draftlog.delayed"
+			style="
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				margin-left: 1em;
+				margin-right: 1em;
+			"
+		>
+			<div>Click on a player to display more information.</div>
+			<div>
+				<button type="button" @click="exportBoosters" v-tooltip="'Export boosters to clipboard.'">
+					<font-awesome-icon icon="fa-solid fa-clipboard-check"></font-awesome-icon> Export Boosters
+				</button>
+			</div>
+		</div>
 		<!-- Table -->
 		<div>
-			<p>Click on a player to display their details.</p>
 			<ul
 				:class="{
 					'player-table': type === 'Draft' && tableSummary.length <= 8,
@@ -309,6 +325,21 @@ export default defineComponent({
 		}
 	},
 	methods: {
+		exportBoosters() {
+			helper.copyToClipboard(
+				this.draftlog.boosters
+					.map((b) =>
+						b
+							.map(
+								(c) =>
+									`${this.draftlog.carddata[c].name} (${this.draftlog.carddata[c].set}) ${this.draftlog.carddata[c].collector_number}`
+							)
+							.join("\n")
+					)
+					.join("\n\n")
+			);
+			fireToast("success", "Boosters copied to clipboard");
+		},
 		downloadMPT(id: UserID) {
 			helper.download(`DraftLog_${id}.txt`, helper.exportToMagicProTools(this.draftlog, id));
 		},
@@ -607,7 +638,9 @@ ul.player-table {
 	display: flex;
 	flex-wrap: wrap;
 	list-style: none;
-	--margin: 1rem;
+	margin: 0.5rem;
+	--half-gap: 1rem;
+	gap: calc(2 * var(--half-gap));
 	--halflength: 4;
 }
 ul.player-table.six {
@@ -620,15 +653,14 @@ ul.player-table li {
 	justify-content: space-between;
 
 	border: 1px solid #282828;
-	margin: var(--margin);
 	padding: 0.5em;
 	border-radius: 0.2em;
 	background-color: #555;
 }
 
 ul.player-table li {
-	width: calc(100% / var(--halflength) - 1% - 2 * var(--margin) - 1em);
-	max-width: calc(100% / var(--halflength) - 1% - 2 * var(--margin) - 1em);
+	width: calc(100% / var(--halflength) - 1% - 2 * var(--half-gap) - 1em);
+	max-width: calc(100% / var(--halflength) - 1% - 2 * var(--half-gap) - 1em);
 	position: relative;
 }
 
