@@ -2044,7 +2044,7 @@
 							class="line"
 							v-tooltip.left="{
 								popperClass: 'option-tooltip',
-								content: '<p>Share this session ID with everyone.</p>',
+								content: '<p>Display this session on the front page, allowing any visitor to join.</p>',
 								html: true,
 							}"
 						>
