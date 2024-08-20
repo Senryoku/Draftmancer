@@ -51,7 +51,7 @@
 						<span style="pointer-events: none">
 							(Partial: The complete log is locked until you share it)
 						</span>
-						<button @click="$emit('sharelog', draftLog)">
+						<button @click="emit('sharelog', draftLog)">
 							<font-awesome-icon icon="fa-solid fa-share-square"></font-awesome-icon> Share with session
 							and unlock
 						</button>
@@ -115,23 +115,23 @@
 				</span>
 			</div>
 			<transition name="scale">
-				<draft-log
+				<draft-log-component
 					v-if="expandedLogs[idx]"
 					:draftlog="draftLog"
 					:language="language"
 					:userID="userID"
 					:userName="userName"
-					@storelogs="$emit('storelogs')"
-					@loadDeck="(log: DraftLog, uid: UserID) => $emit('loadDeck', log, uid)"
-					@reloadBoosters="(str: string) => $emit('reloadBoosters', str)"
-				></draft-log>
+					@storelogs="emit('storelogs')"
+					@loadDeck="(log: DraftLog, uid: UserID) => emit('loadDeck', log, uid)"
+					@reloadBoosters="(str: string) => emit('reloadBoosters', str)"
+				></draft-log-component>
 			</transition>
 		</div>
 	</div>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType } from "vue";
+<script setup lang="ts">
+import { ref, computed } from "vue";
 import { ButtonColor, Alert } from "../alerts";
 import * as helper from "../helper";
 import Dropdown from "./Dropdown.vue";
@@ -142,143 +142,143 @@ import { UserID } from "@/IDTypes";
 import exportToMTGO from "../exportToMTGO";
 import { exportToMTGA } from "../exportToMTGA";
 
-export default defineComponent({
-	components: { DraftLog: DraftLogComponent, Dropdown },
-	props: {
-		draftLogs: { type: Array as PropType<DraftLog[]>, required: true },
-		language: { type: String as PropType<Language>, required: true },
-		userID: { type: String as PropType<UserID>, required: true },
-		userName: { type: String },
-	},
-	data: () => {
-		return {
-			expandedLogs: {} as { [idx: number]: boolean },
-			deckExportFormat: ".dek" as ".dek" | "MTGA" | "card names",
-			deckExportWithBasics: false,
-		};
-	},
-	computed: {
-		orderedLogs: function () {
-			return [...this.draftLogs].sort((lhs: DraftLog, rhs: DraftLog) => rhs.time - lhs.time);
-		},
-	},
-	methods: {
-		shareable(draftlog: DraftLog) {
-			// Returns true if the draftlog is shareable, i.e. the full log is locally available and is marked as delayed (other players in the session should only have a partial log)
-			return draftlog?.delayed && draftlog.users && Object.values(draftlog.users).every((user) => user.cards);
-		},
-		downloadLog(draftLog: DraftLog) {
-			helper.download(
-				`DraftLog_${draftLog.sessionID.replace(/\W/g, "")}.txt`,
-				JSON.stringify(draftLog, null, "\t")
-			);
-		},
-		hasDecks(draftLog: DraftLog) {
-			return Object.values(draftLog.users).some(
-				(user) =>
-					user.decklist !== undefined && (user.decklist.main?.length > 0 || user.decklist.side?.length > 0)
-			);
-		},
-		async downloadAllDecks(draftLog: DraftLog, format: ".dek" | "MTGA" | "card names", withBasics: boolean) {
-			for (const user of Object.values(draftLog.users)) {
-				if (user.decklist) {
-					const filename = `Session_${draftLog.sessionID.replace(/\W/g, "")}_Deck_${user.userName}`;
-					const main = user.decklist.main.map((cid) => draftLog.carddata[cid]);
-					const side = user.decklist.side.map((cid) => draftLog.carddata[cid]);
-					const lands = withBasics ? user.decklist.lands : undefined;
-					if (format === ".dek") {
-						await exportToMTGO(main, side, {
-							lands: lands,
-							filename: `${filename}.dek`,
-						});
-					} else if (format === "MTGA" || format === "card names") {
-						helper.download(
-							`${filename}.txt`,
-							exportToMTGA(main, side, this.language, lands, {
-								preferredBasics: "",
-								sideboardBasics: 0,
-								full: format === "MTGA",
-							})
-						);
-					}
-				}
-			}
-		},
-		deleteLog(draftLog: DraftLog) {
-			Alert.fire({
-				position: "center",
-				icon: "question",
-				title: "Delete log?",
-				text: `Are you sure you want to delete draft log for session '${draftLog.sessionID}'? This cannot be reverted.`,
-				showCancelButton: true,
-				confirmButtonColor: ButtonColor.Critical,
-				cancelButtonColor: ButtonColor.Safe,
-				confirmButtonText: "Delete",
-				cancelButtonText: "Cancel",
-				allowOutsideClick: false,
-			}).then((result) => {
-				if (result.isConfirmed) {
-					this.draftLogs.splice(
-						this.draftLogs.findIndex((e) => e === draftLog),
-						1
-					);
-					this.expandedLogs = {};
-					this.$emit("storelogs");
-				}
-			});
-		},
-		displayParsingError(e: string) {
-			Alert.fire({
-				icon: "error",
-				title: "Parsing Error",
-				text: "An error occurred during parsing. Please make sure that you selected the correct file.",
-				footer: `Full error: ${helper.escapeHTML(e)}`,
-			});
-		},
-		importLog(e: Event, callback: (str: string) => void) {
-			if (this.draftLogs.length >= 25) {
-				Alert.fire({
-					icon: "error",
-					title: "Limit Reached",
-					text: "Game logs history is limited to 25. Please delete a game log before importing a new one.",
+const props = defineProps<{
+	draftLogs: DraftLog[];
+	language: Language;
+	userID: UserID;
+	userName: string;
+}>();
+
+const emit = defineEmits<{
+	(e: "storelogs"): void;
+	(e: "loadDeck", log: DraftLog, userID: UserID): void;
+	(e: "sharelog", log: DraftLog): void;
+	(e: "importMTGOLog", log: string): void;
+	(e: "reloadBoosters", str: string): void;
+}>();
+
+const expandedLogs = ref<{ [idx: number]: boolean }>({});
+const deckExportFormat = ref<".dek" | "MTGA" | "card names">(".dek");
+const deckExportWithBasics = ref(false);
+
+const orderedLogs = computed(() => [...props.draftLogs].sort((lhs: DraftLog, rhs: DraftLog) => rhs.time - lhs.time));
+
+function shareable(draftlog: DraftLog) {
+	// Returns true if the draftlog is shareable, i.e. the full log is locally available and is marked as delayed (other players in the session should only have a partial log)
+	return draftlog?.delayed && draftlog.users && Object.values(draftlog.users).every((user) => user.cards);
+}
+
+function downloadLog(draftLog: DraftLog) {
+	helper.download(`DraftLog_${draftLog.sessionID.replace(/\W/g, "")}.txt`, JSON.stringify(draftLog, null, "\t"));
+}
+
+function hasDecks(draftLog: DraftLog) {
+	return Object.values(draftLog.users).some(
+		(user) => user.decklist !== undefined && (user.decklist.main?.length > 0 || user.decklist.side?.length > 0)
+	);
+}
+
+async function downloadAllDecks(draftLog: DraftLog, format: ".dek" | "MTGA" | "card names", withBasics: boolean) {
+	for (const user of Object.values(draftLog.users)) {
+		if (user.decklist) {
+			const filename = `Session_${draftLog.sessionID.replace(/\W/g, "")}_Deck_${user.userName}`;
+			const main = user.decklist.main.map((cid) => draftLog.carddata[cid]);
+			const side = user.decklist.side.map((cid) => draftLog.carddata[cid]);
+			const lands = withBasics ? user.decklist.lands : undefined;
+			if (format === ".dek") {
+				await exportToMTGO(main, side, {
+					lands: lands,
+					filename: `${filename}.dek`,
 				});
-				return;
+			} else if (format === "MTGA" || format === "card names") {
+				helper.download(
+					`${filename}.txt`,
+					exportToMTGA(main, side, props.language, lands, {
+						preferredBasics: "",
+						sideboardBasics: 0,
+						full: format === "MTGA",
+					})
+				);
 			}
-			let file = (e.target as HTMLInputElement)?.files?.[0];
-			if (e.target instanceof HTMLInputElement) e.target.value = "";
-			if (!file) return;
-			const reader = new FileReader();
-			reader.onload = (e) => {
-				try {
-					callback(e.target?.result as string);
-				} catch (e) {
-					this.displayParsingError(e as string);
-				}
-			};
-			reader.readAsText(file);
-		},
-		importDraftmancerLog(contents: string) {
-			let json = JSON.parse(contents);
-			if (json.users) {
-				this.draftLogs.push(json);
-				this.expandedLogs = {};
-				this.expandedLogs[this.orderedLogs.findIndex((e) => e === json)] = !this.expandedLogs[json];
-				this.$emit("storelogs");
-			} else this.displayParsingError("Missing required data.");
-		},
-		importMTGOLog(contents: string) {
-			this.$emit("importMTGOLog", contents);
-		},
-		toggle(idx: number) {
-			this.expandedLogs[idx] = !this.expandedLogs[idx];
-		},
-		printableType(draftLog: DraftLog) {
-			let r = draftLog.type ? draftLog.type : "Draft";
-			if (r === "Draft" && draftLog.teamDraft) return "Team Draft";
-			return r;
-		},
-	},
-});
+		}
+	}
+}
+
+function deleteLog(draftLog: DraftLog) {
+	Alert.fire({
+		position: "center",
+		icon: "question",
+		title: "Delete log?",
+		text: `Are you sure you want to delete draft log for session '${draftLog.sessionID}'? This cannot be reverted.`,
+		showCancelButton: true,
+		confirmButtonColor: ButtonColor.Critical,
+		cancelButtonColor: ButtonColor.Safe,
+		confirmButtonText: "Delete",
+		cancelButtonText: "Cancel",
+		allowOutsideClick: false,
+	}).then((result) => {
+		if (result.isConfirmed) {
+			props.draftLogs.splice(
+				props.draftLogs.findIndex((e) => e === draftLog),
+				1
+			);
+			expandedLogs.value = {};
+			emit("storelogs");
+		}
+	});
+}
+
+function displayParsingError(e: string) {
+	Alert.fire({
+		icon: "error",
+		title: "Parsing Error",
+		text: "An error occurred during parsing. Please make sure that you selected the correct file.",
+		footer: `Full error: ${helper.escapeHTML(e)}`,
+	});
+}
+
+function importLog(e: Event, callback: (str: string) => void) {
+	if (props.draftLogs.length >= 25) {
+		Alert.fire({
+			icon: "error",
+			title: "Limit Reached",
+			text: "Game logs history is limited to 25. Please delete a game log before importing a new one.",
+		});
+		return;
+	}
+	let file = (e.target as HTMLInputElement)?.files?.[0];
+	if (e.target instanceof HTMLInputElement) e.target.value = "";
+	if (!file) return;
+	const reader = new FileReader();
+	reader.onload = (e) => {
+		try {
+			callback(e.target?.result as string);
+		} catch (e) {
+			displayParsingError(e as string);
+		}
+	};
+	reader.readAsText(file);
+}
+
+function importDraftmancerLog(contents: string) {
+	let json = JSON.parse(contents);
+	if (json.users) {
+		props.draftLogs.push(json);
+		expandedLogs.value = {};
+		expandedLogs.value[orderedLogs.value.findIndex((e) => e === json)] = !expandedLogs.value[json];
+		emit("storelogs");
+	} else displayParsingError("Missing required data.");
+}
+
+const importMTGOLog = (contents: string) => emit("importMTGOLog", contents);
+
+const toggle = (idx: number) => (expandedLogs.value[idx] = !expandedLogs.value[idx]);
+
+function printableType(draftLog: DraftLog) {
+	let r = draftLog.type ? draftLog.type : "Draft";
+	if (r === "Draft" && draftLog.teamDraft) return "Team Draft";
+	return r;
+}
 </script>
 
 <style scoped>
