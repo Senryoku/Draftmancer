@@ -1211,13 +1211,25 @@ function setUseCustomCardList(userID: UserID, sessionID: SessionID, useCustomCar
 function setCustomCardListWithReplacement(
 	userID: UserID,
 	sessionID: SessionID,
-	customCardListWithReplacement: boolean
+	customCardListWithReplacement: unknown
 ) {
-	if (!SessionsSettingsProps.customCardListWithReplacement(customCardListWithReplacement)) return;
+	if (!isBoolean(customCardListWithReplacement)) return;
 	if (customCardListWithReplacement === Sessions[sessionID].customCardListWithReplacement) return;
 
 	Sessions[sessionID].customCardListWithReplacement = customCardListWithReplacement;
 	Sessions[sessionID].emitToConnectedNonOwners("sessionOptions", { customCardListWithReplacement });
+}
+
+function setCustomCardListDuplicateProtection(
+	userID: UserID,
+	sessionID: SessionID,
+	customCardListDuplicateProtection: unknown
+) {
+	if (!isBoolean(customCardListDuplicateProtection)) return;
+	if (customCardListDuplicateProtection === Sessions[sessionID].customCardListDuplicateProtection) return;
+
+	Sessions[sessionID].customCardListDuplicateProtection = customCardListDuplicateProtection;
+	Sessions[sessionID].emitToConnectedNonOwners("sessionOptions", { customCardListDuplicateProtection });
 }
 
 function setDoubleMastersMode(userID: UserID, sessionID: SessionID, doubleMastersMode: boolean) {
@@ -1611,6 +1623,10 @@ io.on("connection", async function (socket) {
 		socket.on("setCollationType", prepareSocketCallback(setCollationType, true));
 		socket.on("setUseCustomCardList", prepareSocketCallback(setUseCustomCardList, true));
 		socket.on("setCustomCardListWithReplacement", prepareSocketCallback(setCustomCardListWithReplacement, true));
+		socket.on(
+			"setCustomCardListDuplicateProtection",
+			prepareSocketCallback(setCustomCardListDuplicateProtection, true)
+		);
 		socket.on("setDoubleMastersMode", prepareSocketCallback(setDoubleMastersMode, true));
 		socket.on("setPickedCardsPerRound", prepareSocketCallback(setPickedCardsPerRound, true));
 		socket.on("setBurnedCardsPerRound", prepareSocketCallback(setBurnedCardsPerRound, true));

@@ -226,13 +226,27 @@ describe("Custom Card List Parsing", function () {
 
 	it(`should apply the provided default session settings.`, () => {
 		const session = new Session("sessionid", "clientid");
+		// Check session defaults
+		expect(session.customCardListWithReplacement).to.be.false;
+		expect(session.customCardListDuplicateProtection).to.be.true;
+		expect(session.boostersPerPlayer).to.be.equal(3);
+		expect(session.colorBalance).to.be.true;
+
 		const list = parseCardList(fs.readFileSync(`./test/data/SessionSettingsDefaults.txt`, "utf8"), {});
 		if (isSocketError(list)) {
 			expect(isSocketError(list), `Got ${JSON.stringify((list as SocketError).error)}`).to.be.false;
 			return;
 		}
+		// Check list settings
+		expect(list.settings?.withReplacement).to.be.true;
+		expect(list.settings?.duplicateProtection).to.be.false;
+		expect(list.settings?.boostersPerPlayer).to.be.equal(42);
+		expect(list.settings?.colorBalance).to.be.false;
+
+		// Make sure they're applied to the session
 		session.setCustomCardList(list);
 		expect(session.customCardListWithReplacement).to.be.true;
+		expect(session.customCardListDuplicateProtection).to.be.false;
 		expect(session.boostersPerPlayer).to.be.equal(42);
 		expect(session.colorBalance).to.be.false;
 	});

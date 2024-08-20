@@ -2,6 +2,7 @@
 {
 	"name": "Session Settings Test",
 	"withReplacement": true,
+	"duplicateProtection": false,
 	"boostersPerPlayer": 42,
 	"colorBalance": false,
 }

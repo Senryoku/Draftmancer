@@ -329,6 +329,7 @@ export default defineComponent({
 			drafting: false,
 			useCustomCardList: false,
 			customCardListWithReplacement: false,
+			customCardListDuplicateProtection: true,
 			customCardList: null as CustomCardList | null,
 			doubleMastersMode: false,
 			pickedCardsPerRound: 1,
@@ -4117,7 +4118,7 @@ export default defineComponent({
 			this.updateStoredSessionSettings({ colorBalance: this.colorBalance });
 		},
 		foil() {
-			if (this.userID != this.sessionOwner || !this.socket) return;
+			if (this.userID !== this.sessionOwner || !this.socket) return;
 			this.socket.emit("setFoil", this.foil);
 			this.updateStoredSessionSettings({ foil: this.foil });
 		},
@@ -4128,6 +4129,10 @@ export default defineComponent({
 		customCardListWithReplacement() {
 			if (this.userID !== this.sessionOwner || !this.socket) return;
 			this.socket.emit("setCustomCardListWithReplacement", this.customCardListWithReplacement);
+		},
+		customCardListDuplicateProtection() {
+			if (this.userID !== this.sessionOwner || !this.socket) return;
+			this.socket.emit("setCustomCardListDuplicateProtection", this.customCardListDuplicateProtection);
 		},
 		doubleMastersMode() {
 			if (this.userID !== this.sessionOwner || !this.socket) return;

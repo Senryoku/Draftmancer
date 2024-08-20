@@ -379,6 +379,7 @@ export interface ClientToServerEvents {
 	setCollationType: (preferredCollation: string) => void;
 	setUseCustomCardList: (useCustomCardList: boolean) => void;
 	setCustomCardListWithReplacement: (customCardListWithReplacement: boolean) => void;
+	setCustomCardListDuplicateProtection: (customCardListDuplicateProtection: boolean) => void;
 	setDoubleMastersMode: (doubleMastersMode: boolean) => void;
 	setPickedCardsPerRound: (pickedCardsPerRound: number) => void;
 	setBurnedCardsPerRound: (burnedCardsPerRound: number) => void;

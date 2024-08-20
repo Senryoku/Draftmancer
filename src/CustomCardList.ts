@@ -58,6 +58,7 @@ export function generateBoosterFromCustomCardList(
 		colorBalance?: boolean;
 		cardsPerBooster?: number;
 		withReplacement?: boolean;
+		duplicateProtection?: boolean;
 		playerCount?: number; // Allow correct ordering of boosters when using predetermined layouts
 		removeFromCardPool?: CardID[]; // Used by LoreSeeker draft effect
 	} = {}
@@ -74,14 +75,14 @@ export function generateBoosterFromCustomCardList(
 		return new MessageError("Error generating boosters", "No custom card list provided.");
 	}
 
-	const duplicateProtection = customCardList.settings?.duplicateProtection ?? true;
 	if (options.colorBalance === undefined) options.colorBalance = false;
+	if (options.duplicateProtection === undefined) options.duplicateProtection = true;
 	if (options.withReplacement === undefined) options.withReplacement = false;
 	const pickOptions = {
 		uniformAll: true,
 		withReplacement: options.withReplacement,
+		duplicateProtection: options.duplicateProtection,
 		getCard: generateCustomGetCardFunction(customCardList),
-		duplicateProtection: duplicateProtection,
 	};
 
 	// List is using custom layouts
