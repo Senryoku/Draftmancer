@@ -2697,8 +2697,7 @@ export default defineComponent({
 				}
 			});
 		},
-		// FIXME: Use a stricter type than 'string' for services.
-		importCube(service: string) {
+		importCube(service: "Cube Cobra" | "CubeArtisan") {
 			const defaultMatchCardVersions = (localStorage.getItem("import-match-versions") ?? "true") === "true";
 			const defaultCubeID = localStorage.getItem("import-cubeID") ?? "";
 			Alert.fire({
@@ -2735,18 +2734,12 @@ export default defineComponent({
 				},
 			}).then((result: SweetAlertResult<{ cubeID: string; matchVersions: boolean }>) => {
 				if (result.value && result.value.cubeID) {
-					const cube =
-						service === "Cube Cobra"
-							? {
-									name: "Imported Cube",
-									cubeCobraID: result.value.cubeID,
-									description: `Imported from Cube Cobra: '${result.value.cubeID}'`,
-								}
-							: {
-									name: "Imported Cube",
-									cubeArtisanID: result.value.cubeID,
-									description: `Imported from CubeArtisan: '${result.value.cubeID}'`,
-								};
+					const cube: CubeDescription = {
+						name: "Imported Cube",
+						description: `Imported from ${service}: '${result.value.cubeID}'`,
+					};
+					if (service === "Cube Cobra") cube.cubeCobraID = result.value.cubeID;
+					if (service === "CubeArtisan") cube.cubeArtisanID = result.value.cubeID;
 					this.selectCube(cube, result.value.matchVersions);
 				}
 			});
@@ -2773,7 +2766,11 @@ export default defineComponent({
 					showConfirmButton: false,
 					allowOutsideClick: false,
 				});
-				this.socket.emit("importCube", { cubeID: cubeID, service: service, matchVersions: matchVersions }, ack);
+				this.socket.emit(
+					"importCube",
+					{ name: cube.name, cubeID: cubeID, service: service, matchVersions: matchVersions },
+					ack
+				);
 			} else if (cube.name) {
 				this.socket.emit("loadLocalCustomCardList", cube.name, ack);
 			}

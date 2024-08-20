@@ -956,6 +956,8 @@ function parseCustomCardListEvent(
 function importCube(userID: UserID, sessionID: SessionID, data: unknown, ack: (result: SocketAck) => void) {
 	if (!isObject(data)) return ack?.(new SocketError("Invalid data"));
 	if (!hasProperty("service", isString)(data)) return ack?.(new SocketError("Invalid data: Missing service."));
+	if (!hasOptionalProperty("name", isString)(data))
+		return ack?.(new SocketError("Invalid data: name should be a string."));
 	if (!hasOptionalProperty("matchVersions", isBoolean)(data))
 		return ack?.(new SocketError("Invalid data: matchVersions should be a boolean."));
 	if (!["Cube Cobra", "CubeArtisan"].includes(data.service))
@@ -991,7 +993,7 @@ function importCube(userID: UserID, sessionID: SessionID, data: unknown, ack: (r
 	// Plain text card list
 	const fromTextList = (
 		sessionID: SessionID,
-		data: { service: string; cubeID: string },
+		data: { name?: string; service: string; cubeID: string },
 		ack: (result: SocketAck) => void
 	) => {
 		let url = null;
@@ -1002,7 +1004,7 @@ function importCube(userID: UserID, sessionID: SessionID, data: unknown, ack: (r
 			.get(url, { timeout: 3000 })
 			.then((response) => {
 				if (validateResponse(response, data, ack))
-					parseCustomCardList(Sessions[sessionID], response.data, {}, ack);
+					parseCustomCardList(Sessions[sessionID], response.data, { name: data.name }, ack);
 			})
 			.catch((err) =>
 				ack?.(
@@ -1030,7 +1032,13 @@ function importCube(userID: UserID, sessionID: SessionID, data: unknown, ack: (r
 					const converted = XMageToArena(response.data);
 					// Fallback to plain text list
 					if (!converted) fromTextList(sessionID, data, ack);
-					else parseCustomCardList(Sessions[sessionID], converted, { fallbackToCardName: true }, ack);
+					else
+						parseCustomCardList(
+							Sessions[sessionID],
+							converted,
+							{ name: data.name, fallbackToCardName: true },
+							ack
+						);
 				}
 			})
 			.catch((err) =>
