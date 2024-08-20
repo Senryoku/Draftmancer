@@ -2,13 +2,7 @@
 	<div v-if="draftlog.version === '2.0' || draftlog.version === '2.1'">
 		<div
 			v-if="!draftlog.delayed"
-			style="
-				display: flex;
-				justify-content: space-between;
-				align-items: center;
-				margin-left: 1em;
-				margin-right: 1em;
-			"
+			style="display: flex; justify-content: space-between; align-items: center; margin: 0.5em 1em"
 		>
 			<div>Click on a player to display more information.</div>
 			<div>
