@@ -513,6 +513,10 @@ function parseCustomCards(lines: string[], startIdx: number) {
 								text: `'${cid}', referenced in '${card.name}' ${effect.type} draft effect, is not a valid card.`,
 							});
 						effect.cards[i] = result.cardID;
+						// Insert additional copies of the card if needed.
+						for (let count = 1; count < result.count; ++count) {
+							effect.cards.splice(++i, 0, result.cardID);
+						}
 					}
 				}
 			}

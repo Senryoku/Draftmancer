@@ -7,6 +7,7 @@ import {
 	hasOptionalProperty,
 	hasProperty,
 	isArrayOf,
+	isBoolean,
 	isInteger,
 	isNumber,
 	isObject,
@@ -251,7 +252,13 @@ export function validateCustomCard(inputCard: any): SocketError | Card {
 					if (!hasOptionalProperty("count", isInteger)(entry)) {
 						return valErr(
 							`Invalid Parameter`,
-							`Invalid 'AddCards' entry in 'draft_effects' of custom card. Missing or invalid 'count' parameter.`
+							`Invalid 'AddCards' entry in 'draft_effects' of custom card. Invalid 'count' parameter.`
+						);
+					}
+					if (!hasOptionalProperty("duplicateProtection", isBoolean)(entry)) {
+						return valErr(
+							`Invalid Parameter`,
+							`Invalid 'AddCards' entry in 'draft_effects' of custom card. Invalid 'duplicateProtection' parameter.`
 						);
 					}
 					if (entry.count) {
@@ -267,6 +274,7 @@ export function validateCustomCard(inputCard: any): SocketError | Card {
 						type: entry.type,
 						count: entry.count ?? entry.cards.length,
 						cards: entry.cards,
+						duplicateProtection: entry.duplicateProtection ?? true,
 					});
 				} else {
 					return valErr(

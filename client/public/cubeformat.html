@@ -576,7 +576,8 @@ AddCards            <comment># Adds additional cards to your draft pool.</commen
 	{
 		"type": "AddCards",
 		"count": 1, <comment># Optional, if omitted, all cards from the following array will be added. Otherwise, 'count' random cards will be added to your pool.</comment>
-		"cards": ["Card Name 1", "Card Name 2"...]
+		"cards": ["Card Name 1", "Card Name 2"...],
+		"duplicateProtection": true, <comment># Optional, defaults to true. Duplicates of the same card can be used to increase its probability of being picked.</comment>
 	}
 ]
 </pre>

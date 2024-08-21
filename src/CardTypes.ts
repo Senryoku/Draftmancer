@@ -58,7 +58,7 @@ export type DraftEffect =
 	| {
 			type: SimpleDraftEffectType;
 	  }
-	| { type: ParameterizedDraftEffectType.AddCards; count: number; cards: CardID[] };
+	| { type: ParameterizedDraftEffectType.AddCards; count: number; cards: CardID[]; duplicateProtection: boolean };
 
 export type CardFace = {
 	name: string;

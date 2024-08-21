@@ -2343,12 +2343,23 @@ export class Session implements IIndexable {
 						}
 						case ParameterizedDraftEffectType.AddCards: {
 							const additionalPicksCIDs: CardID[] = [];
-							if (effect.count < effect.cards.length) {
-								const availableCards = structuredClone(effect.cards);
-								random.shuffle(availableCards);
-								additionalPicksCIDs.push(...availableCards.slice(0, effect.count));
-							} else {
+							if (effect.count === effect.cards.length) {
+								// Assume the user doesn't expect any randomness in this case.
 								additionalPicksCIDs.push(...effect.cards);
+							} else {
+								let availableCards: CardID[] = [];
+								for (let i = 0; i < effect.count; i++) {
+									if (availableCards.length === 0) {
+										availableCards = structuredClone(effect.cards);
+										random.shuffle(availableCards);
+									}
+									const picked = availableCards.splice(0, 1)[0];
+									// A card can be specified multiple times to increase its probability of being picked.
+									// Protect from duplicates by default, except when explicitely disabled.
+									if (effect.duplicateProtection)
+										availableCards = availableCards.filter((cid) => cid !== picked);
+									additionalPicksCIDs.push(picked);
+								}
 							}
 							const additionalPicks = additionalPicksCIDs.map((cid) =>
 								getUnique(cid, { getCard: this.getCustomGetCardFunction() })
