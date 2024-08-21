@@ -2,7 +2,8 @@
 	{
 		"date": "20/08/2024",
 		"notes": [
-			"Added 'Duplicate Protection' setting override for custom card lists in the UI."
+			"Added 'Duplicate Protection' setting override for custom card lists in the UI.",
+			"Added 'Export/Reload Boosters' feature to draft logs to help replaying drafts."
 		]
 	},
 	{
