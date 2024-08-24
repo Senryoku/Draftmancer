@@ -8,33 +8,14 @@
 				"node": true
 			},
 			"parser": "@typescript-eslint/parser",
-			"extends": [
-				"eslint:recommended",
-				"plugin:@typescript-eslint/recommended",
-				"plugin:import/recommended",
-				"plugin:import/typescript",
-				"prettier"
-			],
-			"plugins": ["import", "@typescript-eslint"],
+			"extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended", "prettier"],
+			"plugins": ["@typescript-eslint"],
 			"rules": {
 				"no-param-reassign": "warn",
 				"no-empty-function": "off",
 				"@typescript-eslint/no-empty-function": "off",
 				"@typescript-eslint/no-inferrable-types": ["off", { "ignoreRestArgs": true }],
-				"@typescript-eslint/no-non-null-assertion": "off",
-				"import/extensions": [
-					"error",
-					"ignorePackages",
-					{
-						"js": "ignorePackages",
-						"ts": "never"
-					}
-				]
-			},
-			"settings": {
-				"import/resolver": {
-					"typescript": {} // this loads <rootdir>/tsconfig.json to eslint
-				}
+				"@typescript-eslint/no-non-null-assertion": "off"
 			}
 		},
 		// Client side
