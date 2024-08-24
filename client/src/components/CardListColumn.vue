@@ -1,6 +1,6 @@
 <template>
 	<div class="card-column" v-show="column.length > 0">
-		<card
+		<card-component
 			v-for="(card, index) in column"
 			:key="index"
 			:card="{ ...card, uniqueID: index }"
@@ -28,43 +28,45 @@
 				></font-awesome-icon>
 			</div>
 			<div v-if="card.count && card.count > 1" class="card-count">{{ card.count }} x</div>
-		</card>
+		</card-component>
 	</div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import { Language } from "@/Types";
-import { defineComponent, PropType } from "vue";
+import { computed } from "vue";
 import { Card, CardID, PlainCollection } from "@/CardTypes";
 import MTGAAlternates from "../MTGAAlternates";
 import CardComponent from "./Card.vue";
 
-export default defineComponent({
-	props: {
-		column: { type: Array as PropType<(Card & { count: number })[]>, required: true },
-		language: { type: String as PropType<Language>, required: true },
-		checkcollection: { type: Boolean },
-		collection: { type: Object as PropType<PlainCollection> },
-	},
-	components: { Card: CardComponent },
-	computed: {
-		missingCard() {
-			if (!this.collection) return {};
+const props = withDefaults(
+	defineProps<{
+		column: (Card & { count: number })[];
+		language: Language;
+		checkcollection?: boolean;
+		collection?: PlainCollection;
+	}>(),
+	{
+		checkcollection: false,
+		collection: undefined,
+	}
+);
 
-			let r: { [cid: CardID]: "Present" | "Missing" | "NonExistent" | "Equivalent" } = {};
-			for (let card of this.column) {
-				if (card.arena_id && card.arena_id in this.collection) {
-					r[card.id] = "Present";
-				} else {
-					const alternates = MTGAAlternates[card.name];
-					if (!alternates || alternates.length === 0) r[card.id] = "NonExistent";
-					else if (alternates.some((cid) => this.collection![cid] > 0)) r[card.id] = "Equivalent";
-					else r[card.id] = "Missing";
-				}
-			}
-			return r;
-		},
-	},
+const missingCard = computed(() => {
+	if (!props.collection) return {};
+
+	let r: { [cid: CardID]: "Present" | "Missing" | "NonExistent" | "Equivalent" } = {};
+	for (let card of props.column) {
+		if (card.arena_id && card.arena_id in props.collection) {
+			r[card.id] = "Present";
+		} else {
+			const alternates = MTGAAlternates[card.name];
+			if (!alternates || alternates.length === 0) r[card.id] = "NonExistent";
+			else if (alternates.some((cid) => props.collection![cid] > 0)) r[card.id] = "Equivalent";
+			else r[card.id] = "Missing";
+		}
+	}
+	return r;
 });
 </script>
 
