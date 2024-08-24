@@ -121,6 +121,7 @@ export const Sounds: { [name: string]: HTMLAudioElement } = {
 const localStorageSettingsKey = "draftmancer-settings";
 const localStorageSessionSettingsKey = "draftmancer-session-settings";
 const sessionStorageWindowSpecificDataKey = "draftmancer-window-specific-data";
+const localStorageDraftLogsKey = "draftLogs-smol";
 
 const defaultUserName = `Player_${randomStr4()}`;
 
@@ -3387,28 +3388,14 @@ export default defineComponent({
 			this.storeDraftLogsTimeout = setTimeout(this.doStoreDraftLogs, 5000);
 		},
 		doStoreDraftLogs() {
-			// Backward compatibility: Remove previous version of the compression.
-			// FIXME: Remove this at some point.
-			if (localStorage.getItem("draftLogs")) localStorage.removeItem("draftLogs");
-
 			compress(JSON.stringify(this.draftLogs))
 				.then((str: string) => {
-					localStorage.setItem("draftLogs-smol", str);
+					localStorage.setItem(localStorageDraftLogsKey, str);
 					this.storeDraftLogsTimeout = null;
 					console.log("Stored Draft Logs.");
 				})
 				.catch((e: Error) => {
 					console.error("Error compressing draft logs using smol-string: ", e);
-					// Backward compatibility
-					console.error("Fallingback to lz-string.");
-					// FIXME: Remove this at some point.
-					const worker = new Worker(new URL("./logstore.worker.ts", import.meta.url));
-					worker.onmessage = (ev) => {
-						localStorage.setItem("draftLogs", ev.data);
-						this.storeDraftLogsTimeout = null;
-						console.log("Stored Draft Logs.");
-					};
-					worker.postMessage(["compress", toRaw(this.draftLogs)]);
 				});
 		},
 		toggleLimitDuplicates() {
@@ -3840,53 +3827,28 @@ export default defineComponent({
 				}
 			}
 
-			// Backward compatibilty: Retrieve draft logs using the old compression method and convert them to the new one.
-			// FIXME: Delete this at some point.
-			const storedLogs = localStorage.getItem("draftLogs");
-			if (storedLogs) {
-				const worker = new Worker(new URL("./logstore.worker.ts", import.meta.url));
-				worker.onmessage = (e) => {
-					this.draftLogs = e.data as DraftLog[];
-					console.log(`Loaded ${this.draftLogs.length} saved draft logs.`);
-					// Asks the server if the last log was updated while we were offline.
-					const logsForThisSession = this.draftLogs.filter((l) => l.sessionID === this.sessionID);
-					if (logsForThisSession.length > 0) {
-						const log = logsForThisSession.reduce((prev, curr) => (prev.time > curr.time ? prev : curr)); // Get the latest log
-						this.socket?.emit("retrieveUpdatedDraftLogs", log.sessionID, log.time, log.lastUpdated);
-					}
-					console.log("Converting stored logs to smol-string compression...");
-					this.doStoreDraftLogs();
-				};
-				worker.postMessage(["decompress", storedLogs]);
-			} else {
-				// New compressing method
-				const storedLogsSmol = localStorage.getItem("draftLogs-smol");
-				if (storedLogsSmol) {
-					// Workaround what I can only assume is a Firefox bug. Don't ask me how many hours I lost on this.
-					setTimeout(() => {
-						decompress(storedLogsSmol)
-							.then((str: string) => {
-								this.draftLogs = JSON.parse(str);
-								console.log(`Loaded ${this.draftLogs.length} saved draft logs.`);
-								// Asks the server if the last log was updated while we were offline.
-								const logsForThisSession = this.draftLogs.filter((l) => l.sessionID === this.sessionID);
-								if (logsForThisSession.length > 0) {
-									const log = logsForThisSession.reduce((prev, curr) =>
-										prev.time > curr.time ? prev : curr
-									); // Get the latest log
-									this.socket?.emit(
-										"retrieveUpdatedDraftLogs",
-										log.sessionID,
-										log.time,
-										log.lastUpdated
-									);
-								}
-							})
-							.catch((e: unknown) => {
-								console.error("smol-string decompress threw an error: ", e);
-							});
-					}, 0);
-				}
+			// Retrieve game logs from local storage and decompress them.
+			const storedLogsSmol = localStorage.getItem(localStorageDraftLogsKey);
+			if (storedLogsSmol) {
+				// Workaround what I can only assume is a Firefox bug. Don't ask me how many hours I lost on this.
+				setTimeout(() => {
+					decompress(storedLogsSmol)
+						.then((str: string) => {
+							this.draftLogs = JSON.parse(str);
+							console.log(`Loaded ${this.draftLogs.length} saved draft logs.`);
+							// Asks the server if the last log was updated while we were offline.
+							const logsForThisSession = this.draftLogs.filter((l) => l.sessionID === this.sessionID);
+							if (logsForThisSession.length > 0) {
+								const log = logsForThisSession.reduce((prev, curr) =>
+									prev.time > curr.time ? prev : curr
+								); // Get the latest log
+								this.socket?.emit("retrieveUpdatedDraftLogs", log.sessionID, log.time, log.lastUpdated);
+							}
+						})
+						.catch((e: unknown) => {
+							console.error("smol-string decompress threw an error: ", e);
+						});
+				}, 0);
 			}
 
 			// If we're waiting on a storeDraftLogsTimeout, ask the user to wait and trigger the compressiong/storing immediatly
