@@ -58,7 +58,8 @@ onMounted(() => {
 	// We can't use v-show or mounted will be called while the element is hidden and fitAll will do nothing.
 	// There's no way to know when the element is visible becasue of v-show (apart from tracking it ourselves).
 	// NOTE: Fitting a lot of cards simultaneously is very slow in Chrome (e.g. for a cube list). delayTextFit is a hack to stagger these calls and not block the main thread.
-	if (props.delayTextFit) idleRequest = window.requestIdleCallback(fitAll, { timeout: 3000 });
+	if (props.delayTextFit && window.requestIdleCallback)
+		idleRequest = window.requestIdleCallback(fitAll, { timeout: 3000 });
 	else fitAll();
 });
 
