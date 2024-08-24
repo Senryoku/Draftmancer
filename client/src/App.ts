@@ -34,6 +34,8 @@ import Swal, { SweetAlertIcon, SweetAlertOptions, SweetAlertResult } from "sweet
 import { SortableEvent } from "sortablejs";
 import { createCommonApp } from "./appCommon";
 
+import DefaultCardback from "./assets/img/cardback.webp";
+
 // @ts-expect-error Don't want to debug why TS doesn't understand this for now. Import works fine.
 import { compress, decompress } from "smol-string/worker";
 // This is an issue with TS moduleResolution, see:
@@ -472,7 +474,7 @@ export default defineComponent({
 				this.userID = newID;
 				this.socket.io.opts.query!.userID = newID;
 				const doNotShowAgainKey = "alreadyConnectedWarning-doNotShowAgain";
-				const doNotShowAgain = localStorage.getItem(doNotShowAgainKey) === "true" ?? false;
+				const doNotShowAgain = (localStorage.getItem(doNotShowAgainKey) ?? "false") === "true";
 				if (!doNotShowAgain) {
 					const r = await Alert.fire({
 						icon: "warning",
@@ -3799,9 +3801,8 @@ export default defineComponent({
 		},
 
 		cardBackImage(): string {
-			if (this.useCustomCardList)
-				return this.customCardList?.settings?.cardBack ?? require(`./assets/img/cardback.webp`);
-			return require(`./assets/img/cardback.webp`);
+			if (this.useCustomCardList) return this.customCardList?.settings?.cardBack ?? DefaultCardback;
+			return DefaultCardback;
 		},
 		cardTitleHeightFactor(): number {
 			if (this.useCustomCardList) return this.customCardList?.settings?.cardTitleHeightFactor ?? 1.0;

@@ -69,6 +69,7 @@ export default defineComponent({
 				}
 			}
 		} catch (e) {
+			console.error(e);
 			this.error = "Client-side error.";
 		}
 	},

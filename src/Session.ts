@@ -2698,12 +2698,12 @@ export class Session implements IIndexable {
 				// Workaround for a very specific case where everyone disconnects during a review phase, leaving everyone waiting for the next round to start.
 				if (!this.draftState.pendingTimeout) setImmediate(this.distributeBoosters.bind(this));
 				else {
-					// FIXME: This is clearly non-standard, but it works in Node 18.
+					// FIXME: This is clearly non-standard, but it should work in Node 18, 20 and 22.
 					const remainingTime =
 						((this.draftState.pendingTimeout as unknown as { _idleStart: number })._idleStart +
 							(this.draftState.pendingTimeout as unknown as { _idleTimeout: number })._idleTimeout) /
 							1000 -
-							process.uptime() ?? 0;
+						process.uptime();
 					this.forUsers((uid) => Connections[uid]?.socket.emit("startReviewPhase", remainingTime));
 				}
 			}

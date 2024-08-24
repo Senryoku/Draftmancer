@@ -117,11 +117,14 @@ const Comparators: { [name: string]: ComparatorType } = {
 };
 
 export function columnCMC(cards: Card[]) {
-	const a = cards.reduce((acc, item) => {
-		if (!acc[item.cmc]) acc[item.cmc] = [];
-		acc[item.cmc].push(item);
-		return acc;
-	}, {} as { [cmc: number]: Card[] });
+	const a = cards.reduce(
+		(acc, item) => {
+			if (!acc[item.cmc]) acc[item.cmc] = [];
+			acc[item.cmc].push(item);
+			return acc;
+		},
+		{} as { [cmc: number]: Card[] }
+	);
 	for (const col in a) orderByArenaInPlace(a[col]);
 	return a;
 }

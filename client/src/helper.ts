@@ -182,7 +182,7 @@ export function sortableUpdate<T>(e: SortableEvent, arr: T[]) {
 	} else entries.push({ item: arr[e.oldIndex!], oldIndex: e.oldIndex!, newIndex: e.newIndex! });
 
 	entries.sort((l, r) => r.oldIndex - l.oldIndex);
-	for (const { oldIndex } of entries) arr.splice(oldIndex, 1)[0];
+	for (const { oldIndex } of entries) arr.splice(oldIndex, 1);
 	entries.sort((l, r) => l.newIndex - r.newIndex);
 	for (const { item, newIndex } of entries) arr.splice(Math.min(newIndex, arr.length), 0, item);
 }
