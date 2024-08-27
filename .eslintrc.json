@@ -18,6 +18,12 @@
 				"@typescript-eslint/no-non-null-assertion": "off"
 			}
 		},
+		{
+			"files": ["test/**/*"],
+			"rules": {
+				"@typescript-eslint/no-unused-expressions": "off" // Conflicts with chai
+			}
+		},
 		// Client side
 		{
 			"files": "client/**/*",

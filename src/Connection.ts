@@ -1,5 +1,3 @@
-"use strict";
-
 import { Socket } from "socket.io";
 import { UserID, SessionID } from "./IDTypes.js";
 import { CardID, CardPool, UniqueCard } from "./CardTypes.js";

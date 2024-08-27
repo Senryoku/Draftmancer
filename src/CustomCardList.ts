@@ -229,6 +229,7 @@ export function generateBoosterFromCustomCardList(
 
 					booster.push(...pickedCards);
 				} catch (e) {
+					console.error("generateBoosterFromCustomCardList error: ", e);
 					return new MessageError(
 						"Error generating boosters",
 						"An error occured while generating boosters. Make sure there are enough cards in the list."
