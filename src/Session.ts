@@ -230,12 +230,10 @@ export class Session implements IIndexable {
 		} else {
 			this.owner = newOwnerID;
 		}
-		this.forUsers((user) =>
-			Connections[user]?.socket.emit(
-				"sessionOwner",
-				this.owner,
-				this.owner && this.owner in Connections ? Connections[this.owner].userName : null
-			)
+		this.emitToConnectedUsers(
+			"sessionOwner",
+			this.owner,
+			this.owner && this.owner in Connections ? Connections[this.owner].userName : null
 		);
 	}
 
@@ -291,12 +289,10 @@ export class Session implements IIndexable {
 		const disconnectedUsersData: { [uid: string]: { userName: string } } = {};
 		for (const uid in this.disconnectedUsers)
 			disconnectedUsersData[uid] = { userName: this.disconnectedUsers[uid].userName };
-		this.forUsers((u) =>
-			Connections[u]?.socket.emit("userDisconnected", {
-				owner: this.owner,
-				disconnectedUsers: disconnectedUsersData,
-			})
-		);
+		this.emitToConnectedUsers("userDisconnected", {
+			owner: this.owner,
+			disconnectedUsers: disconnectedUsersData,
+		});
 	}
 
 	remUser(userID: UserID) {
@@ -377,16 +373,14 @@ export class Session implements IIndexable {
 			this.boostersPerPlayer = cardList.settings.boostersPerPlayer;
 		if (cardList.settings?.colorBalance !== undefined) this.colorBalance = cardList.settings.colorBalance;
 
-		this.forUsers((uid: UserID) =>
-			Connections[uid]?.socket.emit("sessionOptions", {
-				useCustomCardList: this.useCustomCardList,
-				customCardList: this.customCardList,
-				customCardListWithReplacement: this.customCardListWithReplacement,
-				customCardListDuplicateProtection: this.customCardListDuplicateProtection,
-				boostersPerPlayer: this.boostersPerPlayer,
-				colorBalance: this.colorBalance,
-			})
-		);
+		this.emitToConnectedUsers("sessionOptions", {
+			useCustomCardList: this.useCustomCardList,
+			customCardList: this.customCardList,
+			customCardListWithReplacement: this.customCardListWithReplacement,
+			customCardListDuplicateProtection: this.customCardListDuplicateProtection,
+			boostersPerPlayer: this.boostersPerPlayer,
+			colorBalance: this.colorBalance,
+		});
 	}
 
 	setTeamDraft(teamDraft: boolean) {
@@ -396,34 +390,24 @@ export class Session implements IIndexable {
 				this.bots = 0;
 			}
 
-			this.forUsers((u) =>
-				Connections[u]?.socket.emit("sessionOptions", {
-					teamDraft: this.teamDraft,
-					bots: this.bots,
-				})
-			);
+			this.emitToConnectedUsers("sessionOptions", {
+				teamDraft: this.teamDraft,
+				bots: this.bots,
+			});
 		}
 	}
 
 	setDisableBotSuggestions(disableBotSuggestions: boolean) {
 		if (this.disableBotSuggestions !== disableBotSuggestions) {
 			this.disableBotSuggestions = disableBotSuggestions;
-			this.forUsers((u) =>
-				Connections[u]?.socket.emit("sessionOptions", {
-					disableBotSuggestions: this.disableBotSuggestions,
-				})
-			);
+			this.emitToConnectedUsers("sessionOptions", { disableBotSuggestions: this.disableBotSuggestions });
 		}
 	}
 
 	setRandomizeSeatingOrder(randomizeSeatingOrder: boolean) {
 		if (this.randomizeSeatingOrder !== randomizeSeatingOrder) {
 			this.randomizeSeatingOrder = randomizeSeatingOrder;
-			this.forUsers((u) =>
-				Connections[u]?.socket.emit("sessionOptions", {
-					randomizeSeatingOrder: this.randomizeSeatingOrder,
-				})
-			);
+			this.emitToConnectedUsers("sessionOptions", { randomizeSeatingOrder: this.randomizeSeatingOrder });
 		}
 	}
 
@@ -443,7 +427,7 @@ export class Session implements IIndexable {
 	setUsePredeterminedBoosters(value: boolean) {
 		if (this.usePredeterminedBoosters === value) return;
 		this.usePredeterminedBoosters = value;
-		this.forUsers((uid) => Connections[uid]?.socket.emit("sessionOptions", { usePredeterminedBoosters: value }));
+		this.emitToConnectedUsers("sessionOptions", { usePredeterminedBoosters: value });
 	}
 
 	setPredeterminedBoosters(text: string): SocketAck {
@@ -883,15 +867,13 @@ export class Session implements IIndexable {
 		}
 
 		// Send to all session users
-		this.forUsers((user) => {
-			if (Connections[user]) {
-				Connections[user].socket.emit(
-					"sessionOwner",
-					this.owner,
-					this.owner && this.owner in Connections ? Connections[this.owner].userName : null
-				);
-				Connections[user].socket.emit("sessionUsers", userInfo);
-			}
+		this.forUsers((uid) => {
+			Connections[uid]?.socket.emit(
+				"sessionOwner",
+				this.owner,
+				this.owner && this.owner in Connections ? Connections[this.owner].userName : null
+			);
+			Connections[uid]?.socket.emit("sessionUsers", userInfo);
 		});
 	}
 
@@ -922,11 +904,10 @@ export class Session implements IIndexable {
 		this.drafting = true;
 		this.disconnectedUsers = {};
 		this.draftState = new WinstonDraftState(this.getSortedHumanPlayersIDs(), boosters, pileCount);
+		const virtualPlayersData = this.getSortedHumanPlayerData();
 		for (const uid of this.users) {
 			Connections[uid].pickedCards = { main: [], side: [] };
-			Connections[uid].socket.emit("sessionOptions", {
-				virtualPlayersData: this.getSortedHumanPlayerData(),
-			});
+			Connections[uid].socket.emit("sessionOptions", { virtualPlayersData });
 			Connections[uid].socket.emit("startWinstonDraft", (this.draftState as WinstonDraftState).syncData(uid));
 		}
 
@@ -940,7 +921,7 @@ export class Session implements IIndexable {
 		logSession("WinstonDraft", this);
 		this.finalizeLogs();
 		this.sendLogs();
-		for (const user of this.users) Connections[user].socket.emit("winstonDraftEnd");
+		this.emitToConnectedUsers("winstonDraftEnd");
 		this.cleanDraftState();
 	}
 
@@ -1052,7 +1033,7 @@ export class Session implements IIndexable {
 		logSession("WinchesterDraft", this);
 		this.finalizeLogs();
 		this.sendLogs();
-		for (const user of this.users) Connections[user].socket.emit("winchesterDraftEnd");
+		this.emitToConnectedUsers("winchesterDraftEnd");
 		this.cleanDraftState();
 	}
 
@@ -1074,10 +1055,7 @@ export class Session implements IIndexable {
 		++s.round;
 
 		if (s.done()) this.endWinchesterDraft();
-		else {
-			const syncData = s.syncData();
-			for (const uid of this.users) Connections[uid]?.socket.emit("winchesterDraftSync", syncData);
-		}
+		else this.emitToConnectedUsers("winchesterDraftSync", s.syncData());
 
 		return new SocketAck();
 	}
@@ -1135,12 +1113,10 @@ export class Session implements IIndexable {
 			exchangeCount,
 			roundCount
 		);
-		const playerData = this.getSortedHumanPlayerData();
+		const virtualPlayersData = this.getSortedHumanPlayerData();
 		for (const uid of this.users) {
 			Connections[uid].pickedCards = { main: [], side: [] };
-			Connections[uid].socket.emit("sessionOptions", {
-				virtualPlayersData: playerData,
-			});
+			Connections[uid].socket.emit("sessionOptions", { virtualPlayersData });
 			const syncData = (this.draftState as HousmanDraftState).syncData(uid);
 			Connections[uid].socket.emit("startHousmanDraft", syncData);
 		}
@@ -1153,7 +1129,7 @@ export class Session implements IIndexable {
 		if (!this.drafting || !isHousmanDraftState(this.draftState)) return;
 		logSession("HousmanDraft", this);
 		this.sendLogs();
-		this.forUsers((uid) => Connections[uid].socket.emit("housmanDraftEnd"));
+		this.emitToConnectedUsers("housmanDraftEnd");
 		this.cleanDraftState();
 	}
 
@@ -1185,14 +1161,12 @@ export class Session implements IIndexable {
 
 		const nextRound = s.exchange(handIndex, revealedCardsIndex);
 
-		this.forUsers((uid) =>
-			Connections[uid].socket.emit(
-				"housmanDraftExchange",
-				revealedCardsIndex,
-				s.revealedCards[revealedCardsIndex],
-				s.currentPlayer(),
-				s.exchangeNum
-			)
+		this.emitToConnectedUsers(
+			"housmanDraftExchange",
+			revealedCardsIndex,
+			s.revealedCards[revealedCardsIndex],
+			s.currentPlayer(),
+			s.exchangeNum
 		);
 
 		if (nextRound) {
@@ -1203,7 +1177,7 @@ export class Session implements IIndexable {
 			}
 
 			if (s.nextRound()) this.endHousmanDraft();
-			else this.forUsers((uid) => Connections[uid].socket.emit("housmanDraftSync", s.syncData(uid)));
+			else this.forUsers((uid) => Connections[uid]?.socket.emit("housmanDraftSync", s.syncData(uid)));
 		}
 
 		return new SocketAck();
@@ -1285,11 +1259,10 @@ export class Session implements IIndexable {
 			return new SocketAck(s.error);
 		}
 
+		const virtualPlayersData = this.getSortedHumanPlayerData();
 		for (const user of this.users) {
 			Connections[user].pickedCards = { main: [], side: [] };
-			Connections[user].socket.emit("sessionOptions", {
-				virtualPlayersData: this.getSortedHumanPlayerData(),
-			});
+			Connections[user].socket.emit("sessionOptions", { virtualPlayersData });
 			Connections[user].socket.emit("startGridDraft", s.syncData());
 		}
 
@@ -1317,7 +1290,7 @@ export class Session implements IIndexable {
 			// Send the current state before re-filling for animation purposes.
 			const syncData = s.syncData();
 			syncData.currentPlayer = null; // Set current player to null as a flag to delay the display update
-			for (const user of this.users) Connections[user].socket.emit("gridDraftNextRound", syncData);
+			this.emitToConnectedUsers("gridDraftNextRound", syncData);
 
 			const additionalCards = s.boosters[0].slice(9);
 			s.boosters[0] = s.boosters[0].slice(0, 9);
@@ -1328,7 +1301,7 @@ export class Session implements IIndexable {
 			// Share the last pick before advancing to the next booster.
 			const syncData = s.syncData();
 			syncData.currentPlayer = null; // Set current player to null as a flag to delay the display update
-			for (const user of this.users) Connections[user].socket.emit("gridDraftNextRound", syncData);
+			this.emitToConnectedUsers("gridDraftNextRound", syncData);
 
 			s.boosters.shift();
 			if (s.boosters.length === 0) {
@@ -1391,12 +1364,12 @@ export class Session implements IIndexable {
 		this.drafting = true;
 		this.disconnectedUsers = {};
 		this.draftState = new RochesterDraftState(this.getSortedHumanPlayersIDs(), boosters);
+		const virtualPlayersData = this.getSortedHumanPlayerData();
+		const syncData = (this.draftState as RochesterDraftState).syncData();
 		for (const user of this.users) {
 			Connections[user].pickedCards = { main: [], side: [] };
-			Connections[user].socket.emit("sessionOptions", {
-				virtualPlayersData: this.getSortedHumanPlayerData(),
-			});
-			Connections[user].socket.emit("startRochesterDraft", (this.draftState as RochesterDraftState).syncData());
+			Connections[user].socket.emit("sessionOptions", { virtualPlayersData });
+			Connections[user].socket.emit("startRochesterDraft", syncData);
 		}
 
 		this.initLogs("Rochester Draft", boosters);
@@ -1514,11 +1487,10 @@ export class Session implements IIndexable {
 		this.draftState = new RotisserieDraftState(this.getSortedHumanPlayersIDs(), cards, cardsPerPlayer);
 		if (!isRotisserieDraftState(this.draftState)) return new SocketError("Internal Error");
 		this.drafting = true;
+		const virtualPlayersData = this.getSortedHumanPlayerData();
 		for (const user of this.users) {
 			Connections[user].pickedCards = { main: [], side: [] };
-			Connections[user].socket.emit("sessionOptions", {
-				virtualPlayersData: this.getSortedHumanPlayerData(),
-			});
+			Connections[user].socket.emit("sessionOptions", { virtualPlayersData });
 			Connections[user].socket.emit("startRotisserieDraft", this.draftState.syncData(user));
 		}
 
@@ -1560,13 +1532,7 @@ export class Session implements IIndexable {
 		if (s.done()) {
 			this.endRotisserieDraft();
 		} else {
-			for (const user of this.users)
-				Connections[user]?.socket.emit(
-					"rotisserieDraftUpdateState",
-					card.uniqueID,
-					card.owner,
-					s.currentPlayer()
-				);
+			this.emitToConnectedUsers("rotisserieDraftUpdateState", card.uniqueID, card.owner, s.currentPlayer());
 		}
 		return new SocketAck();
 	}
@@ -1612,15 +1578,12 @@ export class Session implements IIndexable {
 			revealCorners,
 			revealBorders
 		);
+		const virtualPlayersData = this.getSortedHumanPlayerData();
+		const syncData = (this.draftState as MinesweeperDraftState).syncData();
 		for (const user of this.users) {
 			Connections[user].pickedCards = { main: [], side: [] };
-			Connections[user].socket.emit("sessionOptions", {
-				virtualPlayersData: this.getSortedHumanPlayerData(),
-			});
-			Connections[user].socket.emit(
-				"startMinesweeperDraft",
-				(this.draftState as MinesweeperDraftState).syncData()
-			);
+			Connections[user].socket.emit("sessionOptions", { virtualPlayersData });
+			Connections[user].socket.emit("startMinesweeperDraft", syncData);
 		}
 
 		return new SocketAck();
@@ -1649,24 +1612,18 @@ export class Session implements IIndexable {
 
 		if (s.advance()) {
 			// Send the state without current player for animation purposes.
-			this.forUsers((userID) => {
-				currentGridState.currentPlayer = "";
-				Connections[userID].socket.emit("minesweeperDraftUpdateState", currentGridState);
-			});
+			currentGridState.currentPlayer = "";
+			this.emitToConnectedUsers("minesweeperDraftUpdateState", currentGridState);
 
 			if (s.done()) {
 				this.endMinesweeperDraft();
 			} else {
 				// Send the next grid immediately, front-end will handle the animation
 				const nextGridState = s.syncData();
-				this.forUsers((userID) => {
-					Connections[userID].socket.emit("minesweeperDraftState", nextGridState);
-				});
+				this.emitToConnectedUsers("minesweeperDraftState", nextGridState);
 			}
 		} else {
-			this.forUsers((userID) => {
-				Connections[userID].socket.emit("minesweeperDraftUpdateState", currentGridState);
-			});
+			this.emitToConnectedUsers("minesweeperDraftUpdateState", currentGridState);
 		}
 
 		return new SocketAck();
@@ -2274,7 +2231,7 @@ export class Session implements IIndexable {
 			const msg = new ToastMessage(
 				`${Connections[userID].userName} picked '${target.state.cardName}' and noted its name on their '${target.name}'!`
 			);
-			this.forUsers((uid) => Connections[uid]?.socket?.emit("message", msg));
+			this.emitToConnectedUsers("message", msg);
 			s.players[userID].effect!.aetherSearcher = undefined;
 		}
 
@@ -2385,7 +2342,7 @@ export class Session implements IIndexable {
 					}
 					const msg = new ToastMessage(str);
 					this.forUsers((uid) => {
-						if (uid !== userID) Connections[uid]?.socket?.emit("message", msg);
+						if (uid !== userID) Connections[uid]?.socket.emit("message", msg);
 					});
 				}
 			}
@@ -2659,7 +2616,7 @@ export class Session implements IIndexable {
 			const roundReviewTimer = Math.round(
 				(1 + 0.5 * Math.max(0, Math.min(s.boosterNumber - 1, 2))) * this.reviewTimer
 			);
-			this.forUsers((uid) => Connections[uid]?.socket.emit("startReviewPhase", roundReviewTimer));
+			this.emitToConnectedUsers("startReviewPhase", roundReviewTimer);
 			// FIXME: Using this method, if everyone disconnects during the review phase (not impossible, especially with a single player), the draft will be completely stuck.
 			//        This is currently handled by a workaround in resumeOnReconnection, but we can probably do better.
 			s.pendingTimeout = setTimeout(doDistributeBoosters, roundReviewTimer * 1000);
@@ -2682,11 +2639,7 @@ export class Session implements IIndexable {
 
 		console.warn(`resumeOnReconnection(): Restarting draft for session ${this.id}.`);
 
-		this.forUsers((user) =>
-			Connections[user]?.socket.emit("sessionOptions", {
-				virtualPlayersData: this.getSortedVirtualPlayerData(),
-			})
-		);
+		this.emitToConnectedUsers("sessionOptions", { virtualPlayersData: this.getSortedVirtualPlayerData() });
 
 		if (isDraftState(this.draftState)) {
 			if (!this.draftPaused) this.resumeCountdowns();
@@ -2704,12 +2657,12 @@ export class Session implements IIndexable {
 							(this.draftState.pendingTimeout as unknown as { _idleTimeout: number })._idleTimeout) /
 							1000 -
 						process.uptime();
-					this.forUsers((uid) => Connections[uid]?.socket.emit("startReviewPhase", remainingTime));
+					this.emitToConnectedUsers("startReviewPhase", remainingTime);
 				}
 			}
 		}
 
-		this.forUsers((u) => Connections[u]?.socket.emit("resumeOnReconnection", new Message(msg.title, msg.text)));
+		this.emitToConnectedUsers("resumeOnReconnection", new Message(msg.title, msg.text));
 	}
 
 	endDraft() {
@@ -2741,7 +2694,7 @@ export class Session implements IIndexable {
 			logSession("Draft", this);
 			this.cleanDraftState();
 
-			this.forUsers((u) => Connections[u]?.socket.emit("endDraft"));
+			this.emitToConnectedUsers("endDraft");
 			console.log(`Session ${this.id} draft ended.`);
 		});
 	}
@@ -2793,14 +2746,14 @@ export class Session implements IIndexable {
 		this.draftPaused = true;
 
 		this.stopCountdowns();
-		this.forUsers((u) => Connections[u]?.socket.emit("pauseDraft"));
+		this.emitToConnectedUsers("pauseDraft");
 	}
 
 	resumeDraft() {
 		if (!this.drafting || !this.draftPaused) return;
 		this.resumeCountdowns();
 		this.draftPaused = false;
-		this.forUsers((u) => Connections[u]?.socket.emit("resumeDraft"));
+		this.emitToConnectedUsers("resumeDraft");
 	}
 
 	///////////////////// Traditional Draft End  //////////////////////
@@ -2895,7 +2848,7 @@ export class Session implements IIndexable {
 					this.forUsers((uid) => Connections[uid]?.socket.emit("draftLog", this.getStrippedLog(uid)!));
 				else {
 					const strippedLog = this.getStrippedLog();
-					this.forUsers((uid) => Connections[uid]?.socket.emit("draftLog", strippedLog!));
+					this.emitToConnectedUsers("draftLog", strippedLog!);
 				}
 				break;
 			default:
@@ -2926,11 +2879,11 @@ export class Session implements IIndexable {
 					this.forNonOwners((uid) => Connections[uid]?.socket.emit("draftLog", this.getStrippedLog(uid)!));
 				else {
 					const strippedLog = this.getStrippedLog();
-					this.forNonOwners((uid) => Connections[uid]?.socket.emit("draftLog", strippedLog!));
+					this.emitToConnectedNonOwners("draftLog", strippedLog!);
 				}
 				break;
 			case "everyone":
-				this.forUsers((uid) => Connections[uid]?.socket.emit("draftLog", this.draftLog!));
+				this.emitToConnectedUsers("draftLog", this.draftLog!);
 				break;
 		}
 	}
@@ -3417,11 +3370,7 @@ export class Session implements IIndexable {
 			this.startBotPickChain(uid);
 		}
 		const virtualPlayers = this.getSortedVirtualPlayerData();
-		this.forUsers((uid) =>
-			Connections[uid]?.socket.emit("sessionOptions", {
-				virtualPlayersData: virtualPlayers,
-			})
-		);
+		this.emitToConnectedUsers("sessionOptions", { virtualPlayersData: virtualPlayers });
 		this.resumeOnReconnection({
 			title: "Resuming draft",
 			text: `Disconnected player(s) has been replaced by bot(s).`,
@@ -3584,14 +3533,12 @@ export class Session implements IIndexable {
 	}
 
 	emitMessage(title: string, text: string = "", showConfirmButton = true, timer = 1500) {
-		this.forUsers((uid) =>
-			Connections[uid]?.socket.emit("message", {
-				title: title,
-				text: text,
-				showConfirmButton: showConfirmButton,
-				timer: timer,
-			} as Message)
-		);
+		this.emitToConnectedUsers("message", {
+			title: title,
+			text: text,
+			showConfirmButton: showConfirmButton,
+			timer: timer,
+		} as Message);
 	}
 
 	generateBracket(type: BracketType): void | MessageError {
@@ -3637,14 +3584,14 @@ export class Session implements IIndexable {
 				if (p) MatchResults.unsubscribe(p!.userName);
 			});
 
-		this.forUsers((u) => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
+		this.emitToConnectedUsers("sessionOptions", { bracket: this.bracket });
 	}
 
 	updateBracket(matchIndex: number, playerIndex: number, value: number): void {
 		if (!this.bracket) return;
 		this.bracket.matches[matchIndex].results[playerIndex] = value;
 		this.bracket.updatePairings();
-		this.forUsers((u) => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
+		this.emitToConnectedUsers("sessionOptions", { bracket: this.bracket });
 	}
 
 	handleMTGOEvent(e: EventCompleted) {
@@ -3685,14 +3632,14 @@ export class Session implements IIndexable {
 
 				this.bracket.matches[mID].results = results;
 				this.bracket.updatePairings();
-				this.forUsers((u) => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
+				this.emitToConnectedUsers("sessionOptions", { bracket: this.bracket });
 
 				const winnerIdx = results[0] > results[1] ? 0 : 1;
 				const loserIdx = (winnerIdx + 1) % 2;
 				const msg = new ToastMessage(
 					`${this.bracket.players[this.bracket.matches[mID].players[winnerIdx]]?.userName} won their match against ${this.bracket.players[this.bracket.matches[mID].players[loserIdx]]?.userName} ${results[winnerIdx]}-${results[loserIdx]}`
 				);
-				this.forUsers((uid) => Connections[uid]?.socket?.emit("message", msg));
+				this.emitToConnectedUsers("message", msg);
 			}
 		}
 	}
@@ -3725,7 +3672,7 @@ export class Session implements IIndexable {
 				if (p) MatchResults.unsubscribe(p.userName);
 			});
 		}
-		this.forUsers((u) => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
+		this.emitToConnectedUsers("sessionOptions", { bracket: this.bracket });
 	}
 
 	// Execute fn for each user. Owner included even if they're not playing.
@@ -3741,7 +3688,7 @@ export class Session implements IIndexable {
 		eventKey: T,
 		...args: Parameters<ServerToClientEvents[T]>
 	) {
-		for (const uid of this.users) Connections[uid]?.socket.emit(eventKey, ...args);
+		this.forUsers((uid) => Connections[uid]?.socket.emit(eventKey, ...args));
 	}
 
 	emitToConnectedNonOwners<T extends keyof ServerToClientEvents>(
