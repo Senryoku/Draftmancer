@@ -1199,14 +1199,6 @@ function setFoil(userID: UserID, sessionID: SessionID, foil: boolean) {
 	Sessions[sessionID].emitToConnectedNonOwners("sessionOptions", { foil });
 }
 
-function setCollationType(userID: UserID, sessionID: SessionID, preferredCollation: string) {
-	if (!SessionsSettingsProps.preferredCollation(preferredCollation)) return;
-	if (preferredCollation === Sessions[sessionID].preferredCollation) return;
-
-	Sessions[sessionID].preferredCollation = preferredCollation;
-	Sessions[sessionID].emitToConnectedNonOwners("sessionOptions", { preferredCollation });
-}
-
 function setUseCustomCardList(userID: UserID, sessionID: SessionID, useCustomCardList: boolean) {
 	if (!SessionsSettingsProps.useCustomCardList(useCustomCardList)) return;
 	if (useCustomCardList == Sessions[sessionID].useCustomCardList) return;
@@ -1628,7 +1620,6 @@ io.on("connection", async function (socket) {
 		socket.on("setMaxDuplicates", prepareSocketCallback(setMaxDuplicates, true));
 		socket.on("setColorBalance", prepareSocketCallback(setColorBalance, true));
 		socket.on("setFoil", prepareSocketCallback(setFoil, true));
-		socket.on("setCollationType", prepareSocketCallback(setCollationType, true));
 		socket.on("setUseCustomCardList", prepareSocketCallback(setUseCustomCardList, true));
 		socket.on("setCustomCardListWithReplacement", prepareSocketCallback(setCustomCardListWithReplacement, true));
 		socket.on(
@@ -1843,6 +1834,7 @@ function getCollection(res: express.Response, sessionID: SessionID) {
 			res.sendStatus(404);
 		}
 	} catch (e) {
+		console.error("Error in getCollection: ", e);
 		res.sendStatus(500);
 	}
 }

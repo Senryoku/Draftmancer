@@ -23,7 +23,6 @@ import { RochesterDraftSyncData } from "./RochesterDraft";
 import { MinesweeperSyncData, MinesweeperSyncDataDiff } from "./MinesweeperDraftTypes";
 import { DraftState, DraftSyncData } from "./DraftState";
 import { BotScores } from "./Bot";
-import { SessionsSettingsProps } from "./Session/SessionProps";
 import { getPublicSessionData } from "./Session";
 import { JHHBooster } from "./JumpstartHistoricHorizons";
 import { RotisserieDraftStartOptions, RotisserieDraftSyncData } from "./RotisserieDraft";
@@ -31,7 +30,8 @@ import { WinchesterDraftSyncData } from "./WinchesterDraft";
 import { HousmanDraftSyncData } from "./HousmanDraft";
 import { SolomonDraftSyncData } from "./SolomonDraft";
 import { QueueID } from "./draftQueue/QueueDescription";
-import { BracketType } from "./Brackets";
+import { BracketType, IBracket } from "./Brackets";
+import { CustomCardList } from "./CustomCardList";
 
 export type LoaderOptions = { title: string };
 
@@ -64,7 +64,43 @@ export interface ServerToClientEvents {
 	}) => void;
 
 	userDisconnected: (data: { owner?: UserID; disconnectedUsers: { [uid: string]: { userName: string } } }) => void;
-	sessionOptions: (sessionOptions: { [key: keyof typeof SessionsSettingsProps]: any }) => void; // FIXME: Specify allowed options and their types
+	sessionOptions: (
+		sessionOptions: Partial<{
+			boosterContent: { [slot: string]: number };
+			boostersPerPlayer: number;
+			bots: number;
+			bracket: IBracket;
+			bracketLocked: boolean;
+			burnedCardsPerRound: number;
+			cardsPerBooster: number;
+			colorBalance: boolean;
+			customBoosters: string[];
+			customCardList: CustomCardList;
+			customCardListDuplicateProtection: boolean;
+			customCardListWithReplacement: boolean;
+			disableBotSuggestions: boolean;
+			discardRemainingCardsAt: number;
+			distributionMode: DistributionMode;
+			doubleMastersMode: boolean;
+			draftLogRecipients: DraftLogRecipients;
+			draftLogUnlockTimer: number;
+			foil: boolean;
+			hidePicks: boolean;
+			maxDuplicates: { [rarity: string]: number } | null;
+			mythicPromotion: boolean;
+			ownerIsPlayer: boolean;
+			personalLogs: boolean;
+			pickedCardsPerRound: number;
+			randomizeSeatingOrder: boolean;
+			reviewTimer: number;
+			teamDraft: boolean;
+			tournamentTimer: boolean;
+			useBoosterContent: boolean;
+			useCustomCardList: boolean;
+			usePredeterminedBoosters: boolean;
+			virtualPlayersData: Record<UserID, UserData>;
+		}>
+	) => void;
 	setRestriction: (setRestriction: Array<SetCode>) => void;
 	ignoreCollections: (ignoreCollections: boolean) => void;
 	setPickTimer: (pickTimer: number) => void;
@@ -376,7 +412,6 @@ export interface ClientToServerEvents {
 	setMaxDuplicates: (maxDuplicates: { [rarity in "common" | "uncommon" | "rare" | "mythic"]: number } | null) => void;
 	setColorBalance: (colorBalance: boolean) => void;
 	setFoil: (foil: boolean) => void;
-	setCollationType: (preferredCollation: string) => void;
 	setUseCustomCardList: (useCustomCardList: boolean) => void;
 	setCustomCardListWithReplacement: (customCardListWithReplacement: boolean) => void;
 	setCustomCardListDuplicateProtection: (customCardListDuplicateProtection: boolean) => void;

@@ -16,7 +16,6 @@ import type { SocketAck } from "@/Message";
 import type { Options } from "@/utils";
 import type { JHHBooster } from "@/JumpstartHistoricHorizons";
 import type { CustomCardList } from "@/CustomCardList";
-import type SessionsSettingsProps from "@/Session/SessionProps";
 import { IBracket, BracketType } from "../../src/Brackets";
 import { MinesweeperSyncData } from "@/MinesweeperDraftTypes";
 import { HousmanDraftSyncData } from "@/HousmanDraft";
@@ -569,8 +568,7 @@ export default defineComponent({
 
 			this.socket.on("sessionOptions", (sessionOptions) => {
 				// FIXME: Use accurate key type once we have it.
-				for (const prop in sessionOptions)
-					(this as IIndexable)[prop as keyof typeof SessionsSettingsProps] = sessionOptions[prop];
+				for (const prop in sessionOptions) (this as IIndexable)[prop] = (sessionOptions as IIndexable)[prop];
 			});
 
 			this.socket.on("virtualPlayersDataUpdate", (virtualPlayersData) => {

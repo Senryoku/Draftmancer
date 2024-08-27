@@ -9,7 +9,7 @@ describe("Brackets", function () {
 	let clients: ReturnType<typeof makeClients> = [];
 	const sessionID = "SessionID";
 	let ownerIdx: number = 0;
-	let bracket: IBracket | null = null;
+	let bracket: IBracket | undefined = undefined;
 
 	beforeEach(function (done) {
 		disableLogs();
@@ -46,7 +46,7 @@ describe("Brackets", function () {
 	describe("Single", function () {
 		it(`Generate bracket, should receive a new bracket.`, function (done) {
 			clients[ownerIdx].once("sessionOptions", function (data) {
-				expect(data.bracket).to.not.be.null;
+				expect(data.bracket).to.not.be.undefined;
 				for (let m = 0; m < 4; ++m) {
 					expect(data.bracket!.matches[m].players[0]).to.equal(2 * m + 0);
 					expect(data.bracket!.matches[m].players[1]).to.equal(2 * m + 1);
@@ -58,7 +58,7 @@ describe("Brackets", function () {
 
 		it(`Update match results.`, function (done) {
 			clients[ownerIdx].once("sessionOptions", function (data) {
-				expect(data.bracket).to.not.be.null;
+				expect(data.bracket).to.not.be.undefined;
 				expect(data.bracket!.matches[data.bracket!.bracket[0][0]].results[0]).to.equal(2);
 				expect(data.bracket!.matches[data.bracket!.bracket[1][0]].players[0]).to.equal(0);
 				expect(data.bracket!.matches[data.bracket!.bracket[1][0]].players[1]).to.equal(PlayerPlaceholder.TBD);
@@ -69,7 +69,7 @@ describe("Brackets", function () {
 
 		it(`Update match results.`, function (done) {
 			clients[ownerIdx].once("sessionOptions", function (data) {
-				expect(data.bracket).to.not.be.null;
+				expect(data.bracket).to.not.be.undefined;
 				expect(data.bracket!.matches[data.bracket!.bracket[0][1]].results[1]).to.equal(2);
 				expect(data.bracket!.matches[data.bracket!.bracket[1][0]].players[0]).to.equal(0);
 				expect(data.bracket!.matches[data.bracket!.bracket[1][0]].players[1]).to.equal(3);
@@ -80,7 +80,7 @@ describe("Brackets", function () {
 
 		it(`Receive MTGO match, without enabling auto sync.`, function (done) {
 			clients[ownerIdx].once("sessionOptions", function (data) {
-				expect(data.bracket).to.not.be.null;
+				expect(data.bracket).to.not.be.undefined;
 				expect(data.bracket!.matches[data.bracket!.bracket[1][0]].results[0]).to.equal(0);
 				expect(data.bracket!.matches[data.bracket!.bracket[1][0]].results[1]).to.equal(2);
 				done();
@@ -91,7 +91,7 @@ describe("Brackets", function () {
 
 		it(`Enabled MTGO sync`, function (done) {
 			clients[ownerIdx].once("sessionOptions", function (data) {
-				expect(data.bracket).to.not.be.null;
+				expect(data.bracket).to.not.be.undefined;
 				expect(data.bracket!.MTGOSynced).to.be.true;
 				bracket = data.bracket;
 				done();
@@ -101,7 +101,7 @@ describe("Brackets", function () {
 
 		it(`Receive MTGO match, with auto sync. enabled`, function (done) {
 			clients[ownerIdx].once("sessionOptions", function (data) {
-				expect(data.bracket).to.not.be.null;
+				expect(data.bracket).to.not.be.undefined;
 				expect(data.bracket!.matches[bracket!.bracket[0][2]].results[0]).to.equal(2);
 				expect(data.bracket!.matches[bracket!.bracket[0][2]].results[1]).to.equal(1);
 				done();
@@ -117,7 +117,7 @@ describe("Brackets", function () {
 
 		it(`Generate new bracket.`, function (done) {
 			clients[ownerIdx].once("sessionOptions", function (data) {
-				expect(data.bracket).to.not.be.null;
+				expect(data.bracket).to.not.be.undefined;
 				for (let m = 0; m < 4; ++m) {
 					expect(data.bracket!.matches[m].players[0]).to.equal(2 * m + 0);
 					expect(data.bracket!.matches[m].players[1]).to.equal(2 * m + 1);
@@ -129,7 +129,7 @@ describe("Brackets", function () {
 
 		it(`Receive MTGO match, without enabling auto sync.`, function (done) {
 			clients[ownerIdx].once("sessionOptions", function (data) {
-				expect(data.bracket).to.not.be.null;
+				expect(data.bracket).to.not.be.undefined;
 				expect(data.bracket!.matches[data.bracket!.bracket[1][0]].results[0]).to.equal(0);
 				expect(data.bracket!.matches[data.bracket!.bracket[1][0]].results[1]).to.equal(2);
 				done();
@@ -140,7 +140,7 @@ describe("Brackets", function () {
 
 		it(`Enabled MTGO sync`, function (done) {
 			clients[ownerIdx].once("sessionOptions", function (data) {
-				expect(data.bracket).to.not.be.null;
+				expect(data.bracket).to.not.be.undefined;
 				expect(data.bracket!.MTGOSynced).to.be.true;
 				bracket = data.bracket;
 				done();
@@ -150,7 +150,7 @@ describe("Brackets", function () {
 
 		it(`Receive MTGO match, with auto sync. enabled`, function (done) {
 			clients[ownerIdx].once("sessionOptions", function (data) {
-				expect(data.bracket).to.not.be.null;
+				expect(data.bracket).to.not.be.undefined;
 				expect(data.bracket!.matches[bracket!.bracket[0][2]].results[0]).to.equal(2);
 				expect(data.bracket!.matches[bracket!.bracket[0][2]].results[1]).to.equal(1);
 				done();
@@ -168,7 +168,7 @@ describe("Brackets", function () {
 	describe("Swiss", function () {
 		it(`Generate swiss bracket, should receive a new bracket.`, function (done) {
 			clients[ownerIdx].once("sessionOptions", function (data) {
-				expect(data.bracket).to.not.be.null;
+				expect(data.bracket).to.not.be.undefined;
 				for (let m = 0; m < 8; ++m) {
 					expect(data.bracket!.matches[4 + m].players[0]).to.equal(PlayerPlaceholder.TBD);
 					expect(data.bracket!.matches[4 + m].players[1]).to.equal(PlayerPlaceholder.TBD);
@@ -180,7 +180,7 @@ describe("Brackets", function () {
 
 		it(`Update match results.`, function (done) {
 			clients[ownerIdx].once("sessionOptions", function (data) {
-				expect(data.bracket).to.not.be.null;
+				expect(data.bracket).to.not.be.undefined;
 				expect(data.bracket!.matches[0].results[0]).to.equal(2);
 				for (let m = 0; m < 8; ++m) {
 					expect(data.bracket!.matches[4 + m].players[0]).to.equal(PlayerPlaceholder.TBD);
@@ -195,7 +195,7 @@ describe("Brackets", function () {
 			let updates = 1;
 
 			clients[ownerIdx].on("sessionOptions", function (data) {
-				expect(data.bracket).to.not.be.null;
+				expect(data.bracket).to.not.be.undefined;
 				expect(data.bracket!.matches[0].results[0]).to.equal(2);
 				updates += 1;
 				if (updates < 4) {
@@ -225,7 +225,7 @@ describe("Brackets", function () {
 			let updates = 0;
 
 			clients[ownerIdx].on("sessionOptions", function (data) {
-				expect(data.bracket).to.not.be.null;
+				expect(data.bracket).to.not.be.undefined;
 				expect(data.bracket!.matches[0].results[0]).to.equal(2);
 				updates += 1;
 				if (updates < 4) {
@@ -257,7 +257,7 @@ describe("Brackets", function () {
 	describe("Double", function () {
 		it(`Generate double bracket, should receive a new bracket.`, function (done) {
 			clients[ownerIdx].once("sessionOptions", function (data) {
-				expect(data.bracket).to.not.be.null;
+				expect(data.bracket).to.not.be.undefined;
 				done();
 			});
 			clients[ownerIdx].emit("generateBracket", BracketType.Double, ackNoError);

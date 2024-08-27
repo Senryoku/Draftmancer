@@ -101,6 +101,6 @@ export const SessionsSettingsProps: { [propName: string]: (val: unknown) => bool
 	},
 	bracketLocked: isBoolean,
 	draftPaused: isBoolean,
-};
+} as const;
 
 export default SessionsSettingsProps;

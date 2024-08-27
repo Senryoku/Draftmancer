@@ -3294,8 +3294,17 @@ export class Session implements IIndexable {
 		this.addUser(userID);
 
 		if (!isDraftState(this.draftState)) {
-			const msgData: { name?: keyof ServerToClientEvents; state: IDraftState } = { state: this.draftState };
-			const EventNames: Record<string, keyof ServerToClientEvents> = {
+			type RejoinEventNames =
+				| "rejoinWinstonDraft"
+				| "rejoinWinchesterDraft"
+				| "rejoinHousmanDraft"
+				| "rejoinGridDraft"
+				| "rejoinRochesterDraft"
+				| "rejoinRotisserieDraft"
+				| "rejoinMinesweeperDraft"
+				| "rejoinTeamSealed"
+				| "rejoinSolomonDraft";
+			const EventNames: Record<string, RejoinEventNames> = {
 				winston: "rejoinWinstonDraft",
 				winchester: "rejoinWinchesterDraft",
 				housman: "rejoinHousmanDraft",
@@ -3305,15 +3314,15 @@ export class Session implements IIndexable {
 				minesweeper: "rejoinMinesweeperDraft",
 				teamSealed: "rejoinTeamSealed",
 				solomon: "rejoinSolomonDraft",
-			};
+			} as const;
 			if (!(this.draftState.type in EventNames))
 				return console.error(`Unknown draft state type: ${this.draftState.type}`);
 
-			msgData.name = EventNames[this.draftState.type];
 			// FIXME: Refactor to get full type checking
-			Connections[userID].socket.emit(msgData.name!, {
+			Connections[userID].socket.emit(EventNames[this.draftState.type], {
 				pickedCards: this.disconnectedUsers[userID].pickedCards,
-				state: msgData.state.syncData(userID),
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				state: this.draftState.syncData(userID) as any,
 			});
 		} else {
 			Connections[userID].socket.emit("rejoinDraft", {
