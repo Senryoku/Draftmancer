@@ -146,11 +146,13 @@ function downloadList() {
 		str += `[${slotName}${slotSettings}]\n`;
 		if (slot.collation === "printRun") {
 			for (let cardID of slot.printRun) {
-				str += `${cards.value[slotName].find((c) => c.id === cardID)!.name}\n`;
+				const card = cards.value[slotName].find((c) => c.id === cardID)!;
+				str += `${card.name} (${card.set.toUpperCase()}) ${card.collector_number}\n`;
 			}
 		} else {
 			for (let [cardID, count] of Object.entries(slot.cards)) {
-				str += `${count} ${cards.value[slotName].find((c) => c.id === cardID)!.name}\n`;
+				const card = cards.value[slotName].find((c) => c.id === cardID)!;
+				str += `${count} ${card.name} (${card.set.toUpperCase()}) ${card.collector_number}\n`;
 			}
 		}
 	}
