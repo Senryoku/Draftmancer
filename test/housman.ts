@@ -15,16 +15,99 @@ import {
 import { HousmanDraftSyncData } from "../src/HousmanDraft.js";
 import { random } from "../src/utils.js";
 
-for (const settings of [
-	{ playerCount: 2, handSize: 9, revealedCardsCount: 9, exchangeCount: 3, roundCount: 9, removeBasicLands: true },
-	{ playerCount: 2, handSize: 9, revealedCardsCount: 9, exchangeCount: 3, roundCount: 9, removeBasicLands: false },
-	{ playerCount: 4, handSize: 9, revealedCardsCount: 9, exchangeCount: 3, roundCount: 9, removeBasicLands: true },
-	{ playerCount: 4, handSize: 9, revealedCardsCount: 9, exchangeCount: 3, roundCount: 9, removeBasicLands: false },
-	{ playerCount: 2, handSize: 10, revealedCardsCount: 15, exchangeCount: 4, roundCount: 8, removeBasicLands: true },
-	{ playerCount: 2, handSize: 10, revealedCardsCount: 15, exchangeCount: 4, roundCount: 8, removeBasicLands: false },
-	{ playerCount: 4, handSize: 10, revealedCardsCount: 15, exchangeCount: 4, roundCount: 8, removeBasicLands: true },
-	{ playerCount: 4, handSize: 10, revealedCardsCount: 15, exchangeCount: 4, roundCount: 8, removeBasicLands: false },
-])
+const Settings: {
+	playerCount: number;
+	handSize: number;
+	revealedCardsCount: number;
+	exchangeCount: number;
+	roundCount: number;
+	removeBasicLands: boolean;
+	turnOrder: "classic" | "snake";
+}[] = [
+	{
+		playerCount: 2,
+		handSize: 9,
+		revealedCardsCount: 9,
+		exchangeCount: 3,
+		roundCount: 9,
+		removeBasicLands: true,
+		turnOrder: "classic",
+	},
+	{
+		playerCount: 2,
+		handSize: 9,
+		revealedCardsCount: 9,
+		exchangeCount: 3,
+		roundCount: 9,
+		removeBasicLands: false,
+		turnOrder: "classic",
+	},
+	{
+		playerCount: 4,
+		handSize: 9,
+		revealedCardsCount: 9,
+		exchangeCount: 3,
+		roundCount: 9,
+		removeBasicLands: true,
+		turnOrder: "classic",
+	},
+	{
+		playerCount: 4,
+		handSize: 9,
+		revealedCardsCount: 9,
+		exchangeCount: 3,
+		roundCount: 9,
+		removeBasicLands: true,
+		turnOrder: "snake",
+	},
+	{
+		playerCount: 4,
+		handSize: 9,
+		revealedCardsCount: 9,
+		exchangeCount: 3,
+		roundCount: 9,
+		removeBasicLands: false,
+		turnOrder: "classic",
+	},
+	{
+		playerCount: 2,
+		handSize: 10,
+		revealedCardsCount: 15,
+		exchangeCount: 4,
+		roundCount: 8,
+		removeBasicLands: true,
+		turnOrder: "classic",
+	},
+	{
+		playerCount: 2,
+		handSize: 10,
+		revealedCardsCount: 15,
+		exchangeCount: 4,
+		roundCount: 8,
+		removeBasicLands: false,
+		turnOrder: "classic",
+	},
+	{
+		playerCount: 4,
+		handSize: 10,
+		revealedCardsCount: 15,
+		exchangeCount: 4,
+		roundCount: 8,
+		removeBasicLands: true,
+		turnOrder: "classic",
+	},
+	{
+		playerCount: 4,
+		handSize: 10,
+		revealedCardsCount: 15,
+		exchangeCount: 4,
+		roundCount: 8,
+		removeBasicLands: false,
+		turnOrder: "classic",
+	},
+];
+
+for (const settings of Settings)
 	describe(`Housman Draft: ${JSON.stringify(settings)}`, function () {
 		let clients: ReturnType<typeof makeClients> = [];
 		const sessionID = "sessionID";
@@ -97,6 +180,7 @@ for (const settings of [
 				settings.exchangeCount,
 				settings.roundCount,
 				settings.removeBasicLands,
+				settings.turnOrder,
 				ackNoError
 			);
 		});

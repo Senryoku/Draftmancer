@@ -233,7 +233,7 @@ const selectionIsValid = computed(() => {
 	grid-template-columns: 1fr 1fr auto 1fr 1fr;
 	margin: 0 2em;
 	align-items: center;
-	min-height: 2em;
+	min-height: 2.1em;
 }
 
 .housman-draft-controls span:nth-child(3) {

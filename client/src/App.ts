@@ -2046,7 +2046,8 @@ export default defineComponent({
 					revealedCardsCount: number,
 					exchangeCount: number,
 					roundCount: number,
-					removeBasicLands: boolean
+					removeBasicLands: boolean,
+					turnOrder: "classic" | "snake"
 				) => {
 					this.deckWarning(
 						(
@@ -2054,7 +2055,8 @@ export default defineComponent({
 							revealedCardsCount: number,
 							exchangeCount: number,
 							roundCount: number,
-							removeBasicLands: boolean
+							removeBasicLands: boolean,
+							turnOrder: "classic" | "snake"
 						) => {
 							this.socket.emit(
 								"startHousmanDraft",
@@ -2063,6 +2065,7 @@ export default defineComponent({
 								exchangeCount,
 								roundCount,
 								removeBasicLands,
+								turnOrder,
 								(answer: SocketAck) => {
 									if (answer.code !== 0 && answer.error) Alert.fire(answer.error);
 								}
@@ -2072,7 +2075,8 @@ export default defineComponent({
 						revealedCardsCount,
 						exchangeCount,
 						roundCount,
-						removeBasicLands
+						removeBasicLands,
+						turnOrder
 					);
 				},
 			});

@@ -1065,7 +1065,8 @@ export class Session implements IIndexable {
 		revealedCardsCount: number = 9,
 		exchangeCount: number = 3,
 		roundCount: number = 9,
-		removeBasicLands: boolean = true
+		removeBasicLands: boolean = true,
+		turnOrder: "classic" | "snake" = "classic"
 	): SocketAck {
 		if (this.drafting) return new SocketError("Already drafting.");
 		if (this.users.size < 2)
@@ -1111,7 +1112,8 @@ export class Session implements IIndexable {
 			handSize,
 			revealedCardsCount,
 			exchangeCount,
-			roundCount
+			roundCount,
+			turnOrder
 		);
 		const virtualPlayersData = this.getSortedHumanPlayerData();
 		for (const uid of this.users) {

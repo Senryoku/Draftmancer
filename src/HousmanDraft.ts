@@ -1,7 +1,7 @@
 import { UniqueCard } from "./CardTypes.js";
 import { IDraftState, TurnBased } from "./IDraftState.js";
 import { UserID } from "./IDTypes.js";
-import { shuffleArray } from "./utils.js";
+import { negMod, shuffleArray } from "./utils.js";
 
 export class HousmanDraftState extends IDraftState implements TurnBased {
 	// Settings
@@ -10,6 +10,7 @@ export class HousmanDraftState extends IDraftState implements TurnBased {
 	readonly revealedCardsCount: number;
 	readonly exchangeCount: number; // Exchange per player each round
 	readonly roundCount: number;
+	readonly turnOrder: "classic" | "snake";
 	// State
 	exchangeNum = 0; // Number of current exchange this round ([0, exchangeCount*players.length[)
 	roundNum = -1; // [0, roundCount[ Will be immediately incremented.
@@ -24,7 +25,8 @@ export class HousmanDraftState extends IDraftState implements TurnBased {
 		handSize: number = 5,
 		revealedCardsCount: number = 9,
 		exchangeCount: number = 3,
-		roundCount: number = 9
+		roundCount: number = 9,
+		turnOrder: "classic" | "snake" = "classic"
 	) {
 		super("housman");
 		this.players = players;
@@ -35,6 +37,7 @@ export class HousmanDraftState extends IDraftState implements TurnBased {
 		this.revealedCardsCount = revealedCardsCount;
 		this.exchangeCount = exchangeCount;
 		this.roundCount = roundCount;
+		this.turnOrder = turnOrder;
 		this.nextRound();
 	}
 
@@ -75,7 +78,20 @@ export class HousmanDraftState extends IDraftState implements TurnBased {
 	}
 
 	currentPlayer(): UserID {
-		return this.players[(this.roundNum + this.exchangeNum) % this.players.length];
+		switch (this.turnOrder) {
+			case "snake": {
+				const exchange = this.players.length * this.exchangeCount * this.roundNum + this.exchangeNum;
+				const cycle = Math.floor(exchange / this.players.length);
+				return this.players[
+					cycle % 2 === 1
+						? negMod(cycle - exchange, this.players.length)
+						: (cycle + exchange) % this.players.length
+				];
+			}
+			case "classic":
+			default:
+				return this.players[(this.roundNum + this.exchangeNum) % this.players.length];
+		}
 	}
 
 	syncData(uid: UserID) {

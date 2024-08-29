@@ -71,7 +71,15 @@
 						/>
 						<ResetButton v-model="roundCount" :default-value="9" />
 					</div>
-					<label for="remove-basic-lands-input"> Remove Basic Lands? </label>
+					<label for="turn-order-input">Turn Order</label>
+					<div>
+						<select id="turn-order-input" v-model.number="turnOrder">
+							<option value="classic">Classic</option>
+							<option value="snake">Snaking</option>
+						</select>
+						<ResetButton v-model="turnOrder" :default-value="'classic'" />
+					</div>
+					<label for="remove-basic-lands-input">Remove Basic Lands?</label>
 					<input type="checkbox" id="remove-basic-lands-input" v-model="removeBasicLands" />
 				</div>
 			</div>
@@ -95,6 +103,7 @@ const revealedCardsCount = ref(9);
 const exchangeCount = ref(3);
 const roundCount = ref(9);
 const removeBasicLands = ref(true);
+const turnOrder = ref<"classic" | "snake">("classic");
 
 const emit = defineEmits<{
 	(e: "close"): void;
@@ -104,7 +113,8 @@ const emit = defineEmits<{
 		revealedCardsCount: number,
 		exchangeCount: number,
 		roundCount: number,
-		removeBasicLands: boolean
+		removeBasicLands: boolean,
+		turnOrder: "classic" | "snake"
 	): void;
 }>();
 
@@ -116,7 +126,8 @@ const start = () => {
 		revealedCardsCount.value,
 		exchangeCount.value,
 		roundCount.value,
-		removeBasicLands.value
+		removeBasicLands.value,
+		turnOrder.value
 	);
 	emit("close");
 };

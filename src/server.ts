@@ -734,6 +734,7 @@ function startHousmanDraft(
 	exchangeCount: unknown,
 	roundCount: unknown,
 	removeBasicLands: unknown,
+	turnOrder: unknown,
 	ack: (s: SocketAck) => void
 ) {
 	const sess = Sessions[sessionID];
@@ -744,7 +745,15 @@ function startHousmanDraft(
 	const _exchangeCount = !isNumber(exchangeCount) ? parseInt(exchangeCount as string) : exchangeCount;
 	const _roundCount = !isNumber(roundCount) ? parseInt(roundCount as string) : roundCount;
 	const _removeBasicLands = isBoolean(removeBasicLands) ? removeBasicLands : true;
-	const r = sess.startHousmanDraft(_handSize, _revealedCardsCount, _exchangeCount, _roundCount, _removeBasicLands);
+	const _turnOrder = turnOrder === "classic" || turnOrder === "snake" ? turnOrder : "classic";
+	const r = sess.startHousmanDraft(
+		_handSize,
+		_revealedCardsCount,
+		_exchangeCount,
+		_roundCount,
+		_removeBasicLands,
+		_turnOrder
+	);
 	if (!isSocketError(r)) startPublicSession(sess);
 	ack(r);
 }

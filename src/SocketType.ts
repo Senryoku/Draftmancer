@@ -352,6 +352,7 @@ export interface ClientToServerEvents {
 		exchangeCount: number,
 		roundCount: number,
 		removeBasicLands: boolean,
+		turnOrder: "classic" | "snake",
 		ack: (s: SocketAck) => void
 	) => void;
 	startMinesweeperDraft: (
