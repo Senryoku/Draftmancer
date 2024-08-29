@@ -518,7 +518,9 @@ function parseCustomCards(lines: string[], startIdx: number) {
 							effect.cards.splice(++i, 0, result.cardID);
 						}
 					}
-					if (effect.count && effect.count > effect.cards.length) {
+					// Actual card count is now known, update the 'count' field if unspecified and validate it.
+					if (effect.count <= 0) effect.count = effect.cards.length;
+					if (effect.count <= 0 || effect.count > effect.cards.length) {
 						return ackError({
 							title: `Invalid Parameter`,
 							text: `Invalid 'AddCards' entry in 'draft_effects' of '${card.name}'. 'count' (${effect.count}) must be strictly positive and less than or equal to the number of cards in 'cards' (${effect.cards.length}).`,

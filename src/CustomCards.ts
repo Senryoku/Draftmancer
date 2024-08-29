@@ -269,7 +269,7 @@ export function validateCustomCard(inputCard: any): SocketError | Card {
 					// NOTE: Full verification of the cards will be done later, once the rest of the file is parsed.
 					card.draft_effects.push({
 						type: entry.type,
-						count: entry.count ?? entry.cards.length,
+						count: entry.count ?? 0, // NOTE: If 0, will be filled after validation (we want to set it to all cards, but their count is unknown until parsed)
 						cards: entry.cards,
 						duplicateProtection: entry.duplicateProtection ?? true,
 					});
