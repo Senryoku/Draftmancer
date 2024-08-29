@@ -2323,6 +2323,13 @@ export class Session implements IIndexable {
 							const additionalPicks = additionalPicksCIDs.map((cid) =>
 								getUnique(cid, { getCard: this.getCustomGetCardFunction() })
 							);
+							// Mark cards with a usable effect as face-up, allowing their use from the card pool. Other on-pick effects are not supported.
+							for (const card of additionalPicks) {
+								if (card.draft_effects?.find((e) => e.type === OnPickDraftEffect.FaceUp)) {
+									if (!card.state) card.state = {};
+									card.state.faceUp = true;
+								}
+							}
 							Connections[userID]?.pickedCards.main.push(...additionalPicks);
 							Connections[userID]?.socket.emit(
 								"addCards",
