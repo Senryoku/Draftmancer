@@ -518,6 +518,12 @@ function parseCustomCards(lines: string[], startIdx: number) {
 							effect.cards.splice(++i, 0, result.cardID);
 						}
 					}
+					if (effect.count && effect.count > effect.cards.length) {
+						return ackError({
+							title: `Invalid Parameter`,
+							text: `Invalid 'AddCards' entry in 'draft_effects' of '${card.name}'. 'count' (${effect.count}) must be strictly positive and less than or equal to the number of cards in 'cards' (${effect.cards.length}).`,
+						});
+					}
 				}
 			}
 		}

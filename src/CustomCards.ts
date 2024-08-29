@@ -261,14 +261,11 @@ export function validateCustomCard(inputCard: any): SocketError | Card {
 							`Invalid 'AddCards' entry in 'draft_effects' of custom card. Invalid 'duplicateProtection' parameter.`
 						);
 					}
-					if (entry.count) {
-						if (entry.count <= 0 || entry.count > entry.cards.length) {
-							return valErr(
-								`Invalid Parameter`,
-								`Invalid 'AddCards' entry in 'draft_effects' of custom card. 'count' must be strictly positive and less than or equal to the number of cards in 'cards'.`
-							);
-						}
-					}
+					if (entry.count && entry.count <= 0)
+						return valErr(
+							`Invalid Parameter`,
+							`Invalid 'AddCards' entry in 'draft_effects' of custom card. 'count' must be strictly positive.`
+						);
 					// NOTE: Full verification of the cards will be done later, once the rest of the file is parsed.
 					card.draft_effects.push({
 						type: entry.type,
