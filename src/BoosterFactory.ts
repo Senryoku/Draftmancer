@@ -1884,6 +1884,7 @@ export const SpecialGuests = {
 	otj: filterSetByNumber("spg", 29, 38),
 	mh3: filterSetByNumber("spg", 39, 48),
 	blb: filterSetByNumber("spg", 54, 63),
+	dsk: filterSetByNumber("spg", 64, 73),
 };
 
 // NOTE: This mimics the ratios of wildcard set boosters described here: https://magic.wizards.com/en/news/making-magic/set-boosters-2020-07-25
@@ -2384,7 +2385,7 @@ export class MH3BoosterFactory extends BoosterFactory {
 //   NOTE/TODO: Both wildcards (foil and non foil) can be "booster fun" (Woodland Frame or Borderless Field Notes), however the rate is unknown.
 //              It's very possible that this will have no bearing on the gameplay, and thus could be safely ignored.
 class BLBBoosterFactory extends BoosterFactory {
-	static readonly SPGRatio: number = 0.015;
+	static readonly SPGRatio: number = 0.015625;
 
 	spg: CardPool; // Special Guests
 
@@ -2418,12 +2419,59 @@ class BLBBoosterFactory extends BoosterFactory {
 		// 1 Wildcard of any rarity
 		booster.push(pickCard(this.cardPool[rollSetBoosterWildcardRarity(this.cardPool, this.options)], booster));
 
-		// Traditional foil card of any rarity - This can include Booster Fun cards and OTP cards but doesn't include cards from The List.
+		// Traditional foil card of any rarity
 		booster.push(
 			pickCard(this.cardPool[rollSetBoosterWildcardRarity(this.cardPool, this.options)], booster, { foil: true })
 		);
 
 		// TODO: Seasonal full-art basic land... or not?
+
+		// Make sure there are no negative counts
+		for (const key in updatedTargets) updatedTargets[key] = Math.max(0, updatedTargets[key]);
+		return super.generateBooster(updatedTargets, booster);
+	}
+}
+
+// Duskmourn
+class DSKBoosterFactory extends BoosterFactory {
+	static readonly SPGRatio: number = 0.015625;
+
+	spg: CardPool; // Special Guests
+
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
+		const opt = { ...options };
+		opt.foil = false; // We'll handle the garanteed foil slot ourselves.
+		super(cardPool, landSlot, opt);
+		this.spg = new CardPool();
+		for (const c of SpecialGuests.dsk)
+			this.spg.set(c, options.maxDuplicates?.[getCard(c).rarity] ?? DefaultMaxDuplicates);
+	}
+
+	generateBooster(targets: Targets) {
+		const updatedTargets = structuredClone(targets);
+		const booster: UniqueCard[] = [];
+
+		if (targets === DefaultBoosterTargets) {
+			// 10 -> 6 or 7
+			updatedTargets.common = Math.max(0, updatedTargets.common - 3);
+		} else {
+			// Two commons will be replaced by wildcards.
+			updatedTargets.common = Math.max(0, updatedTargets.common - 2);
+		}
+
+		// 6th Common or Special Guest
+		if (random.realZeroToOneInclusive() < DSKBoosterFactory.SPGRatio) {
+			--updatedTargets.common;
+			booster.push(pickCard(this.spg, booster));
+		}
+
+		// 1 Wildcard of any rarity
+		booster.push(pickCard(this.cardPool[rollSetBoosterWildcardRarity(this.cardPool, this.options)], booster));
+
+		// Traditional foil card of any rarity
+		booster.push(
+			pickCard(this.cardPool[rollSetBoosterWildcardRarity(this.cardPool, this.options)], booster, { foil: true })
+		);
 
 		// Make sure there are no negative counts
 		for (const key in updatedTargets) updatedTargets[key] = Math.max(0, updatedTargets[key]);
@@ -2474,6 +2522,7 @@ export const SetSpecificFactories: {
 	otj: OTJBoosterFactory,
 	mh3: MH3BoosterFactory,
 	blb: BLBBoosterFactory,
+	dsk: DSKBoosterFactory,
 };
 
 export const getBoosterFactory = function (
