@@ -2432,7 +2432,22 @@ class BLBBoosterFactory extends BoosterFactory {
 	}
 }
 
-// Duskmourn
+// Duskmourn: House of Horror Play Boosters
+//   6–7 Commons
+//   There are 81 commons in the main set of Duskmourn: House of Horror that show up in this slot. Of those, 2 of the commons have a lurking evil version that will show up 1 in 4 times you see that common.
+//   One of the 10 Special Guests cards in non-foil replaces a common in 1 in 64 Play Boosters. Of note, Special Guests cards aren’t found in the wildcard nor traditional foil slot in Play Boosters.
+//   3 Uncommons
+//   There are 100 uncommons in the main set that show up in this slot. Of those, 4 of the uncommons have a lurking evil version and 4 have a paranormal frame version, each showing up 1 in 4 times you see that uncommon.
+//   1 Rare or mythic rare
+//     There are 60 rares (75%) and 20 mythic rares (12.6%) in the main set that show up in this slot. The remainder of the time, you get one of the following Booster Fun cards:
+//   	46 Booster Fun rares (8.2%) and 16 mythic rares (1.4%) – The cards found here include borderless treatments of Rooms, lands, and a planeswalker. This also includes paranormal frame cards, mirror monster cards, and double exposure cards.
+//   	7 Lurking evil rares (2.5%) and 2 lurking evil mythic rares (0.3%)
+//     There are some cards that show up in two treatments. When that occurs, we adjust how often we drop each Booster Fun variant so that particular card shows up as often as any other card of the same rarity.
+//   1 Wildcard of any rarity – Can be one of the cards mentioned in the above common, uncommon, and rare or mythic rare slots, including Booster Fun cards.
+//   1 Traditional foil card of any rarity – This slot contains the same list of cards as is found in the wildcard slot.
+//   1 Land card – Here, you get one of either the 5 full-art manor lands (13.3% non-foil, 3.3% traditional foil), 10 regular basic lands (26.7% non-foil, 6.7% traditional foil), or one of 10 common dual lands (40% non-foil, 10% traditional foil).
+//   1 Token or art card
+// Most of the complexity here is only cosmetic. It is ignored (at least for now).
 class DSKBoosterFactory extends BoosterFactory {
 	static readonly SPGRatio: number = 0.015625;
 

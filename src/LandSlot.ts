@@ -252,6 +252,14 @@ export const SpecialLandSlots: { [set: string]: SpecialLandSlot } = {
 		],
 		0.5
 	),
+	dsk: new SpecialLandSlot(
+		"dsk",
+		// Dual lands
+		[
+			// TODO
+		],
+		0.5
+	),
 };
 
 export const BasicLandSlots: { [set: string]: BasicLandSlot } = {};
