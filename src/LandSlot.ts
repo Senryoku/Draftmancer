@@ -256,7 +256,16 @@ export const SpecialLandSlots: { [set: string]: SpecialLandSlot } = {
 		"dsk",
 		// Dual lands
 		[
-			// TODO
+			"ee0565f5-ebdb-43f9-bbb4-0485b1968937",
+			"cb224874-aff5-461f-82ee-89b06663231a",
+			"f8900b89-0e10-4602-bba2-da8d60ea5885",
+			"a9367acd-393a-4966-ba60-af2ecd4e7596",
+			"6098d8be-4e3f-455d-8799-91435bf45a1c",
+			"11cf1531-8a3c-4e28-a114-d3a342b33bb6",
+			"3a6e40c0-e70e-4353-a920-9851cfac71dd",
+			"3604a211-9bf7-474e-bd78-32a862f4259c",
+			"98d0d067-b52d-47ec-ba7b-8cfcd716c0e5",
+			"c1ce9250-bdbe-4c77-9243-6db9ffffe69b",
 		],
 		0.5
 	),
