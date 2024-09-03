@@ -66,18 +66,24 @@
 	<div class="message" v-else-if="list && list.hashes">
 		<h2>{{ username }}'s Deck hashes</h2>
 		<table class="hashes">
-			<tr>
-				<td>Cockatrice</td>
-				<td @click="copyHash(hashes.cockatrice)" class="clickable" v-tooltip.right="'Copy hash to clipboard.'">
-					<code>{{ hashes.cockatrice }}</code>
-				</td>
-			</tr>
-			<tr>
-				<td>MWS</td>
-				<td @click="copyHash(hashes.mws)" class="clickable" v-tooltip.right="'Copy hash to clipboard.'">
-					<code>{{ hashes.mws }}</code>
-				</td>
-			</tr>
+			<tbody>
+				<tr>
+					<td>Cockatrice</td>
+					<td
+						@click="copyHash(hashes.cockatrice)"
+						class="clickable"
+						v-tooltip.right="'Copy hash to clipboard.'"
+					>
+						<code>{{ hashes.cockatrice }}</code>
+					</td>
+				</tr>
+				<tr>
+					<td>MWS</td>
+					<td @click="copyHash(hashes.mws)" class="clickable" v-tooltip.right="'Copy hash to clipboard.'">
+						<code>{{ hashes.mws }}</code>
+					</td>
+				</tr>
+			</tbody>
 		</table>
 	</div>
 	<div class="message" v-else>{{ username }} did not submit their decklist.</div>

@@ -13,55 +13,61 @@
 			/>
 			<div class="info">Average Mana Cost: {{ manaAverage }}</div>
 			<table class="type-table">
-				<tr>
-					<th>CMC</th>
-					<th>Creature</th>
-					<th>Non-Creature</th>
-					<th>Total</th>
-				</tr>
-				<tr v-for="(data, cmc) in manacurve" :key="cmc">
-					<td class="table-number">
-						<img :src="`img/mana/${cmc}.svg`" class="mana-icon" />
-					</td>
-					<td class="table-number">{{ data.creatures }}</td>
-					<td class="table-number">{{ data.nonCreatures }}</td>
-					<td class="table-number">{{ data.creatures + data.nonCreatures }}</td>
-				</tr>
+				<tbody>
+					<tr>
+						<th>CMC</th>
+						<th>Creature</th>
+						<th>Non-Creature</th>
+						<th>Total</th>
+					</tr>
+					<tr v-for="(data, cmc) in manacurve" :key="cmc">
+						<td class="table-number">
+							<img :src="`img/mana/${cmc}.svg`" class="mana-icon" />
+						</td>
+						<td class="table-number">{{ data.creatures }}</td>
+						<td class="table-number">{{ data.nonCreatures }}</td>
+						<td class="table-number">{{ data.creatures + data.nonCreatures }}</td>
+					</tr>
+				</tbody>
 			</table>
 		</div>
 		<div>
 			<h2>Colors in Mana Cost</h2>
 			<Pie :data="colorsChartData" />
 			<table class="type-table">
-				<tr>
-					<th>Mana Color</th>
-					<th>Count in Cost</th>
-				</tr>
-				<tr v-for="(count, color) in colors" :key="color">
-					<td>{{ color }}</td>
-					<td class="table-number">{{ count }}</td>
-				</tr>
+				<tbody>
+					<tr>
+						<th>Mana Color</th>
+						<th>Count in Cost</th>
+					</tr>
+					<tr v-for="(count, color) in colors" :key="color">
+						<td>{{ color }}</td>
+						<td class="table-number">{{ count }}</td>
+					</tr>
+				</tbody>
 			</table>
 		</div>
 		<div>
 			<h2>Types</h2>
 			<Pie :data="cardTypeChartData" />
 			<table class="type-table">
-				<tr>
-					<th>Type</th>
-					<th>Count</th>
-					<th>%</th>
-				</tr>
-				<tr v-for="(val, key) in types" :key="key">
-					<td>{{ key }}</td>
-					<td class="table-number">{{ val }}</td>
-					<td class="table-number">{{ (100 * (val / (cards.length + addedbasics))).toPrecision(3) }}%</td>
-				</tr>
-				<tr>
-					<td>Total</td>
-					<td class="table-number">{{ cards.length + addedbasics }}</td>
-					<td class="table-number">-</td>
-				</tr>
+				<tbody>
+					<tr>
+						<th>Type</th>
+						<th>Count</th>
+						<th>%</th>
+					</tr>
+					<tr v-for="(val, key) in types" :key="key">
+						<td>{{ key }}</td>
+						<td class="table-number">{{ val }}</td>
+						<td class="table-number">{{ (100 * (val / (cards.length + addedbasics))).toPrecision(3) }}%</td>
+					</tr>
+					<tr>
+						<td>Total</td>
+						<td class="table-number">{{ cards.length + addedbasics }}</td>
+						<td class="table-number">-</td>
+					</tr>
+				</tbody>
 			</table>
 		</div>
 	</div>
@@ -89,11 +95,14 @@ export default defineComponent({
 					if (c.type.startsWith("Legendary ")) return c.type.slice(10);
 					return c.type;
 				})
-				.reduce((acc, t) => {
-					if (!(t in acc)) acc[t] = 1;
-					else ++acc[t];
-					return acc;
-				}, {} as { [type: string]: number });
+				.reduce(
+					(acc, t) => {
+						if (!(t in acc)) acc[t] = 1;
+						else ++acc[t];
+						return acc;
+					},
+					{} as { [type: string]: number }
+				);
 			r["Basic Land"] = (r["Basic Land"] || 0) + this.addedbasics;
 			return r;
 		},
