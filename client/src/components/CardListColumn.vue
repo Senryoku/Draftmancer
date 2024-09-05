@@ -8,7 +8,6 @@
 			:lazyLoad="true"
 		>
 			<div v-if="checkcollection && missingCard[card.id] !== 'Present'" class="collection-warning">
-				<!-- FIXME: These v-tooltip are causing "Uncaught (in promise) Maximum recursive updates exceeded in component <VTooltipDirectiveApp>." -->
 				<font-awesome-icon
 					icon="fa-solid fa-exclamation-triangle"
 					class="green"
