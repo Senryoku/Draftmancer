@@ -1,5 +1,11 @@
 [
 	{
+		"date": "13/09/2024",
+		"notes": [
+			"Duskmourn: House of Horror (DSK) support."
+		]
+	},
+	{
 		"date": "20/08/2024",
 		"notes": [
 			"Added 'Duplicate Protection' setting override for custom card lists in the UI.",
