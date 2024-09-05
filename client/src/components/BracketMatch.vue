@@ -1,7 +1,7 @@
 <template>
 	<div class="bracket-match">
-		<td class="bracket-match-num">{{ matchID + 1 }}</td>
-		<td class="bracket-match-players">
+		<div class="bracket-match-num">{{ matchID + 1 }}</div>
+		<div class="bracket-match-players">
 			<div v-for="(p, index) in players" :key="index">
 				<div class="bracket-player bracket-empty" v-if="isEmpty(p)">(Empty)</div>
 				<div class="bracket-player bracket-tbd" v-else-if="isTBD(p)">(TBD)</div>
@@ -50,7 +50,7 @@
 					</template>
 				</div>
 			</div>
-		</td>
+		</div>
 	</div>
 </template>
 
@@ -143,6 +143,8 @@ const isDoubleBracket = computed(() => props.bracketType === BracketType.Double)
 
 <style scoped>
 .bracket-match {
+	display: flex;
+	align-items: center;
 	margin: 0.5em;
 }
 
