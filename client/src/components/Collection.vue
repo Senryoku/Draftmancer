@@ -29,19 +29,21 @@
 		<div class="resources">
 			<h3>Resources</h3>
 			<table style="margin: auto">
-				<tr v-for="(value, rarity) in collectionInfos.wildcards" :key="rarity">
-					<td><img class="wildcard-icon" :src="`img/wc_${rarity}.webp`" /></td>
-					<td>{{ value }}</td>
-				</tr>
-				<tr
-					v-if="collectionInfos.vaultProgress"
-					v-tooltip.left="
-						'Vault Progress. For every 100% you\'ll receive 1 mythic, 2 rare and 3 uncommon wildcards when opened.'
-					"
-				>
-					<td><img src="../assets/img/vault.png" style="height: 1rem" /></td>
-					<td>{{ collectionInfos.vaultProgress }}%</td>
-				</tr>
+				<tbody>
+					<tr v-for="(value, rarity) in collectionInfos.wildcards" :key="rarity">
+						<td><img class="wildcard-icon" :src="`img/wc_${rarity}.webp`" /></td>
+						<td>{{ value }}</td>
+					</tr>
+					<tr
+						v-if="collectionInfos.vaultProgress"
+						v-tooltip.left="
+							'Vault Progress. For every 100% you\'ll receive 1 mythic, 2 rare and 3 uncommon wildcards when opened.'
+						"
+					>
+						<td><img src="../assets/img/vault.png" style="height: 1rem" /></td>
+						<td>{{ collectionInfos.vaultProgress }}%</td>
+					</tr>
+				</tbody>
 			</table>
 		</div>
 		<div class="set-stats">
@@ -58,24 +60,26 @@
 							selectedSet.fullName
 						}}
 					</caption>
-					<tr>
-						<th>Rarity</th>
-						<th>Unique</th>
-						<th>Total</th>
-						<th>Total Missing</th>
-						<th>Unique (Booster)</th>
-						<th>Total (Booster)</th>
-						<th>Missing From Boosters</th>
-					</tr>
-					<tr v-for="r in ['common', 'uncommon', 'rare', 'mythic', 'all']" :key="r">
-						<td style="text-transform: capitalize">{{ r }}</td>
-						<td>{{ selectedSet.ownedUnique[r] }} / {{ selectedSet.total[r] }}</td>
-						<td>{{ selectedSet.owned[r] }} / {{ 4 * selectedSet.total[r] }}</td>
-						<td>{{ 4 * selectedSet.total[r] - selectedSet.owned[r] }}</td>
-						<td>{{ selectedSet.inBoosters.ownedUnique[r] }} / {{ selectedSet.inBoosters.total[r] }}</td>
-						<td>{{ selectedSet.inBoosters.owned[r] }} / {{ 4 * selectedSet.inBoosters.total[r] }}</td>
-						<td>{{ 4 * selectedSet.inBoosters.total[r] - selectedSet.inBoosters.owned[r] }}</td>
-					</tr>
+					<tbody>
+						<tr>
+							<th>Rarity</th>
+							<th>Unique</th>
+							<th>Total</th>
+							<th>Total Missing</th>
+							<th>Unique (Booster)</th>
+							<th>Total (Booster)</th>
+							<th>Missing From Boosters</th>
+						</tr>
+						<tr v-for="r in ['common', 'uncommon', 'rare', 'mythic', 'all']" :key="r">
+							<td style="text-transform: capitalize">{{ r }}</td>
+							<td>{{ selectedSet.ownedUnique[r] }} / {{ selectedSet.total[r] }}</td>
+							<td>{{ selectedSet.owned[r] }} / {{ 4 * selectedSet.total[r] }}</td>
+							<td>{{ 4 * selectedSet.total[r] - selectedSet.owned[r] }}</td>
+							<td>{{ selectedSet.inBoosters.ownedUnique[r] }} / {{ selectedSet.inBoosters.total[r] }}</td>
+							<td>{{ selectedSet.inBoosters.owned[r] }} / {{ 4 * selectedSet.inBoosters.total[r] }}</td>
+							<td>{{ 4 * selectedSet.inBoosters.total[r] - selectedSet.inBoosters.owned[r] }}</td>
+						</tr>
+					</tbody>
 				</table>
 
 				<h3>
