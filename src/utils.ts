@@ -49,7 +49,7 @@ export function getRandomMapKey<K, V>(map: Map<K, V>): K {
 	for (const k of map.keys()) {
 		if (idx-- === 0) return k;
 	}
-	return map.keys().next().value;
+	return map.keys().next().value!;
 }
 
 export function getRandomKey(obj: object) {

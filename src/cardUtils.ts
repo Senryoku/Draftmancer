@@ -11,7 +11,7 @@ function getRandomCardFromCardPool(cardPool: CardPool): CardID {
 	if (cardPool.size === cardPool.count()) {
 		const r = cardPool.keys();
 		for (let i = 0; i < idx; ++i) r.next();
-		return r.next().value;
+		return r.next().value!;
 	}
 
 	let acc = 0;
@@ -19,7 +19,7 @@ function getRandomCardFromCardPool(cardPool: CardPool): CardID {
 		acc += count;
 		if (acc > idx) return cid;
 	}
-	return cardPool.keys().next().value;
+	return cardPool.keys().next().value!;
 }
 
 // TODO: Prevent multiples by name?
