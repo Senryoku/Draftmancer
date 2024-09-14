@@ -618,6 +618,12 @@
         "fullName": "The Dark",
         "icon": "img/sets/drk.svg"
     },
+    "dsc": {
+        "code": "dsc",
+        "fullName": "Duskmourn: House of Horror Commander",
+        "block": "Commander",
+        "icon": "img/sets/dsc.svg"
+    },
     "dsk": {
         "code": "dsk",
         "fullName": "Duskmourn: House of Horror",
@@ -3686,7 +3692,7 @@
     "yblb": {
         "code": "yblb",
         "fullName": "Alchemy: Bloomburrow",
-        "block": "Alchemy 2024",
+        "block": "Alchemy 2025",
         "icon": "img/sets/yblb.svg"
     },
     "ybro": {
