@@ -1,7 +1,7 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
-			<em>September 13, 2024</em>
+			<em>September 14, 2024</em>
 			<p>
 				<img src="img/sets/dsk.svg" class="set-icon" style="--invertedness: 100%" alt="DSK" />
 				Duskmourn: House of Horror is now available!
