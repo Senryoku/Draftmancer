@@ -505,7 +505,7 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
             except:
                 selection['in_booster'] = False
         
-        if c['set'] == "usg" and c['collector_number'].endswith('s'):
+        if c['set'] in ["usg", "5ed", "6ed", "7ed", "8ed"] and c['collector_number'].endswith('s'):
             selection['in_booster'] = False
           
 
