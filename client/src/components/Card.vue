@@ -231,77 +231,90 @@ function keyUp(event: KeyboardEvent) {
 	gap: 0.5em;
 	padding: 0.2em 0;
 }
+</style>
+
+<style>
+/* Workaround: I don't understand why this is necessary... Without it inner-card-image has a height of 0 after the booster open animation. */
+.booster .foil:not(.booster-open-enter-active) {
+	.inner-card-image {
+		height: 100%;
+	}
+	&:hover .inner-card-image {
+		transition: none;
+	}
+}
 
 .foil:not(.booster-open-enter-active) {
-	.card-image {
-		position: relative;
-		overflow: hidden;
-		filter: brightness(var(--brightness));
-		transform: perspective(1000px) rotate3d(0, 1, 0, var(--transform-rotation-x))
-			rotate3d(1, 0, 0, var(--transform-rotation-y));
-	}
-
-	:not(:hover) {
-		.card-image,
-		.card-image:after,
-		.card-image:before {
+	&:not(:hover) {
+		.inner-card-image,
+		.inner-card-image:after,
+		.inner-card-image:before {
 			transition: all 0.5s ease-out;
 		}
 	}
 
-	.card-image:after,
-	.card-image:before {
-		content: "";
+	.inner-card-image {
+		position: relative;
+		overflow: hidden;
+		border-radius: 3%;
+		filter: brightness(var(--brightness));
+		transform: perspective(1000px) rotate3d(0, 1, 0, var(--transform-rotation-x))
+			rotate3d(1, 0, 0, var(--transform-rotation-y));
 
-		position: absolute;
-		width: 100%;
-		padding-bottom: calc(1.41 * 300%);
-		top: calc(-75% + var(--foil-initial-top));
-		left: calc(0% + var(--foil-initial-left));
-		transform: rotate(30deg);
-	}
+		&:after,
+		&:before {
+			content: "";
 
-	.card-image:after {
-		background: rgba(255, 255, 255, 0.5);
-		--saturation: 100%;
-		--lightness: 50%;
-		background: linear-gradient(
-			to right,
-			hsla(0, var(--saturation), var(--lightness), 0),
-			hsl(40, var(--saturation), var(--lightness)),
-			hsl(80, var(--saturation), var(--lightness)),
-			hsl(120, var(--saturation), var(--lightness)),
-			hsl(160, var(--saturation), var(--lightness)),
-			hsl(200, var(--saturation), var(--lightness)),
-			hsl(240, var(--saturation), var(--lightness)),
-			hsl(280, var(--saturation), var(--lightness)),
-			hsl(320, var(--saturation), var(--lightness)),
-			hsla(360, var(--saturation), var(--lightness), 0)
-		);
-		mix-blend-mode: hue;
+			position: absolute;
+			width: 100%;
+			padding-bottom: calc(1.41 * 300%);
+			top: calc(-75% + var(--foil-initial-top));
+			left: calc(0% + var(--foil-initial-left));
+			transform: rotate(30deg);
+		}
 
-		animation: fade-in 0.15s linear forwards;
-	}
+		&:after {
+			background: rgba(255, 255, 255, 0.5);
+			--saturation: 100%;
+			--lightness: 50%;
+			background: linear-gradient(
+				to right,
+				hsla(0, var(--saturation), var(--lightness), 0),
+				hsl(40, var(--saturation), var(--lightness)),
+				hsl(80, var(--saturation), var(--lightness)),
+				hsl(120, var(--saturation), var(--lightness)),
+				hsl(160, var(--saturation), var(--lightness)),
+				hsl(200, var(--saturation), var(--lightness)),
+				hsl(240, var(--saturation), var(--lightness)),
+				hsl(280, var(--saturation), var(--lightness)),
+				hsl(320, var(--saturation), var(--lightness)),
+				hsla(360, var(--saturation), var(--lightness), 0)
+			);
+			mix-blend-mode: hue;
 
-	.card-image:before {
-		background: rgba(255, 255, 255, 0.25);
-		background: linear-gradient(
-			to right,
-			rgba(255, 255, 255, 0) 35%,
-			rgba(255, 255, 255, 0.04) 40%,
-			rgba(255, 255, 255, 0.2) 45%,
-			rgba(255, 255, 255, 0.24) 49%,
-			rgba(255, 255, 255, 0.25) 50%,
-			rgba(255, 255, 255, 0.24) 51%,
-			rgba(255, 255, 255, 0.2) 55%,
-			rgba(255, 255, 255, 0.04) 60%,
-			rgba(255, 255, 255, 0) 65%,
-			rgba(255, 255, 255, 0) 100%
-		);
-		mix-blend-mode: lighten;
-		z-index: 1;
+			animation: fade-in 0.15s linear forwards;
+		}
 
-		animation: fade-in 0.15s linear forwards;
+		&:before {
+			background: rgba(255, 255, 255, 0.25);
+			background: linear-gradient(
+				to right,
+				rgba(255, 255, 255, 0) 35%,
+				rgba(255, 255, 255, 0.04) 40%,
+				rgba(255, 255, 255, 0.2) 45%,
+				rgba(255, 255, 255, 0.24) 49%,
+				rgba(255, 255, 255, 0.25) 50%,
+				rgba(255, 255, 255, 0.24) 51%,
+				rgba(255, 255, 255, 0.2) 55%,
+				rgba(255, 255, 255, 0.04) 60%,
+				rgba(255, 255, 255, 0) 65%,
+				rgba(255, 255, 255, 0) 100%
+			);
+			mix-blend-mode: lighten;
+			z-index: 1;
+
+			animation: fade-in 0.15s linear forwards;
+		}
 	}
 }
 

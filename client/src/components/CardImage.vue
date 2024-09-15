@@ -34,7 +34,7 @@
 		<div v-if="card.layout === 'split-left'" class="split-left-button">
 			<img src="../assets/img/tap-icon.svg" class="split-left-icon" />
 		</div>
-		<div :class="{ 'flip-container': hasBack || renderCommonBackside }">
+		<div :class="{ 'inner-card-image': true, 'flip-container': hasBack || renderCommonBackside }">
 			<clazy-load
 				:ratio="0"
 				margin="200px"
@@ -348,6 +348,24 @@ img {
 
 .split-left-button:hover ~ div .front-image {
 	transform: scale(1.41) rotateZ(-90deg);
+}
+
+/* Cancel foil transform when hovering the flip button */
+.flip-button,
+.vertical-flip-button,
+.split-button,
+.split-left-button {
+	&:hover {
+		~ .inner-card-image {
+			transform: none;
+			overflow: visible;
+
+			&:before,
+			&:after {
+				display: none;
+			}
+		}
+	}
 }
 
 /* Fixed Layouts (Used by CardPopup) */
