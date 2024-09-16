@@ -58,9 +58,9 @@ const ioOptions = {
 
 let UniqueUserID = 0;
 
-export const getUID = (c: Socket) => (c as any).query.userID as UserID; // FIXME: This is how we store userID for now (see makeClients), but this should change.
+export const getUID = (c: Socket) => (c as unknown as { query: { userID: UserID } }).query.userID as UserID; // FIXME: This is how we store userID for now (see makeClients), but this should change.
 
-export function connectClient(query: any) {
+export function connectClient(query: Record<string, unknown>) {
 	if (!query.userID) query.userID = `UserID${++UniqueUserID}`;
 
 	const r = io(`http://localhost:${NODE_PORT}`, Object.assign({ query: query }, ioOptions)) as Socket<
@@ -68,12 +68,12 @@ export function connectClient(query: any) {
 		ClientToServerEvents
 	>;
 	r.on("alreadyConnected", (newID) => {
-		(r as any).query.userID = newID;
+		(r as unknown as { query: Record<string, unknown> }).query.userID = newID;
 	});
 	r.on("stillAlive", function (ack) {
 		if (ack) ack();
 	});
-	(r as any).query = query; // Hackish: This property disappeared between socket.io v2 and v3
+	(r as unknown as { query: Record<string, unknown> }).query = query; // Hackish: This property disappeared between socket.io v2 and v3
 	return r;
 }
 
