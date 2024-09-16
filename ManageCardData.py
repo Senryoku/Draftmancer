@@ -507,6 +507,9 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
         
         if c['set'] in ["usg", "5ed", "6ed", "7ed", "8ed"] and c['collector_number'].endswith('s'):
             selection['in_booster'] = False
+
+        if c['collector_number'].endswith('†'):
+            selection['in_booster'] = False
           
 
         if c['layout'] == "split":
