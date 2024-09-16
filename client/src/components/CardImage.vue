@@ -357,7 +357,11 @@ img {
 .split-left-button {
 	&:hover {
 		~ .inner-card-image {
-			transform: none;
+			--brightness: 100%;
+			--transform-rotation-x: 0;
+			--transform-rotation-y: 0;
+			--foil-initial-top: 0%;
+			--foil-initial-left: 0%;
 			overflow: visible;
 
 			&:before,
