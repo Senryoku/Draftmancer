@@ -234,16 +234,6 @@ function keyUp(event: KeyboardEvent) {
 </style>
 
 <style>
-/* Workaround: I don't understand why this is necessary... Without it inner-card-image has a height of 0 after the booster open animation. */
-.booster .foil:not(.booster-open-enter-active) {
-	.inner-card-image {
-		height: 100%;
-	}
-	&:hover .inner-card-image {
-		transition: none;
-	}
-}
-
 .foil:not(.booster-open-enter-active) {
 	&:not(:hover) {
 		.inner-card-image,

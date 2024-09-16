@@ -34,54 +34,56 @@
 		<div v-if="card.layout === 'split-left'" class="split-left-button">
 			<img src="../assets/img/tap-icon.svg" class="split-left-icon" />
 		</div>
-		<div :class="{ 'inner-card-image': true, 'flip-container': hasBack || renderCommonBackside }">
-			<clazy-load
-				:ratio="0"
-				margin="200px"
-				:src="imageURI"
-				loadingClass="card-loading"
-				:forceLoad="!lazyLoad"
-				:class="{ 'flip-front': hasBack || renderCommonBackside }"
-			>
-				<template v-if="cardAdditionalData && displayCardText">
-					<template v-if="cardAdditionalData.status === 'pending'">
-						<div class="pending-alt-card-text">
-							<font-awesome-icon icon="fa-solid fa-spinner" spin></font-awesome-icon>
-						</div>
+		<div class="inner-card-image">
+			<div :class="{ 'flip-container': hasBack || renderCommonBackside }">
+				<clazy-load
+					:ratio="0"
+					margin="200px"
+					:src="imageURI"
+					loadingClass="card-loading"
+					:forceLoad="!lazyLoad"
+					:class="{ 'flip-front': hasBack || renderCommonBackside }"
+				>
+					<template v-if="cardAdditionalData && displayCardText">
+						<template v-if="cardAdditionalData.status === 'pending'">
+							<div class="pending-alt-card-text">
+								<font-awesome-icon icon="fa-solid fa-spinner" spin></font-awesome-icon>
+							</div>
+						</template>
+						<template v-else>
+							<CardText :card="cardFrontAdditionalData!" />
+						</template>
 					</template>
-					<template v-else>
-						<CardText :card="cardFrontAdditionalData!" />
+					<img class="front-image" :src="imageURI" />
+					<template v-slot:placeholder>
+						<CardPlaceholder :card="card"></CardPlaceholder>
 					</template>
-				</template>
-				<img class="front-image" :src="imageURI" />
-				<template v-slot:placeholder>
-					<CardPlaceholder :card="card"></CardPlaceholder>
-				</template>
-			</clazy-load>
-			<clazy-load
-				:ratio="0"
-				margin="200px"
-				:src="backImageURI!"
-				loadingClass="card-loading"
-				class="flip-back"
-				:forceLoad="!lazyLoad"
-				v-if="hasBack"
-			>
-				<template v-if="cardAdditionalData && displayCardText">
-					<template v-if="cardAdditionalData.status === 'pending'">
-						<div class="pending-alt-card-text">
-							<font-awesome-icon icon="fa-solid fa-spinner" spin></font-awesome-icon>
-						</div>
+				</clazy-load>
+				<clazy-load
+					:ratio="0"
+					margin="200px"
+					:src="backImageURI!"
+					loadingClass="card-loading"
+					class="flip-back"
+					:forceLoad="!lazyLoad"
+					v-if="hasBack"
+				>
+					<template v-if="cardAdditionalData && displayCardText">
+						<template v-if="cardAdditionalData.status === 'pending'">
+							<div class="pending-alt-card-text">
+								<font-awesome-icon icon="fa-solid fa-spinner" spin></font-awesome-icon>
+							</div>
+						</template>
+						<template v-else>
+							<CardText v-if="hasBack && cardBackAdditionalData" :card="cardBackAdditionalData" />
+						</template>
 					</template>
-					<template v-else>
-						<CardText v-if="hasBack && cardBackAdditionalData" :card="cardBackAdditionalData" />
-					</template>
-				</template>
-				<img class="back-image" :src="backImageURI" />
-				<template v-slot:placeholder><CardPlaceholder :card="card.back" /></template>
-			</clazy-load>
-			<div class="flip-back" v-else-if="renderCommonBackside">
-				<CardPlaceholder :card="undefined" />
+					<img class="back-image" :src="backImageURI" />
+					<template v-slot:placeholder><CardPlaceholder :card="card.back" /></template>
+				</clazy-load>
+				<div class="flip-back" v-else-if="renderCommonBackside">
+					<CardPlaceholder :card="undefined" />
+				</div>
 			</div>
 		</div>
 	</div>
@@ -273,22 +275,26 @@ img {
 	transform-style: preserve-3d;
 }
 
-.flip-button:hover ~ .flip-container {
+.flip-button:hover ~ div .flip-container {
 	transform: rotateY(-180deg);
 }
 
 .flip-front,
 .flip-back {
-	position: absolute;
-	left: 0;
-	width: 100%;
-	height: 100%;
 	-webkit-backface-visibility: hidden; /* Safari */
 	backface-visibility: hidden;
 
 	-ms-transform: translateZ(0); /* IE 9 */
 	-webkit-transform: translateZ(0); /* Chrome, Safari, Opera */
 	transform: translateZ(0);
+}
+
+.flip-back {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
 }
 
 .flip-back {
