@@ -1,0 +1,30 @@
+[Settings]
+{
+	"name": "Settings Test",
+	"withReplacement": true,
+	"layoutWithReplacement" : true,
+	"layouts": {
+		"Normal" : {
+			"weight": 3,
+			"slots": [
+				{ "name": "Rare",     "count": 1},
+				{ "name": "Uncommon", "count": 3},
+				{ "name": "Common",   "count": 10}
+			]
+		},
+		"Lucky": {
+			"weight": 1,
+			"slots": [
+				{ "name": "Rare"     , "count" : 2},
+				{ "name": "Uncommon" , "count" : 3},
+				{ "name": "Common"   , "count" : 9}
+			]
+		}
+	}
+}
+[Common]
+Lightning Bolt
+[Uncommon]
+Blood Artist
+[Rare]
+Teferi, Time Raveler

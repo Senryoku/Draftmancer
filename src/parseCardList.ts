@@ -281,14 +281,29 @@ function parseSettings(
 			return err(`'layouts' must be an object.`);
 
 		for (const [key, value] of Object.entries(parsedSettings.layouts)) {
-			if (!("weight" in value)) err(`Layout '${key}'  must have a 'weight' property.`);
-			if (!isInteger(value.weight)) return err(`'weight' must be an integer.`);
+			if (!("weight" in value)) err(`Layout '${key}' must have a 'weight' property.`);
+			if (!isInteger(value.weight)) return err(`Layout '${key}': 'weight' must be an integer.`);
 			if (!("slots" in value)) return err(`Layout '${key}' must have a 'slots' property.`);
-			if (!isRecord(isString, isInteger)(value["slots"])) return err(`'slots' must be a Record<string, number>.`);
+
+			let slots: Record<string, number> = {};
+
+			if (isRecord(isString, isInteger)(value["slots"])) {
+				slots = value["slots"];
+			} else if (isArrayOf(isObject)(value["slots"])) {
+				for (const slot of value["slots"]) {
+					if (!("name" in slot)) return err(`Layout '${key}': Missing required property 'name' in slot.`);
+					if (!isString(slot.name)) return err(`Layout '${key}': slot 'name' must be a string.`);
+					if (!("count" in slot)) return err(`Layout '${key}': Missing required property 'count' in slot.`);
+					if (!isInteger(slot.count)) return err(`Layout '${key}': slot 'count' must be an integer.`);
+					slots[slot.name] = slot.count;
+				}
+			} else {
+				return err(`'slots' must be a Record<string, number> or Array<{ name: string; count: number }>.`);
+			}
 
 			layouts[key] = {
 				weight: value.weight,
-				slots: value.slots,
+				slots: slots,
 			};
 		}
 

@@ -24,6 +24,24 @@ describe("Custom Card List Parsing", function () {
 		});
 	}
 
+	it(`should parse LayoutSlotArray`, function () {
+		const r = parseCardList(fs.readFileSync(`./test/data/LayoutSlotArray.txt`, "utf8"), {});
+		expect(isSocketError(r), `Got ${JSON.stringify((r as SocketError).error)}`).to.be.false;
+		if (!isSocketError(r)) {
+			expect(r.layouts).to.not.be.false;
+			if (r.layouts) {
+				expect(r.layouts.Normal.weight).to.equal(3);
+				expect(r.layouts.Normal.slots.Common).to.equal(10);
+				expect(r.layouts.Normal.slots.Uncommon).to.equal(3);
+				expect(r.layouts.Normal.slots.Rare).to.equal(1);
+				expect(r.layouts.Lucky.weight).to.equal(1);
+				expect(r.layouts.Lucky.slots.Common).to.equal(9);
+				expect(r.layouts.Lucky.slots.Uncommon).to.equal(3);
+				expect(r.layouts.Lucky.slots.Rare).to.equal(2);
+			}
+		}
+	});
+
 	it(`should respect the 'predeterminedLayouts' setting.`, () => {
 		const session = new Session("sessionid", "clientid");
 		const list = parseCardList(fs.readFileSync(`./test/data/PredeterminedLayouts.txt`, "utf8"), {});

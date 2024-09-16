@@ -241,7 +241,7 @@ Card Name 6
 		}
 	]
 
-	layouts: <type>Record&lt;string, PackLayout&gt;</type>; <comment>// See below</comment>
+	layouts: <type>Record&lt;string, PackLayout&gt; | Array&lt;{ name: string; count: number }&gt;</type>; <comment>// See below</comment>
 
 	<comment>// Specify the exact order of the pack layouts rather than picking them randomly. Useful for block drafts. 
 	//   Array of layout names, array of arrays of layout names (weights inherited from the layout declaration) 
