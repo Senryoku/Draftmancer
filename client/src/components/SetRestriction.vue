@@ -126,7 +126,7 @@ let unsortedBlocks: { [code: SetCode]: SetInfo[] } = {};
 for (let s of constants.PrimarySets.map((s) => SetsInfos[s])) {
 	let b = s.block;
 	if (b && FilteredBlocks.includes(b)) continue;
-	if (!b && assigned.includes(s.code)) continue;
+	if ((!b || s.code === "ydmu" || s.code === "hbg") && assigned.includes(s.code)) continue;
 	if (!b) b = "Others";
 	if (!(b in unsortedBlocks)) unsortedBlocks[b] = [];
 	unsortedBlocks[b].push(s);
