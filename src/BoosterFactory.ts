@@ -3,6 +3,8 @@ import { getUnique, BoosterCardsBySet, CardsBySet, getCard, DefaultMaxDuplicates
 import { shuffleArray, randomInt, Options, random, getRandom, cumulativeSum } from "./utils.js";
 import { pickCard } from "./cardUtils.js";
 import { BasicLandSlot } from "./LandSlot.js";
+import { MessageError, isMessageError } from "./Message.js";
+import { Session } from "./Session.js";
 
 // Generates booster for regular MtG Sets
 
@@ -1370,8 +1372,6 @@ class ONEBoosterFactory extends BoosterFactory {
 // Shadows over Innistrad Remastered (SIR)
 // One card from a rotating bonus sheet in each booster
 import ShadowOfThePastLists from "./data/shadow_of_the_past.json" assert { type: "json" };
-import { MessageError, isMessageError } from "./Message.js";
-import { Session } from "./Session.js";
 
 class SIRBoosterFactory extends BoosterFactory {
 	bonusSheet: SlotedCardPool = {
@@ -1862,7 +1862,8 @@ function filterSetByNumber(set: keyof typeof CardsBySet, min: number, max: numbe
 			if (!/^\d+$/.test(card.collector_number)) return false;
 			const cn = parseInt(card.collector_number);
 			return cn >= min && cn <= max;
-		} catch (e) {
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		} catch (e: unknown) {
 			return false;
 		}
 	});
@@ -1917,6 +1918,8 @@ function rollSetBoosterWildcardRarity(pool?: SlotedCardPool, options?: BoosterFa
 // - Land Slot
 // - Non-Foil Wildcard from the set
 // - Traditional Foil Wildcard from the set
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 class PlayBoosterFactory extends BoosterFactory {
 	theList: SlotedCardPool;
 	spg: CardPool; // Special Guests
@@ -2494,6 +2497,108 @@ class DSKBoosterFactory extends BoosterFactory {
 	}
 }
 
+import MB2PlistCards from "../data/mb2.json" assert { type: "json" };
+
+// Mystery Booster 2
+//   10 Commons or uncommons
+//    - 2 Cards of each color
+//   1 Multicolor, artifact, or common or uncommon land
+//   1 Rare or mythic rare
+//   1 Future Sight frame card
+//    - Less than 5% of Future Sight frame cards appear in traditional foil.
+//    - In less than 1% of boosters, this slot is replaced with a traditional foil acorn Alchemy card.
+//   1 White-bordered card
+//   1 Playtest card
+class MB2BoosterFactory extends BoosterFactory {
+	monocoloredCommonsOrUncommons = {
+		W: new CardPool(),
+		U: new CardPool(),
+		B: new CardPool(),
+		R: new CardPool(),
+		G: new CardPool(),
+	};
+	otherCommonsOrUncommons: CardPool = new CardPool();
+	rares: CardPool = new CardPool();
+	mythics: CardPool = new CardPool();
+	futureSight: CardPool = new CardPool();
+	whiteBordered: CardPool = new CardPool();
+	playtest: CardPool = new CardPool();
+	alchemy: CardPool = new CardPool();
+
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
+		super(cardPool, landSlot, options);
+		for (const cid of MB2PlistCards) {
+			const card = getCard(cid);
+			const rarity = card.rarity;
+			const copies = options.maxDuplicates?.[card.rarity] ?? DefaultMaxDuplicates;
+			if (rarity === "common" || rarity === "uncommon") {
+				if (card.colors.length === 1) {
+					this.monocoloredCommonsOrUncommons[card.colors[0]].set(cid, copies);
+				} else {
+					this.otherCommonsOrUncommons.set(cid, copies);
+				}
+			} else if (rarity === "rare") {
+				this.rares.set(cid, copies);
+			} else if (rarity === "mythic") {
+				this.mythics.set(cid, copies);
+			} else {
+				console.error(`MB2BoosterFactory: Unrecognized rarity: ${rarity}`);
+			}
+		}
+		for (const cid of BoosterCardsBySet["mb2"]) {
+			const card = getCard(cid);
+			const collector_number = parseInt(card.collector_number);
+			const copies = options.maxDuplicates?.[card.rarity] ?? DefaultMaxDuplicates;
+			if (collector_number >= 1 && collector_number <= 121) {
+				this.whiteBordered.set(cid, copies);
+			} else if (collector_number >= 122 && collector_number <= 257) {
+				this.futureSight.set(cid, copies);
+			} else if (collector_number >= 258 && collector_number <= 264) {
+				this.alchemy.set(cid, copies);
+			} else if (collector_number >= 265 && collector_number <= 385) {
+				this.playtest.set(cid, copies);
+			}
+		}
+	}
+
+	generateBooster(targets: Targets) {
+		const booster: UniqueCard[] = [];
+
+		if (targets !== DefaultBoosterTargets) {
+			return new MessageError("Unsupported", "Mystery Booster 2 does not support non-default booster content.");
+		}
+
+		booster.push(pickCard(this.playtest, booster));
+		booster.push(pickCard(this.whiteBordered, booster));
+
+		const futureSightRoll = random.realZeroToOneInclusive();
+		if (futureSightRoll < 0.01) {
+			booster.push(pickCard(this.alchemy, booster));
+		} else if (futureSightRoll < 0.05) {
+			booster.push(pickCard(this.futureSight, booster, { foil: true }));
+		} else {
+			booster.push(pickCard(this.futureSight, booster));
+		}
+
+		if (random.realZeroToOneInclusive() < 1.0 / 8.0) booster.push(pickCard(this.mythics, booster));
+		else booster.push(pickCard(this.rares, booster));
+
+		booster.push(pickCard(this.otherCommonsOrUncommons, booster));
+
+		for (const color of Object.keys(this.monocoloredCommonsOrUncommons)) {
+			for (let i = 0; i < 2; ++i)
+				booster.push(
+					pickCard(
+						this.monocoloredCommonsOrUncommons[color as keyof typeof this.monocoloredCommonsOrUncommons],
+						booster
+					)
+				);
+		}
+
+		return booster;
+	}
+}
+
 // Set specific rules.
 // Neither DOM, WAR or ZNR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
 export const SetSpecificFactories: {
@@ -2538,6 +2643,7 @@ export const SetSpecificFactories: {
 	mh3: MH3BoosterFactory,
 	blb: BLBBoosterFactory,
 	dsk: DSKBoosterFactory,
+	mb2: MB2BoosterFactory,
 };
 
 export const getBoosterFactory = function (

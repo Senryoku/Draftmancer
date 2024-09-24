@@ -1,6 +1,13 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
+			<em>September 24, 2024</em>
+			<p>
+				Added <img src="img/sets/mb2.svg" class="set-icon" style="--invertedness: 100%" alt="MB2" />
+				Mystery Booster 2 support!
+			</p>
+		</div>
+		<div class="news">
 			<em>September 14, 2024</em>
 			<p>
 				<img src="img/sets/dsk.svg" class="set-icon" style="--invertedness: 100%" alt="DSK" />

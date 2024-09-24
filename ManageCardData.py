@@ -266,6 +266,7 @@ else:
     with open(RatingsDest, 'r', encoding="utf8") as file:
         CardRatings = dict(CardRatings, **json.loads(file.read()))
 
+NonProcessedCards = {} # Keep track of cards that were not added to the database (by (name, set, collector number))). After the first pass this will contain cards never printed in English. 
 if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
     all_cards = []
     with open(BulkDataPath, 'r', encoding="utf8") as file:
@@ -355,7 +356,6 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
     cards = {}
     cardsByName = {}
     Translations = {}
-    NonProcessedCards = {} # Keep track of cards that were not added to the database (by (name, set, collector number))). After the first pass this will contain cards never printed in English. 
     print("Generating card data cache...")
 
     def addCard(c):
@@ -511,6 +511,8 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
         if c['collector_number'].endswith('†'):
             selection['in_booster'] = False
           
+        if c['set'] == "mb2":
+            selection['in_booster'] = True
 
         if c['layout'] == "split":
             if 'Aftermath' in c['keywords']:
@@ -883,6 +885,7 @@ setinfos["mb1_convention_2021"] = {"code": "mb1_convention_2021",
                                    "isPrimary": True,
                                    }
 PrimarySets.append("mb1_convention_2021")
+PrimarySets.append("mb2")
 
 # Add Portal sets as draftable (They're not meant to be drafted, but some users want to try anyway!) 
 PrimarySets.append("por")
