@@ -5521,6 +5521,10 @@
         71987,
         70712
     ],
+    "Hallowed Haunting": [
+        92403,
+        78795
+    ],
     "Sunder the Gateway": [
         84294
     ],
@@ -8513,7 +8517,8 @@
     ],
     "Unholy Heat": [
         76101,
-        76101
+        76101,
+        92410
     ],
     "Jadecraft Artisan": [
         66887
@@ -16993,6 +16998,9 @@
     "Skanos, Dragon Vassal": [
         81597
     ],
+    "Sacrifice": [
+        92408
+    ],
     "Aether Channeler": [
         82094
     ],
@@ -18073,9 +18081,6 @@
     "Frilled Sparkshooter": [
         91672
     ],
-    "Hallowed Haunting": [
-        78795
-    ],
     "Invading Manticore": [
         69585
     ],
@@ -18694,7 +18699,8 @@
     ],
     "Soul Warden": [
         32675,
-        32675
+        32675,
+        92404
     ],
     "Steamcore Scholar": [
         88990
@@ -21000,6 +21006,9 @@
     ],
     "Keral Keep Disciples": [
         72056
+    ],
+    "Noxious Revival": [
+        92412
     ],
     "Chaos Channeler": [
         77241
@@ -24419,6 +24428,9 @@
     "Invasion of Muraganda // Primordial Plasm": [
         84481
     ],
+    "Damnation": [
+        92407
+    ],
     "Reap the Past": [
         71552,
         71552
@@ -24826,6 +24838,9 @@
     ],
     "Contraband Kingpin": [
         75768
+    ],
+    "Maddening Hex": [
+        92409
     ],
     "Caught Red-Handed": [
         89030
@@ -25850,6 +25865,9 @@
     ],
     "Brokers Veteran": [
         80187
+    ],
+    "Phantasmal Image": [
+        92406
     ],
     "Arcbound Mouser": [
         75955,
@@ -27128,7 +27146,8 @@
         86735
     ],
     "Collected Company": [
-        73966
+        73966,
+        92411
     ],
     "Floodpits Drowner": [
         92125
@@ -32774,6 +32793,9 @@
     ],
     "Coordinated Clobbering": [
         92261
+    ],
+    "Expropriate": [
+        92405
     ],
     "Rosethorn Halberd": [
         70322
