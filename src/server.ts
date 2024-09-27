@@ -2011,11 +2011,11 @@ function returnCircularJSON(res: express.Response, data: unknown) {
 }
 
 app.get("/getSessionsDebug/:key", requireAPIKey, (req, res) => {
-	return returnCircularJSON(res, Sessions);
+	returnCircularJSON(res, Sessions);
 });
 
 app.get("/getConnections/:key", requireAPIKey, (req, res) => {
-	return returnCircularJSON(res, Connections);
+	returnCircularJSON(res, Connections);
 });
 
 app.get("/getStatus/:key", requireAPIKey, (req, res) => {
@@ -2028,7 +2028,7 @@ app.get("/getStatus/:key", requireAPIKey, (req, res) => {
 		}
 	}
 	const uptime = process.uptime();
-	return returnCircularJSON(res, {
+	returnCircularJSON(res, {
 		uptime: uptime,
 		sessionCount: Object.keys(Sessions).length,
 		playerCount: Object.keys(Connections).length,
@@ -2055,11 +2055,11 @@ app.get("/getSessions/:key", requireAPIKey, (req, res) => {
 				: null,
 			setRestriction: Sessions[sid].setRestriction,
 		};
-	return returnCircularJSON(res, localSess);
+	returnCircularJSON(res, localSess);
 });
 
 app.get("/api/getDraftQueueStatus", (req, res) => {
-	return res.json(getQueueStatus());
+	res.json(getQueueStatus());
 });
 
 Promise.all([InactiveConnections, InactiveSessions]).then(() => {

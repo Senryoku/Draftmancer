@@ -45,13 +45,15 @@ describe("Brackets", function () {
 
 	describe("Single", function () {
 		it(`Generate bracket, should receive a new bracket.`, function (done) {
-			clients[ownerIdx].once("sessionOptions", function (data) {
-				expect(data.bracket).to.not.be.undefined;
-				for (let m = 0; m < 4; ++m) {
-					expect(data.bracket!.matches[m].players[0]).to.equal(2 * m + 0);
-					expect(data.bracket!.matches[m].players[1]).to.equal(2 * m + 1);
+			clients[ownerIdx].on("sessionOptions", function (data) {
+				if (data.bracket) {
+					for (let m = 0; m < 4; ++m) {
+						expect(data.bracket!.matches[m].players[0]).to.equal(2 * m + 0);
+						expect(data.bracket!.matches[m].players[1]).to.equal(2 * m + 1);
+					}
+					clients[ownerIdx].removeListener("sessionOptions");
+					done();
 				}
-				done();
 			});
 			clients[ownerIdx].emit("generateBracket", BracketType.Single, ackNoError);
 		});
