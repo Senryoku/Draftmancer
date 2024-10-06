@@ -814,7 +814,11 @@ export class Session implements IIndexable {
 		// This is only an approximation, generateBoosters is quite complicated.
 		const expectedCardsPerBooster = this.useCustomCardList
 			? this.customCardList.layouts
-				? Math.min(...Object.values(this.customCardList.layouts).map((layout) => sumValues(layout.slots)))
+				? Math.min(
+						...Object.values(this.customCardList.layouts).map((layout) =>
+							sum(layout.slots.map((s) => s.count))
+						)
+					)
 				: this.cardsPerBooster
 			: sumValues(this.getBoosterContent());
 
@@ -1204,7 +1208,7 @@ export class Session implements IIndexable {
 				? this.customCardList.layouts
 					? Math.min(
 							...Object.values(this.customCardList.layouts).map((layout) =>
-								Object.values(layout.slots).reduce((val, acc) => val + acc, 0)
+								sum(layout.slots.map((s) => s.count))
 							)
 						)
 					: this.cardsPerBooster

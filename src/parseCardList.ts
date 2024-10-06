@@ -2,7 +2,7 @@ import { genCustomCardID } from "./CustomCardID.js";
 import { validateCustomCard } from "./CustomCards.js";
 import { Card, CardID, ParameterizedDraftEffectType } from "./CardTypes.js";
 import { CardsByName, CardVersionsByName, getCard, isValidCardID } from "./Cards.js";
-import { CCLSettings, CustomCardList, PackLayout, Slot } from "./CustomCardList.js";
+import { CCLSettings, CustomCardList, PackLayout, Slot, SlotName } from "./CustomCardList.js";
 import { escapeHTML } from "./utils.js";
 import { ackError, isSocketError, SocketError } from "./Message.js";
 import {
@@ -285,17 +285,42 @@ function parseSettings(
 			if (!isInteger(value.weight)) return err(`Layout '${key}': 'weight' must be an integer.`);
 			if (!("slots" in value)) return err(`Layout '${key}' must have a 'slots' property.`);
 
-			let slots: Record<string, number> = {};
+			const slots: {
+				name: string;
+				count: number;
+				sheets: { name: SlotName; weight: number }[];
+			}[] = [];
 
-			if (isRecord(isString, isInteger)(value["slots"])) {
-				slots = value["slots"];
-			} else if (isArrayOf(isObject)(value["slots"])) {
-				for (const slot of value["slots"]) {
+			if (isArrayOf(isObject)(value.slots)) {
+				for (const slot of value.slots) {
 					if (!("name" in slot)) return err(`Layout '${key}': Missing required property 'name' in slot.`);
 					if (!isString(slot.name)) return err(`Layout '${key}': slot 'name' must be a string.`);
 					if (!("count" in slot)) return err(`Layout '${key}': Missing required property 'count' in slot.`);
 					if (!isInteger(slot.count)) return err(`Layout '${key}': slot 'count' must be an integer.`);
-					slots[slot.name] = slot.count;
+
+					const sheets: { name: SlotName; weight: number }[] = [];
+					if (hasProperty("sheets", isArrayOf(isObject))(slot)) {
+						for (const sheet of slot.sheets) {
+							if (!("name" in sheet))
+								return err(`Layout '${key}': Missing required property 'name' in sheet.`);
+							if (!isString(sheet.name)) return err(`Layout '${key}': sheet 'name' must be a string.`);
+
+							let weight = 1;
+							if (hasProperty("weight", isNumber)(sheet)) {
+								if (!isInteger(sheet.weight))
+									return err(`Layout '${key}': sheet 'weight' must be an integer.`);
+								weight = sheet.weight;
+							}
+							sheets.push({ name: sheet.name, weight });
+						}
+					} else {
+						sheets.push({ name: slot.name, weight: 1 });
+					}
+					slots.push({ name: slot.name, count: slot.count, sheets });
+				}
+			} else if (isRecord(isString, isInteger)(value.slots)) {
+				for (const [name, count] of Object.entries(value.slots)) {
+					slots.push({ name: name, count: count, sheets: [{ name: name, weight: 1 }] });
 				}
 			} else {
 				return err(`'slots' must be a Record<string, number> or Array<{ name: string; count: number }>.`);
@@ -570,7 +595,7 @@ function parsePackLayoutsDeprecated(
 		}
 		const layoutName = match[1];
 		const layoutWeight = parseInt(match[2]);
-		layouts[layoutName] = { weight: layoutWeight, slots: {} };
+		layouts[layoutName] = { weight: layoutWeight, slots: [] };
 		++lineIdx;
 		while (lineIdx < lines.length && lines[lineIdx][0] !== "-" && lines[lineIdx][0] !== "[") {
 			const slotMatch = lines[lineIdx].match(/(\d+)\s+([a-zA-Z]+)/);
@@ -582,7 +607,11 @@ function parsePackLayoutsDeprecated(
 					}).`,
 				});
 			}
-			layouts[layoutName].slots[slotMatch[2]] = parseInt(slotMatch[1]);
+			layouts[layoutName].slots.push({
+				name: slotMatch[2],
+				count: parseInt(slotMatch[1]),
+				sheets: [{ name: slotMatch[2], weight: 1 }],
+			});
 			++lineIdx;
 		}
 	}
@@ -694,10 +723,12 @@ export function parseCardList(
 								});
 							}
 							if (!cardList.layouts) cardList.layouts = {};
-							if (!cardList.layouts["default"]) cardList.layouts["default"] = { weight: 1, slots: {} };
-							cardList.layouts["default"].slots[slotName] = parseInt(
-								count.substring(1, count.length - 1)
-							);
+							if (!cardList.layouts["default"]) cardList.layouts["default"] = { weight: 1, slots: [] };
+							cardList.layouts["default"].slots.push({
+								name: slotName,
+								count: parseInt(count.substring(1, count.length - 1)),
+								sheets: [{ name: slotName, weight: 1 }],
+							});
 						}
 						// Additional options
 						if (settings) {
@@ -745,18 +776,20 @@ export function parseCardList(
 			if (cardList.layouts) {
 				for (const layoutName in cardList.layouts) {
 					let packSize = 0;
-					for (const [slotName, cardCount] of Object.entries(cardList.layouts[layoutName].slots)) {
-						if (!Object.prototype.hasOwnProperty.call(cardList.slots, slotName))
+					for (const slot of cardList.layouts[layoutName].slots) {
+						for (const sheet of slot.sheets) {
+							if (!Object.prototype.hasOwnProperty.call(cardList.slots, sheet.name))
+								return ackError({
+									title: `Parsing Error`,
+									text: `Layout '${layoutName}' refers to slot '${sheet.name}' which is not defined.`,
+								});
+						}
+						if (!isInteger(slot.count) || slot.count <= 0)
 							return ackError({
 								title: `Parsing Error`,
-								text: `Layout '${layoutName}' refers to slot '${slotName}' which is not defined.`,
+								text: `Layout '${layoutName}' slot '${slot.name}' value is invalid, must be a positive integer (got '${slot.count}').`,
 							});
-						if (!isInteger(cardCount) || cardCount <= 0)
-							return ackError({
-								title: `Parsing Error`,
-								text: `Layout '${layoutName}' slot '${slotName}' value is invalid, must be a positive integer (got '${cardCount}').`,
-							});
-						packSize += cardCount;
+						packSize += slot.count;
 					}
 					if (packSize <= 0)
 						return ackError({

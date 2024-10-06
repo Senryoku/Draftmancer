@@ -24,7 +24,7 @@
 				<div class="layouts">
 					<div v-for="(value, name) in cardlist.layouts" :key="name">
 						<h3>{{ name }} ({{ value.weight }})</h3>
-						<div v-for="(num, slot) in value.slots" :key="slot">{{ num }} {{ slot }}</div>
+						<div v-for="slot in value.slots" :key="slot">{{ slot.count }} {{ slot.name }}</div>
 					</div>
 				</div>
 			</div>

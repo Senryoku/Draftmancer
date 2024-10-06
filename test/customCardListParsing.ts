@@ -31,13 +31,77 @@ describe("Custom Card List Parsing", function () {
 			expect(r.layouts).to.not.be.false;
 			if (r.layouts) {
 				expect(r.layouts.Normal.weight).to.equal(3);
-				expect(r.layouts.Normal.slots.Common).to.equal(10);
-				expect(r.layouts.Normal.slots.Uncommon).to.equal(3);
-				expect(r.layouts.Normal.slots.Rare).to.equal(1);
+				expect(r.layouts.Normal.slots[0].sheets.length).to.equal(1);
+				expect(r.layouts.Normal.slots[0].sheets[0].name).to.equal("Rare");
+				expect(r.layouts.Normal.slots[0].count).to.equal(1);
+				expect(r.layouts.Normal.slots[1].sheets.length).to.equal(1);
+				expect(r.layouts.Normal.slots[1].sheets[0].name).to.equal("Uncommon");
+				expect(r.layouts.Normal.slots[1].count).to.equal(3);
+				expect(r.layouts.Normal.slots[2].sheets.length).to.equal(1);
+				expect(r.layouts.Normal.slots[2].sheets[0].name).to.equal("Common");
+				expect(r.layouts.Normal.slots[2].count).to.equal(10);
 				expect(r.layouts.Lucky.weight).to.equal(1);
-				expect(r.layouts.Lucky.slots.Common).to.equal(9);
-				expect(r.layouts.Lucky.slots.Uncommon).to.equal(3);
-				expect(r.layouts.Lucky.slots.Rare).to.equal(2);
+				expect(r.layouts.Lucky.slots[0].sheets.length).to.equal(1);
+				expect(r.layouts.Lucky.slots[0].sheets[0].name).to.equal("Rare");
+				expect(r.layouts.Lucky.slots[0].count).to.equal(2);
+				expect(r.layouts.Lucky.slots[1].sheets.length).to.equal(1);
+				expect(r.layouts.Lucky.slots[1].sheets[0].name).to.equal("Uncommon");
+				expect(r.layouts.Lucky.slots[1].count).to.equal(3);
+				expect(r.layouts.Lucky.slots[2].sheets.length).to.equal(1);
+				expect(r.layouts.Lucky.slots[2].sheets[0].name).to.equal("Common");
+				expect(r.layouts.Lucky.slots[2].count).to.equal(9);
+			}
+		}
+	});
+
+	it(`should parse DOMLayoutExampleExtended`, function () {
+		const r = parseCardList(fs.readFileSync(`./test/data/DOMLayoutExampleExtended.txt`, "utf8"), {});
+		expect(isSocketError(r), `Got ${JSON.stringify((r as SocketError).error)}`).to.be.false;
+		if (!isSocketError(r)) {
+			expect(r.layouts).to.not.be.false;
+			if (r.layouts) {
+				expect(r.layouts.UncommonLegendary.weight).to.equal(24);
+				expect(r.layouts.UncommonLegendary.slots.length).to.equal(4);
+
+				expect(r.layouts.UncommonLegendary.slots[0].name).to.equal("RareOrMythic");
+				expect(r.layouts.UncommonLegendary.slots[0].count).to.equal(1);
+				expect(r.layouts.UncommonLegendary.slots[0].sheets.length).to.equal(2);
+				expect(r.layouts.UncommonLegendary.slots[0].sheets[0].name).to.equal("Rare");
+				expect(r.layouts.UncommonLegendary.slots[0].sheets[1].name).to.equal("Mythic");
+
+				expect(r.layouts.UncommonLegendary.slots[1].name).to.equal("UncommonLegendary");
+				expect(r.layouts.UncommonLegendary.slots[1].count).to.equal(1);
+				expect(r.layouts.UncommonLegendary.slots[1].sheets.length).to.equal(1);
+				expect(r.layouts.UncommonLegendary.slots[1].sheets[0].name).to.equal("UncommonLegendary");
+
+				expect(r.layouts.UncommonLegendary.slots[2].name).to.equal("Uncommon");
+				expect(r.layouts.UncommonLegendary.slots[2].count).to.equal(2);
+				expect(r.layouts.UncommonLegendary.slots[2].sheets.length).to.equal(1);
+				expect(r.layouts.UncommonLegendary.slots[2].sheets[0].name).to.equal("Uncommon");
+
+				expect(r.layouts.UncommonLegendary.slots[3].name).to.equal("Common");
+				expect(r.layouts.UncommonLegendary.slots[3].sheets.length).to.equal(1);
+				expect(r.layouts.UncommonLegendary.slots[3].sheets[0].name).to.equal("Common");
+				expect(r.layouts.UncommonLegendary.slots[3].count).to.equal(10);
+
+				expect(r.layouts.RareOrMythicLegendary.weight).to.equal(8);
+				expect(r.layouts.RareOrMythicLegendary.slots.length).to.equal(3);
+
+				expect(r.layouts.RareOrMythicLegendary.slots[0].name).to.equal("RareOrMythicLegendary");
+				expect(r.layouts.RareOrMythicLegendary.slots[0].count).to.equal(1);
+				expect(r.layouts.RareOrMythicLegendary.slots[0].sheets.length).to.equal(2);
+				expect(r.layouts.RareOrMythicLegendary.slots[0].sheets[0].name).to.equal("RareLegendary");
+				expect(r.layouts.RareOrMythicLegendary.slots[0].sheets[1].name).to.equal("MythicLegendary");
+
+				expect(r.layouts.RareOrMythicLegendary.slots[1].count).to.equal(3);
+				expect(r.layouts.RareOrMythicLegendary.slots[1].sheets.length).to.equal(1);
+				expect(r.layouts.RareOrMythicLegendary.slots[1].sheets[0].name).to.equal("Uncommon");
+				expect(r.layouts.RareOrMythicLegendary.slots[1].count).to.equal(3);
+
+				expect(r.layouts.RareOrMythicLegendary.slots[2].name).to.equal("Common");
+				expect(r.layouts.RareOrMythicLegendary.slots[2].sheets.length).to.equal(1);
+				expect(r.layouts.RareOrMythicLegendary.slots[2].sheets[0].name).to.equal("Common");
+				expect(r.layouts.RareOrMythicLegendary.slots[2].count).to.equal(10);
 			}
 		}
 	});

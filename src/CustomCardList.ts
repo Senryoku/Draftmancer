@@ -14,7 +14,11 @@ export type Slot =
 
 export type PackLayout = {
 	weight: number;
-	slots: Record<SlotName, number>;
+	slots: {
+		name: string;
+		count: number;
+		sheets: { name: SlotName; weight: number }[];
+	}[];
 };
 
 export type CCLSettings = {
@@ -108,15 +112,18 @@ export function generateBoosterFromCustomCardList(
 		}
 
 		// Color balance the largest slot of each layout
-		const colorBalancedSlots: { [layoutName: string]: string } = {};
+		const colorBalancedSlots: { [layoutName: string]: number } = {};
 		const colorBalancedSlotGenerators: { [slotName: string]: ColorBalancedSlot } = {};
 		if (options.colorBalance) {
 			for (const layoutName in layouts) {
-				colorBalancedSlots[layoutName] = Object.keys(layouts[layoutName].slots).reduce((max, curr) =>
-					layouts[layoutName].slots[curr] > layouts[layoutName].slots[max] ? curr : max
-				);
+				colorBalancedSlots[layoutName] = 0;
+				for (let i = 1; i < layouts[layoutName].slots.length; ++i) {
+					if (layouts[layoutName].slots[i].count > colorBalancedSlots[layoutName]) {
+						colorBalancedSlots[layoutName] = i;
+					}
+				}
 			}
-			for (const slotName of new Set(Object.values(colorBalancedSlots))) {
+			for (const slotName in customCardList.slots) {
 				if (customCardList.slots[slotName].collation !== "printRun") {
 					colorBalancedSlotGenerators[slotName] = new ColorBalancedSlot(cardsBySlot[slotName], pickOptions);
 				}
@@ -190,40 +197,47 @@ export function generateBoosterFromCustomCardList(
 				return new MessageError("Error generating boosters", `Invalid layout '${pickedLayoutName}'.`);
 			const pickedLayout = layouts[pickedLayoutName];
 
-			for (const [slotName, cardCount] of Object.entries(pickedLayout.slots)) {
+			for (const [index, slot] of pickedLayout.slots.entries()) {
+				const sheetName =
+					slot.sheets[
+						weightedRandomIdx(
+							slot.sheets,
+							slot.sheets.reduce((acc, curr) => acc + curr.weight, 0)
+						)
+					].name;
 				const useColorBalance =
 					options.colorBalance &&
-					slotName === colorBalancedSlots[pickedLayoutName] &&
-					pickedLayout.slots[slotName] > ColorBalancedSlot.CardCountThreshold &&
-					colorBalancedSlotGenerators[slotName];
+					index === colorBalancedSlots[pickedLayoutName] &&
+					slot.count > ColorBalancedSlot.CardCountThreshold &&
+					colorBalancedSlotGenerators[sheetName];
 				// Checking the card count beforehand is tricky, we'll rely on pickCard throwing an exception if we run out of cards to pick.
 				try {
 					let pickedCards: UniqueCard[] = [];
 
-					if (customCardList.slots[slotName].collation === "printRun") {
+					if (customCardList.slots[sheetName].collation === "printRun") {
 						pickedCards = pickPrintRun(
-							cardCount,
-							customCardList.slots[slotName].printRun,
-							customCardList.slots[slotName].groupSize,
+							slot.count,
+							customCardList.slots[sheetName].printRun,
+							customCardList.slots[sheetName].groupSize,
 							pickOptions
 						);
 					} else if (useColorBalance) {
-						pickedCards = colorBalancedSlotGenerators[slotName].generate(cardCount, booster, pickOptions);
+						pickedCards = colorBalancedSlotGenerators[sheetName].generate(slot.count, booster, pickOptions);
 					} else {
-						for (let i = 0; i < cardCount; ++i) {
+						for (let i = 0; i < slot.count; ++i) {
 							const pickedCard = pickCard(
-								cardsBySlot[slotName],
+								cardsBySlot[sheetName],
 								booster.concat(pickedCards),
 								pickOptions
 							);
 							pickedCards.push(pickedCard);
-							if (colorBalancedSlotGenerators[slotName] && !pickOptions.withReplacement)
-								colorBalancedSlotGenerators[slotName].cache.removeCard(pickedCard);
+							if (colorBalancedSlotGenerators[sheetName] && !pickOptions.withReplacement)
+								colorBalancedSlotGenerators[sheetName].cache.removeCard(pickedCard);
 						}
 					}
 
 					if (customCardList.settings?.showSlots) {
-						const displaySlotName = slotName.split("##")[0]; // Remove potential 'hidden id' after '##' delimiter.
+						const displaySlotName = slot.name.split("##")[0]; // Remove potential 'hidden id' after '##' delimiter.
 						for (const card of pickedCards) card.slot = displaySlotName;
 					}
 
