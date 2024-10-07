@@ -288,7 +288,7 @@
 					<span v-if="useCustomCardList && customCardList">
 						{{ customCardList!.name ? customCardList!.name : "Custom Card List" }}
 						<span style="display: inline-flex; gap: 0.25em; align-items: center; vertical-align: middle">
-							<div v-if="customCardList!.slots && Object.keys(customCardList!.slots).length > 0">
+							<div v-if="customCardList!.sheets && Object.keys(customCardList!.sheets).length > 0">
 								<font-awesome-icon
 									style="padding: 0.25em"
 									icon="fa-solid fa-file-alt"
@@ -2650,7 +2650,7 @@
 								</div>
 							</div>
 							<div
-								v-if="customCardList?.slots && Object.keys(customCardList?.slots).length > 0"
+								v-if="customCardList?.sheets && Object.keys(customCardList?.sheets).length > 0"
 								class="option-cube-settings-2"
 							>
 								<font-awesome-icon

@@ -28,11 +28,11 @@
 					</div>
 				</div>
 			</div>
-			<h2>Slots</h2>
-			<div v-for="(slot, key) in cardlist.slots" :key="key">
+			<h2>Sheets</h2>
+			<div v-for="(slot, key) in cardlist.sheets" :key="key">
 				<h3>{{ key }}</h3>
 				<template v-if="cards">
-					<div v-for="(row, rowIndex) in rowsBySlot[key]" :key="'row' + rowIndex" class="category-wrapper">
+					<div v-for="(row, rowIndex) in rowsBySheet[key]" :key="'row' + rowIndex" class="category-wrapper">
 						<card-list-column
 							v-for="(column, colIndex) in row"
 							:key="'col' + colIndex"
@@ -80,7 +80,7 @@ onMounted(() => {
 });
 
 const isValid = computed(() => {
-	return props.cardlist?.slots && Object.keys(props.cardlist.slots).length > 0;
+	return props.cardlist?.sheets && Object.keys(props.cardlist.sheets).length > 0;
 });
 
 const defaultLayout = computed(() => {
@@ -88,14 +88,14 @@ const defaultLayout = computed(() => {
 });
 
 const rows = computed(() => {
-	if (!defaultLayout.value || !cards.value[Object.keys(props.cardlist.slots)[0]]) return [];
-	return rowsByColor(cards.value[Object.keys(props.cardlist.slots)[0]]);
+	if (!defaultLayout.value || !cards.value[Object.keys(props.cardlist.sheets)[0]]) return [];
+	return rowsByColor(cards.value[Object.keys(props.cardlist.sheets)[0]]);
 });
 
-const rowsBySlot = computed(() => {
+const rowsBySheet = computed(() => {
 	if (defaultLayout.value || !cards.value) return {};
 	let rowsBySlot: { [slot: string]: { [s: string]: CardWithCount[] }[] } = {};
-	for (let slotName in props.cardlist.slots) rowsBySlot[slotName] = rowsByColor(cards.value[slotName]);
+	for (let sheetName in props.cardlist.sheets) rowsBySlot[sheetName] = rowsByColor(cards.value[sheetName]);
 	return rowsBySlot;
 });
 
@@ -138,20 +138,21 @@ function downloadList() {
 		str += JSON.stringify(Object.values(props.cardlist.customCards), null, 2);
 		str += "\n";
 	}
-	for (let [slotName, slot] of Object.entries(props.cardlist.slots)) {
+	for (let [sheetName, sheet] of Object.entries(props.cardlist.sheets)) {
 		let slotSettings = "";
-		if (slot.collation) {
-			slotSettings = ` {"collation":"${slot.collation}"}`;
+		if (sheet.collation) {
+			slotSettings = ` {"collation":"${sheet.collation}"}`;
+			// FIXME: Support all other properties (e.g. "groupSize")
 		}
-		str += `[${slotName}${slotSettings}]\n`;
-		if (slot.collation === "printRun") {
-			for (let cardID of slot.printRun) {
-				const card = cards.value[slotName].find((c) => c.id === cardID)!;
+		str += `[${sheetName}${slotSettings}]\n`;
+		if (sheet.collation === "printRun") {
+			for (let cardID of sheet.printRun) {
+				const card = cards.value[sheetName].find((c) => c.id === cardID)!;
 				str += `${card.name} (${card.set.toUpperCase()}) ${card.collector_number}\n`;
 			}
 		} else {
-			for (let [cardID, count] of Object.entries(slot.cards)) {
-				const card = cards.value[slotName].find((c) => c.id === cardID)!;
+			for (let [cardID, count] of Object.entries(sheet.cards)) {
+				const card = cards.value[sheetName].find((c) => c.id === cardID)!;
 				str += `${count} ${card.name} (${card.set.toUpperCase()}) ${card.collector_number}\n`;
 			}
 		}
@@ -180,29 +181,29 @@ function rowsByColor(cards: CardWithCount[]) {
 }
 
 async function getCards() {
-	if (!props.cardlist || !props.cardlist.slots) return;
+	if (!props.cardlist || !props.cardlist.sheets) return;
 	let tmpCards: typeof cards.value = {};
 	let tofetch: { [slot: string]: CardID[] } = {};
-	for (let [slotName, slot] of Object.entries(props.cardlist.slots)) {
-		tmpCards[slotName] = [];
-		tofetch[slotName] = [];
-		if (slot.collation === "printRun") {
-			for (let cid of slot.printRun) {
+	for (let [sheetName, sheet] of Object.entries(props.cardlist.sheets)) {
+		tmpCards[sheetName] = [];
+		tofetch[sheetName] = [];
+		if (sheet.collation === "printRun") {
+			for (let cid of sheet.printRun) {
 				if (props.cardlist.customCards && cid in props.cardlist.customCards)
-					tmpCards[slotName].push({
+					tmpCards[sheetName].push({
 						...props.cardlist.customCards[cid],
 						count: 1,
 					});
-				else tofetch[slotName].push(cid);
+				else tofetch[sheetName].push(cid);
 			}
 		} else {
-			for (let [cid, count] of Object.entries(slot.cards)) {
+			for (let [cid, count] of Object.entries(sheet.cards)) {
 				if (props.cardlist.customCards && cid in props.cardlist.customCards)
-					tmpCards[slotName].push({
+					tmpCards[sheetName].push({
 						...props.cardlist.customCards[cid],
 						count: count,
 					});
-				else tofetch[slotName].push(cid);
+				else tofetch[sheetName].push(cid);
 			}
 		}
 	}
@@ -222,11 +223,11 @@ async function getCards() {
 		});
 		if (response.status === 200) {
 			const json = await response.json();
-			for (let slotName in json) {
-				const slot = props.cardlist.slots[slotName];
-				for (let card of json[slotName]) {
-					tmpCards[slotName].push(card);
-					card.count = slot.collation === "printRun" ? 1 : slot.cards[card.id];
+			for (let sheetName in json) {
+				const sheet = props.cardlist.sheets[sheetName];
+				for (let card of json[sheetName]) {
+					tmpCards[sheetName].push(card);
+					card.count = sheet.collation === "printRun" ? 1 : sheet.cards[card.id];
 				}
 			}
 		}

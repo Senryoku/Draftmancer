@@ -152,7 +152,7 @@ export class Session implements IIndexable {
 	preferredCollation: string = "MTGA"; // Unused! (And thus not exposed client-side)
 	useCustomCardList: boolean = false;
 	customCardList: CustomCardList = {
-		slots: {},
+		sheets: {},
 		layouts: false,
 		customCards: null,
 	};
@@ -1454,7 +1454,7 @@ export class Session implements IIndexable {
 		if (options.singleton) {
 			let cardPool: CardID[] = [];
 			if (this.useCustomCardList) {
-				for (const slot of Object.values(this.customCardList.slots)) {
+				for (const slot of Object.values(this.customCardList.sheets)) {
 					if (slot.collation === "printRun") {
 						cardPool.push(...slot.printRun);
 					} else {

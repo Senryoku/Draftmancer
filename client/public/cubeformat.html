@@ -97,8 +97,9 @@
 			<ol>
 				<li><a href="#cube">Cube</a></li>
 				<li><a href="#card-spec">Advanced Card Specification</a></li>
-				<li><a href="#slots">Slots</a></li>
+				<li><a href="#simple-layout">Simple Layout</a></li>
 				<li><a href="#settings">Settings</a></li>
+				<li><a href="#sheets">Sheets</a></li>
 				<li><a href="#layouts">Pack Layouts</a></li>
 				<li><a href="#custom-cards">Custom Cards</a></li>
 			</ol>
@@ -145,8 +146,11 @@ Incubation Druid</pre
 				</section>
 			</section>
 			<section>
-				<h2 id="slots">Slots</h2>
-				If you want more control over your booster, like a custom 'rarity' distribution, you can use the following format:
+				<h2 id="simple-layout">Simple Layout</h2>
+				<p>
+					By specifying some card lists (hereafter named 'sheets') and card counts, you can create a simple pack layout. The following example mimicks a basic rarity
+					distribution. For more customization, skip this section and continue reading :)
+				</p>
 				<pre>
 [SlotName(CardsPerBooster)]
 Card Name 1
@@ -170,12 +174,12 @@ Card Name 4
 Card Name 5
 Card Name 6
 <note>...</note></pre>
-				Will mimic the distribution of a standard Magic booster, except for the 1/8 Mythic/Rare ratio. Cards in the 'Common' slot don't have to be 'real' commons! Why not
-				add a special planeswalker slot in each of your booster instead of one of the commons, everyone loved them in WAR right? :D
+				<p>Will mimic the distribution of a standard Magic booster, except for the 1/8 Mythic/Rare ratio. Cards in the 'Common' slot don't have to be 'real' commons!</p>
+				<p>The following adds a Planeswalker in each pack:</p>
 				<pre>
-[Planewalker(1)]
-Planewalker Card Name 1
-Planewalker Card Name 2
+[Planeswalker(1)]
+Planeswalker Card Name 1
+Planeswalker Card Name 2
 <note>...</note>
 [Common(9)]
 Card Name 1
@@ -189,13 +193,15 @@ Card Name 4
 Card Name 5
 Card Name 6
 <note>...</note></pre>
-				Color balancing (if enabled) will be used only on the largest slot (in terms of cards per booster) and if it consist of at least 5 cards per booster. In both
-				previous examples, the 'Common' slot will be color balanced if the option is enabled (which is the default value).
+				<p>
+					Color balancing (if enabled) will be used only on the largest slot (in terms of cards per booster) and if it consist of at least 5 cards per booster. In both
+					previous examples, the 'Common' slot will be color balanced if the option is enabled (which is the default value).
+				</p>
 			</section>
 			<section>
 				<h2 id="settings">Settings</h2>
 				<p>
-					Before slots, you can declare a
+					As the first section, you can declare a
 					<code>Settings</code>
 					block followed by a JSON object to control some global behaviors of your list.
 				</p>
@@ -259,13 +265,31 @@ Card Name 6
 </pre>
 			</section>
 			<section>
+				<h2 id="sheets">Sheets</h2>
+				<p>Sheets are simply card lists, with some optional properties. They can be refered to in the layouts section, and assigned to slots. Here's the syntax:</p>
+				<pre>
+<comment># Header: Name followed by optional properties (JSON)</comment>
+[SheetName {"collation": "random"}]
+Card Name 1 <comment># Then a list of cards, as described <a href="#card-spec">above</a>.</comment>
+Card Name 2
+...
+				</pre>
+				<p>Sheet settings:</p>
+				<pre>
+{
+		"collation": "random" | "printRun", <comment># "random" is the default. "printRun" means cards are picked sequentionally from a random starting point.</comment>
+		"groupSize": integer, <comment># Only for "printRun". Forces the random start point to be a multiple of this value (default: 1).</comment>
+}
+				</pre>
+			</section>
+			<section>
 				<h2 id="layouts">Pack Layouts</h2>
 				<p>
 					For even more control, you can specify multiple
 					<strong>Pack Layouts</strong>
 					describing variations of a pack, each with an associated weight (or probability to be chosen).
 					<strong>Important Note:</strong>
-					When using pack layouts, slots should be declared without a
+					When using pack layouts, sheets must be declared without a
 					<code>CardsPerBooster</code>
 					parameter.
 				</p>
@@ -288,18 +312,20 @@ Card Name 6
 				<p>
 					Where
 					<code>Weight</code>
-					is an integer specifying how often this layout will be chosen when generating a pack. In this example, each pack will contain
+					is an integer specifying how often this layout will be chosen when generating a pack. By default, and for convenience, each slot will be filled with cards from
+					the sheet with the same name. In this example, each pack will contain
 					<code>7</code>
-					cards picked from
+					cards picked from the sheet named
 					<code>SlotName1</code>
-					(user defined card list) and
+					and
 					<code>3</code>
 					cards picked from
 					<code>SlotName2</code>
 					.
 				</p>
 				<p>Example implementing a mythic rarity:</p>
-				<pre>
+				<div style="display: flex; gap: 1em">
+					<pre>
 [Settings]
 {
 	"layouts": {
@@ -329,6 +355,37 @@ Card Name 6
 <note>..Card List..</note>
 [Mythic]
 <note>..Card List..</note></pre>
+					<pre>
+<comment># Alternatively, slots can refer to multiple sheets rather than relying having the same name as a sheet:</comment>
+[Settings]
+{
+	"layouts": {
+		"Default": {
+			"weight": 1,
+			"slots": [
+				{
+					"name": "RareOrMythic", 
+					"count": 1, 
+					"sheets": [
+						{"name": "Rare",   "weight": 7}, 
+						{"name": "Mythic", "weight": 1}
+					]
+				},
+				{"name": "Uncommon", "count": 3 },
+				{"name": "Common",   "count": 10},
+			]
+		}
+	}
+}
+[Common]
+<note>..Card List..</note>
+[Uncommon]
+<note>..Card List..</note>
+[Rare]
+<note>..Card List..</note>
+[Mythic]
+<note>..Card List..</note></pre>
+				</div>
 				<p>More complex example mimicking the collation of Dominaria United (Exactly one legendary creature of varying rarity in each pack):</p>
 				<div style="display: flex; gap: 1em">
 					<pre>
@@ -388,7 +445,9 @@ Card Name 6
 [MythicLegendary]
 <note>..List of all Mythic Legendary Creatures..</note></pre>
 					<pre>
-<comment># Another way to generate the same packs. Slots can pick from a randomly selected list of cards ('sheet').</comment>
+<comment># Another way to generate the same packs.</comment>
+<comment># You can use the 'sheets' property to assign multiple sheets to a slot.</comment>
+<comment># It will randomly select a sheet before picking the cards normally.</comment>
 [Settings]
 {
     "withReplacement": true,
@@ -400,13 +459,13 @@ Card Name 6
 					"name": "RareOrMythic", 
 					"count": 1, 
 					"sheets": [
-						{"name": "Rare", "weight": 7}, 
+						{"name": "Rare",   "weight": 7}, 
 						{"name": "Mythic", "weight": 1}
 					]
 				},
-                {"name": "UncommonLegendary", "count": 1},
-                {"name": "Uncommon", "count": 2},
-                {"name": "Common", "count": 10}
+                {"name": "UncommonLegendary", "count": 1 },
+                {"name": "Uncommon",          "count": 2 },
+                {"name": "Common",            "count": 10}
             ]
         },
         "RareOrMythicLegendary": {
@@ -416,11 +475,11 @@ Card Name 6
 					"name": "RareOrMythicLegendary", 
 					"count": 1, 
 					"sheets": [
-						{"name": "RareLegendary", "weight": 7}, 
+						{"name": "RareLegendary",   "weight": 7}, 
 						{"name": "MythicLegendary", "weight": 1}
 					]},
-                {"name": "Uncommon", "count": 3},
-                {"name": "Common", "count": 10}
+                {"name": "Uncommon", "count": 3 },
+                {"name": "Common",   "count": 10}
             ]
         }
     }
@@ -444,7 +503,7 @@ Card Name 6
 			<section>
 				<h2 id="custom-cards">Custom Cards</h2>
 				A cube can also be composed of user-defined cards specified as JSON data. The CustomCards section must be the first one in the file. Once defined in this section,
-				custom cards can be refered to by name in slots, just like regular cards.
+				custom cards can be refered to by name in sheets, just like regular cards.
 				<pre>
 [CustomCards]
 [
@@ -487,7 +546,7 @@ Card Name 6
 		}
 	}
 ]
-[MainSlot(15)]
+[MainSheet(15)]
 4 My 1st Custom Card
 4 My 2nd Custom Card
 <note>... Standard Card List ...</note></pre>
@@ -536,7 +595,7 @@ Card Name 6
 		]
 	}
 ]
-[DefaultSlot]
+[DefaultSheet]
 Nazgûl
 Nazgûl (LTR) 100
 Nazgûl (LTR) 332
@@ -655,8 +714,8 @@ AddCards            <comment># Adds additional cards to your draft pool.</commen
 	<comment># This enables picking with replacement</comment>
 	"withReplacement": true
 }
-<comment># This slot contains all the cards because this is just an example of how to use comments!</comment>
-[DefaultSlot]
+<comment># This sheet contains all the cards because this is just an example of how to use comments!</comment>
+[DefaultSheet]
 Lightning Bolt</pre>
 			</section>
 		</div>

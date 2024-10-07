@@ -159,11 +159,11 @@ describe("Statistical color balancing tests", function () {
 			return;
 		}
 		SessionInst.setCustomCardList(list);
-		if (SessionInst.customCardList.slots.Common.collation === "printRun") {
+		if (SessionInst.customCardList.sheets.Common.collation === "printRun") {
 			expect(false, "What? Got a printRun here.");
 			return;
 		}
-		const trackedCards = Object.keys(SessionInst.customCardList.slots.Common.cards).reduce(
+		const trackedCards = Object.keys(SessionInst.customCardList.sheets.Common.cards).reduce(
 			(o, key) => ({ ...o, [key]: 0 }),
 			{}
 		);
