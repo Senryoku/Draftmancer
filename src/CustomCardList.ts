@@ -13,13 +13,16 @@ export type Sheet =
 	| { collation?: Exclude<CollationType, "printRun">; cards: Record<CardID, number> }
 	| { collation: "printRun"; printRun: CardID[]; groupSize: number };
 
+export type Slot = {
+	name: string;
+	count: number;
+	foil: boolean;
+	sheets: { name: SheetName; weight: number }[];
+};
+
 export type PackLayout = {
 	weight: number;
-	slots: {
-		name: string;
-		count: number;
-		sheets: { name: SheetName; weight: number }[];
-	}[];
+	slots: Slot[];
 };
 
 export type CCLSettings = {
@@ -241,6 +244,7 @@ export function generateBoosterFromCustomCardList(
 						const displaySlotName = slot.name.split("##")[0]; // Remove potential 'hidden id' after '##' delimiter.
 						for (const card of pickedCards) card.slot = displaySlotName;
 					}
+					if (slot.foil) pickedCards.forEach((card) => (card.foil = true));
 
 					booster.push(...pickedCards);
 				} catch (e) {

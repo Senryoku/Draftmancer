@@ -1,6 +1,6 @@
 [Settings]
 {
-	"name": "Mythic Example",
+	"name": "Foil Example",
 	"withReplacement": true,
 	"layouts": {
 		"Default": {
@@ -15,7 +15,18 @@
 					]
 				},
 				{"name": "Uncommon", "count": 3 },
-				{"name": "Common",   "count": 10},
+				{"name": "Common",   "count": 9},
+				{
+					"name": "Foil", 
+					"count": 1,
+					"foil": true,
+					"sheets": [
+						{"name": "Mythic",   "weight": 1}, 
+						{"name": "Rare",     "weight": 7},
+						{"name": "Uncommon", "weight": 21},
+						{"name": "Common",   "weight": 70}
+					]
+				},
 			]
 		}
 	}

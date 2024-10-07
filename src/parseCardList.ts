@@ -2,7 +2,7 @@ import { genCustomCardID } from "./CustomCardID.js";
 import { validateCustomCard } from "./CustomCards.js";
 import { Card, CardID, ParameterizedDraftEffectType } from "./CardTypes.js";
 import { CardsByName, CardVersionsByName, getCard, isValidCardID } from "./Cards.js";
-import { CCLSettings, CustomCardList, PackLayout, Sheet, SheetName } from "./CustomCardList.js";
+import { CCLSettings, CustomCardList, PackLayout, Sheet, SheetName, Slot } from "./CustomCardList.js";
 import { escapeHTML } from "./utils.js";
 import { ackError, isSocketError, SocketError } from "./Message.js";
 import {
@@ -285,11 +285,7 @@ function parseSettings(
 			if (!isInteger(value.weight)) return err(`Layout '${key}': 'weight' must be an integer.`);
 			if (!("slots" in value)) return err(`Layout '${key}' must have a 'slots' property.`);
 
-			const slots: {
-				name: string;
-				count: number;
-				sheets: { name: SheetName; weight: number }[];
-			}[] = [];
+			const slots: Slot[] = [];
 
 			if (isArrayOf(isObject)(value.slots)) {
 				for (const slot of value.slots) {
@@ -297,6 +293,8 @@ function parseSettings(
 					if (!isString(slot.name)) return err(`Layout '${key}': slot 'name' must be a string.`);
 					if (!("count" in slot)) return err(`Layout '${key}': Missing required property 'count' in slot.`);
 					if (!isInteger(slot.count)) return err(`Layout '${key}': slot 'count' must be an integer.`);
+					if (!hasOptionalProperty("foil", isBoolean)(slot))
+						return err(`Layout '${key}': slot 'foil' property must be a boolean.`);
 
 					const sheets: { name: SheetName; weight: number }[] = [];
 					if (hasProperty("sheets", isArrayOf(isObject))(slot)) {
@@ -316,11 +314,11 @@ function parseSettings(
 					} else {
 						sheets.push({ name: slot.name, weight: 1 });
 					}
-					slots.push({ name: slot.name, count: slot.count, sheets });
+					slots.push({ name: slot.name, count: slot.count, foil: slot.foil ?? false, sheets });
 				}
 			} else if (isRecord(isString, isInteger)(value.slots)) {
 				for (const [name, count] of Object.entries(value.slots)) {
-					slots.push({ name: name, count: count, sheets: [{ name: name, weight: 1 }] });
+					slots.push({ name: name, count: count, foil: false, sheets: [{ name: name, weight: 1 }] });
 				}
 			} else {
 				return err(`'slots' must be a Record<string, number> or Array<{ name: string; count: number }>.`);
@@ -610,6 +608,7 @@ function parsePackLayoutsDeprecated(
 			layouts[layoutName].slots.push({
 				name: slotMatch[2],
 				count: parseInt(slotMatch[1]),
+				foil: false,
 				sheets: [{ name: slotMatch[2], weight: 1 }],
 			});
 			++lineIdx;
@@ -727,6 +726,7 @@ export function parseCardList(
 							cardList.layouts["default"].slots.push({
 								name: sheetName,
 								count: parseInt(count.substring(1, count.length - 1)),
+								foil: false,
 								sheets: [{ name: sheetName, weight: 1 }],
 							});
 						}
