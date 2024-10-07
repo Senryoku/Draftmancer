@@ -330,7 +330,8 @@ Card Name 6
 [Mythic]
 <note>..Card List..</note></pre>
 				<p>More complex example mimicking the collation of Dominaria United (Exactly one legendary creature of varying rarity in each pack):</p>
-				<pre>
+				<div style="display: flex; gap: 1em">
+					<pre>
 [Settings]
 {
 	"name": "Dominaria United",
@@ -386,6 +387,59 @@ Card Name 6
 <note>..List of all Rare Legendary Creatures..</note>
 [MythicLegendary]
 <note>..List of all Mythic Legendary Creatures..</note></pre>
+					<pre>
+<comment># Another way to generate the same packs. Slots can pick from a randomly selected list of cards ('sheet').</comment>
+[Settings]
+{
+    "withReplacement": true,
+    "layouts": {
+        "UncommonLegendary": {
+            "weight": 24,
+            "slots": [
+                {
+					"name": "RareOrMythic", 
+					"count": 1, 
+					"sheets": [
+						{"name": "Rare", "weight": 7}, 
+						{"name": "Mythic", "weight": 1}
+					]
+				},
+                {"name": "UncommonLegendary", "count": 1},
+                {"name": "Uncommon", "count": 2},
+                {"name": "Common", "count": 10}
+            ]
+        },
+        "RareOrMythicLegendary": {
+            "weight": 8,
+            "slots": [
+                {
+					"name": "RareOrMythicLegendary", 
+					"count": 1, 
+					"sheets": [
+						{"name": "RareLegendary", "weight": 7}, 
+						{"name": "MythicLegendary", "weight": 1}
+					]},
+                {"name": "Uncommon", "count": 3},
+                {"name": "Common", "count": 10}
+            ]
+        }
+    }
+}
+[Common]
+<note>..List of all non-Legendary Creature Commons..</note>
+[Uncommon]
+<note>..List of all non-Legendary Creature Uncommons..</note>
+[Rare]
+<note>..List of all non-Legendary Creature Rares..</note>
+[Mythic]
+<note>..List of all non-Legendary Creature Mythics..</note>
+[UncommonLegendary]
+<note>..List of all Uncommon Legendary Creatures..</note>
+[RareLegendary]
+<note>..List of all Rare Legendary Creatures..</note>
+[MythicLegendary]
+<note>..List of all Mythic Legendary Creatures..</note></pre>
+				</div>
 			</section>
 			<section>
 				<h2 id="custom-cards">Custom Cards</h2>
