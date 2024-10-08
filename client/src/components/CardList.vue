@@ -139,12 +139,19 @@ function downloadList() {
 		str += "\n";
 	}
 	for (let [sheetName, sheet] of Object.entries(props.cardlist.sheets)) {
-		let slotSettings = "";
-		if (sheet.collation) {
-			slotSettings = ` {"collation":"${sheet.collation}"}`;
-			// FIXME: Support all other properties (e.g. "groupSize")
+		let sheetSettings = "";
+		switch (sheet.collation) {
+			case "printRun": {
+				sheetSettings = ` {"collation": "${sheet.collation}", "groupSize": ${sheet.groupSize} }`;
+				break;
+			}
+			case "striped": {
+				sheetSettings = ` {"collation": "${sheet.collation}", "length": ${sheet.length}, "weights": ${JSON.stringify(sheet.weights)}}`;
+				break;
+			}
+			// Nothing to do in the "random" case
 		}
-		str += `[${sheetName}${slotSettings}]\n`;
+		str += `[${sheetName}${sheetSettings}]\n`;
 		switch (sheet.collation) {
 			case "printRun":
 			case "striped": {
