@@ -57,7 +57,7 @@ import { download, isEmpty } from "../helper";
 import CardOrder from "../cardorder";
 import CardListColumn from "./CardListColumn.vue";
 import { Language } from "@/Types";
-import { CustomCardList } from "@/CustomCardList";
+import { CustomCardList, getSheetCardIDs } from "../../../src/CustomCardList";
 import { ref, computed, onMounted, toRaw } from "vue";
 import { Card, CardID, PlainCollection } from "@/CardTypes";
 
@@ -145,15 +145,21 @@ function downloadList() {
 			// FIXME: Support all other properties (e.g. "groupSize")
 		}
 		str += `[${sheetName}${slotSettings}]\n`;
-		if (sheet.collation === "printRun") {
-			for (let cardID of sheet.printRun) {
-				const card = cards.value[sheetName].find((c) => c.id === cardID)!;
-				str += `${card.name} (${card.set.toUpperCase()}) ${card.collector_number}\n`;
+		switch (sheet.collation) {
+			case "printRun":
+			case "striped": {
+				for (let cardID of getSheetCardIDs(sheet)) {
+					const card = cards.value[sheetName].find((c) => c.id === cardID)!;
+					str += `${card.name} (${card.set.toUpperCase()}) ${card.collector_number}\n`;
+				}
+				break;
 			}
-		} else {
-			for (let [cardID, count] of Object.entries(sheet.cards)) {
-				const card = cards.value[sheetName].find((c) => c.id === cardID)!;
-				str += `${count} ${card.name} (${card.set.toUpperCase()}) ${card.collector_number}\n`;
+			case "random":
+			default: {
+				for (let [cardID, count] of Object.entries(sheet.cards)) {
+					const card = cards.value[sheetName].find((c) => c.id === cardID)!;
+					str += `${count} ${card.name} (${card.set.toUpperCase()}) ${card.collector_number}\n`;
+				}
 			}
 		}
 	}
@@ -187,23 +193,29 @@ async function getCards() {
 	for (let [sheetName, sheet] of Object.entries(props.cardlist.sheets)) {
 		tmpCards[sheetName] = [];
 		tofetch[sheetName] = [];
-		if (sheet.collation === "printRun") {
-			for (let cid of sheet.printRun) {
-				if (props.cardlist.customCards && cid in props.cardlist.customCards)
-					tmpCards[sheetName].push({
-						...props.cardlist.customCards[cid],
-						count: 1,
-					});
-				else tofetch[sheetName].push(cid);
+		switch (sheet.collation) {
+			case "printRun":
+			case "striped": {
+				for (let cid of getSheetCardIDs(sheet)) {
+					if (props.cardlist.customCards && cid in props.cardlist.customCards)
+						tmpCards[sheetName].push({
+							...props.cardlist.customCards[cid],
+							count: 1,
+						});
+					else tofetch[sheetName].push(cid);
+				}
+				break;
 			}
-		} else {
-			for (let [cid, count] of Object.entries(sheet.cards)) {
-				if (props.cardlist.customCards && cid in props.cardlist.customCards)
-					tmpCards[sheetName].push({
-						...props.cardlist.customCards[cid],
-						count: count,
-					});
-				else tofetch[sheetName].push(cid);
+			case "random":
+			default: {
+				for (let [cid, count] of Object.entries(sheet.cards)) {
+					if (props.cardlist.customCards && cid in props.cardlist.customCards)
+						tmpCards[sheetName].push({
+							...props.cardlist.customCards[cid],
+							count: count,
+						});
+					else tofetch[sheetName].push(cid);
+				}
 			}
 		}
 	}
@@ -227,7 +239,7 @@ async function getCards() {
 				const sheet = props.cardlist.sheets[sheetName];
 				for (let card of json[sheetName]) {
 					tmpCards[sheetName].push(card);
-					card.count = sheet.collation === "printRun" ? 1 : sheet.cards[card.id];
+					card.count = sheet.collation !== "random" ? 1 : sheet.cards[card.id];
 				}
 			}
 		}

@@ -66,7 +66,8 @@ import {
 import { InactiveSessions, logSession } from "./Persistence.js";
 import { sendDecks } from "./BotTrainingAPI.js";
 import { IBracket, SingleBracket, TeamBracket, SwissBracket, DoubleBracket, BracketType } from "./Brackets.js";
-import { CustomCardList, generateBoosterFromCustomCardList, generateCustomGetCardFunction } from "./CustomCardList.js";
+import { CustomCardList, getSheetCardIDs } from "./CustomCardList.js";
+import { generateBoosterFromCustomCardList, generateCustomGetCardFunction } from "./CustomCardListUtils.js";
 import { DraftLog, DraftPick, GridDraftPick } from "./DraftLog.js";
 import { generateJHHBooster, JHHBooster, JHHBoosterPattern } from "./JumpstartHistoricHorizons.js";
 import { IDraftState } from "./IDraftState.js";
@@ -1455,11 +1456,7 @@ export class Session implements IIndexable {
 			let cardPool: CardID[] = [];
 			if (this.useCustomCardList) {
 				for (const slot of Object.values(this.customCardList.sheets)) {
-					if (slot.collation === "printRun") {
-						cardPool.push(...slot.printRun);
-					} else {
-						cardPool.push(...Object.keys(slot.cards));
-					}
+					cardPool.push(...getSheetCardIDs(slot));
 				}
 				cardPool = [...new Set(cardPool)];
 			} else {

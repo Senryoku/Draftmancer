@@ -2,7 +2,7 @@ import { genCustomCardID } from "./CustomCardID.js";
 import { validateCustomCard } from "./CustomCards.js";
 import { Card, CardID, ParameterizedDraftEffectType } from "./CardTypes.js";
 import { CardsByName, CardVersionsByName, getCard, isValidCardID } from "./Cards.js";
-import { CCLSettings, CustomCardList, PackLayout, Sheet, SheetName, Slot } from "./CustomCardList.js";
+import { CCLSettings, CustomCardList, getSheetCardIDs, PackLayout, Sheet, SheetName, Slot } from "./CustomCardList.js";
 import { escapeHTML } from "./utils.js";
 import { ackError, isSocketError, SocketError } from "./Message.js";
 import {
@@ -841,13 +841,7 @@ export function parseCardList(
 			cardList.layouts = false;
 		}
 		if (options?.name) cardList.name = options.name;
-		if (
-			Object.values(cardList.sheets).every(
-				(slot) =>
-					(slot.collation === "printRun" && slot.printRun.length === 0) ||
-					(slot.collation !== "printRun" && Object.keys(slot.cards).length === 0)
-			)
-		)
+		if (Object.values(cardList.sheets).every((sheet) => getSheetCardIDs(sheet).length === 0))
 			return ackError({
 				title: "Empty List",
 				text: `Supplied card list is empty.`,

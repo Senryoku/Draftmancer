@@ -73,11 +73,25 @@ export function pickPrintRun(
 		getCard?: (cid: CardID) => Card;
 	}
 ): UniqueCard[] {
-	const start_idx = groupSize * random.integer(0, (printRun.length - 1) / groupSize);
+	const startIdx = groupSize * random.integer(0, (printRun.length - 1) / groupSize);
 	const cids: CardID[] = [];
 	for (let i = 0; i < count; ++i) {
-		const idx = (start_idx + i) % printRun.length;
+		const idx = (startIdx + i) % printRun.length;
 		cids.push(printRun[idx]);
 	}
 	return cids.map((cid) => getUnique(cid, options));
+}
+
+export function pickStriped(
+	count: number,
+	sheet: CardID[],
+	length: number,
+	weights: number[],
+	options?: {
+		getCard?: (cid: CardID) => Card;
+	}
+): UniqueCard[] {
+	const sequence: number[] = []; // TODO! Indices into 'sheet'.
+
+	return sequence.map((idx) => sheet[idx]).map((cid) => getUnique(cid, options));
 }
