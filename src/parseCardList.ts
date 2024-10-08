@@ -736,15 +736,32 @@ export function parseCardList(
 							if (!hasOptionalProperty("collation", isString)(parsed))
 								return ackError({
 									title: `Parsing Error`,
-									text: `Invalid 'collation' setting for slot '${sheetName}'.`,
+									text: `Invalid 'collation' setting for sheet '${sheetName}'.`,
 								});
 							if (parsed.collation === "printRun") {
 								if (!hasOptionalProperty("groupSize", isNumber)(parsed))
 									return ackError({
 										title: `Parsing Error`,
-										text: `Invalid 'groupSize' setting for slot '${sheetName}'.`,
+										text: `Invalid 'groupSize' setting for sheet '${sheetName}'.`,
 									});
 								sheet = { collation: "printRun", printRun: [], groupSize: parsed.groupSize ?? 1 };
+							} else if (parsed.collation === "striped") {
+								if (!hasProperty("length", isNumber)(parsed))
+									return ackError({
+										title: `Parsing Error`,
+										text: `Missing or invalid 'length' setting for sheet '${sheetName}'.`,
+									});
+								if (!hasProperty("weights", isArrayOf(isNumber))(parsed))
+									return ackError({
+										title: `Parsing Error`,
+										text: `Missing or invalid 'weights' setting for sheet '${sheetName}'.`,
+									});
+								sheet = {
+									collation: "striped",
+									sheet: [],
+									length: parsed.length,
+									weights: parsed.weights,
+								};
 							}
 						}
 					}
@@ -759,6 +776,8 @@ export function parseCardList(
 								const { count, cardID } = result;
 								if (sheet.collation === "printRun") {
 									for (let i = 0; i < count; ++i) sheet.printRun.push(cardID);
+								} else if (sheet.collation === "striped") {
+									for (let i = 0; i < count; ++i) sheet.sheet.push(cardID);
 								} else {
 									// Merge duplicate declarations
 									if (Object.prototype.hasOwnProperty.call(sheet.cards, cardID))
