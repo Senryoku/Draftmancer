@@ -1,6 +1,6 @@
 import { CardID, Card, CardPool, UniqueCard } from "./CardTypes.js";
 import { getUnique } from "./Cards.js";
-import { getRandomMapKey, random, sum } from "./utils.js";
+import { cumulativeSum, getRandomMapKey, random } from "./utils.js";
 
 // Returns a random card from the pool, choosen uniformly across ALL cards (not UNIQUE ones),
 // meaning cards present in multiple copies are more likely to be picked.
@@ -82,11 +82,11 @@ export function pickPrintRun(
 	return cids.map((cid) => getUnique(cid, options));
 }
 
-function randomWeightedIndex(weights: number[], totalWeight: number): number {
-	const pick = random.integer(0, totalWeight - 1);
+function randomWeightedIndex(cumsumWeights: number[]): number {
+	const pick = random.integer(0, cumsumWeights[cumsumWeights.length - 1]);
 	let index = 0;
-	while (weights[index] >= pick) ++index;
-	return index;
+	while (pick >= cumsumWeights[index] && index < cumsumWeights.length - 1) ++index;
+	return Math.max(0, Math.min(index, cumsumWeights.length - 1)); // Shouldn't be needed.
 }
 
 export function pickStriped(
@@ -98,11 +98,11 @@ export function pickStriped(
 		getCard?: (cid: CardID) => Card;
 	}
 ): UniqueCard[] {
-	const totalWeight = sum(weights);
+	const cumsumWeights = cumulativeSum(weights);
 
 	const sequence: number[] = [];
 	let idx = random.integer(0, sheet.length - 1);
-	let width = randomWeightedIndex(weights, totalWeight);
+	let width = randomWeightedIndex(cumsumWeights);
 	let depth = random.integer(1, width);
 	sequence.push(idx);
 	for (let i = 1; i < count; ++i) {
@@ -114,7 +114,7 @@ export function pickStriped(
 			if (idx % length > 0) {
 				idx += (width - 1) * length;
 			} else {
-				width = randomWeightedIndex(weights, totalWeight);
+				width = randomWeightedIndex(cumsumWeights);
 			}
 			--idx;
 		}
