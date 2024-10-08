@@ -28,11 +28,17 @@
 					</div>
 				</div>
 			</div>
-			<h2>Sheets</h2>
+			<div style="display: flex; justify-content: space-between; align-items: center">
+				<h2>Sheets</h2>
+				<div v-tooltip="'Display cards in a 2D grid following their collation when applicable'">
+					<label for="sheetDisplay">Full Sheet Display</label>
+					<input type="checkbox" v-model="sheetDisplay" id="sheetDisplay" />
+				</div>
+			</div>
 			<div v-for="(sheet, key) in cardlist.sheets" :key="key">
 				<h3>{{ key }}</h3>
 				<template v-if="cards">
-					<template v-if="sheet.collation === 'random'">
+					<template v-if="sheet.collation === 'random' || !sheetDisplay">
 						<div
 							v-for="(row, rowIndex) in rowsBySheet[key]"
 							:key="'row' + rowIndex"
@@ -51,7 +57,7 @@
 					<template v-else>
 						<div
 							class="sheet-display"
-							:style="`--card-size: ${sheet.collation === 'striped' ? 'calc(100%/' + sheet.length + ')' : '200px'}`"
+							:style="`--card-size: ${sheet.collation === 'striped' ? 'calc(100%/' + sheet.length + ')' : 'calc(100%/11)'}`"
 						>
 							<CardComponent
 								v-for="(card, idx) in cards[key]"
@@ -93,6 +99,7 @@ const props = withDefaults(
 );
 
 const cards = ref<{ [slot: string]: CardWithCount[] }>({});
+const sheetDisplay = ref(true);
 
 onMounted(() => {
 	// Could be useful to cache this, but also quite annoying to keep it in sync with the cardlist.
