@@ -154,8 +154,7 @@ function downloadList() {
 				}
 				break;
 			}
-			case "random":
-			default: {
+			case "random": {
 				for (let [cardID, count] of Object.entries(sheet.cards)) {
 					const card = cards.value[sheetName].find((c) => c.id === cardID)!;
 					str += `${count} ${card.name} (${card.set.toUpperCase()}) ${card.collector_number}\n`;

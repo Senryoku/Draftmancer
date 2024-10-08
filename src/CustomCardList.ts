@@ -5,7 +5,7 @@ export type SheetName = string;
 export type LayoutName = string;
 
 export type Sheet =
-	| { collation?: "random"; cards: Record<CardID, number> }
+	| { collation: "random"; cards: Record<CardID, number> }
 	| { collation: "printRun"; printRun: CardID[]; groupSize: number }
 	| { collation: "striped"; sheet: CardID[]; length: number; weights: number[] };
 
@@ -16,7 +16,6 @@ export function getSheetCardIDs(sheet: Sheet): CardID[] {
 		case "striped":
 			return sheet.sheet;
 		case "random":
-		default:
 			return Object.keys(sheet.cards);
 	}
 }
