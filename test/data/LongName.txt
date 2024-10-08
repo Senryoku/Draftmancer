@@ -1,0 +1,6 @@
+[Settings]
+{
+	"name": "Cube with a very long name, too long to be displayed in its entirety",
+}
+[Common]
+4 Adventure Awaits

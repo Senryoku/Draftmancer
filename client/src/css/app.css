@@ -5,6 +5,23 @@
 	}
 }
 
+@media (max-width: 1400px) {
+	.remove-below-1400 {
+		display: none !important;
+	}
+}
+
+@media (max-width: 1200px) {
+	.remove-below-1200 {
+		display: none !important;
+	}
+}
+@media (max-width: 1000px) {
+	.remove-below-1000 {
+		display: none !important;
+	}
+}
+
 body {
 	overflow-y: hidden;
 }
@@ -816,10 +833,14 @@ ul.quick-start-list {
 	#session-id {
 		width: 10em;
 	}
+}
 
-	#card-pool-label {
-		display: none;
-	}
+.inline-cube-name {
+	display: inline-block;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+	max-width: 16em;
 }
 
 @media (orientation: portrait) and (max-width: 500px) {
@@ -1294,12 +1315,6 @@ ul.player-list {
 .swap-controls {
 	display: flex;
 	gap: 0.75em;
-}
-
-@media (max-width: 1000px) {
-	.deck-search {
-		display: none;
-	}
 }
 
 .collapsed-sideboard {

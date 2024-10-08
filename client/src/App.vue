@@ -275,7 +275,7 @@
 						></font-awesome-icon>
 					</div>
 				</span>
-				<span class="generic-container card-pool-controls">
+				<div class="generic-container card-pool-controls">
 					<input
 						type="file"
 						id="card-list-input-main"
@@ -284,10 +284,12 @@
 						accept=".txt"
 					/>
 
-					<strong id="card-pool-label">Card Pool: </strong>
-					<span v-if="useCustomCardList && customCardList">
-						{{ customCardList!.name ? customCardList!.name : "Custom Card List" }}
-						<span style="display: inline-flex; gap: 0.25em; align-items: center; vertical-align: middle">
+					<strong class="remove-below-1400">Card Pool: </strong>
+					<template v-if="useCustomCardList && customCardList">
+						<span class="inline-cube-name" style="vertical-align: text-top">{{
+							customCardList.name ?? "Custom Card List"
+						}}</span>
+						<div style="display: inline-flex; gap: 0.25em; align-items: center; vertical-align: middle">
 							<div v-if="customCardList!.sheets && Object.keys(customCardList!.sheets).length > 0">
 								<font-awesome-icon
 									style="padding: 0.25em"
@@ -314,8 +316,8 @@
 									v-if="sessionOwner === userID"
 								></font-awesome-icon>
 							</div>
-						</span>
-					</span>
+						</div>
+					</template>
 					<span v-else :class="{ disabled: sessionOwner != userID }">
 						<div class="inline">
 							<set-select v-model="setRestriction" :options="sets.slice().reverse()">
@@ -372,7 +374,7 @@
 							</div>
 						</div>
 					</span>
-				</span>
+				</div>
 				<span class="generic-container" :class="{ disabled: sessionOwner != userID }">
 					<strong>Draft:</strong>
 					<div
@@ -537,6 +539,13 @@
 				<div id="url-remainder">Draftmancer.com</div>
 				<div id="draft-in-progress">
 					{{ gameModeName }}
+					<span
+						v-if="useCustomCardList && customCardList?.name"
+						class="inline-cube-name remove-below-1200"
+						style="vertical-align: bottom; max-width: 22em"
+					>
+						- {{ customCardList.name }}</span
+					>
 				</div>
 				<div id="draft-controls">
 					<template v-if="sessionOwner === userID">
@@ -1508,7 +1517,7 @@
 										</template>
 									</dropdown>
 									<div
-										class="deck-search input-delete-icon"
+										class="deck-search input-delete-icon remove-below-1000"
 										v-tooltip.top="
 											'Quick search for English card names and types in your deck/sideboard.'
 										"
@@ -2665,8 +2674,13 @@
 									v-else
 									v-tooltip="'Card list successfully loaded, but not used.'"
 								></font-awesome-icon>
-								<span v-if="customCardList.name">Loaded '{{ customCardList.name }}'.</span>
-								<span v-else>Unamed list loaded.</span>
+								<div v-if="customCardList.name">
+									Loaded '<span class="inline-cube-name" style="vertical-align: bottom">{{
+										customCardList.name
+									}}</span
+									>'.
+								</div>
+								<div v-else>Unamed list loaded.</div>
 								<button @click="displayedModal = 'cardList'">
 									<font-awesome-icon icon="fa-solid fa-file-lines"></font-awesome-icon>
 									Review.
