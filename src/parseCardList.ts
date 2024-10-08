@@ -756,6 +756,7 @@ export function parseCardList(
 										title: `Parsing Error`,
 										text: `Missing or invalid 'weights' setting for sheet '${sheetName}'.`,
 									});
+
 								sheet = {
 									collation: "striped",
 									sheet: [],
@@ -788,6 +789,13 @@ export function parseCardList(
 						}
 						++lineIdx;
 					}
+
+					if (sheet.collation === "striped" && sheet.length >= sheet.sheet.length)
+						return ackError({
+							title: `Parsing Error`,
+							text: `Striped sheet '${sheetName}' length should be strictly less than the number of cards.`,
+						});
+
 					cardList.sheets[sheetName] = sheet;
 				}
 			}
