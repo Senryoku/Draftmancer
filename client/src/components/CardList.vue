@@ -29,19 +29,38 @@
 				</div>
 			</div>
 			<h2>Sheets</h2>
-			<div v-for="(slot, key) in cardlist.sheets" :key="key">
+			<div v-for="(sheet, key) in cardlist.sheets" :key="key">
 				<h3>{{ key }}</h3>
 				<template v-if="cards">
-					<div v-for="(row, rowIndex) in rowsBySheet[key]" :key="'row' + rowIndex" class="category-wrapper">
-						<card-list-column
-							v-for="(column, colIndex) in row"
-							:key="'col' + colIndex"
-							:column="column"
-							:checkcollection="checkCollection"
-							:collection="collection"
-							:language="language"
-						></card-list-column>
-					</div>
+					<template v-if="sheet.collation === 'random'">
+						<div
+							v-for="(row, rowIndex) in rowsBySheet[key]"
+							:key="'row' + rowIndex"
+							class="category-wrapper"
+						>
+							<card-list-column
+								v-for="(column, colIndex) in row"
+								:key="'col' + colIndex"
+								:column="column"
+								:checkcollection="checkCollection"
+								:collection="collection"
+								:language="language"
+							></card-list-column>
+						</div>
+					</template>
+					<template v-else>
+						<div
+							class="sheet-display"
+							:style="`--card-size: ${sheet.collation === 'striped' ? 'calc(100%/' + sheet.length + ')' : '200px'}`"
+						>
+							<CardComponent
+								v-for="(card, idx) in cards[key]"
+								:key="idx"
+								:card="{ ...card, uniqueID: idx }"
+								:language="language"
+							/>
+						</div>
+					</template>
 				</template>
 				<template v-else>
 					(<font-awesome-icon icon="fa-solid fa-spinner" spin></font-awesome-icon> Loading...)
@@ -60,6 +79,7 @@ import { Language } from "@/Types";
 import { CustomCardList, getSheetCardIDs } from "../../../src/CustomCardList";
 import { ref, computed, onMounted, toRaw } from "vue";
 import { Card, CardID, PlainCollection } from "@/CardTypes";
+import CardComponent from "./Card.vue";
 
 type CardWithCount = Card & { count: number };
 
@@ -194,39 +214,31 @@ function rowsByColor(cards: CardWithCount[]) {
 
 async function getCards() {
 	if (!props.cardlist || !props.cardlist.sheets) return;
-	let tmpCards: typeof cards.value = {};
-	let tofetch: { [slot: string]: CardID[] } = {};
-	for (let [sheetName, sheet] of Object.entries(props.cardlist.sheets)) {
-		tmpCards[sheetName] = [];
-		tofetch[sheetName] = [];
+	let cardData: Record<CardID, Card> = {};
+	let tofetch = new Set<CardID>();
+	for (let sheet of Object.values(props.cardlist.sheets)) {
 		switch (sheet.collation) {
 			case "printRun":
 			case "striped": {
 				for (let cid of getSheetCardIDs(sheet)) {
 					if (props.cardlist.customCards && cid in props.cardlist.customCards)
-						tmpCards[sheetName].push({
-							...props.cardlist.customCards[cid],
-							count: 1,
-						});
-					else tofetch[sheetName].push(cid);
+						cardData[cid] = props.cardlist.customCards[cid];
+					else tofetch.add(cid);
 				}
 				break;
 			}
 			case "random":
 			default: {
-				for (let [cid, count] of Object.entries(sheet.cards)) {
+				for (let cid of Object.keys(sheet.cards)) {
 					if (props.cardlist.customCards && cid in props.cardlist.customCards)
-						tmpCards[sheetName].push({
-							...props.cardlist.customCards[cid],
-							count: count,
-						});
-					else tofetch[sheetName].push(cid);
+						cardData[cid] = props.cardlist.customCards[cid];
+					else tofetch.add(cid);
 				}
 			}
 		}
 	}
 
-	if (!isEmpty(tofetch)) {
+	if (tofetch.size > 0) {
 		const response = await fetch("/getCards", {
 			method: "POST",
 			mode: "cors",
@@ -237,17 +249,24 @@ async function getCards() {
 			},
 			redirect: "follow",
 			referrerPolicy: "no-referrer",
-			body: JSON.stringify(tofetch),
+			body: JSON.stringify([...tofetch]),
 		});
 		if (response.status === 200) {
 			const json = await response.json();
-			for (let sheetName in json) {
-				const sheet = props.cardlist.sheets[sheetName];
-				for (let card of json[sheetName]) {
-					tmpCards[sheetName].push(card);
-					card.count = sheet.collation !== "random" ? 1 : sheet.cards[card.id];
-				}
+			for (let card of json) {
+				cardData[card.id] = card;
 			}
+		}
+	}
+
+	let tmpCards: typeof cards.value = {};
+	for (let [sheetName, sheet] of Object.entries(props.cardlist.sheets)) {
+		tmpCards[sheetName] = [];
+		for (let cid of getSheetCardIDs(sheet)) {
+			tmpCards[sheetName].push({
+				...cardData[cid],
+				count: sheet.collation !== "random" ? 1 : sheet.cards[cid],
+			});
 		}
 	}
 
@@ -279,5 +298,16 @@ async function getCards() {
 .layouts {
 	display: flex;
 	gap: 1em;
+}
+
+.sheet-display {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: left;
+
+	& > div {
+		flex-basis: var(--card-size);
+		height: auto;
+	}
 }
 </style>
