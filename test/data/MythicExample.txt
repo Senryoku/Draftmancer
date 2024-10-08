@@ -1,0 +1,30 @@
+[Settings]
+{
+	"name": "Mythic Example",
+	"withReplacement": true,
+	"layouts": {
+		"Default": {
+			"weight": 1,
+			"slots": [
+				{
+					"name": "RareOrMythic", 
+					"count": 1, 
+					"sheets": [
+						{"name": "Rare",   "weight": 7}, 
+						{"name": "Mythic", "weight": 1}
+					]
+				},
+				{"name": "Uncommon", "count": 3 },
+				{"name": "Common",   "count": 10},
+			]
+		}
+	}
+}
+[Common]
+Adamant Will
+[Uncommon]
+Diligent Excavator
+[Rare]
+Benalish Marshal
+[Mythic]
+Karn, Scion of Urza

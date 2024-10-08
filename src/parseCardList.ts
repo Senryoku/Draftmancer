@@ -2,7 +2,7 @@ import { genCustomCardID } from "./CustomCardID.js";
 import { validateCustomCard } from "./CustomCards.js";
 import { Card, CardID, ParameterizedDraftEffectType } from "./CardTypes.js";
 import { CardsByName, CardVersionsByName, getCard, isValidCardID } from "./Cards.js";
-import { CCLSettings, CustomCardList, PackLayout, Slot } from "./CustomCardList.js";
+import { CCLSettings, CustomCardList, PackLayout, Sheet, SheetName, Slot } from "./CustomCardList.js";
 import { escapeHTML } from "./utils.js";
 import { ackError, isSocketError, SocketError } from "./Message.js";
 import {
@@ -285,17 +285,40 @@ function parseSettings(
 			if (!isInteger(value.weight)) return err(`Layout '${key}': 'weight' must be an integer.`);
 			if (!("slots" in value)) return err(`Layout '${key}' must have a 'slots' property.`);
 
-			let slots: Record<string, number> = {};
+			const slots: Slot[] = [];
 
-			if (isRecord(isString, isInteger)(value["slots"])) {
-				slots = value["slots"];
-			} else if (isArrayOf(isObject)(value["slots"])) {
-				for (const slot of value["slots"]) {
+			if (isArrayOf(isObject)(value.slots)) {
+				for (const slot of value.slots) {
 					if (!("name" in slot)) return err(`Layout '${key}': Missing required property 'name' in slot.`);
 					if (!isString(slot.name)) return err(`Layout '${key}': slot 'name' must be a string.`);
 					if (!("count" in slot)) return err(`Layout '${key}': Missing required property 'count' in slot.`);
 					if (!isInteger(slot.count)) return err(`Layout '${key}': slot 'count' must be an integer.`);
-					slots[slot.name] = slot.count;
+					if (!hasOptionalProperty("foil", isBoolean)(slot))
+						return err(`Layout '${key}': slot 'foil' property must be a boolean.`);
+
+					const sheets: { name: SheetName; weight: number }[] = [];
+					if (hasProperty("sheets", isArrayOf(isObject))(slot)) {
+						for (const sheet of slot.sheets) {
+							if (!("name" in sheet))
+								return err(`Layout '${key}': Missing required property 'name' in sheet.`);
+							if (!isString(sheet.name)) return err(`Layout '${key}': sheet 'name' must be a string.`);
+
+							let weight = 1;
+							if (hasProperty("weight", isNumber)(sheet)) {
+								if (!isInteger(sheet.weight))
+									return err(`Layout '${key}': sheet 'weight' must be an integer.`);
+								weight = sheet.weight;
+							}
+							sheets.push({ name: sheet.name, weight });
+						}
+					} else {
+						sheets.push({ name: slot.name, weight: 1 });
+					}
+					slots.push({ name: slot.name, count: slot.count, foil: slot.foil ?? false, sheets });
+				}
+			} else if (isRecord(isString, isInteger)(value.slots)) {
+				for (const [name, count] of Object.entries(value.slots)) {
+					slots.push({ name: name, count: count, foil: false, sheets: [{ name: name, weight: 1 }] });
 				}
 			} else {
 				return err(`'slots' must be a Record<string, number> or Array<{ name: string; count: number }>.`);
@@ -570,7 +593,7 @@ function parsePackLayoutsDeprecated(
 		}
 		const layoutName = match[1];
 		const layoutWeight = parseInt(match[2]);
-		layouts[layoutName] = { weight: layoutWeight, slots: {} };
+		layouts[layoutName] = { weight: layoutWeight, slots: [] };
 		++lineIdx;
 		while (lineIdx < lines.length && lines[lineIdx][0] !== "-" && lines[lineIdx][0] !== "[") {
 			const slotMatch = lines[lineIdx].match(/(\d+)\s+([a-zA-Z]+)/);
@@ -582,7 +605,12 @@ function parsePackLayoutsDeprecated(
 					}).`,
 				});
 			}
-			layouts[layoutName].slots[slotMatch[2]] = parseInt(slotMatch[1]);
+			layouts[layoutName].slots.push({
+				name: slotMatch[2],
+				count: parseInt(slotMatch[1]),
+				foil: false,
+				sheets: [{ name: slotMatch[2], weight: 1 }],
+			});
 			++lineIdx;
 		}
 	}
@@ -604,7 +632,7 @@ export function parseCardList(
 		const cardList: CustomCardList = {
 			customCards: null,
 			layouts: false,
-			slots: {},
+			sheets: {},
 		};
 		let lineIdx = 0;
 
@@ -678,26 +706,29 @@ export function parseCardList(
 					cardList.layouts = layoutsOrError.layouts;
 					skipEmptyLinesAndComments();
 				} else {
-					let slot: Slot = { cards: {} };
-					let slotName = header;
+					let sheet: Sheet = { cards: {} };
+					let sheetName = header;
 					const match =
 						/(?<name>[a-zA-Z0-9# ]*[a-zA-Z0-9#])\s*(?<count>\(\d+\))?\s*(?<settings>\{.*\})?/.exec(header);
 					if (match) {
 						const { name, count, settings } = match.groups!;
-						slotName = name;
+						sheetName = name;
 						// Header with card count: Default layout.
 						if (count) {
 							if (cardList.layouts && !cardList.layouts["default"]) {
 								return ackError({
 									title: `Parsing Error`,
-									text: `Default layout (defining slot sizes in their headers) and custom layouts should not be mixed.`,
+									text: `Default layout (defining slot sizes in sheet headers) and custom layouts should not be mixed.`,
 								});
 							}
 							if (!cardList.layouts) cardList.layouts = {};
-							if (!cardList.layouts["default"]) cardList.layouts["default"] = { weight: 1, slots: {} };
-							cardList.layouts["default"].slots[slotName] = parseInt(
-								count.substring(1, count.length - 1)
-							);
+							if (!cardList.layouts["default"]) cardList.layouts["default"] = { weight: 1, slots: [] };
+							cardList.layouts["default"].slots.push({
+								name: sheetName,
+								count: parseInt(count.substring(1, count.length - 1)),
+								foil: false,
+								sheets: [{ name: sheetName, weight: 1 }],
+							});
 						}
 						// Additional options
 						if (settings) {
@@ -705,15 +736,15 @@ export function parseCardList(
 							if (!hasOptionalProperty("collation", isString)(parsed))
 								return ackError({
 									title: `Parsing Error`,
-									text: `Invalid 'collation' setting for slot '${slotName}'.`,
+									text: `Invalid 'collation' setting for slot '${sheetName}'.`,
 								});
 							if (parsed.collation === "printRun") {
 								if (!hasOptionalProperty("groupSize", isNumber)(parsed))
 									return ackError({
 										title: `Parsing Error`,
-										text: `Invalid 'groupSize' setting for slot '${slotName}'.`,
+										text: `Invalid 'groupSize' setting for slot '${sheetName}'.`,
 									});
-								slot = { collation: "printRun", printRun: [], groupSize: parsed.groupSize ?? 1 };
+								sheet = { collation: "printRun", printRun: [], groupSize: parsed.groupSize ?? 1 };
 							}
 						}
 					}
@@ -726,37 +757,39 @@ export function parseCardList(
 								else return result;
 							} else {
 								const { count, cardID } = result;
-								if (slot.collation === "printRun") {
-									for (let i = 0; i < count; ++i) slot.printRun.push(cardID);
+								if (sheet.collation === "printRun") {
+									for (let i = 0; i < count; ++i) sheet.printRun.push(cardID);
 								} else {
 									// Merge duplicate declarations
-									if (Object.prototype.hasOwnProperty.call(slot.cards, cardID))
-										slot.cards[cardID] += count;
-									else slot.cards[cardID] = count;
+									if (Object.prototype.hasOwnProperty.call(sheet.cards, cardID))
+										sheet.cards[cardID] += count;
+									else sheet.cards[cardID] = count;
 								}
 							}
 						}
 						++lineIdx;
 					}
-					cardList.slots[slotName] = slot;
+					cardList.sheets[sheetName] = sheet;
 				}
 			}
 			// Check layout declarations
 			if (cardList.layouts) {
 				for (const layoutName in cardList.layouts) {
 					let packSize = 0;
-					for (const [slotName, cardCount] of Object.entries(cardList.layouts[layoutName].slots)) {
-						if (!Object.prototype.hasOwnProperty.call(cardList.slots, slotName))
+					for (const slot of cardList.layouts[layoutName].slots) {
+						for (const sheet of slot.sheets) {
+							if (!Object.prototype.hasOwnProperty.call(cardList.sheets, sheet.name))
+								return ackError({
+									title: `Parsing Error`,
+									text: `Layout '${layoutName}' refers to slot '${sheet.name}' which is not defined.`,
+								});
+						}
+						if (!isInteger(slot.count) || slot.count <= 0)
 							return ackError({
 								title: `Parsing Error`,
-								text: `Layout '${layoutName}' refers to slot '${slotName}' which is not defined.`,
+								text: `Layout '${layoutName}' slot '${slot.name}' value is invalid, must be a positive integer (got '${slot.count}').`,
 							});
-						if (!isInteger(cardCount) || cardCount <= 0)
-							return ackError({
-								title: `Parsing Error`,
-								text: `Layout '${layoutName}' slot '${slotName}' value is invalid, must be a positive integer (got '${cardCount}').`,
-							});
-						packSize += cardCount;
+						packSize += slot.count;
 					}
 					if (packSize <= 0)
 						return ackError({
@@ -766,12 +799,12 @@ export function parseCardList(
 				}
 			} else {
 				// No explicit or default (via slot sizes) layout, expect a single slot.
-				if (Object.keys(cardList.slots).length === 0)
+				if (Object.keys(cardList.sheets).length === 0)
 					return ackError({
 						title: `Parsing Error`,
 						text: `No slot defined.`,
 					});
-				else if (Object.keys(cardList.slots).length !== 1)
+				else if (Object.keys(cardList.sheets).length !== 1)
 					return ackError({
 						title: `Parsing Error`,
 						text: `Multiple 'default' slots defined. Merge them into a single one, or use layouts (you can define a default layout by explicitly setting slot sizes).`,
@@ -779,7 +812,7 @@ export function parseCardList(
 			}
 		} else {
 			// Simple list (one card name per line)
-			cardList.slots["default"] = {
+			cardList.sheets["default"] = {
 				cards: {},
 			};
 			for (const line of lines) {
@@ -799,9 +832,9 @@ export function parseCardList(
 					} else {
 						const { count, cardID } = result;
 						// Merge duplicate declarations
-						if (Object.prototype.hasOwnProperty.call(cardList.slots["default"].cards, cardID))
-							cardList.slots["default"].cards[cardID] += count;
-						else cardList.slots["default"].cards[cardID] = count;
+						if (Object.prototype.hasOwnProperty.call(cardList.sheets["default"].cards, cardID))
+							cardList.sheets["default"].cards[cardID] += count;
+						else cardList.sheets["default"].cards[cardID] = count;
 					}
 				}
 			}
@@ -809,7 +842,7 @@ export function parseCardList(
 		}
 		if (options?.name) cardList.name = options.name;
 		if (
-			Object.values(cardList.slots).every(
+			Object.values(cardList.sheets).every(
 				(slot) =>
 					(slot.collation === "printRun" && slot.printRun.length === 0) ||
 					(slot.collation !== "printRun" && Object.keys(slot.cards).length === 0)

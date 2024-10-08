@@ -31,13 +31,77 @@ describe("Custom Card List Parsing", function () {
 			expect(r.layouts).to.not.be.false;
 			if (r.layouts) {
 				expect(r.layouts.Normal.weight).to.equal(3);
-				expect(r.layouts.Normal.slots.Common).to.equal(10);
-				expect(r.layouts.Normal.slots.Uncommon).to.equal(3);
-				expect(r.layouts.Normal.slots.Rare).to.equal(1);
+				expect(r.layouts.Normal.slots[0].sheets.length).to.equal(1);
+				expect(r.layouts.Normal.slots[0].sheets[0].name).to.equal("Rare");
+				expect(r.layouts.Normal.slots[0].count).to.equal(1);
+				expect(r.layouts.Normal.slots[1].sheets.length).to.equal(1);
+				expect(r.layouts.Normal.slots[1].sheets[0].name).to.equal("Uncommon");
+				expect(r.layouts.Normal.slots[1].count).to.equal(3);
+				expect(r.layouts.Normal.slots[2].sheets.length).to.equal(1);
+				expect(r.layouts.Normal.slots[2].sheets[0].name).to.equal("Common");
+				expect(r.layouts.Normal.slots[2].count).to.equal(10);
 				expect(r.layouts.Lucky.weight).to.equal(1);
-				expect(r.layouts.Lucky.slots.Common).to.equal(9);
-				expect(r.layouts.Lucky.slots.Uncommon).to.equal(3);
-				expect(r.layouts.Lucky.slots.Rare).to.equal(2);
+				expect(r.layouts.Lucky.slots[0].sheets.length).to.equal(1);
+				expect(r.layouts.Lucky.slots[0].sheets[0].name).to.equal("Rare");
+				expect(r.layouts.Lucky.slots[0].count).to.equal(2);
+				expect(r.layouts.Lucky.slots[1].sheets.length).to.equal(1);
+				expect(r.layouts.Lucky.slots[1].sheets[0].name).to.equal("Uncommon");
+				expect(r.layouts.Lucky.slots[1].count).to.equal(3);
+				expect(r.layouts.Lucky.slots[2].sheets.length).to.equal(1);
+				expect(r.layouts.Lucky.slots[2].sheets[0].name).to.equal("Common");
+				expect(r.layouts.Lucky.slots[2].count).to.equal(9);
+			}
+		}
+	});
+
+	it(`should parse DOMLayoutExampleExtended`, function () {
+		const r = parseCardList(fs.readFileSync(`./test/data/DOMLayoutExampleExtended.txt`, "utf8"), {});
+		expect(isSocketError(r), `Got ${JSON.stringify((r as SocketError).error)}`).to.be.false;
+		if (!isSocketError(r)) {
+			expect(r.layouts).to.not.be.false;
+			if (r.layouts) {
+				expect(r.layouts.UncommonLegendary.weight).to.equal(24);
+				expect(r.layouts.UncommonLegendary.slots.length).to.equal(4);
+
+				expect(r.layouts.UncommonLegendary.slots[0].name).to.equal("RareOrMythic");
+				expect(r.layouts.UncommonLegendary.slots[0].count).to.equal(1);
+				expect(r.layouts.UncommonLegendary.slots[0].sheets.length).to.equal(2);
+				expect(r.layouts.UncommonLegendary.slots[0].sheets[0].name).to.equal("Rare");
+				expect(r.layouts.UncommonLegendary.slots[0].sheets[1].name).to.equal("Mythic");
+
+				expect(r.layouts.UncommonLegendary.slots[1].name).to.equal("UncommonLegendary");
+				expect(r.layouts.UncommonLegendary.slots[1].count).to.equal(1);
+				expect(r.layouts.UncommonLegendary.slots[1].sheets.length).to.equal(1);
+				expect(r.layouts.UncommonLegendary.slots[1].sheets[0].name).to.equal("UncommonLegendary");
+
+				expect(r.layouts.UncommonLegendary.slots[2].name).to.equal("Uncommon");
+				expect(r.layouts.UncommonLegendary.slots[2].count).to.equal(2);
+				expect(r.layouts.UncommonLegendary.slots[2].sheets.length).to.equal(1);
+				expect(r.layouts.UncommonLegendary.slots[2].sheets[0].name).to.equal("Uncommon");
+
+				expect(r.layouts.UncommonLegendary.slots[3].name).to.equal("Common");
+				expect(r.layouts.UncommonLegendary.slots[3].sheets.length).to.equal(1);
+				expect(r.layouts.UncommonLegendary.slots[3].sheets[0].name).to.equal("Common");
+				expect(r.layouts.UncommonLegendary.slots[3].count).to.equal(10);
+
+				expect(r.layouts.RareOrMythicLegendary.weight).to.equal(8);
+				expect(r.layouts.RareOrMythicLegendary.slots.length).to.equal(3);
+
+				expect(r.layouts.RareOrMythicLegendary.slots[0].name).to.equal("RareOrMythicLegendary");
+				expect(r.layouts.RareOrMythicLegendary.slots[0].count).to.equal(1);
+				expect(r.layouts.RareOrMythicLegendary.slots[0].sheets.length).to.equal(2);
+				expect(r.layouts.RareOrMythicLegendary.slots[0].sheets[0].name).to.equal("RareLegendary");
+				expect(r.layouts.RareOrMythicLegendary.slots[0].sheets[1].name).to.equal("MythicLegendary");
+
+				expect(r.layouts.RareOrMythicLegendary.slots[1].count).to.equal(3);
+				expect(r.layouts.RareOrMythicLegendary.slots[1].sheets.length).to.equal(1);
+				expect(r.layouts.RareOrMythicLegendary.slots[1].sheets[0].name).to.equal("Uncommon");
+				expect(r.layouts.RareOrMythicLegendary.slots[1].count).to.equal(3);
+
+				expect(r.layouts.RareOrMythicLegendary.slots[2].name).to.equal("Common");
+				expect(r.layouts.RareOrMythicLegendary.slots[2].sheets.length).to.equal(1);
+				expect(r.layouts.RareOrMythicLegendary.slots[2].sheets[0].name).to.equal("Common");
+				expect(r.layouts.RareOrMythicLegendary.slots[2].count).to.equal(10);
 			}
 		}
 	});
@@ -275,7 +339,7 @@ describe("Custom Card List Parsing", function () {
 			expect(isSocketError(list), `Got ${JSON.stringify((list as SocketError).error)}`).to.be.false;
 			return;
 		}
-		expect(list.slots["Common"]).to.exist;
+		expect(list.sheets["Common"]).to.exist;
 		expect(list.settings?.withReplacement).to.be.true;
 		expect(list.customCards).to.not.be.null;
 	});
@@ -286,13 +350,13 @@ describe("Custom Card List Parsing", function () {
 			expect(isSocketError(list), `Got ${JSON.stringify((list as SocketError).error)}`).to.be.false;
 			return;
 		}
-		expect(list.slots["default"]).to.exist;
-		expect(list.slots["default"].collation).to.be.undefined;
-		if (!list.slots["default"].collation) {
-			expect(list.slots["default"].cards).to.exist;
-			expect(Object.keys(list.slots["default"].cards).length).to.equal(246);
-			expect(Object.values(list.slots["default"].cards).every((v) => v === 1)).to.be.true;
-			expect(list.slots["default"].cards["Nomads en-Kor"]).to.be.undefined;
+		expect(list.sheets["default"]).to.exist;
+		expect(list.sheets["default"].collation).to.be.undefined;
+		if (!list.sheets["default"].collation) {
+			expect(list.sheets["default"].cards).to.exist;
+			expect(Object.keys(list.sheets["default"].cards).length).to.equal(246);
+			expect(Object.values(list.sheets["default"].cards).every((v) => v === 1)).to.be.true;
+			expect(list.sheets["default"].cards["Nomads en-Kor"]).to.be.undefined;
 		}
 	});
 });

@@ -6,15 +6,23 @@ import { MessageError } from "./Message.js";
 import { isEmpty, random, weightedRandomIdx, shuffleArray } from "./utils.js";
 
 export type SlotName = string;
+export type SheetName = string;
 export type LayoutName = string;
 
-export type Slot =
+export type Sheet =
 	| { collation?: Exclude<CollationType, "printRun">; cards: Record<CardID, number> }
 	| { collation: "printRun"; printRun: CardID[]; groupSize: number };
 
+export type Slot = {
+	name: string;
+	count: number;
+	foil: boolean;
+	sheets: { name: SheetName; weight: number }[];
+};
+
 export type PackLayout = {
 	weight: number;
-	slots: Record<SlotName, number>;
+	slots: Slot[];
 };
 
 export type CCLSettings = {
@@ -36,7 +44,7 @@ export type CollationType = "random" | "printRun";
 
 export type CustomCardList = {
 	name?: string;
-	slots: Record<SlotName, Slot>;
+	sheets: Record<SheetName, Sheet>;
 	layouts: Record<LayoutName, PackLayout> | false;
 	customCards: Record<CardID, Card> | null;
 	settings?: CCLSettings;
@@ -64,9 +72,9 @@ export function generateBoosterFromCustomCardList(
 	} = {}
 ): MessageError | Array<UniqueCard>[] {
 	if (
-		!customCardList.slots ||
-		Object.keys(customCardList.slots).length === 0 ||
-		Object.values(customCardList.slots).every(
+		!customCardList.sheets ||
+		Object.keys(customCardList.sheets).length === 0 ||
+		Object.values(customCardList.sheets).every(
 			(slot) =>
 				(slot.collation === "printRun" && slot.printRun.length === 0) ||
 				(slot.collation !== "printRun" && Object.keys(slot.cards).length === 0)
@@ -90,11 +98,11 @@ export function generateBoosterFromCustomCardList(
 		const layouts = customCardList.layouts;
 		const layoutsTotalWeights = Object.keys(layouts).reduce((acc, key) => acc + layouts[key].weight, 0);
 
-		const cardsBySlot: SlotedCardPool = {};
-		for (const [slotName, slot] of Object.entries(customCardList.slots)) {
-			if (slot.collation !== "printRun") {
-				cardsBySlot[slotName] = new CardPool();
-				for (const [cardID, count] of Object.entries(slot.cards)) cardsBySlot[slotName].set(cardID, count);
+		const cardsBySheet: SlotedCardPool = {};
+		for (const [sheetName, sheet] of Object.entries(customCardList.sheets)) {
+			if (sheet.collation !== "printRun") {
+				cardsBySheet[sheetName] = new CardPool();
+				for (const [cardID, count] of Object.entries(sheet.cards)) cardsBySheet[sheetName].set(cardID, count);
 			}
 		}
 
@@ -102,23 +110,26 @@ export function generateBoosterFromCustomCardList(
 		if (!options.withReplacement && options.removeFromCardPool) {
 			// We don't know from which slot the cards were picked, so we might remove them multiple times if they're shared between multiple slots,
 			// however I don't have a better solution for now.
-			for (const slotName in cardsBySlot)
+			for (const sheetName in cardsBySheet)
 				for (const cardId of options.removeFromCardPool)
-					if (cardsBySlot[slotName].has(cardId)) cardsBySlot[slotName].removeCard(cardId);
+					if (cardsBySheet[sheetName].has(cardId)) cardsBySheet[sheetName].removeCard(cardId);
 		}
 
 		// Color balance the largest slot of each layout
-		const colorBalancedSlots: { [layoutName: string]: string } = {};
-		const colorBalancedSlotGenerators: { [slotName: string]: ColorBalancedSlot } = {};
+		const colorBalancedSlots: { [layoutName: string]: number } = {};
+		const colorBalancedGenerators: { [slotName: string]: ColorBalancedSlot } = {};
 		if (options.colorBalance) {
 			for (const layoutName in layouts) {
-				colorBalancedSlots[layoutName] = Object.keys(layouts[layoutName].slots).reduce((max, curr) =>
-					layouts[layoutName].slots[curr] > layouts[layoutName].slots[max] ? curr : max
-				);
+				colorBalancedSlots[layoutName] = 0;
+				for (let i = 1; i < layouts[layoutName].slots.length; ++i) {
+					if (layouts[layoutName].slots[i].count > colorBalancedSlots[layoutName]) {
+						colorBalancedSlots[layoutName] = i;
+					}
+				}
 			}
-			for (const slotName of new Set(Object.values(colorBalancedSlots))) {
-				if (customCardList.slots[slotName].collation !== "printRun") {
-					colorBalancedSlotGenerators[slotName] = new ColorBalancedSlot(cardsBySlot[slotName], pickOptions);
+			for (const sheetName in customCardList.sheets) {
+				if (customCardList.sheets[sheetName].collation !== "printRun") {
+					colorBalancedGenerators[sheetName] = new ColorBalancedSlot(cardsBySheet[sheetName], pickOptions);
 				}
 			}
 		}
@@ -190,42 +201,50 @@ export function generateBoosterFromCustomCardList(
 				return new MessageError("Error generating boosters", `Invalid layout '${pickedLayoutName}'.`);
 			const pickedLayout = layouts[pickedLayoutName];
 
-			for (const [slotName, cardCount] of Object.entries(pickedLayout.slots)) {
+			for (const [index, slot] of pickedLayout.slots.entries()) {
+				const sheetName =
+					slot.sheets[
+						weightedRandomIdx(
+							slot.sheets,
+							slot.sheets.reduce((acc, curr) => acc + curr.weight, 0)
+						)
+					].name;
 				const useColorBalance =
 					options.colorBalance &&
-					slotName === colorBalancedSlots[pickedLayoutName] &&
-					pickedLayout.slots[slotName] > ColorBalancedSlot.CardCountThreshold &&
-					colorBalancedSlotGenerators[slotName];
+					index === colorBalancedSlots[pickedLayoutName] &&
+					slot.count > ColorBalancedSlot.CardCountThreshold &&
+					colorBalancedGenerators[sheetName];
 				// Checking the card count beforehand is tricky, we'll rely on pickCard throwing an exception if we run out of cards to pick.
 				try {
 					let pickedCards: UniqueCard[] = [];
 
-					if (customCardList.slots[slotName].collation === "printRun") {
+					if (customCardList.sheets[sheetName].collation === "printRun") {
 						pickedCards = pickPrintRun(
-							cardCount,
-							customCardList.slots[slotName].printRun,
-							customCardList.slots[slotName].groupSize,
+							slot.count,
+							customCardList.sheets[sheetName].printRun,
+							customCardList.sheets[sheetName].groupSize,
 							pickOptions
 						);
 					} else if (useColorBalance) {
-						pickedCards = colorBalancedSlotGenerators[slotName].generate(cardCount, booster, pickOptions);
+						pickedCards = colorBalancedGenerators[sheetName].generate(slot.count, booster, pickOptions);
 					} else {
-						for (let i = 0; i < cardCount; ++i) {
+						for (let i = 0; i < slot.count; ++i) {
 							const pickedCard = pickCard(
-								cardsBySlot[slotName],
+								cardsBySheet[sheetName],
 								booster.concat(pickedCards),
 								pickOptions
 							);
 							pickedCards.push(pickedCard);
-							if (colorBalancedSlotGenerators[slotName] && !pickOptions.withReplacement)
-								colorBalancedSlotGenerators[slotName].cache.removeCard(pickedCard);
+							if (colorBalancedGenerators[sheetName] && !pickOptions.withReplacement)
+								colorBalancedGenerators[sheetName].cache.removeCard(pickedCard);
 						}
 					}
 
 					if (customCardList.settings?.showSlots) {
-						const displaySlotName = slotName.split("##")[0]; // Remove potential 'hidden id' after '##' delimiter.
+						const displaySlotName = slot.name.split("##")[0]; // Remove potential 'hidden id' after '##' delimiter.
 						for (const card of pickedCards) card.slot = displaySlotName;
 					}
+					if (slot.foil) pickedCards.forEach((card) => (card.foil = true));
 
 					booster.push(...pickedCards);
 				} catch (e) {
@@ -245,7 +264,7 @@ export function generateBoosterFromCustomCardList(
 		// Number of cards in pack is determined by the session settings.
 
 		// These errors should have been caught during list parsing, double checking just in case.
-		const slotsCount = Object.keys(customCardList.slots).length;
+		const slotsCount = Object.keys(customCardList.sheets).length;
 		if (slotsCount === 0) {
 			return new MessageError("Error generating boosters", `No slot defined.`);
 		} else if (slotsCount !== 1) {
@@ -255,7 +274,7 @@ export function generateBoosterFromCustomCardList(
 			);
 		}
 
-		const defaultSlot = Object.values(customCardList.slots)[0];
+		const defaultSlot = Object.values(customCardList.sheets)[0];
 
 		if (defaultSlot.collation === "printRun")
 			return new MessageError(

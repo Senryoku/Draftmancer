@@ -249,7 +249,7 @@ function parseCollection(
 		ack?.(cardList);
 		return;
 	}
-	if (cardList.slots["default"].collation === "printRun") {
+	if (cardList.sheets["default"].collation === "printRun") {
 		ack?.(new SocketError("Unexpected collection."));
 		return;
 	}
@@ -266,7 +266,7 @@ function parseCollection(
 	const ignoredCards = [];
 
 	const collection = new Map<ArenaID, number>();
-	for (const [cardID, count] of Object.entries(cardList.slots["default"].cards)) {
+	for (const [cardID, count] of Object.entries(cardList.sheets["default"].cards)) {
 		const aid = getCard(cardID).arena_id;
 		if (!aid) {
 			ignoredCards.push(`${getCard(cardID).name} (${getCard(cardID).set})`);

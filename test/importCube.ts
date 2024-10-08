@@ -85,19 +85,19 @@ describe("Import Cubes", function () {
 				it(`should successfully import from ${service} with matchVersions:${matchVersions}`, function (done) {
 					clients[0].once("sessionOptions", (options) => {
 						expect(options.customCardList).to.exist;
-						expect(options.customCardList!.slots["default"]).to.exist;
-						expect(options.customCardList!.slots["default"].collation).to.be.undefined;
-						if (options.customCardList!.slots["default"].collation === undefined) {
+						expect(options.customCardList!.sheets["default"]).to.exist;
+						expect(options.customCardList!.sheets["default"].collation).to.be.undefined;
+						if (options.customCardList!.sheets["default"].collation === undefined) {
 							if (matchVersions) {
 								expect(
-									options.customCardList!.slots["default"].cards[
+									options.customCardList!.sheets["default"].cards[
 										"81706879-ec5d-4b17-b4bc-5f7cb37557a5"
 									],
 									"The cube should contain this exact card: Watery Grave (UNF) 278"
 								).to.equal(1);
 							} else {
 								expect(
-									options.customCardList!.slots["default"].cards[CardsByName["Watery Grave"]],
+									options.customCardList!.sheets["default"].cards[CardsByName["Watery Grave"]],
 									"The cube should contain the default version of Watery Grave"
 								).to.equal(1);
 							}
