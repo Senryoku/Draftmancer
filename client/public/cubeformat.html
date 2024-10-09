@@ -277,10 +277,20 @@ Card Name 2
 				<p>Sheet settings:</p>
 				<pre>
 {
-		"collation": "random" | "printRun", <comment># "random" is the default. "printRun" means cards are picked sequentionally from a random starting point.</comment>
+		<comment># "random" is the default. 
+		# "printRun" means cards are picked sequentionally from a random starting point.
+		# "striped" means cards are picked as per striped collation (from very early sets).</comment>
+		"collation": "random" | "printRun" | "striped", 
 		"groupSize": integer, <comment># Only for "printRun". Forces the random start point to be a multiple of this value (default: 1).</comment>
+		"length": integer,    <comment># Only for "striped" (required). Specifies the length of each row.</comment>
+		"weights": integer[], <comment># Only for "striped" (required). Specifies the chances of different stripe widths.</comment>
 }
-				</pre>
+
+<comment># Examples:</comment>
+[common]                                                               <comment># Defaults to random collation.</comment>
+[common {"collation": "striped", "length": 11, "weights": [0,1,1,1,1]} <comment># Uses striped collation from a sheet with 11 columns with equal chances of stripe widths 2, 3, 4, or 5.</comment>
+[common {"collation": "printRun"}]                                     <comment># Uses sequential collation, wraps from end to start</comment>
+[special {"collation": "printRun","groupSize":2}                       <comment># Uses sequential collation but can only start on 1st, 3rd, 5th, etc</comment></pre>
 			</section>
 			<section>
 				<h2 id="layouts">Pack Layouts</h2>

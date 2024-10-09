@@ -159,8 +159,8 @@ describe("Statistical color balancing tests", function () {
 			return;
 		}
 		SessionInst.setCustomCardList(list);
-		if (SessionInst.customCardList.sheets.Common.collation === "printRun") {
-			expect(false, "What? Got a printRun here.");
+		if (SessionInst.customCardList.sheets.Common.collation !== "random") {
+			expect(false, "Unexpected collation type.");
 			return;
 		}
 		const trackedCards = Object.keys(SessionInst.customCardList.sheets.Common.cards).reduce(

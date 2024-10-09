@@ -1,6 +1,6 @@
 import { CardID, Card, CardPool, UniqueCard } from "./CardTypes.js";
 import { getUnique } from "./Cards.js";
-import { getRandomMapKey, random } from "./utils.js";
+import { cumulativeSum, getRandomMapKey, random } from "./utils.js";
 
 // Returns a random card from the pool, choosen uniformly across ALL cards (not UNIQUE ones),
 // meaning cards present in multiple copies are more likely to be picked.
@@ -73,11 +73,60 @@ export function pickPrintRun(
 		getCard?: (cid: CardID) => Card;
 	}
 ): UniqueCard[] {
-	const start_idx = groupSize * random.integer(0, (printRun.length - 1) / groupSize);
+	const startIdx = groupSize * random.integer(0, (printRun.length - 1) / groupSize);
 	const cids: CardID[] = [];
 	for (let i = 0; i < count; ++i) {
-		const idx = (start_idx + i) % printRun.length;
+		const idx = (startIdx + i) % printRun.length;
 		cids.push(printRun[idx]);
 	}
 	return cids.map((cid) => getUnique(cid, options));
+}
+
+function randomWeightedIndex(cumsumWeights: number[]): number {
+	if (cumsumWeights.length <= 1 || cumsumWeights[cumsumWeights.length - 1] === 0) return 0;
+
+	const pick = random.integer(0, cumsumWeights[cumsumWeights.length - 1] - 1);
+	let index = 0;
+	while (pick >= cumsumWeights[index]) ++index;
+	return index;
+}
+
+// https://www.lethe.xyz/mtg/collation/striped-collation.html
+export function pickStriped(
+	count: number,
+	sheet: CardID[],
+	length: number,
+	weights: number[],
+	options?: {
+		getCard?: (cid: CardID) => Card;
+	}
+): UniqueCard[] {
+	const cumsumWeights = cumulativeSum(weights);
+
+	const sequence: number[] = [];
+	let idx = random.integer(0, sheet.length - 1);
+	let width = randomWeightedIndex(cumsumWeights) + 1;
+	let depth = random.integer(1, width); // Start at a random point in sequence
+	sequence.push(idx);
+	for (let i = 1; i < count; ++i) {
+		if (depth < width) {
+			++depth;
+			idx -= length; // Go up a row
+		} else {
+			depth = 1;
+			if (idx % length > 0) {
+				// Back down 'width' rows
+				idx += (width - 1) * length;
+			} else {
+				// Unless we're at the leftmost column already, restart the sequence
+				width = randomWeightedIndex(cumsumWeights) + 1;
+			}
+			--idx; // Go back a column
+		}
+		if (idx < 0) idx += sheet.length;
+		idx = idx % sheet.length;
+		sequence.push(idx);
+	}
+
+	return sequence.map((idx) => sheet[idx]).map((cid) => getUnique(cid, options));
 }

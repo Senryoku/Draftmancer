@@ -86,8 +86,8 @@ describe("Import Cubes", function () {
 					clients[0].once("sessionOptions", (options) => {
 						expect(options.customCardList).to.exist;
 						expect(options.customCardList!.sheets["default"]).to.exist;
-						expect(options.customCardList!.sheets["default"].collation).to.be.undefined;
-						if (options.customCardList!.sheets["default"].collation === undefined) {
+						expect(options.customCardList!.sheets["default"].collation).to.equal("random");
+						if (options.customCardList!.sheets["default"].collation === "random") {
 							if (matchVersions) {
 								expect(
 									options.customCardList!.sheets["default"].cards[

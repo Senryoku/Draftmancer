@@ -2,7 +2,7 @@ import { genCustomCardID } from "./CustomCardID.js";
 import { validateCustomCard } from "./CustomCards.js";
 import { Card, CardID, ParameterizedDraftEffectType } from "./CardTypes.js";
 import { CardsByName, CardVersionsByName, getCard, isValidCardID } from "./Cards.js";
-import { CCLSettings, CustomCardList, PackLayout, Sheet, SheetName, Slot } from "./CustomCardList.js";
+import { CCLSettings, CustomCardList, getSheetCardIDs, PackLayout, Sheet, SheetName, Slot } from "./CustomCardList.js";
 import { escapeHTML } from "./utils.js";
 import { ackError, isSocketError, SocketError } from "./Message.js";
 import {
@@ -706,7 +706,7 @@ export function parseCardList(
 					cardList.layouts = layoutsOrError.layouts;
 					skipEmptyLinesAndComments();
 				} else {
-					let sheet: Sheet = { cards: {} };
+					let sheet: Sheet = { collation: "random", cards: {} };
 					let sheetName = header;
 					const match =
 						/(?<name>[a-zA-Z0-9# ]*[a-zA-Z0-9#])\s*(?<count>\(\d+\))?\s*(?<settings>\{.*\})?/.exec(header);
@@ -736,15 +736,33 @@ export function parseCardList(
 							if (!hasOptionalProperty("collation", isString)(parsed))
 								return ackError({
 									title: `Parsing Error`,
-									text: `Invalid 'collation' setting for slot '${sheetName}'.`,
+									text: `Invalid 'collation' setting for sheet '${sheetName}'.`,
 								});
 							if (parsed.collation === "printRun") {
 								if (!hasOptionalProperty("groupSize", isNumber)(parsed))
 									return ackError({
 										title: `Parsing Error`,
-										text: `Invalid 'groupSize' setting for slot '${sheetName}'.`,
+										text: `Invalid 'groupSize' setting for sheet '${sheetName}'.`,
 									});
 								sheet = { collation: "printRun", printRun: [], groupSize: parsed.groupSize ?? 1 };
+							} else if (parsed.collation === "striped") {
+								if (!hasProperty("length", isNumber)(parsed))
+									return ackError({
+										title: `Parsing Error`,
+										text: `Missing or invalid 'length' setting for sheet '${sheetName}'.`,
+									});
+								if (!hasProperty("weights", isArrayOf(isNumber))(parsed))
+									return ackError({
+										title: `Parsing Error`,
+										text: `Missing or invalid 'weights' setting for sheet '${sheetName}'.`,
+									});
+
+								sheet = {
+									collation: "striped",
+									sheet: [],
+									length: parsed.length,
+									weights: parsed.weights,
+								};
 							}
 						}
 					}
@@ -759,6 +777,8 @@ export function parseCardList(
 								const { count, cardID } = result;
 								if (sheet.collation === "printRun") {
 									for (let i = 0; i < count; ++i) sheet.printRun.push(cardID);
+								} else if (sheet.collation === "striped") {
+									for (let i = 0; i < count; ++i) sheet.sheet.push(cardID);
 								} else {
 									// Merge duplicate declarations
 									if (Object.prototype.hasOwnProperty.call(sheet.cards, cardID))
@@ -769,6 +789,13 @@ export function parseCardList(
 						}
 						++lineIdx;
 					}
+
+					if (sheet.collation === "striped" && sheet.length >= sheet.sheet.length)
+						return ackError({
+							title: `Parsing Error`,
+							text: `Striped sheet '${sheetName}' length should be strictly less than the number of cards.`,
+						});
+
 					cardList.sheets[sheetName] = sheet;
 				}
 			}
@@ -813,6 +840,7 @@ export function parseCardList(
 		} else {
 			// Simple list (one card name per line)
 			cardList.sheets["default"] = {
+				collation: "random",
 				cards: {},
 			};
 			for (const line of lines) {
@@ -841,13 +869,7 @@ export function parseCardList(
 			cardList.layouts = false;
 		}
 		if (options?.name) cardList.name = options.name;
-		if (
-			Object.values(cardList.sheets).every(
-				(slot) =>
-					(slot.collation === "printRun" && slot.printRun.length === 0) ||
-					(slot.collation !== "printRun" && Object.keys(slot.cards).length === 0)
-			)
-		)
+		if (Object.values(cardList.sheets).every((sheet) => getSheetCardIDs(sheet).length === 0))
 			return ackError({
 				title: "Empty List",
 				text: `Supplied card list is empty.`,

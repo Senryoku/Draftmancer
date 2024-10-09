@@ -1,5 +1,12 @@
 [
 	{
+		"date": "09/10/2024",
+		"notes": [
+			"Added 'striped' collation support. Thanks to tiera3 for the idea and help with the implementation.",
+			"Expanded cube display to support sheets with 'printRun' and 'striped' collations."
+		]
+	},
+	{
 		"date": "24/09/2024",
 		"notes": [
 			"Mystery Booster 2 (MB2) support."

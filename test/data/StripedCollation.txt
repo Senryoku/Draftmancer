@@ -1,0 +1,546 @@
+[Settings]
+{
+    "name": "Striped Collation",
+    "withReplacement": true,
+    "showSlots": true,
+    
+    "layouts": {
+        "AABBBBCCCC": {
+            "weight": 33,
+            "slots": {
+               "rare":  1,
+               "uncommon":  3,
+               "common##A":  2,
+               "common##B":  4,
+               "common##C":  4,
+               "Land":  1,
+            }
+        },
+        "AAABBBCCCC": {
+            "weight": 34,
+            "slots": {
+               "rare":  1,
+               "uncommon":  3,
+               "common##A":  3,
+               "common##B":  3,
+               "common##C":  4,
+               "Land":  1,
+            }
+        },
+        "AAABBBBCCC": {
+            "weight": 34,
+            "slots": {
+               "rare":  1,
+               "uncommon":  3,
+               "common##A":  3,
+               "common##B":  4,
+               "common##C":  3,
+               "Land":  1,
+            }
+        },
+    },
+    "predeterminedLayouts": [["AABBBBCCCC","AAABBBCCCC","AAABBBBCCC"],["AABBBBCCCC","AAABBBCCCC","AAABBBBCCC"],["AABBBBCCCC","AAABBBCCCC","AAABBBBCCC"]]
+}
+[common##A {"collation":"striped", "length": 10, "weights": [0,2,3,3,3]}]
+1 Lost Legion (ELD) 94
+1 Ardenvale Tactician // Dizzying Swoop (ELD) 5
+1 Forever Young (ELD) 89
+1 Redcap Raiders (ELD) 136
+1 Locthwain Paladin (ELD) 93
+1 Steelgaze Griffin (ELD) 65
+1 Reaper of Night // Harvest Fear (ELD) 102
+1 Trapped in the Tower (ELD) 33
+1 Tempting Witch (ELD) 108
+1 Unexplained Vision (ELD) 70
+1 Wicked Guardian (ELD) 109
+1 Dwarven Mine (ELD) 243
+1 Reave Soul (ELD) 103
+1 Festive Funeral (ELD) 87
+1 Unexplained Vision (ELD) 70
+1 Smitten Swordmaster // Curry Favor (ELD) 105
+1 Ardenvale Tactician // Dizzying Swoop (ELD) 5
+1 Malevolent Noble (ELD) 95
+1 Redcap Raiders (ELD) 136
+1 Foreboding Fruit (ELD) 88
+1 Flutterfox (ELD) 12
+1 Lost Legion (ELD) 94
+1 Steelgaze Griffin (ELD) 65
+1 Tempting Witch (ELD) 108
+1 Wicked Guardian (ELD) 109
+1 Mystic Sanctuary (ELD) 247
+1 Barrow Witches (ELD) 77
+1 Lash of Thorns (ELD) 92
+1 Charmed Sleep (ELD) 40
+1 Giant's Skewer (ELD) 91
+1 Fierce Witchstalker (ELD) 154
+1 Bake into a Pie (ELD) 76
+1 Vantress Paladin (ELD) 72
+1 Forever Young (ELD) 89
+1 Trapped in the Tower (ELD) 33
+1 Reaper of Night // Harvest Fear (ELD) 102
+1 Brimstone Trebuchet (ELD) 116
+1 Locthwain Paladin (ELD) 93
+1 Dwarven Mine (ELD) 243
+1 Wicked Guardian (ELD) 109
+1 Malevolent Noble (ELD) 95
+1 Fierce Witchstalker (ELD) 154
+1 Smitten Swordmaster // Curry Favor (ELD) 105
+1 Vantress Paladin (ELD) 72
+1 Lost Legion (ELD) 94
+1 Ardenvale Tactician // Dizzying Swoop (ELD) 5
+1 Lash of Thorns (ELD) 92
+1 Redcap Raiders (ELD) 136
+1 Giant's Skewer (ELD) 91
+1 Unexplained Vision (ELD) 70
+1 Forever Young (ELD) 89
+1 Reave Soul (ELD) 103
+1 Dwarven Mine (ELD) 243
+1 Locthwain Paladin (ELD) 93
+1 Foreboding Fruit (ELD) 88
+1 Trapped in the Tower (ELD) 33
+1 Tempting Witch (ELD) 108
+1 Charmed Sleep (ELD) 40
+1 Barrow Witches (ELD) 77
+1 Brimstone Trebuchet (ELD) 116
+1 Reaper of Night // Harvest Fear (ELD) 102
+1 Steelgaze Griffin (ELD) 65
+1 Festive Funeral (ELD) 87
+1 Flutterfox (ELD) 12
+1 Bake into a Pie (ELD) 76
+1 Mystic Sanctuary (ELD) 247
+1 Barrow Witches (ELD) 77
+1 Smitten Swordmaster // Curry Favor (ELD) 105
+1 Trapped in the Tower (ELD) 33
+1 Festive Funeral (ELD) 87
+1 Brimstone Trebuchet (ELD) 116
+1 Lash of Thorns (ELD) 92
+1 Steelgaze Griffin (ELD) 65
+1 Malevolent Noble (ELD) 95
+1 Redcap Raiders (ELD) 136
+1 Reaper of Night // Harvest Fear (ELD) 102
+1 Fierce Witchstalker (ELD) 154
+1 Tempting Witch (ELD) 108
+1 Reave Soul (ELD) 103
+1 Dwarven Mine (ELD) 243
+1 Bake into a Pie (ELD) 76
+1 Foreboding Fruit (ELD) 88
+1 Unexplained Vision (ELD) 70
+1 Giant's Skewer (ELD) 91
+1 Ardenvale Tactician // Dizzying Swoop (ELD) 5
+1 Wicked Guardian (ELD) 109
+1 Vantress Paladin (ELD) 72
+1 Lost Legion (ELD) 94
+1 Flutterfox (ELD) 12
+1 Forever Young (ELD) 89
+1 Charmed Sleep (ELD) 40
+1 Locthwain Paladin (ELD) 93
+1 Mystic Sanctuary (ELD) 247
+1 Reave Soul (ELD) 103
+1 Giant's Skewer (ELD) 91
+1 Vantress Paladin (ELD) 72
+1 Lash of Thorns (ELD) 92
+1 Flutterfox (ELD) 12
+1 Smitten Swordmaster // Curry Favor (ELD) 105
+1 Charmed Sleep (ELD) 40
+1 Foreboding Fruit (ELD) 88
+1 Fierce Witchstalker (ELD) 154
+1 Festive Funeral (ELD) 87
+1 Brimstone Trebuchet (ELD) 116
+1 Malevolent Noble (ELD) 95
+1 Barrow Witches (ELD) 77
+1 Mystic Sanctuary (ELD) 247
+1 Bake into a Pie (ELD) 76
+[common##B {"collation":"striped", "length": 10, "weights": [0,2,3,3,3]}]
+1 Witch's Cottage (ELD) 249
+1 Fell the Pheasant (ELD) 153
+1 Ogre Errant (ELD) 132
+1 Jousting Dummy (ELD) 224
+1 Wolf's Quarry (ELD) 184
+1 Raging Redcap (ELD) 134
+1 Maraleaf Rider (ELD) 166
+1 Henge Walker (ELD) 221
+1 Crystal Slipper (ELD) 119
+1 Insatiable Appetite (ELD) 162
+1 Roving Keep (ELD) 228
+1 Rimrock Knight // Boulder Rush (ELD) 137
+1 Fell the Pheasant (ELD) 153
+1 Searing Barrage (ELD) 140
+1 Crashing Drawbridge (ELD) 217
+1 Return to Nature (ELD) 173
+1 Bloodhaze Wolverine (ELD) 113
+1 Outmuscle (ELD) 170
+1 Weaselback Redcap (ELD) 148
+1 Idyllic Grange (ELD) 246
+1 Rosethorn Halberd (ELD) 175
+1 Ogre Errant (ELD) 132
+1 Garenbrig Carver // Shield's Might (ELD) 156
+1 Signpost Scarecrow (ELD) 231
+1 Merchant of the Vale // Haggle (ELD) 131
+1 Garenbrig Paladin (ELD) 157
+1 Witch's Cottage (ELD) 249
+1 Barge In (ELD) 112
+1 Sporecap Spider (ELD) 176
+1 Weapon Rack (ELD) 236
+1 Embereth Paladin (ELD) 121
+1 Garenbrig Squire (ELD) 158
+1 Curious Pair // Treats to Share (ELD) 150
+1 Thrill of Possibility (ELD) 146
+1 Gingerbread Cabin (ELD) 245
+1 Tuinvale Treefolk // Oaken Boon (ELD) 180
+1 Seven Dwarves (ELD) 141
+1 Locthwain Gargoyle (ELD) 225
+1 Rosethorn Acolyte // Seasonal Ritual (ELD) 174
+1 Scorching Dragonfire (ELD) 139
+1 Gingerbread Cabin (ELD) 245
+1 Fell the Pheasant (ELD) 153
+1 Thrill of Possibility (ELD) 146
+1 Outmuscle (ELD) 170
+1 Witch's Cottage (ELD) 249
+1 Crystal Slipper (ELD) 119
+1 Rosethorn Acolyte // Seasonal Ritual (ELD) 174
+1 Crashing Drawbridge (ELD) 217
+1 Bloodhaze Wolverine (ELD) 113
+1 Sporecap Spider (ELD) 176
+1 Searing Barrage (ELD) 140
+1 Locthwain Gargoyle (ELD) 225
+1 Curious Pair // Treats to Share (ELD) 150
+1 Seven Dwarves (ELD) 141
+1 Garenbrig Paladin (ELD) 157
+1 Rimrock Knight // Boulder Rush (ELD) 137
+1 Signpost Scarecrow (ELD) 231
+1 Return to Nature (ELD) 173
+1 Scorching Dragonfire (ELD) 139
+1 Garenbrig Carver // Shield's Might (ELD) 156
+1 Roving Keep (ELD) 228
+1 Barge In (ELD) 112
+1 Maraleaf Rider (ELD) 166
+1 Jousting Dummy (ELD) 224
+1 Raging Redcap (ELD) 134
+1 Rosethorn Halberd (ELD) 175
+1 Idyllic Grange (ELD) 246
+1 Embereth Paladin (ELD) 121
+1 Tuinvale Treefolk // Oaken Boon (ELD) 180
+1 Wolf's Quarry (ELD) 184
+1 Merchant of the Vale // Haggle (ELD) 131
+1 Henge Walker (ELD) 221
+1 Insatiable Appetite (ELD) 162
+1 Weaselback Redcap (ELD) 148
+1 Weapon Rack (ELD) 236
+1 Garenbrig Squire (ELD) 158
+1 Ogre Errant (ELD) 132
+1 Idyllic Grange (ELD) 246
+1 Sporecap Spider (ELD) 176
+1 Crystal Slipper (ELD) 119
+1 Maraleaf Rider (ELD) 166
+1 Signpost Scarecrow (ELD) 231
+1 Embereth Paladin (ELD) 121
+1 Rosethorn Halberd (ELD) 175
+1 Jousting Dummy (ELD) 224
+1 Rimrock Knight // Boulder Rush (ELD) 137
+1 Curious Pair // Treats to Share (ELD) 150
+1 Searing Barrage (ELD) 140
+1 Henge Walker (ELD) 221
+1 Garenbrig Squire (ELD) 158
+1 Weaselback Redcap (ELD) 148
+1 Garenbrig Paladin (ELD) 157
+1 Merchant of the Vale // Haggle (ELD) 131
+1 Gingerbread Cabin (ELD) 245
+1 Wolf's Quarry (ELD) 184
+1 Scorching Dragonfire (ELD) 139
+1 Tuinvale Treefolk // Oaken Boon (ELD) 180
+1 Roving Keep (ELD) 228
+1 Raging Redcap (ELD) 134
+1 Outmuscle (ELD) 170
+1 Locthwain Gargoyle (ELD) 225
+1 Bloodhaze Wolverine (ELD) 113
+1 Insatiable Appetite (ELD) 162
+1 Crashing Drawbridge (ELD) 217
+1 Seven Dwarves (ELD) 141
+1 Garenbrig Carver // Shield's Might (ELD) 156
+1 Return to Nature (ELD) 173
+1 Thrill of Possibility (ELD) 146
+1 Weapon Rack (ELD) 236
+1 Rosethorn Acolyte // Seasonal Ritual (ELD) 174
+1 Barge In (ELD) 112
+[common##C {"collation":"striped", "length": 10, "weights": [0,2,3,3,3]}]
+1 Eye Collector (ELD) 86
+1 Mantle of Tides (ELD) 52
+1 Ardenvale Paladin (ELD) 4
+1 Blow Your House Down (ELD) 114
+1 So Tiny (ELD) 64
+1 Beloved Princess (ELD) 7
+1 True Love's Kiss (ELD) 34
+1 Opt (ELD) 59
+1 Shining Armor (ELD) 29
+1 Wildwood Tracker (ELD) 183
+1 Run Away Together (ELD) 62
+1 Outflank (ELD) 23
+1 Prophet of the Peak (ELD) 227
+1 Corridor Monitor (ELD) 41
+1 Silverflame Ritual (ELD) 30
+1 Fling (ELD) 126
+1 Witching Well (ELD) 74
+1 Silverflame Squire // On Alert (ELD) 31
+1 Memory Theft (ELD) 96
+1 Didn't Say Please (ELD) 42
+1 Prized Griffin (ELD) 24
+1 Golden Egg (ELD) 220
+1 Wishful Merfolk (ELD) 73
+1 Knight of the Keep (ELD) 19
+1 Ardenvale Paladin (ELD) 4
+1 Queen of Ice // Rage of Winter (ELD) 61
+1 Corridor Monitor (ELD) 41
+1 Youthful Knight (ELD) 37
+1 Prophet of the Peak (ELD) 227
+1 Mistford River Turtle (ELD) 56
+1 Bartered Cow (ELD) 6
+1 Gingerbrute (ELD) 219
+1 So Tiny (ELD) 64
+1 Prized Griffin (ELD) 24
+1 Memory Theft (ELD) 96
+1 Wishful Merfolk (ELD) 73
+1 True Love's Kiss (ELD) 34
+1 Wildwood Tracker (ELD) 183
+1 Mantle of Tides (ELD) 52
+1 Lonesome Unicorn // Rider in Need (ELD) 21
+1 Blow Your House Down (ELD) 114
+1 Didn't Say Please (ELD) 42
+1 Knight of the Keep (ELD) 19
+1 Silverflame Ritual (ELD) 30
+1 Tome Raider (ELD) 68
+1 Outflank (ELD) 23
+1 Eye Collector (ELD) 86
+1 Witching Well (ELD) 74
+1 Shining Armor (ELD) 29
+1 Golden Egg (ELD) 220
+1 Merfolk Secretkeeper // Venture Deeper (ELD) 53
+1 Silverflame Squire // On Alert (ELD) 31
+1 Tall as a Beanstalk (ELD) 178
+1 Moonlit Scavengers (ELD) 57
+1 Faerie Guidemother // Gift of the Fae (ELD) 11
+1 Fling (ELD) 126
+1 Opt (ELD) 59
+1 Fortifying Provisions (ELD) 13
+1 Scalding Cauldron (ELD) 229
+1 Run Away Together (ELD) 62
+1 Beloved Princess (ELD) 7
+1 Ardenvale Paladin (ELD) 4
+1 Didn't Say Please (ELD) 42
+1 Merfolk Secretkeeper // Venture Deeper (ELD) 53
+1 Bartered Cow (ELD) 6
+1 Prophet of the Peak (ELD) 227
+1 Moonlit Scavengers (ELD) 57
+1 Silverflame Squire // On Alert (ELD) 31
+1 Gingerbrute (ELD) 219
+1 Wishful Merfolk (ELD) 73
+1 Shining Armor (ELD) 29
+1 Memory Theft (ELD) 96
+1 Witching Well (ELD) 74
+1 Youthful Knight (ELD) 37
+1 Wildwood Tracker (ELD) 183
+1 Tome Raider (ELD) 68
+1 Fortifying Provisions (ELD) 13
+1 Blow Your House Down (ELD) 114
+1 Run Away Together (ELD) 62
+1 Knight of the Keep (ELD) 19
+1 Lonesome Unicorn // Rider in Need (ELD) 21
+1 Queen of Ice // Rage of Winter (ELD) 61
+1 True Love's Kiss (ELD) 34
+1 Fling (ELD) 126
+1 Mistford River Turtle (ELD) 56
+1 Outflank (ELD) 23
+1 Golden Egg (ELD) 220
+1 Corridor Monitor (ELD) 41
+1 Prized Griffin (ELD) 24
+1 Eye Collector (ELD) 86
+1 Opt (ELD) 59
+1 Silverflame Ritual (ELD) 30
+1 Tall as a Beanstalk (ELD) 178
+1 So Tiny (ELD) 64
+1 Faerie Guidemother // Gift of the Fae (ELD) 11
+1 Scalding Cauldron (ELD) 229
+1 Mantle of Tides (ELD) 52
+1 Beloved Princess (ELD) 7
+1 Lonesome Unicorn // Rider in Need (ELD) 21
+1 Mistford River Turtle (ELD) 56
+1 Merfolk Secretkeeper // Venture Deeper (ELD) 53
+1 Youthful Knight (ELD) 37
+1 Scalding Cauldron (ELD) 229
+1 Queen of Ice // Rage of Winter (ELD) 61
+1 Fortifying Provisions (ELD) 13
+1 Gingerbrute (ELD) 219
+1 Moonlit Scavengers (ELD) 57
+1 Bartered Cow (ELD) 6
+1 Tall as a Beanstalk (ELD) 178
+1 Tome Raider (ELD) 68
+1 Faerie Guidemother // Gift of the Fae (ELD) 11
+[uncommon]
+1 All That Glitters (ELD) 2
+1 Archon of Absolution (ELD) 3
+1 Deafening Silence (ELD) 10
+1 Glass Casket (ELD) 15
+1 Mysterious Pathlighter (ELD) 22
+1 Rally for the Throne (ELD) 25
+1 Righteousness (ELD) 27
+1 Shepherd of the Flock (ELD) 28
+1 Syr Alin, the Lion's Claw (ELD) 32
+1 Venerable Knight (ELD) 35
+1 Animating Faerie (ELD) 38
+1 Faerie Vandal (ELD) 45
+1 Frogify (ELD) 47
+1 Hypnotic Sprite (ELD) 49
+1 Into the Story (ELD) 50
+1 Mystical Dispute (ELD) 58
+1 Overwhelmed Apprentice (ELD) 60
+1 Sage of the Falls (ELD) 63
+1 Syr Elenora, the Discerning (ELD) 67
+1 Turn into a Pumpkin (ELD) 69
+1 Belle of the Brawl (ELD) 78
+1 Bog Naughty (ELD) 80
+1 Cauldron Familiar (ELD) 81
+1 Cauldron's Gift (ELD) 83
+1 Epic Downfall (ELD) 85
+1 Foulmire Knight (ELD) 90
+1 Order of Midnight (ELD) 99
+1 Revenge of Ravens (ELD) 104
+1 Specter's Shriek (ELD) 106
+1 Syr Konrad, the Grim (ELD) 107
+1 Burning-Yard Trainer (ELD) 117
+1 Claim the Firstborn (ELD) 118
+1 Embereth Shieldbreaker (ELD) 122
+1 Ferocity of the Wilds (ELD) 123
+1 Joust (ELD) 129
+1 Mad Ratter (ELD) 130
+1 Redcap Melee (ELD) 135
+1 Skullknocker Ogre (ELD) 142
+1 Slaying Fire (ELD) 143
+1 Syr Carah, the Bold (ELD) 145
+1 Beanstalk Giant (ELD) 149
+1 Edgewall Innkeeper (ELD) 151
+1 Flaxen Intruder (ELD) 155
+1 Giant Opportunity (ELD) 159
+1 Keeper of Fables (ELD) 163
+1 Kenrith's Transformation (ELD) 164
+1 Oakhame Adversary (ELD) 167
+1 Once and Future (ELD) 168
+1 Syr Faren, the Hengehammer (ELD) 177
+1 Trail of Crumbs (ELD) 179
+1 Drown in the Loch (ELD) 188
+1 Grumgully, the Generous (ELD) 192
+1 Improbable Alliance (ELD) 193
+1 Inspiring Veteran (ELD) 194
+1 Maraleaf Pixie (ELD) 196
+1 Savvy Hunter (ELD) 200
+1 Shinechaser (ELD) 201
+1 Steelclaw Lance (ELD) 202
+1 Wandermare (ELD) 204
+1 Wintermoor Commander (ELD) 205
+1 Arcanist's Owl (ELD) 206
+1 Covetous Urge (ELD) 207
+1 Deathless Knight (ELD) 208
+1 Elite Headhunter (ELD) 209
+1 Fireborn Knight (ELD) 210
+1 Loch Dragon (ELD) 211
+1 Oakhame Ranger (ELD) 212
+1 Rampart Smasher (ELD) 213
+1 Resolute Rider (ELD) 214
+1 Thunderous Snapper (ELD) 215
+1 Clockwork Servant (ELD) 216
+1 Enchanted Carriage (ELD) 218
+1 Heraldic Banner (ELD) 222
+1 Inquisitive Puppet (ELD) 223
+1 Lucky Clover (ELD) 226
+1 Shambling Suit (ELD) 230
+1 Sorcerer's Broom (ELD) 232
+1 Spinning Wheel (ELD) 234
+1 Witch's Oven (ELD) 237
+[rare]
+2 Acclaimed Contender (ELD) 1
+2 Charming Prince (ELD) 8
+2 Giant Killer // Chop Down (ELD) 14
+2 Happily Ever After (ELD) 16
+2 Hushbringer (ELD) 18
+2 Linden, the Steadfast Queen (ELD) 20
+2 Worthy Knight (ELD) 36
+2 Emry, Lurker of the Loch (ELD) 43
+2 Fae of Wishes // Granted (ELD) 44
+2 Folio of Fancies (ELD) 46
+2 Gadwick, the Wizened (ELD) 48
+2 Midnight Clock (ELD) 54
+2 Mirrormade (ELD) 55
+2 Stolen by the Fae (ELD) 66
+2 Vantress Gargoyle (ELD) 71
+2 Ayara, First of Locthwain (ELD) 75
+2 Blacklance Paragon (ELD) 79
+2 Clackbridge Troll (ELD) 84
+2 Murderous Rider // Swift End (ELD) 97
+2 Oathsworn Knight (ELD) 98
+2 Piper of the Swarm (ELD) 100
+2 Wishclaw Talisman (ELD) 110
+2 Witch's Vengeance (ELD) 111
+2 Bonecrusher Giant // Stomp (ELD) 115
+2 Fervent Champion (ELD) 124
+2 Fires of Invention (ELD) 125
+2 Irencrag Feat (ELD) 127
+2 Irencrag Pyromancer (ELD) 128
+2 Opportunistic Dragon (ELD) 133
+2 Sundering Stroke (ELD) 144
+2 Torbran, Thane of Red Fell (ELD) 147
+2 Feasting Troll King (ELD) 152
+2 Gilded Goose (ELD) 160
+2 Lovestruck Beast // Heart's Desire (ELD) 165
+2 Once Upon a Time (ELD) 169
+2 Return of the Wildspeaker (ELD) 172
+2 Wicked Wolf (ELD) 181
+2 Wildborn Preserver (ELD) 182
+2 Yorvo, Lord of Garenbrig (ELD) 185
+2 Dance of the Manse (ELD) 186
+2 Doom Foretold (ELD) 187
+2 Escape to the Wilds (ELD) 189
+2 Faeburrow Elder (ELD) 190
+2 Lochmere Serpent (ELD) 195
+2 Stormfist Crusader (ELD) 203
+2 Sorcerous Spyglass (ELD) 233
+2 Stonecoil Serpent (ELD) 235
+2 Castle Ardenvale (ELD) 238
+2 Castle Embereth (ELD) 239
+2 Castle Garenbrig (ELD) 240
+2 Castle Locthwain (ELD) 241
+2 Castle Vantress (ELD) 242
+2 Fabled Passage (ELD) 244
+1 The Circle of Loyalty (ELD) 9
+1 Harmonious Archon (ELD) 17
+1 Realm-Cloaked Giant // Cast Off (ELD) 26
+1 Brazen Borrower // Petty Theft (ELD) 39
+1 The Magic Mirror (ELD) 51
+1 The Cauldron of Eternity (ELD) 82
+1 Rankle, Master of Pranks (ELD) 101
+1 Embercleave (ELD) 120
+1 Robber of the Rich (ELD) 138
+1 The Great Henge (ELD) 161
+1 Questing Beast (ELD) 171
+1 Garruk, Cursed Huntsman (ELD) 191
+1 Oko, Thief of Crowns (ELD) 197
+1 Outlaws' Merriment (ELD) 198
+1 The Royal Scions (ELD) 199
+[Land]
+1 Plains (ELD) 250
+1 Plains (ELD) 251
+1 Plains (ELD) 252
+1 Plains (ELD) 253
+1 Island (ELD) 254
+1 Island (ELD) 255
+1 Island (ELD) 256
+1 Island (ELD) 257
+1 Swamp (ELD) 258
+1 Swamp (ELD) 259
+1 Swamp (ELD) 260
+1 Swamp (ELD) 261
+1 Mountain (ELD) 262
+1 Mountain (ELD) 263
+1 Mountain (ELD) 264
+1 Mountain (ELD) 265
+1 Forest (ELD) 266
+1 Forest (ELD) 267
+1 Forest (ELD) 268
+1 Forest (ELD) 269

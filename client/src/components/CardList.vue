@@ -28,20 +28,45 @@
 					</div>
 				</div>
 			</div>
-			<h2>Sheets</h2>
-			<div v-for="(slot, key) in cardlist.sheets" :key="key">
+			<div style="display: flex; justify-content: space-between; align-items: center">
+				<h2>Sheets</h2>
+				<div v-tooltip="'Display cards in a 2D grid following their collation when applicable'">
+					<label for="sheetDisplay">Full Sheet Display</label>
+					<input type="checkbox" v-model="sheetDisplay" id="sheetDisplay" />
+				</div>
+			</div>
+			<div v-for="(sheet, key) in cardlist.sheets" :key="key">
 				<h3>{{ key }}</h3>
 				<template v-if="cards">
-					<div v-for="(row, rowIndex) in rowsBySheet[key]" :key="'row' + rowIndex" class="category-wrapper">
-						<card-list-column
-							v-for="(column, colIndex) in row"
-							:key="'col' + colIndex"
-							:column="column"
-							:checkcollection="checkCollection"
-							:collection="collection"
-							:language="language"
-						></card-list-column>
-					</div>
+					<template v-if="sheet.collation === 'random' || !sheetDisplay">
+						<div
+							v-for="(row, rowIndex) in rowsBySheet[key]"
+							:key="'row' + rowIndex"
+							class="category-wrapper"
+						>
+							<card-list-column
+								v-for="(column, colIndex) in row"
+								:key="'col' + colIndex"
+								:column="column"
+								:checkcollection="checkCollection"
+								:collection="collection"
+								:language="language"
+							></card-list-column>
+						</div>
+					</template>
+					<template v-else>
+						<div
+							class="sheet-display"
+							:style="`--card-size: ${sheet.collation === 'striped' ? 'calc(100%/' + sheet.length + ')' : 'calc(100%/11)'}`"
+						>
+							<CardComponent
+								v-for="(card, idx) in cards[key]"
+								:key="idx"
+								:card="{ ...card, uniqueID: idx }"
+								:language="language"
+							/>
+						</div>
+					</template>
 				</template>
 				<template v-else>
 					(<font-awesome-icon icon="fa-solid fa-spinner" spin></font-awesome-icon> Loading...)
@@ -57,9 +82,10 @@ import { download, isEmpty } from "../helper";
 import CardOrder from "../cardorder";
 import CardListColumn from "./CardListColumn.vue";
 import { Language } from "@/Types";
-import { CustomCardList } from "@/CustomCardList";
+import { CustomCardList, getSheetCardIDs } from "../../../src/CustomCardList";
 import { ref, computed, onMounted, toRaw } from "vue";
 import { Card, CardID, PlainCollection } from "@/CardTypes";
+import CardComponent from "./Card.vue";
 
 type CardWithCount = Card & { count: number };
 
@@ -73,6 +99,7 @@ const props = withDefaults(
 );
 
 const cards = ref<{ [slot: string]: CardWithCount[] }>({});
+const sheetDisplay = ref(true);
 
 onMounted(() => {
 	// Could be useful to cache this, but also quite annoying to keep it in sync with the cardlist.
@@ -139,21 +166,33 @@ function downloadList() {
 		str += "\n";
 	}
 	for (let [sheetName, sheet] of Object.entries(props.cardlist.sheets)) {
-		let slotSettings = "";
-		if (sheet.collation) {
-			slotSettings = ` {"collation":"${sheet.collation}"}`;
-			// FIXME: Support all other properties (e.g. "groupSize")
-		}
-		str += `[${sheetName}${slotSettings}]\n`;
-		if (sheet.collation === "printRun") {
-			for (let cardID of sheet.printRun) {
-				const card = cards.value[sheetName].find((c) => c.id === cardID)!;
-				str += `${card.name} (${card.set.toUpperCase()}) ${card.collector_number}\n`;
+		let sheetSettings = "";
+		switch (sheet.collation) {
+			case "printRun": {
+				sheetSettings = ` {"collation": "${sheet.collation}", "groupSize": ${sheet.groupSize} }`;
+				break;
 			}
-		} else {
-			for (let [cardID, count] of Object.entries(sheet.cards)) {
-				const card = cards.value[sheetName].find((c) => c.id === cardID)!;
-				str += `${count} ${card.name} (${card.set.toUpperCase()}) ${card.collector_number}\n`;
+			case "striped": {
+				sheetSettings = ` {"collation": "${sheet.collation}", "length": ${sheet.length}, "weights": ${JSON.stringify(sheet.weights)}}`;
+				break;
+			}
+			// Nothing to do in the "random" case
+		}
+		str += `[${sheetName}${sheetSettings}]\n`;
+		switch (sheet.collation) {
+			case "printRun":
+			case "striped": {
+				for (let cardID of getSheetCardIDs(sheet)) {
+					const card = cards.value[sheetName].find((c) => c.id === cardID)!;
+					str += `${card.name} (${card.set.toUpperCase()}) ${card.collector_number}\n`;
+				}
+				break;
+			}
+			case "random": {
+				for (let [cardID, count] of Object.entries(sheet.cards)) {
+					const card = cards.value[sheetName].find((c) => c.id === cardID)!;
+					str += `${count} ${card.name} (${card.set.toUpperCase()}) ${card.collector_number}\n`;
+				}
 			}
 		}
 	}
@@ -182,33 +221,31 @@ function rowsByColor(cards: CardWithCount[]) {
 
 async function getCards() {
 	if (!props.cardlist || !props.cardlist.sheets) return;
-	let tmpCards: typeof cards.value = {};
-	let tofetch: { [slot: string]: CardID[] } = {};
-	for (let [sheetName, sheet] of Object.entries(props.cardlist.sheets)) {
-		tmpCards[sheetName] = [];
-		tofetch[sheetName] = [];
-		if (sheet.collation === "printRun") {
-			for (let cid of sheet.printRun) {
-				if (props.cardlist.customCards && cid in props.cardlist.customCards)
-					tmpCards[sheetName].push({
-						...props.cardlist.customCards[cid],
-						count: 1,
-					});
-				else tofetch[sheetName].push(cid);
+	let cardData: Record<CardID, Card> = {};
+	let tofetch = new Set<CardID>();
+	for (let sheet of Object.values(props.cardlist.sheets)) {
+		switch (sheet.collation) {
+			case "printRun":
+			case "striped": {
+				for (let cid of getSheetCardIDs(sheet)) {
+					if (props.cardlist.customCards && cid in props.cardlist.customCards)
+						cardData[cid] = props.cardlist.customCards[cid];
+					else tofetch.add(cid);
+				}
+				break;
 			}
-		} else {
-			for (let [cid, count] of Object.entries(sheet.cards)) {
-				if (props.cardlist.customCards && cid in props.cardlist.customCards)
-					tmpCards[sheetName].push({
-						...props.cardlist.customCards[cid],
-						count: count,
-					});
-				else tofetch[sheetName].push(cid);
+			case "random":
+			default: {
+				for (let cid of Object.keys(sheet.cards)) {
+					if (props.cardlist.customCards && cid in props.cardlist.customCards)
+						cardData[cid] = props.cardlist.customCards[cid];
+					else tofetch.add(cid);
+				}
 			}
 		}
 	}
 
-	if (!isEmpty(tofetch)) {
+	if (tofetch.size > 0) {
 		const response = await fetch("/getCards", {
 			method: "POST",
 			mode: "cors",
@@ -219,17 +256,24 @@ async function getCards() {
 			},
 			redirect: "follow",
 			referrerPolicy: "no-referrer",
-			body: JSON.stringify(tofetch),
+			body: JSON.stringify([...tofetch]),
 		});
 		if (response.status === 200) {
 			const json = await response.json();
-			for (let sheetName in json) {
-				const sheet = props.cardlist.sheets[sheetName];
-				for (let card of json[sheetName]) {
-					tmpCards[sheetName].push(card);
-					card.count = sheet.collation === "printRun" ? 1 : sheet.cards[card.id];
-				}
+			for (let card of json) {
+				cardData[card.id] = card;
 			}
+		}
+	}
+
+	let tmpCards: typeof cards.value = {};
+	for (let [sheetName, sheet] of Object.entries(props.cardlist.sheets)) {
+		tmpCards[sheetName] = [];
+		for (let cid of getSheetCardIDs(sheet)) {
+			tmpCards[sheetName].push({
+				...cardData[cid],
+				count: sheet.collation !== "random" ? 1 : sheet.cards[cid],
+			});
 		}
 	}
 
@@ -261,5 +305,16 @@ async function getCards() {
 .layouts {
 	display: flex;
 	gap: 1em;
+}
+
+.sheet-display {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: left;
+
+	& > div {
+		flex-basis: var(--card-size);
+		height: auto;
+	}
 }
 </style>

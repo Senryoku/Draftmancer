@@ -351,8 +351,8 @@ describe("Custom Card List Parsing", function () {
 			return;
 		}
 		expect(list.sheets["default"]).to.exist;
-		expect(list.sheets["default"].collation).to.be.undefined;
-		if (!list.sheets["default"].collation) {
+		expect(list.sheets["default"].collation).to.equal("random");
+		if (list.sheets["default"].collation === "random") {
 			expect(list.sheets["default"].cards).to.exist;
 			expect(Object.keys(list.sheets["default"].cards).length).to.equal(246);
 			expect(Object.values(list.sheets["default"].cards).every((v) => v === 1)).to.be.true;

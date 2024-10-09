@@ -249,7 +249,7 @@ function parseCollection(
 		ack?.(cardList);
 		return;
 	}
-	if (cardList.sheets["default"].collation === "printRun") {
+	if (cardList.sheets["default"].collation !== "random") {
 		ack?.(new SocketError("Unexpected collection."));
 		return;
 	}
