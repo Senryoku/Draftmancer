@@ -2,6 +2,7 @@
 	{
 		"date": "09/10/2024",
 		"notes": [
+			"Extended slots in cubes to support multiple sheets (card lists) per slot.",
 			"Added 'striped' collation support. Thanks to tiera3 for the idea and help with the implementation.",
 			"Expanded cube display to support sheets with 'printRun' and 'striped' collations."
 		]
