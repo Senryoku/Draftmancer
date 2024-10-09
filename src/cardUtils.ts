@@ -83,12 +83,15 @@ export function pickPrintRun(
 }
 
 function randomWeightedIndex(cumsumWeights: number[]): number {
-	const pick = random.integer(0, cumsumWeights[cumsumWeights.length - 1]);
+	if (cumsumWeights.length <= 1 || cumsumWeights[cumsumWeights.length - 1] === 0) return 0;
+
+	const pick = random.integer(0, cumsumWeights[cumsumWeights.length - 1] - 1);
 	let index = 0;
-	while (pick >= cumsumWeights[index] && index < cumsumWeights.length - 1) ++index;
-	return Math.max(0, Math.min(index, cumsumWeights.length - 1)); // Shouldn't be needed.
+	while (pick >= cumsumWeights[index]) ++index;
+	return index;
 }
 
+// https://www.lethe.xyz/mtg/collation/striped-collation.html
 export function pickStriped(
 	count: number,
 	sheet: CardID[],
@@ -102,21 +105,23 @@ export function pickStriped(
 
 	const sequence: number[] = [];
 	let idx = random.integer(0, sheet.length - 1);
-	let width = randomWeightedIndex(cumsumWeights);
-	let depth = random.integer(1, width);
+	let width = randomWeightedIndex(cumsumWeights) + 1;
+	let depth = random.integer(1, width); // Start at a random point in sequence
 	sequence.push(idx);
 	for (let i = 1; i < count; ++i) {
 		if (depth < width) {
 			++depth;
-			idx -= length;
+			idx -= length; // Go up a row
 		} else {
 			depth = 1;
 			if (idx % length > 0) {
+				// Back down 'width' rows
 				idx += (width - 1) * length;
 			} else {
-				width = randomWeightedIndex(cumsumWeights);
+				// Unless we're at the leftmost column already, restart the sequence
+				width = randomWeightedIndex(cumsumWeights) + 1;
 			}
-			--idx;
+			--idx; // Go back a column
 		}
 		if (idx < 0) idx += sheet.length;
 		idx = idx % sheet.length;

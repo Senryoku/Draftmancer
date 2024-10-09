@@ -1,0 +1,382 @@
+[Settings]
+{
+    "name": "LEB collation",
+    "withReplacement": true,
+    "showSlots": true,
+    "boostersPerPlayer": 3,
+    
+    "layouts": {
+        "pack": { "weight": 1, "slots": { "common": 11, "uncommon": 3, "rare":  1 }},
+    }
+}
+[common {"collation":"striped","length": 11, "weights": [0,2,3,3,3]}]
+Swamp (leb) 294
+Howl from Beyond (leb) 112
+Mountain (leb) 299
+Lightning Bolt (leb) 162
+Forest (leb) 302
+Giant Spider (leb) 199
+Plains (leb) 290
+Death Ward (leb) 18
+Unsummon (leb) 87
+Island (leb) 293
+Sea Serpent (leb) 77
+Sinkhole (leb) 130
+Swamp (leb) 295
+Frozen Shade (leb) 110
+Swamp (leb) 294
+Mountain (leb) 298
+Shatter (leb) 174
+Hill Giant (leb) 158
+War Mammoth (leb) 228
+Wall of Wood (leb) 226
+Forest (leb) 301
+Giant Growth (leb) 198
+Mountain (leb) 297
+Circle of Protection: Black (leb) 10
+Benalish Hero (leb) 4
+Plains (leb) 289
+Island (leb) 291
+Twiddle (leb) 86
+Power Sink (leb) 73
+Fear (leb) 109
+Swamp (leb) 296
+Plague Rats (leb) 122
+Dark Ritual (leb) 99
+False Orders (leb) 148
+Mountain (leb) 299
+Red Elemental Blast (leb) 170
+Ironclaw Orcs (leb) 160
+Llanowar Elves (leb) 211
+Scryb Sprites (leb) 216
+Forest (leb) 300
+Plains (leb) 289
+Guardian Angel (leb) 22
+Circle of Protection: Blue (leb) 11
+Plains (leb) 290
+Power Leak (leb) 72
+Prodigal Sorcerer (leb) 74
+Island (leb) 292
+Jump (leb) 61
+Unholy Strength (leb) 132
+Drudge Skeletons (leb) 107
+Swamp (leb) 294
+Mountain (leb) 298
+Mons's Goblin Raiders (leb) 165
+Fireball (leb) 150
+Mountain (leb) 297
+Tranquility (leb) 221
+Ironroot Treefolk (leb) 204
+Forest (leb) 301
+Wild Growth (leb) 230
+Plains (leb) 290
+Healing Salve (leb) 23
+Circle of Protection: Red (leb) 13
+Invisibility (leb) 60
+Island (leb) 292
+Island (leb) 291
+Creature Bond (leb) 56
+Paralyze (leb) 120
+Terror (leb) 131
+Swamp (leb) 295
+Scathe Zombies (leb) 126
+Firebreathing (leb) 151
+Dwarven Warriors (leb) 144
+Mountain (leb) 298
+Forest (leb) 300
+Stream of Life (leb) 218
+Grizzly Bears (leb) 200
+Forest (leb) 302
+Holy Armor (leb) 24
+Plains (leb) 288
+Mesa Pegasus (leb) 29
+Circle of Protection: White (leb) 14
+Spell Blast (leb) 80
+Island (leb) 292
+Merfolk of the Pearl Trident (leb) 67
+Swamp (leb) 296
+Pestilence (leb) 121
+Swamp (leb) 295
+Raise Dead (leb) 123
+Mountain (leb) 297
+Hurloon Minotaur (leb) 159
+Disintegrate (leb) 141
+Mountain (leb) 299
+Regeneration (leb) 214
+Forest (leb) 300
+Shanodin Dryads (leb) 217
+Pearled Unicorn (leb) 31
+Plains (leb) 289
+Disenchant (leb) 19
+Holy Strength (leb) 25
+Island (leb) 292
+Phantasmal Terrain (leb) 69
+Blue Elemental Blast (leb) 50
+Island (leb) 291
+Drain Life (leb) 106
+Swamp (leb) 296
+Weakness (leb) 135
+Earthbind (leb) 146
+Mountain (leb) 299
+Gray Ogre (leb) 157
+Stone Rain (leb) 178
+Fog (leb) 194
+Forest (leb) 302
+Craw Wurm (leb) 191
+Forest (leb) 301
+Samite Healer (leb) 38
+Plains (leb) 288
+Circle of Protection: Green (leb) 12
+Island (leb) 293
+Psychic Venom (leb) 76
+Flight (leb) 59
+Island (leb) 293
+# "294","112","299","162","302","199","290", "18", "87","293", "77","130","295","110","294","298","174","158","228","226","301","198","297", "10",  "4","289","291", "86", "73","109","296","122", "99","148","299","170","160","211","216","300","289", "22", "11","290", "72", "74","292", "61","132","107","294","298","165","150","297","221","204","301","230","290", "23", "13", "60","292","291", "56","120","131","295","126","151","144","298","300","218","200","302", "24","288", "29", "14", "80","292", "67","296","121","295","123","297","159","141","299","214","300","217", "31","289", "19", "25","292", "69", "50","291","106","296","135","146","299","157","178","194","302","191","301", "38","288", "12","293", "76", "59","293",
+
+[uncommon {"collation":"striped","length": 11, "weights": [0,2,3,3,3]}]
+Swamp (leb) 296
+Nettling Imp (leb) 118
+Demonic Tutor (leb) 105
+Mountain (leb) 299
+Stone Giant (leb) 177
+Orcish Oriflamme (leb) 167
+Rod of Ruin (leb) 269
+Berserk (leb) 186
+Library of Leng (leb) 258
+White Knight (leb) 44
+Black Ward (leb) 5
+Control Magic (leb) 53
+Feedback (leb) 58
+Throne of Bone (leb) 274
+Animate Dead (leb) 93
+Wall of Bone (leb) 133
+Swamp (leb) 294
+Deathgrip (leb) 101
+Burrowing (leb) 139
+Living Wall (leb) 259
+Mountain (leb) 299
+Keldon Warlord (leb) 161
+Instill Energy (leb) 203
+Thicket Basilisk (leb) 219
+Forest (leb) 302
+Castle (leb) 9
+Ivory Cup (leb) 252
+Plains (leb) 289
+Swords to Plowshares (leb) 41
+Lifetap (leb) 62
+Island (leb) 293
+Steal Artifact (leb) 82
+Counterspell (leb) 55
+Swamp (leb) 296
+Sengir Vampire (leb) 128
+Evil Presence (leb) 108
+Earth Elemental (leb) 145
+Mountain (leb) 298
+Iron Star (leb) 251
+Wall of Stone (leb) 183
+Copper Tablet (leb) 239
+Hurricane (leb) 201
+Tsunami (leb) 222
+Forest (leb) 301
+Lure (leb) 212
+Obsianus Golem (leb) 268
+White Ward (leb) 45
+Conversion (leb) 16
+Plains (leb) 290
+Icy Manipulator (leb) 249
+Clone (leb) 52
+Animate Artifact (leb) 49
+Swamp (leb) 295
+Bog Wraith (leb) 96
+Simulacrum (leb) 129
+Orcish Artillery (leb) 166
+Flashfires (leb) 152
+Basalt Monolith (leb) 232
+Forest (leb) 300
+Wall of Ice (leb) 225
+Ice Storm (leb) 202
+Conservator (leb) 238
+Serra Angel (leb) 40
+Plains (leb) 288
+Consecrate Land (leb) 15
+Sol Ring (leb) 270
+Air Elemental (leb) 47
+Island (leb) 292
+Wall of Air (leb) 90
+Swamp (leb) 295
+Gloom (leb) 111
+Scavenging Ghoul (leb) 127
+Sacrifice (leb) 125
+Soul Net (leb) 271
+Wall of Fire (leb) 182
+Fire Elemental (leb) 149
+Mountain (leb) 297
+Forest (leb) 301
+Ley Druid (leb) 206
+Regrowth (leb) 215
+Blue Ward (leb) 8
+Jade Statue (leb) 254
+Plains (leb) 289
+Lance (leb) 28
+Water Elemental (leb) 92
+Wall of Water (leb) 91
+Glasses of Urza (leb) 246
+Uthden Troll (leb) 181
+Tunnel (leb) 179
+Mountain (leb) 297
+Dragon Whelp (leb) 142
+Wooden Sphere (leb) 277
+Forest (leb) 300
+Lifeforce (leb) 207
+Wanderlust (leb) 227
+Plains (leb) 288
+Celestial Prism (leb) 235
+Wall of Swords (leb) 43
+Resurrection (leb) 35
+Red Ward (leb) 34
+Siren's Call (leb) 78
+Phantom Monster (leb) 70
+Black Vise (leb) 234
+Cursed Land (leb) 98
+Black Knight (leb) 95
+Swamp (leb) 294
+Hypnotic Specter (leb) 113
+Dwarven Demolition Team (leb) 143
+Mountain (leb) 298
+Goblin Balloon Brigade (leb) 154
+Camouflage (leb) 188
+Channel (leb) 189
+Forest (leb) 302
+Wall of Brambles (leb) 224
+Juggernaut (leb) 256
+Karma (leb) 27
+Plains (leb) 290
+Green Ward (leb) 21
+Crystal Rod (leb) 240
+Phantasmal Forces (leb) 68
+Psionic Blast (leb) 75
+# "296","118","105","299","177","167","269","186","258", "44",  "5", "53", "58","274", "93","133","294","101","139","259","299","161","203","219","302",  "9","252","289", "41", "62","293", "82", "55","296","128","108","145","298","251","183","239","201","222","301","212","268", "45", "16","290","249", "52", "49","295", "96","129","166","152","232","300","225","202","238", "40","288", "15","270", "47","292", "90","295","111","127","125","271","182","149","297","301","206","215",  "8","254","289", "28", "92", "91","246","181","179","297","142","277","300","207","227","288","235", "43", "35", "34", "78", "70","234", "98", "95","294","113","143","298","154","188","189","302","224","256", "27","290", "21","240", "68", "75",
+
+[rare {"collation":"striped","length": 11, "weights": [0,2,3,3,3]}]
+Winter Orb (leb) 276
+Nightmare (leb) 119
+Jade Monolith (leb) 253
+Manabarbs (leb) 164
+Mox Emerald (leb) 262
+Elvish Archers (leb) 192
+Sunglasses of Urza (leb) 272
+Animate Wall (leb) 1
+Tundra (leb) 285
+Sleight of Mind (leb) 79
+Chaos Orb (leb) 236
+Lifelace (leb) 208
+Savannah (leb) 281
+Righteousness (leb) 37
+Ancestral Recall (leb) 48
+Black Lotus (leb) 233
+Bad Moon (leb) 94
+Mox Sapphire (leb) 266
+Raging River (leb) 169
+Fungusaur (leb) 196
+Northern Paladin (leb) 30
+Magical Hack (leb) 64
+Cockatrice (leb) 190
+Mox Ruby (leb) 265
+Blaze of Glory (leb) 6
+Disrupting Scepter (leb) 243
+Lord of the Pit (leb) 115
+Mana Flare (leb) 163
+Taiga (leb) 283
+Natural Selection (leb) 213
+Crusade (leb) 17
+Mana Short (leb) 66
+Birds of Paradise (leb) 187
+Cyclopean Tomb (leb) 241
+Contract from Below (leb) 97
+Badlands (leb) 278
+Granite Gargoyle (leb) 156
+Mox Pearl (leb) 264
+Timber Wolves (leb) 220
+Meekstone (leb) 261
+Savannah Lions (leb) 39
+Vesuvan Doppelganger (leb) 88
+Word of Command (leb) 137
+Forcefield (leb) 244
+Chaoslace (leb) 140
+The Hive (leb) 273
+Lord of Atlantis (leb) 63
+Warp Artifact (leb) 134
+Roc of Kher Ridges (leb) 171
+Force of Nature (leb) 195
+Farmstead (leb) 20
+Mahamoti Djinn (leb) 65
+Volcanic Island (leb) 287
+Volcanic Eruption (leb) 89
+Island (leb) 292
+Lich (leb) 114
+Zombie Master (leb) 138
+Ankh of Mishra (leb) 231
+Tropical Island (leb) 284
+Deathlace (leb) 102
+Smoke (leb) 176
+Gaea's Liege (leb) 197
+Island (leb) 292
+Balance (leb) 3
+Pirate Ship (leb) 71
+Island Sanctuary (leb) 26
+Gauntlet of Might (leb) 245
+Demonic Attorney (leb) 103
+Howling Mine (leb) 248
+Bayou (leb) 279
+Fork (leb) 153
+Goblin King (leb) 155
+Illusionary Mask (leb) 250
+Living Lands (leb) 210
+Personal Incarnation (leb) 32
+Thoughtlace (leb) 83
+Mox Jet (leb) 263
+Mana Vault (leb) 260
+Demonic Hordes (leb) 104
+Scrubland (leb) 282
+Earthquake (leb) 147
+Helm of Chatzuk (leb) 247
+Verduran Enchantress (leb) 223
+Purelace (leb) 33
+Kormus Bell (leb) 257
+Copy Artifact (leb) 54
+Clockwork Beast (leb) 237
+Sedge Troll (leb) 173
+Jayemdae Tome (leb) 255
+Island (leb) 291
+Nevinyrral's Disk (leb) 267
+Royal Assassin (leb) 124
+Two-Headed Giant of Foriys (leb) 180
+Plateau (leb) 280
+Living Artifact (leb) 209
+Time Vault (leb) 275
+Reverse Damage (leb) 36
+Drain Power (leb) 57
+Island (leb) 291
+Will-o'-the-Wisp (leb) 136
+Shivan Dragon (leb) 175
+Kudzu (leb) 205
+Blessing (leb) 7
+Time Walk (leb) 84
+Nether Shadow (leb) 117
+Rock Hydra (leb) 172
+Fastbond (leb) 193
+Veteran Bodyguard (leb) 42
+Braingeyser (leb) 51
+Stasis (leb) 81
+Mind Twist (leb) 116
+Power Surge (leb) 168
+Web (leb) 229
+Wrath of God (leb) 46
+Underground Sea (leb) 286
+Dingus Egg (leb) 242
+Darkpact (leb) 100
+Wheel of Fortune (leb) 184
+Aspect of Wolf (leb) 185
+Armageddon (leb) 2
+Timetwister (leb) 85
+# "276","119","253","164","262","192","272",  "1","285", "79","236","208","281", "37", "48","233", "94","266","169","196", "30", "64","190","265",  "6","243","115","163","283","213", "17", "66","187","241", "97","278","156","264","220","261", "39", "88","137","244","140","273", "63","134","171","195", "20", "65","287", "89","292","114","138","231","284","102","176","197","292",  "3", "71", "26","245","103","248","279","153","155","250","210", "32", "83","263","260","104","282","147","247","223", "33","257", "54","237","173","255","291","267","124","180","280","209","275", "36", "57","291","136","175","205",  "7", "84","117","172","193", "42", "51", "81","116","168","229", "46","286","242","100","184","185",  "2", "85",

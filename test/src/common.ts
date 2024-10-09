@@ -29,6 +29,7 @@ export const ValidCubes: { [name: string]: string } = {
 	CustomCards_DraftEffects: fs.readFileSync(`./test/data/CustomCards_DraftEffects.txt`, "utf8"),
 	CustomCards_Props: fs.readFileSync(`./test/data/CustomCards_Props.txt`, "utf8"),
 	ZRWK: fs.readFileSync(`./test/data/ZRWK_draftmancer_showslots.txt`, "utf8"),
+	StripedCollation_LEB: fs.readFileSync(`./test/data/StripedCollation_LEB.txt`, "utf8"),
 };
 
 export const InvalidCubes: { [name: string]: string } = {
