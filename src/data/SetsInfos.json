@@ -2069,6 +2069,11 @@
         "fullName": "Dragon Con",
         "icon": "img/sets/pdrc.svg"
     },
+    "pdsk": {
+        "code": "pdsk",
+        "fullName": "Duskmourn: House of Horror Promos",
+        "icon": "img/sets/pdsk.svg"
+    },
     "pdst": {
         "code": "pdst",
         "fullName": "Darksteel Promos",
