@@ -37,7 +37,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, getCurrentInstance } from "vue";
+import { ref, computed, getCurrentInstance, useTemplateRef } from "vue";
 import { Language } from "../../../src/Types";
 import { UniqueCard } from "@/CardTypes";
 import { hasEffect, OnPickDraftEffect } from "../../../src/CardTypes";
@@ -59,8 +59,8 @@ const props = withDefaults(
 );
 
 const displayCardText = ref(false);
-const rootElement = ref<HTMLElement | null>(null);
-const imageElement = ref<typeof CardImage | null>(null);
+const rootElement = useTemplateRef("rootElement");
+const imageElement = useTemplateRef<InstanceType<typeof CardImage>>("imageElement");
 
 const classes = computed(() => {
 	let classes = props.conditionalClasses ? props.conditionalClasses(props.card) : [];

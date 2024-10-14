@@ -19,7 +19,7 @@
 import { UniqueCard } from "@/CardTypes";
 import { CardColor } from "../../../src/CardTypes";
 import CardComponent from "./Card.vue";
-import { ref, computed } from "vue";
+import { useTemplateRef, computed } from "vue";
 import TimedSidePopup from "./TimedSidePopup.vue";
 
 const props = defineProps<{ userName: string; card: UniqueCard }>();
@@ -29,7 +29,7 @@ const availableChoices = computed(() => {
 	return (["W", "U", "B", "R", "G"] as CardColor[]).filter((c) => !props.card.state?.colors?.includes(c));
 });
 
-const popup = ref<typeof TimedSidePopup | null>(null);
+const popup = useTemplateRef<InstanceType<typeof TimedSidePopup>>("popup");
 
 function select(c: CardColor | undefined) {
 	popup.value?.close(() => {

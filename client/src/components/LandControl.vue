@@ -1,5 +1,5 @@
 <template>
-	<dropdown
+	<Dropdown
 		v-tooltip.top="
 			`Controls basic lands added on export. \'Auto. Land\' will complete your deck to ${targetDeckSize} cards with basic lands.`
 		"
@@ -107,11 +107,11 @@
 				</div>
 			</div>
 		</template>
-	</dropdown>
+	</Dropdown>
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onMounted, ref, toRefs, watch } from "vue";
+import { computed, nextTick, onMounted, ref, useTemplateRef, toRefs, watch } from "vue";
 import Constants from "../../../src/Constants";
 
 import Dropdown from "./Dropdown.vue";
@@ -122,7 +122,7 @@ const DefaultpreferredBasicsMessage =
 	"Enter the set code of your preferred basic lands, or leave blank to get MTGA's default ones.";
 
 // Data
-const dropdown = ref(null as typeof Dropdown | null);
+const dropdown = useTemplateRef<InstanceType<typeof Dropdown>>("dropdown");
 const preferredBasicsError = ref(null as string | null);
 
 // Props

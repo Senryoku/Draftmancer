@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, useTemplateRef, onMounted } from "vue";
 
 defineExpose({
 	updateHeight,
@@ -21,8 +21,8 @@ const props = withDefaults(defineProps<{ minwidth?: string }>(), {
 });
 
 const forcedOpen = ref(false);
-const element = ref<HTMLElement>();
-const content = ref<HTMLElement>();
+const element = useTemplateRef("element");
+const content = useTemplateRef("content");
 
 onMounted(() => {
 	updateHeight();

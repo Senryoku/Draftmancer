@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { useTemplateRef } from "vue";
 import TimedSidePopup from "./TimedSidePopup.vue";
 import { UserData } from "@/Session/SessionTypes";
 import { UserID } from "@/IDTypes";
@@ -19,7 +19,7 @@ import { UserID } from "@/IDTypes";
 defineProps<{ sessionUsers: UserData[]; reason: string; users: UserID[] }>();
 const emit = defineEmits<{ (e: "choose", uid: UserID | undefined): void }>();
 
-const popup = ref<typeof TimedSidePopup | null>(null);
+const popup = useTemplateRef<InstanceType<typeof TimedSidePopup>>("popup");
 
 function choose(uid: UserID) {
 	popup.value?.close(() => {

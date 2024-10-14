@@ -78,7 +78,7 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
 import { Alert } from "../alerts";
-import { ref } from "vue";
+import { ref, useTemplateRef } from "vue";
 import { fitFontSize } from "../helper";
 
 function shuffleArray<T>(array: Array<T>, start = 0, end = array.length) {
@@ -88,9 +88,9 @@ function shuffleArray<T>(array: Array<T>, start = 0, end = array.length) {
 	}
 }
 
-const communitiesEl = ref();
+const communitiesEl = useTemplateRef("communitiesEl");
 onMounted(() => {
-	communitiesEl.value.querySelectorAll(".community").forEach((c: HTMLElement) => {
+	communitiesEl.value?.querySelectorAll(".community").forEach((c: Element) => {
 		fitFontSize(c.querySelector(".description")!);
 	});
 });

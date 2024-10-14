@@ -17,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, useTemplateRef } from "vue";
 
 // Input emiting a input event when unfocus, hiting return or optionally on a timeout (time without further change)
 const props = withDefaults(
@@ -44,7 +44,7 @@ const props = withDefaults(
 );
 
 const timeout = ref<ReturnType<typeof setTimeout> | null>(null);
-const inputEl = ref<HTMLInputElement | null>(null);
+const inputEl = useTemplateRef("inputEl");
 
 const emit = defineEmits<{
 	(e: "update:modelValue", value: string): void;
