@@ -72,6 +72,7 @@ import SetSelect from "./components/SetSelect.vue";
 
 const SupremeDialog = defineAsyncComponent(() => import("./components/SupremeDraftDialog.vue"));
 const GlimpseDialog = defineAsyncComponent(() => import("./components/GlimpseDraftDialog.vue"));
+const JumpInDialog = defineAsyncComponent(() => import("./components/JumpInDialog.vue"));
 const GridDialog = defineAsyncComponent(() => import("./components/GridDraftDialog.vue"));
 const HousmanDialog = defineAsyncComponent(() => import("./components/HousmanDialog.vue"));
 const MinesweeperDialog = defineAsyncComponent(() => import("./components/MinesweeperDraftDialog.vue"));
@@ -2325,6 +2326,15 @@ export default defineComponent({
 					this.socket.emit("startSupremeDraft", boostersPerPlayer, pickedCardsPerRound, (response) => {
 						if (response?.error) Alert.fire(response.error);
 					});
+				},
+			});
+		},
+		startJumpIn: async function () {
+			if (this.userID !== this.sessionOwner || this.drafting) return;
+
+			this.spawnDialog(JumpInDialog, {
+				onStart: (set: string) => {
+					this.deckWarning(() => this.distributeJumpstart(set));
 				},
 			});
 		},
