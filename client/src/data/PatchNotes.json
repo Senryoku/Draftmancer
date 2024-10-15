@@ -1,5 +1,11 @@
 [
 	{
+		"date": "16/10/2024",
+		"notes": [
+			"Experimental Jump In! game mode."
+		]
+	},
+	{
 		"date": "09/10/2024",
 		"notes": [
 			"Extended slots in cubes to support multiple sheets (card lists) per slot.",
