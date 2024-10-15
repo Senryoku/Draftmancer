@@ -3717,6 +3717,11 @@
         "block": "Alchemy 2023",
         "icon": "img/sets/ydmu.svg"
     },
+    "ydsk": {
+        "code": "ydsk",
+        "fullName": "Alchemy: Duskmourn",
+        "icon": "img/sets/ydsk.svg"
+    },
     "ylci": {
         "code": "ylci",
         "fullName": "Alchemy: Ixalan",

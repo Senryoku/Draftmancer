@@ -7724,6 +7724,9 @@
     "Hope-Ender Coatl": [
         90913
     ],
+    "Mothlight Processionist": [
+        95335
+    ],
     "Fuss // Bother": [
         89164
     ],
@@ -12809,6 +12812,9 @@
     "Etched Familiar": [
         84369
     ],
+    "Chittering Illuminator": [
+        95351
+    ],
     "Guildpact Greenwalker": [
         91383
     ],
@@ -15110,6 +15116,9 @@
     "Wary Okapi": [
         68610
     ],
+    "Razor Demon": [
+        95343
+    ],
     "Phyrexian Arena": [
         83804,
         19577,
@@ -16166,6 +16175,9 @@
     "Fiery Impulse": [
         61359,
         61359
+    ],
+    "Crude Abattoir": [
+        95347
     ],
     "Sage of Ancient Lore // Werewolf of Ancient Hunger": [
         86264
@@ -19355,6 +19367,9 @@
     "Slickshot Show-Off": [
         90492
     ],
+    "Anguished Recollection": [
+        95346
+    ],
     "Captive Weird // Compleated Conjurer": [
         84305
     ],
@@ -20088,6 +20103,9 @@
     ],
     "Short Circuit": [
         79503
+    ],
+    "Enduring Friendship": [
+        95356
     ],
     "Mirrodin Avenged": [
         84390
@@ -23868,6 +23886,9 @@
     "Planar Disruption": [
         83728
     ],
+    "Lurker in the Deep": [
+        95340
+    ],
     "Orphans of the Wheat": [
         92082
     ],
@@ -23909,6 +23930,9 @@
     ],
     "Shipwreck Sifters": [
         78411
+    ],
+    "Eager Flameguide": [
+        95350
     ],
     "Siren's Ruse": [
         66123
@@ -26257,6 +26281,9 @@
         70636,
         73757
     ],
+    "Improvising Aerialist": [
+        95334
+    ],
     "Olivia, Mobilized for War": [
         86296
     ],
@@ -27020,6 +27047,9 @@
     ],
     "A-Metropolis Angel": [
         84130
+    ],
+    "Fear of Ridicule": [
+        95341
     ],
     "Gideon of the Trials": [
         73793
@@ -28005,6 +28035,9 @@
     ],
     "Edgewall Pack": [
         86824
+    ],
+    "Verdant Dread": [
+        95353
     ],
     "Discovery // Dispersal": [
         68688
@@ -29443,6 +29476,9 @@
     ],
     "Pawpatch Formation": [
         91722
+    ],
+    "Harrowing Swarm": [
+        95352
     ],
     "Rewind": [
         71845
@@ -32422,6 +32458,9 @@
     "Inordinate Rage": [
         73345
     ],
+    "Effie, Fast Learner": [
+        95355
+    ],
     "Glass of the Guildpact": [
         69381
     ],
@@ -32654,6 +32693,9 @@
     ],
     "Sunshot Militia": [
         87322
+    ],
+    "Ethrimik, Imagined Fiend": [
+        95333
     ],
     "Serum Snare": [
         83768
@@ -33098,6 +33140,9 @@
     "Arcane Proxy": [
         82559
     ],
+    "Fear of Change": [
+        95357
+    ],
     "Llanowar Visionary": [
         71975
     ],
@@ -33206,6 +33251,9 @@
     ],
     "Rhuk, Hexgold Nabber": [
         83965
+    ],
+    "Replicating Terror": [
+        95344
     ],
     "Crackle with Power": [
         90720,
@@ -33525,6 +33573,9 @@
     "Mishra's Foundry": [
         82752,
         82793
+    ],
+    "C": [
+        95342
     ],
     "Senate Courier": [
         69178
@@ -34747,11 +34798,17 @@
     "Central Elevator // Promising Stairs": [
         92108
     ],
+    "Wary Zone Guard": [
+        95354
+    ],
     "Ichorplate Golem": [
         83930
     ],
     "Haphazard Bombardment": [
         67366
+    ],
+    "Welcome the Darkness": [
+        95345
     ],
     "Seismic Wave": [
         79592
@@ -34952,6 +35009,9 @@
     ],
     "Grasping Current": [
         66545
+    ],
+    "Solitary Study // Endless Corridor": [
+        95336
     ],
     "Webspinner Cuff": [
         79652
@@ -37854,5 +37914,11 @@
     ],
     "Exultant Skymarcher": [
         66631
+    ],
+    "Gilded Ambusher": [
+        95358
+    ],
+    "Golden Sidekick": [
+        95359
     ]
 }
