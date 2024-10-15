@@ -6,7 +6,7 @@
             "U"
         ],
         "cycling_land": false,
-        "image": "/img/cardback.webp",
+        "image": "https://cards.scryfall.io/border_crop/front/1/f/1f88d077-5082-4a67-91e4-97aafb9a5e91.jpg?1706378680",
         "cards": [
             "0ad38866-fc5f-4f62-89c1-afc0f50765aa",
             "1f88d077-5082-4a67-91e4-97aafb9a5e91",
@@ -75,7 +75,7 @@
             "W"
         ],
         "cycling_land": false,
-        "image": "/img/cardback.webp",
+        "image": "https://cards.scryfall.io/border_crop/front/0/4/0438d482-b74c-4d5e-a2bc-7063c1ae73fa.jpg?1706241518",
         "cards": [
             "93ab3e11-8584-406f-b9ae-9e1df4396cbc",
             "0438d482-b74c-4d5e-a2bc-7063c1ae73fa",
@@ -140,11 +140,11 @@
     {
         "name": "Battalion",
         "colors": [
-            "R",
-            "W"
+            "W",
+            "R"
         ],
         "cycling_land": false,
-        "image": "/img/cardback.webp",
+        "image": "https://cards.scryfall.io/border_crop/front/e/b/eb81e343-7242-44b1-9ce6-1dddd104f764.jpg?1706241862",
         "cards": [
             "eb81e343-7242-44b1-9ce6-1dddd104f764",
             "a6e0adb7-a030-4dcc-9284-cd91c7598a22",
@@ -214,11 +214,11 @@
     {
         "name": "Undercover",
         "colors": [
-            "W",
-            "G"
+            "G",
+            "W"
         ],
         "cycling_land": false,
-        "image": "/img/cardback.webp",
+        "image": "https://cards.scryfall.io/border_crop/front/3/b/3b9d4691-59d1-4e97-9b5d-8017788fbcb3.jpg?1706242253",
         "cards": [
             "3b9d4691-59d1-4e97-9b5d-8017788fbcb3",
             "93b747c7-b342-47f8-a190-16c393b20607",
@@ -292,7 +292,7 @@
             "U"
         ],
         "cycling_land": false,
-        "image": "/img/cardback.webp",
+        "image": "https://cards.scryfall.io/border_crop/front/e/8/e8578839-046f-4afd-a0e7-4737ded9e6eb.jpg?1706241631",
         "cards": [
             "e8578839-046f-4afd-a0e7-4737ded9e6eb",
             "20267dab-8898-4b44-8ef4-8a239967662c",
@@ -357,11 +357,11 @@
     {
         "name": "Gadgets",
         "colors": [
-            "R",
-            "U"
+            "U",
+            "R"
         ],
         "cycling_land": false,
-        "image": "/img/cardback.webp",
+        "image": "https://cards.scryfall.io/border_crop/front/c/a/cabb5875-42ff-4e3a-a32e-aab392fccff8.jpg?1706242169",
         "cards": [
             "6c137a44-9ab6-4e59-8324-34d9dca8f5a6",
             "cabb5875-42ff-4e3a-a32e-aab392fccff8",
@@ -430,7 +430,7 @@
             "U"
         ],
         "cycling_land": false,
-        "image": "/img/cardback.webp",
+        "image": "https://cards.scryfall.io/border_crop/front/f/5/f53a6ee7-86e1-4d2d-994c-214e0ec08dad.jpg?1706242160",
         "cards": [
             "f53a6ee7-86e1-4d2d-994c-214e0ec08dad",
             "664d15d7-2724-4a9b-b5a7-8042d4b7da7b",
@@ -495,11 +495,11 @@
     {
         "name": "Suspects",
         "colors": [
-            "R",
-            "B"
+            "B",
+            "R"
         ],
         "cycling_land": false,
-        "image": "/img/cardback.webp",
+        "image": "https://cards.scryfall.io/border_crop/front/5/2/5288cf17-9d79-4d35-85f1-bf4d0a73494b.jpg?1706378665",
         "cards": [
             "5288cf17-9d79-4d35-85f1-bf4d0a73494b",
             "0c2ca1e7-e0de-4d29-a81b-62185ccd295f",
@@ -564,11 +564,11 @@
     {
         "name": "Forensics",
         "colors": [
-            "B",
-            "G"
+            "G",
+            "B"
         ],
         "cycling_land": false,
-        "image": "/img/cardback.webp",
+        "image": "https://cards.scryfall.io/border_crop/front/0/c/0c08ed44-2c13-4029-af2e-68585a76bb03.jpg?1706242194",
         "cards": [
             "81c7ff67-b9e1-4d2e-b1ae-da9b946da00b",
             "0c08ed44-2c13-4029-af2e-68585a76bb03",
@@ -633,11 +633,11 @@
     {
         "name": "Disguised",
         "colors": [
-            "R",
-            "G"
+            "G",
+            "R"
         ],
         "cycling_land": false,
-        "image": "/img/cardback.webp",
+        "image": "https://cards.scryfall.io/border_crop/front/4/0/4094b13f-28d4-48b6-8cce-3c44656745b7.jpg?1706242261",
         "cards": [
             "6154a991-c602-4fca-91a3-3830060da60e",
             "93b747c7-b342-47f8-a190-16c393b20607",
@@ -707,11 +707,11 @@
     {
         "name": "Slime Against Humanity",
         "colors": [
-            "R",
-            "G"
+            "G",
+            "R"
         ],
         "cycling_land": false,
-        "image": "/img/cardback.webp",
+        "image": "https://cards.scryfall.io/border_crop/front/4/6/4627adcd-ace7-4777-a7e6-fc80ac6b9dfe.jpg?1706242021",
         "cards": [
             "4627adcd-ace7-4777-a7e6-fc80ac6b9dfe",
             "1eb21318-d32e-4724-8908-c0d7613de2f4",

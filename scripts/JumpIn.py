@@ -16,21 +16,26 @@ Sets = [
     {"set": "ltr", "url": "https://magic.wizards.com/en/news/mtg-arena/jump-into-middle-earth-on-mtg-arena"},
     {"set": "one", "url": "https://magic.wizards.com/en/news/mtg-arena/jump-in-packets-update-for-phyrexia-all-will-be-one"},
     {"set": "bro", "url": "https://magic.wizards.com/en/news/mtg-arena/jump-in-packets-update-for-the-brothers-war"},
-    # TODO: DMU
+    #{"set": "dmu", "url": "https://magic.wizards.com/en/news/mtg-arena/jump-packets-update-dominaria-united-2022-08-31"},
 ]
 
 TitleRegex = r"<deck-list.* deck-title=\"(.*)\" format=\".*\">"
 CardRegex = r"(\d+) (.*)"
 AlternateLinesRegex = r"<tr[\s\S]*?<\/tr>"
-AlternateCardsRegex = r"<td>(?:(?:<auto-card>|<a class=\"autocard-link\".*>))(.*)(?:<\/auto-card>|<\/a>)<\/td>\s*\n\s*<td>(\d+)%<\/td>"
+AlternateCardsRegex = r"<td>(?:(?:<auto-card.*>|<a class=\"autocard-link\".*>))([^<]+)(?:<\/auto-card>|<\/a>)?<\/td>\s*\n\s*<td>(\d+)%<\/td>"
 
 for entry in Sets:
     Set = entry["set"]
     PacketListURL = entry["url"]
 
+    CardsByName = {}
+    CardsByID = {}
+
     OutputFile = f'src/data/JumpInBoosters_{Set}.json'
     if not os.path.isfile(OutputFile):
         def getCardFromName(name):
+            if name in CardsByName:
+                return CardsByName[name]
             name = html.unescape(name)
             name = urllib.parse.quote(name)
             r = requests.get(f"https://api.scryfall.com/cards/named?exact={name}&set={Set}")
@@ -39,6 +44,8 @@ for entry in Sets:
                 if r.status_code != 200:
                     print(f"Card not found: {name}")
                     exit()
+            CardsByName[name] = r.json()
+            CardsByID[r.json()["id"]] = r.json()
             return r.json()
 
         NameFixes = {
@@ -57,6 +64,7 @@ for entry in Sets:
         matches_arr = []
         for m in matches:
             matches_arr.append(m)
+            
         for idx in range(len(matches_arr)):
             deck_name = matches_arr[idx].group(1)
             print(f"Deck: {deck_name}")
@@ -108,15 +116,30 @@ for entry in Sets:
                 print("Error: Not alts?")
                 exit()
             print(f"Added Pack '{deck_name}', {len(set_cards)} + {len(altcards)} cards.")
+
+            image = None
+            image_rarity = None
+            rarity_values = {"common":0, "uncommon":1, "rare":2, "mythic":3, "special":4}
+            for cid in set_cards:
+                c = CardsByID[cid]
+                if image == None or c["rarity"] > image_rarity and "image_uris" in c:
+                    image = c["image_uris"]["border_crop"]
+                    image_rarity = c["rarity"]
+
+            if image == None:
+                image = "/img/cardback.webp"
+
             jumpInBoosters.append({
                 "name": deck_name, 
                 "colors": list(colors), 
                 "cycling_land": False,
-                "image":  "/img/cardback.webp", 
+                "image":  image, 
                 "cards": set_cards, 
                 "alts": altcards
             })
         print(f"JumpIn Boosters: {len(jumpInBoosters)}")
+        for c in jumpInBoosters:
+            print(f"{c['name']:<30}: {len(c['cards'])} + {len(c['alts'])} = {len(c['cards']) + len(c['alts'])} cards")
         if len(jumpInBoosters) > 0:
             with open(OutputFile, 'w', encoding="utf8") as outfile:
                 json.dump(jumpInBoosters, outfile, indent=4, ensure_ascii=False,)

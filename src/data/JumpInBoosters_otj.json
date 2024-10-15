@@ -6,7 +6,7 @@
             "U"
         ],
         "cycling_land": false,
-        "image": "/img/cardback.webp",
+        "image": "https://cards.scryfall.io/border_crop/front/e/2/e24fe6dc-662a-4abc-ad60-a1959b2be006.jpg?1712356117",
         "cards": [
             "e24fe6dc-662a-4abc-ad60-a1959b2be006",
             "b4d163dd-67dc-4aab-afb9-d043352d109c",
@@ -71,11 +71,11 @@
     {
         "name": "Crimes",
         "colors": [
-            "B",
-            "U"
+            "U",
+            "B"
         ],
         "cycling_land": false,
-        "image": "/img/cardback.webp",
+        "image": "https://cards.scryfall.io/border_crop/front/0/0/00293326-3eb2-492c-b565-7abafa037d8c.jpg?1712356143",
         "cards": [
             "00293326-3eb2-492c-b565-7abafa037d8c",
             "596fb7a2-bb79-44b7-ad84-414c8139ec13",
@@ -149,7 +149,7 @@
             "B"
         ],
         "cycling_land": false,
-        "image": "/img/cardback.webp",
+        "image": "https://cards.scryfall.io/border_crop/front/3/a/3afce4e6-ac59-4fba-b63a-8fed96bbdc4a.jpg?1712356228",
         "cards": [
             "3afce4e6-ac59-4fba-b63a-8fed96bbdc4a",
             "897d594d-b5b0-43dc-b877-b483942416ce",
@@ -218,7 +218,7 @@
             "G"
         ],
         "cycling_land": false,
-        "image": "/img/cardback.webp",
+        "image": "https://cards.scryfall.io/border_crop/front/f/e/fe30b5c8-4889-4350-bb1d-3e2a67d9dfb2.jpg?1712356118",
         "cards": [
             "fe30b5c8-4889-4350-bb1d-3e2a67d9dfb2",
             "318b8c5d-9fb0-488f-9b32-c2e29d1f1dbb",
@@ -287,7 +287,7 @@
             "G"
         ],
         "cycling_land": false,
-        "image": "/img/cardback.webp",
+        "image": "https://cards.scryfall.io/border_crop/front/b/f/bfa7750a-7c32-4413-b762-62e24d992c6b.jpg?1712356167",
         "cards": [
             "bfa7750a-7c32-4413-b762-62e24d992c6b",
             "0ef4907a-2fc1-42c5-bffc-3b3f93601fb9",
@@ -355,7 +355,7 @@
             "W"
         ],
         "cycling_land": false,
-        "image": "/img/cardback.webp",
+        "image": "https://cards.scryfall.io/border_crop/front/6/9/69689049-a704-4f16-84ee-4d5d915028ec.jpg?1712860589",
         "cards": [
             "69689049-a704-4f16-84ee-4d5d915028ec",
             "ea96eeac-c316-4247-a81f-0ddf52675ebf",
@@ -423,7 +423,7 @@
             "U"
         ],
         "cycling_land": false,
-        "image": "/img/cardback.webp",
+        "image": "https://cards.scryfall.io/border_crop/front/e/6/e6cfe383-e483-47e7-99d1-991a06b089bc.jpg?1712355493",
         "cards": [
             "e6cfe383-e483-47e7-99d1-991a06b089bc",
             "ba9584f0-55b8-448d-99a7-041934053f42",
@@ -496,7 +496,7 @@
             "B"
         ],
         "cycling_land": false,
-        "image": "/img/cardback.webp",
+        "image": "https://cards.scryfall.io/border_crop/front/d/f/df2913d5-57c7-4f9b-bc96-8a46beef2563.jpg?1712355599",
         "cards": [
             "df2913d5-57c7-4f9b-bc96-8a46beef2563",
             "9e56a8df-db04-4a88-a5ab-6954d3449976",
@@ -569,7 +569,7 @@
             "R"
         ],
         "cycling_land": false,
-        "image": "/img/cardback.webp",
+        "image": "https://cards.scryfall.io/border_crop/front/c/c/cc598338-eeba-4815-a0a6-ff2dc09790d2.jpg?1712356268",
         "cards": [
             "cc598338-eeba-4815-a0a6-ff2dc09790d2",
             "f568803d-65c0-48d7-916f-671267a9e00e",
@@ -637,7 +637,7 @@
             "G"
         ],
         "cycling_land": false,
-        "image": "/img/cardback.webp",
+        "image": "https://cards.scryfall.io/border_crop/front/8/d/8dc3cbfe-410f-40e3-8021-647a2efb50bf.jpg?1712355978",
         "cards": [
             "8dc3cbfe-410f-40e3-8021-647a2efb50bf",
             "eda59f99-1d6d-4051-ac89-b7cbfa19262e",
