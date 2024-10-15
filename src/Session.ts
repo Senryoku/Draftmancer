@@ -50,11 +50,30 @@ import { isPaperBoosterFactoryAvailable, getPaperBoosterFactory } from "./PaperB
 import JumpstartBoosters from "./data/JumpstartBoosters.json" assert { type: "json" };
 import Jumpstart2022Boosters from "./data/Jumpstart2022Boosters.json" assert { type: "json" };
 import JumpstartHHBoosters from "./data/JumpstartHHBoosters.json" assert { type: "json" };
-import JumpIntoMiddleEarthBoosters from "./data/JumpIntoMiddleEarthBoosters.json" assert { type: "json" };
 import SuperJumpBoosters from "./data/SuperJumpBoosters.json" assert { type: "json" };
 Object.freeze(JumpstartBoosters);
 Object.freeze(Jumpstart2022Boosters);
 Object.freeze(SuperJumpBoosters);
+
+import JumpInBLB from "./data/JumpInBoosters_blb.json" assert { type: "json" };
+import JumpInOTJ from "./data/JumpInBoosters_otj.json" assert { type: "json" };
+import JumpInMKM from "./data/JumpInBoosters_mkm.json" assert { type: "json" };
+import JumpInLCI from "./data/JumpInBoosters_lci.json" assert { type: "json" };
+import JumpInWOE from "./data/JumpInBoosters_woe.json" assert { type: "json" };
+import JumpInLTR from "./data/JumpInBoosters_ltr.json" assert { type: "json" };
+import JumpInONE from "./data/JumpInBoosters_one.json" assert { type: "json" };
+import JumpInBRO from "./data/JumpInBoosters_bro.json" assert { type: "json" };
+const JumpInBoosters: Record<string, JHHBoosterPattern[]> = {
+	blb: JumpInBLB,
+	otj: JumpInOTJ,
+	mkm: JumpInMKM,
+	lci: JumpInLCI,
+	woe: JumpInWOE,
+	ltr: JumpInLTR,
+	one: JumpInONE,
+	bro: JumpInBRO,
+};
+
 import {
 	isMessageError,
 	isSocketError,
@@ -3224,13 +3243,15 @@ export class Session implements IIndexable {
 			for (const cid of cardIDs) if (!(cid in this.draftLog.carddata)) this.draftLog.carddata[cid] = getCard(cid);
 		};
 
+		const JumpInSets = Object.keys(JumpInBoosters);
+
 		// Jumpstart: Historic Horizons
-		if (set === "j21" || set === "super" || set === "ltr") {
+		if (set === "j21" || set === "super" || JumpInSets.includes(set)) {
 			for (const user of this.users) {
 				// Randomly get 2*3 packs and let the user choose among them.
 				const choices: [JHHBooster[], JHHBooster[][]] = [[], []];
-				if (set === "j21" || set === "ltr") {
-					const Boosters = set === "j21" ? JumpstartHHBoosters : JumpIntoMiddleEarthBoosters;
+				if (set === "j21" || JumpInSets.includes(set)) {
+					const Boosters = set === "j21" ? JumpstartHHBoosters : JumpInBoosters[set];
 					choices[0] = getNDisctinctRandom(Boosters, 3).map(generateJHHBooster);
 					// The choices are based on the first pick colors (we send all possibilties rather than waiting for user action).
 					const secondchoice: JHHBooster[][] = [];

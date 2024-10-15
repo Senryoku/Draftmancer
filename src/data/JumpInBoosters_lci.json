@@ -1,0 +1,799 @@
+[
+    {
+        "name": "Crafting",
+        "colors": [
+            "W"
+        ],
+        "cycling_land": false,
+        "image": "/img/cardback.webp",
+        "cards": [
+            "36dafcd6-ce4e-4a27-bd8c-fa1a3bffc99e",
+            "ad1a0159-7f00-429c-9318-b028b1e03ba8",
+            "8321857e-7977-46dd-8357-d732312e5261",
+            "02d68a38-2e0b-401b-b67d-a55e2af5b18d",
+            "bbc5f28f-6361-455f-ac82-260a70e59316",
+            "8aece300-656b-4e0d-a45f-aa7feaff0a4e",
+            "24417388-f2bb-4783-bdce-264774531838",
+            "b8685d46-99fc-44b3-be95-707a4b7b8327"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Kinjalli's Dawnrunner",
+                    "id": "fc4c527c-6963-47f4-bcad-841d06bb2211",
+                    "weight": 50
+                },
+                {
+                    "name": "Mischievous Pup",
+                    "id": "7c219861-f808-456f-b551-37512764062d",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Adaptive Gemguard",
+                    "id": "83c91e24-b7e8-4040-80cb-d1b375002c10",
+                    "weight": 50
+                },
+                {
+                    "name": "Oltec Archaeologists",
+                    "id": "57c21561-2213-4524-89a6-30a305843e5a",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Oteclan Landmark // Oteclan Levitator",
+                    "id": "099a1d1c-72ba-468e-9385-8f93e1fce001",
+                    "weight": 50
+                },
+                {
+                    "name": "Deconstruction Hammer",
+                    "id": "0c7ba382-18c4-4833-b3d2-bd469ae2ad77",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Unstable Glyphbridge // Sandswirl Wanderglyph",
+                    "id": "d70f48e7-582c-4dd2-a64e-6fd03fa6b77e",
+                    "weight": 40
+                },
+                {
+                    "name": "Threefold Thunderhulk",
+                    "id": "1917c62f-d463-43eb-87ad-89ffbc88b6fe",
+                    "weight": 40
+                },
+                {
+                    "name": "Ojer Taq, Deepest Foundation // Temple of Civilization",
+                    "id": "1ca79dd4-67fc-496c-96fc-489b039c4932",
+                    "weight": 20
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Secrets",
+        "colors": [
+            "U"
+        ],
+        "cycling_land": false,
+        "image": "/img/cardback.webp",
+        "cards": [
+            "8ae8ab66-5840-4b2e-bd4e-94ead0c79b61",
+            "a6e53495-c76c-4cd4-b93e-b2c491d2c13a",
+            "6f65e1bc-fade-4fdf-a1fd-de068bff9e4c",
+            "3c068b2e-17cc-4fb8-bd79-b775a4713d74",
+            "85ad358d-a520-4d57-82b0-d2297da1fbde",
+            "27acf726-52f5-493d-8678-c12485f67747",
+            "ab8f7a75-df5e-43b3-8c33-328ad0dc3c40",
+            "69f317fc-f603-45b5-9208-545be4dcbf36"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Hermitic Nautilus",
+                    "id": "545503f8-a8c6-4518-9ad6-76e4996397fc",
+                    "weight": 50
+                },
+                {
+                    "name": "Digsite Conservator",
+                    "id": "dfa3cd5e-b727-479d-9a77-9f320b92f3f2",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Waterlogged Hulk // Watertight Gondola",
+                    "id": "7ea89d3c-8d47-4bbb-9271-8cdfd9296e2f",
+                    "weight": 50
+                },
+                {
+                    "name": "Lodestone Needle // Guidestone Compass",
+                    "id": "dedd7a22-92e2-41fd-aa80-944c69653a5e",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Eaten by Piranhas",
+                    "id": "b0c504ef-2382-4174-9b1d-5f38e12a28fc",
+                    "weight": 50
+                },
+                {
+                    "name": "Confounding Riddle",
+                    "id": "f2ae23db-c391-402c-9568-65447cada66e",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "The Everflowing Well // The Myriad Pools",
+                    "id": "bf573fb7-fa6c-4df7-8e5e-1e071585361e",
+                    "weight": 60
+                },
+                {
+                    "name": "Matzalantli, the Great Door // The Core",
+                    "id": "b4c31b29-06ba-436d-a3d9-18f4796c39be",
+                    "weight": 40
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Depths",
+        "colors": [
+            "B"
+        ],
+        "cycling_land": false,
+        "image": "/img/cardback.webp",
+        "cards": [
+            "319a457c-89b7-47f6-a13c-20bb50d41138",
+            "ccc9d22c-dfce-4136-aed8-a5fe9bb852f2",
+            "bc2f3efb-1526-48c0-842a-374af63ea467",
+            "6a230208-84ae-4f48-afbd-a0d50596ad27",
+            "a18f5ad0-e9c1-4e45-b245-2946e29baecb",
+            "aad0adcb-80e5-4c6d-bcdd-9e5d18c017b3",
+            "05bdd22c-3e11-4c29-bdfa-d3dfc0e90a9f",
+            "f67fd04f-05da-4418-97de-abeb7346cc69"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Deep-Cavern Bat",
+                    "id": "69c68c95-b788-43b1-9f22-1b22c5a00b25",
+                    "weight": 50
+                },
+                {
+                    "name": "Soulcoil Viper",
+                    "id": "1125fdf2-2dbb-49a6-b76f-8cd6c3d6fab4",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Starving Revenant",
+                    "id": "f25ea466-eb48-4c4c-b5d4-35f58e46ebe1",
+                    "weight": 80
+                },
+                {
+                    "name": "Aclazotz, Deepest Betrayal // Temple of the Dead",
+                    "id": "627c392c-4d18-4eb2-a4e8-c668f61f5487",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Dead Weight",
+                    "id": "82e6b971-3f5b-47e7-8209-98d72ee781fc",
+                    "weight": 50
+                },
+                {
+                    "name": "Tithing Blade // Consuming Sepulcher",
+                    "id": "dbaa9a2d-e9fd-4746-a26c-f99ae731f024",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Bloodthorn Flail",
+                    "id": "db38babd-57e8-4e59-9701-11a0682baa77",
+                    "weight": 50
+                },
+                {
+                    "name": "Canonized in Blood",
+                    "id": "384b6892-5dfc-4607-b511-cf83544a9357",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Dinosaurs",
+        "colors": [
+            "R"
+        ],
+        "cycling_land": false,
+        "image": "/img/cardback.webp",
+        "cards": [
+            "0b2debca-8535-4cf6-a461-c268faaacaae",
+            "0c491ac0-4752-47a7-967e-456b6e4245de",
+            "9436cf62-56d6-4662-9982-72e9be80d25c",
+            "9de1a93e-ec71-45fa-b0b8-2c21123e390c",
+            "98aeb9dc-18f9-4120-ac3d-226c62a1dc1d",
+            "0bdc79c6-1193-46bd-931d-2c2a0381e420",
+            "4f06b53f-ec82-4d7f-bee3-6ca04583f023",
+            "9fa06aed-52c1-48f1-9906-362db12a3cf7"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Hotfoot Gnome",
+                    "id": "87468b6b-6f78-42e4-ab0d-6730aeecdc3f",
+                    "weight": 50
+                },
+                {
+                    "name": "Plundering Pirate",
+                    "id": "5bb2552f-8370-4931-83e1-93706d51413a",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Trumpeting Carnosaur",
+                    "id": "edc035ca-f0a3-4814-9405-d6dc6f048315",
+                    "weight": 80
+                },
+                {
+                    "name": "Bonehoard Dracosaur",
+                    "id": "2220ed60-3f8f-4dd2-8319-6a06896a5350",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Triumphant Chomp",
+                    "id": "06b28139-efa7-4818-a012-cf8150692b43",
+                    "weight": 50
+                },
+                {
+                    "name": "Dreadmaw's Ire",
+                    "id": "062e00a1-f1dc-4089-b640-800ab781c590",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Etali's Favor",
+                    "id": "6d4075a8-c15d-4078-bf4b-0f85c03fecec",
+                    "weight": 50
+                },
+                {
+                    "name": "Daring Discovery",
+                    "id": "d95018a4-be10-4c46-b14d-4b1eba838bc0",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Prehistoric",
+        "colors": [
+            "G"
+        ],
+        "cycling_land": false,
+        "image": "/img/cardback.webp",
+        "cards": [
+            "4bc94ded-458d-4458-9c0b-136d825b885d",
+            "62c1f09a-9d17-415c-8afa-cd0b62abe48d",
+            "b76a46a1-a63e-460a-98c5-699dd1c827aa",
+            "cdcbba6f-aa54-44be-a3b0-f712fa8bd5ad",
+            "081d5c9e-71da-4454-ae4e-c76cb7790d20",
+            "2259f959-ca97-4df9-8d50-0532090fb967",
+            "71a6f85b-5ef8-4526-9c86-7cb71508b4c0",
+            "a942939a-c06e-4b90-a404-ae5acfffcff9"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Intrepid Paleontologist",
+                    "id": "871a164a-0fe6-480e-a1be-cbffce884bd3",
+                    "weight": 40
+                },
+                {
+                    "name": "Hulking Raptor",
+                    "id": "45f763af-5a6a-404c-8e8c-4dbed71277bc",
+                    "weight": 40
+                },
+                {
+                    "name": "Ghalta, Stampede Tyrant",
+                    "id": "72e805e9-69be-45c1-aa04-f460641a0c1e",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Thrashing Brontodon",
+                    "id": "d52ef7c1-dacb-4204-b64e-5fa3ae3b1ace",
+                    "weight": 50
+                },
+                {
+                    "name": "Colossadactyl",
+                    "id": "8702e776-be2c-48a9-9bc5-bb8ea514333b",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Pathfinding Axejaw",
+                    "id": "9f619075-ca5d-4e09-bd84-31e6b61eaa7e",
+                    "weight": 50
+                },
+                {
+                    "name": "Cavern Stomper",
+                    "id": "decdfd6b-55ab-47fd-9f98-1845261f1caf",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Staggering Size",
+                    "id": "e34c4946-6c21-4ae1-9595-35933d38da52",
+                    "weight": 50
+                },
+                {
+                    "name": "Disturbed Slumber",
+                    "id": "4404b8d6-3673-4d82-b9ed-d28e9b54e1f6",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Offerings",
+        "colors": [
+            "W",
+            "B"
+        ],
+        "cycling_land": false,
+        "image": "/img/cardback.webp",
+        "cards": [
+            "690ccdc7-6c43-4902-9d11-2f07b7a36b11",
+            "0d96d019-5d80-468a-b891-e3e99346372a",
+            "efeb22a4-37bf-487a-9cf4-74de4cbbc0a3",
+            "9030048a-b866-4a89-8d4a-aa55411463e4",
+            "a559f77f-1f10-475b-9361-7f297d50f254",
+            "a5f231ef-4167-4b0a-b54c-a098b2eb2f6f",
+            "adcae196-dbcc-44d5-b700-c57b0b646483"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Greedy Freebooter",
+                    "id": "692fe4e8-13b4-4bec-938e-a8073a7fbd71",
+                    "weight": 50
+                },
+                {
+                    "name": "Miner's Guidewing",
+                    "id": "9048cd9d-df3f-4705-a5f4-e5b09760c631",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Acolyte of Aclazotz",
+                    "id": "99009400-ffa4-40af-8305-78295ae605ac",
+                    "weight": 50
+                },
+                {
+                    "name": "Glorifier of Suffering",
+                    "id": "7580ad36-7362-4dee-9511-d119173b70e8",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Sanguine Evangelist",
+                    "id": "269ddd84-fdc4-4c94-b183-32ecec56967c",
+                    "weight": 80
+                },
+                {
+                    "name": "Vito, Fanatic of Aclazotz",
+                    "id": "c4fd9047-df91-4d82-be00-c623acae0f01",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Fanatical Offering",
+                    "id": "d896dd52-b134-4b55-ab91-ccb05ecc50f4",
+                    "weight": 50
+                },
+                {
+                    "name": "Cosmium Blast",
+                    "id": "193d1eac-ede7-4f75-9c74-05133b215f93",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Hidden Courtyard",
+                    "id": "b8685d46-99fc-44b3-be95-707a4b7b8327",
+                    "weight": 50
+                },
+                {
+                    "name": "Hidden Necropolis",
+                    "id": "f67fd04f-05da-4418-97de-abeb7346cc69",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Looted",
+        "colors": [
+            "R",
+            "U"
+        ],
+        "cycling_land": false,
+        "image": "/img/cardback.webp",
+        "cards": [
+            "41e54343-95e5-4dc4-9f18-e4a415fe5e0a",
+            "14c65f5a-10bd-4f9b-b816-46c2240b11ff",
+            "143e9845-8a11-4fc4-b116-29a929985146",
+            "ded2bb06-7163-47fe-bede-9c192c9b8952",
+            "9d11e3d4-769d-47aa-8d3a-ce1ac60b68b8",
+            "3d715e9f-223d-462e-8ce3-eebbaf1cd021",
+            "d1d8d8ef-c8b2-4e7c-89e4-b381dff20584"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Shipwreck Sentry",
+                    "id": "814803bc-72cd-46db-b957-4322f2a7b28a",
+                    "weight": 50
+                },
+                {
+                    "name": "Oaken Siren",
+                    "id": "d7731ef5-da74-4436-8ee7-01c065cbefae",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Brazen Blademaster",
+                    "id": "8e9e0c66-f64a-428c-be13-a52691833df1",
+                    "weight": 50
+                },
+                {
+                    "name": "Plundering Pirate",
+                    "id": "5bb2552f-8370-4931-83e1-93706d51413a",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Breeches, Eager Pillager",
+                    "id": "aadf5028-8dfe-40d3-89b4-22bd7ed0aae6",
+                    "weight": 50
+                },
+                {
+                    "name": "The Belligerent",
+                    "id": "1454af8c-bce9-47d3-890f-283e2fea2cf2",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Unlucky Drop",
+                    "id": "76ebb2df-8891-434e-9cd0-f25b848cb754",
+                    "weight": 50
+                },
+                {
+                    "name": "Rumbling Rockslide",
+                    "id": "4f06b53f-ec82-4d7f-bee3-6ca04583f023",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Hidden Cataract",
+                    "id": "69f317fc-f603-45b5-9208-545be4dcbf36",
+                    "weight": 50
+                },
+                {
+                    "name": "Hidden Volcano",
+                    "id": "9fa06aed-52c1-48f1-9906-362db12a3cf7",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Descent",
+        "colors": [
+            "B",
+            "G"
+        ],
+        "cycling_land": false,
+        "image": "/img/cardback.webp",
+        "cards": [
+            "4ce4b7bc-636b-4723-a7c1-2c859f333492",
+            "ff0a2ba4-dfa8-49d6-95e9-04b7a14d0c6c",
+            "3ee62dd1-97d0-4e5d-8937-26c9e51e9414",
+            "b75a3639-a917-4700-a093-14a4cda78d9f",
+            "bdd8eed6-91da-4454-a5e3-7bbfac614f47",
+            "4b9b16b3-1cbd-4b63-85b2-e4053dfc1e93",
+            "82e6b971-3f5b-47e7-8209-98d72ee781fc"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Deathcap Marionette",
+                    "id": "ccc9d22c-dfce-4136-aed8-a5fe9bb852f2",
+                    "weight": 50
+                },
+                {
+                    "name": "Screaming Phantom",
+                    "id": "bc2f3efb-1526-48c0-842a-374af63ea467",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Corpses of the Lost",
+                    "id": "5f661095-3645-4e44-ac39-752e417c2174",
+                    "weight": 80
+                },
+                {
+                    "name": "The Mycotyrant",
+                    "id": "caef93cc-70d0-4cce-9aaa-13c0931b2ef7",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Visage of Dread // Dread Osseosaur",
+                    "id": "3d4b61c6-3e88-49f5-9e16-aa8a59653327",
+                    "weight": 50
+                },
+                {
+                    "name": "Jade Seedstones // Jadeheart Attendant",
+                    "id": "bb95ffc2-ef35-49bf-8211-c5354d176051",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Another Chance",
+                    "id": "20d9eb9f-2fcc-49f0-99c1-bad748239466",
+                    "weight": 50
+                },
+                {
+                    "name": "In the Presence of Ages",
+                    "id": "97b1be22-3177-49af-bb06-42497d717c21",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Hidden Necropolis",
+                    "id": "f67fd04f-05da-4418-97de-abeb7346cc69",
+                    "weight": 50
+                },
+                {
+                    "name": "Hidden Nursery",
+                    "id": "a942939a-c06e-4b90-a404-ae5acfffcff9",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Militia",
+        "colors": [
+            "R",
+            "W"
+        ],
+        "cycling_land": false,
+        "image": "/img/cardback.webp",
+        "cards": [
+            "9048cd9d-df3f-4705-a5f4-e5b09760c631",
+            "d3114f5c-21e9-43c3-abe3-3cf1da20916f",
+            "8ea82964-fd9c-48e3-962f-94954476b31f",
+            "415904fe-b77f-4c1a-850f-688484d629e6",
+            "a86f3cb2-7822-4c19-bd84-cea177e5b6e9",
+            "4ae30fa7-3d1d-417f-80d7-a668236cb2c1",
+            "47f39b5e-2e85-4f31-bbab-0b0bf58f701d"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Attentive Sunscribe",
+                    "id": "ad1a0159-7f00-429c-9318-b028b1e03ba8",
+                    "weight": 50
+                },
+                {
+                    "name": "Volatile Wanderglyph",
+                    "id": "2101921a-d26f-4a00-a0db-1b418f2e6b01",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Thousand Moons Infantry",
+                    "id": "c1974a8c-3328-4ff5-9a00-cb79ebb8ccf6",
+                    "weight": 50
+                },
+                {
+                    "name": "Tinker's Tote",
+                    "id": "8321857e-7977-46dd-8357-d732312e5261",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Ancestors' Aid",
+                    "id": "e90d5b7d-e27d-42d6-ba7a-d4a6b0dd8549",
+                    "weight": 50
+                },
+                {
+                    "name": "Quicksand Whirlpool",
+                    "id": "a74ddccb-ebbd-4fad-a9b6-6b9e9bafae31",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Thousand Moons Smithy // Barracks of the Thousand",
+                    "id": "4a6bec46-1acd-4726-b8d9-3045ac6a2ea2",
+                    "weight": 80
+                },
+                {
+                    "name": "Quintorius Kand",
+                    "id": "4382fa49-9e34-45b3-8495-4916dcd995ec",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Hidden Volcano",
+                    "id": "9fa06aed-52c1-48f1-9906-362db12a3cf7",
+                    "weight": 50
+                },
+                {
+                    "name": "Hidden Courtyard",
+                    "id": "b8685d46-99fc-44b3-be95-707a4b7b8327",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Explorers",
+        "colors": [
+            "G",
+            "U"
+        ],
+        "cycling_land": false,
+        "image": "/img/cardback.webp",
+        "cards": [
+            "ffcdb10f-4bad-4f89-8e7c-daa5c0c69230",
+            "5e6f4aba-3500-4fb7-ab78-02f63c03778a",
+            "8ae8ab66-5840-4b2e-bd4e-94ead0c79b61",
+            "8a7738fb-0a1b-4010-b8c0-e1129739c765",
+            "9f619075-ca5d-4e09-bd84-31e6b61eaa7e",
+            "3cdf691e-96a5-45c7-9b94-6f04af81c8e4",
+            "1247a5fa-b50a-4ab1-96ca-dbeb45bd0b56"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Merfolk Cave-Diver",
+                    "id": "6e0fe81c-b8ef-49ff-8743-f03d0220cb9e",
+                    "weight": 50
+                },
+                {
+                    "name": "Self-Reflection",
+                    "id": "1242203d-c9b5-4ab6-802e-e222f92291e9",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Deepfathom Echo",
+                    "id": "c7c7fb87-8448-49f4-a9ed-db97f6a41d98",
+                    "weight": 50
+                },
+                {
+                    "name": "Jadelight Spelunker",
+                    "id": "68e633d3-47e2-48c5-9be3-574ce5023bf7",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Glowcap Lantern",
+                    "id": "bafde87c-743d-4307-93e0-fbd30f5d92f6",
+                    "weight": 50
+                },
+                {
+                    "name": "Explorer's Cache",
+                    "id": "86b36214-9c7e-4a24-93d4-17b2d00cbc51",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Over the Edge",
+                    "id": "23dddddb-5409-4c28-bf32-e6473f2cc620",
+                    "weight": 50
+                },
+                {
+                    "name": "Brackish Blunder",
+                    "id": "dea3d0f4-76f5-416f-93ba-8b003b967816",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Hidden Nursery",
+                    "id": "a942939a-c06e-4b90-a404-ae5acfffcff9",
+                    "weight": 50
+                },
+                {
+                    "name": "Hidden Cataract",
+                    "id": "69f317fc-f603-45b5-9208-545be4dcbf36",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Spelunking",
+        "colors": [
+            "B",
+            "R",
+            "W",
+            "U",
+            "G"
+        ],
+        "cycling_land": false,
+        "image": "/img/cardback.webp",
+        "cards": [
+            "10e1030e-2b95-4807-9111-e495a2fc8813",
+            "e0b6d40a-fded-4625-b03c-765c88d75766",
+            "1c02134c-ec9f-4090-820e-8ba7ae4a8c2b",
+            "afcb2a90-d4c0-4c83-8ee7-2ac3a23b4402",
+            "7a58639c-001f-4cb1-89fd-0a0967b86977",
+            "94724efb-4785-4751-9fe1-07f243dd6008",
+            "4c9c45b6-dedd-4481-a06a-c83ace2f18fa",
+            "d3be4257-2316-4a2e-b347-f71c0368a947",
+            "78b1b412-228a-4e05-a4b3-8159ebf54dc6",
+            "8341ddd9-aac1-4773-b8ce-51e35f696263",
+            "e9681a54-6413-4ff4-b6b1-ee4decb25bfa",
+            "1d1a645e-85c7-4044-b817-6e24744d245e",
+            "de8c1c02-e533-46b2-a3eb-91dff561854b",
+            "2a51ebf6-a465-42e2-82b7-d2cb928ca632",
+            "b8685d46-99fc-44b3-be95-707a4b7b8327",
+            "69f317fc-f603-45b5-9208-545be4dcbf36",
+            "f67fd04f-05da-4418-97de-abeb7346cc69",
+            "9fa06aed-52c1-48f1-9906-362db12a3cf7",
+            "a942939a-c06e-4b90-a404-ae5acfffcff9"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Cosmium Confluence",
+                    "id": "490a5054-0607-4e4a-a0a9-0e9eea7adb00",
+                    "weight": 50
+                },
+                {
+                    "name": "Chimil, the Inner Sun",
+                    "id": "27a1bfb5-ddfc-49cf-baa3-5d1958d2067a",
+                    "weight": 50
+                }
+            ]
+        ]
+    }
+]
