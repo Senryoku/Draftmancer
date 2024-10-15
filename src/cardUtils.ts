@@ -91,6 +91,14 @@ function randomWeightedIndex(cumsumWeights: number[]): number {
 	return index;
 }
 
+// Longer stripes last longer - we're more likely to start a pack in one of them.
+function pickInitialStripWidth(weights: number[]): number {
+	if (weights.length <= 1) return 0;
+	const adjusted: number[] = [weights[0]];
+	for (let idx = 1; idx < weights.length; ++idx) adjusted.push(adjusted[idx - 1] + (1 + idx) * weights[idx]);
+	return randomWeightedIndex(adjusted);
+}
+
 // https://www.lethe.xyz/mtg/collation/striped-collation.html
 export function pickStriped(
 	count: number,
@@ -105,7 +113,7 @@ export function pickStriped(
 
 	const sequence: number[] = [];
 	let idx = random.integer(0, sheet.length - 1);
-	let width = randomWeightedIndex(cumsumWeights) + 1;
+	let width = pickInitialStripWidth(weights) + 1;
 	let depth = random.integer(1, width); // Start at a random point in sequence
 	sequence.push(idx);
 	for (let i = 1; i < count; ++i) {
