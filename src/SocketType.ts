@@ -24,7 +24,7 @@ import { MinesweeperSyncData, MinesweeperSyncDataDiff } from "./MinesweeperDraft
 import { DraftState, DraftSyncData } from "./DraftState";
 import { BotScores } from "./Bot";
 import { getPublicSessionData } from "./Session";
-import { JHHBooster } from "./JumpstartHistoricHorizons";
+import { JumpInBooster } from "./JumpInTypes";
 import { RotisserieDraftStartOptions, RotisserieDraftSyncData } from "./RotisserieDraft";
 import { WinchesterDraftSyncData } from "./WinchesterDraft";
 import { HousmanDraftSyncData } from "./HousmanDraft";
@@ -248,7 +248,7 @@ export interface ServerToClientEvents {
 	teamSealedUpdateCard: (cid: UniqueCardID, owner: UserID | null) => void;
 
 	selectJumpstartPacks: (
-		choices: [JHHBooster[], JHHBooster[][]],
+		choices: [JumpInBooster[], JumpInBooster[][]],
 		callback: (user: UserID, cards: CardID[]) => void
 	) => void; // FIXME
 

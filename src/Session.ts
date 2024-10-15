@@ -1,16 +1,6 @@
 import { assert } from "console";
 import { UserID, SessionID } from "./IDTypes.js";
-import {
-	shuffleArray,
-	getRandom,
-	arrayIntersect,
-	Options,
-	getNDisctinctRandom,
-	pickRandom,
-	random,
-	sum,
-	sumValues,
-} from "./utils.js";
+import { shuffleArray, getRandom, arrayIntersect, Options, pickRandom, random, sum, sumValues } from "./utils.js";
 import { Connections, getPickedCardIds } from "./Connection.js";
 import {
 	CardID,
@@ -47,32 +37,6 @@ import {
 	getBoosterFactory,
 } from "./BoosterFactory.js";
 import { isPaperBoosterFactoryAvailable, getPaperBoosterFactory } from "./PaperBoosterFactory.js";
-import JumpstartBoosters from "./data/JumpstartBoosters.json" with { type: "json" };
-import Jumpstart2022Boosters from "./data/Jumpstart2022Boosters.json" with { type: "json" };
-import JumpstartHHBoosters from "./data/JumpstartHHBoosters.json" with { type: "json" };
-import SuperJumpBoosters from "./data/SuperJumpBoosters.json" with { type: "json" };
-Object.freeze(JumpstartBoosters);
-Object.freeze(Jumpstart2022Boosters);
-Object.freeze(SuperJumpBoosters);
-
-import JumpInBLB from "./data/JumpInBoosters_blb.json" with { type: "json" };
-import JumpInOTJ from "./data/JumpInBoosters_otj.json" with { type: "json" };
-import JumpInMKM from "./data/JumpInBoosters_mkm.json" with { type: "json" };
-import JumpInLCI from "./data/JumpInBoosters_lci.json" with { type: "json" };
-import JumpInWOE from "./data/JumpInBoosters_woe.json" with { type: "json" };
-import JumpInLTR from "./data/JumpInBoosters_ltr.json" with { type: "json" };
-import JumpInONE from "./data/JumpInBoosters_one.json" with { type: "json" };
-import JumpInBRO from "./data/JumpInBoosters_bro.json" with { type: "json" };
-const JumpInBoosters: Record<string, JHHBoosterPattern[]> = {
-	blb: JumpInBLB,
-	otj: JumpInOTJ,
-	mkm: JumpInMKM,
-	lci: JumpInLCI,
-	woe: JumpInWOE,
-	ltr: JumpInLTR,
-	one: JumpInONE,
-	bro: JumpInBRO,
-};
 
 import {
 	isMessageError,
@@ -89,7 +53,14 @@ import { IBracket, SingleBracket, TeamBracket, SwissBracket, DoubleBracket, Brac
 import { CustomCardList, getSheetCardIDs } from "./CustomCardList.js";
 import { generateBoosterFromCustomCardList, generateCustomGetCardFunction } from "./CustomCardListUtils.js";
 import { DraftLog, DraftPick, GridDraftPick } from "./DraftLog.js";
-import { generateJHHBooster, JHHBooster, JHHBoosterPattern } from "./JumpstartHistoricHorizons.js";
+import {
+	genJHHPackChoices,
+	genJumpInPackChoices,
+	genSuperJumpPackChoices,
+	JumpInSets,
+	Jumpstart2022Boosters,
+	JumpstartBoosters,
+} from "./Jumpstart.js";
 import { IDraftState } from "./IDraftState.js";
 import { MinesweeperCellState } from "./MinesweeperDraftTypes.js";
 import { MinesweeperDraftState, isMinesweeperDraftState } from "./MinesweeperDraft.js";
@@ -3243,108 +3214,16 @@ export class Session implements IIndexable {
 			for (const cid of cardIDs) if (!(cid in this.draftLog.carddata)) this.draftLog.carddata[cid] = getCard(cid);
 		};
 
-		const JumpInSets = Object.keys(JumpInBoosters);
-
-		// Jumpstart: Historic Horizons
 		if (set === "j21" || set === "super" || JumpInSets.includes(set)) {
 			for (const user of this.users) {
 				// Randomly get 2*3 packs and let the user choose among them.
 				// The choices are based on the first pick colors (we send all possibilties rather than waiting for user action).
-				const choices: [JHHBooster[], JHHBooster[][]] = [[], []];
-				if (set === "j21") {
-					choices[0] = getNDisctinctRandom(JumpstartHHBoosters, 3).map(generateJHHBooster);
-					const secondchoice: JHHBooster[][] = [];
-					for (let i = 0; i < 3; ++i) {
-						const candidates: JHHBoosterPattern[] = JumpstartHHBoosters.filter((p) => {
-							if (p.name === choices[0][i].name) return false; // Prevent duplicates
-							if (p.colors.length === 5) return true; // WUBRG can always be picked
-							// If first pack is mono-colored: Mono colored, Dual colored than contains the first pack's color, or WUBRG
-							if (choices[0][i].colors.length === 1) return p.colors.includes(choices[0][i].colors[0]);
-							// If first pack is dual-colored: Mono colored of one of these colors, Dual colored of the same colors, or WUBRG
-							return (
-								p.colors === choices[0][i].colors ||
-								(p.colors.length === 1 && choices[0][i].colors.includes(p.colors[0]))
-							);
-						});
-						console.log("first", choices[0][i].name, choices[0][i].colors, "; candidates:", candidates);
-						secondchoice.push(getNDisctinctRandom(candidates, 3).map(generateJHHBooster));
-					}
-					choices[1] = secondchoice;
-				} else if (JumpInSets.includes(set)) {
-					// https://mtg.fandom.com/wiki/Jump_In!
-					const Boosters = JumpInBoosters[set];
-					// At least one packet will be a mono-colored option and at least one will be a multicolored option. None of the three packets will have the same color identity as any other.
-					{
-						const first: JHHBoosterPattern[] = [];
-						const mono = Boosters.filter((p) => p.colors.length === 1);
-						const multi = Boosters.filter((p) => p.colors.length > 1);
-						first.push(getRandom(mono.length > 0 ? mono : Boosters));
-						first.push(getRandom(multi.length > 0 ? multi : Boosters));
-						first.push(
-							getRandom(
-								Boosters.filter(
-									(p) =>
-										!first.includes(p) &&
-										new Set(p.colors).difference(new Set(first[0].colors)).size > 0 &&
-										new Set(p.colors).difference(new Set(first[1].colors)).size > 0
-								)
-							)
-						);
-						choices[0] = first.map(generateJHHBooster);
-					}
-					for (let i = 0; i < 3; ++i) {
-						const firstColors = choices[0][i].colors;
-
-						const second: JHHBoosterPattern[] = [];
-						// Prevent duplicates
-						let mono = Boosters.filter((p) => p.colors.length === 1).filter(
-							(p) => p.name !== choices[0][i].name
-						);
-						if (mono.length === 0) mono = Boosters.filter((p) => p.name !== choices[0][i].name);
-						let multi = Boosters.filter((p) => p.colors.length > 1).filter(
-							(p) => p.name !== choices[0][i].name
-						);
-						if (multi.length === 0) multi = Boosters.filter((p) => p.name !== choices[0][i].name);
-
-						if (firstColors.length == 1) {
-							// At least one mono-color option and at least one multicolor option.
-							second.push(getRandom(mono));
-							// All multicolor options will include the color of the first packet.
-							multi = multi.filter((p) => p.colors.includes(firstColors[0]));
-							second.push(getRandom(multi));
-							second.push(getRandom([...mono, ...multi].filter((p) => !second.includes(p))));
-						} else if (firstColors.length == 2) {
-							// At least two mono-color options - one of each color in the first packet.
-							second.push(getRandom(mono.filter((p) => p.colors.includes(firstColors[0]))));
-							second.push(getRandom(mono.filter((p) => p.colors.includes(firstColors[1]))));
-							// If there is a multicolor option, either its colors will be the same as the first packet selected or it will contain both of those colors plus a third color.
-							multi = multi.filter(
-								(p) => p.colors.includes(firstColors[0]) && p.colors.includes(firstColors[1])
-							);
-							second.push(getRandom([...mono, ...multi].filter((p) => !second.includes(p))));
-						} else {
-							// At least two mono-color options, covering two of the three colors.
-							const pickedColors = getNDisctinctRandom(firstColors, 2);
-							second.push(getRandom(mono.filter((p) => p.colors.includes(pickedColors[0]))));
-							second.push(getRandom(mono.filter((p) => p.colors.includes(pickedColors[1]))));
-							// If there is a multicolor option, it will only contain colors within the first packet selection's color. Note - there are not currently any three-color packets available.
-							multi = multi.filter(
-								(p) =>
-									p.colors.includes(firstColors[0]) &&
-									p.colors.includes(firstColors[1]) &&
-									p.colors.includes(firstColors[2])
-							);
-							second.push(getRandom([...mono, ...multi].filter((p) => !second.includes(p))));
-						}
-						choices[1].push(second.map(generateJHHBooster));
-					}
-				} else {
-					choices[0] = getNDisctinctRandom(SuperJumpBoosters, 3).map(generateJHHBooster);
-					// Second choice does not depend on the first one in this case, but we'll keep the same interface for simplicity.
-					choices[1] = [];
-					const secondChoice = getNDisctinctRandom(SuperJumpBoosters, 3).map(generateJHHBooster);
-					for (let i = 0; i < 3; ++i) choices[1].push(secondChoice);
-				}
+				const choices =
+					set === "j21"
+						? genJHHPackChoices()
+						: JumpInSets.includes(set)
+							? genJumpInPackChoices(set)
+							: genSuperJumpPackChoices();
 				Connections[user].socket.emit("selectJumpstartPacks", choices, (user: UserID, cardIDs: CardID[]) => {
 					if (!this.draftLog) return;
 					updateLog(user, cardIDs);

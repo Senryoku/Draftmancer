@@ -2395,15 +2395,14 @@ describe("Sealed", function () {
 	});
 });
 
-import JumpstartBoosters from "../src/data/JumpstartBoosters.json" with { type: "json" };
-import Jumpstart2022Boosters from "../src/data/Jumpstart2022Boosters.json" with { type: "json" };
+import { JumpstartBoosters, Jumpstart2022Boosters } from "../src/Jumpstart.js";
 import { Card, CardColor, CardID, DeckList, UniqueCard } from "../src/CardTypes.js";
 import { SessionID, UserID } from "../src/IDTypes.js";
 import { SetCode } from "../src/Types.js";
 import { DraftState } from "../src/DraftState.js";
 import { ClientToServerEvents, ServerToClientEvents } from "../src/SocketType.js";
 import { Socket } from "socket.io-client";
-import { JHHBooster } from "../src/JumpstartHistoricHorizons.js";
+import { JumpInBooster } from "../src/JumpInTypes.js";
 import { parseLine } from "../src/parseCardList.js";
 import { SocketError, isSocketError } from "../src/Message.js";
 import { isNumber } from "../src/TypeChecks.js";
@@ -2526,7 +2525,10 @@ describe("Jumpstart: Historic Horizons", function () {
 	let clients: ReturnType<typeof makeClients> = [];
 	const sessionID = "JumpStartSession";
 	const userData: {
-		[id: string]: { packChoices: [JHHBooster[], JHHBooster[][]]; ack: (user: string, cards: string[]) => void };
+		[id: string]: {
+			packChoices: [JumpInBooster[], JumpInBooster[][]];
+			ack: (user: string, cards: string[]) => void;
+		};
 	} = {};
 
 	beforeEach(function (done) {
@@ -2598,7 +2600,7 @@ describe("Jump In!", function () {
 			const sessionID = "JumpInSession";
 			const userData: {
 				[id: string]: {
-					packChoices: [JHHBooster[], JHHBooster[][]];
+					packChoices: [JumpInBooster[], JumpInBooster[][]];
 					ack: (user: string, cards: string[]) => void;
 				};
 			} = {};
@@ -2671,7 +2673,10 @@ describe("Jumpstart: Super Jump!", function () {
 	let clients: ReturnType<typeof makeClients> = [];
 	const sessionID = "JumpStartSession";
 	const userData: {
-		[id: string]: { packChoices: [JHHBooster[], JHHBooster[][]]; ack: (user: string, cards: string[]) => void };
+		[id: string]: {
+			packChoices: [JumpInBooster[], JumpInBooster[][]];
+			ack: (user: string, cards: string[]) => void;
+		};
 	} = {};
 
 	beforeEach(function (done) {
