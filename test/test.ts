@@ -2395,8 +2395,8 @@ describe("Sealed", function () {
 	});
 });
 
-import JumpstartBoosters from "../src/data/JumpstartBoosters.json" assert { type: "json" };
-import Jumpstart2022Boosters from "../src/data/Jumpstart2022Boosters.json" assert { type: "json" };
+import JumpstartBoosters from "../src/data/JumpstartBoosters.json" with { type: "json" };
+import Jumpstart2022Boosters from "../src/data/Jumpstart2022Boosters.json" with { type: "json" };
 import { Card, CardColor, CardID, DeckList, UniqueCard } from "../src/CardTypes.js";
 import { SessionID, UserID } from "../src/IDTypes.js";
 import { SetCode } from "../src/Types.js";

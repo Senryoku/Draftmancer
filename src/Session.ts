@@ -47,22 +47,22 @@ import {
 	getBoosterFactory,
 } from "./BoosterFactory.js";
 import { isPaperBoosterFactoryAvailable, getPaperBoosterFactory } from "./PaperBoosterFactory.js";
-import JumpstartBoosters from "./data/JumpstartBoosters.json" assert { type: "json" };
-import Jumpstart2022Boosters from "./data/Jumpstart2022Boosters.json" assert { type: "json" };
-import JumpstartHHBoosters from "./data/JumpstartHHBoosters.json" assert { type: "json" };
-import SuperJumpBoosters from "./data/SuperJumpBoosters.json" assert { type: "json" };
+import JumpstartBoosters from "./data/JumpstartBoosters.json" with { type: "json" };
+import Jumpstart2022Boosters from "./data/Jumpstart2022Boosters.json" with { type: "json" };
+import JumpstartHHBoosters from "./data/JumpstartHHBoosters.json" with { type: "json" };
+import SuperJumpBoosters from "./data/SuperJumpBoosters.json" with { type: "json" };
 Object.freeze(JumpstartBoosters);
 Object.freeze(Jumpstart2022Boosters);
 Object.freeze(SuperJumpBoosters);
 
-import JumpInBLB from "./data/JumpInBoosters_blb.json" assert { type: "json" };
-import JumpInOTJ from "./data/JumpInBoosters_otj.json" assert { type: "json" };
-import JumpInMKM from "./data/JumpInBoosters_mkm.json" assert { type: "json" };
-import JumpInLCI from "./data/JumpInBoosters_lci.json" assert { type: "json" };
-import JumpInWOE from "./data/JumpInBoosters_woe.json" assert { type: "json" };
-import JumpInLTR from "./data/JumpInBoosters_ltr.json" assert { type: "json" };
-import JumpInONE from "./data/JumpInBoosters_one.json" assert { type: "json" };
-import JumpInBRO from "./data/JumpInBoosters_bro.json" assert { type: "json" };
+import JumpInBLB from "./data/JumpInBoosters_blb.json" with { type: "json" };
+import JumpInOTJ from "./data/JumpInBoosters_otj.json" with { type: "json" };
+import JumpInMKM from "./data/JumpInBoosters_mkm.json" with { type: "json" };
+import JumpInLCI from "./data/JumpInBoosters_lci.json" with { type: "json" };
+import JumpInWOE from "./data/JumpInBoosters_woe.json" with { type: "json" };
+import JumpInLTR from "./data/JumpInBoosters_ltr.json" with { type: "json" };
+import JumpInONE from "./data/JumpInBoosters_one.json" with { type: "json" };
+import JumpInBRO from "./data/JumpInBoosters_bro.json" with { type: "json" };
 const JumpInBoosters: Record<string, JHHBoosterPattern[]> = {
 	blb: JumpInBLB,
 	otj: JumpInOTJ,

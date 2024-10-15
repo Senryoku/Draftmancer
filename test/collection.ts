@@ -6,7 +6,7 @@ import { getCard } from "../src/Cards.js";
 import { Sessions } from "../src/Session.js";
 import { makeClients, enableLogs, disableLogs, waitForClientDisconnects, ackNoError, getUID } from "./src/common.js";
 
-import MTGACards from "../client/src/data/MTGACards.json" assert { type: "json" };
+import MTGACards from "../client/src/data/MTGACards.json" with { type: "json" };
 import { PlainCollection, UniqueCard } from "../src/CardTypes.js";
 
 describe("Collection Restriction", function () {
