@@ -50,6 +50,7 @@ import { isPaperBoosterFactoryAvailable, getPaperBoosterFactory } from "./PaperB
 import JumpstartBoosters from "./data/JumpstartBoosters.json" assert { type: "json" };
 import Jumpstart2022Boosters from "./data/Jumpstart2022Boosters.json" assert { type: "json" };
 import JumpstartHHBoosters from "./data/JumpstartHHBoosters.json" assert { type: "json" };
+import JumpIntoMiddleEarthBoosters from "./data/JumpIntoMiddleEarthBoosters.json" assert { type: "json" };
 import SuperJumpBoosters from "./data/SuperJumpBoosters.json" assert { type: "json" };
 Object.freeze(JumpstartBoosters);
 Object.freeze(Jumpstart2022Boosters);
@@ -3224,16 +3225,17 @@ export class Session implements IIndexable {
 		};
 
 		// Jumpstart: Historic Horizons
-		if (set === "j21" || set === "super") {
+		if (set === "j21" || set === "super" || set === "ltr") {
 			for (const user of this.users) {
 				// Randomly get 2*3 packs and let the user choose among them.
 				const choices: [JHHBooster[], JHHBooster[][]] = [[], []];
-				if (set === "j21") {
-					choices[0] = getNDisctinctRandom(JumpstartHHBoosters, 3).map(generateJHHBooster);
+				if (set === "j21" || set === "ltr") {
+					const Boosters = set === "j21" ? JumpstartHHBoosters : JumpIntoMiddleEarthBoosters;
+					choices[0] = getNDisctinctRandom(Boosters, 3).map(generateJHHBooster);
 					// The choices are based on the first pick colors (we send all possibilties rather than waiting for user action).
 					const secondchoice: JHHBooster[][] = [];
 					for (let i = 0; i < 3; ++i) {
-						const candidates: JHHBoosterPattern[] = JumpstartHHBoosters.filter((p) => {
+						const candidates: JHHBoosterPattern[] = Boosters.filter((p) => {
 							if (p.name === choices[0][i].name) return false; // Prevent duplicates
 							if (p.colors.length === 5) return true; // WUBRG can always be picked
 							// If first pack is mono-colored: Mono colored, Dual colored than contains the first pack's color, or WUBRG
