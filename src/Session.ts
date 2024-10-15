@@ -3249,14 +3249,13 @@ export class Session implements IIndexable {
 		if (set === "j21" || set === "super" || JumpInSets.includes(set)) {
 			for (const user of this.users) {
 				// Randomly get 2*3 packs and let the user choose among them.
+				// The choices are based on the first pick colors (we send all possibilties rather than waiting for user action).
 				const choices: [JHHBooster[], JHHBooster[][]] = [[], []];
-				if (set === "j21" || JumpInSets.includes(set)) {
-					const Boosters = set === "j21" ? JumpstartHHBoosters : JumpInBoosters[set];
-					choices[0] = getNDisctinctRandom(Boosters, 3).map(generateJHHBooster);
-					// The choices are based on the first pick colors (we send all possibilties rather than waiting for user action).
+				if (set === "j21") {
+					choices[0] = getNDisctinctRandom(JumpstartHHBoosters, 3).map(generateJHHBooster);
 					const secondchoice: JHHBooster[][] = [];
 					for (let i = 0; i < 3; ++i) {
-						const candidates: JHHBoosterPattern[] = Boosters.filter((p) => {
+						const candidates: JHHBoosterPattern[] = JumpstartHHBoosters.filter((p) => {
 							if (p.name === choices[0][i].name) return false; // Prevent duplicates
 							if (p.colors.length === 5) return true; // WUBRG can always be picked
 							// If first pack is mono-colored: Mono colored, Dual colored than contains the first pack's color, or WUBRG
@@ -3267,9 +3266,70 @@ export class Session implements IIndexable {
 								(p.colors.length === 1 && choices[0][i].colors.includes(p.colors[0]))
 							);
 						});
+						console.log("first", choices[0][i].name, choices[0][i].colors, "; candidates:", candidates);
 						secondchoice.push(getNDisctinctRandom(candidates, 3).map(generateJHHBooster));
 					}
 					choices[1] = secondchoice;
+				} else if (JumpInSets.includes(set)) {
+					// https://mtg.fandom.com/wiki/Jump_In!
+					const Boosters = JumpInBoosters[set];
+					// At least one packet will be a mono-colored option and at least one will be a multicolored option. None of the three packets will have the same color identity as any other.
+					const firstPatterns: JHHBoosterPattern[] = [];
+					firstPatterns.push(pickRandom(Boosters.filter((p) => p.colors.length === 1)));
+					firstPatterns.push(pickRandom(Boosters.filter((p) => p.colors.length > 1)));
+					firstPatterns.push(
+						pickRandom(
+							Boosters.filter(
+								(p) =>
+									!firstPatterns.includes(p) &&
+									new Set(p.colors).difference(new Set(firstPatterns[0].colors)).size > 0 &&
+									new Set(p.colors).difference(new Set(firstPatterns[1].colors)).size > 0
+							)
+						)
+					);
+
+					choices[0] = firstPatterns.map(generateJHHBooster);
+					for (let i = 0; i < 3; ++i) {
+						const first = choices[0][i];
+
+						const second: JHHBoosterPattern[] = [];
+
+						const rest = Boosters.filter((p) => p.name !== first.name); // Prevent duplicates
+						const mono = rest.filter((p) => p.colors.length === 1);
+						let multi = rest.filter((p) => p.colors.length > 1);
+
+						if (first.colors.length == 1) {
+							// At least one mono-color option and at least one multicolor option.
+							second.push(pickRandom(mono));
+							// All multicolor options will include the color of the first packet.
+							multi = multi.filter((p) => p.colors.includes(first.colors[0]));
+							second.push(pickRandom(multi));
+							second.push(pickRandom([...mono, ...multi].filter((p) => !second.includes(p))));
+						} else if (first.colors.length == 2) {
+							// At least two mono-color options - one of each color in the first packet.
+							second.push(pickRandom(mono.filter((p) => p.colors.includes(first.colors[0]))));
+							second.push(pickRandom(mono.filter((p) => p.colors.includes(first.colors[1]))));
+							// If there is a multicolor option, either its colors will be the same as the first packet selected or it will contain both of those colors plus a third color.
+							multi = multi.filter(
+								(p) => p.colors.includes(first.colors[0]) && p.colors.includes(first.colors[1])
+							);
+							second.push(pickRandom([...mono, ...multi].filter((p) => !second.includes(p))));
+						} else {
+							// At least two mono-color options, covering two of the three colors.
+							const colors = getNDisctinctRandom(first.colors, 2);
+							second.push(pickRandom(mono.filter((p) => p.colors.includes(colors[0]))));
+							second.push(pickRandom(mono.filter((p) => p.colors.includes(colors[1]))));
+							// If there is a multicolor option, it will only contain colors within the first packet selection's color. Note - there are not currently any three-color packets available.
+							multi = multi.filter(
+								(p) =>
+									p.colors.includes(first.colors[0]) &&
+									p.colors.includes(first.colors[1]) &&
+									p.colors.includes(first.colors[2])
+							);
+							second.push(pickRandom([...mono, ...multi].filter((p) => !second.includes(p))));
+						}
+						choices[1].push(second.map(generateJHHBooster));
+					}
 				} else {
 					choices[0] = getNDisctinctRandom(SuperJumpBoosters, 3).map(generateJHHBooster);
 					// Second choice does not depend on the first one in this case, but we'll keep the same interface for simplicity.
