@@ -95,17 +95,16 @@ export function genJumpInPackChoices(set: string): [JumpInBooster[], JumpInBoost
 		const mono = Boosters.filter((p) => p.colors.length === 1);
 		const multi = Boosters.filter((p) => p.colors.length > 1);
 		first.push(getRandom(mono.length > 0 ? mono : Boosters));
-		first.push(getRandom(multi.length > 0 ? multi : Boosters));
-		first.push(
-			getRandom(
-				Boosters.filter(
-					(p) =>
-						!first.includes(p) &&
-						new Set(p.colors).difference(new Set(first[0].colors)).size > 0 &&
-						new Set(p.colors).difference(new Set(first[1].colors)).size > 0
-				)
-			)
-		);
+		first.push(getRandom(multi.length > 0 ? multi : Boosters.filter((p) => p.name !== first[0].name)));
+		const thirdChoice = Boosters.filter((p) => {
+			const colors = new Set(p.colors);
+			return (
+				!first.includes(p) &&
+				colors.intersection(new Set(first[0].colors)).size !== colors.size &&
+				colors.intersection(new Set(first[1].colors)).size !== colors.size
+			);
+		});
+		first.push(getRandom(thirdChoice.length > 0 ? thirdChoice : Boosters.filter((p) => !first.includes(p))));
 		choices[0] = first.map(generateJumpInBooster);
 	}
 	for (let i = 0; i < 3; ++i) {
@@ -127,8 +126,10 @@ export function genJumpInPackChoices(set: string): [JumpInBooster[], JumpInBoost
 			second.push(getRandom([...mono, ...multi].filter((p) => !second.includes(p))));
 		} else if (firstColors.length == 2) {
 			// At least two mono-color options - one of each color in the first packet.
-			second.push(getRandom(mono.filter((p) => p.colors.includes(firstColors[0]))));
-			second.push(getRandom(mono.filter((p) => p.colors.includes(firstColors[1]))));
+			const one = mono.filter((p) => p.colors.includes(firstColors[0]));
+			second.push(getRandom(one.length > 0 ? one : mono));
+			const two = mono.filter((p) => p.name !== second[0].name && p.colors.includes(firstColors[1]));
+			second.push(getRandom(two.length > 0 ? two : mono));
 			// If there is a multicolor option, either its colors will be the same as the first packet selected or it will contain both of those colors plus a third color.
 			multi = multi.filter((p) => p.colors.includes(firstColors[0]) && p.colors.includes(firstColors[1]));
 			second.push(getRandom([...mono, ...multi].filter((p) => !second.includes(p))));
