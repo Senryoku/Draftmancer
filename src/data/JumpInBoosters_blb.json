@@ -1,0 +1,723 @@
+[
+    {
+        "name": "Bats",
+        "colors": [
+            "W",
+            "B"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/6/b/6b2f6dc5-9fe8-49c1-b24c-1d99ce1da619.jpg?1721427196",
+        "cards": [
+            "6b2f6dc5-9fe8-49c1-b24c-1d99ce1da619",
+            "35f2a71f-31e8-4b51-9dd4-51a5336b3b86",
+            "a50da179-751f-47a8-a547-8c4a291ed381",
+            "184c1eca-2991-438f-b5d2-cd2529b9c9b4",
+            "742c0409-9abd-4559-b52e-932cc90c531a",
+            "d90ea719-5320-46c6-a347-161853a14776",
+            "59e4aa8d-1d06-48db-b205-aa2f1392bbcb",
+            "aaced75b-6e07-457c-8ea2-f74d99710d15"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Zoraline, Cosmos Caller",
+                    "id": "b7f99fd5-5298-4b27-923d-9d31203c931a",
+                    "weight": 50
+                },
+                {
+                    "name": "Lunar Convocation",
+                    "id": "a9ee50d4-c878-457b-964d-29c039ce9852",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Lifecreed Duo",
+                    "id": "ca543405-5e12-48a0-9a77-082ac9bcb2f2",
+                    "weight": 50
+                },
+                {
+                    "name": "Agate-Blade Assassin",
+                    "id": "39ebb84a-1c52-4b07-9bd0-b360523b3a5b",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Star Charter",
+                    "id": "0e209237-00f7-4bf0-8287-ccde02ce8e8d",
+                    "weight": 50
+                },
+                {
+                    "name": "Glidedive Duo",
+                    "id": "4831e7ae-54e3-4bd9-b5af-52dc29f81715",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Sinister Monolith",
+                    "id": "2a15e06c-2608-4e7a-a16c-d35417669d86",
+                    "weight": 50
+                },
+                {
+                    "name": "Stargaze",
+                    "id": "777fc599-8de7-44d2-8fdd-9bddf5948a0c",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Otters",
+        "colors": [
+            "U",
+            "R"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/9/9/99754055-6d67-4fde-aff3-41f6af6ea764.jpg?1721427197",
+        "cards": [
+            "99754055-6d67-4fde-aff3-41f6af6ea764",
+            "3ff83ff7-e428-4ccc-8341-f223dab76bd1",
+            "7392d397-9836-4df2-944d-c930c9566811",
+            "dc2c1de0-6233-469a-be72-a050b97d2c8f",
+            "b56beeb6-88ca-475e-8654-1d4e8b4aa3c0",
+            "2f373dd6-2412-453c-85ba-10230dfe473a",
+            "b6178258-1ad6-4122-a56f-6eb7d0611e84",
+            "aaced75b-6e07-457c-8ea2-f74d99710d15"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Alania, Divergent Storm",
+                    "id": "436d6a84-4cea-4ca7-94aa-9d08280652af",
+                    "weight": 40
+                },
+                {
+                    "name": "Festival of Embers",
+                    "id": "4433ee12-2013-4fdc-979f-ae065f63a527",
+                    "weight": 40
+                },
+                {
+                    "name": "Ral, Crackling Wit",
+                    "id": "acfde780-899a-4c5b-a39b-f4a3ff129103",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Agate Assault",
+                    "id": "7dd9946b-515e-4e0d-9da2-711e126e9fa6",
+                    "weight": 50
+                },
+                {
+                    "name": "Dazzling Denial",
+                    "id": "8739f1ac-2e57-4b52-a7ff-cc8df5936aad",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Daring Waverider",
+                    "id": "19422406-0c1a-497e-bed1-708bc556491a",
+                    "weight": 50
+                },
+                {
+                    "name": "Eddymurk Crab",
+                    "id": "e6d45abe-4962-47d9-a54e-7e623ea8647c",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Kindlespark Duo",
+                    "id": "a839fba3-1b66-4dd1-bf43-9b015b44fc81",
+                    "weight": 50
+                },
+                {
+                    "name": "Tempest Angler",
+                    "id": "850daae4-f0b7-4604-95e7-ad044ec165c3",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Squirrels",
+        "colors": [
+            "B",
+            "G"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/2/9/29b615ba-45c4-42a1-8525-1535f0b55300.jpg?1721427225",
+        "cards": [
+            "29b615ba-45c4-42a1-8525-1535f0b55300",
+            "c911a759-ed7b-452b-88a3-663478357610",
+            "82defb87-237f-4b77-9673-5bf00607148f",
+            "e16d4d6e-1fe5-4ff6-9877-8c849a24f5e0",
+            "dfd977dc-a7c3-4d0a-aca7-b25bd154e963",
+            "7e017ff8-2936-4a1b-bece-00004cfbad06",
+            "bc5ee537-52e1-474a-9326-dfacc2a758ab",
+            "aaced75b-6e07-457c-8ea2-f74d99710d15"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Camellia, the Seedmiser",
+                    "id": "2c16eaec-924c-42f6-9fea-07edd7ed93b9",
+                    "weight": 40
+                },
+                {
+                    "name": "Osteomancer Adept",
+                    "id": "7d8238dd-858f-466c-96de-986bd66861d7",
+                    "weight": 40
+                },
+                {
+                    "name": "Ygra, Eater of All",
+                    "id": "b9ac7673-eae8-4c4b-889e-5025213a6151",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Bonebind Orator",
+                    "id": "faf226fa-ca09-4468-8804-87b2a7de2c66",
+                    "weight": 50
+                },
+                {
+                    "name": "Daggerfang Duo",
+                    "id": "cea2bb34-e328-44fb-918a-72208c9457e4",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Wick's Patrol",
+                    "id": "5fa0c53d-fe7b-4b8b-ad81-7967ca318ff7",
+                    "weight": 50
+                },
+                {
+                    "name": "Downwind Ambusher",
+                    "id": "55cfd628-933a-4d3d-b2e5-70bc86960d1c",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Bushy Bodyguard",
+                    "id": "0de60cf7-fa82-4b6f-9f88-6590fba5c863",
+                    "weight": 50
+                },
+                {
+                    "name": "Curious Forager",
+                    "id": "64653b4a-e139-45f9-a915-ab49afb6b795",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Mice",
+        "colors": [
+            "W",
+            "R"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/d/2/d21c3e41-0636-49a3-8c9c-384c5e5c9c3e.jpg?1721427185",
+        "cards": [
+            "d21c3e41-0636-49a3-8c9c-384c5e5c9c3e",
+            "3db43c46-b616-4ef8-80ed-0fab345ab3d0",
+            "b8dd4693-424d-4d6e-86cf-24401a23d6b1",
+            "e200b8bf-f2f3-4157-8e04-02baf07a963e",
+            "97ff118f-9c3c-43a2-8085-980c7fe7d227",
+            "5cfcf83f-089c-4e35-855e-b61b98bb1cd8",
+            "48ace959-66b2-40c8-9bff-fd7ed9c99a82",
+            "aaced75b-6e07-457c-8ea2-f74d99710d15"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Mabel, Heir to Cragflame",
+                    "id": "be6627fd-729d-44f2-b6bf-5299f49d1e3d",
+                    "weight": 50
+                },
+                {
+                    "name": "Manifold Mouse",
+                    "id": "db3832b5-e83f-4569-bd49-fb7b86fa2d47",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Whiskerquill Scribe",
+                    "id": "da653996-9bd4-40bd-afb4-48c7e070a269",
+                    "weight": 50
+                },
+                {
+                    "name": "Thistledown Players",
+                    "id": "afa8d83f-8586-4127-8b55-9715e9547488",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "War Squeak",
+                    "id": "105964a7-88b7-4340-aa66-e908189a3638",
+                    "weight": 50
+                },
+                {
+                    "name": "Feather of Flight",
+                    "id": "9fb41503-8632-4bf1-9bfe-6d9b9993c337",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Short Bow",
+                    "id": "51d8b72b-fa8f-48d3-bddc-d3ce9b8ba2ea",
+                    "weight": 50
+                },
+                {
+                    "name": "Blacksmith's Talent",
+                    "id": "4bb318fa-481d-40a7-978e-f01b49101ae0",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Frogs",
+        "colors": [
+            "U",
+            "G"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/6/4/64de7b1f-a03e-4407-91f1-e108a2f26735.jpg?1721427132",
+        "cards": [
+            "64de7b1f-a03e-4407-91f1-e108a2f26735",
+            "fb959e74-61ea-453d-bb9f-ad0183c0e1b1",
+            "7c267719-cd03-4003-b281-e732d5e42a1e",
+            "ea2ca1b3-4c1a-4be5-b321-f57db5ff0528",
+            "09c8cf4b-8e65-4a1c-b458-28b5ab56b390",
+            "7740abc5-54e1-478d-966e-0fa64e727995",
+            "b5fa9651-b217-4f93-9c46-9bdb11feedcb",
+            "6bc4963c-d90b-4588-bdb7-85956e42a623"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Clement, the Worrywort",
+                    "id": "7028130c-c91d-4bf7-b0b0-450f71107d7a",
+                    "weight": 50
+                },
+                {
+                    "name": "Dreamdew Entrancer",
+                    "id": "26bd6b0d-8606-4a37-8be3-a852f1a8e99c",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Bellowing Crier",
+                    "id": "ca2215dd-6300-49cf-b9b2-3a840b786c31",
+                    "weight": 50
+                },
+                {
+                    "name": "Waterspout Warden",
+                    "id": "35898b39-98e2-405b-8f18-0e054bd2c29e",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Splash Lasher",
+                    "id": "362ee125-35a0-46cd-a201-e6797d12d33a",
+                    "weight": 50
+                },
+                {
+                    "name": "Run Away Together",
+                    "id": "7cb7ec70-a5a4-4188-ba1a-e88b81bdbad0",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Skyskipper Duo",
+                    "id": "d6844bad-ffbe-4c6e-b438-08562eccea52",
+                    "weight": 50
+                },
+                {
+                    "name": "Treeguard Duo",
+                    "id": "89c8456e-c971-42b7-abf3-ff5ae1320abe",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Rabbits",
+        "colors": [
+            "W"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/4/1/41762689-0c13-4d45-9d81-ba2afad980f8.jpg?1721425845",
+        "cards": [
+            "41762689-0c13-4d45-9d81-ba2afad980f8",
+            "ee7207f8-5daa-42af-aeea-7a489047110b",
+            "15fa581a-724e-4196-a9a3-ff84c54bdb7d",
+            "c4ded450-346d-4917-917a-b62bc0267509",
+            "4bf20069-5a20-4f95-976b-6af2b69f3ad0",
+            "25a06f82-ebdb-4dd6-bfe8-958018ce557c",
+            "eb03bb4f-8b4b-417e-bfc6-294cd2186b2e",
+            "a8a982c8-bc08-44ba-b3ed-9e4b124615d6"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Valley Questcaller",
+                    "id": "ba629ca8-a368-4282-8a61-9bf6a5c217f0",
+                    "weight": 40
+                },
+                {
+                    "name": "Caretaker's Talent",
+                    "id": "ad5ea98a-e36e-4ab9-b4da-cc572f3777db",
+                    "weight": 40
+                },
+                {
+                    "name": "Warren Warleader",
+                    "id": "eb5237a0-5ac3-4ded-9f92-5f782a7bbbd7",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Seasoned Warrenguard",
+                    "id": "90873995-876f-4e89-8bc7-41a74f4d931f",
+                    "weight": 50
+                },
+                {
+                    "name": "Lifecreed Duo",
+                    "id": "ca543405-5e12-48a0-9a77-082ac9bcb2f2",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Intrepid Rabbit",
+                    "id": "4d70b99d-c8bf-4a56-8957-cf587fe60b81",
+                    "weight": 50
+                },
+                {
+                    "name": "Shrike Force",
+                    "id": "306fec2c-d8b7-4f4b-8f58-10e3b9f3158f",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Driftgloom Coyote",
+                    "id": "d7ab2de3-3aea-461a-a74f-fb742cf8a198",
+                    "weight": 50
+                },
+                {
+                    "name": "Repel Calamity",
+                    "id": "d068192a-6270-4981-819d-4945fa4a2b83",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Rats",
+        "colors": [
+            "B"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/c/9/c96ac326-de44-470b-a592-a4c2a052c091.jpg?1721426418",
+        "cards": [
+            "c96ac326-de44-470b-a592-a4c2a052c091",
+            "485dc8d8-9e44-4a0f-9ff6-fa448e232290",
+            "42e80284-d489-493b-ae92-95b742d07cb3",
+            "42f66c4a-feaa-4ba6-aa56-955b43329a9e",
+            "c7f4360c-8d68-4058-b9ec-da9948cb060d",
+            "ed2f61d7-4eb0-41c5-8a34-a0793c2abc51",
+            "9ae14276-dbbd-4257-80e9-accd6c19f5b2",
+            "df900308-8432-4a0a-be21-17482026012b"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Cruelclaw's Heist",
+                    "id": "cab4539a-0157-4cbe-b50f-6e2575df74e9",
+                    "weight": 40
+                },
+                {
+                    "name": "Coiling Rebirth",
+                    "id": "96d5de3e-0440-4dd1-899c-ab40c0752343",
+                    "weight": 40
+                },
+                {
+                    "name": "Rottenmouth Viper",
+                    "id": "735e79b1-a3a9-4ddf-8bbc-f756c8a0452b",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Agate-Blade Assassin",
+                    "id": "39ebb84a-1c52-4b07-9bd0-b360523b3a5b",
+                    "weight": 50
+                },
+                {
+                    "name": "Bonebind Orator",
+                    "id": "faf226fa-ca09-4468-8804-87b2a7de2c66",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Ravine Raider",
+                    "id": "874510be-7ecd-4eff-abad-b9594eb4821a",
+                    "weight": 50
+                },
+                {
+                    "name": "Nezumi Informant",
+                    "id": "e36fbff8-471e-4cf8-8946-e1e5cdf598af",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Consumed by Greed",
+                    "id": "e50acc41-3517-42db-b1d3-1bdfd7294d84",
+                    "weight": 50
+                },
+                {
+                    "name": "Polygraph Orb",
+                    "id": "a6cc4c6f-4a84-4d42-89fa-7405f7ad6ba0",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Lizards",
+        "colors": [
+            "B",
+            "R"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/8/1/81dec453-c9d7-42cb-980a-c82f82bede76.jpg?1721426690",
+        "cards": [
+            "81dec453-c9d7-42cb-980a-c82f82bede76",
+            "d3871fe6-e26e-4ab4-bd81-7e3c7b8135c1",
+            "78cdcfb9-a247-4c2d-a098-5b57570f8cd5",
+            "fb8e7c97-8393-41b8-bb0b-3983dcc5e7f4",
+            "674bbd6d-e329-42cf-963d-88d1ce8fe51e",
+            "2f815bae-820a-49f6-8eed-46f658e7b6ff",
+            "6d963080-b3ec-467d-82f7-39db6ecd6bbc",
+            "c2ed5079-07b4-4575-a2c8-5f0cbff888c3"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Hearthborn Battler",
+                    "id": "bef1cf5c-9738-4062-8cb1-87a372d36687",
+                    "weight": 40
+                },
+                {
+                    "name": "Valley Flamecaller",
+                    "id": "a0812db4-b7d1-4cf7-aaa5-9c0e784079a1",
+                    "weight": 40
+                },
+                {
+                    "name": "Dragonhawk, Fate's Tempest",
+                    "id": "8659789c-6a2c-439f-a348-b9b1b06c55b8",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Quaketusk Boar",
+                    "id": "2f2b7fd3-a139-49ea-8a89-b64261e868ef",
+                    "weight": 50
+                },
+                {
+                    "name": "Teapot Slinger",
+                    "id": "30506844-349f-4b68-8cc1-d028c1611cc7",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Raccoon Rallier",
+                    "id": "b5b5180f-5a1c-4df8-9019-195e65a50ce3",
+                    "weight": 50
+                },
+                {
+                    "name": "Steampath Charger",
+                    "id": "03bf1296-e347-4070-8c6f-5c362c2f9364",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Blooming Blast",
+                    "id": "0cd92a83-cec3-4085-a929-3f204e3e0140",
+                    "weight": 50
+                },
+                {
+                    "name": "Playful Shove",
+                    "id": "07956edf-34c1-4218-9784-ddbca13e380c",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Threshold",
+        "colors": [
+            "U"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/f/c/fcacbe71-efb0-49e1-b2d0-3ee65ec6cf8b.jpg?1721426291",
+        "cards": [
+            "fcacbe71-efb0-49e1-b2d0-3ee65ec6cf8b",
+            "aaa10f34-5bfd-4d87-8f07-58de3b0f5663",
+            "0928e04f-2568-41e8-b603-7a25cf5f94d0",
+            "ca2215dd-6300-49cf-b9b2-3a840b786c31",
+            "44b0d83b-cc41-4f82-892c-ef6d3293228a",
+            "2f00c834-b4a9-45b8-bb3f-22c2a42314a0",
+            "d5bf8cf0-419a-4dc9-9342-aad55c1af05a",
+            "4dc3b49e-3674-494c-bdea-4374cefd10f4"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Spellgyre",
+                    "id": "f6f6620a-1d40-429d-9a0c-aaeb62adaa71",
+                    "weight": 50
+                },
+                {
+                    "name": "Long River's Pull",
+                    "id": "1c81d0fa-81a1-4f9b-a5fd-5a648fd01dea",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Portent of Calamity",
+                    "id": "8599e2dd-9164-4da3-814f-adccef3b9497",
+                    "weight": 40
+                },
+                {
+                    "name": "Azure Beastbinder",
+                    "id": "211af1bf-910b-41a5-b928-f378188d1871",
+                    "weight": 40
+                },
+                {
+                    "name": "Kitsa, Otterball Elite",
+                    "id": "c8ff751a-ec64-41d5-b22c-2a483ad9a9b2",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Dire Downdraft",
+                    "id": "f1931f22-974c-43ad-911e-684bf3f9995d",
+                    "weight": 50
+                },
+                {
+                    "name": "Plumecreed Escort",
+                    "id": "f71320ed-2f30-49ce-bcb0-19aebba3f0e8",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Sterling Hound",
+                    "id": "9e5bfcf5-6e5c-47fe-af6c-6b18938261c6",
+                    "weight": 50
+                },
+                {
+                    "name": "Ephara's Dispersal",
+                    "id": "b622aad1-4f57-472e-9bd8-9404da88d6be",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Exploring",
+        "colors": [
+            "G"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/5/8/58706bd8-558a-43b9-9f1e-c1ff0044203b.jpg?1721426814",
+        "cards": [
+            "58706bd8-558a-43b9-9f1e-c1ff0044203b",
+            "821970a3-a291-4fe9-bb13-dfc54f9c3caf",
+            "582637a9-6aa0-4824-bed7-d5fc91bda35e",
+            "e9a31863-9649-4a4f-99e4-c93729938bd7",
+            "d1ab6e14-26e0-4174-b5c6-bc0f5c26b177",
+            "3b5349db-0e0a-4b15-886e-0db403ef49cb",
+            "b82c20ad-0f69-4822-ae76-770832cccdf7",
+            "5f72466c-505b-4371-9366-0fde525a37e6"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Tender Wildguide",
+                    "id": "6b8bfa91-adb0-4596-8c16-d8bb64fdb26d",
+                    "weight": 40
+                },
+                {
+                    "name": "Fecund Greenshell",
+                    "id": "80b3e815-0e2e-4325-b1d5-5531b7b92da6",
+                    "weight": 40
+                },
+                {
+                    "name": "Lumra, Bellow of the Woods",
+                    "id": "ae4f3aaf-3960-48cd-b34b-32e4ae5ae088",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Clifftop Lookout",
+                    "id": "662d3bcc-65f3-4c69-8ea1-446870a1193d",
+                    "weight": 50
+                },
+                {
+                    "name": "Brambleguard Veteran",
+                    "id": "bac9f6f8-6797-4580-9fc4-9a825872e017",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Stickytongue Sentinel",
+                    "id": "b5fa9651-b217-4f93-9c46-9bdb11feedcb",
+                    "weight": 50
+                },
+                {
+                    "name": "Bakersbane Duo",
+                    "id": "5309354f-1ff4-4fa9-9141-01ea2f7588ab",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Rust-Shield Rampager",
+                    "id": "c96b01f5-83de-4237-a68d-f946c53e31a6",
+                    "weight": 50
+                },
+                {
+                    "name": "Treeguard Duo",
+                    "id": "89c8456e-c971-42b7-abf3-ff5ae1320abe",
+                    "weight": 50
+                }
+            ]
+        ]
+    }
+]

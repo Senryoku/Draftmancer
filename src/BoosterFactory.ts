@@ -113,7 +113,7 @@ class ColorBalancedSlotCache {
 	}
 }
 
-import TheListMKM from "./data/TheList/MKM_TheList.json" assert { type: "json" };
+import TheListMKM from "./data/TheList/MKM_TheList.json" with { type: "json" };
 
 const TheList = {
 	mkm: TheListMKM,
@@ -1371,7 +1371,7 @@ class ONEBoosterFactory extends BoosterFactory {
 
 // Shadows over Innistrad Remastered (SIR)
 // One card from a rotating bonus sheet in each booster
-import ShadowOfThePastLists from "./data/shadow_of_the_past.json" assert { type: "json" };
+import ShadowOfThePastLists from "./data/shadow_of_the_past.json" with { type: "json" };
 
 class SIRBoosterFactory extends BoosterFactory {
 	bonusSheet: SlotedCardPool = {
@@ -2497,7 +2497,7 @@ class DSKBoosterFactory extends BoosterFactory {
 	}
 }
 
-import MB2PlistCards from "../data/mb2.json" assert { type: "json" };
+import MB2PlistCards from "../data/mb2.json" with { type: "json" };
 
 // Mystery Booster 2
 //   10 Commons or uncommons

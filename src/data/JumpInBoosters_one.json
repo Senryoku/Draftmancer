@@ -1,0 +1,747 @@
+[
+    {
+        "name": "Compleat",
+        "colors": [
+            "W"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/b/0/b00ea7bb-705b-4669-bb2a-560bed04b14a.jpg?1675956910",
+        "cards": [
+            "b00ea7bb-705b-4669-bb2a-560bed04b14a",
+            "04baad61-1b51-4602-9e33-0de4a9f34793",
+            "134aecf0-dc48-4fb3-8c8b-4e5272077856",
+            "0409bacf-b728-473d-bf9b-41fdf364e783",
+            "d051bfc7-b402-444d-896e-c3a9562cdb0d",
+            "81ef3cfa-63e6-4450-af65-da7f05d13cf3",
+            "0da03224-c1af-438f-96c2-b0e41e1070b7",
+            "985d1b57-42e0-41a2-a9c6-2f5427c0c1c9"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Crawling Chorus",
+                    "id": "aace4c44-7250-414b-aac4-df042a1e2e1d",
+                    "weight": 50
+                },
+                {
+                    "name": "Sinew Dancer",
+                    "id": "ebad4fcc-4f78-48dc-b236-c78c22edc1e9",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Incisor Glider",
+                    "id": "b3cf4c4f-bda6-454c-991d-429c0dca0e85",
+                    "weight": 50
+                },
+                {
+                    "name": "Duelist of Deep Faith",
+                    "id": "56444440-a9e6-4583-a289-9f0571a98093",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Norn's Wellspring",
+                    "id": "eeebc0ab-89fb-47d5-a20f-8f1fe5e3c149",
+                    "weight": 80
+                },
+                {
+                    "name": "Elesh Norn, Mother of Machines",
+                    "id": "44dcab01-1d13-4dfc-ae2f-fbaa3dd35087",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Compleat Devotion",
+                    "id": "2bb29a69-3e42-4268-8026-f01072d7b56c",
+                    "weight": 50
+                },
+                {
+                    "name": "Charge of the Mites",
+                    "id": "42060b9d-de58-485e-817a-1e64839943aa",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Science",
+        "colors": [
+            "U"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/3/0/30225e40-4bde-4e2e-b0f0-48ed16aebafd.jpg?1675956999",
+        "cards": [
+            "611497d2-83df-4c69-bbeb-6a807c686bc4",
+            "95a7e5ff-ba81-4b45-933e-0ac747525ab8",
+            "30225e40-4bde-4e2e-b0f0-48ed16aebafd",
+            "f912c4ec-08e9-4524-a2ba-98f6dfabdc18",
+            "bad0e96a-b4cc-4439-aab9-731a1036145d",
+            "272c9888-ef13-4d47-a4bc-f5239b357a1b",
+            "dac28e27-78aa-48b1-96fa-edca1fbcfb77",
+            "86382685-e54c-4152-a500-2148a2d6b5a4"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Unctus, Grand Metatect",
+                    "id": "164b07e6-48ba-4789-bd8f-7cada1fec8a9",
+                    "weight": 80
+                },
+                {
+                    "name": "Jace, the Perfected Mind",
+                    "id": "64e6a8d1-ae75-45bd-af62-9a622620cb5c",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Chrome Prowler",
+                    "id": "a94378a2-cbde-4adf-b889-43e90fc6ba28",
+                    "weight": 50
+                },
+                {
+                    "name": "Eye of Malcator",
+                    "id": "7cc4246b-ff59-44b2-acff-c0bb6e4cd6ac",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Surgical Skullbomb",
+                    "id": "98c2b2af-739f-413c-8c36-da6f78df0acb",
+                    "weight": 50
+                },
+                {
+                    "name": "Prophetic Prism",
+                    "id": "3056ac38-7630-4301-88bb-a012a5b186ed",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Tamiyo's Logbook",
+                    "id": "0edb2d01-9a94-410c-8ab7-ca1b404ab5f0",
+                    "weight": 50
+                },
+                {
+                    "name": "Mysterious Tome // Chilling Chronicle",
+                    "id": "caa57b63-bb11-45e8-8795-de92ca61f4f1",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Cutthroat",
+        "colors": [
+            "B"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/7/2/72af72d2-5995-4cad-82f1-e2d0c465d6f1.jpg?1675957036",
+        "cards": [
+            "b3890961-d636-4ccc-9c42-2088a8531c9b",
+            "cdbbcbe1-5317-455e-8d71-a4e2ad0addfc",
+            "a5424859-628a-4c19-acd0-0c63c21c8338",
+            "72af72d2-5995-4cad-82f1-e2d0c465d6f1",
+            "20a961ea-0639-4f5d-8cf4-f909c59a4ae1",
+            "be5d0b95-ec12-4e8e-99a0-7aca457f9107",
+            "bf148ef4-0ed7-4fbe-8ab6-01dd3981c8d3",
+            "90183d4d-c231-4e45-b1fc-2699b33a3733"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Dross Skullbomb",
+                    "id": "66270dd2-9139-4329-9621-852962836688",
+                    "weight": 50
+                },
+                {
+                    "name": "Persistent Specimen",
+                    "id": "f7baf973-3202-4fea-8861-a4a5ec228640",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Blightbelly Rat",
+                    "id": "9255cd01-a611-4fec-b9ec-b271687740ba",
+                    "weight": 50
+                },
+                {
+                    "name": "Fleshless Gladiator",
+                    "id": "0b2a32c9-f0ae-4ae4-a5c5-72bea05018fb",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Vraan, Executioner Thane",
+                    "id": "4c4a3119-c70a-46ff-8ede-6356f2b7bc13",
+                    "weight": 80
+                },
+                {
+                    "name": "Drivnod, Carnage Dominus",
+                    "id": "6bc26bca-c4d8-4e8b-a96a-9529fc2daed7",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Nimraiser Paladin",
+                    "id": "a99fe9a8-d9e7-4286-81a1-adfb753e4741",
+                    "weight": 50
+                },
+                {
+                    "name": "Vat Emergence",
+                    "id": "3a2aeaeb-7853-4588-8a5e-cfd997ba8515",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Oily",
+        "colors": [
+            "R"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/a/6/a6e8d7b9-ff5e-48ae-9e38-d2b6a45b119b.jpg?1675957080",
+        "cards": [
+            "a6e8d7b9-ff5e-48ae-9e38-d2b6a45b119b",
+            "c9b3b785-396e-4240-bfa3-58ab53497686",
+            "f7155c42-a824-4bbe-9f7a-fa01e7625fd6",
+            "b3ef034f-37e5-4baa-a7a9-5fd0de792535",
+            "aa625ab0-1e79-4497-a5da-98fe1abfd024",
+            "0c117239-8e40-4e7e-ab1b-82f2ddf55cf4",
+            "73d74045-cc9b-4b01-bc5f-0f2eb4b01580",
+            "f8532b98-b69e-4d43-9ec8-0587572a0dff"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Shrapnel Slinger",
+                    "id": "a6147bdc-4e02-48be-9ab9-c212f70d9194",
+                    "weight": 50
+                },
+                {
+                    "name": "Chimney Rabble",
+                    "id": "5668699d-8df8-426b-a04a-99cfe55e570b",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Magmatic Sprinter",
+                    "id": "2e6af42f-35ec-432f-9879-2a0fb938a9f6",
+                    "weight": 50
+                },
+                {
+                    "name": "Ichorplate Golem",
+                    "id": "e555abb1-ffd4-4143-9be8-ec8a758f5c2a",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Free from Flesh",
+                    "id": "2c83600d-ea4d-4219-8dbb-34c4215a2005",
+                    "weight": 50
+                },
+                {
+                    "name": "Blazing Crescendo",
+                    "id": "d6bfc16a-2871-40a4-b279-636b80491a06",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Urabrask's Forge",
+                    "id": "68f9f9d8-9ea0-4608-a79c-a09a87918186",
+                    "weight": 80
+                },
+                {
+                    "name": "All Will Be One",
+                    "id": "6d75e1f4-bd63-428e-8e6e-131594b3ba44",
+                    "weight": 20
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Venom",
+        "colors": [
+            "G"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/8/5/85ad30a1-3ecc-42ca-afe8-85df5bad9196.jpg?1680795489",
+        "cards": [
+            "6b71fd8f-e688-4210-bc5b-a3f19b5b3497",
+            "e5290a4c-1f98-4e97-a407-f951e386b8b0",
+            "f8855fbf-4f1e-4c44-9653-bbbfc3f2fafd",
+            "85ad30a1-3ecc-42ca-afe8-85df5bad9196",
+            "157cf43c-f7f2-4362-bfc8-11682e94b747",
+            "758dbe61-6dc7-4b08-bdd6-7262257955fc",
+            "83dfb2a5-cd5c-46c6-9bb8-7c5d00f3e003",
+            "a902d474-0d02-449e-ab6c-8c2f32c99384"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Bloated Contaminator",
+                    "id": "411bda96-6c65-475d-9850-0a9b3eefa553",
+                    "weight": 80
+                },
+                {
+                    "name": "Tyrranax Rex",
+                    "id": "0fb52b44-da5f-4f7a-a6c2-7924b855e051",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Venomous Brutalizer",
+                    "id": "dd9df44a-a0ab-435f-914c-aa11cd88f4ec",
+                    "weight": 50
+                },
+                {
+                    "name": "Unnatural Restoration",
+                    "id": "4d4e6a91-59cc-4f7f-af25-16acabdafb1a",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Thirsting Roots",
+                    "id": "75a4a340-453b-471a-82ba-48ebf20b271a",
+                    "weight": 50
+                },
+                {
+                    "name": "Carnivorous Canopy",
+                    "id": "7b43ba43-f7ae-4e00-b797-2360c3ccd839",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Maze's Mantle",
+                    "id": "bc79106b-9aa2-4add-b9ca-e3c7aafd9821",
+                    "weight": 50
+                },
+                {
+                    "name": "Gaea's Gift",
+                    "id": "5503186a-46fe-4956-8ae3-5ab3343f8a93",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Corrupted",
+        "colors": [
+            "W",
+            "B"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/e/0/e0328d43-ae9b-462a-a1e5-8ed408eea1a7.jpg?1675957014",
+        "cards": [
+            "aace4c44-7250-414b-aac4-df042a1e2e1d",
+            "56444440-a9e6-4583-a289-9f0571a98093",
+            "134aecf0-dc48-4fb3-8c8b-4e5272077856",
+            "e0328d43-ae9b-462a-a1e5-8ed408eea1a7",
+            "626c46a3-72b8-4e04-adf2-c9c7aaf94f04",
+            "f7dc55a8-290f-4666-90ce-aa632e87c5e7",
+            "8f0b3308-9c0b-4461-9094-38deec20e1bc"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Skrelv's Hive",
+                    "id": "ffbd77ec-fc81-41d5-934f-c3dd844cb053",
+                    "weight": 60
+                },
+                {
+                    "name": "Ria Ivor, Bane of Bladehold",
+                    "id": "f7531ed3-235f-4368-98a8-e4e1947c53fb",
+                    "weight": 40
+                }
+            ],
+            [
+                {
+                    "name": "Fleshless Gladiator",
+                    "id": "0b2a32c9-f0ae-4ae4-a5c5-72bea05018fb",
+                    "weight": 50
+                },
+                {
+                    "name": "Stinging Hivemaster",
+                    "id": "cdbbcbe1-5317-455e-8d71-a4e2ad0addfc",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Ravenous Necrotitan",
+                    "id": "ce7e1e9b-ad7f-4f4c-bdb5-2ccb6f147037",
+                    "weight": 50
+                },
+                {
+                    "name": "Apostle of Invasion",
+                    "id": "8a973487-5def-4771-bb77-5748cbd2f469",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Zealot's Conviction",
+                    "id": "3a419ba1-7bd3-48e3-8f88-d9f833b25d6d",
+                    "weight": 50
+                },
+                {
+                    "name": "Compleat Devotion",
+                    "id": "2bb29a69-3e42-4268-8026-f01072d7b56c",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Gate to the Citadel",
+                    "id": "985d1b57-42e0-41a2-a9c6-2f5427c0c1c9",
+                    "weight": 50
+                },
+                {
+                    "name": "Gate of the Black Dragon",
+                    "id": "90183d4d-c231-4e45-b1fc-2699b33a3733",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Synthesized",
+        "colors": [
+            "R",
+            "U"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/f/4/f442442d-2e5d-4913-82d8-bab2f31541f8.jpg?1680795495",
+        "cards": [
+            "7f04c2e5-9100-439a-9aa4-28d388518e4a",
+            "7f516ee6-8f7b-40b2-82e5-9c4ea3e0a355",
+            "f442442d-2e5d-4913-82d8-bab2f31541f8",
+            "31147651-9a5e-4329-923b-e464f67135e9",
+            "73d74045-cc9b-4b01-bc5f-0f2eb4b01580",
+            "daa20112-2955-439d-8802-3a228ba0832e",
+            "cd244359-781e-4e1d-946d-243664f40c7c"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Mercurial Spelldancer",
+                    "id": "cf28c75d-1fb3-44cc-b651-5b2830e22add",
+                    "weight": 60
+                },
+                {
+                    "name": "Ovika, Enigma Goliath",
+                    "id": "b298cf34-7aa5-4f97-a86c-7f28d2113b87",
+                    "weight": 40
+                }
+            ],
+            [
+                {
+                    "name": "Kuldotha Cackler",
+                    "id": "f7155c42-a824-4bbe-9f7a-fa01e7625fd6",
+                    "weight": 50
+                },
+                {
+                    "name": "Vulshok Splitter",
+                    "id": "f05078dd-b928-4b3f-9636-f299ebac180b",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Free from Flesh",
+                    "id": "2c83600d-ea4d-4219-8dbb-34c4215a2005",
+                    "weight": 50
+                },
+                {
+                    "name": "Blazing Crescendo",
+                    "id": "d6bfc16a-2871-40a4-b279-636b80491a06",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Serum Snare",
+                    "id": "d326bff1-5370-4817-8370-6da87a061058",
+                    "weight": 50
+                },
+                {
+                    "name": "Reject Imperfection",
+                    "id": "c7ce5296-f28f-4105-9c79-b9c63ea720e7",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Gate to Seatower",
+                    "id": "86382685-e54c-4152-a500-2148a2d6b5a4",
+                    "weight": 50
+                },
+                {
+                    "name": "Gate to Tumbledown",
+                    "id": "f8532b98-b69e-4d43-9ec8-0587572a0dff",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Virulent",
+        "colors": [
+            "B",
+            "G"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/d/f/dfb81cb1-ac56-4803-a962-359854a447df.jpg?1675957012",
+        "cards": [
+            "dfb81cb1-ac56-4803-a962-359854a447df",
+            "e5290a4c-1f98-4e97-a407-f951e386b8b0",
+            "cdbbcbe1-5317-455e-8d71-a4e2ad0addfc",
+            "5e7eef9e-68ae-4743-ad89-64f6fafbe365",
+            "87519b36-1d95-4020-a61d-6afb75555e3e",
+            "a99fe9a8-d9e7-4286-81a1-adfb753e4741",
+            "0173b7b4-2832-4943-ba45-8ba498d7a056"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Venerated Rotpriest",
+                    "id": "d1b032e3-14e3-48ba-ab8a-d2b4f8d31a7d",
+                    "weight": 60
+                },
+                {
+                    "name": "Glissa Sunslayer",
+                    "id": "b2bf633e-0470-4b87-99ed-5ad1683b0954",
+                    "weight": 40
+                }
+            ],
+            [
+                {
+                    "name": "Pestilent Syphoner",
+                    "id": "947a1e44-3485-4e24-a34d-6c318584743c",
+                    "weight": 50
+                },
+                {
+                    "name": "Blightbelly Rat",
+                    "id": "9255cd01-a611-4fec-b9ec-b271687740ba",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Whisper of the Dross",
+                    "id": "58d287e8-5297-415a-97d5-02002470c52b",
+                    "weight": 50
+                },
+                {
+                    "name": "Maze's Mantle",
+                    "id": "bc79106b-9aa2-4add-b9ca-e3c7aafd9821",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Necrogen Communion",
+                    "id": "6ac8cd7c-992f-4953-b5bf-42e5a9ff09ad",
+                    "weight": 50
+                },
+                {
+                    "name": "Infectious Bite",
+                    "id": "83dfb2a5-cd5c-46c6-9bb8-7c5d00f3e003",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Gate of the Black Dragon",
+                    "id": "90183d4d-c231-4e45-b1fc-2699b33a3733",
+                    "weight": 50
+                },
+                {
+                    "name": "Gate to Manorborn",
+                    "id": "a902d474-0d02-449e-ab6c-8c2f32c99384",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Hexgold",
+        "colors": [
+            "R",
+            "W"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/5/6/563e9ba5-e0ec-4fb3-8301-689aa145cc19.jpg?1675957183",
+        "cards": [
+            "96ae13df-670e-49a0-99b0-baf908ac9eb4",
+            "563e9ba5-e0ec-4fb3-8301-689aa145cc19",
+            "2d6cf933-73fe-4e79-8d0b-29dc0f18b25d",
+            "c498dbf9-c68c-400c-9349-c3c3fc8efcae",
+            "3006ea5a-5391-41eb-b0c8-092741dca2eb",
+            "0ec44465-68d4-4dca-a313-7f2ab0ce2e63",
+            "cd37d1b1-70ce-466e-890d-36be82433035"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Jor Kadeen, First Goldwarden",
+                    "id": "e7e4d8f7-874d-4b2a-ad23-afab479784ea",
+                    "weight": 80
+                },
+                {
+                    "name": "Nahiri, the Unforgiving",
+                    "id": "578e35b9-7252-4767-a1f3-aecd71256515",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Barbed Batterfist",
+                    "id": "de1d02d1-91dc-47d6-bdbe-87602428abfb",
+                    "weight": 60
+                },
+                {
+                    "name": "Hexgold Halberd",
+                    "id": "f22108ec-28f0-44d3-ba6b-3075f5f6bc65",
+                    "weight": 40
+                }
+            ],
+            [
+                {
+                    "name": "Resistance Skywarden",
+                    "id": "6249aabe-8f21-4257-9e04-ceffd44d42a5",
+                    "weight": 50
+                },
+                {
+                    "name": "Oxidda Finisher",
+                    "id": "7177431e-5cc4-4ecd-8848-f51903289072",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Resistance Reunited",
+                    "id": "bbc4b5ca-557e-4465-9725-9e7a15590258",
+                    "weight": 50
+                },
+                {
+                    "name": "Against All Odds",
+                    "id": "3cd8dd4e-6892-49d7-8fae-97d04f9f6c84",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Gate to Tumbledown",
+                    "id": "f8532b98-b69e-4d43-9ec8-0587572a0dff",
+                    "weight": 50
+                },
+                {
+                    "name": "Gate to the Citadel",
+                    "id": "985d1b57-42e0-41a2-a9c6-2f5427c0c1c9",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Contagion",
+        "colors": [
+            "G",
+            "U"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/6/7/67f0a63e-0866-423e-b917-fc7c71063021.jpg?1675956992",
+        "cards": [
+            "67f0a63e-0866-423e-b917-fc7c71063021",
+            "419fab07-f921-4eff-91e2-1974ae121077",
+            "b9cba67a-b714-49b0-9797-24aca283f162",
+            "18af2c85-e58f-4043-99d3-e90121348aca",
+            "a895f63f-3c59-4249-9346-55ef489944fc",
+            "123f0c76-1fde-439e-a76d-eccf96f8d941",
+            "dac28e27-78aa-48b1-96fa-edca1fbcfb77"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Rustvine Cultivator",
+                    "id": "6b71fd8f-e688-4210-bc5b-a3f19b5b3497",
+                    "weight": 50
+                },
+                {
+                    "name": "Glistener Seer",
+                    "id": "c22aaaec-bad5-43e9-8e92-9c4bde95fcfd",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Evolved Spinoderm",
+                    "id": "dd4bcb42-f5cf-410d-8f20-1006b0f92abe",
+                    "weight": 40
+                },
+                {
+                    "name": "Ezuri, Stalker of Spheres",
+                    "id": "d38961ce-0257-412f-acec-c5c9886061f8",
+                    "weight": 40
+                },
+                {
+                    "name": "Tekuthal, Inquiry Dominus",
+                    "id": "f1d4b157-2c77-4355-8c65-78dec9d44c85",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Aspirant's Ascent",
+                    "id": "57551332-e2a4-4e6a-9bd8-e3a9baafcd17",
+                    "weight": 50
+                },
+                {
+                    "name": "Titanic Growth",
+                    "id": "3583ea03-525f-4c70-9d7e-ccc6002ee9e1",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Incubation Sac",
+                    "id": "a6b36e23-a414-400c-a3a5-e23883e866d3",
+                    "weight": 50
+                },
+                {
+                    "name": "Evolving Adaptive",
+                    "id": "13366c60-1200-4ad2-bbf4-77596121fcd2",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Gate to Seatower",
+                    "id": "86382685-e54c-4152-a500-2148a2d6b5a4",
+                    "weight": 50
+                },
+                {
+                    "name": "Gate to Manorborn",
+                    "id": "a902d474-0d02-449e-ab6c-8c2f32c99384",
+                    "weight": 50
+                }
+            ]
+        ]
+    }
+]

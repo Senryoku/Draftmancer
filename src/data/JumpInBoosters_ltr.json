@@ -1,0 +1,1433 @@
+[
+    {
+        "name": "Breakfast",
+        "colors": [
+            "W"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/7/5/75338f49-1f02-4333-87e4-5779ef14e688.jpg?1686967894",
+        "cards": [
+            "c4cd0756-7bf3-4cb6-9687-1f9346b0bb92",
+            "1da7fc15-f894-496e-ba18-a02d42e9bedc",
+            "26bb65ba-d605-4b79-a700-4a08ec5a90b4",
+            "75338f49-1f02-4333-87e4-5779ef14e688",
+            "9ac68519-ed7f-4f38-9549-c02975f88eed",
+            "c1bd3bc0-77bd-40fe-b4f1-835a04cb6e41",
+            "1bd3fa8a-6c50-4f7f-9ae3-0810eec5e3db",
+            "bb0cda3a-20d7-425a-89fe-b0a3cd7ced03"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Samwise the Stouthearted",
+                    "id": "214c270e-29ca-4d69-bea6-9252ae7707ad",
+                    "weight": 50
+                },
+                {
+                    "name": "Shire Shirriff",
+                    "id": "444b687f-2571-4c55-a497-d24b9e18bc0f",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Soldier of the Grey Host",
+                    "id": "b79999df-af8c-4724-9631-20eee5a00e49",
+                    "weight": 50
+                },
+                {
+                    "name": "Protector of Gondor",
+                    "id": "85708748-40ca-4066-a287-7a6a189ff3df",
+                    "weight": 49
+                },
+                {
+                    "name": "The One Ring",
+                    "id": "d5806e68-1054-458e-866d-1f2470f682b2",
+                    "weight": 1
+                }
+            ],
+            [
+                {
+                    "name": "Hobbit's Sting",
+                    "id": "019eab42-9e0c-4958-ac97-74d3db5580f3",
+                    "weight": 50
+                },
+                {
+                    "name": "Second Breakfast",
+                    "id": "002f647a-25f8-461b-8617-52674f5d577c",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "The Battle of Bywater",
+                    "id": "9bae7a4d-9117-43c5-a048-80a0ddadc034",
+                    "weight": 80
+                },
+                {
+                    "name": "Dawn of a New Age",
+                    "id": "cb966ee6-bf1b-4bb6-9277-8de6f3918ae2",
+                    "weight": 20
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Insight",
+        "colors": [
+            "U"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/2/0/20ac63cb-fa4d-4340-8062-1029c8bd5ec8.jpg?1686968020",
+        "cards": [
+            "aa59141a-4645-4316-b714-bbf2c139786e",
+            "20ac63cb-fa4d-4340-8062-1029c8bd5ec8",
+            "68c29762-6859-4564-9e1d-a87fa63b951a",
+            "cc9cfcc7-be64-4871-8d52-851e43fe3305",
+            "1bfccbab-29fa-4e92-8919-6cd4815fb655",
+            "b612452e-b8a8-4a5a-82a8-01fd463cfc77",
+            "8eb6c23b-e52e-4533-9625-884eb0a4d866",
+            "0ce44270-a684-4489-9077-521456e6dfaa"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Captain of Umbar",
+                    "id": "c222577d-a3c7-41d9-b11b-62065bdb98ef",
+                    "weight": 50
+                },
+                {
+                    "name": "Grey Havens Navigator",
+                    "id": "4dd89994-bdff-47ca-a65d-10afcc7e773e",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Rangers of Ithilien",
+                    "id": "819b4208-7a29-41fa-947f-614bf669b300",
+                    "weight": 80
+                },
+                {
+                    "name": "Storm of Saruman",
+                    "id": "52884e67-c742-4799-9afd-55bc70b2cf40",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Birthday Escape",
+                    "id": "42db2313-b13d-4292-bef2-bf86f989d32f",
+                    "weight": 50
+                },
+                {
+                    "name": "Hithlain Knots",
+                    "id": "bbcc27e7-cbe4-45c2-b157-7251a10e7ba4",
+                    "weight": 49
+                },
+                {
+                    "name": "The One Ring",
+                    "id": "d5806e68-1054-458e-866d-1f2470f682b2",
+                    "weight": 1
+                }
+            ],
+            [
+                {
+                    "name": "Soothing of Sméagol",
+                    "id": "be6400e8-7f99-4005-9a92-ffbc359d3871",
+                    "weight": 50
+                },
+                {
+                    "name": "Dreadful as the Storm",
+                    "id": "b6e0b4ff-85b5-485f-a78f-1a58bb343238",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Sauron's",
+        "colors": [
+            "B"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/4/d/4ddda7d4-0226-404f-8418-f1f5720dcef8.jpg?1686968450",
+        "cards": [
+            "673c6c12-2513-4d1b-acf0-6a1f741d49dd",
+            "4ddda7d4-0226-404f-8418-f1f5720dcef8",
+            "e860dd40-07c5-47c3-92a8-1ee95a953c2f",
+            "695c05ab-e46e-46c7-bd2e-ef0b2307e449",
+            "a6539e26-b63b-4725-9407-caaf451de084",
+            "1b1e790e-ff82-4888-8aee-9986c646241a",
+            "e57815d4-b21f-4ceb-a3f1-73cff5f0e612",
+            "121c12c4-83ea-463e-8fdf-30718968a2bd"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Uruk-hai Berserker",
+                    "id": "936421a0-2c2a-4410-941d-4e6b88166bd1",
+                    "weight": 50
+                },
+                {
+                    "name": "Mordor Trebuchet",
+                    "id": "648bc8ae-1798-4c2f-a372-0487a90ba4d3",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Gothmog, Morgul Lieutenant",
+                    "id": "a1c10e93-88eb-46b9-8adc-583661807990",
+                    "weight": 50
+                },
+                {
+                    "name": "Grond, the Gatebreaker",
+                    "id": "4bc61b28-afdd-4de9-829b-ffe5ca7c7f19",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Sauron, the Necromancer",
+                    "id": "377d65d8-21c8-4292-97db-610e0173ba59",
+                    "weight": 80
+                },
+                {
+                    "name": "Witch-king of Angmar",
+                    "id": "a55e6508-0b59-4573-bc4e-67b27279cfed",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Shelob's Ambush",
+                    "id": "25e69fa8-7339-4bfa-8e35-9cbfe0001d8b",
+                    "weight": 50
+                },
+                {
+                    "name": "Orcish Medicine",
+                    "id": "66fae9ab-2302-4dea-a4e8-701938a0ef09",
+                    "weight": 49
+                },
+                {
+                    "name": "The One Ring",
+                    "id": "d5806e68-1054-458e-866d-1f2470f682b2",
+                    "weight": 1
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Moria",
+        "colors": [
+            "R"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/0/4/04dcef75-6f98-4233-ae32-6fe41724c8e0.jpg?1688569131",
+        "cards": [
+            "552730c5-e3a6-468f-91b2-82c272dda400",
+            "b91859de-1983-4c9c-a9e6-289c7dba1eb4",
+            "04dcef75-6f98-4233-ae32-6fe41724c8e0",
+            "6385e769-f805-499d-9f47-494533362152",
+            "0a1bd073-4351-4c56-9b07-4430d0d83084",
+            "28b41c48-0715-49d9-98e5-e82b706da816",
+            "6989018c-37b1-4282-a4af-9cc97f160b4d",
+            "8b716fcc-c4cc-4987-be82-2897a9888d23"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "There and Back Again",
+                    "id": "939b0bd0-24ea-45de-a2d3-37bbf6a3e6f9",
+                    "weight": 80
+                },
+                {
+                    "name": "Andúril, Flame of the West",
+                    "id": "7e7b9eea-a224-4db1-a089-cb385f7af20c",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Rush the Room",
+                    "id": "f525b727-acde-427b-9c33-20964e8cf613",
+                    "weight": 50
+                },
+                {
+                    "name": "Gimli's Fury",
+                    "id": "efde011d-8732-49b3-9204-8b114a3d81ba",
+                    "weight": 49
+                },
+                {
+                    "name": "The One Ring",
+                    "id": "d5806e68-1054-458e-866d-1f2470f682b2",
+                    "weight": 1
+                }
+            ],
+            [
+                {
+                    "name": "Breaking of the Fellowship",
+                    "id": "130f60d0-4fac-4e4e-a938-58f3b96e5335",
+                    "weight": 50
+                },
+                {
+                    "name": "Improvised Club",
+                    "id": "b8397d13-eeaf-4b4e-b3cd-9a9ac231873a",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Fear, Fire, Foes!",
+                    "id": "37be98a4-0cba-46b4-be93-a9805fe77160",
+                    "weight": 50
+                },
+                {
+                    "name": "Foray of Orcs",
+                    "id": "5fea0c66-c776-4dc7-a235-f3822521cacd",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Shire",
+        "colors": [
+            "G"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/8/8/885a3277-ef10-4dcf-ac63-eb8971cd627c.jpg?1686969480",
+        "cards": [
+            "d15fd66d-fa7e-411d-9014-a56caa879d93",
+            "885a3277-ef10-4dcf-ac63-eb8971cd627c",
+            "f5baee8d-88e7-4468-94a9-66ca8e2caf15",
+            "1c24b5fa-506d-4eaf-881b-bc282c74a16c",
+            "b7557170-39a2-49df-823e-958c3eb34801",
+            "85d22d5d-3875-42ff-b51e-c6e21db201f5",
+            "13bc14f9-c90c-499d-9024-3182d78e0a88",
+            "bcc7c41c-f416-457e-91ba-1f338f45eeac"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Delighted Halfling",
+                    "id": "71384418-173a-4f77-adab-56e52fa23692",
+                    "weight": 80
+                },
+                {
+                    "name": "Radagast the Brown",
+                    "id": "b3988120-ebbe-4d24-9bb4-8c5331a14034",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Galadhrim Guide",
+                    "id": "f4603f59-f899-4caf-a874-bf234d2045fb",
+                    "weight": 50
+                },
+                {
+                    "name": "Enraged Huorn",
+                    "id": "a9b48836-6d37-46eb-8c41-a3eeecc72ae1",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Pippin's Bravery",
+                    "id": "bc60dc65-6813-4d57-877b-df195ed00d00",
+                    "weight": 50
+                },
+                {
+                    "name": "Bombadil's Song",
+                    "id": "6391699e-987a-499f-9fec-96f2362760b9",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Revive the Shire",
+                    "id": "46b7f493-1b57-4b07-8510-30703282f879",
+                    "weight": 50
+                },
+                {
+                    "name": "Galadhrim Bow",
+                    "id": "9df34f21-798f-440d-8b09-ec5b5c0b8c12",
+                    "weight": 49
+                },
+                {
+                    "name": "The One Ring",
+                    "id": "d5806e68-1054-458e-866d-1f2470f682b2",
+                    "weight": 1
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Amass",
+        "colors": [
+            "U",
+            "B"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/5/8/58aafdb6-1c8c-4fc4-a52e-3e601be7fb0c.jpg?1686968472",
+        "cards": [
+            "aa59141a-4645-4316-b714-bbf2c139786e",
+            "58aafdb6-1c8c-4fc4-a52e-3e601be7fb0c",
+            "aae2f15a-0629-453e-992c-a199af194a3c",
+            "71f97505-c961-4890-acd0-32a63919ac2a",
+            "648bc8ae-1798-4c2f-a372-0487a90ba4d3",
+            "76a88814-aa30-4297-b338-3d851bfe7256",
+            "e4b83aa1-33ce-4b8d-ae5a-72f64eef5f09",
+            "f7725dc2-2654-4ffb-b6b3-510ae64ec6af"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Surrounded by Orcs",
+                    "id": "1c50d4c8-2311-4394-b73f-389eb81e898b",
+                    "weight": 50
+                },
+                {
+                    "name": "The Torment of Gollum",
+                    "id": "ba2c8c25-1fa9-4cc4-a378-5eccc25bacf0",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Deceive the Messenger",
+                    "id": "b2984bc6-7c12-46e4-8dd3-b23e29a7a7ec",
+                    "weight": 50
+                },
+                {
+                    "name": "Orcish Medicine",
+                    "id": "66fae9ab-2302-4dea-a4e8-701938a0ef09",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Sauron's Ransom",
+                    "id": "6b98850c-ad69-42da-b91a-8dc5e226c444",
+                    "weight": 80
+                },
+                {
+                    "name": "Shadow of the Enemy",
+                    "id": "e47cab70-55cb-481c-b4cd-32a41251f210",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Lash of the Balrog",
+                    "id": "812fee97-e145-4458-b495-bc6ad227335b",
+                    "weight": 50
+                },
+                {
+                    "name": "Isolation at Orthanc",
+                    "id": "54b9c323-ac9b-4864-bd57-81b557f44114",
+                    "weight": 49
+                },
+                {
+                    "name": "The One Ring",
+                    "id": "d5806e68-1054-458e-866d-1f2470f682b2",
+                    "weight": 1
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Elves",
+        "colors": [
+            "G",
+            "U"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/c/5/c544e301-13b4-4dec-b65c-d54809bb7736.jpg?1695498672",
+        "cards": [
+            "c544e301-13b4-4dec-b65c-d54809bb7736",
+            "0aa57431-39e2-4152-8a30-1c1e8faef153",
+            "a62a5e55-fa1b-4c70-9293-740dd513d52e",
+            "2daf449a-5f3e-44fd-968e-55d8517ae797",
+            "c8bd408c-9e6d-436d-9c4f-9ef3203aeb64",
+            "0adc3bff-0eb1-40e9-b954-5515babd07a3",
+            "c7946af6-69ab-47a1-955c-1954a04752df",
+            "30e1ec49-ad4f-4623-aeeb-dba07d6e6251"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Lothlórien Lookout",
+                    "id": "4e3639c1-ebc3-4a0b-ab93-549e45aff0f7",
+                    "weight": 50
+                },
+                {
+                    "name": "Nimrodel Watcher",
+                    "id": "c253ee40-41c9-4cb5-a1a3-94b0aaed09d4",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Galadriel of Lothlórien",
+                    "id": "a6e5c3b3-9a70-4a1c-bfb3-db27e51c4b8d",
+                    "weight": 50
+                },
+                {
+                    "name": "Elrond, Master of Healing",
+                    "id": "d26ffb2c-f7a5-4a4f-9b99-c8de9dfd49da",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Elven Farsight",
+                    "id": "73d135b2-d2b8-499c-84d9-824370c19ccc",
+                    "weight": 50
+                },
+                {
+                    "name": "Hithlain Knots",
+                    "id": "bbcc27e7-cbe4-45c2-b157-7251a10e7ba4",
+                    "weight": 49
+                },
+                {
+                    "name": "The One Ring",
+                    "id": "d5806e68-1054-458e-866d-1f2470f682b2",
+                    "weight": 1
+                }
+            ],
+            [
+                {
+                    "name": "Galadhrim Bow",
+                    "id": "9df34f21-798f-440d-8b09-ec5b5c0b8c12",
+                    "weight": 50
+                },
+                {
+                    "name": "Shower of Arrows",
+                    "id": "92cd3884-18d1-4200-b28e-a52349ef37aa",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Tokens",
+        "colors": [
+            "W",
+            "B"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/e/c/ec0984b2-bed6-41b1-9087-2cfd16749037.jpg?1686970017",
+        "cards": [
+            "7d86dc2e-6f0c-4714-9d30-5d099d3b895c",
+            "ec0984b2-bed6-41b1-9087-2cfd16749037",
+            "fa8654cf-431c-427b-b78f-0e48f6007e9e",
+            "695c05ab-e46e-46c7-bd2e-ef0b2307e449",
+            "17c2250a-9af1-40de-9f09-7e8c7daec520",
+            "7cd03837-37cc-4f6c-8e22-e3b0ff635462",
+            "812fee97-e145-4458-b495-bc6ad227335b",
+            "a4410076-e1fe-45f3-a0ca-a91ab0133ff4"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Westfold Rider",
+                    "id": "71ed2e4b-c732-472a-a589-f1f53086d9ee",
+                    "weight": 50
+                },
+                {
+                    "name": "Easterling Vanguard",
+                    "id": "e860dd40-07c5-47c3-92a8-1ee95a953c2f",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Mirkwood Bats",
+                    "id": "15f035df-784a-4dc8-b7f5-77139a4e6e99",
+                    "weight": 50
+                },
+                {
+                    "name": "Protector of Gondor",
+                    "id": "85708748-40ca-4066-a287-7a6a189ff3df",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Morgul-Knife Wound",
+                    "id": "5ae08177-48ee-4404-834d-d3cd7482ae81",
+                    "weight": 50
+                },
+                {
+                    "name": "Slip On the Ring",
+                    "id": "2e20c2b8-ffe3-4d14-8588-f89719358e3d",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Now for Wrath, Now for Ruin!",
+                    "id": "c2e2c80d-7581-46ba-8237-7886b91c19b3",
+                    "weight": 50
+                },
+                {
+                    "name": "Nasty End",
+                    "id": "c34f88d7-15a1-434f-88d7-3d4fcf406d54",
+                    "weight": 49
+                },
+                {
+                    "name": "The One Ring",
+                    "id": "d5806e68-1054-458e-866d-1f2470f682b2",
+                    "weight": 1
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Wild",
+        "colors": [
+            "G",
+            "R"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/5/4/54461d61-a745-467f-9fbe-b5e7a8edbdbf.jpg?1686970082",
+        "cards": [
+            "ad961ba1-c74f-4a44-87fe-b30e2b63e378",
+            "6589b339-9067-4e9b-bfdb-c49f8b3ef2d4",
+            "df4be38c-3f93-4ff4-bff4-94753b96f2f3",
+            "21b7606a-6a4c-4bf0-b311-1883383161d2",
+            "54461d61-a745-467f-9fbe-b5e7a8edbdbf",
+            "b889037f-b95f-4756-80aa-04097d2818c3",
+            "c7946af6-69ab-47a1-955c-1954a04752df",
+            "24076763-88ba-4dee-b548-9c27bd34fdb7"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Haradrim Spearmaster",
+                    "id": "6050cf98-cdce-4825-9ab8-2294a2b63faf",
+                    "weight": 50
+                },
+                {
+                    "name": "Mirrormere Guardian",
+                    "id": "8315d7cc-fc2c-45b1-8340-11ff2af3beb5",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Warbeast of Gorgoroth",
+                    "id": "5eeecb9e-fbde-429b-b3da-18a4dbadf6de",
+                    "weight": 50
+                },
+                {
+                    "name": "Enraged Huorn",
+                    "id": "a9b48836-6d37-46eb-8c41-a3eeecc72ae1",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Long List of the Ents",
+                    "id": "27347256-2ac4-4b12-b288-0a8d578a1ff2",
+                    "weight": 50
+                },
+                {
+                    "name": "Entish Restoration",
+                    "id": "cd4dbf80-187b-40e3-9e0b-526f78d9a34e",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Gimli's Fury",
+                    "id": "efde011d-8732-49b3-9204-8b114a3d81ba",
+                    "weight": 50
+                },
+                {
+                    "name": "Gimli's Axe",
+                    "id": "d8999b6c-e501-48d0-ae51-a35b96f996ec",
+                    "weight": 49
+                },
+                {
+                    "name": "The One Ring",
+                    "id": "d5806e68-1054-458e-866d-1f2470f682b2",
+                    "weight": 1
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Humans",
+        "colors": [
+            "W",
+            "R"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/f/6/f6dcd1ca-4943-46e4-bb5d-c14949e21e23.jpg?1686970093",
+        "cards": [
+            "ee7292f7-1c7e-449c-9c52-7584d6a14c2c",
+            "f6dcd1ca-4943-46e4-bb5d-c14949e21e23",
+            "adffb389-c9a3-41c4-b078-292a2bcf870d",
+            "38f81e68-cddd-47f4-b1d1-a297c3298c25",
+            "4c7d861d-7832-4c15-8d6c-8c07a9a57891",
+            "f4ff3330-dcca-4435-87e7-871be91a68b0",
+            "06541200-fa4c-4b98-bdc4-44708fd2ddf6",
+            "3d5f92bf-e4e7-487a-834c-964fdd6ad674"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Esquire of the King",
+                    "id": "caa6dded-ab08-43d0-b2fb-008854582cba",
+                    "weight": 50
+                },
+                {
+                    "name": "Rohirrim Lancer",
+                    "id": "2f506f9f-4c0d-44e8-9f81-8403d808d0e4",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Westfold Rider",
+                    "id": "71ed2e4b-c732-472a-a589-f1f53086d9ee",
+                    "weight": 50
+                },
+                {
+                    "name": "East-Mark Cavalier",
+                    "id": "9be412c0-45d4-4856-a8cf-63a5a822dc5c",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Errand-Rider of Gondor",
+                    "id": "d3f990e7-54a3-4893-8510-645b2065447b",
+                    "weight": 50
+                },
+                {
+                    "name": "Haradrim Spearmaster",
+                    "id": "6050cf98-cdce-4825-9ab8-2294a2b63faf",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Quarrel's End",
+                    "id": "5a7e61a6-c602-4089-ae45-828d8e516a63",
+                    "weight": 50
+                },
+                {
+                    "name": "Now for Wrath, Now for Ruin!",
+                    "id": "c2e2c80d-7581-46ba-8237-7886b91c19b3",
+                    "weight": 49
+                },
+                {
+                    "name": "The One Ring",
+                    "id": "d5806e68-1054-458e-866d-1f2470f682b2",
+                    "weight": 1
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Rallying",
+        "colors": [
+            "W"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/5/6/5684483b-9a6a-499b-a5e1-e2815ee03cdb.jpg?1686967838",
+        "cards": [
+            "b422ce26-06fb-4748-9c01-32c4be914a77",
+            "c1bd3bc0-77bd-40fe-b4f1-835a04cb6e41",
+            "f4ff3330-dcca-4435-87e7-871be91a68b0",
+            "bb0cda3a-20d7-425a-89fe-b0a3cd7ced03",
+            "5684483b-9a6a-499b-a5e1-e2815ee03cdb",
+            "c4e40481-aeaa-4b3d-a020-e9b6d7c11992",
+            "116d4030-acd2-4aa2-8254-aaaff1264459",
+            "56a3108b-c33d-47c5-984b-01fa257fbd79"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Wizard's Rockets",
+                    "id": "1c6ed742-dfb1-41e2-8f19-184555109e34",
+                    "weight": 50
+                },
+                {
+                    "name": "Lembas",
+                    "id": "3b46aacf-b31a-4380-9e4b-82795fbaba3b",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Soldier of the Grey Host",
+                    "id": "b79999df-af8c-4724-9631-20eee5a00e49",
+                    "weight": 50
+                },
+                {
+                    "name": "Westfold Rider",
+                    "id": "71ed2e4b-c732-472a-a589-f1f53086d9ee",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Steel Exemplar",
+                    "id": "386c139a-13fc-49ca-923d-45faca4f9a2f",
+                    "weight": 99
+                },
+                {
+                    "name": "The One Ring",
+                    "id": "d5806e68-1054-458e-866d-1f2470f682b2",
+                    "weight": 1
+                }
+            ],
+            [
+                {
+                    "name": "Mesa Cavalier",
+                    "id": "feeec740-7ffc-4f57-b52c-92209da91d69",
+                    "weight": 50
+                },
+                {
+                    "name": "Argivian Cavalier",
+                    "id": "57746e72-ba9f-4717-a4a2-6c6a039080c3",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Adorned",
+        "colors": [
+            "U"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/f/4/f442442d-2e5d-4913-82d8-bab2f31541f8.jpg?1680795495",
+        "cards": [
+            "bf4f0a7c-620e-4ed8-8da3-fa6564e8a0cd",
+            "c4303347-3fbd-4bbd-ab3f-e7ddbe0e0a9d",
+            "dac28e27-78aa-48b1-96fa-edca1fbcfb77",
+            "f442442d-2e5d-4913-82d8-bab2f31541f8",
+            "1500126f-fbe4-4c39-bb06-1a36e2c4682f",
+            "4f5e95f8-c04d-405f-bba4-e83a8f6bf463",
+            "661338ff-a192-4007-a144-63d00f2e9ecb",
+            "c7ce5296-f28f-4105-9c79-b9c63ea720e7"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Experimental Augury",
+                    "id": "e508ae5d-ffb5-4480-be90-a4394954b559",
+                    "weight": 50
+                },
+                {
+                    "name": "Vivisurgeon's Insight",
+                    "id": "cd244359-781e-4e1d-946d-243664f40c7c",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Thopter Mechanic",
+                    "id": "7577b5c7-91ed-4201-bdfd-0919142124eb",
+                    "weight": 50
+                },
+                {
+                    "name": "Thrummingbird",
+                    "id": "86ff84d8-1b89-42cc-a8c0-4ac6fa26ce65",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Steel Exemplar",
+                    "id": "386c139a-13fc-49ca-923d-45faca4f9a2f",
+                    "weight": 99
+                },
+                {
+                    "name": "The One Ring",
+                    "id": "d5806e68-1054-458e-866d-1f2470f682b2",
+                    "weight": 1
+                }
+            ],
+            [
+                {
+                    "name": "Fallaji Archaeologist",
+                    "id": "b0eab397-25a6-4377-8e12-e8acef9675cf",
+                    "weight": 50
+                },
+                {
+                    "name": "Lat-Nam Adept",
+                    "id": "a1e088de-e99f-4706-89e0-a7efdaf9403a",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Greedy",
+        "colors": [
+            "B"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/d/9/d9b7d7f8-503d-4660-9a18-6a8e2fcaa25f.jpg?1686968776",
+        "cards": [
+            "87500b92-3d68-42f3-afa9-f8206b2ebcbb",
+            "d9b7d7f8-503d-4660-9a18-6a8e2fcaa25f",
+            "6a780abd-f276-40d3-b2af-d2e47d858d3d",
+            "1ec1a02f-128c-44aa-b708-6fcda34b40c0",
+            "de652420-eacf-4f9d-9f13-c6bc02b0fa72",
+            "a166abef-f068-47e9-8a65-43ebf4b015bd",
+            "fc59ca3b-d417-4cf2-99a3-89816bf2bd09",
+            "72af72d2-5995-4cad-82f1-e2d0c465d6f1"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Claim the Precious",
+                    "id": "121c12c4-83ea-463e-8fdf-30718968a2bd",
+                    "weight": 99
+                },
+                {
+                    "name": "The One Ring",
+                    "id": "d5806e68-1054-458e-866d-1f2470f682b2",
+                    "weight": 1
+                }
+            ],
+            [
+                {
+                    "name": "Goring Warplow",
+                    "id": "9d927dfd-ae66-4235-a61b-39c85d0c1222",
+                    "weight": 50
+                },
+                {
+                    "name": "Cruel Grimnarch",
+                    "id": "e3f571b5-ce50-4856-a151-fe6610d27bca",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Ichor Shade",
+                    "id": "0fd86fbf-eac2-456b-b4bb-437ff9be9b58",
+                    "weight": 50
+                },
+                {
+                    "name": "Seer of Stolen Sight",
+                    "id": "9d0b3232-44ee-481d-81d9-46432f853a7d",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Vampire Opportunist",
+                    "id": "ced4b4a9-73a8-4135-b150-cd78d1558aca",
+                    "weight": 50
+                },
+                {
+                    "name": "Phyrexian Rager",
+                    "id": "a9861fb3-6722-43b8-bf0a-af6dd166e59d",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Horde",
+        "colors": [
+            "R"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/6/3/6385e769-f805-499d-9f47-494533362152.jpg?1686969015",
+        "cards": [
+            "b9db8702-fc72-453b-afc8-62266f7cd1c2",
+            "0a1bd073-4351-4c56-9b07-4430d0d83084",
+            "f525b727-acde-427b-9c33-20964e8cf613",
+            "6385e769-f805-499d-9f47-494533362152",
+            "06b6cc77-4c0e-432e-b73c-f14876ce72fc",
+            "98be3783-23e8-4143-8685-6d887f164294",
+            "0380a4c9-a5d3-465f-8584-e546b54f91e0",
+            "ca75d458-4947-4075-89b6-e93936c67370"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Goblin Fireleaper",
+                    "id": "ec120dae-8c40-4053-9341-1f7774464634",
+                    "weight": 50
+                },
+                {
+                    "name": "Foray of Orcs",
+                    "id": "5fea0c66-c776-4dc7-a235-f3822521cacd",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Chimney Rabble",
+                    "id": "5668699d-8df8-426b-a04a-99cfe55e570b",
+                    "weight": 50
+                },
+                {
+                    "name": "Goblin Tunneler",
+                    "id": "7d1ebba6-25ed-448f-b230-7c4a0ca675fa",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Goblin Picker",
+                    "id": "6d8f1f06-dde5-41f2-923c-67d1d4d13fab",
+                    "weight": 99
+                },
+                {
+                    "name": "The One Ring",
+                    "id": "d5806e68-1054-458e-866d-1f2470f682b2",
+                    "weight": 1
+                }
+            ],
+            [
+                {
+                    "name": "Lightning Strike",
+                    "id": "7d541125-bfb8-4f88-8bf3-ad7b6af7ad1d",
+                    "weight": 50
+                },
+                {
+                    "name": "Bombard",
+                    "id": "1f391555-4697-4492-9854-32393f473104",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Treefolk",
+        "colors": [
+            "G"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/b/8/b889037f-b95f-4756-80aa-04097d2818c3.jpg?1686969546",
+        "cards": [
+            "b889037f-b95f-4756-80aa-04097d2818c3",
+            "a9b48836-6d37-46eb-8c41-a3eeecc72ae1",
+            "85d22d5d-3875-42ff-b51e-c6e21db201f5",
+            "d939d4bc-b7e8-4ee8-b904-68f0bff0fde1",
+            "6589b339-9067-4e9b-bfdb-c49f8b3ef2d4",
+            "bcc7c41c-f416-457e-91ba-1f338f45eeac",
+            "46b7f493-1b57-4b07-8510-30703282f879",
+            "c7946af6-69ab-47a1-955c-1954a04752df"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Fangorn, Tree Shepherd",
+                    "id": "0fb0f946-2127-4aa3-88ac-9bd2e94d8983",
+                    "weight": 80
+                },
+                {
+                    "name": "Last March of the Ents",
+                    "id": "7f1b99e0-ffb7-4f98-8ee5-4357bb79dd2e",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Entish Restoration",
+                    "id": "cd4dbf80-187b-40e3-9e0b-526f78d9a34e",
+                    "weight": 99
+                },
+                {
+                    "name": "The One Ring",
+                    "id": "d5806e68-1054-458e-866d-1f2470f682b2",
+                    "weight": 1
+                }
+            ],
+            [
+                {
+                    "name": "Ilysian Caryatid",
+                    "id": "3db65137-c9d6-4352-b7a0-f3968b167233",
+                    "weight": 50
+                },
+                {
+                    "name": "Armored Scrapgorger",
+                    "id": "61e220d0-38c9-4584-940b-8a9e983ecfe7",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Deathbloom Gardener",
+                    "id": "88dee3d1-0496-40ea-b208-7362a932f531",
+                    "weight": 50
+                },
+                {
+                    "name": "Woodland Mystic",
+                    "id": "2d6117cf-5cb3-41f3-8756-c01b5e9c760e",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Stalwart",
+        "colors": [
+            "G",
+            "W"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/d/e/de1c0399-9db8-4901-b72e-0010eb9b92b0.jpg?1686969787",
+        "cards": [
+            "73ca5f48-0117-49d6-8b00-b8482e3545b3",
+            "b590d028-ea6a-4550-b5e2-ba328a81bbc0",
+            "de1c0399-9db8-4901-b72e-0010eb9b92b0",
+            "630e1e36-2f5d-44d4-9ff2-19ae75295016",
+            "6391699e-987a-499f-9fec-96f2362760b9",
+            "214c270e-29ca-4d69-bea6-9252ae7707ad",
+            "c2e2c80d-7581-46ba-8237-7886b91c19b3",
+            "a9b48836-6d37-46eb-8c41-a3eeecc72ae1"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Slip On the Ring",
+                    "id": "2e20c2b8-ffe3-4d14-8588-f89719358e3d",
+                    "weight": 50
+                },
+                {
+                    "name": "Epic Confrontation",
+                    "id": "35ba6c05-a4c2-422b-a4cb-852b3aef77a5",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Shortcut to Mushrooms",
+                    "id": "13bc14f9-c90c-499d-9024-3182d78e0a88",
+                    "weight": 99
+                },
+                {
+                    "name": "The One Ring",
+                    "id": "d5806e68-1054-458e-866d-1f2470f682b2",
+                    "weight": 1
+                }
+            ],
+            [
+                {
+                    "name": "Mirrormere Guardian",
+                    "id": "8315d7cc-fc2c-45b1-8340-11ff2af3beb5",
+                    "weight": 50
+                },
+                {
+                    "name": "Undercity Upheaval",
+                    "id": "acfe6957-d971-413f-b075-01b995f1d7a3",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Stalwarts of Osgiliath",
+                    "id": "2acb8240-8e0e-4adf-a884-4986c116e704",
+                    "weight": 50
+                },
+                {
+                    "name": "Took Reaper",
+                    "id": "1da7fc15-f894-496e-ba18-a02d42e9bedc",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Captain",
+        "colors": [
+            "W",
+            "U"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/7/d/7d486def-7c3f-41e9-bb28-4582450a7b9e.jpg?1686969940",
+        "cards": [
+            "8700923a-e9ff-4ced-87fe-1ab26554623a",
+            "7d486def-7c3f-41e9-bb28-4582450a7b9e",
+            "a4410076-e1fe-45f3-a0ca-a91ab0133ff4",
+            "d3f990e7-54a3-4893-8510-645b2065447b",
+            "17c2250a-9af1-40de-9f09-7e8c7daec520",
+            "c2e2c80d-7581-46ba-8237-7886b91c19b3",
+            "62d2ee20-abbc-4a9d-8d30-4223242123e8",
+            "3e11ad33-b9d7-43ef-840a-61955683b599"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Esquire of the King",
+                    "id": "caa6dded-ab08-43d0-b2fb-008854582cba",
+                    "weight": 50
+                },
+                {
+                    "name": "Protector of Gondor",
+                    "id": "85708748-40ca-4066-a287-7a6a189ff3df",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Stalwarts of Osgiliath",
+                    "id": "2acb8240-8e0e-4adf-a884-4986c116e704",
+                    "weight": 50
+                },
+                {
+                    "name": "Captain's Call",
+                    "id": "0c7ed7e0-0e80-44d3-a7af-b4c321239df8",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Protect the Negotiators",
+                    "id": "bb6db604-8bbe-4719-88bd-f3cad8c4725d",
+                    "weight": 99
+                },
+                {
+                    "name": "The One Ring",
+                    "id": "d5806e68-1054-458e-866d-1f2470f682b2",
+                    "weight": 1
+                }
+            ],
+            [
+                {
+                    "name": "Tolarian Geyser",
+                    "id": "5dd5f389-fea2-4aed-a218-eca162902775",
+                    "weight": 50
+                },
+                {
+                    "name": "Reprieve",
+                    "id": "1bd3fa8a-6c50-4f7f-9ae3-0810eec5e3db",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Wizard",
+        "colors": [
+            "R",
+            "U"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/8/e/8ebf2a25-9bee-4146-af83-f22aab6db2a8.jpg?1688134626",
+        "cards": [
+            "e2b975e6-e709-481f-bfbc-41a832508283",
+            "8ebf2a25-9bee-4146-af83-f22aab6db2a8",
+            "8b716fcc-c4cc-4987-be82-2897a9888d23",
+            "5a7e61a6-c602-4089-ae45-828d8e516a63",
+            "3ca1e1de-b916-445f-b3b2-0f4d0cc7ceeb",
+            "bc531409-26cb-4c58-ba69-f39dd8aee3d1",
+            "54b9c323-ac9b-4864-bd57-81b557f44114",
+            "ad56d60b-985e-470f-935b-036084957d2b"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Deceive the Messenger",
+                    "id": "b2984bc6-7c12-46e4-8dd3-b23e29a7a7ec",
+                    "weight": 99
+                },
+                {
+                    "name": "The One Ring",
+                    "id": "d5806e68-1054-458e-866d-1f2470f682b2",
+                    "weight": 1
+                }
+            ],
+            [
+                {
+                    "name": "Erebor Flamesmith",
+                    "id": "552730c5-e3a6-468f-91b2-82c272dda400",
+                    "weight": 50
+                },
+                {
+                    "name": "Ghitu Amplifier",
+                    "id": "b1845806-7585-40d5-9d3a-f13667e6a9d2",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Haunting Figment",
+                    "id": "d14b07ea-18e4-41fb-8136-759d5349e88a",
+                    "weight": 50
+                },
+                {
+                    "name": "Academy Wall",
+                    "id": "d2028115-f0de-4e8b-99bc-7369352e1e07",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Halo-Charged Skaab",
+                    "id": "5c6bdac3-6762-41a4-821f-ab7034a823d9",
+                    "weight": 50
+                },
+                {
+                    "name": "Tolarian Terror",
+                    "id": "42f01cba-43d4-46ad-b7a5-d7631b0e1347",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Foul",
+        "colors": [
+            "R",
+            "B"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/e/9/e914c7fc-be3c-4346-bf37-6e10f4998204.jpg?1686970114",
+        "cards": [
+            "e914c7fc-be3c-4346-bf37-6e10f4998204",
+            "65e9a757-7ed4-4cc0-bb6f-a59fa69b32a5",
+            "5eeecb9e-fbde-429b-b3da-18a4dbadf6de",
+            "b8397d13-eeaf-4b4e-b3cd-9a9ac231873a",
+            "812fee97-e145-4458-b495-bc6ad227335b",
+            "8e3bd86b-e8ca-4885-a823-78fb967e6caf",
+            "7cd03837-37cc-4f6c-8e22-e3b0ff635462"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "The Balrog, Durin's Bane",
+                    "id": "416880c3-cefb-45ea-bcc3-2ec7a70c8097",
+                    "weight": 80
+                },
+                {
+                    "name": "Sauron, the Lidless Eye",
+                    "id": "d82a4c78-d2fc-425a-8d0e-2e64509a08f1",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Stormclaw Rager",
+                    "id": "3b00c6e1-dfda-4c47-b1d8-4c114a921477",
+                    "weight": 50
+                },
+                {
+                    "name": "Balduvian Atrocity",
+                    "id": "365333c4-59a0-4365-b242-a67b6224c1b8",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Nasty End",
+                    "id": "c34f88d7-15a1-434f-88d7-3d4fcf406d54",
+                    "weight": 50
+                },
+                {
+                    "name": "Corrupted Conviction",
+                    "id": "8046f892-3317-4ef7-9cf7-97b9060540c8",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "In Thrall to the Pit",
+                    "id": "0f33284f-bdb1-4982-8636-8f2e12896053",
+                    "weight": 99
+                },
+                {
+                    "name": "The One Ring",
+                    "id": "d5806e68-1054-458e-866d-1f2470f682b2",
+                    "weight": 1
+                }
+            ],
+            [
+                {
+                    "name": "Sanitarium Skeleton",
+                    "id": "7c33d20d-8d1c-4cf7-a7ad-3dab9758fafe",
+                    "weight": 50
+                },
+                {
+                    "name": "Clay Revenant",
+                    "id": "fc295bac-5031-46c8-8d9a-368656bcf6d3",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Blighted",
+        "colors": [
+            "G",
+            "B"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/8/7/87300ac8-8b6f-4c37-8058-beb59eaa66be.jpg?1674421851",
+        "cards": [
+            "a14c4b29-3363-45ce-9190-0f79e1a0ef7f",
+            "ad961ba1-c74f-4a44-87fe-b30e2b63e378",
+            "0b51c3b5-db70-4976-986d-ed3fc8584d1a",
+            "01e7af76-e505-49ca-a91e-8167027560ff",
+            "87300ac8-8b6f-4c37-8058-beb59eaa66be",
+            "c0c0fdf5-2f56-4480-9ccb-84471b3e5331",
+            "3f440fa1-5387-41d6-a80f-5b19dbb21514",
+            "6559afec-6bb8-4501-8805-4eb108443048"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Tear Asunder",
+                    "id": "629aa907-9533-4681-9bf2-9e56450a4cc2",
+                    "weight": 50
+                },
+                {
+                    "name": "Choking Miasma",
+                    "id": "ba537452-3dab-4ecd-b65f-9e311a130d31",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Shelob's Ambush",
+                    "id": "25e69fa8-7339-4bfa-8e35-9cbfe0001d8b",
+                    "weight": 99
+                },
+                {
+                    "name": "The One Ring",
+                    "id": "d5806e68-1054-458e-866d-1f2470f682b2",
+                    "weight": 1
+                }
+            ],
+            [
+                {
+                    "name": "Bite Down",
+                    "id": "0eacd3de-b803-4322-8d88-d533761aa748",
+                    "weight": 50
+                },
+                {
+                    "name": "Ruthless Predation",
+                    "id": "123f0c76-1fde-439e-a76d-eccf96f8d941",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Urborg Repossession",
+                    "id": "ecb8dab0-ecce-4321-b382-c58b296c2fd3",
+                    "weight": 50
+                },
+                {
+                    "name": "Arachnoid Adaptation",
+                    "id": "8278069a-bd92-40ee-b7d5-e740dddb00fa",
+                    "weight": 50
+                }
+            ]
+        ]
+    }
+]

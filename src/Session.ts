@@ -1,16 +1,6 @@
 import { assert } from "console";
 import { UserID, SessionID } from "./IDTypes.js";
-import {
-	shuffleArray,
-	getRandom,
-	arrayIntersect,
-	Options,
-	getNDisctinctRandom,
-	pickRandom,
-	random,
-	sum,
-	sumValues,
-} from "./utils.js";
+import { shuffleArray, getRandom, arrayIntersect, Options, pickRandom, random, sum, sumValues } from "./utils.js";
 import { Connections, getPickedCardIds } from "./Connection.js";
 import {
 	CardID,
@@ -47,13 +37,7 @@ import {
 	getBoosterFactory,
 } from "./BoosterFactory.js";
 import { isPaperBoosterFactoryAvailable, getPaperBoosterFactory } from "./PaperBoosterFactory.js";
-import JumpstartBoosters from "./data/JumpstartBoosters.json" assert { type: "json" };
-import Jumpstart2022Boosters from "./data/Jumpstart2022Boosters.json" assert { type: "json" };
-import JumpstartHHBoosters from "./data/JumpstartHHBoosters.json" assert { type: "json" };
-import SuperJumpBoosters from "./data/SuperJumpBoosters.json" assert { type: "json" };
-Object.freeze(JumpstartBoosters);
-Object.freeze(Jumpstart2022Boosters);
-Object.freeze(SuperJumpBoosters);
+
 import {
 	isMessageError,
 	isSocketError,
@@ -69,7 +53,14 @@ import { IBracket, SingleBracket, TeamBracket, SwissBracket, DoubleBracket, Brac
 import { CustomCardList, getSheetCardIDs } from "./CustomCardList.js";
 import { generateBoosterFromCustomCardList, generateCustomGetCardFunction } from "./CustomCardListUtils.js";
 import { DraftLog, DraftPick, GridDraftPick } from "./DraftLog.js";
-import { generateJHHBooster, JHHBooster, JHHBoosterPattern } from "./JumpstartHistoricHorizons.js";
+import {
+	genJHHPackChoices,
+	genJumpInPackChoices,
+	genSuperJumpPackChoices,
+	JumpInSets,
+	Jumpstart2022Boosters,
+	JumpstartBoosters,
+} from "./Jumpstart.js";
 import { IDraftState } from "./IDraftState.js";
 import { MinesweeperCellState } from "./MinesweeperDraftTypes.js";
 import { MinesweeperDraftState, isMinesweeperDraftState } from "./MinesweeperDraft.js";
@@ -3223,37 +3214,16 @@ export class Session implements IIndexable {
 			for (const cid of cardIDs) if (!(cid in this.draftLog.carddata)) this.draftLog.carddata[cid] = getCard(cid);
 		};
 
-		// Jumpstart: Historic Horizons
-		if (set === "j21" || set === "super") {
+		if (set === "j21" || set === "super" || JumpInSets.includes(set)) {
 			for (const user of this.users) {
 				// Randomly get 2*3 packs and let the user choose among them.
-				const choices: [JHHBooster[], JHHBooster[][]] = [[], []];
-				if (set === "j21") {
-					choices[0] = getNDisctinctRandom(JumpstartHHBoosters, 3).map(generateJHHBooster);
-					// The choices are based on the first pick colors (we send all possibilties rather than waiting for user action).
-					const secondchoice: JHHBooster[][] = [];
-					for (let i = 0; i < 3; ++i) {
-						const candidates: JHHBoosterPattern[] = JumpstartHHBoosters.filter((p) => {
-							if (p.name === choices[0][i].name) return false; // Prevent duplicates
-							if (p.colors.length === 5) return true; // WUBRG can always be picked
-							// If first pack is mono-colored: Mono colored, Dual colored than contains the first pack's color, or WUBRG
-							if (choices[0][i].colors.length === 1) return p.colors.includes(choices[0][i].colors[0]);
-							// If first pack is dual-colored: Mono colored of one of these colors, Dual colored of the same colors, or WUBRG
-							return (
-								p.colors === choices[0][i].colors ||
-								(p.colors.length === 1 && choices[0][i].colors.includes(p.colors[0]))
-							);
-						});
-						secondchoice.push(getNDisctinctRandom(candidates, 3).map(generateJHHBooster));
-					}
-					choices[1] = secondchoice;
-				} else {
-					choices[0] = getNDisctinctRandom(SuperJumpBoosters, 3).map(generateJHHBooster);
-					// Second choice does not depend on the first one in this case, but we'll keep the same interface for simplicity.
-					choices[1] = [];
-					const secondChoice = getNDisctinctRandom(SuperJumpBoosters, 3).map(generateJHHBooster);
-					for (let i = 0; i < 3; ++i) choices[1].push(secondChoice);
-				}
+				// The choices are based on the first pick colors (we send all possibilties rather than waiting for user action).
+				const choices =
+					set === "j21"
+						? genJHHPackChoices()
+						: JumpInSets.includes(set)
+							? genJumpInPackChoices(set)
+							: genSuperJumpPackChoices();
 				Connections[user].socket.emit("selectJumpstartPacks", choices, (user: UserID, cardIDs: CardID[]) => {
 					if (!this.draftLog) return;
 					updateLog(user, cardIDs);

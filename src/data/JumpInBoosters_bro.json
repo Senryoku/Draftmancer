@@ -1,0 +1,757 @@
+[
+    {
+        "name": "Excavation",
+        "colors": [
+            "W"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/b/f/bfa05d1e-6728-4e77-bfb2-da0b9598e44b.jpg?1674420445",
+        "cards": [
+            "bfa05d1e-6728-4e77-bfb2-da0b9598e44b",
+            "2901c5f6-5d83-437d-b434-d9beb115dd82",
+            "7ad55575-6053-43b1-9496-bcb1ea25e2a1",
+            "91b0f17e-603a-4840-b2c3-381ec6f102f3",
+            "5649ee5a-4485-40a2-96d1-2e061905a71e",
+            "e811461a-6a90-416f-940c-c9579659ae0c",
+            "76832ca8-95b2-4bc8-a191-9e2f50b77626",
+            "985d1b57-42e0-41a2-a9c6-2f5427c0c1c9"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Phalanx Vanguard",
+                    "id": "2abe2af7-deba-4569-822a-2d9309aeaadd",
+                    "weight": 50
+                },
+                {
+                    "name": "Energy Refractor",
+                    "id": "cc2a81fb-5045-4b7b-8cfb-b90c4f4a1f51",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Tocasia's Onulet",
+                    "id": "e4abf2fb-f78a-4e75-b46f-524d3d7405db",
+                    "weight": 67
+                },
+                {
+                    "name": "Combat Thresher",
+                    "id": "74dfabfd-e13b-4512-a733-abe514be6404",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Steel Seraph",
+                    "id": "1b6ef5f5-4058-4f89-a573-9e2da87a9f2e",
+                    "weight": 80
+                },
+                {
+                    "name": "Platoon Dispenser",
+                    "id": "6c4825e3-c549-4bcb-84b5-2d0782c5c4e5",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Deadly Riposte",
+                    "id": "38eca0ae-d400-4afb-9a45-7100f4cd7149",
+                    "weight": 50
+                },
+                {
+                    "name": "Recommission",
+                    "id": "2a64e330-1257-4ec3-9a75-889cdcac3ade",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Urza's",
+        "colors": [
+            "U"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/4/4/445f897e-a059-4cd5-bfd2-302dc7a4c8e2.jpg?1674420651",
+        "cards": [
+            "5aa63321-aa28-449d-a31f-869a98c5a6be",
+            "445f897e-a059-4cd5-bfd2-302dc7a4c8e2",
+            "f31bd134-22c8-4031-8f85-ac0855914d11",
+            "99965310-e4bd-40d9-80f5-3fd1754c61c5",
+            "d90175ae-4109-4845-b3ff-1531fb67a0e1",
+            "46e101e5-2b20-48dd-aac4-15a3c32a7441",
+            "86382685-e54c-4152-a500-2148a2d6b5a4"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Urza's Command",
+                    "id": "b9b4a02c-e57f-4287-943e-6bc859ac149e",
+                    "weight": 80
+                },
+                {
+                    "name": "Surge Engine",
+                    "id": "12b9c9c5-e992-4f1c-a779-124176c3aade",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Argivian Avenger",
+                    "id": "28e3bf5a-0a90-46d3-bcfe-9a47df41b72b",
+                    "weight": 50
+                },
+                {
+                    "name": "Hulking Metamorph",
+                    "id": "420f0b81-8b87-4854-9dc4-6da84cc38623",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Scatter Ray",
+                    "id": "1c2852c9-d566-4824-836a-2f4c7a5148a1",
+                    "weight": 50
+                },
+                {
+                    "name": "Machine Over Matter",
+                    "id": "d08eadf5-a86d-4e8d-b65d-79b4f88477b9",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Stern Lesson",
+                    "id": "3151caa2-10ed-4f30-83eb-cd1bd3f642ce",
+                    "weight": 50
+                },
+                {
+                    "name": "Urza's Rebuff",
+                    "id": "8a6f90b3-450c-490a-b6d0-2393c4646c85",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Resurrected",
+        "colors": [
+            "B"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/2/f/2fa2fa48-ddb7-45f0-b183-4186df98f7cc.jpg?1674420893",
+        "cards": [
+            "2fa2fa48-ddb7-45f0-b183-4186df98f7cc",
+            "58baa977-16c1-4983-8343-dbd65e98ddb7",
+            "ebdcf02b-1876-44d7-8a22-679ea1272856",
+            "2fee3328-75c2-4d13-86e1-bf3a40fbf538",
+            "e28de770-7975-4aa9-b656-e7dbe6bff290",
+            "9d927dfd-ae66-4235-a61b-39c85d0c1222",
+            "202cbfa4-3b3d-47fd-84a6-892692c906d6",
+            "90183d4d-c231-4e45-b1fc-2699b33a3733"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Battlefield Butcher",
+                    "id": "90c47e31-d4f6-46f3-94b7-1726c4a4a8eb",
+                    "weight": 50
+                },
+                {
+                    "name": "Reconstructed Thopter",
+                    "id": "bcc8a8d8-6d8e-44b3-a29b-5fa4a851a25b",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Ashnod's Intervention",
+                    "id": "bcf491db-d12b-4c58-9c05-085cac34a73e",
+                    "weight": 50
+                },
+                {
+                    "name": "Disfigure",
+                    "id": "aaa9c6f1-3938-448b-bdc3-22420c5984d3",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Dreams of Steel and Oil",
+                    "id": "261ac92e-c61a-4c11-aa6a-9ae1cb703e5c",
+                    "weight": 50
+                },
+                {
+                    "name": "Gruesome Realization",
+                    "id": "21cd0ece-a267-42ab-b95a-6e7931bd837a",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Gix's Command",
+                    "id": "9606de75-c25f-411b-a271-258ac5a60987",
+                    "weight": 80
+                },
+                {
+                    "name": "Gix, Yawgmoth Praetor",
+                    "id": "2c76f7e0-37e7-4e87-93a3-a25ba0674645",
+                    "weight": 20
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Mishra's",
+        "colors": [
+            "R"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/f/5/f5d02416-8578-40a5-bf31-d1ef9b8764f1.jpg?1674421176",
+        "cards": [
+            "4742800a-4872-4c2d-b884-01e0ba16950c",
+            "f5d02416-8578-40a5-bf31-d1ef9b8764f1",
+            "b30457c3-57df-4720-8b45-962f16316d17",
+            "e4e5529a-848b-486c-97fb-1def35df7837",
+            "f7761ed0-a784-4dfb-ab6c-0f4b9a411cf3",
+            "a169612e-f5de-4653-bc31-9ede8c5bdc75",
+            "1be13abf-b717-4122-ab2b-7e597a251d52",
+            "f8532b98-b69e-4d43-9ec8-0587572a0dff"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Sardian Cliffstomper",
+                    "id": "c1c42d56-5b0e-4624-8831-77280f8d56cf",
+                    "weight": 50
+                },
+                {
+                    "name": "Horned Stoneseeker",
+                    "id": "5cd965a9-caa2-42a3-b2f9-e4f57341ac27",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Mishra's Onslaught",
+                    "id": "eda82e38-c1d4-4019-8f79-f91602d941b0",
+                    "weight": 50
+                },
+                {
+                    "name": "Fallaji Chaindancer",
+                    "id": "4dc2da75-160d-47f9-b978-e153262ec1fc",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Mishra's Command",
+                    "id": "f4d2e518-30c6-480c-aaf4-b7596c9479e4",
+                    "weight": 80
+                },
+                {
+                    "name": "Skitterbeam Battalion",
+                    "id": "38fc1715-4ddb-4404-83c6-0b8a61922578",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Mishra's Research Desk",
+                    "id": "bb142d99-b210-47c8-897c-be62f90d2192",
+                    "weight": 50
+                },
+                {
+                    "name": "Bitter Reunion",
+                    "id": "345a1c80-41d6-43b1-83ab-1aa56dd06b1b",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Prototype",
+        "colors": [
+            "G"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/5/0/50cc9b90-792e-4cf7-ab8c-cb616d94092a.jpg?1680794389",
+        "cards": [
+            "9c6988b6-ade0-4cd5-b27c-146e5e7ae91f",
+            "b5dbc383-7e08-4701-8d4a-6b99b74fe358",
+            "50cc9b90-792e-4cf7-ab8c-cb616d94092a",
+            "64e2ec10-f45f-46ef-a076-52425bf3fe3b",
+            "8348f73d-4226-4296-9d51-a2c497ee8270",
+            "35ba6c05-a4c2-422b-a4cb-852b3aef77a5",
+            "a902d474-0d02-449e-ab6c-8c2f32c99384"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Gwenna, Eyes of Gaea",
+                    "id": "7ee387b7-18e4-41b7-aefe-f2b5954e3051",
+                    "weight": 80
+                },
+                {
+                    "name": "Rootwire Amalgam",
+                    "id": "2498b591-4a80-459f-a639-fe4cf8880be2",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Hoarding Recluse",
+                    "id": "6559afec-6bb8-4501-8805-4eb108443048",
+                    "weight": 50
+                },
+                {
+                    "name": "Boulderbranch Golem",
+                    "id": "6e6e5338-9b95-4ac7-a57c-5efaa6423531",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Gaea's Courser",
+                    "id": "1a0b94e5-d270-4820-83b9-1d346d378ff8",
+                    "weight": 50
+                },
+                {
+                    "name": "Mask of the Jadecrafter",
+                    "id": "5db83275-bfd2-42c2-8d0f-e8a9b4f60e78",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Audacity",
+                    "id": "40b0813a-38cf-4a07-81d6-91d24af8b549",
+                    "weight": 67
+                },
+                {
+                    "name": "Bushwhack",
+                    "id": "712a0640-d9c8-46fc-b38b-bf20a40fa902",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Gaea's Gift",
+                    "id": "5503186a-46fe-4956-8ae3-5ab3343f8a93",
+                    "weight": 50
+                },
+                {
+                    "name": "Wasteful Harvest",
+                    "id": "00a0c819-36d1-442b-bec5-e6df58a122c0",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Soldiers",
+        "colors": [
+            "U",
+            "W"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/c/2/c226656b-68d5-4df2-b313-a323a728c520.jpg?1674420296",
+        "cards": [
+            "c226656b-68d5-4df2-b313-a323a728c520",
+            "991e1a6c-914b-45c8-9170-c09e72696117",
+            "43e640c3-02bb-453c-a609-05d8214e2e2e",
+            "760c0369-c2e4-4bd7-a301-9f707f5f48a8",
+            "38a62bb2-bc33-44d4-9a7e-92c9ea7d3c2c",
+            "94778e17-87c4-4765-b2f0-40455069f2c4",
+            "d4fcaf6d-6491-4459-98b0-b3c7d43df59e"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Ambush Paratrooper",
+                    "id": "cfa00c0e-163d-4f59-b8b9-3ee9143d27bb",
+                    "weight": 50
+                },
+                {
+                    "name": "Retrieval Agent",
+                    "id": "f333a7b1-936e-42f3-ba22-2c76dd2f1c9a",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Siege Veteran",
+                    "id": "f57e2a32-6e52-4f6e-96ec-55f5b7ba77e0",
+                    "weight": 50
+                },
+                {
+                    "name": "Skystrike Officer",
+                    "id": "925fa343-d9c3-4ed9-bd1f-aaa31c0badd7",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Mass Production",
+                    "id": "640a08b7-dd30-446e-a8a7-2e084bbb9586",
+                    "weight": 67
+                },
+                {
+                    "name": "Zephyr Sentinel",
+                    "id": "f935adbb-d2e3-48d0-b38c-41f3b583fecb",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Deadly Riposte",
+                    "id": "38eca0ae-d400-4afb-9a45-7100f4cd7149",
+                    "weight": 50
+                },
+                {
+                    "name": "Desynchronize",
+                    "id": "46e101e5-2b20-48dd-aac4-15a3c32a7441",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Gate to the Citadel",
+                    "id": "985d1b57-42e0-41a2-a9c6-2f5427c0c1c9",
+                    "weight": 50
+                },
+                {
+                    "name": "Gate to Seatower",
+                    "id": "86382685-e54c-4152-a500-2148a2d6b5a4",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Inspired",
+        "colors": [
+            "U",
+            "B"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/7/5/7577b5c7-91ed-4201-bdfd-0919142124eb.jpg?1674420643",
+        "cards": [
+            "171edf80-ffc1-4894-9be5-c3e93a96f734",
+            "7577b5c7-91ed-4201-bdfd-0919142124eb",
+            "e8b60003-a987-49b0-a0f8-bb825c97da4d",
+            "9ce0d139-2bea-48df-a007-cee7c8ce07bd",
+            "793a51ab-59fb-424f-a315-3f63e8990322",
+            "aaa9c6f1-3938-448b-bdc3-22420c5984d3",
+            "46a2108e-e45e-4b21-a03b-5f644b6043be"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Gixian Puppeteer",
+                    "id": "2cc86e18-ffbc-4c5f-a694-922332b146cc",
+                    "weight": 80
+                },
+                {
+                    "name": "Bladecoil Serpent",
+                    "id": "08c5a528-d16d-4cb9-b532-b85648c8395a",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Scrapwork Rager",
+                    "id": "e28de770-7975-4aa9-b656-e7dbe6bff290",
+                    "weight": 50
+                },
+                {
+                    "name": "Trench Stalker",
+                    "id": "aa1b987a-a3b9-4cd1-85b0-e58df4130934",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Curate",
+                    "id": "fe8c3fc8-c1cc-4dfc-94cb-1538bff9d09a",
+                    "weight": 50
+                },
+                {
+                    "name": "Moment of Defiance",
+                    "id": "0e99fb27-a1e9-491f-ab2a-3ccb493168cb",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Powerstone Fracture",
+                    "id": "2323301f-565a-4c0f-bffd-18386ccd1f7a",
+                    "weight": 50
+                },
+                {
+                    "name": "Weakstone's Subjugation",
+                    "id": "ef93ac79-8575-40f8-a222-63c2ffb30f60",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Gate to Seatower",
+                    "id": "86382685-e54c-4152-a500-2148a2d6b5a4",
+                    "weight": 50
+                },
+                {
+                    "name": "Gate of the Black Dragon",
+                    "id": "90183d4d-c231-4e45-b1fc-2699b33a3733",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Junkyard",
+        "colors": [
+            "B",
+            "R"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/5/c/5cd965a9-caa2-42a3-b2f9-e4f57341ac27.jpg?1674421162",
+        "cards": [
+            "5eb43c15-50a9-488f-b0be-84a5e0a6d10b",
+            "5cd965a9-caa2-42a3-b2f9-e4f57341ac27",
+            "c94a3317-7d1f-4f29-8353-180f1ab48d18",
+            "a15b0676-b698-4160-8d2f-a22a1011bac0",
+            "e28de770-7975-4aa9-b656-e7dbe6bff290",
+            "94117b09-d852-4f2e-be8e-68ee0ee3c3d8",
+            "a523d5a7-58b1-45a3-81a7-078da02fda16"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Thraxodemon",
+                    "id": "fc59ca3b-d417-4cf2-99a3-89816bf2bd09",
+                    "weight": 50
+                },
+                {
+                    "name": "Dwarven Forge-Chanter",
+                    "id": "bbd6a95a-11b9-43aa-b293-20a3102bae71",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Blitz Automaton",
+                    "id": "e4e5529a-848b-486c-97fb-1def35df7837",
+                    "weight": 50
+                },
+                {
+                    "name": "Conscripted Infantry",
+                    "id": "f50b0449-8ff7-4549-893b-aeca93720c64",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Emergency Weld",
+                    "id": "ec94d440-3922-4588-bf7b-d8670f81ef4e",
+                    "weight": 50
+                },
+                {
+                    "name": "Sibling Rivalry",
+                    "id": "c44b24de-60b4-4855-9111-f1237f71bc4d",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Energy Refractor",
+                    "id": "cc2a81fb-5045-4b7b-8cfb-b90c4f4a1f51",
+                    "weight": 50
+                },
+                {
+                    "name": "Supply Drop",
+                    "id": "82a5d3e9-bada-448b-894d-9d4e7e0463c7",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Gate of the Black Dragon",
+                    "id": "90183d4d-c231-4e45-b1fc-2699b33a3733",
+                    "weight": 50
+                },
+                {
+                    "name": "Gate to Tumbledown",
+                    "id": "f8532b98-b69e-4d43-9ec8-0587572a0dff",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Sluggers",
+        "colors": [
+            "G",
+            "R"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/d/f/df343bf9-f535-42c7-a2d0-8adfd068b354.jpg?1674421739",
+        "cards": [
+            "a842a945-21d9-432c-b970-6da65b16f309",
+            "f50b0449-8ff7-4549-893b-aeca93720c64",
+            "df343bf9-f535-42c7-a2d0-8adfd068b354",
+            "e1b7809f-f3a3-439e-8bae-c083842de1bf",
+            "6e6e5338-9b95-4ac7-a57c-5efaa6423531",
+            "40b0813a-38cf-4a07-81d6-91d24af8b549",
+            "7f886411-8216-4fb7-9172-a408c39043ee"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Tomakul Honor Guard",
+                    "id": "c7745439-f40b-4647-8bff-53751d511bbd",
+                    "weight": 50
+                },
+                {
+                    "name": "Roc Hunter",
+                    "id": "5c8b2f2b-6f19-47f7-bb65-00665989bc30",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Scrapwork Mutt",
+                    "id": "4742800a-4872-4c2d-b884-01e0ba16950c",
+                    "weight": 50
+                },
+                {
+                    "name": "Blanchwood Prowler",
+                    "id": "9c6988b6-ade0-4cd5-b27c-146e5e7ae91f",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Tyrant of Kher Ridges",
+                    "id": "72a271b1-b757-4373-8e6d-e9698ae96bed",
+                    "weight": 40
+                },
+                {
+                    "name": "Titania's Command",
+                    "id": "753567c7-c484-4c0d-8128-7710e23c428f",
+                    "weight": 40
+                },
+                {
+                    "name": "Sarinth Greatwurm",
+                    "id": "eaee6fcb-23de-4347-84b6-1e9849a537fc",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Giant Growth",
+                    "id": "aeece336-e5e8-4455-a297-c3739198d011",
+                    "weight": 50
+                },
+                {
+                    "name": "Whirling Strike",
+                    "id": "b17950ae-43aa-4d03-a41e-726ca96eb1ba",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Gate to Tumbledown",
+                    "id": "f8532b98-b69e-4d43-9ec8-0587572a0dff",
+                    "weight": 50
+                },
+                {
+                    "name": "Gate to Manorborn",
+                    "id": "a902d474-0d02-449e-ab6c-8c2f32c99384",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Tech",
+        "colors": [
+            "G",
+            "W"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/1/e/1eb02f00-c188-4193-a049-d26f7643e5da.jpg?1674421903",
+        "cards": [
+            "1eb02f00-c188-4193-a049-d26f7643e5da",
+            "74dfabfd-e13b-4512-a733-abe514be6404",
+            "b22586ce-efcc-4b20-83f9-c23b8eeaa88c",
+            "d4719bc1-4c27-45d8-89f7-8c76ccf946d2",
+            "61017325-cec0-46ac-aa32-5855e5904888",
+            "35ba6c05-a4c2-422b-a4cb-852b3aef77a5",
+            "5ab5cb30-3ced-4450-a3c4-b519f3762620"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Teething Wurmlet",
+                    "id": "2350027a-f3a4-4cba-9dfc-27e33bddb3be",
+                    "weight": 80
+                },
+                {
+                    "name": "Clay Champion",
+                    "id": "625f3b20-4b9a-4f61-8afe-31a761711b43",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Phalanx Vanguard",
+                    "id": "2abe2af7-deba-4569-822a-2d9309aeaadd",
+                    "weight": 50
+                },
+                {
+                    "name": "Halo Scarab",
+                    "id": "2eead159-b9a1-4c64-affe-c77b0a9e4775",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Tocasia's Onulet",
+                    "id": "e4abf2fb-f78a-4e75-b46f-524d3d7405db",
+                    "weight": 50
+                },
+                {
+                    "name": "Rust Goliath",
+                    "id": "8348f73d-4226-4296-9d51-a2c497ee8270",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Aeronaut's Wings",
+                    "id": "fcc65821-e4e7-471c-941c-9d3e25ae8bb9",
+                    "weight": 50
+                },
+                {
+                    "name": "Supply Drop",
+                    "id": "82a5d3e9-bada-448b-894d-9d4e7e0463c7",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Gate to Manorborn",
+                    "id": "a902d474-0d02-449e-ab6c-8c2f32c99384",
+                    "weight": 50
+                },
+                {
+                    "name": "Gate to the Citadel",
+                    "id": "985d1b57-42e0-41a2-a9c6-2f5427c0c1c9",
+                    "weight": 50
+                }
+            ]
+        ]
+    }
+]

@@ -2395,15 +2395,14 @@ describe("Sealed", function () {
 	});
 });
 
-import JumpstartBoosters from "../src/data/JumpstartBoosters.json" assert { type: "json" };
-import Jumpstart2022Boosters from "../src/data/Jumpstart2022Boosters.json" assert { type: "json" };
+import { JumpstartBoosters, Jumpstart2022Boosters } from "../src/Jumpstart.js";
 import { Card, CardColor, CardID, DeckList, UniqueCard } from "../src/CardTypes.js";
 import { SessionID, UserID } from "../src/IDTypes.js";
 import { SetCode } from "../src/Types.js";
 import { DraftState } from "../src/DraftState.js";
 import { ClientToServerEvents, ServerToClientEvents } from "../src/SocketType.js";
 import { Socket } from "socket.io-client";
-import { JHHBooster } from "../src/JumpstartHistoricHorizons.js";
+import { JumpInBooster } from "../src/JumpInTypes.js";
 import { parseLine } from "../src/parseCardList.js";
 import { SocketError, isSocketError } from "../src/Message.js";
 import { isNumber } from "../src/TypeChecks.js";
@@ -2526,7 +2525,10 @@ describe("Jumpstart: Historic Horizons", function () {
 	let clients: ReturnType<typeof makeClients> = [];
 	const sessionID = "JumpStartSession";
 	const userData: {
-		[id: string]: { packChoices: [JHHBooster[], JHHBooster[][]]; ack: (user: string, cards: string[]) => void };
+		[id: string]: {
+			packChoices: [JumpInBooster[], JumpInBooster[][]];
+			ack: (user: string, cards: string[]) => void;
+		};
 	} = {};
 
 	beforeEach(function (done) {
@@ -2591,11 +2593,90 @@ describe("Jumpstart: Historic Horizons", function () {
 	});
 });
 
+describe("Jump In!", function () {
+	for (const set of ["blb", "otj", "mkm", "lci", "woe", "ltr", "one", "bro"]) {
+		describe(set, function () {
+			let clients: ReturnType<typeof makeClients> = [];
+			const sessionID = "JumpInSession";
+			const userData: {
+				[id: string]: {
+					packChoices: [JumpInBooster[], JumpInBooster[][]];
+					ack: (user: string, cards: string[]) => void;
+				};
+			} = {};
+
+			beforeEach(function (done) {
+				disableLogs();
+				done();
+			});
+
+			afterEach(function (done) {
+				enableLogs(this.currentTest!.state === "failed");
+				done();
+			});
+
+			before(function (done) {
+				const queries = [];
+				for (let i = 0; i < 8; ++i)
+					queries.push({
+						sessionID: sessionID,
+						userName: "DontCare",
+					});
+				clients = makeClients(queries, done);
+			});
+
+			after(function (done) {
+				disableLogs();
+				for (const c of clients) {
+					c.disconnect();
+				}
+
+				waitForClientDisconnects(done);
+			});
+
+			it(`Owner launches a JumpIn game, clients should receive their pack selection.`, function (done) {
+				const ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
+				let receivedPools = 0;
+				for (const client of clients) {
+					client.once("selectJumpstartPacks", function (choices, ack) {
+						expect(choices.length).to.equal(2);
+						expect(choices[0].length).to.equal(3);
+						expect(choices[1].length).to.equal(3);
+						for (let i = 0; i < 3; ++i) expect(choices[1][i].length).to.equal(3);
+						userData[client.id!] = { packChoices: choices, ack: ack };
+						++receivedPools;
+						if (receivedPools === clients.length) done();
+					});
+				}
+				clients[ownerIdx].emit("distributeJumpstart", set, ackNoError);
+			});
+
+			it(`Clients make their choice and draft log updates accordingly.`, function (done) {
+				const ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
+				clients[ownerIdx].on("draftLog", (log) => {
+					if (Object.keys(log.users).filter((uid) => !!log.users[uid].cards).length === clients.length) {
+						clients[ownerIdx].removeListener("draftLog");
+						done();
+					}
+				});
+				for (const client of clients) {
+					const cards = userData[client.id!].packChoices[0][0].cards.map((card) => card.id);
+					cards.concat(userData[client.id!].packChoices[1][0][1].cards.map((card) => card.id));
+					userData[client.id!].ack(getUID(client), cards);
+				}
+			});
+		});
+	}
+});
+
 describe("Jumpstart: Super Jump!", function () {
 	let clients: ReturnType<typeof makeClients> = [];
 	const sessionID = "JumpStartSession";
 	const userData: {
-		[id: string]: { packChoices: [JHHBooster[], JHHBooster[][]]; ack: (user: string, cards: string[]) => void };
+		[id: string]: {
+			packChoices: [JumpInBooster[], JumpInBooster[][]];
+			ack: (user: string, cards: string[]) => void;
+		};
 	} = {};
 
 	beforeEach(function (done) {

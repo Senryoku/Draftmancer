@@ -1,5 +1,5 @@
 import { CardColor } from "./CardTypes";
-import ManaSymbolsJSON from "./data/mana_symbols.json" assert { type: "json" };
+import ManaSymbolsJSON from "./data/mana_symbols.json" with { type: "json" };
 import { MessageError } from "./Message.js";
 
 type parseCostReturnType = { cmc: number; colors: CardColor[]; normalizedCost: string };

@@ -1,0 +1,760 @@
+[
+    {
+        "name": "Detectives",
+        "colors": [
+            "W",
+            "U"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/1/f/1f88d077-5082-4a67-91e4-97aafb9a5e91.jpg?1706378680",
+        "cards": [
+            "0ad38866-fc5f-4f62-89c1-afc0f50765aa",
+            "1f88d077-5082-4a67-91e4-97aafb9a5e91",
+            "268f142d-9fb1-4673-b804-add1f08dacb9",
+            "b6a50807-058e-45dc-847c-8ffd13b1bd48",
+            "daee9d98-f8c6-4980-8f23-c6c636b69430",
+            "6d2565e1-dd7b-462b-8270-a17913277793",
+            "1e0c695d-62f9-4805-9e2f-7032e8464136",
+            "4ea29c34-4b55-4170-9120-0a8dda61f2eb"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Projektor Inspector",
+                    "id": "ad378843-e2b0-48d6-90dc-b584e857473d",
+                    "weight": 50
+                },
+                {
+                    "name": "Inside Source",
+                    "id": "1548d181-3f83-457a-b2d3-eb88cfb2afda",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Griffnaut Tracker",
+                    "id": "95f5d048-226f-49a4-a2ce-a6fa99aa9e8a",
+                    "weight": 50
+                },
+                {
+                    "name": "Cold Case Cracker",
+                    "id": "f082111b-9b1c-4a25-8c5d-d6ef77533a9b",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Ezrim, Agency Chief",
+                    "id": "9554d5f2-7a33-4734-8cf3-dfae2ccc3596",
+                    "weight": 80
+                },
+                {
+                    "name": "Alquist Proft, Master Sleuth",
+                    "id": "41129b44-4fa7-473b-b2b7-48c6a58be03c",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Auspicious Arrival",
+                    "id": "5180c85c-6add-4066-83c4-27fb1fd4de16",
+                    "weight": 50
+                },
+                {
+                    "name": "Out Cold",
+                    "id": "aabfada0-3c1b-4237-b06c-573071ccd68d",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Scrappy",
+        "colors": [
+            "B",
+            "W"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/0/4/0438d482-b74c-4d5e-a2bc-7063c1ae73fa.jpg?1706241518",
+        "cards": [
+            "93ab3e11-8584-406f-b9ae-9e1df4396cbc",
+            "0438d482-b74c-4d5e-a2bc-7063c1ae73fa",
+            "9cba5503-ba99-43d8-8062-66d905e0d86b",
+            "a3490c05-d12c-4483-acbc-1b4ae68877f0",
+            "5277fe72-dc33-4d19-a439-63b5344c6034",
+            "c3896705-bbd2-4ffb-a590-ee78e0eabdc5",
+            "0f852937-381d-4445-99d3-2ecb8af6bb6a",
+            "e45d2e0c-d70d-40e5-8c3d-db6803393516"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Forum Familiar",
+                    "id": "b06a243d-acc8-42cd-926c-98a4cc96ab21",
+                    "weight": 50
+                },
+                {
+                    "name": "Slimy Dualleech",
+                    "id": "4bc803ad-f8a2-4198-a8a6-8d987b3d00fb",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Unscrupulous Agent",
+                    "id": "37692f9a-3825-43aa-aacb-1bb92cb5bd07",
+                    "weight": 50
+                },
+                {
+                    "name": "Marketwatch Phantom",
+                    "id": "daf6a392-3fc4-45d1-b85d-3b1381b3ab7d",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Teysa, Opulent Oligarch",
+                    "id": "9b5a13dd-c2fd-432e-bc49-cc62d94d62a0",
+                    "weight": 80
+                },
+                {
+                    "name": "Delney, Streetwise Lookout",
+                    "id": "be219928-3d0e-4d00-b124-152ce8a8c13b",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Toxin Analysis",
+                    "id": "0eda1aff-c1f4-4171-a800-605396cc8168",
+                    "weight": 50
+                },
+                {
+                    "name": "Slice from the Shadows",
+                    "id": "317800b3-6b2d-4de6-8e44-7e54dd623055",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Battalion",
+        "colors": [
+            "W",
+            "R"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/e/b/eb81e343-7242-44b1-9ce6-1dddd104f764.jpg?1706241862",
+        "cards": [
+            "eb81e343-7242-44b1-9ce6-1dddd104f764",
+            "a6e0adb7-a030-4dcc-9284-cd91c7598a22",
+            "c0ebfe5d-8819-495d-bf72-b9c28c6fd23e",
+            "1548d181-3f83-457a-b2d3-eb88cfb2afda",
+            "af12417c-b082-4379-a850-c72e2652c6fb",
+            "8b284304-c3bf-4413-9fd3-b44eb4eb642a",
+            "4538d6a8-a24a-40e3-b894-45a30882c92a",
+            "4101e3fe-b0e7-4f0f-b9ac-9b61a4d628b3"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Innocent Bystander",
+                    "id": "085f4595-4ae5-428e-a934-e918774df6fd",
+                    "weight": 50
+                },
+                {
+                    "name": "Red Herring",
+                    "id": "6c137a44-9ab6-4e59-8324-34d9dca8f5a6",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Karlov Watchdog",
+                    "id": "79cfb366-ae2a-4b3d-9a80-383a32db1509",
+                    "weight": 50
+                },
+                {
+                    "name": "Harried Dronesmith",
+                    "id": "36cb25ee-3c84-40a8-ba45-7e44893deecf",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Warleader's Call",
+                    "id": "b3e8f8bd-1c8b-4a7c-96c4-57a247ce9ccc",
+                    "weight": 40
+                },
+                {
+                    "name": "Aurelia, the Law Above",
+                    "id": "8f80c6e7-e9f9-4ca6-87f7-a52c96079e4a",
+                    "weight": 40
+                },
+                {
+                    "name": "Agrus Kos, Spirit of Justice",
+                    "id": "58aeac7c-1275-49d4-9915-7604ae4bfdff",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Wrench",
+                    "id": "c36cc39b-8f3b-4297-b118-86fa624308b4",
+                    "weight": 50
+                },
+                {
+                    "name": "Case of the Gateway Express",
+                    "id": "0862bf07-8a76-4e80-bba2-20d22f8eee30",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Undercover",
+        "colors": [
+            "G",
+            "W"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/3/b/3b9d4691-59d1-4e97-9b5d-8017788fbcb3.jpg?1706242253",
+        "cards": [
+            "3b9d4691-59d1-4e97-9b5d-8017788fbcb3",
+            "93b747c7-b342-47f8-a190-16c393b20607",
+            "88e62346-cc62-4938-970c-b56beeb79fa6",
+            "cdf0578f-4966-4ecd-81e1-83ae13126f13",
+            "2c1392c5-91a5-4e6e-803d-ed032e4d594b",
+            "700294fc-7c16-4f7d-bce0-7452d8e9c401",
+            "bffbbe21-0a1d-48b9-903e-81c109aa11de",
+            "7e144609-e1f6-4bdc-8d14-b735ef4140d3"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Tunnel Tipster",
+                    "id": "3e29b890-35b9-4e2a-9b4c-9417ca7db31d",
+                    "weight": 50
+                },
+                {
+                    "name": "Marketwatch Phantom",
+                    "id": "daf6a392-3fc4-45d1-b85d-3b1381b3ab7d",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Museum Nightwatch",
+                    "id": "37860682-4973-4a0f-a43a-3056037bd2dc",
+                    "weight": 50
+                },
+                {
+                    "name": "Defenestrated Phantom",
+                    "id": "8b284304-c3bf-4413-9fd3-b44eb4eb642a",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Hide in Plain Sight",
+                    "id": "d87c1ed8-c644-4ad5-9a21-c7bd9a7e8d20",
+                    "weight": 40
+                },
+                {
+                    "name": "Tolsimir, Midnight's Light",
+                    "id": "08d22402-c41d-43d7-be1f-42be1e300726",
+                    "weight": 40
+                },
+                {
+                    "name": "Trostani, Three Whispers",
+                    "id": "329f3aca-6db7-41d3-95b2-c479d14b7fa3",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Make Your Move",
+                    "id": "73475d29-2673-4614-86d3-404232426aa8",
+                    "weight": 50
+                },
+                {
+                    "name": "On the Job",
+                    "id": "48b92629-4196-4943-91fd-8c8d5f3fcaef",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Elusive",
+        "colors": [
+            "B",
+            "U"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/e/8/e8578839-046f-4afd-a0e7-4737ded9e6eb.jpg?1706241631",
+        "cards": [
+            "e8578839-046f-4afd-a0e7-4737ded9e6eb",
+            "20267dab-8898-4b44-8ef4-8a239967662c",
+            "2893aef8-835d-4935-b532-d8670585e489",
+            "8dc3b23b-04d6-4ac0-b698-596ea90b7781",
+            "270570a3-8637-4e4e-92d9-e985474cd5d2",
+            "7cbb17af-e17e-438a-ad72-0c942e6706b6",
+            "1ea6438b-0e6c-4d65-8bcd-34a988717c81",
+            "2dc9f352-5076-4b5f-9815-cf47abb63d5b"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Jaded Analyst",
+                    "id": "2807dcfb-d99c-483b-835f-2606eae4bd30",
+                    "weight": 50
+                },
+                {
+                    "name": "Unscrupulous Agent",
+                    "id": "37692f9a-3825-43aa-aacb-1bb92cb5bd07",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Lazav, Wearer of Faces",
+                    "id": "cc264d1d-689d-41ac-b624-3fc7bb890e58",
+                    "weight": 50
+                },
+                {
+                    "name": "Drag the Canal",
+                    "id": "508d7096-2be3-4d4b-a55c-d4dbd3c9019c",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Furtive Courier",
+                    "id": "6f359fc2-b9e4-4a01-9d04-442bb160b01e",
+                    "weight": 50
+                },
+                {
+                    "name": "Undercity Eliminator",
+                    "id": "a67a4c5e-215b-4f03-87f7-c1af4f9f0a63",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Curious Inquiry",
+                    "id": "5a3603c6-92df-45c7-b402-1f0a552ea398",
+                    "weight": 50
+                },
+                {
+                    "name": "Sudden Setback",
+                    "id": "0b9e5fd6-a5ea-4ae5-83f5-89ed6a658dd3",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Gadgets",
+        "colors": [
+            "U",
+            "R"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/c/a/cabb5875-42ff-4e3a-a32e-aab392fccff8.jpg?1706242169",
+        "cards": [
+            "6c137a44-9ab6-4e59-8324-34d9dca8f5a6",
+            "cabb5875-42ff-4e3a-a32e-aab392fccff8",
+            "3b489a54-ee43-4962-be7b-16e0e28800e0",
+            "283b6b5a-acdf-4255-a294-0964d9c62686",
+            "64ed3bfa-3294-45dd-825e-3afc2580f0d4",
+            "2ca93438-a132-45ca-9fa8-364aeb519594",
+            "2c05bf2d-7d4f-4717-b1ea-ec4284854f4f",
+            "6e280482-ed7e-4011-899e-096ff7bd4c41"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Reckless Detective",
+                    "id": "18da1a1d-e6ba-47e5-a545-0bacd427b782",
+                    "weight": 50
+                },
+                {
+                    "name": "Crime Novelist",
+                    "id": "14a5cd7c-b0b1-4ffa-a806-bb0e73baffad",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Bubble Smuggler",
+                    "id": "6b863ee0-d9f3-4b1e-993d-5212731d9353",
+                    "weight": 50
+                },
+                {
+                    "name": "Gearbane Orangutan",
+                    "id": "6900a344-a155-4ee1-a3ac-d6c28e024270",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Forensic Gadgeteer",
+                    "id": "97d08a15-e61c-4421-a541-c68a4f87cb74",
+                    "weight": 50
+                },
+                {
+                    "name": "Krenko, Baron of Tin Street",
+                    "id": "5524b712-c67d-4d2e-9344-9e85a6ce3227",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Case of the Filched Falcon",
+                    "id": "266be5bd-71ba-4511-8b71-d0b03885a28d",
+                    "weight": 50
+                },
+                {
+                    "name": "Knife",
+                    "id": "b6883788-e1ee-4ddd-add2-24d6bc367717",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Evidence",
+        "colors": [
+            "G",
+            "U"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/f/5/f53a6ee7-86e1-4d2d-994c-214e0ec08dad.jpg?1706242160",
+        "cards": [
+            "f53a6ee7-86e1-4d2d-994c-214e0ec08dad",
+            "664d15d7-2724-4a9b-b5a7-8042d4b7da7b",
+            "703b874d-6739-4063-9891-e9c040dd9618",
+            "03d0365e-6dee-4236-a997-6761e3cde90d",
+            "5bc669c8-6f39-4d52-82d3-a4005d41c8a5",
+            "71701c28-f113-4d38-8fd3-a19cd9749661",
+            "8a458474-d721-46d7-b487-6a47dc063cfd",
+            "29bbfe93-8225-444c-835b-33ffa006ef66"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Forensic Researcher",
+                    "id": "1384df5d-d705-49cb-a982-1588cbf303d8",
+                    "weight": 50
+                },
+                {
+                    "name": "Sample Collector",
+                    "id": "76f7480c-82cc-4ddd-b619-c1a609c29a13",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Steamcore Scholar",
+                    "id": "6bbf7394-9b17-45f8-a25b-d865e8452b2c",
+                    "weight": 50
+                },
+                {
+                    "name": "Doppelgang",
+                    "id": "a2daec58-78ed-4da5-b3b0-b04f12b0acbd",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Crimestopper Sprite",
+                    "id": "dc4ac597-38f0-48b5-ac2d-dfb0b169f834",
+                    "weight": 50
+                },
+                {
+                    "name": "Loxodon Eavesdropper",
+                    "id": "bbbf8c3a-6c74-42fd-bb8d-61e3f0a77848",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Candlestick",
+                    "id": "5aeae6fb-3834-4891-924e-3d1fb3e19e09",
+                    "weight": 50
+                },
+                {
+                    "name": "Flotsam // Jetsam",
+                    "id": "c1500cbf-5619-465e-a97b-75e676ce789b",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Suspects",
+        "colors": [
+            "B",
+            "R"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/5/2/5288cf17-9d79-4d35-85f1-bf4d0a73494b.jpg?1706378665",
+        "cards": [
+            "5288cf17-9d79-4d35-85f1-bf4d0a73494b",
+            "0c2ca1e7-e0de-4d29-a81b-62185ccd295f",
+            "2e069de0-3218-456c-b191-93e755634783",
+            "7d56ebff-67c8-4bc7-a533-ddde4ce0c2af",
+            "0de36e63-8190-415f-b65b-bae1e595845d",
+            "298747bb-eb40-4b58-bb22-4ac2bc1d795c",
+            "4dd64e5c-ea0b-4ea0-aba3-88e7e96ac7ba",
+            "7c68981c-037c-42e7-9b7f-6f07edab5f2e"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Case of the Stashed Skeleton",
+                    "id": "4b120cbe-f0af-46c5-863f-03ecadf0435c",
+                    "weight": 50
+                },
+                {
+                    "name": "Barbed Servitor",
+                    "id": "1c34e4ae-9bf3-4098-88f1-267e7d6cfa35",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Alley Assailant",
+                    "id": "edf238c9-61de-4f3a-b82f-05af46e5e81b",
+                    "weight": 50
+                },
+                {
+                    "name": "Gearbane Orangutan",
+                    "id": "6900a344-a155-4ee1-a3ac-d6c28e024270",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Agency Coroner",
+                    "id": "d63f2c23-e877-42e3-9362-5d003a173c6d",
+                    "weight": 50
+                },
+                {
+                    "name": "Rubblebelt Braggart",
+                    "id": "f90f8691-210a-4bf0-9fc2-fb2efcf057fb",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Lead Pipe",
+                    "id": "87f69249-c6e4-40c1-9870-b9c45ce24c39",
+                    "weight": 50
+                },
+                {
+                    "name": "Concealed Weapon",
+                    "id": "38e31fa6-a445-47c6-a73f-135087f6d760",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Forensics",
+        "colors": [
+            "G",
+            "B"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/0/c/0c08ed44-2c13-4029-af2e-68585a76bb03.jpg?1706242194",
+        "cards": [
+            "81c7ff67-b9e1-4d2e-b1ae-da9b946da00b",
+            "0c08ed44-2c13-4029-af2e-68585a76bb03",
+            "dc687588-9c57-411d-b666-b9699949d48f",
+            "6aaa8c6b-7ef7-45db-99c9-4a6e7f177b94",
+            "023b0142-663a-47e7-a9f1-0b565a172b60",
+            "70ea66cd-587a-4ca9-9ca8-d7d2046bfbed",
+            "0bb91a22-2040-4a37-85f8-5f22de8c5907",
+            "29bbfe93-8225-444c-835b-33ffa006ef66"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Festerleech",
+                    "id": "83a6fa37-8351-403b-ae05-b67e9bf74bbb",
+                    "weight": 50
+                },
+                {
+                    "name": "Polygraph Orb",
+                    "id": "a6cc4c6f-4a84-4d42-89fa-7405f7ad6ba0",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Topiary Panther",
+                    "id": "03d0365e-6dee-4236-a997-6761e3cde90d",
+                    "weight": 50
+                },
+                {
+                    "name": "Basilica Stalker",
+                    "id": "fdafea8f-283d-4f19-a74a-669bfbdfed98",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Extract a Confession",
+                    "id": "256c8b6e-4031-458b-8eb9-bbfe58405a0c",
+                    "weight": 50
+                },
+                {
+                    "name": "Macabre Reconstruction",
+                    "id": "abb6184c-e3d0-4275-b25b-95e4a64b26f3",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Chalk Outline",
+                    "id": "b3ff56c1-4153-4e15-9ac6-06d93fa2ae50",
+                    "weight": 50
+                },
+                {
+                    "name": "Soul Enervation",
+                    "id": "6f22ac67-06ce-47cc-a515-d216d30b9cae",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Disguised",
+        "colors": [
+            "G",
+            "R"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/4/0/4094b13f-28d4-48b6-8cce-3c44656745b7.jpg?1706242261",
+        "cards": [
+            "6154a991-c602-4fca-91a3-3830060da60e",
+            "93b747c7-b342-47f8-a190-16c393b20607",
+            "3e29b890-35b9-4e2a-9b4c-9417ca7db31d",
+            "4094b13f-28d4-48b6-8cce-3c44656745b7",
+            "9fae9044-a859-434d-8dc6-4f9d455ca5e1",
+            "8ad807c2-14a7-4464-bf57-c323fb3c0bd0",
+            "8c628476-0987-47d4-8d2a-cfc3977b2357",
+            "22bbf709-d8e9-4e3b-8ec8-206f1b2162b3"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Pyrotechnic Performer",
+                    "id": "0fa5671b-2651-4944-a50a-c768ec70229e",
+                    "weight": 40
+                },
+                {
+                    "name": "Yarus, Roar of the Old Gods",
+                    "id": "326845a7-7502-4dc3-8f3e-867d6c84e931",
+                    "weight": 40
+                },
+                {
+                    "name": "Anzrag, the Quake-Mole",
+                    "id": "70e9d8b8-4b32-4414-b32f-1f47523239c5",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Vengeful Creeper",
+                    "id": "7a914416-effd-4eda-b609-2773c53a08ec",
+                    "weight": 50
+                },
+                {
+                    "name": "Offender at Large",
+                    "id": "f096ff4a-85f4-46f1-9478-e8921f21309d",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Culvert Ambusher",
+                    "id": "2ccdc58b-1e7e-402c-88f9-c789ff1dae31",
+                    "weight": 50
+                },
+                {
+                    "name": "Bolrac-Clan Basher",
+                    "id": "b87683f7-8a61-4e4a-8b8b-3bf812454096",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Pick Your Poison",
+                    "id": "f58cfb23-4d99-4133-bf4b-d7e7c7d17cea",
+                    "weight": 50
+                },
+                {
+                    "name": "Fanatical Strength",
+                    "id": "4941fa74-c7b9-4468-8080-de8057d3d27b",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Slime Against Humanity",
+        "colors": [
+            "G",
+            "R"
+        ],
+        "cycling_land": false,
+        "image": "https://cards.scryfall.io/border_crop/front/4/6/4627adcd-ace7-4777-a7e6-fc80ac6b9dfe.jpg?1706242021",
+        "cards": [
+            "4627adcd-ace7-4777-a7e6-fc80ac6b9dfe",
+            "1eb21318-d32e-4724-8908-c0d7613de2f4",
+            "1eb21318-d32e-4724-8908-c0d7613de2f4",
+            "1eb21318-d32e-4724-8908-c0d7613de2f4",
+            "1eb21318-d32e-4724-8908-c0d7613de2f4",
+            "1eb21318-d32e-4724-8908-c0d7613de2f4",
+            "1eb21318-d32e-4724-8908-c0d7613de2f4",
+            "1eb21318-d32e-4724-8908-c0d7613de2f4",
+            "34e61e0f-d0f3-492a-92f1-36f72a91583a",
+            "8ad807c2-14a7-4464-bf57-c323fb3c0bd0",
+            "9e80f5c7-ae29-473c-ac64-04bcbc629385"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Hard-Hitting Question",
+                    "id": "8ad807c2-14a7-4464-bf57-c323fb3c0bd0",
+                    "weight": 50
+                },
+                {
+                    "name": "Rope",
+                    "id": "6881946c-5036-4d9f-926f-932c9a592aff",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Commercial District",
+                    "id": "bf220c06-3cce-4bdd-aa58-83940c223e9c",
+                    "weight": 25
+                },
+                {
+                    "name": "Lush Portico",
+                    "id": "c17816e8-28b1-4295-a637-efb0e5c18873",
+                    "weight": 25
+                },
+                {
+                    "name": "Underground Mortuary",
+                    "id": "f6ca59cd-8779-4a84-a54b-e863b79c61f0",
+                    "weight": 25
+                }
+            ]
+        ]
+    }
+]

@@ -14,7 +14,7 @@ import type { RotisserieDraftStartOptions, RotisserieDraftSyncData } from "@/Rot
 import type { TeamSealedSyncData } from "@/TeamSealed";
 import type { SocketAck } from "@/Message";
 import type { Options } from "@/utils";
-import type { JHHBooster } from "@/JumpstartHistoricHorizons";
+import type { JumpInBooster } from "@/JumpInTypes";
 import type { CustomCardList } from "@/CustomCardList";
 import { IBracket, BracketType } from "../../src/Brackets";
 import { MinesweeperSyncData } from "@/MinesweeperDraftTypes";
@@ -72,6 +72,7 @@ import SetSelect from "./components/SetSelect.vue";
 
 const SupremeDialog = defineAsyncComponent(() => import("./components/SupremeDraftDialog.vue"));
 const GlimpseDialog = defineAsyncComponent(() => import("./components/GlimpseDraftDialog.vue"));
+const JumpInDialog = defineAsyncComponent(() => import("./components/JumpInDialog.vue"));
 const GridDialog = defineAsyncComponent(() => import("./components/GridDraftDialog.vue"));
 const HousmanDialog = defineAsyncComponent(() => import("./components/HousmanDialog.vue"));
 const MinesweeperDialog = defineAsyncComponent(() => import("./components/MinesweeperDraftDialog.vue"));
@@ -2328,6 +2329,15 @@ export default defineComponent({
 				},
 			});
 		},
+		startJumpIn: async function () {
+			if (this.userID !== this.sessionOwner || this.drafting) return;
+
+			this.spawnDialog(JumpInDialog, {
+				onStart: (set: string) => {
+					this.deckWarning(() => this.distributeJumpstart(set));
+				},
+			});
+		},
 		// Collection management
 		setCollection(json: PlainCollection) {
 			if (this.collection == json) return;
@@ -2977,7 +2987,7 @@ export default defineComponent({
 				if (r.error) Alert.fire(r.error);
 			});
 		},
-		async displayPackChoice(boosters: JHHBooster[], currentPack: number, packCount: number) {
+		async displayPackChoice(boosters: JumpInBooster[], currentPack: number, packCount: number) {
 			let boostersDisplay = "";
 			for (const b of boosters) {
 				const colors = b.colors
@@ -3009,7 +3019,7 @@ export default defineComponent({
 			return choice;
 		},
 		async selectJumpstartPacks(
-			choices: [JHHBooster[], JHHBooster[][]],
+			choices: [JumpInBooster[], JumpInBooster[][]],
 			ack: (user: UserID, cards: CardID[]) => void
 		) {
 			const choice = await this.displayPackChoice(choices[0], 0, choices.length);

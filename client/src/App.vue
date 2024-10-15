@@ -509,6 +509,13 @@
 										Jumpstart: Historic Horizons
 									</button>
 								</div>
+								<div
+									v-tooltip.left="
+										'Distributes two Jump In! boosters to everyone. Multiple sets are available.'
+									"
+								>
+									<button @click="startJumpIn">Jump In!</button>
+								</div>
 								<div v-tooltip.left="'Distributes two Super Jump! boosters to everyone.'">
 									<button
 										@click="deckWarning(() => distributeJumpstart('super'))"
