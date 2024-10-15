@@ -219,7 +219,7 @@ Card Name 6
 	name: <type>string</type>;                       <comment>// The name of your cube.</comment>
 	cardBack: <type>string</type>;                   <comment>// URL to a custom card back.</comment>
 	cardTitleHeightFactor: <type>number</type>;      <comment>// Allows you to adjust the height of the card title when stacked in a column. Defaults to 1.</comment>
-	showSlots: <type>boolean</type>;                 <comment>// If layouts are used, will display what sheet slot generated which card.
+	showSlots: <type>boolean</type>;                 <comment>// If layouts are used, will display what slot generated which card.
 	                                    //   If you want multiple slots to be displayed with the same name, use "##" to add a hidden identifier.
 		                                //   For example, "Rare" and "Rare##Legendary" will both be displayed as "Rare".</comment>
 	
@@ -342,17 +342,17 @@ Card Name 2
 		"Rare": {
 			"weight": 7,
 			"slots": {
-  				"Common": 10,
+  				"Rare": 1,
   				"Uncommon": 3,
-  				"Rare": 1
+  				"Common": 10
 			}
 		},
 		"Mythic": {
 			"weight": 1,
 			"slots": {
-  				"Common": 10,
+  				"Mythic": 1,
   				"Uncommon": 3,
-  				"Mythic": 1
+  				"Common": 10
 			}
 		}
 	}
@@ -407,35 +407,35 @@ Card Name 2
 		"Rare": {
 			"weight": 21,
 			"slots": {
-  				"Common": 10,
-  				"Uncommon": 2,
+				"Rare": 1,
 				"UncommonLegendary": 1,
-  				"Rare": 1
+				"Uncommon": 2,
+  				"Common": 10
 			}
 		},
 		"Mythic": {
 			"weight": 3,
 			"slots": {
-  				"Common": 10,
-  				"Uncommon": 2,
+				"Mythic": 1,
 				"UncommonLegendary": 1,
-  				"Mythic": 1
+  				"Uncommon": 2,
+  				"Common": 10
 			}
 		},
 		"RareLegendary": {
 			"weight": 7,
 			"slots": {
-  				"Common": 10,
-  				"Uncommon": 3,
-				"RareLegendary": 1
+				"RareLegendary": 1,
+				"Uncommon": 3,
+  				"Common": 10
 			}
 		},
 		"MythicLegendary": {
 			"weight": 1,
 			"slots": {
-  				"Common": 10,
+				"MythicLegendary": 1,
   				"Uncommon": 3,
-				"MythicLegendary": 1
+  				"Common": 10
 			}
 		}
 	}
