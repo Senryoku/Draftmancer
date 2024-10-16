@@ -215,7 +215,8 @@ def append_set_cards(allcards, results):
 # Manually fetch up-to-date data for a specific set (really unoptimized)
 if FetchSet:
     print("Fetching cards from {}...".format(SetToFetch))
-    setcards = requests.get(json.loads(requests.get(f"https://api.scryfall.com/sets/{SetToFetch}").content)["search_uri"]).json()
+    #setcards = requests.get(json.loads(requests.get(f"https://api.scryfall.com/sets/{SetToFetch}").content)["search_uri"]).json()
+    setcards = requests.get(f"https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3A{SetToFetch}").json()
     allcards = []
     with open(BulkDataPath, 'r', encoding="utf8") as file:
         allcards = json.load(file)

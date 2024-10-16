@@ -128,6 +128,9 @@ for entry in Sets:
 
             if image == None:
                 image = "/img/cardback.webp"
+                
+            if os.path.isfile(f"client/public/img/jumpin/{deck_name.lower()}.png"):
+                image = f"/img/jumpin/{deck_name.lower()}.png"
 
             jumpInBoosters.append({
                 "name": deck_name, 
@@ -139,7 +142,7 @@ for entry in Sets:
             })
         print(f"JumpIn Boosters: {len(jumpInBoosters)}")
         for c in jumpInBoosters:
-            print(f"{c['name']:<30}: {len(c['cards'])} + {len(c['alts'])} = {len(c['cards']) + len(c['alts'])} cards")
+            print(f"{c['name']:<30}: {len(c['cards'])} + {len(c['alts'])} = {len(c['cards']) + len(c['alts'])} cards - {c['image']}")
         if len(jumpInBoosters) > 0:
             with open(OutputFile, 'w', encoding="utf8") as outfile:
                 json.dump(jumpInBoosters, outfile, indent=4, ensure_ascii=False,)

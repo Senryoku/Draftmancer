@@ -16176,7 +16176,7 @@
         61359,
         61359
     ],
-    "Crude Abattoir": [
+    "Crude Abattoir // Unsavory Kitchen": [
         95347
     ],
     "Sage of Ancient Lore // Werewolf of Ancient Hunger": [
@@ -32769,6 +32769,9 @@
     "Ghitu Chronicler": [
         67354
     ],
+    "Housemeld": [
+        95339
+    ],
     "Kami of Industry": [
         79579
     ],
@@ -33574,7 +33577,7 @@
         82752,
         82793
     ],
-    "C": [
+    "Glimmer Hoarder": [
         95342
     ],
     "Senate Courier": [
@@ -37920,5 +37923,26 @@
     ],
     "Golden Sidekick": [
         95359
+    ],
+    "Mangled Soulrager": [
+        95360
+    ],
+    "Mischievous Lookout": [
+        95361
+    ],
+    "Polterheist": [
+        95362
+    ],
+    "Unnatural Summons": [
+        95363
+    ],
+    "Valiant Emberkin": [
+        95364
+    ],
+    "Wingbright Thief": [
+        95365
+    ],
+    "Soul Shredder": [
+        95366
     ]
 }
