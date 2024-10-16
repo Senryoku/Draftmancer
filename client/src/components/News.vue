@@ -1,6 +1,24 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
+			<em>October 16, 2024</em>
+			<ul>
+				<li>Added Alchemy: Duskmourn cards.</li>
+				<li>
+					New experimental game mode: Jump In!<br />Subtleties like dual lands allocations and more sets will
+					be added later on if there's an interest.
+				</li>
+				<li>
+					Extended slots in cubes to support multiple sheets (card lists) per slot.
+					<br />This will help create complex layouts more easily, limiting the number combinaison needed.
+				</li>
+				<li>
+					Added 'striped' collation support. Thanks to tiera3 for the idea and help with the implementation.
+				</li>
+				<li>Usual maintenance and minor tweaks and fixes.</li>
+			</ul>
+		</div>
+		<div class="news">
 			<em>September 24, 2024</em>
 			<p>
 				Added <img src="img/sets/mb2.svg" class="set-icon" style="--invertedness: 100%" alt="MB2" />
@@ -27,47 +45,6 @@
 			<p>
 				<img src="img/sets/mh3.svg" class="set-icon" style="--invertedness: 100%" alt="MH3" />
 				Modern Horizons 3 is now available!
-			</p>
-			<p>
-				Pack content is particularly confusing this time around, it is very possible I made some mistakes.
-				Please let me know if you find any :)
-			</p>
-		</div>
-		<div class="news">
-			<em>May 18, 2024</em>
-			<p>Custom cards update:</p>
-			<ul>
-				<li>
-					New <code>oracle_text</code>, <code>power</code>, <code>toughness</code> and
-					<code>loyalty</code> fields.
-				</li>
-				<li>New <code>image</code> field: A shortcut for <code>image_uris</code> with a single image.</li>
-				<li>
-					The system will now accept cards without images, allowing you to quickly prototype and test your
-					custom cards without having to generate or host images!
-				</li>
-			</ul>
-			<p>
-				See the
-				<a href="cubeformat.html#custom-cards" target="_blank">
-					<font-awesome-icon icon="fa-solid fa-external-link-alt"></font-awesome-icon> Cube format
-					documentation
-				</a>
-				for more information.
-			</p>
-		</div>
-		<div class="news">
-			<em>April 20, 2024</em>
-			<p>
-				<font-awesome-icon icon="fa-solid fa-trophy"></font-awesome-icon> I rewrote the tournament bracket
-				system to be more robust and maintainable. Please me let me know if you encounter any regression!
-			</p>
-			<p>
-				As a first improvement to the tournament brackets and thanks to the help of Danbopes from
-				<a href="https://mtgbot.tv/donate" target="_blank">MTGBot</a>, you can now enable the experimental
-				"Sync. with MTGO matches" setting in your tournament bracket and Draftmancer will automatically populate
-				it with your match results!<br />Make sure everyone use their MTGO screen names for this to work
-				properly ;)
 			</p>
 		</div>
 	</div>
