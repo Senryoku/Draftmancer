@@ -5,7 +5,7 @@
 		</template>
 		<template v-slot:body>
 			<div class="dialog">
-				<p>Select one of multiple sets:</p>
+				<p>Select one or multiple sets:</p>
 				<div class="sets">
 					<div v-for="set in Sets" :key="set" class="set">
 						<input
