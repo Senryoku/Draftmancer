@@ -423,7 +423,7 @@ export interface ClientToServerEvents {
 	setPublic: (isPublic: boolean) => void;
 	setDescription: (description: string) => void;
 	replaceDisconnectedPlayers: () => void;
-	distributeJumpstart: (set: string, ack: (result: SocketAck) => void) => void;
+	distributeJumpstart: (set: string | string[], ack: (result: SocketAck) => void) => void;
 	generateBracket: (type: BracketType, ack: (result: SocketAck) => void) => void;
 	lockBracket: (bracketLocked: boolean) => void;
 	syncBracketMTGO: (value: boolean) => void;

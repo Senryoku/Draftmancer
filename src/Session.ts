@@ -3200,7 +3200,7 @@ export class Session implements IIndexable {
 		return new SocketError("Not playing", "You're not playing in this team sealed?!");
 	}
 
-	distributeJumpstart(set: string): SocketAck {
+	distributeJumpstart(set: string | string[]): SocketAck {
 		this.initLogs("Jumpstart", []);
 		this.draftLog!.carddata = {};
 
@@ -3214,16 +3214,18 @@ export class Session implements IIndexable {
 			for (const cid of cardIDs) if (!(cid in this.draftLog.carddata)) this.draftLog.carddata[cid] = getCard(cid);
 		};
 
-		if (set === "j21" || set === "super" || JumpInSets.includes(set)) {
+		if (set === "j21" || set === "super" || Array.isArray(set)) {
+			if (Array.isArray(set) && set.some((s) => !JumpInSets.includes(s)))
+				return new SocketError("Invalid Set", "Invalid Jump In set specified.");
+
 			for (const user of this.users) {
 				// Randomly get 2*3 packs and let the user choose among them.
 				// The choices are based on the first pick colors (we send all possibilties rather than waiting for user action).
-				const choices =
-					set === "j21"
+				const choices = Array.isArray(set)
+					? genJumpInPackChoices(set)
+					: set === "j21"
 						? genJHHPackChoices()
-						: JumpInSets.includes(set)
-							? genJumpInPackChoices(set)
-							: genSuperJumpPackChoices();
+						: genSuperJumpPackChoices();
 				Connections[user].socket.emit("selectJumpstartPacks", choices, (user: UserID, cardIDs: CardID[]) => {
 					if (!this.draftLog) return;
 					updateLog(user, cardIDs);

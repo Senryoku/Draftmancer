@@ -2395,7 +2395,7 @@ describe("Sealed", function () {
 	});
 });
 
-import { JumpstartBoosters, Jumpstart2022Boosters } from "../src/Jumpstart.js";
+import { JumpstartBoosters, Jumpstart2022Boosters, JumpInSets } from "../src/Jumpstart.js";
 import { Card, CardColor, CardID, DeckList, UniqueCard } from "../src/CardTypes.js";
 import { SessionID, UserID } from "../src/IDTypes.js";
 import { SetCode } from "../src/Types.js";
@@ -2406,6 +2406,7 @@ import { JumpInBooster } from "../src/JumpInTypes.js";
 import { parseLine } from "../src/parseCardList.js";
 import { SocketError, isSocketError } from "../src/Message.js";
 import { isNumber } from "../src/TypeChecks.js";
+import { getNDisctinctRandom, random, randomInt } from "../src/utils.js";
 
 describe("Jumpstart", function () {
 	let clients: ReturnType<typeof makeClients> = [];
@@ -2594,8 +2595,9 @@ describe("Jumpstart: Historic Horizons", function () {
 });
 
 describe("Jump In!", function () {
-	for (const set of ["blb", "otj", "mkm", "lci", "woe", "ltr", "one", "bro"]) {
-		describe(set, function () {
+	for (let i = 0; i < 8; ++i) {
+		const sets = getNDisctinctRandom(JumpInSets, randomInt(1, JumpInSets.length));
+		describe(sets.join(", "), function () {
 			let clients: ReturnType<typeof makeClients> = [];
 			const sessionID = "JumpInSession";
 			const userData: {
@@ -2648,7 +2650,7 @@ describe("Jump In!", function () {
 						if (receivedPools === clients.length) done();
 					});
 				}
-				clients[ownerIdx].emit("distributeJumpstart", set, ackNoError);
+				clients[ownerIdx].emit("distributeJumpstart", sets, ackNoError);
 			});
 
 			it(`Clients make their choice and draft log updates accordingly.`, function (done) {

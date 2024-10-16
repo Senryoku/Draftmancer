@@ -85,10 +85,10 @@ export function genJHHPackChoices(): [JumpInBooster[], JumpInBooster[][]] {
 	return choices;
 }
 
-export function genJumpInPackChoices(set: string): [JumpInBooster[], JumpInBooster[][]] {
+export function genJumpInPackChoices(sets: string[]): [JumpInBooster[], JumpInBooster[][]] {
 	const choices: [JumpInBooster[], JumpInBooster[][]] = [[], []];
 	// https://mtg.fandom.com/wiki/Jump_In!
-	const Boosters = JumpInBoosters[set];
+	const Boosters = sets.map((set) => JumpInBoosters[set]).flat();
 	// At least one packet will be a mono-colored option and at least one will be a multicolored option. None of the three packets will have the same color identity as any other.
 	{
 		const first: JumpInBoosterPattern[] = [];
