@@ -75,7 +75,7 @@
             "B"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/0/0/00293326-3eb2-492c-b565-7abafa037d8c.jpg?1712356143",
+        "image": "/img/jumpin/crimes.png",
         "cards": [
             "00293326-3eb2-492c-b565-7abafa037d8c",
             "596fb7a2-bb79-44b7-ad84-414c8139ec13",
@@ -218,7 +218,7 @@
             "G"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/f/e/fe30b5c8-4889-4350-bb1d-3e2a67d9dfb2.jpg?1712356118",
+        "image": "/img/jumpin/power.png",
         "cards": [
             "fe30b5c8-4889-4350-bb1d-3e2a67d9dfb2",
             "318b8c5d-9fb0-488f-9b32-c2e29d1f1dbb",
@@ -355,7 +355,7 @@
             "W"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/6/9/69689049-a704-4f16-84ee-4d5d915028ec.jpg?1712860589",
+        "image": "/img/jumpin/entering.png",
         "cards": [
             "69689049-a704-4f16-84ee-4d5d915028ec",
             "ea96eeac-c316-4247-a81f-0ddf52675ebf",
@@ -423,7 +423,7 @@
             "U"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/e/6/e6cfe383-e483-47e7-99d1-991a06b089bc.jpg?1712355493",
+        "image": "/img/jumpin/casting.png",
         "cards": [
             "e6cfe383-e483-47e7-99d1-991a06b089bc",
             "ba9584f0-55b8-448d-99a7-041934053f42",
@@ -496,7 +496,7 @@
             "B"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/d/f/df2913d5-57c7-4f9b-bc96-8a46beef2563.jpg?1712355599",
+        "image": "/img/jumpin/graveyard.png",
         "cards": [
             "df2913d5-57c7-4f9b-bc96-8a46beef2563",
             "9e56a8df-db04-4a88-a5ab-6954d3449976",
@@ -569,7 +569,7 @@
             "R"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/c/c/cc598338-eeba-4815-a0a6-ff2dc09790d2.jpg?1712356268",
+        "image": "/img/jumpin/treasured.png",
         "cards": [
             "cc598338-eeba-4815-a0a6-ff2dc09790d2",
             "f568803d-65c0-48d7-916f-671267a9e00e",
@@ -637,7 +637,7 @@
             "G"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/8/d/8dc3cbfe-410f-40e3-8021-647a2efb50bf.jpg?1712355978",
+        "image": "/img/jumpin/frontier.png",
         "cards": [
             "8dc3cbfe-410f-40e3-8021-647a2efb50bf",
             "eda59f99-1d6d-4051-ac89-b7cbfa19262e",

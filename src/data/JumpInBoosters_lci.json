@@ -5,7 +5,7 @@
             "W"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/3/6/36dafcd6-ce4e-4a27-bd8c-fa1a3bffc99e.jpg?1699043256",
+        "image": "/img/jumpin/crafting.png",
         "cards": [
             "36dafcd6-ce4e-4a27-bd8c-fa1a3bffc99e",
             "ad1a0159-7f00-429c-9318-b028b1e03ba8",
@@ -78,7 +78,7 @@
             "U"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/8/5/85ad358d-a520-4d57-82b0-d2297da1fbde.jpg?1699043588",
+        "image": "/img/jumpin/secrets.png",
         "cards": [
             "8ae8ab66-5840-4b2e-bd4e-94ead0c79b61",
             "a6e53495-c76c-4cd4-b93e-b2c491d2c13a",
@@ -146,7 +146,7 @@
             "B"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/6/a/6a230208-84ae-4f48-afbd-a0d50596ad27.jpg?1699044189",
+        "image": "/img/jumpin/depths.png",
         "cards": [
             "319a457c-89b7-47f6-a13c-20bb50d41138",
             "ccc9d22c-dfce-4136-aed8-a5fe9bb852f2",
@@ -214,7 +214,7 @@
             "R"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/0/b/0b2debca-8535-4cf6-a461-c268faaacaae.jpg?1699044224",
+        "image": "/img/jumpin/dinosaurs.png",
         "cards": [
             "0b2debca-8535-4cf6-a461-c268faaacaae",
             "0c491ac0-4752-47a7-967e-456b6e4245de",
@@ -282,7 +282,7 @@
             "G"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/4/b/4bc94ded-458d-4458-9c0b-136d825b885d.jpg?1699044427",
+        "image": "/img/jumpin/prehistoric.png",
         "cards": [
             "4bc94ded-458d-4458-9c0b-136d825b885d",
             "62c1f09a-9d17-415c-8afa-cd0b62abe48d",
@@ -356,7 +356,7 @@
             "W"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/6/9/690ccdc7-6c43-4902-9d11-2f07b7a36b11.jpg?1699044523",
+        "image": "/img/jumpin/offerings.png",
         "cards": [
             "690ccdc7-6c43-4902-9d11-2f07b7a36b11",
             "0d96d019-5d80-468a-b891-e3e99346372a",
@@ -436,7 +436,7 @@
             "R"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/4/1/41e54343-95e5-4dc4-9f18-e4a415fe5e0a.jpg?1699043946",
+        "image": "/img/jumpin/looted.png",
         "cards": [
             "41e54343-95e5-4dc4-9f18-e4a415fe5e0a",
             "14c65f5a-10bd-4f9b-b816-46c2240b11ff",
@@ -516,7 +516,7 @@
             "B"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/4/c/4ce4b7bc-636b-4723-a7c1-2c859f333492.jpg?1699044377",
+        "image": "/img/jumpin/descent.png",
         "cards": [
             "4ce4b7bc-636b-4723-a7c1-2c859f333492",
             "ff0a2ba4-dfa8-49d6-95e9-04b7a14d0c6c",
@@ -596,7 +596,7 @@
             "R"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/8/e/8ea82964-fd9c-48e3-962f-94954476b31f.jpg?1699044531",
+        "image": "/img/jumpin/militia.png",
         "cards": [
             "9048cd9d-df3f-4705-a5f4-e5b09760c631",
             "d3114f5c-21e9-43c3-abe3-3cf1da20916f",
@@ -676,7 +676,7 @@
             "U"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/5/e/5e6f4aba-3500-4fb7-ab78-02f63c03778a.jpg?1699044562",
+        "image": "/img/jumpin/explorers.png",
         "cards": [
             "ffcdb10f-4bad-4f89-8e7c-daa5c0c69230",
             "5e6f4aba-3500-4fb7-ab78-02f63c03778a",
@@ -759,7 +759,7 @@
             "G"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/1/c/1c02134c-ec9f-4090-820e-8ba7ae4a8c2b.jpg?1699043091",
+        "image": "/img/jumpin/spelunking.png",
         "cards": [
             "10e1030e-2b95-4807-9111-e495a2fc8813",
             "e0b6d40a-fded-4625-b03c-765c88d75766",

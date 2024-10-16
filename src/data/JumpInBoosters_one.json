@@ -5,7 +5,7 @@
             "W"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/b/0/b00ea7bb-705b-4669-bb2a-560bed04b14a.jpg?1675956910",
+        "image": "/img/jumpin/compleat.png",
         "cards": [
             "b00ea7bb-705b-4669-bb2a-560bed04b14a",
             "04baad61-1b51-4602-9e33-0de4a9f34793",
@@ -73,7 +73,7 @@
             "U"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/3/0/30225e40-4bde-4e2e-b0f0-48ed16aebafd.jpg?1675956999",
+        "image": "/img/jumpin/science.png",
         "cards": [
             "611497d2-83df-4c69-bbeb-6a807c686bc4",
             "95a7e5ff-ba81-4b45-933e-0ac747525ab8",
@@ -141,7 +141,7 @@
             "B"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/7/2/72af72d2-5995-4cad-82f1-e2d0c465d6f1.jpg?1675957036",
+        "image": "/img/jumpin/cutthroat.png",
         "cards": [
             "b3890961-d636-4ccc-9c42-2088a8531c9b",
             "cdbbcbe1-5317-455e-8d71-a4e2ad0addfc",
@@ -209,7 +209,7 @@
             "R"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/a/6/a6e8d7b9-ff5e-48ae-9e38-d2b6a45b119b.jpg?1675957080",
+        "image": "/img/jumpin/oily.png",
         "cards": [
             "a6e8d7b9-ff5e-48ae-9e38-d2b6a45b119b",
             "c9b3b785-396e-4240-bfa3-58ab53497686",
@@ -277,7 +277,7 @@
             "G"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/8/5/85ad30a1-3ecc-42ca-afe8-85df5bad9196.jpg?1680795489",
+        "image": "/img/jumpin/venom.png",
         "cards": [
             "6b71fd8f-e688-4210-bc5b-a3f19b5b3497",
             "e5290a4c-1f98-4e97-a407-f951e386b8b0",
@@ -346,7 +346,7 @@
             "B"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/e/0/e0328d43-ae9b-462a-a1e5-8ed408eea1a7.jpg?1675957014",
+        "image": "/img/jumpin/corrupted.png",
         "cards": [
             "aace4c44-7250-414b-aac4-df042a1e2e1d",
             "56444440-a9e6-4583-a289-9f0571a98093",
@@ -426,7 +426,7 @@
             "U"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/f/4/f442442d-2e5d-4913-82d8-bab2f31541f8.jpg?1680795495",
+        "image": "/img/jumpin/synthesized.png",
         "cards": [
             "7f04c2e5-9100-439a-9aa4-28d388518e4a",
             "7f516ee6-8f7b-40b2-82e5-9c4ea3e0a355",
@@ -506,7 +506,7 @@
             "G"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/d/f/dfb81cb1-ac56-4803-a962-359854a447df.jpg?1675957012",
+        "image": "/img/jumpin/virulent.png",
         "cards": [
             "dfb81cb1-ac56-4803-a962-359854a447df",
             "e5290a4c-1f98-4e97-a407-f951e386b8b0",
@@ -586,7 +586,7 @@
             "W"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/5/6/563e9ba5-e0ec-4fb3-8301-689aa145cc19.jpg?1675957183",
+        "image": "/img/jumpin/hexgold.png",
         "cards": [
             "96ae13df-670e-49a0-99b0-baf908ac9eb4",
             "563e9ba5-e0ec-4fb3-8301-689aa145cc19",
@@ -666,7 +666,7 @@
             "U"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/6/7/67f0a63e-0866-423e-b917-fc7c71063021.jpg?1675956992",
+        "image": "/img/jumpin/contagion.png",
         "cards": [
             "67f0a63e-0866-423e-b917-fc7c71063021",
             "419fab07-f921-4eff-91e2-1974ae121077",

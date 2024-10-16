@@ -5,7 +5,7 @@
             "W"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/7/5/75338f49-1f02-4333-87e4-5779ef14e688.jpg?1686967894",
+        "image": "/img/jumpin/breakfast.png",
         "cards": [
             "c4cd0756-7bf3-4cb6-9687-1f9346b0bb92",
             "1da7fc15-f894-496e-ba18-a02d42e9bedc",
@@ -78,7 +78,7 @@
             "U"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/2/0/20ac63cb-fa4d-4340-8062-1029c8bd5ec8.jpg?1686968020",
+        "image": "/img/jumpin/insight.png",
         "cards": [
             "aa59141a-4645-4316-b714-bbf2c139786e",
             "20ac63cb-fa4d-4340-8062-1029c8bd5ec8",
@@ -133,7 +133,7 @@
             ],
             [
                 {
-                    "name": "Soothing of Sméagol",
+                    "name": "Soothing of Sm\u00c3\u00a9agol",
                     "id": "be6400e8-7f99-4005-9a92-ffbc359d3871",
                     "weight": 50
                 },
@@ -151,7 +151,7 @@
             "B"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/4/d/4ddda7d4-0226-404f-8418-f1f5720dcef8.jpg?1686968450",
+        "image": "/img/jumpin/saurons.png",
         "cards": [
             "673c6c12-2513-4d1b-acf0-6a1f741d49dd",
             "4ddda7d4-0226-404f-8418-f1f5720dcef8",
@@ -224,7 +224,7 @@
             "R"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/0/4/04dcef75-6f98-4233-ae32-6fe41724c8e0.jpg?1688569131",
+        "image": "/img/jumpin/moria.png",
         "cards": [
             "552730c5-e3a6-468f-91b2-82c272dda400",
             "b91859de-1983-4c9c-a9e6-289c7dba1eb4",
@@ -243,7 +243,7 @@
                     "weight": 80
                 },
                 {
-                    "name": "Andúril, Flame of the West",
+                    "name": "And\u00c3\u00baril, Flame of the West",
                     "id": "7e7b9eea-a224-4db1-a089-cb385f7af20c",
                     "weight": 20
                 }
@@ -297,7 +297,7 @@
             "G"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/8/8/885a3277-ef10-4dcf-ac63-eb8971cd627c.jpg?1686969480",
+        "image": "/img/jumpin/shire.png",
         "cards": [
             "d15fd66d-fa7e-411d-9014-a56caa879d93",
             "885a3277-ef10-4dcf-ac63-eb8971cd627c",
@@ -371,7 +371,7 @@
             "B"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/5/8/58aafdb6-1c8c-4fc4-a52e-3e601be7fb0c.jpg?1686968472",
+        "image": "/img/jumpin/amass.png",
         "cards": [
             "aa59141a-4645-4316-b714-bbf2c139786e",
             "58aafdb6-1c8c-4fc4-a52e-3e601be7fb0c",
@@ -445,7 +445,7 @@
             "U"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/c/5/c544e301-13b4-4dec-b65c-d54809bb7736.jpg?1695498672",
+        "image": "/img/jumpin/elves.png",
         "cards": [
             "c544e301-13b4-4dec-b65c-d54809bb7736",
             "0aa57431-39e2-4152-8a30-1c1e8faef153",
@@ -459,7 +459,7 @@
         "alts": [
             [
                 {
-                    "name": "Lothlórien Lookout",
+                    "name": "Lothl\u00c3\u00b3rien Lookout",
                     "id": "4e3639c1-ebc3-4a0b-ab93-549e45aff0f7",
                     "weight": 50
                 },
@@ -471,7 +471,7 @@
             ],
             [
                 {
-                    "name": "Galadriel of Lothlórien",
+                    "name": "Galadriel of Lothl\u00c3\u00b3rien",
                     "id": "a6e5c3b3-9a70-4a1c-bfb3-db27e51c4b8d",
                     "weight": 50
                 },
@@ -519,7 +519,7 @@
             "B"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/e/c/ec0984b2-bed6-41b1-9087-2cfd16749037.jpg?1686970017",
+        "image": "/img/jumpin/tokens.png",
         "cards": [
             "7d86dc2e-6f0c-4714-9d30-5d099d3b895c",
             "ec0984b2-bed6-41b1-9087-2cfd16749037",
@@ -593,7 +593,7 @@
             "R"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/5/4/54461d61-a745-467f-9fbe-b5e7a8edbdbf.jpg?1686970082",
+        "image": "/img/jumpin/wild.png",
         "cards": [
             "ad961ba1-c74f-4a44-87fe-b30e2b63e378",
             "6589b339-9067-4e9b-bfdb-c49f8b3ef2d4",
@@ -667,7 +667,7 @@
             "R"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/f/6/f6dcd1ca-4943-46e4-bb5d-c14949e21e23.jpg?1686970093",
+        "image": "/img/jumpin/humans.png",
         "cards": [
             "ee7292f7-1c7e-449c-9c52-7584d6a14c2c",
             "f6dcd1ca-4943-46e4-bb5d-c14949e21e23",

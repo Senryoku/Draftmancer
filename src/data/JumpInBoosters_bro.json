@@ -5,7 +5,7 @@
             "W"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/b/f/bfa05d1e-6728-4e77-bfb2-da0b9598e44b.jpg?1674420445",
+        "image": "/img/jumpin/excavation.png",
         "cards": [
             "bfa05d1e-6728-4e77-bfb2-da0b9598e44b",
             "2901c5f6-5d83-437d-b434-d9beb115dd82",
@@ -73,7 +73,7 @@
             "U"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/4/4/445f897e-a059-4cd5-bfd2-302dc7a4c8e2.jpg?1674420651",
+        "image": "/img/jumpin/urzas.png",
         "cards": [
             "5aa63321-aa28-449d-a31f-869a98c5a6be",
             "445f897e-a059-4cd5-bfd2-302dc7a4c8e2",
@@ -140,7 +140,7 @@
             "B"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/2/f/2fa2fa48-ddb7-45f0-b183-4186df98f7cc.jpg?1674420893",
+        "image": "/img/jumpin/resurrected.png",
         "cards": [
             "2fa2fa48-ddb7-45f0-b183-4186df98f7cc",
             "58baa977-16c1-4983-8343-dbd65e98ddb7",
@@ -208,7 +208,7 @@
             "R"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/f/5/f5d02416-8578-40a5-bf31-d1ef9b8764f1.jpg?1674421176",
+        "image": "/img/jumpin/mishras.png",
         "cards": [
             "4742800a-4872-4c2d-b884-01e0ba16950c",
             "f5d02416-8578-40a5-bf31-d1ef9b8764f1",
@@ -276,7 +276,7 @@
             "G"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/5/0/50cc9b90-792e-4cf7-ab8c-cb616d94092a.jpg?1680794389",
+        "image": "/img/jumpin/prototype.png",
         "cards": [
             "9c6988b6-ade0-4cd5-b27c-146e5e7ae91f",
             "b5dbc383-7e08-4701-8d4a-6b99b74fe358",
@@ -356,7 +356,7 @@
             "W"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/c/2/c226656b-68d5-4df2-b313-a323a728c520.jpg?1674420296",
+        "image": "/img/jumpin/soldiers.png",
         "cards": [
             "c226656b-68d5-4df2-b313-a323a728c520",
             "991e1a6c-914b-45c8-9170-c09e72696117",
@@ -436,7 +436,7 @@
             "B"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/7/5/7577b5c7-91ed-4201-bdfd-0919142124eb.jpg?1674420643",
+        "image": "/img/jumpin/inspired.png",
         "cards": [
             "171edf80-ffc1-4894-9be5-c3e93a96f734",
             "7577b5c7-91ed-4201-bdfd-0919142124eb",
@@ -516,7 +516,7 @@
             "R"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/5/c/5cd965a9-caa2-42a3-b2f9-e4f57341ac27.jpg?1674421162",
+        "image": "/img/jumpin/junkyard.png",
         "cards": [
             "5eb43c15-50a9-488f-b0be-84a5e0a6d10b",
             "5cd965a9-caa2-42a3-b2f9-e4f57341ac27",
@@ -596,7 +596,7 @@
             "R"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/d/f/df343bf9-f535-42c7-a2d0-8adfd068b354.jpg?1674421739",
+        "image": "/img/jumpin/sluggers.png",
         "cards": [
             "a842a945-21d9-432c-b970-6da65b16f309",
             "f50b0449-8ff7-4549-893b-aeca93720c64",
@@ -681,7 +681,7 @@
             "W"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/1/e/1eb02f00-c188-4193-a049-d26f7643e5da.jpg?1674421903",
+        "image": "/img/jumpin/tech.png",
         "cards": [
             "1eb02f00-c188-4193-a049-d26f7643e5da",
             "74dfabfd-e13b-4512-a733-abe514be6404",

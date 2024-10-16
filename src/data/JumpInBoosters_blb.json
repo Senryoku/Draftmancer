@@ -149,7 +149,7 @@
             "G"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/2/9/29b615ba-45c4-42a1-8525-1535f0b55300.jpg?1721427225",
+        "image": "/img/jumpin/squirrels.png",
         "cards": [
             "29b615ba-45c4-42a1-8525-1535f0b55300",
             "c911a759-ed7b-452b-88a3-663478357610",
@@ -223,7 +223,7 @@
             "R"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/d/2/d21c3e41-0636-49a3-8c9c-384c5e5c9c3e.jpg?1721427185",
+        "image": "/img/jumpin/mice.png",
         "cards": [
             "d21c3e41-0636-49a3-8c9c-384c5e5c9c3e",
             "3db43c46-b616-4ef8-80ed-0fab345ab3d0",
@@ -360,7 +360,7 @@
             "W"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/4/1/41762689-0c13-4d45-9d81-ba2afad980f8.jpg?1721425845",
+        "image": "/img/jumpin/rabbits.png",
         "cards": [
             "41762689-0c13-4d45-9d81-ba2afad980f8",
             "ee7207f8-5daa-42af-aeea-7a489047110b",
@@ -433,7 +433,7 @@
             "B"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/c/9/c96ac326-de44-470b-a592-a4c2a052c091.jpg?1721426418",
+        "image": "/img/jumpin/rats_blb.png",
         "cards": [
             "c96ac326-de44-470b-a592-a4c2a052c091",
             "485dc8d8-9e44-4a0f-9ff6-fa448e232290",
@@ -507,7 +507,7 @@
             "R"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/8/1/81dec453-c9d7-42cb-980a-c82f82bede76.jpg?1721426690",
+        "image": "/img/jumpin/lizards.png",
         "cards": [
             "81dec453-c9d7-42cb-980a-c82f82bede76",
             "d3871fe6-e26e-4ab4-bd81-7e3c7b8135c1",
@@ -580,7 +580,7 @@
             "U"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/f/c/fcacbe71-efb0-49e1-b2d0-3ee65ec6cf8b.jpg?1721426291",
+        "image": "/img/jumpin/threshold.png",
         "cards": [
             "fcacbe71-efb0-49e1-b2d0-3ee65ec6cf8b",
             "aaa10f34-5bfd-4d87-8f07-58de3b0f5663",
@@ -653,7 +653,7 @@
             "G"
         ],
         "cycling_land": false,
-        "image": "https://cards.scryfall.io/border_crop/front/5/8/58706bd8-558a-43b9-9f1e-c1ff0044203b.jpg?1721426814",
+        "image": "/img/jumpin/exploring.png",
         "cards": [
             "58706bd8-558a-43b9-9f1e-c1ff0044203b",
             "821970a3-a291-4fe9-bb13-dfc54f9c3caf",
