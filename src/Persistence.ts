@@ -37,6 +37,7 @@ import { HousmanDraftState } from "./HousmanDraft.js";
 import { SolomonDraftState } from "./SolomonDraft.js";
 import { sendLog } from "./BotTrainingAPI.js";
 import { deserializeBracket } from "./BracketSerialization.js";
+import { hasProperty, isString } from "./TypeChecks.js";
 
 const PersistenceLocalPath = process.env.PERSISTENCE_LOCAL_PATH ?? ".";
 const LocalPersitenceDirectory = "tmp";
@@ -53,8 +54,17 @@ export function copyPODProps<T>(source: Partial<T>, target: T): T {
 	return target;
 }
 
-function restoreBot(bot: any): IBot | undefined {
+function restoreBot(bot: unknown): IBot | undefined {
 	if (!bot) return undefined;
+
+	if (
+		!hasProperty("type", isString)(bot) ||
+		!hasProperty("name", isString)(bot) ||
+		!hasProperty("id", isString)(bot)
+	) {
+		console.error(`Error: Invalid bot object: ${JSON.stringify(bot)}`);
+		return undefined;
+	}
 
 	if (bot.type == "SimpleBot") {
 		const newBot = new SimpleBot(bot.name, bot.id);

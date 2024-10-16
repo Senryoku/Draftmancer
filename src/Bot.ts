@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import axios, { AxiosError } from "axios";
 
 import { arrayIntersect } from "./utils.js";
@@ -12,10 +13,11 @@ const MTGDraftBotsAPITimeout = 10000;
 const MTGDraftBotsAPI = {
 	available: false,
 	domain: process.env.MTGDRAFTBOTS_API_DOMAIN ?? "https://mtgml.cubeartisan.net/",
-	authToken: process.env.MTGDRAFTBOTS_AUTHTOKEN ?? "testing",
+	authToken: process.env.MTGDRAFTBOTS_AUTHTOKEN,
 	models: [] as string[],
 	modelKnownOracles: {} as Record<string, OracleID[]>,
 };
+
 async function checkMTGDraftBotsAPIAvailability() {
 	// Make sure the instance is accessible
 	try {
@@ -59,8 +61,11 @@ async function checkMTGDraftBotsAPIAvailability() {
 		} else console.error(`MTGDraftBots instance '${MTGDraftBotsAPI.domain}' could not be reached: ${error}.`);
 	}
 }
-checkMTGDraftBotsAPIAvailability();
-setInterval(checkMTGDraftBotsAPIAvailability, 30 * 60 * 1000);
+
+if (MTGDraftBotsAPI.authToken) {
+	checkMTGDraftBotsAPIAvailability();
+	setInterval(checkMTGDraftBotsAPIAvailability, 30 * 60 * 1000);
+} else console.warn("MTGDraftBots API token not set.");
 
 export const DraftmancerAI = {
 	available: false,
