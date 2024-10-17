@@ -1,0 +1,742 @@
+[
+    {
+        "name": "Vitality",
+        "colors": [
+            "W"
+        ],
+        "cycling_land": false,
+        "image": "/img/cardback.webp",
+        "cards": [
+            "26899e78-fa6f-49fa-bb9b-be1c432612ee",
+            "0b833fa8-515b-47fa-868e-ee854a51d384",
+            "8b6f7b89-1648-4c2b-8d68-88ad43267c6f",
+            "f2d68812-8862-4e34-a992-7d6bbadaf316",
+            "fa7e6933-5c64-4fcd-bb7f-740767a149cb",
+            "a2c06b6e-faf5-467d-bfe1-9ff00be9e2f5",
+            "874b3590-932a-46b7-a7aa-e3e864ec22d1",
+            "985d1b57-42e0-41a2-a9c6-2f5427c0c1c9"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Traveling Minister",
+                    "id": "e672a05c-5f1a-4aa6-9398-e33df01c7c96",
+                    "weight": 50
+                },
+                {
+                    "name": "Lunarch Veteran // Luminous Phantom",
+                    "id": "d2704743-2e23-40b9-a367-c73d2db45afc",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Sune's Intervention",
+                    "id": "2e9034db-d167-4a5b-884c-df4ad661dc99",
+                    "weight": 75
+                },
+                {
+                    "name": "Champions of Tyr",
+                    "id": "19461956-6287-4ee5-9a90-96d2805fe636",
+                    "weight": 25
+                }
+            ],
+            [
+                {
+                    "name": "You Hear Something on Watch",
+                    "id": "76e939ab-9d0c-4685-805c-c8bc4e6af163",
+                    "weight": 50
+                },
+                {
+                    "name": "Blessed Defiance",
+                    "id": "1555cdcb-3471-4ee7-99c3-d05311bf433c",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Rally Maneuver",
+                    "id": "926ce53e-8e30-4018-a9e7-7266791b5d27",
+                    "weight": 50
+                },
+                {
+                    "name": "Knockout Blow",
+                    "id": "9b00bbec-61d0-464c-bf82-4ecf5ddb3451",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Saboteurs",
+        "colors": [
+            "U"
+        ],
+        "cycling_land": false,
+        "image": "/img/cardback.webp",
+        "cards": [
+            "6835928a-4483-4324-8cae-a5b477649453",
+            "50d69ee8-a616-4191-b111-1330dfb24f72",
+            "85746149-1119-4238-a8ca-3cc6873cf6e3",
+            "dcc26897-4644-4af5-ac37-099e641c27d1",
+            "045c7c23-d418-42f0-b497-50c39e5321ad",
+            "71a4973d-3cbe-49ec-b29c-e07baa33291e",
+            "deb2aa14-4b8d-4f33-856d-296bc59a0ade",
+            "4238ad00-af9c-4535-a589-c5afb0d2ec57",
+            "86382685-e54c-4152-a500-2148a2d6b5a4"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Guild Thief",
+                    "id": "fd4348ec-fdb1-4c3b-bec5-42513c6c0662",
+                    "weight": 67
+                },
+                {
+                    "name": "Mischievous Catgeist // Catlike Curiosity",
+                    "id": "a3ff628a-ef8e-45c4-84e7-a33ec28f025a",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Water Weird",
+                    "id": "d9ccb772-6145-4d1d-a619-53451dcdf83e",
+                    "weight": 50
+                },
+                {
+                    "name": "Air-Cult Elemental",
+                    "id": "fba82564-a9a9-4ded-a5fa-0e5fab2a3faa",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "You Come to a River",
+                    "id": "ebf9bab7-98a0-4394-90c0-e7c52e14eb37",
+                    "weight": 34
+                },
+                {
+                    "name": "Shocking Grasp",
+                    "id": "ab95fe13-c09b-4eed-aeae-fb1c5b6eb476",
+                    "weight": 33
+                },
+                {
+                    "name": "Majestic Metamorphosis",
+                    "id": "bcaebea6-9e3f-4ac7-abe1-5445912f5b44",
+                    "weight": 33
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Hoard",
+        "colors": [
+            "B"
+        ],
+        "cycling_land": false,
+        "image": "/img/cardback.webp",
+        "cards": [
+            "d96198a7-dd19-4940-bf8f-23135011fc84",
+            "b965f765-35a8-471b-b9e1-d7d539b9ae1a",
+            "2bbb8865-dc37-4d56-9a2d-a92f7462c338",
+            "38326f48-548c-4b18-9ad2-0b7c23385deb",
+            "b723d9cd-05f5-4894-9f2b-52a434a3019c",
+            "f2bde2d6-7c2a-4566-a45a-ccdbbed039b7",
+            "b98e0ab1-dea8-492b-a712-2057f2b1d020",
+            "90183d4d-c231-4e45-b1fc-2699b33a3733"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Nefarious Imp",
+                    "id": "0dc61b93-b87a-47f4-b5b5-eedb1db48288",
+                    "weight": 67
+                },
+                {
+                    "name": "Undercity Scrounger",
+                    "id": "6319b84b-8a3d-4bc8-af48-8b500f124be1",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Hook Horror",
+                    "id": "ebb127b7-a11b-44b6-87d2-48819427f1ba",
+                    "weight": 50
+                },
+                {
+                    "name": "Baleful Beholder",
+                    "id": "e52d6ef6-d8a3-4288-8917-4c0a179ed4e0",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Deadly Dispute",
+                    "id": "7373fe95-ad1c-44b9-8c7f-464ce8cbffc6",
+                    "weight": 50
+                },
+                {
+                    "name": "Fake Your Own Death",
+                    "id": "b4e117a8-3291-4f9a-ab00-c820c8e2aa00",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Grave Choice",
+                    "id": "34aff99e-a638-4e44-802b-f8a828e2061c",
+                    "weight": 50
+                },
+                {
+                    "name": "Sewer Plague",
+                    "id": "dbfc8eb5-b7a7-4e35-be1d-6dd0d46f4666",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Speedy",
+        "colors": [
+            "R"
+        ],
+        "cycling_land": false,
+        "image": "/img/cardback.webp",
+        "cards": [
+            "8967f552-f74a-4a13-bbd9-f7b5ddfe9fe4",
+            "9766a427-2bb3-4028-a502-d1194cdc93aa",
+            "f7c0aa86-fd3b-4e0f-9d37-ce1ea8922243",
+            "fdf75d9d-b8eb-4a10-8d83-c60c0d595236",
+            "0e893613-423e-409b-9334-292bd252405b",
+            "29d5fd00-c616-4079-a91e-4da0bcaf9120",
+            "57a46987-f05a-4b83-af56-f18000874e65",
+            "f8532b98-b69e-4d43-9ec8-0587572a0dff"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Valor Singer",
+                    "id": "89bc162c-bdf1-43f7-882f-d8cee4f3f415",
+                    "weight": 50
+                },
+                {
+                    "name": "Plasma Jockey",
+                    "id": "741ed811-cbcd-4178-a874-dc79d2a5d6f1",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Kardum, Patron of Flames",
+                    "id": "89c0227a-df80-47d1-9400-5f1fb6b71a00",
+                    "weight": 75
+                },
+                {
+                    "name": "Chaos Balor",
+                    "id": "06484215-51e5-464e-b3bc-9a7d430611be",
+                    "weight": 25
+                }
+            ],
+            [
+                {
+                    "name": "Warriors of Tiamat",
+                    "id": "d2665dd5-2281-43ee-9db4-95e58ed6d6f1",
+                    "weight": 50
+                },
+                {
+                    "name": "The Shattered States Era // Nameless Conqueror",
+                    "id": "517392f6-d3fd-4c59-8317-2a3595ab7562",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Craving of Yeenoghu",
+                    "id": "69157bc5-ed19-4ee7-b217-b3bf33d85b38",
+                    "weight": 50
+                },
+                {
+                    "name": "Lunar Frenzy",
+                    "id": "b5fb18c4-1386-4ea0-97c1-4bdd1e7eb5a6",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Monsters",
+        "colors": [
+            "G"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/monsters.png",
+        "cards": [
+            "096d3c0c-98e2-4cfc-a6e1-fddb0359c63f",
+            "700c9ed8-6bfe-4f1e-855a-5f31e0d2fc9b",
+            "60af8bda-e92f-400d-aedf-00a534184e20",
+            "30e8a00f-8131-470d-8072-4c23b812281a",
+            "1d0634cb-e973-4f05-965e-d39b09fe57a9",
+            "0a4813b2-3fd7-4a2b-b87a-9ce5bb18bdd4",
+            "c454312c-ba0d-4b93-a3f5-e7764fcfbe20",
+            "a902d474-0d02-449e-ab6c-8c2f32c99384"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Inspiring Bard",
+                    "id": "0b33db66-d205-4164-b168-6084df562ebb",
+                    "weight": 50
+                },
+                {
+                    "name": "Ambitious Dragonborn",
+                    "id": "5e56a516-d71a-49c4-a929-9a8973125d3c",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Hill Giant Herdgorger",
+                    "id": "b69315cc-c230-4704-9d66-411f624f3e49",
+                    "weight": 50
+                },
+                {
+                    "name": "Dread Linnorm // Scale Deflection",
+                    "id": "174ee9e7-8040-4b53-8d0d-177ce924521c",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Choose Your Weapon",
+                    "id": "213726e4-e2f5-4e52-b05a-21c4bab9927c",
+                    "weight": 67
+                },
+                {
+                    "name": "Wild Shape",
+                    "id": "ec9738f1-b2e7-45a5-b235-290256aabed0",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Monster Manual // Zoological Study",
+                    "id": "27223ee4-970a-438a-beff-a1b13b14aff4",
+                    "weight": 75
+                },
+                {
+                    "name": "Lukamina, Moon Druid",
+                    "id": "acaeef14-b606-42a4-8966-636b45e01b72",
+                    "weight": 25
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Transience",
+        "colors": [
+            "W",
+            "B"
+        ],
+        "cycling_land": false,
+        "image": "/img/cardback.webp",
+        "cards": [
+            "73b17c29-c796-460b-a0c6-7638fb80e397",
+            "8b6f7b89-1648-4c2b-8d68-88ad43267c6f",
+            "9d3cc82d-06e8-4c0e-bc01-babbf3f9f844",
+            "3b3d9117-724a-4b67-be27-142b9c283788",
+            "1d958ec3-1ddc-4622-9089-cbe5b3b47c90",
+            "40debf14-ff15-48c4-bbfc-d8981e6f98a2",
+            "aba79021-39af-4e74-beb5-f2f508c865b2"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Soldiers of the Watch",
+                    "id": "e228fc29-fb05-46a3-83dd-5046f2cf3357",
+                    "weight": 50
+                },
+                {
+                    "name": "Corrupt Court Official",
+                    "id": "505c6215-4006-4c4f-897a-be051cb73fa7",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Klement, Novice Acolyte",
+                    "id": "51dbd7e4-51f9-4995-8cb1-78ae302cdbbb",
+                    "weight": 67
+                },
+                {
+                    "name": "Black Market Connections",
+                    "id": "d13cb0d3-3452-4c1f-81ec-024b4c45bbad",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Flaming Fist Officer",
+                    "id": "98722a04-0674-4083-b6f5-51bb88a99814",
+                    "weight": 50
+                },
+                {
+                    "name": "Nefarious Imp",
+                    "id": "0dc61b93-b87a-47f4-b5b5-eedb1db48288",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Eyes of the Beholder",
+                    "id": "3f9e5402-690f-497d-ada3-aa41fa900fdd",
+                    "weight": 50
+                },
+                {
+                    "name": "Spiked Pit Trap",
+                    "id": "59fbf45a-23b4-4d06-abd9-4cc3895cb29d",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Gate to the Citadel",
+                    "id": "985d1b57-42e0-41a2-a9c6-2f5427c0c1c9",
+                    "weight": 50
+                },
+                {
+                    "name": "Gate of the Black Dragon",
+                    "id": "90183d4d-c231-4e45-b1fc-2699b33a3733",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Dragonventures",
+        "colors": [
+            "R",
+            "U"
+        ],
+        "cycling_land": false,
+        "image": "/img/cardback.webp",
+        "cards": [
+            "c912e984-1d27-4da2-9733-d56e437bcf58",
+            "0bbfb7ae-9a32-428d-903c-99d0d8669b8d",
+            "570e8aaa-5273-42f4-b151-51976ab7730c",
+            "fe604232-19da-4331-a6f2-ddb004f1dd90",
+            "d0b9865a-be87-48fd-a325-be6aca8a31e9",
+            "56b0f66b-dca9-4a01-9394-20a513c2b225",
+            "9666987a-5267-46d3-9b00-31baa92a9cbc"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Swashbuckler Extraordinaire",
+                    "id": "b06604f3-c70c-44d6-b1b9-e915552084e0",
+                    "weight": 50
+                },
+                {
+                    "name": "Carnelian Orb of Dragonkind",
+                    "id": "e7e41166-bdaa-4aed-986a-7be1d043240c",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Wrathful Red Dragon",
+                    "id": "acd207de-eec3-4d82-b8b9-b1e60a7bad12",
+                    "weight": 50
+                },
+                {
+                    "name": "Ancient Copper Dragon",
+                    "id": "3836dddd-a7e4-499f-ad49-ce298aa65720",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "You Find the Villains' Lair",
+                    "id": "c6704458-6e9e-4795-a56d-25b68fbf9672",
+                    "weight": 50
+                },
+                {
+                    "name": "Syncopate",
+                    "id": "08375017-4432-4296-9799-966db145ed7c",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Breath Weapon",
+                    "id": "0174e40a-0ef5-4439-91e6-3fc39f482520",
+                    "weight": 50
+                },
+                {
+                    "name": "Mephit's Enthusiasm",
+                    "id": "93ac299b-ded0-4648-af3a-3e19c3aeec53",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Gate to Tumbledown",
+                    "id": "f8532b98-b69e-4d43-9ec8-0587572a0dff",
+                    "weight": 50
+                },
+                {
+                    "name": "Gate to Seatower",
+                    "id": "86382685-e54c-4152-a500-2148a2d6b5a4",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Warlock",
+        "colors": [
+            "B",
+            "G"
+        ],
+        "cycling_land": false,
+        "image": "/img/cardback.webp",
+        "cards": [
+            "1e84fc74-5b33-423a-82c7-983320fce7a3",
+            "6351adc8-2e44-4e5c-ae58-975b7332155e",
+            "c41156c8-ddd1-4492-ab0f-02c4a7423181",
+            "8f5228dc-ec9d-456f-a89c-1bc592a1bbab",
+            "3de4bf10-a502-4748-9118-5459684542a7",
+            "aba79021-39af-4e74-beb5-f2f508c865b2",
+            "24fdf8bd-1893-4599-936a-fe0d6a87545f"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Guildsworn Prowler",
+                    "id": "d7efb10f-c760-431c-8ac6-904965d850dc",
+                    "weight": 50
+                },
+                {
+                    "name": "Underdark Basilisk",
+                    "id": "ed220158-e4e3-4d46-8098-7b940a923ce9",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Gray Slaad // Entropic Decay",
+                    "id": "0c2b6960-ff4c-4557-ba6d-d504f87d4516",
+                    "weight": 50
+                },
+                {
+                    "name": "Undercellar Myconid",
+                    "id": "786c5b3e-737f-4794-b482-af5f0ee901e5",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "The Hourglass Coven",
+                    "id": "17857be0-5192-45b6-a893-2675cde25937",
+                    "weight": 75
+                },
+                {
+                    "name": "Ancient Brass Dragon",
+                    "id": "952acfb9-41e1-4387-8dbd-746f52ae6395",
+                    "weight": 25
+                }
+            ],
+            [
+                {
+                    "name": "Summon Undead",
+                    "id": "278f7705-01a4-4baf-929b-b93e538a8d77",
+                    "weight": 50
+                },
+                {
+                    "name": "Split the Spoils",
+                    "id": "55893f8b-0fea-40a5-b96d-954c99938810",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Gate of the Black Dragon",
+                    "id": "90183d4d-c231-4e45-b1fc-2699b33a3733",
+                    "weight": 50
+                },
+                {
+                    "name": "Gate to Manorborn",
+                    "id": "a902d474-0d02-449e-ab6c-8c2f32c99384",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Double Team",
+        "colors": [
+            "W",
+            "R"
+        ],
+        "cycling_land": false,
+        "image": "/img/cardback.webp",
+        "cards": [
+            "98209130-a72f-4946-a1d4-3a437cd9a0b2",
+            "c379cb69-a57e-4450-a93a-32e1105f330a",
+            "d2665dd5-2281-43ee-9db4-95e58ed6d6f1",
+            "2467fb90-f812-47f7-a3cb-a215aa39c133",
+            "0665034a-5ed5-4393-b4c2-664c50bbb0af",
+            "724c00b7-14da-4a42-8684-c1b02bbf44c6",
+            "6fb4744e-c3f3-4d8e-9f13-356841fa6aa6"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Flaming Fist Duskguard",
+                    "id": "7818f932-989a-4a29-8deb-77619c760d04",
+                    "weight": 50
+                },
+                {
+                    "name": "Genasi Rabble-Rouser",
+                    "id": "67121610-cf44-404b-a367-6dd36b8c7f7d",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Scouting Hawk",
+                    "id": "bce2209e-7a5c-4394-876c-e0f68cfba9ca",
+                    "weight": 50
+                },
+                {
+                    "name": "Resistance Squad",
+                    "id": "093ae747-350f-4253-b903-8c6892d78c83",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Unexpected Allies",
+                    "id": "c658b34b-4d3d-4495-92a6-b8e8cca0abcd",
+                    "weight": 50
+                },
+                {
+                    "name": "Mace of Disruption",
+                    "id": "93bbb378-cbb9-4cce-a413-3a2fcc85a7be",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Improvised Weaponry",
+                    "id": "29d5fd00-c616-4079-a91e-4da0bcaf9120",
+                    "weight": 50
+                },
+                {
+                    "name": "Light 'Em Up",
+                    "id": "ee31d56a-9b7e-4de0-81cb-3b7c76b6fbd5",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Gate to Tumbledown",
+                    "id": "f8532b98-b69e-4d43-9ec8-0587572a0dff",
+                    "weight": 50
+                },
+                {
+                    "name": "Gate to the Citadel",
+                    "id": "985d1b57-42e0-41a2-a9c6-2f5427c0c1c9",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Dragon Ramp",
+        "colors": [
+            "G",
+            "U",
+            "W"
+        ],
+        "cycling_land": false,
+        "image": "/img/cardback.webp",
+        "cards": [
+            "84ae5a76-b8b9-431d-8060-a6a96f5d1e0b",
+            "fe2d08ac-6c24-4158-87a1-c59d1cd447a8",
+            "4c9bf864-1f93-4d73-a212-f71265411768",
+            "174ee9e7-8040-4b53-8d0d-177ce924521c",
+            "b4590e53-ca8d-4896-a8cf-6af1e4bc456f",
+            "1d07c21e-55dc-45b2-b406-2ac38ca5d871",
+            "26ed684b-e3a1-421d-8cfd-c5eee673a3a1"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Pseudodragon Familiar",
+                    "id": "50d69ee8-a616-4191-b111-1330dfb24f72",
+                    "weight": 50
+                },
+                {
+                    "name": "Dragonborn Looter",
+                    "id": "570e8aaa-5273-42f4-b151-51976ab7730c",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Oyaminartok, Polar Werebear",
+                    "id": "a2b767ec-3e0f-473b-b81d-e3f912c464e0",
+                    "weight": 60
+                },
+                {
+                    "name": "Earthquake Dragon",
+                    "id": "bfedfd30-8075-429e-a0fa-4919920c8632",
+                    "weight": 30
+                },
+                {
+                    "name": "Ancient Bronze Dragon",
+                    "id": "781af4dd-9e3c-48af-80e9-b52c427d2120",
+                    "weight": 10
+                }
+            ],
+            [
+                {
+                    "name": "Undersimplify",
+                    "id": "3eaebdc1-7a20-45db-9d45-0238fc917496",
+                    "weight": 50
+                },
+                {
+                    "name": "Follow the Tracks",
+                    "id": "f4558a6a-66de-4bee-8e42-86b34fbc6bbb",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Band Together",
+                    "id": "c454312c-ba0d-4b93-a3f5-e7764fcfbe20",
+                    "weight": 50
+                },
+                {
+                    "name": "Duel for Dominance",
+                    "id": "9bb0a0c8-158e-4a6f-976e-3de9f57c3463",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Gate to Manorborn",
+                    "id": "a902d474-0d02-449e-ab6c-8c2f32c99384",
+                    "weight": 50
+                },
+                {
+                    "name": "Gate to Seatower",
+                    "id": "86382685-e54c-4152-a500-2148a2d6b5a4",
+                    "weight": 50
+                }
+            ]
+        ]
+    }
+]

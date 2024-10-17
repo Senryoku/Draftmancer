@@ -1,0 +1,1348 @@
+[
+    {
+        "name": "Samurai",
+        "colors": [
+            "W"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_samurai.png",
+        "cards": [
+            "13246172-7554-4edc-b6db-23dc91e4290a",
+            "44d4cd64-8560-48f5-b0bc-f75286c1c91c",
+            "e6c577bb-5e21-4a3e-b0a7-713a4ff7dce6",
+            "24e58478-c6a8-4f86-854a-a489c99bd777",
+            "3b0a9cc0-bb6d-47f7-b0d5-3956c46a1b3a",
+            "d9b1ed43-ee6c-43a2-ba94-5bf71c63e070",
+            "43708ec9-a85a-4244-86b4-67b30b41d854",
+            "f25d56f9-aa54-4657-9ac9-e93fbba3e715"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Selfless Samurai",
+                    "id": "76c27ec5-5a9b-4080-9a53-00630335a915",
+                    "weight": 67
+                },
+                {
+                    "name": "Twinblade Geist // Twinblade Invocation",
+                    "id": "f1deb24b-3d8f-4251-a901-85eeb891f26f",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "The Restoration of Eiganjo // Architect of Restoration",
+                    "id": "a11a33ae-e7fa-4bd4-8cd8-3a3239a29bcc",
+                    "weight": 50
+                },
+                {
+                    "name": "The Wandering Emperor",
+                    "id": "fab2d8a9-ab4c-4225-a570-22636293c17d",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Seven-Tail Mentor",
+                    "id": "9d77d1e6-c804-46f7-ba00-6df6bca2ae08",
+                    "weight": 34
+                },
+                {
+                    "name": "Stalwart Valkyrie",
+                    "id": "89ecb530-e429-4b50-a24c-8437614cf224",
+                    "weight": 33
+                },
+                {
+                    "name": "Axgard Braggart",
+                    "id": "4de5ff64-6fe7-4fc5-be27-cdbaa14545ab",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Touch the Spirit Realm",
+                    "id": "e16ab44e-4257-4c0c-b705-8ac1e9c1d835",
+                    "weight": 50
+                },
+                {
+                    "name": "Borrowed Time",
+                    "id": "3eeef24b-b937-408e-a32e-1a546d3e7b0f",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Mechs",
+        "colors": [
+            "U"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_mechs.png",
+        "cards": [
+            "2217f0a9-5af5-45cc-8cf7-8878d4f66dd8",
+            "8672f626-3e46-447b-841f-6a04cd380653",
+            "767b499e-3bdb-4809-b430-6e965bd100d4",
+            "581ed049-7b5b-47d9-96af-f737631a221f",
+            "cf4bb9de-ba7c-4916-b8ed-e2e644c06b58",
+            "c2fb1fff-12be-4bd5-8dba-c36e84d49651",
+            "50870bfd-7779-4a1c-b18f-57fac7e193b1",
+            "c093984d-38cd-4b49-b179-1e289ab442d1"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Draugr Thought-Thief",
+                    "id": "31da60a2-d4d3-4954-be59-c7ff61fa2905",
+                    "weight": 50
+                },
+                {
+                    "name": "Soulknife Spy",
+                    "id": "045c7c23-d418-42f0-b497-50c39e5321ad",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Mindlink Mech",
+                    "id": "28273a5b-57b3-4b7a-b017-5886c171c9c9",
+                    "weight": 33
+                },
+                {
+                    "name": "Reckoner Bankbuster",
+                    "id": "279acd17-6c17-427b-a69d-fc02442ff4a3",
+                    "weight": 34
+                },
+                {
+                    "name": "Surgehacker Mech",
+                    "id": "3c4bf679-01cc-4786-a3bd-89c8ae70fdfa",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Whispering Wizard",
+                    "id": "54fb422d-71f2-44ed-9589-32630ab87050",
+                    "weight": 50
+                },
+                {
+                    "name": "Futurist Operative",
+                    "id": "c5858176-9f85-403c-8338-48eb55db5c3d",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Tamiyo's Compleation",
+                    "id": "aee62e43-6a82-4749-972b-e21802642abf",
+                    "weight": 67
+                },
+                {
+                    "name": "Revenge of the Drowned",
+                    "id": "93be7d72-927a-40ce-8de4-04a3f21c134b",
+                    "weight": 33
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Sneaky",
+        "colors": [
+            "B"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_sneaky.png",
+        "cards": [
+            "0adf3293-c1e0-447c-8231-26fa9476a262",
+            "62d3be4a-ab4f-46ef-837c-0f7559a701fe",
+            "81496a81-c986-4749-a28c-45341764e28f",
+            "30448144-639a-43c7-a408-bd6ed543c231",
+            "532c5b14-75cf-4e4c-9b80-2d56a86e2844",
+            "dd73fa5a-be0f-49a4-a921-afefbc8fa9c5",
+            "32779721-b021-4bd4-95d1-4a19b78d9faa"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Nezumi Prowler",
+                    "id": "ca911e9a-bd04-4531-a81e-3485e9cbe89e",
+                    "weight": 50
+                },
+                {
+                    "name": "Dokuchi Silencer",
+                    "id": "a24d5664-e214-466d-bb53-4e8f6f75a009",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Inkrise Infiltrator",
+                    "id": "cbb6e447-5f40-4039-8a17-257b4a55382c",
+                    "weight": 50
+                },
+                {
+                    "name": "Ghastly Gloomhunter",
+                    "id": "f272ac54-fea8-4044-83e2-f8fdc10f467d",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Biting-Palm Ninja",
+                    "id": "3017df51-67ae-4c3d-8210-086f83bc2040",
+                    "weight": 50
+                },
+                {
+                    "name": "Nashi, Moon Sage's Scion",
+                    "id": "2893b070-a610-4273-beb2-7609a2da0499",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Return to Action",
+                    "id": "342ec072-e581-490c-b5ae-a625bd35a153",
+                    "weight": 50
+                },
+                {
+                    "name": "You Are Already Dead",
+                    "id": "768727ce-4f84-4527-8d69-3c9b7877b748",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Hero's Downfall",
+                    "id": "c1b0751e-3a7e-4568-8c64-7429d6829687",
+                    "weight": 50
+                },
+                {
+                    "name": "Infernal Grasp",
+                    "id": "17824929-f131-4b8d-addb-66c25323155e",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Equipped",
+        "colors": [
+            "R"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_equipped.png",
+        "cards": [
+            "5d33a5b7-797b-4079-8d62-edd124c0fb5a",
+            "7c8f5da8-13a8-4b39-8ddc-7661892924af",
+            "5776e576-5562-45ea-a29b-185410317e17",
+            "d3d00e61-3007-43da-960b-823e9ead2acf",
+            "4177f57e-c239-47e8-ae50-5f593f6d54ec",
+            "73abe574-6fb8-4809-9c18-0cf989f986f5",
+            "bef5d58e-b490-4682-9a44-12cd61a94c0f",
+            "5cf531dd-0a93-43e3-880b-f705fa5f533d",
+            "75240bbc-adc7-48ff-9523-c79776d710d3"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Lizard Blades",
+                    "id": "a747e6cf-c687-4c4f-8e07-d51165d6cb62",
+                    "weight": 50
+                },
+                {
+                    "name": "Ogre-Head Helm",
+                    "id": "3a0d5f7d-4e8a-42ad-8875-610004bd9796",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Unstoppable Ogre",
+                    "id": "719f20d9-2baa-49b3-8c6a-89f21a07d538",
+                    "weight": 50
+                },
+                {
+                    "name": "Twinscroll Shaman",
+                    "id": "87193af5-4b6b-48d0-9b75-8171bb1d6e53",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Dueling Rapier",
+                    "id": "c304118a-c83b-490a-b0e2-721734a996ee",
+                    "weight": 50
+                },
+                {
+                    "name": "Tormentor's Helm",
+                    "id": "2318d4f8-309e-4645-b6d1-46572edd6996",
+                    "weight": 25
+                },
+                {
+                    "name": "Ninja's Kunai",
+                    "id": "af6ae567-c77a-416a-b609-4df3d0dd2e18",
+                    "weight": 25
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Enchanting",
+        "colors": [
+            "G"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_enchanting.png",
+        "cards": [
+            "d1066ccd-a932-4d05-98da-11ae4675364e",
+            "540ba70a-bea8-4512-83ba-92dab6d25b52",
+            "e66120a5-95a3-4d15-873c-cfba221a2299",
+            "b4fbaee3-a10f-4b2d-b07e-d041a96a7e27",
+            "e8a51d2a-1582-4bad-995c-e7fe9f810149",
+            "7d42ca7c-5b36-45a9-b235-4f90e66f4377",
+            "841f0ec2-94c7-4cec-94bb-b365084ca45f",
+            "235d1ffc-72aa-40a2-95dc-3f6a8d495061"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Weaver of Harmony",
+                    "id": "d1682673-e947-44e2-b9c9-cbcb9a16892b",
+                    "weight": 50
+                },
+                {
+                    "name": "Kami of Transience",
+                    "id": "7d038a59-e589-45f4-b5ef-6d2f9875d560",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Geothermal Kami",
+                    "id": "559d7162-39fc-4d99-8c5f-b40a765b883a",
+                    "weight": 50
+                },
+                {
+                    "name": "Harmonious Emergence",
+                    "id": "c92ff968-b436-4313-8375-8a3bb41f9892",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Blossom Prancer",
+                    "id": "d26abdf2-efd7-40e5-bfc6-d75fcadd26f8",
+                    "weight": 75
+                },
+                {
+                    "name": "Roaring Earth",
+                    "id": "8cbdd88e-c532-4fc0-a1fe-8aa0c26d1092",
+                    "weight": 25
+                }
+            ],
+            [
+                {
+                    "name": "Sheltering Boughs",
+                    "id": "915dd4c2-0e9f-440c-8e4c-80db351a5eba",
+                    "weight": 33
+                },
+                {
+                    "name": "Commune with Spirits",
+                    "id": "a35ff4dd-bad3-4496-82b3-8253f48af06d",
+                    "weight": 33
+                },
+                {
+                    "name": "Favor of Jukai",
+                    "id": "1013266a-81f4-4441-8dcf-2764d14afceb",
+                    "weight": 34
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Ninjas",
+        "colors": [
+            "U",
+            "B"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_ninjas.png",
+        "cards": [
+            "cacc36d9-4c4b-43b2-a8b4-d265deb1e6b2",
+            "c5858176-9f85-403c-8338-48eb55db5c3d",
+            "c6e466d1-943d-41e6-a47d-c9d951ca4262",
+            "cbb6e447-5f40-4039-8a17-257b4a55382c",
+            "dd73fa5a-be0f-49a4-a921-afefbc8fa9c5",
+            "f0e3d1ac-bec2-4bba-a6cf-a823996dde2d",
+            "32779721-b021-4bd4-95d1-4a19b78d9faa"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Network Disruptor",
+                    "id": "5a37719a-2a87-4870-8f25-12544ca2f2cf",
+                    "weight": 50
+                },
+                {
+                    "name": "Brinebarrow Intruder",
+                    "id": "89960a74-9e17-4e30-874a-4286dd4c917d",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Satoru Umezawa",
+                    "id": "8887f26d-b097-4fbc-9c48-bdc656409a32",
+                    "weight": 50
+                },
+                {
+                    "name": "Thousand-Faced Shadow",
+                    "id": "89a698a5-f4ac-4b04-96dc-32e1eeef6ac7",
+                    "weight": 25
+                },
+                {
+                    "name": "Kaito Shizuki",
+                    "id": "2d35a710-3008-4e27-8afd-6e83329f9917",
+                    "weight": 25
+                }
+            ],
+            [
+                {
+                    "name": "Moonsnare Specialist",
+                    "id": "1e8b209f-f577-45cc-9d18-03c1d67d391e",
+                    "weight": 50
+                },
+                {
+                    "name": "Saiba Trespassers",
+                    "id": "c3dd7f1a-5d43-4218-a9d8-7cc4f6a18ecd",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Dokuchi Shadow-Walker",
+                    "id": "81496a81-c986-4749-a28c-45341764e28f",
+                    "weight": 67
+                },
+                {
+                    "name": "Kami of Restless Shadows",
+                    "id": "62d3be4a-ab4f-46ef-837c-0f7559a701fe",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Hero's Downfall",
+                    "id": "c1b0751e-3a7e-4568-8c64-7429d6829687",
+                    "weight": 50
+                },
+                {
+                    "name": "Infernal Grasp",
+                    "id": "17824929-f131-4b8d-addb-66c25323155e",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Modified",
+        "colors": [
+            "G",
+            "R"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_modified.png",
+        "cards": [
+            "4d83e837-fcd1-4833-9117-e6f1bb53caad",
+            "d45daa56-6ad8-4df7-9d81-3193fd32e574",
+            "7c8f5da8-13a8-4b39-8ddc-7661892924af",
+            "e66120a5-95a3-4d15-873c-cfba221a2299",
+            "bef5d58e-b490-4682-9a44-12cd61a94c0f",
+            "7d42ca7c-5b36-45a9-b235-4f90e66f4377",
+            "3a7fd24e-84d8-405d-86e4-0571a9e23cc2"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Guardian Gladewalker",
+                    "id": "587eed42-5111-4161-9af5-bf76556c542a",
+                    "weight": 34
+                },
+                {
+                    "name": "Coiling Stalker",
+                    "id": "6eba24f6-8a9c-4398-b2ab-3924b107c7b7",
+                    "weight": 33
+                },
+                {
+                    "name": "Gnarlid Colony",
+                    "id": "7327289d-eed8-44b1-8495-7172e2b49d5f",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Thundering Raiju",
+                    "id": "ec1a2920-6d39-4276-921c-65cc16a45f17",
+                    "weight": 67
+                },
+                {
+                    "name": "Goro-Goro, Disciple of Ryusei",
+                    "id": "1ca736c7-35a9-48c7-b5a9-69b2a6e33ad0",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Rabbit Battery",
+                    "id": "5d33a5b7-797b-4079-8d62-edd124c0fb5a",
+                    "weight": 50
+                },
+                {
+                    "name": "Kumano Faces Kakkazan // Etching of Kumano",
+                    "id": "28d92cad-45b0-479d-97fc-c175f3a3f259",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Tales of Master Seshiro // Seshiro's Living Legacy",
+                    "id": "512bc867-3a86-4da2-93f0-dd76d6a6f30d",
+                    "weight": 50
+                },
+                {
+                    "name": "Moldgraf Millipede",
+                    "id": "5252ea27-63d1-4b80-beae-8e016373d004",
+                    "weight": 25
+                },
+                {
+                    "name": "Leyline Invocation",
+                    "id": "4edfbed0-0c0d-4aa5-bfe0-5268aff0f958",
+                    "weight": 25
+                }
+            ],
+            [
+                {
+                    "name": "Invigorating Hot Spring",
+                    "id": "59a118d1-30b8-42c0-ac42-6fba0778200a",
+                    "weight": 50
+                },
+                {
+                    "name": "Roaring Earth",
+                    "id": "8cbdd88e-c532-4fc0-a1fe-8aa0c26d1092",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Sagas",
+        "colors": [
+            "G",
+            "W"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_sagas.png",
+        "cards": [
+            "5366900b-2abf-4e5c-8507-f51aca9c7ce8",
+            "74f43827-2b9b-4fc9-a6e2-c682dfbf14f7",
+            "540ba70a-bea8-4512-83ba-92dab6d25b52",
+            "e66120a5-95a3-4d15-873c-cfba221a2299",
+            "8ad44884-ae0d-40ae-87a9-bad043d4e9ad",
+            "512bc867-3a86-4da2-93f0-dd76d6a6f30d",
+            "50a77eed-aa03-43b7-b3c8-6aee4c96c648",
+            "3eeef24b-b937-408e-a32e-1a546d3e7b0f"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Satsuki, the Living Lore",
+                    "id": "0152575b-31b0-4142-9cc2-b87a81bd51a8",
+                    "weight": 75
+                },
+                {
+                    "name": "Jugan Defends the Temple // Remnant of the Rising Star",
+                    "id": "a22b5f27-f9e7-49e1-8e96-dc5d8e7fbe27",
+                    "weight": 25
+                }
+            ],
+            [
+                {
+                    "name": "Greater Tanuki",
+                    "id": "b4fbaee3-a10f-4b2d-b07e-d041a96a7e27",
+                    "weight": 34
+                },
+                {
+                    "name": "Master Skald",
+                    "id": "6b269e27-8e17-4bf2-b28a-a83ecc7d22c0",
+                    "weight": 33
+                },
+                {
+                    "name": "Heron-Blessed Geist",
+                    "id": "83bacf4a-4e99-4008-97e4-3a82dddd4e45",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Fall of the Impostor",
+                    "id": "d7de696a-49c2-421d-a86c-bcffd68870c6",
+                    "weight": 50
+                },
+                {
+                    "name": "The Fall of Lord Konda // Fragment of Konda",
+                    "id": "4d784409-df6d-45d4-8f8b-6e3fd57a8fde",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Sejiri Shelter // Sejiri Glacier",
+                    "id": "f25d56f9-aa54-4657-9ac9-e93fbba3e715",
+                    "weight": 50
+                },
+                {
+                    "name": "Bala Ged Recovery // Bala Ged Sanctuary",
+                    "id": "c5cb3052-358d-44a7-8cfd-cd31b236494a",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Balanced",
+        "colors": [
+            "B",
+            "W"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_balanced.png",
+        "cards": [
+            "488ee202-0d28-4cc0-8a7d-644d9878e952",
+            "5aa91a9e-2fe2-43bc-aa9c-cfb8a71829ff",
+            "9a03d3f5-b32b-4814-b485-25f24e51609c",
+            "58f15af6-eaf5-41b8-b93d-5a90ca219478",
+            "4400fd66-1a24-47fb-bc94-37e0aae0e610",
+            "8ad44884-ae0d-40ae-87a9-bad043d4e9ad",
+            "1e5aba90-c8c7-4f06-b7b3-1b4758d2791a",
+            "609d3ecf-f88d-4268-a8d3-4bf2bcf5df60"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Circuit Mender",
+                    "id": "defaeb68-3f8a-4740-b13f-8c71c7e9c8b4",
+                    "weight": 67
+                },
+                {
+                    "name": "Imperial Recovery Unit",
+                    "id": "ac9b2c7b-c93b-4b97-999e-86faed8a26ee",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Life of Toshiro Umezawa // Memory of Toshiro",
+                    "id": "f7f4adf7-b871-417b-8904-7f024ca21486",
+                    "weight": 50
+                },
+                {
+                    "name": "Nezumi Prowler",
+                    "id": "ca911e9a-bd04-4531-a81e-3485e9cbe89e",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Blood Fountain",
+                    "id": "dd03651e-ada0-41dc-8722-0eba476943e3",
+                    "weight": 67
+                },
+                {
+                    "name": "Hedgewitch's Mask",
+                    "id": "97321072-1f7f-413b-9246-e6b3ec7a8c30",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Intercessor's Arrest",
+                    "id": "e83f2148-bb5d-4236-8d12-150deed0577e",
+                    "weight": 50
+                },
+                {
+                    "name": "Sigarda's Imprisonment",
+                    "id": "118995a6-8471-47ac-9404-700ce7fc46f6",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "High-tech",
+        "colors": [
+            "U",
+            "R"
+        ],
+        "cycling_land": false,
+        "image": "/img/cardback.webp",
+        "cards": [
+            "08a86009-4637-4b6c-9d36-367151583668",
+            "475bb3b5-b648-460c-b0ea-89ecfe0ff226",
+            "ac00521f-1b7d-478d-afe8-6761ea512d8d",
+            "6b927837-8252-4ea7-b2d0-ab624de65bd7",
+            "c47931c9-685d-4b83-8299-bc347224b4e8",
+            "a0e47d11-cb21-402b-a39e-588a94cc57b4"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Iron Apprentice",
+                    "id": "13d6d9fc-509b-42db-8ac1-85066eb6e9c4",
+                    "weight": 33
+                },
+                {
+                    "name": "Network Disruptor",
+                    "id": "5a37719a-2a87-4870-8f25-12544ca2f2cf",
+                    "weight": 33
+                },
+                {
+                    "name": "Simian Sling",
+                    "id": "37a00f95-d563-4d51-a5f2-af139261921a",
+                    "weight": 34
+                }
+            ],
+            [
+                {
+                    "name": "Mechtitan Core",
+                    "id": "ca286ba9-01a7-4dce-b388-177f5dcb95b1",
+                    "weight": 75
+                },
+                {
+                    "name": "Tezzeret, Betrayer of Flesh",
+                    "id": "2174d16e-4a78-4d27-b220-1086c40db83e",
+                    "weight": 25
+                }
+            ],
+            [
+                {
+                    "name": "Moonfolk Puzzlemaker",
+                    "id": "c9fa6d4c-78dc-4b40-9ce8-a0e593d4001f",
+                    "weight": 50
+                },
+                {
+                    "name": "Unstoppable Ogre",
+                    "id": "719f20d9-2baa-49b3-8c6a-89f21a07d538",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Saiba Trespassers",
+                    "id": "c3dd7f1a-5d43-4218-a9d8-7cc4f6a18ecd",
+                    "weight": 50
+                },
+                {
+                    "name": "Mirrorshell Crab",
+                    "id": "0394c8df-2e8a-4477-93b7-569934d7b936",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Towashi Songshaper",
+                    "id": "f7ff9be1-765f-4001-a0ac-39c8099924eb",
+                    "weight": 67
+                },
+                {
+                    "name": "Armguard Familiar",
+                    "id": "7497f147-146d-4a76-b670-bd84e07352b3",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Song-Mad Treachery // Song-Mad Ruins",
+                    "id": "782ca27f-9f18-476c-b582-89c06fb2e322",
+                    "weight": 50
+                },
+                {
+                    "name": "Spikefield Hazard // Spikefield Cave",
+                    "id": "a69541db-3f4e-412f-aa8e-dec1e74f74dc",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Samurai",
+        "colors": [
+            "W"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_samurai.png",
+        "cards": [
+            "13246172-7554-4edc-b6db-23dc91e4290a",
+            "09cb553c-58c1-4cfd-b441-297b5f09b263",
+            "9d77d1e6-c804-46f7-ba00-6df6bca2ae08",
+            "e6c577bb-5e21-4a3e-b0a7-713a4ff7dce6",
+            "f657f2dc-adc8-4a66-b081-a71b3a127389",
+            "3b0a9cc0-bb6d-47f7-b0d5-3956c46a1b3a",
+            "e16ab44e-4257-4c0c-b705-8ac1e9c1d835",
+            "985d1b57-42e0-41a2-a9c6-2f5427c0c1c9"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Selfless Samurai",
+                    "id": "76c27ec5-5a9b-4080-9a53-00630335a915",
+                    "weight": 67
+                },
+                {
+                    "name": "Twinblade Geist // Twinblade Invocation",
+                    "id": "f1deb24b-3d8f-4251-a901-85eeb891f26f",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "The Restoration of Eiganjo // Architect of Restoration",
+                    "id": "a11a33ae-e7fa-4bd4-8cd8-3a3239a29bcc",
+                    "weight": 50
+                },
+                {
+                    "name": "The Wandering Emperor",
+                    "id": "fab2d8a9-ab4c-4225-a570-22636293c17d",
+                    "weight": 25
+                },
+                {
+                    "name": "Mothrider Cavalry",
+                    "id": "580dbecb-6d49-4b67-978f-e2041c10973c",
+                    "weight": 25
+                }
+            ],
+            [
+                {
+                    "name": "Candletrap",
+                    "id": "32869a36-f21e-4348-a787-871daa6151df",
+                    "weight": 50
+                },
+                {
+                    "name": "Sigarda's Imprisonment",
+                    "id": "118995a6-8471-47ac-9404-700ce7fc46f6",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Wanderer's Intervention",
+                    "id": "43708ec9-a85a-4244-86b4-67b30b41d854",
+                    "weight": 50
+                },
+                {
+                    "name": "Ancestral Katana",
+                    "id": "d9b1ed43-ee6c-43a2-ba94-5bf71c63e070",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Mechs",
+        "colors": [
+            "U"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_mechs.png",
+        "cards": [
+            "c9fa6d4c-78dc-4b40-9ce8-a0e593d4001f",
+            "045c7c23-d418-42f0-b497-50c39e5321ad",
+            "8672f626-3e46-447b-841f-6a04cd380653",
+            "475bb3b5-b648-460c-b0ea-89ecfe0ff226",
+            "55fb1426-5a6f-48dd-938b-c64b1a28ee59",
+            "cf4bb9de-ba7c-4916-b8ed-e2e644c06b58",
+            "74fe0fb5-e994-41b1-a73d-4e68f7afdf34",
+            "50870bfd-7779-4a1c-b18f-57fac7e193b1",
+            "c093984d-38cd-4b49-b179-1e289ab442d1"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Mindlink Mech",
+                    "id": "28273a5b-57b3-4b7a-b017-5886c171c9c9",
+                    "weight": 33
+                },
+                {
+                    "name": "Reckoner Bankbuster",
+                    "id": "279acd17-6c17-427b-a69d-fc02442ff4a3",
+                    "weight": 34
+                },
+                {
+                    "name": "Surgehacker Mech",
+                    "id": "3c4bf679-01cc-4786-a3bd-89c8ae70fdfa",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Whispering Wizard",
+                    "id": "54fb422d-71f2-44ed-9589-32630ab87050",
+                    "weight": 50
+                },
+                {
+                    "name": "Futurist Operative",
+                    "id": "c5858176-9f85-403c-8338-48eb55db5c3d",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Tamiyo's Compleation",
+                    "id": "aee62e43-6a82-4749-972b-e21802642abf",
+                    "weight": 67
+                },
+                {
+                    "name": "Revenge of the Drowned",
+                    "id": "93be7d72-927a-40ce-8de4-04a3f21c134b",
+                    "weight": 33
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Sneaky",
+        "colors": [
+            "B"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_sneaky.png",
+        "cards": [
+            "0adf3293-c1e0-447c-8231-26fa9476a262",
+            "62d3be4a-ab4f-46ef-837c-0f7559a701fe",
+            "81496a81-c986-4749-a28c-45341764e28f",
+            "532c5b14-75cf-4e4c-9b80-2d56a86e2844",
+            "768727ce-4f84-4527-8d69-3c9b7877b748",
+            "dd73fa5a-be0f-49a4-a921-afefbc8fa9c5",
+            "90183d4d-c231-4e45-b1fc-2699b33a3733"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Nezumi Prowler",
+                    "id": "ca911e9a-bd04-4531-a81e-3485e9cbe89e",
+                    "weight": 50
+                },
+                {
+                    "name": "Dokuchi Silencer",
+                    "id": "a24d5664-e214-466d-bb53-4e8f6f75a009",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Inkrise Infiltrator",
+                    "id": "cbb6e447-5f40-4039-8a17-257b4a55382c",
+                    "weight": 50
+                },
+                {
+                    "name": "Guildsworn Prowler",
+                    "id": "d7efb10f-c760-431c-8ac6-904965d850dc",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Biting-Palm Ninja",
+                    "id": "3017df51-67ae-4c3d-8210-086f83bc2040",
+                    "weight": 50
+                },
+                {
+                    "name": "Nashi, Moon Sage's Scion",
+                    "id": "2893b070-a610-4273-beb2-7609a2da0499",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Cutthroat Contender",
+                    "id": "6b23b3e4-58cf-4b5d-bdcb-410a403b4987",
+                    "weight": 50
+                },
+                {
+                    "name": "Shambling Ghast",
+                    "id": "d96198a7-dd19-4940-bf8f-23135011fc84",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Hero's Downfall",
+                    "id": "c1b0751e-3a7e-4568-8c64-7429d6829687",
+                    "weight": 50
+                },
+                {
+                    "name": "Infernal Grasp",
+                    "id": "17824929-f131-4b8d-addb-66c25323155e",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Equipped",
+        "colors": [
+            "R"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_equipped.png",
+        "cards": [
+            "5d33a5b7-797b-4079-8d62-edd124c0fb5a",
+            "7c8f5da8-13a8-4b39-8ddc-7661892924af",
+            "5776e576-5562-45ea-a29b-185410317e17",
+            "d3d00e61-3007-43da-960b-823e9ead2acf",
+            "f7ff9be1-765f-4001-a0ac-39c8099924eb",
+            "73abe574-6fb8-4809-9c18-0cf989f986f5",
+            "bef5d58e-b490-4682-9a44-12cd61a94c0f",
+            "5cf531dd-0a93-43e3-880b-f705fa5f533d",
+            "f8532b98-b69e-4d43-9ec8-0587572a0dff"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Lizard Blades",
+                    "id": "a747e6cf-c687-4c4f-8e07-d51165d6cb62",
+                    "weight": 50
+                },
+                {
+                    "name": "Ogre-Head Helm",
+                    "id": "3a0d5f7d-4e8a-42ad-8875-610004bd9796",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Unstoppable Ogre",
+                    "id": "719f20d9-2baa-49b3-8c6a-89f21a07d538",
+                    "weight": 50
+                },
+                {
+                    "name": "Belligerent Guest",
+                    "id": "1bb844c4-f41c-4411-a80a-c19e1d97b272",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Dueling Rapier",
+                    "id": "c304118a-c83b-490a-b0e2-721734a996ee",
+                    "weight": 50
+                },
+                {
+                    "name": "Simian Sling",
+                    "id": "37a00f95-d563-4d51-a5f2-af139261921a",
+                    "weight": 25
+                },
+                {
+                    "name": "Ninja's Kunai",
+                    "id": "af6ae567-c77a-416a-b609-4df3d0dd2e18",
+                    "weight": 25
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Enchanting",
+        "colors": [
+            "G"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_enchanting.png",
+        "cards": [
+            "d1066ccd-a932-4d05-98da-11ae4675364e",
+            "540ba70a-bea8-4512-83ba-92dab6d25b52",
+            "e66120a5-95a3-4d15-873c-cfba221a2299",
+            "b4fbaee3-a10f-4b2d-b07e-d041a96a7e27",
+            "e8a51d2a-1582-4bad-995c-e7fe9f810149",
+            "7d42ca7c-5b36-45a9-b235-4f90e66f4377",
+            "841f0ec2-94c7-4cec-94bb-b365084ca45f",
+            "a902d474-0d02-449e-ab6c-8c2f32c99384"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Weaver of Harmony",
+                    "id": "d1682673-e947-44e2-b9c9-cbcb9a16892b",
+                    "weight": 50
+                },
+                {
+                    "name": "Kami of Transience",
+                    "id": "7d038a59-e589-45f4-b5ef-6d2f9875d560",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Geothermal Kami",
+                    "id": "559d7162-39fc-4d99-8c5f-b40a765b883a",
+                    "weight": 50
+                },
+                {
+                    "name": "Harmonious Emergence",
+                    "id": "c92ff968-b436-4313-8375-8a3bb41f9892",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Blossom Prancer",
+                    "id": "d26abdf2-efd7-40e5-bfc6-d75fcadd26f8",
+                    "weight": 75
+                },
+                {
+                    "name": "Roaring Earth",
+                    "id": "8cbdd88e-c532-4fc0-a1fe-8aa0c26d1092",
+                    "weight": 25
+                }
+            ],
+            [
+                {
+                    "name": "Sheltering Boughs",
+                    "id": "915dd4c2-0e9f-440c-8e4c-80db351a5eba",
+                    "weight": 33
+                },
+                {
+                    "name": "Commune with Spirits",
+                    "id": "a35ff4dd-bad3-4496-82b3-8253f48af06d",
+                    "weight": 33
+                },
+                {
+                    "name": "Favor of Jukai",
+                    "id": "1013266a-81f4-4441-8dcf-2764d14afceb",
+                    "weight": 34
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Balanced",
+        "colors": [
+            "B",
+            "W"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_balanced.png",
+        "cards": [
+            "488ee202-0d28-4cc0-8a7d-644d9878e952",
+            "5aa91a9e-2fe2-43bc-aa9c-cfb8a71829ff",
+            "9a03d3f5-b32b-4814-b485-25f24e51609c",
+            "58f15af6-eaf5-41b8-b93d-5a90ca219478",
+            "4400fd66-1a24-47fb-bc94-37e0aae0e610",
+            "8ad44884-ae0d-40ae-87a9-bad043d4e9ad",
+            "1e5aba90-c8c7-4f06-b7b3-1b4758d2791a",
+            "90183d4d-c231-4e45-b1fc-2699b33a3733"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Circuit Mender",
+                    "id": "defaeb68-3f8a-4740-b13f-8c71c7e9c8b4",
+                    "weight": 67
+                },
+                {
+                    "name": "Imperial Recovery Unit",
+                    "id": "ac9b2c7b-c93b-4b97-999e-86faed8a26ee",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Life of Toshiro Umezawa // Memory of Toshiro",
+                    "id": "f7f4adf7-b871-417b-8904-7f024ca21486",
+                    "weight": 50
+                },
+                {
+                    "name": "Nezumi Prowler",
+                    "id": "ca911e9a-bd04-4531-a81e-3485e9cbe89e",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Blood Fountain",
+                    "id": "dd03651e-ada0-41dc-8722-0eba476943e3",
+                    "weight": 67
+                },
+                {
+                    "name": "Hedgewitch's Mask",
+                    "id": "97321072-1f7f-413b-9246-e6b3ec7a8c30",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Intercessor's Arrest",
+                    "id": "e83f2148-bb5d-4236-8d12-150deed0577e",
+                    "weight": 50
+                },
+                {
+                    "name": "Sigarda's Imprisonment",
+                    "id": "118995a6-8471-47ac-9404-700ce7fc46f6",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "High-tech",
+        "colors": [
+            "U",
+            "R"
+        ],
+        "cycling_land": false,
+        "image": "/img/cardback.webp",
+        "cards": [
+            "08a86009-4637-4b6c-9d36-367151583668",
+            "475bb3b5-b648-460c-b0ea-89ecfe0ff226",
+            "ac00521f-1b7d-478d-afe8-6761ea512d8d",
+            "6b927837-8252-4ea7-b2d0-ab624de65bd7",
+            "c47931c9-685d-4b83-8299-bc347224b4e8",
+            "a0e47d11-cb21-402b-a39e-588a94cc57b4",
+            "f8532b98-b69e-4d43-9ec8-0587572a0dff"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Iron Apprentice",
+                    "id": "13d6d9fc-509b-42db-8ac1-85066eb6e9c4",
+                    "weight": 33
+                },
+                {
+                    "name": "Network Disruptor",
+                    "id": "5a37719a-2a87-4870-8f25-12544ca2f2cf",
+                    "weight": 33
+                },
+                {
+                    "name": "Simian Sling",
+                    "id": "37a00f95-d563-4d51-a5f2-af139261921a",
+                    "weight": 34
+                }
+            ],
+            [
+                {
+                    "name": "Towashi Songshaper",
+                    "id": "f7ff9be1-765f-4001-a0ac-39c8099924eb",
+                    "weight": 67
+                },
+                {
+                    "name": "Armguard Familiar",
+                    "id": "7497f147-146d-4a76-b670-bd84e07352b3",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Mechtitan Core",
+                    "id": "ca286ba9-01a7-4dce-b388-177f5dcb95b1",
+                    "weight": 75
+                },
+                {
+                    "name": "Tezzeret, Betrayer of Flesh",
+                    "id": "2174d16e-4a78-4d27-b220-1086c40db83e",
+                    "weight": 25
+                }
+            ],
+            [
+                {
+                    "name": "Moonfolk Puzzlemaker",
+                    "id": "c9fa6d4c-78dc-4b40-9ce8-a0e593d4001f",
+                    "weight": 50
+                },
+                {
+                    "name": "Unstoppable Ogre",
+                    "id": "719f20d9-2baa-49b3-8c6a-89f21a07d538",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Saiba Trespassers",
+                    "id": "c3dd7f1a-5d43-4218-a9d8-7cc4f6a18ecd",
+                    "weight": 50
+                },
+                {
+                    "name": "Mirrorshell Crab",
+                    "id": "0394c8df-2e8a-4477-93b7-569934d7b936",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Modified",
+        "colors": [
+            "W",
+            "R"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_modified.png",
+        "cards": [
+            "2a46af75-3880-4141-b26e-19834d67e7a8",
+            "4d83e837-fcd1-4833-9117-e6f1bb53caad",
+            "cbb4479f-3157-44b4-b18b-7553c7513118",
+            "8713498f-a467-4a11-9de2-53a1bbd0b18b",
+            "958af4ba-f29e-47ef-995e-3985982c75ad",
+            "bef5d58e-b490-4682-9a44-12cd61a94c0f",
+            "3678fa3d-d41f-4b7a-b25e-6fc5f78876c7",
+            "985d1b57-42e0-41a2-a9c6-2f5427c0c1c9"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Inchblade Companion",
+                    "id": "5ceb064b-b4e7-4e62-ad3c-81fcf97a595a",
+                    "weight": 75
+                },
+                {
+                    "name": "Sanctuary Warden",
+                    "id": "4dfdab77-d7c3-4e6a-bb4b-55153bd2fd4d",
+                    "weight": 25
+                }
+            ],
+            [
+                {
+                    "name": "Citizen's Crowbar",
+                    "id": "b68896f5-1e13-400a-a327-b6c6f00858b7",
+                    "weight": 50
+                },
+                {
+                    "name": "Upriser Renegade",
+                    "id": "62d878c2-a340-4751-adaa-e50b0bb85423",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Revelation of Power",
+                    "id": "7e010b11-8f3e-4792-afe4-0a376650b6c4",
+                    "weight": 50
+                },
+                {
+                    "name": "Ambitious Assault",
+                    "id": "d00d618d-abad-475b-b938-e111282ea1c3",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Hold for Ransom",
+                    "id": "53e74a99-11d9-40b8-b1d6-8f68a3f490fa",
+                    "weight": 50
+                },
+                {
+                    "name": "Intercessor's Arrest",
+                    "id": "e83f2148-bb5d-4236-8d12-150deed0577e",
+                    "weight": 50
+                }
+            ]
+        ]
+    }
+]

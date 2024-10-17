@@ -1,0 +1,770 @@
+[
+    {
+        "name": "Kicker",
+        "colors": [
+            "U"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_kicker.png",
+        "cards": [
+            "6f222fb7-375d-4ee2-9ff6-bd71f63ab31a",
+            "2217f0a9-5af5-45cc-8cf7-8878d4f66dd8",
+            "f6455009-030c-4a33-a60b-80863d8f8aaf",
+            "acb0d55a-9d6a-443d-aa82-5cea93188fd2",
+            "ba1240d4-dbd0-483b-934a-5f7c505fad42",
+            "ba1240d4-dbd0-483b-934a-5f7c505fad42",
+            "1bfba7a0-d5ca-4197-9e58-21f28345f1a6",
+            "899540b0-c17a-4a73-912c-9b8925203de1",
+            "a48c3a2f-678b-4e70-a53f-258457d88d29"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Coralhelm Chronicler",
+                    "id": "50b54524-8345-4b47-913f-d883a1cbe3a1",
+                    "weight": 66
+                },
+                {
+                    "name": "Jace, Mirror Mage",
+                    "id": "fe0ed348-e4ed-4b6a-b9d9-03539a6fb42a",
+                    "weight": 34
+                }
+            ],
+            [
+                {
+                    "name": "Cleric of Chill Depths",
+                    "id": "b4ea262c-ea32-4aca-b96b-58f556a8dffc",
+                    "weight": 50
+                },
+                {
+                    "name": "Campus Guide",
+                    "id": "87a9a8a2-de81-441b-b501-418311b677f7",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Umara Wizard // Umara Skyfalls",
+                    "id": "890eee8d-a339-4143-adfa-1b17ec10c099",
+                    "weight": 50
+                },
+                {
+                    "name": "Beyeen Veil // Beyeen Coast",
+                    "id": "5f411f08-45dd-4d73-8894-daf51c175150",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Ordained",
+        "colors": [
+            "B"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_ordained.png",
+        "cards": [
+            "3d14ea81-d303-47db-90b4-7d10588f7ea6",
+            "7f3a6148-d005-49c1-a7fc-867c4e8251cd",
+            "730ddbcd-0814-4e22-85e9-78b0878324b6",
+            "836f5197-e42b-45e0-8170-1b0a8a5beebd",
+            "331bf97d-f447-4c68-bfc7-2bb593106d66",
+            "c204130f-0483-49ed-8512-03a74894702e",
+            "e7975a3c-570a-4bff-a60d-d274f758b93f",
+            "4b9ae607-e0bc-4415-ad58-65944848bbe9",
+            "007a5c8c-ed0b-4844-9393-a3d25d4ffa1d"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Lash of Malice",
+                    "id": "af3da2c6-29ed-4563-8bae-d1cc05df8897",
+                    "weight": 66
+                },
+                {
+                    "name": "Infernal Grasp",
+                    "id": "17824929-f131-4b8d-addb-66c25323155e",
+                    "weight": 34
+                }
+            ],
+            [
+                {
+                    "name": "Mind Drain",
+                    "id": "0683d586-a54b-425a-a24d-2efb2342f150",
+                    "weight": 50
+                },
+                {
+                    "name": "Raise the Draugr",
+                    "id": "1a67c196-632c-4c7b-a132-de07d894e634",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Malakir Rebirth // Malakir Mire",
+                    "id": "609d3ecf-f88d-4268-a8d3-4bf2bcf5df60",
+                    "weight": 50
+                },
+                {
+                    "name": "Zof Consumption // Zof Bloodbog",
+                    "id": "98496d5b-1519-4f0c-8b46-0a43be643dfb",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Warriors",
+        "colors": [
+            "R"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_warriors.png",
+        "cards": [
+            "30084dc1-f501-4b7c-972d-1a3b9137083a",
+            "30084dc1-f501-4b7c-972d-1a3b9137083a",
+            "0885acdc-9b4c-4e28-8785-9e721a27e81e",
+            "9ec9d3eb-4729-49a9-8146-7388ff2629df",
+            "98be3783-23e8-4143-8685-6d887f164294",
+            "ca8705e3-0e44-45c9-bcdf-c24507b038fe",
+            "f40c88e2-28ed-4e5b-bcb3-4397d6a15a6f",
+            "d8ed0335-daa6-4dbe-a94d-4d56c8cfd093"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Fireblade Charger",
+                    "id": "ca657846-f352-4ac4-b2b3-d0ced6607163",
+                    "weight": 66
+                },
+                {
+                    "name": "Voldaren Stinger",
+                    "id": "f27a7c78-3a64-42fc-8808-15b1f41976a1",
+                    "weight": 34
+                }
+            ],
+            [
+                {
+                    "name": "Goma Fada Vanguard",
+                    "id": "ce83962b-445a-4b44-ad8a-fada2c0a15b8",
+                    "weight": 75
+                },
+                {
+                    "name": "Armory Veteran",
+                    "id": "4177f57e-c239-47e8-ae50-5f593f6d54ec",
+                    "weight": 25
+                }
+            ],
+            [
+                {
+                    "name": "Dueling Rapier",
+                    "id": "c304118a-c83b-490a-b0e2-721734a996ee",
+                    "weight": 75
+                },
+                {
+                    "name": "Scavenged Blade",
+                    "id": "3280f0d0-de0d-4f87-a6ef-c941cb7c9784",
+                    "weight": 25
+                }
+            ],
+            [
+                {
+                    "name": "Run Amok",
+                    "id": "44c8136f-2826-476c-a103-7094670506a6",
+                    "weight": 34
+                },
+                {
+                    "name": "You Come to the Gnoll Camp",
+                    "id": "0e893613-423e-409b-9334-292bd252405b",
+                    "weight": 33
+                },
+                {
+                    "name": "Stolen Vitality",
+                    "id": "d50df2dd-8d14-4d92-ab4e-bf9f9f147e91",
+                    "weight": 33
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Powered Up",
+        "colors": [
+            "G"
+        ],
+        "cycling_land": false,
+        "image": "/img/cardback.webp",
+        "cards": [
+            "7327289d-eed8-44b1-8495-7172e2b49d5f",
+            "7a6f9984-dec7-4a1f-91d6-1e85b5df5e4c",
+            "ca6f8996-bf72-4e55-944f-5b8202b6068c",
+            "f53472b7-53da-4833-b7f9-204706dfb721",
+            "ab62382d-2dc9-4a60-b031-c845ebad0357",
+            "effe3fab-6d13-4603-8a21-8a3c2a0d9e08",
+            "42914fd9-e56e-4c3e-a445-fdfa45a45178",
+            "6974363c-0d0d-4270-a25e-ab84b0c03f4e",
+            "235d1ffc-72aa-40a2-95dc-3f6a8d495061"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Shadowbeast Sighting",
+                    "id": "1b12e978-4deb-4ccc-8ae6-462bc4598c90",
+                    "weight": 34
+                },
+                {
+                    "name": "Elturgard Ranger",
+                    "id": "f6898737-957f-44a6-bef7-fb196658176f",
+                    "weight": 33
+                },
+                {
+                    "name": "Grizzled Outrider",
+                    "id": "4a1d4473-5317-4bdd-9cb9-93670acf52e9",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Ravenous Lindwurm",
+                    "id": "9961e3fc-167e-4043-8510-cc5cf08d473e",
+                    "weight": 50
+                },
+                {
+                    "name": "Hill Giant Herdgorger",
+                    "id": "b69315cc-c230-4704-9d66-411f624f3e49",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Broken Wings",
+                    "id": "c0fc2dfd-85b0-4add-be18-b39549235921",
+                    "weight": 75
+                },
+                {
+                    "name": "Mage Duel",
+                    "id": "92325638-0321-4409-8910-2287c64c182e",
+                    "weight": 25
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Landfall",
+        "colors": [
+            "G"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_landfall.png",
+        "cards": [
+            "c9c0a096-870d-443c-92d3-f7ec1f362616",
+            "7c9d3f4a-ef83-454e-b8a1-1fc5d5f44be8",
+            "5e0f725c-8d1f-47ff-ad81-a5007199a5e2",
+            "6b04160c-89a7-4dcd-b05d-5dc846824d64",
+            "b5339f6e-9ed7-4734-91c9-c2ed59ca1052",
+            "9965a54b-8b22-418c-9a0d-bf154932f2e2",
+            "09278e95-eaae-4cd4-a0d8-a2d15b0abb58",
+            "effe3fab-6d13-4603-8a21-8a3c2a0d9e08",
+            "cb471f90-46f2-4037-87fc-f523fc9d004f"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Kazandu Mammoth // Kazandu Valley",
+                    "id": "2f632537-63bf-4490-86e6-e6067b9c1a3b",
+                    "weight": 50
+                },
+                {
+                    "name": "Lotus Cobra",
+                    "id": "a4b759f0-901f-4be3-93fa-224609b08d48",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Kazandu Stomper",
+                    "id": "afdfe5aa-8b15-4a89-a22a-03baf6afa4e7",
+                    "weight": 50
+                },
+                {
+                    "name": "Leyline Invocation",
+                    "id": "4edfbed0-0c0d-4aa5-bfe0-5268aff0f958",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Roiling Regrowth",
+                    "id": "fa259096-b24f-414c-af59-301bed4b4627",
+                    "weight": 50
+                },
+                {
+                    "name": "Vastwood Surge",
+                    "id": "6974363c-0d0d-4270-a25e-ab84b0c03f4e",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Khalni Ambush // Khalni Territory",
+                    "id": "99535539-aa73-41ed-86ab-21c97b92620d",
+                    "weight": 50
+                },
+                {
+                    "name": "Vastwood Fortification // Vastwood Thicket",
+                    "id": "3a7fd24e-84d8-405d-86e4-0571a9e23cc2",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Roguish",
+        "colors": [
+            "U",
+            "B"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_roguish.png",
+        "cards": [
+            "112077b8-1514-4320-a70f-b23f3c7ce18a",
+            "0b4c7268-60c6-4038-8ce9-d9d51bed4577",
+            "0d73c9c4-8955-499f-8f87-6500b35b4977",
+            "2966b1f0-3d30-4d92-87e5-f39ceacefbd2",
+            "ea080141-6262-4595-8058-b2969b3f016b",
+            "105b6e18-bcd8-43b7-870d-6c7e5c06f99b",
+            "381d84d6-7b34-44cb-a697-54b835ba1281",
+            "ac2a2cf5-80cf-4c06-8b04-bc04a5460de5",
+            "007a5c8c-ed0b-4844-9393-a3d25d4ffa1d",
+            "32779721-b021-4bd4-95d1-4a19b78d9faa"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Nimana Skydancer",
+                    "id": "e72eaa0f-cbec-45a1-b390-cbbedf5a02f2",
+                    "weight": 50
+                },
+                {
+                    "name": "Mistwalker",
+                    "id": "92f64b49-327c-473b-a492-f020a322aed7",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Zareth San, the Trickster",
+                    "id": "9cfe4fbe-277f-410c-9eee-f7617f4cb850",
+                    "weight": 50
+                },
+                {
+                    "name": "Nighthawk Scavenger",
+                    "id": "eb348f07-1d48-4877-8a56-60655d64a3f7",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Party",
+        "colors": [
+            "B",
+            "R"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_party.png",
+        "cards": [
+            "a29e17ba-d584-4296-9f43-17467edaa25f",
+            "3d14ea81-d303-47db-90b4-7d10588f7ea6",
+            "5b310b01-f9cb-48ce-8af3-5957d3abf098",
+            "e8685c8e-935f-49f2-acf2-8e3c41c5b330",
+            "0568341b-f972-407f-92ce-1b7c9ef742f6",
+            "a9e6de80-3516-426b-8a1b-bda45f8c0cac",
+            "af484140-57d6-4505-9960-5e7b0306cc9b",
+            "bd037e51-9088-4145-8289-00a86fb72ca1",
+            "007a5c8c-ed0b-4844-9393-a3d25d4ffa1d"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Scorch Rider",
+                    "id": "9ec9d3eb-4729-49a9-8146-7388ff2629df",
+                    "weight": 50
+                },
+                {
+                    "name": "Drana's Silencer",
+                    "id": "59224f9a-deb2-4dd4-b2d4-967232c14254",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Zagras, Thief of Heartbeats",
+                    "id": "ac81448c-f87b-4ca1-b951-b359216ab1d0",
+                    "weight": 40
+                },
+                {
+                    "name": "Nullpriest of Oblivion",
+                    "id": "086fc7fb-efcf-4676-8455-39b63edaec6a",
+                    "weight": 40
+                },
+                {
+                    "name": "Drana, the Last Bloodchief",
+                    "id": "5cd4154e-7681-444b-a0f2-33e887791ba7",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Akoum Warrior // Akoum Teeth",
+                    "id": "d8ed0335-daa6-4dbe-a94d-4d56c8cfd093",
+                    "weight": 50
+                },
+                {
+                    "name": "Blackbloom Rogue // Blackbloom Bog",
+                    "id": "32779721-b021-4bd4-95d1-4a19b78d9faa",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Roiling",
+        "colors": [
+            "G",
+            "R"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_roiling.png",
+        "cards": [
+            "8fc448f6-a7fe-47c4-ac7c-385a77326469",
+            "5e0f725c-8d1f-47ff-ad81-a5007199a5e2",
+            "5929c89b-8c61-47f5-a8ec-b64bf41e9d5b",
+            "9965a54b-8b22-418c-9a0d-bf154932f2e2",
+            "09278e95-eaae-4cd4-a0d8-a2d15b0abb58",
+            "86572747-8faa-4242-b059-07d11e6be1cd",
+            "fa259096-b24f-414c-af59-301bed4b4627",
+            "cb471f90-46f2-4037-87fc-f523fc9d004f",
+            "99535539-aa73-41ed-86ab-21c97b92620d"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Kazandu Nectarpot",
+                    "id": "7c9d3f4a-ef83-454e-b8a1-1fc5d5f44be8",
+                    "weight": 50
+                },
+                {
+                    "name": "Scurrid Colony",
+                    "id": "c9c0a096-870d-443c-92d3-f7ec1f362616",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Spitfire Lagac",
+                    "id": "47f26493-812f-4c14-91c4-d2ab549a7b8a",
+                    "weight": 50
+                },
+                {
+                    "name": "Canopy Baloth",
+                    "id": "6b04160c-89a7-4dcd-b05d-5dc846824d64",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Phylath, World Sculptor",
+                    "id": "e7af88c9-70ca-484c-bddf-b705e0ea7bc7",
+                    "weight": 50
+                },
+                {
+                    "name": "Moraug, Fury of Akoum",
+                    "id": "cc5eacd7-aaa7-4720-9794-52e7b098c82c",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Clerics",
+        "colors": [
+            "B",
+            "W"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_clerics.png",
+        "cards": [
+            "953db280-6999-4b91-bc40-c6e7f7dd13ef",
+            "730ddbcd-0814-4e22-85e9-78b0878324b6",
+            "6ca80b5a-3943-41ca-8cd1-8e3db1b2a1c8",
+            "47ce8b7e-d8e1-489a-a69e-99089eeb8739",
+            "4b9ae607-e0bc-4415-ad58-65944848bbe9",
+            "014027c4-7f9d-4096-b308-ea4be574c0d4"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Expedition Healer",
+                    "id": "11a00a88-de0e-4012-9ad8-ccb187dff7df",
+                    "weight": 34
+                },
+                {
+                    "name": "Impassioned Orator",
+                    "id": "696d6c4b-69d7-498b-87d4-0a03b16cc971",
+                    "weight": 33
+                },
+                {
+                    "name": "Malakir Blood-Priest",
+                    "id": "3d14ea81-d303-47db-90b4-7d10588f7ea6",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Kor Celebrant",
+                    "id": "87c37e46-a961-4739-8893-f783013e2be6",
+                    "weight": 50
+                },
+                {
+                    "name": "Priest of Ancient Lore",
+                    "id": "b10caff0-701a-48d8-a943-f947482e795a",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Orah, Skyclave Hierophant",
+                    "id": "2336c8bf-fcad-41f9-9041-80b8aa3cd79a",
+                    "weight": 50
+                },
+                {
+                    "name": "Taborax, Hope's Demise",
+                    "id": "331bf97d-f447-4c68-bfc7-2bb593106d66",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Pillardrop Rescuer",
+                    "id": "0884666e-8f9b-44b1-a1e3-c1c8941e2152",
+                    "weight": 50
+                },
+                {
+                    "name": "Shepherd of Heroes",
+                    "id": "1f70baa3-5232-4e10-80b4-a9ead6ed6ec3",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Expel",
+                    "id": "be517a58-b7ee-4213-98a5-8c19e1b2def6",
+                    "weight": 67
+                },
+                {
+                    "name": "You Hear Something on Watch",
+                    "id": "76e939ab-9d0c-4685-805c-c8bc4e6af163",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Grim Bounty",
+                    "id": "b98e0ab1-dea8-492b-a712-2057f2b1d020",
+                    "weight": 34
+                },
+                {
+                    "name": "Deadly Alliance",
+                    "id": "007a5c8c-ed0b-4844-9393-a3d25d4ffa1d",
+                    "weight": 33
+                },
+                {
+                    "name": "Feed the Swarm",
+                    "id": "f6b2eba7-862a-4efd-9f65-065fb2070855",
+                    "weight": 33
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Sorcerous",
+        "colors": [
+            "R",
+            "U"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_sorcerous.png",
+        "cards": [
+            "c790a86d-db91-4a87-aa3a-3f9fc4d4b662",
+            "090f6e94-fb5f-4861-a465-f11766303676",
+            "e105c546-ce4f-49c7-97ba-ea5fbe70df82",
+            "86572747-8faa-4242-b059-07d11e6be1cd"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Magmatic Channeler",
+                    "id": "d8be6570-5b5f-4ffc-a5e5-67d7c41c8caa",
+                    "weight": 50
+                },
+                {
+                    "name": "Master of Winds",
+                    "id": "0caaf92a-3d9d-4c52-acff-cf960ec55e47",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Arcane Investigator",
+                    "id": "dc457520-9947-4f65-bbe7-9b95bd2c23af",
+                    "weight": 50
+                },
+                {
+                    "name": "Tazeem Roilmage",
+                    "id": "6f222fb7-375d-4ee2-9ff6-bd71f63ab31a",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Umara Mystic",
+                    "id": "fb979cfc-3e5b-42c9-b78d-584c274ed912",
+                    "weight": 50
+                },
+                {
+                    "name": "Aegar, the Freezing Flame",
+                    "id": "68011f60-6202-48f4-8255-fb94764e2951",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Chilling Trap",
+                    "id": "60f9adfd-a940-4d62-894b-84f17c693a10",
+                    "weight": 50
+                },
+                {
+                    "name": "Secrets of the Key",
+                    "id": "9b022ba8-07b6-4993-99c8-89c6dcb19e60",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Into the Roil",
+                    "id": "899540b0-c17a-4a73-912c-9b8925203de1",
+                    "weight": 34
+                },
+                {
+                    "name": "Bury in Books",
+                    "id": "ac2a2cf5-80cf-4c06-8b04-bc04a5460de5",
+                    "weight": 33
+                },
+                {
+                    "name": "Geistwave",
+                    "id": "f0e3d1ac-bec2-4bba-a6cf-a823996dde2d",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Mentor's Guidance",
+                    "id": "0dbb1230-a465-4499-bb9c-35a06712a08b",
+                    "weight": 50
+                },
+                {
+                    "name": "Field Research",
+                    "id": "a48c3a2f-678b-4e70-a53f-258457d88d29",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Pigment Storm",
+                    "id": "d285a7a1-bb7e-4a78-a49f-c2add62b829a",
+                    "weight": 34
+                },
+                {
+                    "name": "Burn the Accursed",
+                    "id": "ff4d4e6b-564d-46da-8e32-09ed08c8ddc5",
+                    "weight": 33
+                },
+                {
+                    "name": "Farideh's Fireball",
+                    "id": "57a46987-f05a-4b83-af56-f18000874e65",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Umara Wizard // Umara Skyfalls",
+                    "id": "890eee8d-a339-4143-adfa-1b17ec10c099",
+                    "weight": 50
+                },
+                {
+                    "name": "Song-Mad Treachery // Song-Mad Ruins",
+                    "id": "782ca27f-9f18-476c-b582-89c06fb2e322",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Armory",
+        "colors": [
+            "W",
+            "R"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_armory.png",
+        "cards": [
+            "6ae4634e-1487-4b66-8f70-bcb4b1fa6e77",
+            "4177f57e-c239-47e8-ae50-5f593f6d54ec",
+            "6f921dca-ce93-42d1-87b1-149973558467",
+            "89ecb530-e429-4b50-a24c-8437614cf224",
+            "53e1eb00-412e-4c25-bc7b-6d074330fd97",
+            "f9cc132f-d4c1-4bc4-9c9e-f63ab5e7d094",
+            "ca8705e3-0e44-45c9-bcdf-c24507b038fe",
+            "f40c88e2-28ed-4e5b-bcb3-4397d6a15a6f",
+            "d8ed0335-daa6-4dbe-a94d-4d56c8cfd093"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Dwarfhold Champion",
+                    "id": "2404a028-05f5-469b-80e0-e820721ff266",
+                    "weight": 50
+                },
+                {
+                    "name": "Beskir Shieldmate",
+                    "id": "dfc1df84-9c47-444b-9d58-d9c7bed51c66",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Akiri, Fearless Voyager",
+                    "id": "69e42511-f653-4a6f-a5d4-50e21dfc8077",
+                    "weight": 75
+                },
+                {
+                    "name": "Nahiri, Heir of the Ancients",
+                    "id": "408be425-b8a6-4c03-b2a6-7ff7bd6555e0",
+                    "weight": 25
+                }
+            ],
+            [
+                {
+                    "name": "Dueling Rapier",
+                    "id": "c304118a-c83b-490a-b0e2-721734a996ee",
+                    "weight": 60
+                },
+                {
+                    "name": "Resolute Strike",
+                    "id": "78b82476-4320-4719-9785-af8d68503234",
+                    "weight": 40
+                }
+            ]
+        ]
+    }
+]

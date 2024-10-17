@@ -1,0 +1,759 @@
+[
+    {
+        "name": "Recruits",
+        "colors": [
+            "W",
+            "U"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/recruits.png",
+        "cards": [
+            "10d1d701-841c-4bf3-9122-b01842a22ac6",
+            "2cfe404d-1a27-4627-9284-56188d92d5d5",
+            "afbadc37-1b4f-4237-a3c0-772bafb18aa0",
+            "084d77df-a899-406f-9d79-e3fa3abeaebc",
+            "57746e72-ba9f-4717-a4a2-6c6a039080c3",
+            "f54413be-7d73-478d-a25a-8fe06f6491a5",
+            "f346defa-ee4a-404e-8154-0e33ebe9102c",
+            "985d1b57-42e0-41a2-a9c6-2f5427c0c1c9",
+            "c50ec22c-decb-419f-ae52-78ea1706eb11",
+            "c50ec22c-decb-419f-ae52-78ea1706eb11"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Samite Herbalist",
+                    "id": "409189da-53c9-4daf-b6b2-d155fc14f91a",
+                    "weight": 50
+                },
+                {
+                    "name": "Backup Agent",
+                    "id": "2a46af75-3880-4141-b26e-19834d67e7a8",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Resolute Reinforcements",
+                    "id": "3e11ad33-b9d7-43ef-840a-61955683b599",
+                    "weight": 67
+                },
+                {
+                    "name": "Knight of Dawn's Light",
+                    "id": "b7c7a54e-4df6-4745-8bae-aeefda934d82",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Charismatic Vanguard",
+                    "id": "a51764fe-0d75-4cfa-a699-0d9e7ffb7843",
+                    "weight": 50
+                },
+                {
+                    "name": "Mesa Cavalier",
+                    "id": "feeec740-7ffc-4f57-b52c-92209da91d69",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Love Song of Night and Day",
+                    "id": "1e08d288-2f09-4856-a9ed-cc8aa8d953d7",
+                    "weight": 67
+                },
+                {
+                    "name": "Join Forces",
+                    "id": "e4dce5e7-c864-4239-bab7-af6a3adcb731",
+                    "weight": 33
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Arcanist",
+        "colors": [
+            "U",
+            "B"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/arcanist.png",
+        "cards": [
+            "d14b07ea-18e4-41fb-8136-759d5349e88a",
+            "35095a68-b7c0-4805-b0b6-6ca15a338692",
+            "0a4b9afe-aeb7-4c56-8a22-96e19a7a938c",
+            "f55606da-de3e-4375-925b-cc16b03b6365",
+            "ea61871b-9295-4ea0-86ef-e7a11e23bda8",
+            "0b983366-385f-41a3-aa46-20151e68d140",
+            "bdf96533-f28a-4465-893b-0c9394d5b8d7",
+            "6129b0d3-b50a-4a4b-9111-39f8fc6718dd",
+            "6bb570f4-de68-4d8c-a9f3-8a3294163aa8",
+            "6bb570f4-de68-4d8c-a9f3-8a3294163aa8"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Academy Wall",
+                    "id": "d2028115-f0de-4e8b-99bc-7369352e1e07",
+                    "weight": 50
+                },
+                {
+                    "name": "Tolarian Terror",
+                    "id": "42f01cba-43d4-46ad-b7a5-d7631b0e1347",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Frostfist Strider",
+                    "id": "40141353-c0d6-4529-b26a-34dfccbcf231",
+                    "weight": 50
+                },
+                {
+                    "name": "Whispering Wizard",
+                    "id": "54fb422d-71f2-44ed-9589-32630ab87050",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Essence Scatter",
+                    "id": "b7ad4441-e300-4267-bedb-4ae6a64f59cd",
+                    "weight": 50
+                },
+                {
+                    "name": "Impulse",
+                    "id": "5aec2b2c-0764-4869-814d-aad921122af9",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Hypnotic Pattern",
+                    "id": "71a4973d-3cbe-49ec-b29c-e07baa33291e",
+                    "weight": 50
+                },
+                {
+                    "name": "Run Out of Town",
+                    "id": "7cf00112-0844-49db-a061-d0eb488de68a",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Onslaught",
+        "colors": [
+            "B"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/onslaught.png",
+        "cards": [
+            "6fd574e7-705f-4a65-aad0-68ff6d63bf0f",
+            "365333c4-59a0-4365-b242-a67b6224c1b8",
+            "0368e91c-31ee-4b81-a361-30a4555b1a42",
+            "7c9231f0-7733-46d9-b9c6-c6c5b7fe65dd",
+            "ac809fca-664a-4e7d-a39f-2bc1dea0fbd8",
+            "7cfc631b-49d1-4f1c-adac-5b07a2ccd06f",
+            "01a51d08-f90e-4b72-8dce-fb2a6c72f181",
+            "1e62fe57-4fa4-4bfd-8e31-9f6db774d7e2",
+            "1e62fe57-4fa4-4bfd-8e31-9f6db774d7e2"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "The Raven Man",
+                    "id": "6e761fb2-ae4f-4d72-a142-f7e9bd681303",
+                    "weight": 80
+                },
+                {
+                    "name": "Liliana of the Veil",
+                    "id": "d12c8c97-6491-452c-811d-943441a7ef9f",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Eerie Soultender",
+                    "id": "335f3146-743c-4a25-86b5-c45e9c66eb15",
+                    "weight": 67
+                },
+                {
+                    "name": "Bonecaller Cleric",
+                    "id": "87f411d0-c796-443f-b957-c632aa23deb0",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Ecstatic Awakener // Awoken Demon",
+                    "id": "bbdad18e-e262-41f9-b252-1cbdcdd1b5f9",
+                    "weight": 50
+                },
+                {
+                    "name": "Cult Conscript",
+                    "id": "fed77513-94ab-44e2-b9a1-30ba927cd6ee",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Splatter Goblin",
+                    "id": "5045027d-0ff4-484c-b4cb-e0b61885d428",
+                    "weight": 34
+                },
+                {
+                    "name": "Virus Beetle",
+                    "id": "488ee202-0d28-4cc0-8a7d-644d9878e952",
+                    "weight": 33
+                },
+                {
+                    "name": "Novice Occultist",
+                    "id": "a541ac79-a969-42b4-b989-f6e37572ec90",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Braids's Frightful Return",
+                    "id": "49aa8d4c-04e9-4f38-9786-2c9ad735dd72",
+                    "weight": 50
+                },
+                {
+                    "name": "Cut Down",
+                    "id": "753db072-5d6a-4f37-8f7d-255572ecd3bd",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Stampede",
+        "colors": [
+            "G",
+            "R"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/stampede.png",
+        "cards": [
+            "1f08749e-05e0-4fb4-a4ae-35e7187584ab",
+            "554c422f-2a1b-47c0-9358-42b85cdbb84e",
+            "d13d40b9-319b-4630-a5cd-228ff2f24367",
+            "25175622-7b68-4916-adf2-3bf2d82e8356",
+            "602f5370-d096-4765-b612-16bcec3aafa7",
+            "c35bab2f-8464-4968-8c50-8807638d687b",
+            "7d541125-bfb8-4f88-8bf3-ad7b6af7ad1d",
+            "4b78eaab-819c-4f06-b3b1-a25c17ab2235",
+            "e8e31184-dca4-48b1-be9d-581247c41d99",
+            "e8e31184-dca4-48b1-be9d-581247c41d99"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Goblin Picker",
+                    "id": "6d8f1f06-dde5-41f2-923c-67d1d4d13fab",
+                    "weight": 50
+                },
+                {
+                    "name": "Flowstone Kavu",
+                    "id": "73e40916-3502-448a-a509-f6a6ff3cd73d",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Squee, Dubious Monarch",
+                    "id": "3cd907ed-9c68-4bd6-af92-6244909fdf8b",
+                    "weight": 80
+                },
+                {
+                    "name": "Shivan Devastator",
+                    "id": "1f5d274c-3a03-4f0d-97e8-7eef6508105d",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Hurler Cyclops",
+                    "id": "b16f2cf2-5908-4f49-9c5c-6c9e22a65a4d",
+                    "weight": 50
+                },
+                {
+                    "name": "Magma Pummeler",
+                    "id": "42f133d6-35c3-49b7-85f6-d6cfa6bac3d9",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Thrill of Possibility",
+                    "id": "25e5dc88-9573-4eaa-bd37-eb0dee4add03",
+                    "weight": 50
+                },
+                {
+                    "name": "Furious Bellow",
+                    "id": "63d05659-bfff-4b73-80f7-a9f31a7ef957",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Wandering",
+        "colors": [
+            "G",
+            "B"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/wandering.png",
+        "cards": [
+            "7ae6f015-2ad6-4b8e-8590-c2c2d01b6d98",
+            "2ef6cb5f-0ab3-4652-9b39-c2cbf6d693d5",
+            "d939d4bc-b7e8-4ee8-b904-68f0bff0fde1",
+            "c7fdb424-4d2c-437e-b2a2-8bc56c028338",
+            "5ccd67d4-1a22-4378-804d-6e2c93dc4938",
+            "622f96fc-179a-4ff6-95a5-de721492f7eb",
+            "8418c504-24fe-470f-8102-dcad68ba1520",
+            "2f375674-7ae2-4430-b1f3-c26fa5b201d1",
+            "e0f9dca6-e5ae-4714-8a59-2ef1d8f1e82d",
+            "e0f9dca6-e5ae-4714-8a59-2ef1d8f1e82d",
+            "4a325fb4-fe71-47f1-9a2f-05b8cfe88fe6",
+            "16f5e958-56e6-4666-a534-24deba6f652d",
+            "e8e31184-dca4-48b1-be9d-581247c41d99"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Deathbloom Gardener",
+                    "id": "88dee3d1-0496-40ea-b208-7362a932f531",
+                    "weight": 50
+                },
+                {
+                    "name": "Weaver of Blossoms // Blossom-Clad Werewolf",
+                    "id": "73bf2a0a-b97d-4b90-abd6-d1755734ea15",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Mossbeard Ancient",
+                    "id": "7e528d36-cea6-4013-83d5-ba837d570713",
+                    "weight": 50
+                },
+                {
+                    "name": "Rise of the Ants",
+                    "id": "3143fadd-0162-4e0c-89fc-89dc3501d13c",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Herd Migration",
+                    "id": "b0244a1f-e696-4223-9c14-22c2ca3cb738",
+                    "weight": 80
+                },
+                {
+                    "name": "Silverback Elder",
+                    "id": "b987664f-0b74-4c0a-b306-14767a55559a",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Bite Down",
+                    "id": "0eacd3de-b803-4322-8d88-d533761aa748",
+                    "weight": 50
+                },
+                {
+                    "name": "Prizefight",
+                    "id": "544c810b-5f90-4535-aa76-14f8c6b9428a",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Cultists",
+        "colors": [
+            "B",
+            "W"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/cultists.png",
+        "cards": [
+            "fed77513-94ab-44e2-b9a1-30ba927cd6ee",
+            "f7c0cf16-81ea-45e3-99cc-4424d59bb44b",
+            "7f22fcfa-a5f0-4fae-b578-cdfd7d46a4c8",
+            "f96089ea-20cf-496d-84a6-9b660c2ef672",
+            "f1f8bf98-8911-4c86-978a-427377700544",
+            "f42167ef-7858-4c66-b1bc-41c3288a8ee8",
+            "0d4d7293-657f-48ac-931b-fb6a44128e6d"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Argivian Cavalier",
+                    "id": "57746e72-ba9f-4717-a4a2-6c6a039080c3",
+                    "weight": 50
+                },
+                {
+                    "name": "Phyrexian Rager",
+                    "id": "6fd574e7-705f-4a65-aad0-68ff6d63bf0f",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Braids, Arisen Nightmare",
+                    "id": "4ff97c69-6a6b-401c-b0a1-55fa81045d19",
+                    "weight": 50
+                },
+                {
+                    "name": "Serra Paragon",
+                    "id": "ce295f1e-fb31-4275-a5d3-8c6f29afff40",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Bone Splinters",
+                    "id": "106b5c96-d1bd-433d-955e-ace0b60d3bc3",
+                    "weight": 50
+                },
+                {
+                    "name": "Bladebrand",
+                    "id": "64d4713d-321a-447f-a318-88b552ec5d0c",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Sheoldred's Restoration",
+                    "id": "ed719f25-1aab-4a1e-8c9f-dd574db5de0c",
+                    "weight": 50
+                },
+                {
+                    "name": "Ghoulish Procession",
+                    "id": "363bd6a6-e8e4-4626-a43c-0b77339dd28b",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Gate to the Citadel",
+                    "id": "985d1b57-42e0-41a2-a9c6-2f5427c0c1c9",
+                    "weight": 50
+                },
+                {
+                    "name": "Gate of the Black Dragon",
+                    "id": "90183d4d-c231-4e45-b1fc-2699b33a3733",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Tricky",
+        "colors": [
+            "R",
+            "U"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/tricky.png",
+        "cards": [
+            "b1845806-7585-40d5-9d3a-f13667e6a9d2",
+            "959ba62e-bb3a-49ad-8b1b-e787e413e5d4",
+            "f58592f7-1df5-428d-9dde-e6acd9a5d1d5",
+            "9017ee70-761b-434e-bc44-705cf14336fa",
+            "b57c3674-9a31-4418-b306-e6b0a2514d8f",
+            "bc531409-26cb-4c58-ba69-f39dd8aee3d1",
+            "c58096e5-3cd4-4edd-b71a-3bdb47ab2536"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Electrostatic Infantry",
+                    "id": "5ed2d72f-f1cf-45a7-adf7-969f531721ce",
+                    "weight": 50
+                },
+                {
+                    "name": "Battlewing Mystic",
+                    "id": "000376ef-8b6c-490d-98cb-d6de15b2e585",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Keldon Flamesage",
+                    "id": "710d2a3c-63a7-4e33-9ae3-21fb6b3d8326",
+                    "weight": 80
+                },
+                {
+                    "name": "Jaya, Fiery Negotiator",
+                    "id": "3b9f54f0-4368-4d28-aa21-3f1e7be1b23a",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Timely Interference",
+                    "id": "017a3c6b-9a1e-403a-9c20-2360090d39ee",
+                    "weight": 34
+                },
+                {
+                    "name": "Shore Up",
+                    "id": "9d933bf1-14f0-4150-a0d2-6b845b9624cf",
+                    "weight": 33
+                },
+                {
+                    "name": "Secrets of the Key",
+                    "id": "9b022ba8-07b6-4993-99c8-89c6dcb19e60",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Impulse",
+                    "id": "5aec2b2c-0764-4869-814d-aad921122af9",
+                    "weight": 50
+                },
+                {
+                    "name": "Impede Momentum",
+                    "id": "259c04f7-86f2-4584-97fb-8278dca9a213",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Gate to Tumbledown",
+                    "id": "f8532b98-b69e-4d43-9ec8-0587572a0dff",
+                    "weight": 50
+                },
+                {
+                    "name": "Gate to Seatower",
+                    "id": "86382685-e54c-4152-a500-2148a2d6b5a4",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Vermin",
+        "colors": [
+            "G",
+            "B"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/vermin.png",
+        "cards": [
+            "dd3fc36c-682b-4352-a66f-eddd2baf0bf6",
+            "81f90e4d-f60f-4175-830f-c2ce04c5a945",
+            "9a25855f-abfc-482d-a36b-088b023a7df6",
+            "f435329e-6de7-4b05-ba70-cb63d121116e",
+            "0b51c3b5-db70-4976-986d-ed3fc8584d1a",
+            "ecb8dab0-ecce-4321-b382-c58b296c2fd3",
+            "31274707-3e16-4f46-8450-6927d936064b",
+            "629aa907-9533-4681-9bf2-9e56450a4cc2",
+            "6bb570f4-de68-4d8c-a9f3-8a3294163aa8",
+            "4a325fb4-fe71-47f1-9a2f-05b8cfe88fe6"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Snarling Wolf",
+                    "id": "4b614b21-69ed-4788-97d7-ad502b634abb",
+                    "weight": 50
+                },
+                {
+                    "name": "Persistent Specimen",
+                    "id": "f7baf973-3202-4fea-8861-a4a5ec228640",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Eerie Soultender",
+                    "id": "335f3146-743c-4a25-86b5-c45e9c66eb15",
+                    "weight": 67
+                },
+                {
+                    "name": "Jukai Preserver",
+                    "id": "e66120a5-95a3-4d15-873c-cfba221a2299",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Elfhame Wurm",
+                    "id": "ef2dc99b-083d-473e-b352-e8264353e85b",
+                    "weight": 50
+                },
+                {
+                    "name": "Writhing Necromass",
+                    "id": "a166abef-f068-47e9-8a65-43ebf4b015bd",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Choking Miasma",
+                    "id": "ba537452-3dab-4ecd-b65f-9e311a130d31",
+                    "weight": 50
+                },
+                {
+                    "name": "Crawling Infestation",
+                    "id": "0ab55dae-5393-4356-9f81-66d6ea5d23c0",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Muscle",
+        "colors": [
+            "W",
+            "R"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/muscle.png",
+        "cards": [
+            "e672a05c-5f1a-4aa6-9398-e33df01c7c96",
+            "1f643d78-d8d8-4645-9357-a68ebd0d3517",
+            "43da76ee-fec3-4b2e-915d-10cf8d518d2c",
+            "4af4031e-b14e-4568-b047-b3d470d9b18e",
+            "6544a289-3b27-4980-8ed7-22f50ae92c1a",
+            "25175622-7b68-4916-adf2-3bf2d82e8356",
+            "ff252e80-c155-467b-8df3-9bddc5cc45c3",
+            "4aab611c-64e0-4b38-97b9-b29a1c6a79b7"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Dragon Whelp",
+                    "id": "d13d40b9-319b-4630-a5cd-228ff2f24367",
+                    "weight": 67
+                },
+                {
+                    "name": "Tori D'Avenant, Fury Rider",
+                    "id": "9c873c5b-61f6-49b9-8993-2d5e9823de62",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Take Up the Shield",
+                    "id": "851e842e-a497-4c36-90ee-8d64f806c378",
+                    "weight": 50
+                },
+                {
+                    "name": "Furious Bellow",
+                    "id": "63d05659-bfff-4b73-80f7-a9f31a7ef957",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Vanquisher's Axe",
+                    "id": "aef37244-deb9-464e-ab8c-4308369ae09b",
+                    "weight": 34
+                },
+                {
+                    "name": "Hammerhand",
+                    "id": "8d858e9e-452b-4281-9379-641ef6ebef39",
+                    "weight": 33
+                },
+                {
+                    "name": "Homestead Courage",
+                    "id": "73a9c49f-fcd3-4572-bac7-6eb06fdc0815",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Gate to Tumbledown",
+                    "id": "f8532b98-b69e-4d43-9ec8-0587572a0dff",
+                    "weight": 50
+                },
+                {
+                    "name": "Gate to the Citadel",
+                    "id": "985d1b57-42e0-41a2-a9c6-2f5427c0c1c9",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Globetrotting",
+        "colors": [
+            "G",
+            "U",
+            "R",
+            "B"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/globetrotting.png",
+        "cards": [
+            "90dc4122-4f7a-4d9f-8427-de36e3e8a913",
+            "2a3cc789-cbb8-4dae-a749-af169832dd7b",
+            "5da59e8f-cbe5-4c14-a5a9-28d56048dc23",
+            "853ddf31-826b-411e-9b6d-75d53cdd1b84",
+            "171bfcb2-dd43-4d63-b2e2-6ca594c2ec40",
+            "7ae6f015-2ad6-4b8e-8590-c2c2d01b6d98",
+            "89c46e9c-ae7c-466c-bb11-4f4d01ea7a63",
+            "0eacd3de-b803-4322-8d88-d533761aa748",
+            "e0f9dca6-e5ae-4714-8a59-2ef1d8f1e82d",
+            "20aff4af-5128-432f-a8c8-65b6909d31ac",
+            "6bb570f4-de68-4d8c-a9f3-8a3294163aa8"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Vineshaper Prodigy",
+                    "id": "545cddde-8018-4fdd-874d-b5193b73b414",
+                    "weight": 50
+                },
+                {
+                    "name": "Floriferous Vinewall",
+                    "id": "8382b7c7-762e-43f6-b285-e0cebe749fab",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Vodalian Mindsinger",
+                    "id": "211a9db2-8b5f-419d-8032-ac2a571dbb53",
+                    "weight": 50
+                },
+                {
+                    "name": "Sphinx of Clear Skies",
+                    "id": "974c9e0c-07b2-4535-a3d0-bb827b651075",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Essence Scatter",
+                    "id": "b7ad4441-e300-4267-bedb-4ae6a64f59cd",
+                    "weight": 50
+                },
+                {
+                    "name": "Syncopate",
+                    "id": "08375017-4432-4296-9799-966db145ed7c",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Joint Exploration",
+                    "id": "b25ab334-1060-457e-b212-3d7a697c545e",
+                    "weight": 50
+                },
+                {
+                    "name": "The Weatherseed Treaty",
+                    "id": "e2a54461-1f75-4304-b6d7-635171419456",
+                    "weight": 50
+                }
+            ]
+        ]
+    }
+]

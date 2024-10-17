@@ -1,0 +1,548 @@
+[
+    {
+        "name": "Lost Mine Of Phandelver",
+        "colors": [
+            "W"
+        ],
+        "cycling_land": false,
+        "image": "/img/cardback.webp",
+        "cards": [
+            "9d7a7744-e49d-4b4e-b6ae-7fc6d2892cef",
+            "878a0d8c-11c1-4c65-9051-78e036ac496f",
+            "297bf274-d13d-4b75-b251-2d004b16b431",
+            "926ce53e-8e30-4018-a9e7-7266791b5d27",
+            "d8fe33b3-afaf-4a98-ae64-7d7e0eabe993",
+            "a9e7457a-8ab4-4f3c-a2d8-2da4d81b7470",
+            "ba7ebe7b-732f-4245-a194-e087c3878f61",
+            "53df7b80-71bf-4013-ad44-f76eae8ac81b"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Steadfast Paladin",
+                    "id": "a2c06b6e-faf5-467d-bfe1-9ff00be9e2f5",
+                    "weight": 50
+                },
+                {
+                    "name": "Beskir Shieldmate",
+                    "id": "dfc1df84-9c47-444b-9d58-d9c7bed51c66",
+                    "weight": 25
+                },
+                {
+                    "name": "Dwarfhold Champion",
+                    "id": "2404a028-05f5-469b-80e0-e820721ff266",
+                    "weight": 25
+                }
+            ],
+            [
+                {
+                    "name": "Gavony Silversmith",
+                    "id": "2c53b007-96aa-4db6-8c3e-529d1e845b19",
+                    "weight": 50
+                },
+                {
+                    "name": "Combat Professor",
+                    "id": "3f669ac4-98ed-4e23-91a9-281f8277ab04",
+                    "weight": 25
+                },
+                {
+                    "name": "Gloom Stalker",
+                    "id": "388722ad-dcc6-41b9-afd8-a93be91b30e0",
+                    "weight": 25
+                }
+            ],
+            [
+                {
+                    "name": "Pacifism",
+                    "id": "0da7c6dc-9325-4866-8c09-78c7021f8f17",
+                    "weight": 50
+                },
+                {
+                    "name": "Borrowed Time",
+                    "id": "3eeef24b-b937-408e-a32e-1a546d3e7b0f",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Skyclave Cleric // Skyclave Basilica",
+                    "id": "014027c4-7f9d-4096-b308-ea4be574c0d4",
+                    "weight": 75
+                },
+                {
+                    "name": "Makindi Stampede // Makindi Mesas",
+                    "id": "ada9a974-8f1f-4148-bd61-200fc14714b2",
+                    "weight": 25
+                }
+            ]
+        ]
+    },
+    {
+        "name": "High Rolling",
+        "colors": [
+            "U"
+        ],
+        "cycling_land": false,
+        "image": "/img/cardback.webp",
+        "cards": [
+            "dc457520-9947-4f65-bbe7-9b95bd2c23af",
+            "c65631b9-ca62-4851-9eca-9c760fb1a177",
+            "c93e0296-69e0-45e0-a1c2-0214a53c52d0",
+            "8f0abdb4-4898-4818-b7e2-24a90f15e49d",
+            "67a42698-bf3b-4352-8178-9c98abfc5b09",
+            "59fbf45a-23b4-4d06-abd9-4cc3895cb29d",
+            "8d84cb72-d0a0-4af0-aded-47e5fb7addef",
+            "a6fefb38-c6f2-43c4-a6b9-ac82f8827bc2"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Mind Flayer",
+                    "id": "c29ac797-a186-4224-94e1-9bb9dca4b029",
+                    "weight": 50
+                },
+                {
+                    "name": "Sludge Monster",
+                    "id": "57fa9aa8-86d2-4f1e-ac65-ace7e73a853c",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Charmed Sleep",
+                    "id": "4238ad00-af9c-4535-a589-c5afb0d2ec57",
+                    "weight": 50
+                },
+                {
+                    "name": "Bubble Snare",
+                    "id": "1bfba7a0-d5ca-4197-9e58-21f28345f1a6",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Bury in Books",
+                    "id": "ac2a2cf5-80cf-4c06-8b04-bc04a5460de5",
+                    "weight": 50
+                },
+                {
+                    "name": "Into the Roil",
+                    "id": "899540b0-c17a-4a73-912c-9b8925203de1",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Umara Wizard // Umara Skyfalls",
+                    "id": "890eee8d-a339-4143-adfa-1b17ec10c099",
+                    "weight": 50
+                },
+                {
+                    "name": "Beyeen Veil // Beyeen Coast",
+                    "id": "5f411f08-45dd-4d73-8894-daf51c175150",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Tomb Of Annihilation",
+        "colors": [
+            "B"
+        ],
+        "cycling_land": false,
+        "image": "/img/cardback.webp",
+        "cards": [
+            "4138b66d-cf18-42a5-8522-241bd3969624",
+            "dd52d0bd-3abd-401c-9f56-ee911613da3b",
+            "09ac0b2b-d4d3-4977-b241-7788239362de",
+            "d4dbed36-190c-4748-b282-409a2fb5d134",
+            "126b2636-030a-4a0e-9307-54c3372afb52",
+            "a7e0e09c-ed43-4a37-85f2-c60bdfdb2624",
+            "19ff3d76-e985-4d8d-837e-89360cc23824",
+            "028506ad-ad36-44e5-b488-d038e2d2445f",
+            "7293f9b4-565a-4065-940b-543f76ebecae"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Sepulcher Ghoul",
+                    "id": "5b302bc8-683f-4a26-ab86-87eaa19dce4d",
+                    "weight": 60
+                },
+                {
+                    "name": "Shambling Ghast",
+                    "id": "d96198a7-dd19-4940-bf8f-23135011fc84",
+                    "weight": 40
+                }
+            ],
+            [
+                {
+                    "name": "Infernal Grasp",
+                    "id": "17824929-f131-4b8d-addb-66c25323155e",
+                    "weight": 34
+                },
+                {
+                    "name": "Power Word Kill",
+                    "id": "395b6ce4-143f-4eed-b565-98aa3d6208ef",
+                    "weight": 33
+                },
+                {
+                    "name": "Bloodchief's Thirst",
+                    "id": "059e8447-6b1c-4651-a734-a8fea2cbf7b2",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Malakir Rebirth // Malakir Mire",
+                    "id": "609d3ecf-f88d-4268-a8d3-4bf2bcf5df60",
+                    "weight": 50
+                },
+                {
+                    "name": "Pelakka Predation // Pelakka Caverns",
+                    "id": "e63f8b20-f45b-4293-9aac-cdc021939be6",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Rock And Roll",
+        "colors": [
+            "R"
+        ],
+        "cycling_land": false,
+        "image": "/img/cardback.webp",
+        "cards": [
+            "3658e65b-df54-4327-9104-c2f3dd65df85",
+            "d6eb23c9-6061-4ad1-a8f3-2c791c49f352",
+            "87193af5-4b6b-48d0-9b75-8171bb1d6e53",
+            "e87459aa-af8f-4bd2-a310-151353083a2e",
+            "623c1d1b-69a4-4bc4-b388-17a7600fd960",
+            "fa05f317-b2f8-4eea-951b-0c374774764b",
+            "998f3785-c806-4848-adcb-d89ea51159c5",
+            "647c2269-bdc7-4455-9158-73abbff6e50e",
+            "75240bbc-adc7-48ff-9523-c79776d710d3"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Hoarding Ogre",
+                    "id": "df39eaac-b13f-4cb3-960d-8f7a0d590663",
+                    "weight": 75
+                },
+                {
+                    "name": "Chaos Channeler",
+                    "id": "7b9bb587-f732-42c9-a2a7-152629889997",
+                    "weight": 25
+                }
+            ],
+            [
+                {
+                    "name": "Critical Hit",
+                    "id": "d2e9aaaf-0b51-4721-b75c-923892a41743",
+                    "weight": 50
+                },
+                {
+                    "name": "You See a Pair of Goblins",
+                    "id": "b69e7200-96ea-4455-83cc-0a497d56efe5",
+                    "weight": 25
+                },
+                {
+                    "name": "Lunar Frenzy",
+                    "id": "b5fb18c4-1386-4ea0-97c1-4bdd1e7eb5a6",
+                    "weight": 25
+                }
+            ],
+            [
+                {
+                    "name": "Farideh's Fireball",
+                    "id": "57a46987-f05a-4b83-af56-f18000874e65",
+                    "weight": 75
+                },
+                {
+                    "name": "Spiked Pit Trap",
+                    "id": "59fbf45a-23b4-4d06-abd9-4cc3895cb29d",
+                    "weight": 25
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Goblins",
+        "colors": [
+            "R"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_goblins.png",
+        "cards": [
+            "9766a427-2bb3-4028-a502-d1194cdc93aa",
+            "98be3783-23e8-4143-8685-6d887f164294",
+            "623c1d1b-69a4-4bc4-b388-17a7600fd960",
+            "b69e7200-96ea-4455-83cc-0a497d56efe5",
+            "782ca27f-9f18-476c-b582-89c06fb2e322"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Goblin Javelineer",
+                    "id": "d32b3f1b-40cb-413d-adb9-0809e4a2abdd",
+                    "weight": 67
+                },
+                {
+                    "name": "Tin Street Cadet",
+                    "id": "26307e83-66ae-4def-9532-dd874fd39efc",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Teeterpeak Ambusher",
+                    "id": "ad57c2f3-d9cb-4165-bb39-897b5b12689e",
+                    "weight": 50
+                },
+                {
+                    "name": "Fissure Wizard",
+                    "id": "9fa10a18-5059-46ab-9983-0ea78b507331",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Hobgoblin Bandit Lord",
+                    "id": "09e9dc36-f2d8-4384-98cb-e44c00b02433",
+                    "weight": 67
+                },
+                {
+                    "name": "Goblin Trashmaster",
+                    "id": "2bc69988-3c2d-4b76-a8c0-05926b9bbd08",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Grotag Night-Runner",
+                    "id": "0568341b-f972-407f-92ce-1b7c9ef742f6",
+                    "weight": 60
+                },
+                {
+                    "name": "Hulking Bugbear",
+                    "id": "f55d43d4-5f63-45c3-b8f8-0aebd23750a5",
+                    "weight": 40
+                }
+            ],
+            [
+                {
+                    "name": "Burn the Accursed",
+                    "id": "ff4d4e6b-564d-46da-8e32-09ed08c8ddc5",
+                    "weight": 50
+                },
+                {
+                    "name": "Pigment Storm",
+                    "id": "d285a7a1-bb7e-4a78-a49f-c2add62b829a",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Improvised Weaponry",
+                    "id": "29d5fd00-c616-4079-a91e-4da0bcaf9120",
+                    "weight": 50
+                },
+                {
+                    "name": "Molten Blast",
+                    "id": "bb1beef2-788b-469b-883b-cf1cca04eeff",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Inordinate Rage",
+                    "id": "d0f62bdc-50a0-41a0-ac37-9b0eeb21b6aa",
+                    "weight": 34
+                },
+                {
+                    "name": "You Come to the Gnoll Camp",
+                    "id": "0e893613-423e-409b-9334-292bd252405b",
+                    "weight": 33
+                },
+                {
+                    "name": "Storm Strike",
+                    "id": "8de24cba-545a-438b-9516-1c19a50ca78c",
+                    "weight": 33
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Dungeon Of The Mad Mage",
+        "colors": [
+            "W",
+            "U"
+        ],
+        "cycling_land": false,
+        "image": "/img/cardback.webp",
+        "cards": [
+            "9d7a7744-e49d-4b4e-b6ae-7fc6d2892cef",
+            "47b8eb2e-73ac-4ad6-9ab6-4f8da7b41020",
+            "d8fe33b3-afaf-4a98-ae64-7d7e0eabe993",
+            "122d2635-c4f4-44cd-8f82-37e3016e421e",
+            "a9e7457a-8ab4-4f3c-a2d8-2da4d81b7470",
+            "53df7b80-71bf-4013-ad44-f76eae8ac81b"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Cathar Commando",
+                    "id": "98cbc1c2-b76e-4da3-aa43-00e10b2ce532",
+                    "weight": 50
+                },
+                {
+                    "name": "Burrog Befuddler",
+                    "id": "6040c573-cd8c-4593-8ade-d9922482035c",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Nadaar, Selfless Paladin",
+                    "id": "878a0d8c-11c1-4c65-9051-78e036ac496f",
+                    "weight": 50
+                },
+                {
+                    "name": "Yuan-Ti Malison",
+                    "id": "0f51afd9-7093-4aa3-ad5b-7383684d6285",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Cloister Gargoyle",
+                    "id": "297bf274-d13d-4b75-b251-2d004b16b431",
+                    "weight": 34
+                },
+                {
+                    "name": "Displacer Beast",
+                    "id": "95d5c36c-bcc8-459c-9f4b-b265ccdb1f06",
+                    "weight": 33
+                },
+                {
+                    "name": "Eccentric Apprentice",
+                    "id": "3baa08ac-9a94-4e22-91bb-c6966cd0a0de",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Into the Roil",
+                    "id": "899540b0-c17a-4a73-912c-9b8925203de1",
+                    "weight": 34
+                },
+                {
+                    "name": "Bury in Books",
+                    "id": "ac2a2cf5-80cf-4c06-8b04-bc04a5460de5",
+                    "weight": 33
+                },
+                {
+                    "name": "Geistwave",
+                    "id": "f0e3d1ac-bec2-4bba-a6cf-a823996dde2d",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Borrowed Time",
+                    "id": "3eeef24b-b937-408e-a32e-1a546d3e7b0f",
+                    "weight": 50
+                },
+                {
+                    "name": "Journey to Oblivion",
+                    "id": "47120e3c-73aa-468d-96b7-47aead342e31",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Sejiri Shelter // Sejiri Glacier",
+                    "id": "f25d56f9-aa54-4657-9ac9-e93fbba3e715",
+                    "weight": 50
+                },
+                {
+                    "name": "Beyeen Veil // Beyeen Coast",
+                    "id": "5f411f08-45dd-4d73-8894-daf51c175150",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Doctor",
+        "colors": [
+            "W",
+            "G"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_doctor.png",
+        "cards": [
+            "d2704743-2e23-40b9-a367-c73d2db45afc",
+            "a2c06b6e-faf5-467d-bfe1-9ff00be9e2f5",
+            "f6a4b54c-a8fa-464e-a3dd-f3f3a08606f5",
+            "f2d68812-8862-4e34-a992-7d6bbadaf316",
+            "6ca80b5a-3943-41ca-8cd1-8e3db1b2a1c8",
+            "effe3fab-6d13-4603-8a21-8a3c2a0d9e08",
+            "0da7c6dc-9325-4866-8c09-78c7021f8f17",
+            "014027c4-7f9d-4096-b308-ea4be574c0d4"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Honor Troll",
+                    "id": "a9c6a6b9-f00c-46a5-8dab-796483e3a262",
+                    "weight": 50
+                },
+                {
+                    "name": "Lurking Roper",
+                    "id": "2cce25d7-3f22-48ce-9428-184e661696b9",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Accomplished Alchemist",
+                    "id": "0d7b7830-b65e-4c53-98e8-152026764e4b",
+                    "weight": 67
+                },
+                {
+                    "name": "Sigarda's Splendor",
+                    "id": "bb22626d-84ef-40d1-a4f2-771b45198eaa",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Ravenous Lindwurm",
+                    "id": "9961e3fc-167e-4043-8510-cc5cf08d473e",
+                    "weight": 50
+                },
+                {
+                    "name": "Hill Giant Herdgorger",
+                    "id": "b69315cc-c230-4704-9d66-411f624f3e49",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Fortifying Draught",
+                    "id": "6789b717-a000-464a-a39b-32c1aeefe560",
+                    "weight": 50
+                },
+                {
+                    "name": "Cleric Class",
+                    "id": "47ce8b7e-d8e1-489a-a69e-99089eeb8739",
+                    "weight": 50
+                }
+            ]
+        ]
+    }
+]

@@ -1,0 +1,1063 @@
+[
+    {
+        "name": "Counters",
+        "colors": [
+            "W",
+            "U"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_counters.png",
+        "cards": [
+            "25803f0b-4475-447e-abdf-dcd6a98dd654",
+            "633c7e38-fdad-461c-9ecb-3e89d5b80f24",
+            "da4ccf70-b661-46ea-bea9-4466a3a35562",
+            "41d81b88-c19b-4148-89ba-ae8fb53843e1",
+            "99e9318f-2e17-4b6e-895f-c17cd5d0d282",
+            "a2be6f2c-8ad0-402d-a7ca-9fe817e83b72",
+            "7cf00112-0844-49db-a061-d0eb488de68a",
+            "301750a7-d1fd-435e-bfa8-9d2fb22ad627"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Backup Agent",
+                    "id": "2a46af75-3880-4141-b26e-19834d67e7a8",
+                    "weight": 50
+                },
+                {
+                    "name": "Raffine's Informant",
+                    "id": "4e64ff87-2099-4360-94f6-164277b7b514",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Ledger Shredder",
+                    "id": "7ea4b5bc-18a4-45db-a56a-ab3f8bd2fb0d",
+                    "weight": 67
+                },
+                {
+                    "name": "Scheming Fence",
+                    "id": "af7ef030-7bae-4820-b51a-8fad57a8ff2f",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Guardians of Oboro",
+                    "id": "e9c44d4e-742f-4e4f-9bf4-921075bc427c",
+                    "weight": 50
+                },
+                {
+                    "name": "Psionic Snoop",
+                    "id": "b1e04834-7335-4b25-bedf-b7739c5c3aad",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Boon of Safety",
+                    "id": "2069310a-9fb6-41b7-bbd5-849e3df05632",
+                    "weight": 50
+                },
+                {
+                    "name": "Slip Out the Back",
+                    "id": "8725f4c4-fad7-460e-b86c-ff81674f0980",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Graveyard",
+        "colors": [
+            "B",
+            "U"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_graveyard.png",
+        "cards": [
+            "acef329c-61e6-41c1-8d89-ff2417949839",
+            "bf86c5f2-0caf-48ca-b7ad-a1cdcd014539",
+            "4bfd6449-31a1-4572-8f9c-3f6f4670dc9d",
+            "a06ac58b-6d72-4eb4-a1c9-61b5314c7769",
+            "69af30b3-d4b0-453a-891f-4506e06b5e14",
+            "bed1e957-3df1-4640-9980-783817826602",
+            "902abe4d-5c19-4c96-b825-e6cd4d954a84",
+            "3359f13d-9946-49fa-b621-28b1ea714e55",
+            "609d3ecf-f88d-4268-a8d3-4bf2bcf5df60"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Koma's Faithful",
+                    "id": "af0f1a90-af64-4122-9c1a-954edf8fa240",
+                    "weight": 67
+                },
+                {
+                    "name": "Midnight Assassin",
+                    "id": "02a4a5b3-0477-4709-8bce-3e01f54001b6",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Raffine's Silencer",
+                    "id": "4ba72399-c827-43f3-b072-08597dbafb2d",
+                    "weight": 50
+                },
+                {
+                    "name": "Night Clubber",
+                    "id": "59fd3f8a-a13b-4a0a-bb27-b9246949ea7b",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Fear of Death",
+                    "id": "b81704d2-d555-4894-b36c-6b65d1ebe681",
+                    "weight": 50
+                },
+                {
+                    "name": "Extract the Truth",
+                    "id": "2bdb9df1-4475-45e7-bc9c-40937c8c1722",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Sacrifice",
+        "colors": [
+            "B",
+            "R"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_sacrifice.png",
+        "cards": [
+            "0fcb6d47-dccb-4b69-aed4-7a6215857606",
+            "33c5fd3e-3799-4535-8c33-9c567f4f5709",
+            "cbb4479f-3157-44b4-b18b-7553c7513118",
+            "5052247d-ef72-47f0-973d-2be98bf754c1",
+            "ff2665f7-6cf8-4f9b-810e-17e264753225",
+            "16998689-345d-41e3-a368-e97b696ed689",
+            "1c13ac76-7cd9-456f-9b89-92bfa07c64c5",
+            "75240bbc-adc7-48ff-9523-c79776d710d3"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Shambling Ghast",
+                    "id": "d96198a7-dd19-4940-bf8f-23135011fc84",
+                    "weight": 50
+                },
+                {
+                    "name": "Unwilling Ingredient",
+                    "id": "30448144-639a-43c7-a408-bd6ed543c231",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Jaxis, the Troublemaker",
+                    "id": "78127c0c-672f-4e4b-9c23-6a5f237228fd",
+                    "weight": 40
+                },
+                {
+                    "name": "Sanguine Spy",
+                    "id": "2d52ea1e-5b66-47c7-9a6d-95f5996565d8",
+                    "weight": 40
+                },
+                {
+                    "name": "Ob Nixilis, the Adversary",
+                    "id": "80226520-6b0a-48ea-a868-a29eb3fbd403",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Riveteers Requisitioner",
+                    "id": "8ab5152d-767a-47d5-acfc-f439810aaeea",
+                    "weight": 67
+                },
+                {
+                    "name": "Hungry for More",
+                    "id": "ce09c0df-d022-4ebf-8f7f-8a913249e75f",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Fake Your Own Death",
+                    "id": "b4e117a8-3291-4f9a-ab00-c820c8e2aa00",
+                    "weight": 50
+                },
+                {
+                    "name": "Daring Escape",
+                    "id": "3d09dbcd-188b-4b52-943e-947cbf2c0002",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Treasure",
+        "colors": [
+            "R",
+            "G",
+            "B"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_treasure.png",
+        "cards": [
+            "c059e4b4-1542-4b5c-810a-9f0abac5792b",
+            "3e5aa701-28e8-47fa-8c26-4da2f943f582",
+            "1a3d70d2-0604-41b3-8dd1-bfeb05832271",
+            "b5530b04-f086-4d09-97e9-eda45f8b1f7b",
+            "5354868b-c96b-4765-b0c8-8895093e4019",
+            "544c810b-5f90-4535-aa76-14f8c6b9428a",
+            "16998689-345d-41e3-a368-e97b696ed689",
+            "d8ed0335-daa6-4dbe-a94d-4d56c8cfd093"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Black Market Tycoon",
+                    "id": "28d92b13-8b23-4c78-b690-c5d9ca835809",
+                    "weight": 50
+                },
+                {
+                    "name": "Professional Face-Breaker",
+                    "id": "42acbf52-b137-44f0-a815-2817fe8d2da2",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Exhibition Magician",
+                    "id": "cbb4479f-3157-44b4-b18b-7553c7513118",
+                    "weight": 50
+                },
+                {
+                    "name": "Jewel Thief",
+                    "id": "736e498e-1245-40c1-96a4-c9bcfd1cfe1f",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Luxurious Libation",
+                    "id": "b3e0e818-db6a-453a-a1f0-a7fade6509d3",
+                    "weight": 50
+                },
+                {
+                    "name": "Lunar Frenzy",
+                    "id": "b5fb18c4-1386-4ea0-97c1-4bdd1e7eb5a6",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Stimulus Package",
+                    "id": "ecbe7459-8613-4ab8-84dc-deab19c08511",
+                    "weight": 67
+                },
+                {
+                    "name": "Courier's Briefcase",
+                    "id": "2f375674-7ae2-4430-b1f3-c26fa5b201d1",
+                    "weight": 33
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Citizens",
+        "colors": [
+            "W",
+            "G"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_citizens.png",
+        "cards": [
+            "1cf5da68-a79b-40a3-93bc-785fb2352b05",
+            "2399c6d7-57f9-4100-ad64-3c8897a438f7",
+            "52aa9815-6b47-4c80-87c7-4277166ea0df",
+            "e014d9d0-e6e1-4afb-b94f-b927a09b76c1",
+            "bad9e58e-c9a3-4a0d-9a59-71c20a3275b6",
+            "53e74a99-11d9-40b8-b1d6-8f68a3f490fa",
+            "2b4a5122-6922-4ab5-aa43-94cf2d7f9c8a",
+            "366e9845-019d-47cc-adb8-8fbbaad35b6d"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Backup Agent",
+                    "id": "2a46af75-3880-4141-b26e-19834d67e7a8",
+                    "weight": 34
+                },
+                {
+                    "name": "Sky Crier",
+                    "id": "98e01fa9-9127-4250-94f1-39e71cc3c2bc",
+                    "weight": 33
+                },
+                {
+                    "name": "Civic Gardener",
+                    "id": "f58d39d7-62bf-43c8-97b3-0f9069af0e29",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Voice of the Vermin",
+                    "id": "bfe4e0eb-23a5-46a5-b719-5a6f9a1fc4ce",
+                    "weight": 67
+                },
+                {
+                    "name": "Swooping Protector",
+                    "id": "8713498f-a467-4a11-9de2-53a1bbd0b18b",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Park Heights Pegasus",
+                    "id": "bba250e8-1ceb-40f5-95f1-fb00a2a723eb",
+                    "weight": 75
+                },
+                {
+                    "name": "Halo Fountain",
+                    "id": "0ee79399-715c-4c46-9fa1-e76b1087f009",
+                    "weight": 25
+                }
+            ],
+            [
+                {
+                    "name": "Boon of Safety",
+                    "id": "2069310a-9fb6-41b7-bbd5-849e3df05632",
+                    "weight": 50
+                },
+                {
+                    "name": "For the Family",
+                    "id": "052be93c-1970-4d05-a3d1-e87a6e51c423",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Brokers",
+        "colors": [
+            "G",
+            "W",
+            "U"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_brokers.png",
+        "cards": [
+            "a7867f2d-e89d-429f-9ab8-5337b40b4d8d",
+            "bfe4e0eb-23a5-46a5-b719-5a6f9a1fc4ce",
+            "29eb0e40-d184-423f-8484-ee288fda00cd",
+            "9d4a54bd-5598-4313-b5e6-29fd38da016a",
+            "b9ec36ec-1a9c-41db-b304-c23286a4d182",
+            "544c810b-5f90-4535-aa76-14f8c6b9428a",
+            "74c9c315-1cf4-468e-a74a-b5f3be4a63a1",
+            "799de0f1-6bf2-4158-8a4f-bedc3d2f6578",
+            "989b299b-daa9-4bda-94e2-9a2f0e8f2bce",
+            "989b299b-daa9-4bda-94e2-9a2f0e8f2bce",
+            "989b299b-daa9-4bda-94e2-9a2f0e8f2bce"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Backup Agent",
+                    "id": "2a46af75-3880-4141-b26e-19834d67e7a8",
+                    "weight": 67
+                },
+                {
+                    "name": "Raffine's Informant",
+                    "id": "4e64ff87-2099-4360-94f6-164277b7b514",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Inspiring Overseer",
+                    "id": "35d9da1d-8678-4252-b0f8-9960795642f0",
+                    "weight": 50
+                },
+                {
+                    "name": "Jewel Thief",
+                    "id": "736e498e-1245-40c1-96a4-c9bcfd1cfe1f",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Swooping Protector",
+                    "id": "8713498f-a467-4a11-9de2-53a1bbd0b18b",
+                    "weight": 50
+                },
+                {
+                    "name": "Mage's Attendant",
+                    "id": "0cce08e8-340b-4a67-9884-4cbf01d63790",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Obscura",
+        "colors": [
+            "B",
+            "U",
+            "W"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_obscura.png",
+        "cards": [
+            "f7baf973-3202-4fea-8861-a4a5ec228640",
+            "7edb7a26-82be-4efd-9a5c-a3816e1ee2d6",
+            "956b90ca-1012-4132-bf2f-bc3825ed16ac",
+            "cc75ba0d-230e-4ca4-bb40-bd05af2a4457",
+            "4e64ff87-2099-4360-94f6-164277b7b514",
+            "67774a11-158b-437c-ac16-2d42fbb5c223",
+            "9961562d-cad9-40e5-afae-3ebce77a2260",
+            "1016b884-9a4c-41de-bd65-14271f4f6f9a",
+            "1016b884-9a4c-41de-bd65-14271f4f6f9a",
+            "1016b884-9a4c-41de-bd65-14271f4f6f9a"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Faerie Vandal",
+                    "id": "7645247b-e65a-4912-ac22-e6a0fa806dd7",
+                    "weight": 67
+                },
+                {
+                    "name": "Hypnotic Grifter",
+                    "id": "69af30b3-d4b0-453a-891f-4506e06b5e14",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Toluz, Clever Conductor",
+                    "id": "f01f12e0-f354-43aa-9e2d-b59a99571a5f",
+                    "weight": 50
+                },
+                {
+                    "name": "Obscura Interceptor",
+                    "id": "08886346-2405-47ee-997f-c0fb7776c783",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Buy Your Silence",
+                    "id": "8c9ac05f-f47c-4569-a06e-793d28cbb936",
+                    "weight": 50
+                },
+                {
+                    "name": "Run Out of Town",
+                    "id": "7cf00112-0844-49db-a061-d0eb488de68a",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Fake Your Own Death",
+                    "id": "b4e117a8-3291-4f9a-ab00-c820c8e2aa00",
+                    "weight": 67
+                },
+                {
+                    "name": "Revelation of Power",
+                    "id": "7e010b11-8f3e-4792-afe4-0a376650b6c4",
+                    "weight": 33
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Maestros",
+        "colors": [
+            "R",
+            "B",
+            "U"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_maestros.png",
+        "cards": [
+            "db94f2a9-53be-449e-8240-77f013cdd7e3",
+            "221ac34a-94ed-4c49-afad-b19cac541731",
+            "452abab0-cf23-4b9d-831a-7b9fa1fd582a",
+            "cbb4479f-3157-44b4-b18b-7553c7513118",
+            "ff2665f7-6cf8-4f9b-810e-17e264753225",
+            "3dcdedb6-3c24-4a29-b9b9-27cc47d8ee56",
+            "469a0f03-7874-453d-b9e4-275c13244f4a",
+            "51eb4a44-a5c8-49ed-b440-2462626bb638",
+            "51eb4a44-a5c8-49ed-b440-2462626bb638",
+            "51eb4a44-a5c8-49ed-b440-2462626bb638"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Unlucky Witness",
+                    "id": "ec6430c0-67c1-4793-b4be-8f47545c57d6",
+                    "weight": 67
+                },
+                {
+                    "name": "Fireblade Charger",
+                    "id": "ca657846-f352-4ac4-b2b3-d0ced6607163",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Corrupt Court Official",
+                    "id": "505c6215-4006-4c4f-897a-be051cb73fa7",
+                    "weight": 50
+                },
+                {
+                    "name": "Virus Beetle",
+                    "id": "488ee202-0d28-4cc0-8a7d-644d9878e952",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Brokers Veteran",
+                    "id": "9d4a54bd-5598-4313-b5e6-29fd38da016a",
+                    "weight": 50
+                },
+                {
+                    "name": "Baithook Angler // Hook-Haunt Drifter",
+                    "id": "36e71d16-0964-489d-bea2-9cec7991fc99",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Light 'Em Up",
+                    "id": "ee31d56a-9b7e-4de0-81cb-3b7c76b6fbd5",
+                    "weight": 50
+                },
+                {
+                    "name": "Rooftop Nuisance",
+                    "id": "d7a84781-b40c-41e0-a0b9-86e466c9b12d",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Riveteers",
+        "colors": [
+            "B",
+            "G",
+            "R"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_riveteers.png",
+        "cards": [
+            "59fd3f8a-a13b-4a0a-bb27-b9246949ea7b",
+            "736e498e-1245-40c1-96a4-c9bcfd1cfe1f",
+            "d98022d2-3b46-41f4-8f31-0a238d881ac6",
+            "97caaa92-2a7d-4f79-8d42-86733c902072",
+            "03757415-6b58-42d3-9452-a862e90647ee",
+            "e2e65a50-d2bc-43a0-a9d4-0e846d170f78",
+            "784a5915-bc42-49d6-8a1b-45da7749f03a",
+            "21235916-2379-470c-b9ee-84246043d703",
+            "1d161f81-c01a-4c91-b025-52dcb1881638",
+            "1d161f81-c01a-4c91-b025-52dcb1881638",
+            "1d161f81-c01a-4c91-b025-52dcb1881638"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Cutthroat Contender",
+                    "id": "6b23b3e4-58cf-4b5d-bdcb-410a403b4987",
+                    "weight": 50
+                },
+                {
+                    "name": "Crooked Custodian",
+                    "id": "723d6f60-3e8a-4c58-8b3c-9ba59a01c867",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Strangle",
+                    "id": "4b91d727-c0ee-4bf0-8c7d-8475ecb88083",
+                    "weight": 50
+                },
+                {
+                    "name": "Prizefight",
+                    "id": "544c810b-5f90-4535-aa76-14f8c6b9428a",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Antagonize",
+                    "id": "8bac1d2a-99dd-40b3-8823-ce9225efcdcf",
+                    "weight": 50
+                },
+                {
+                    "name": "Fake Your Own Death",
+                    "id": "b4e117a8-3291-4f9a-ab00-c820c8e2aa00",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Cabaretti",
+        "colors": [
+            "G",
+            "R",
+            "W"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_cabaretti.png",
+        "cards": [
+            "6c691f62-009b-4178-8e8b-d6e88229a282",
+            "04897d8c-ee05-45eb-80f7-76487dbcc449",
+            "9c74197a-367c-40a4-9eb5-6943490bba09",
+            "cbb4479f-3157-44b4-b18b-7553c7513118",
+            "a7b597b3-5792-49e4-9bcb-74012e4e9cb6",
+            "08f33c8a-8e93-4296-964b-da132a854b3b",
+            "9dda1e1c-b330-42e0-8547-97e2afc7615f",
+            "9dda1e1c-b330-42e0-8547-97e2afc7615f",
+            "9dda1e1c-b330-42e0-8547-97e2afc7615f"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Witty Roastmaster",
+                    "id": "71d13f19-482b-4a2e-9692-b7d7caf2f9f5",
+                    "weight": 50
+                },
+                {
+                    "name": "Social Climber",
+                    "id": "a9fb74fd-767f-4dd4-822a-828d59f633ad",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Jinnie Fay, Jetmir's Second",
+                    "id": "c5f9326a-2a41-45b3-97c3-548f0bdc0882",
+                    "weight": 67
+                },
+                {
+                    "name": "Fleetfoot Dancer",
+                    "id": "2473d738-fe15-402a-ad24-0d6e5c4dfda3",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Elegant Entourage",
+                    "id": "e9d3500e-09ba-48b6-933f-25b4625b79aa",
+                    "weight": 50
+                },
+                {
+                    "name": "Sizzling Soloist",
+                    "id": "958dfd59-7dbd-45e0-b6e1-e432c78b6878",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Swarming Goblins",
+                    "id": "623c1d1b-69a4-4bc4-b388-17a7600fd960",
+                    "weight": 67
+                },
+                {
+                    "name": "Elturgard Ranger",
+                    "id": "f6898737-957f-44a6-bef7-fb196658176f",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Strangle",
+                    "id": "4b91d727-c0ee-4bf0-8c7d-8475ecb88083",
+                    "weight": 50
+                },
+                {
+                    "name": "Hold for Ransom",
+                    "id": "53e74a99-11d9-40b8-b1d6-8f68a3f490fa",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Counters",
+        "colors": [
+            "W",
+            "U"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_counters.png",
+        "cards": [
+            "25803f0b-4475-447e-abdf-dcd6a98dd654",
+            "633c7e38-fdad-461c-9ecb-3e89d5b80f24",
+            "da4ccf70-b661-46ea-bea9-4466a3a35562",
+            "41d81b88-c19b-4148-89ba-ae8fb53843e1",
+            "9845cdf2-e5ba-44a0-8136-72a1eb03a6a1",
+            "a2be6f2c-8ad0-402d-a7ca-9fe817e83b72",
+            "7cf00112-0844-49db-a061-d0eb488de68a"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Backup Agent",
+                    "id": "2a46af75-3880-4141-b26e-19834d67e7a8",
+                    "weight": 50
+                },
+                {
+                    "name": "Raffine's Informant",
+                    "id": "4e64ff87-2099-4360-94f6-164277b7b514",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Ledger Shredder",
+                    "id": "7ea4b5bc-18a4-45db-a56a-ab3f8bd2fb0d",
+                    "weight": 67
+                },
+                {
+                    "name": "Scheming Fence",
+                    "id": "af7ef030-7bae-4820-b51a-8fad57a8ff2f",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Guardians of Oboro",
+                    "id": "e9c44d4e-742f-4e4f-9bf4-921075bc427c",
+                    "weight": 50
+                },
+                {
+                    "name": "Psionic Snoop",
+                    "id": "b1e04834-7335-4b25-bedf-b7739c5c3aad",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Boon of Safety",
+                    "id": "2069310a-9fb6-41b7-bbd5-849e3df05632",
+                    "weight": 50
+                },
+                {
+                    "name": "Slip Out the Back",
+                    "id": "8725f4c4-fad7-460e-b86c-ff81674f0980",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Gate to the Citadel",
+                    "id": "985d1b57-42e0-41a2-a9c6-2f5427c0c1c9",
+                    "weight": 50
+                },
+                {
+                    "name": "Gate to Seatower",
+                    "id": "86382685-e54c-4152-a500-2148a2d6b5a4",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Graveyard",
+        "colors": [
+            "B",
+            "U"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_graveyard.png",
+        "cards": [
+            "acef329c-61e6-41c1-8d89-ff2417949839",
+            "bf86c5f2-0caf-48ca-b7ad-a1cdcd014539",
+            "4bfd6449-31a1-4572-8f9c-3f6f4670dc9d",
+            "a06ac58b-6d72-4eb4-a1c9-61b5314c7769",
+            "69af30b3-d4b0-453a-891f-4506e06b5e14",
+            "bed1e957-3df1-4640-9980-783817826602",
+            "902abe4d-5c19-4c96-b825-e6cd4d954a84",
+            "3359f13d-9946-49fa-b621-28b1ea714e55",
+            "90183d4d-c231-4e45-b1fc-2699b33a3733"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Maestros Initiate",
+                    "id": "db94f2a9-53be-449e-8240-77f013cdd7e3",
+                    "weight": 67
+                },
+                {
+                    "name": "Midnight Assassin",
+                    "id": "02a4a5b3-0477-4709-8bce-3e01f54001b6",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Raffine's Silencer",
+                    "id": "4ba72399-c827-43f3-b072-08597dbafb2d",
+                    "weight": 50
+                },
+                {
+                    "name": "Night Clubber",
+                    "id": "59fd3f8a-a13b-4a0a-bb27-b9246949ea7b",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Fear of Death",
+                    "id": "b81704d2-d555-4894-b36c-6b65d1ebe681",
+                    "weight": 50
+                },
+                {
+                    "name": "Extract the Truth",
+                    "id": "2bdb9df1-4475-45e7-bc9c-40937c8c1722",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Sacrifice",
+        "colors": [
+            "B",
+            "R"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_sacrifice.png",
+        "cards": [
+            "0fcb6d47-dccb-4b69-aed4-7a6215857606",
+            "33c5fd3e-3799-4535-8c33-9c567f4f5709",
+            "cbb4479f-3157-44b4-b18b-7553c7513118",
+            "5052247d-ef72-47f0-973d-2be98bf754c1",
+            "ff2665f7-6cf8-4f9b-810e-17e264753225",
+            "16998689-345d-41e3-a368-e97b696ed689",
+            "1c13ac76-7cd9-456f-9b89-92bfa07c64c5",
+            "f8532b98-b69e-4d43-9ec8-0587572a0dff"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Shambling Ghast",
+                    "id": "d96198a7-dd19-4940-bf8f-23135011fc84",
+                    "weight": 50
+                },
+                {
+                    "name": "Persistent Specimen",
+                    "id": "f7baf973-3202-4fea-8861-a4a5ec228640",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Jaxis, the Troublemaker",
+                    "id": "78127c0c-672f-4e4b-9c23-6a5f237228fd",
+                    "weight": 40
+                },
+                {
+                    "name": "Sanguine Spy",
+                    "id": "2d52ea1e-5b66-47c7-9a6d-95f5996565d8",
+                    "weight": 40
+                },
+                {
+                    "name": "Ob Nixilis, the Adversary",
+                    "id": "80226520-6b0a-48ea-a868-a29eb3fbd403",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Riveteers Requisitioner",
+                    "id": "8ab5152d-767a-47d5-acfc-f439810aaeea",
+                    "weight": 67
+                },
+                {
+                    "name": "Hungry for More",
+                    "id": "ce09c0df-d022-4ebf-8f7f-8a913249e75f",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Fake Your Own Death",
+                    "id": "b4e117a8-3291-4f9a-ab00-c820c8e2aa00",
+                    "weight": 50
+                },
+                {
+                    "name": "Daring Escape",
+                    "id": "3d09dbcd-188b-4b52-943e-947cbf2c0002",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Treasure",
+        "colors": [
+            "R",
+            "G",
+            "B"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_treasure.png",
+        "cards": [
+            "c059e4b4-1542-4b5c-810a-9f0abac5792b",
+            "3e5aa701-28e8-47fa-8c26-4da2f943f582",
+            "1a3d70d2-0604-41b3-8dd1-bfeb05832271",
+            "b5530b04-f086-4d09-97e9-eda45f8b1f7b",
+            "5354868b-c96b-4765-b0c8-8895093e4019",
+            "544c810b-5f90-4535-aa76-14f8c6b9428a",
+            "16998689-345d-41e3-a368-e97b696ed689"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Black Market Tycoon",
+                    "id": "28d92b13-8b23-4c78-b690-c5d9ca835809",
+                    "weight": 50
+                },
+                {
+                    "name": "Professional Face-Breaker",
+                    "id": "42acbf52-b137-44f0-a815-2817fe8d2da2",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Exhibition Magician",
+                    "id": "cbb4479f-3157-44b4-b18b-7553c7513118",
+                    "weight": 50
+                },
+                {
+                    "name": "Jewel Thief",
+                    "id": "736e498e-1245-40c1-96a4-c9bcfd1cfe1f",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Luxurious Libation",
+                    "id": "b3e0e818-db6a-453a-a1f0-a7fade6509d3",
+                    "weight": 50
+                },
+                {
+                    "name": "Lunar Frenzy",
+                    "id": "b5fb18c4-1386-4ea0-97c1-4bdd1e7eb5a6",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Stimulus Package",
+                    "id": "ecbe7459-8613-4ab8-84dc-deab19c08511",
+                    "weight": 67
+                },
+                {
+                    "name": "Courier's Briefcase",
+                    "id": "2f375674-7ae2-4430-b1f3-c26fa5b201d1",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Gate to Tumbledown",
+                    "id": "f8532b98-b69e-4d43-9ec8-0587572a0dff",
+                    "weight": 50
+                },
+                {
+                    "name": "Gate to Manorborn",
+                    "id": "a902d474-0d02-449e-ab6c-8c2f32c99384",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Citizens",
+        "colors": [
+            "W",
+            "G"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_citizens.png",
+        "cards": [
+            "1cf5da68-a79b-40a3-93bc-785fb2352b05",
+            "2399c6d7-57f9-4100-ad64-3c8897a438f7",
+            "52aa9815-6b47-4c80-87c7-4277166ea0df",
+            "e014d9d0-e6e1-4afb-b94f-b927a09b76c1",
+            "bad9e58e-c9a3-4a0d-9a59-71c20a3275b6",
+            "53e74a99-11d9-40b8-b1d6-8f68a3f490fa",
+            "2b4a5122-6922-4ab5-aa43-94cf2d7f9c8a",
+            "985d1b57-42e0-41a2-a9c6-2f5427c0c1c9"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Backup Agent",
+                    "id": "2a46af75-3880-4141-b26e-19834d67e7a8",
+                    "weight": 34
+                },
+                {
+                    "name": "Sky Crier",
+                    "id": "98e01fa9-9127-4250-94f1-39e71cc3c2bc",
+                    "weight": 33
+                },
+                {
+                    "name": "Civic Gardener",
+                    "id": "f58d39d7-62bf-43c8-97b3-0f9069af0e29",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Voice of the Vermin",
+                    "id": "bfe4e0eb-23a5-46a5-b719-5a6f9a1fc4ce",
+                    "weight": 67
+                },
+                {
+                    "name": "Swooping Protector",
+                    "id": "8713498f-a467-4a11-9de2-53a1bbd0b18b",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Park Heights Pegasus",
+                    "id": "bba250e8-1ceb-40f5-95f1-fb00a2a723eb",
+                    "weight": 75
+                },
+                {
+                    "name": "Halo Fountain",
+                    "id": "0ee79399-715c-4c46-9fa1-e76b1087f009",
+                    "weight": 25
+                }
+            ],
+            [
+                {
+                    "name": "Boon of Safety",
+                    "id": "2069310a-9fb6-41b7-bbd5-849e3df05632",
+                    "weight": 50
+                },
+                {
+                    "name": "For the Family",
+                    "id": "052be93c-1970-4d05-a3d1-e87a6e51c423",
+                    "weight": 50
+                }
+            ]
+        ]
+    }
+]

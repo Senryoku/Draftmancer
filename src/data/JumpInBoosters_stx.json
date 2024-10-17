@@ -1,0 +1,551 @@
+[
+    {
+        "name": "Wizards",
+        "colors": [
+            "U"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_wizards.png",
+        "cards": [
+            "b2d40071-cadf-48de-a8ed-d55adbfab632",
+            "c790a86d-db91-4a87-aa3a-3f9fc4d4b662",
+            "090f6e94-fb5f-4861-a465-f11766303676",
+            "13105c88-2926-40ad-bc7a-09d515aa36c6",
+            "60f9adfd-a940-4d62-894b-84f17c693a10",
+            "4238ad00-af9c-4535-a589-c5afb0d2ec57",
+            "0dbb1230-a465-4499-bb9c-35a06712a08b",
+            "890eee8d-a339-4143-adfa-1b17ec10c099"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Burrog Befuddler",
+                    "id": "6040c573-cd8c-4593-8ade-d9922482035c",
+                    "weight": 50
+                },
+                {
+                    "name": "Stonework Packbeast",
+                    "id": "a29e17ba-d584-4296-9f43-17467edaa25f",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Soothsayer Adept",
+                    "id": "eb93c9d2-88eb-403d-bb67-8e8b0462ac27",
+                    "weight": 50
+                },
+                {
+                    "name": "Arcane Investigator",
+                    "id": "dc457520-9947-4f65-bbe7-9b95bd2c23af",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Clever Conjurer",
+                    "id": "b9784c97-3839-4a4b-ae8a-965844dbeb70",
+                    "weight": 34
+                },
+                {
+                    "name": "Frost Trickster",
+                    "id": "fd79c9cc-0a8c-4d88-96e2-cb177134a18d",
+                    "weight": 33
+                },
+                {
+                    "name": "Mistwalker",
+                    "id": "92f64b49-327c-473b-a492-f020a322aed7",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Bury in Books",
+                    "id": "ac2a2cf5-80cf-4c06-8b04-bc04a5460de5",
+                    "weight": 50
+                },
+                {
+                    "name": "Into the Roil",
+                    "id": "899540b0-c17a-4a73-912c-9b8925203de1",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Silverquill",
+        "colors": [
+            "W",
+            "B"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_silverquill.png",
+        "cards": [
+            "99e9318f-2e17-4b6e-895f-c17cd5d0d282",
+            "f9f2029f-ffda-4374-9a78-79866ac23fca",
+            "b996743e-7f48-49d8-948b-ceb75bddf215",
+            "2c53b007-96aa-4db6-8c3e-529d1e845b19",
+            "92eba33e-efea-4e58-a832-1c6049fb211f",
+            "8468417d-7ef5-43e0-9190-e88f3eed9e82",
+            "785e6d07-fe40-4723-b963-02da0a0987c7"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Shaile, Dean of Radiance // Embrose, Dean of Shadow",
+                    "id": "938cee8f-ac2c-49a5-9ff7-1367d0edfabe",
+                    "weight": 40
+                },
+                {
+                    "name": "Luminarch Aspirant",
+                    "id": "fe964e7e-e2c5-4263-889d-0a531eb51442",
+                    "weight": 40
+                },
+                {
+                    "name": "Shadrix Silverquill",
+                    "id": "ab701909-83d6-4d39-9a84-e6a9b2cb38d6",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Promising Duskmage",
+                    "id": "2ea0dff9-71c3-4d56-aa7b-e0fb9938529a",
+                    "weight": 50
+                },
+                {
+                    "name": "Skyclave Sentinel",
+                    "id": "fac8809a-77cd-4090-8a89-12121a8da676",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Dueling Coach",
+                    "id": "45b3dbb0-0d68-4351-bfc9-a09c50454bf7",
+                    "weight": 50
+                },
+                {
+                    "name": "Skyclave Shadowcat",
+                    "id": "b27fcfc5-a1a9-4b21-8240-2ed6346c64e1",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Subtle Strike",
+                    "id": "0d3f531a-ce45-4cba-be24-6db749e38abd",
+                    "weight": 34
+                },
+                {
+                    "name": "Professor's Warning",
+                    "id": "862fded6-e474-4b20-86d8-fd9af5f25b1a",
+                    "weight": 33
+                },
+                {
+                    "name": "Feign Death",
+                    "id": "32af7061-fca6-4a06-be3c-01881e6b96f7",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Malakir Rebirth // Malakir Mire",
+                    "id": "609d3ecf-f88d-4268-a8d3-4bf2bcf5df60",
+                    "weight": 50
+                },
+                {
+                    "name": "Sejiri Shelter // Sejiri Glacier",
+                    "id": "f25d56f9-aa54-4657-9ac9-e93fbba3e715",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Prismari",
+        "colors": [
+            "R",
+            "U"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_prismari.png",
+        "cards": [
+            "87a9a8a2-de81-441b-b501-418311b677f7",
+            "dca3aa59-c8ac-4930-abf7-0a74d657122a",
+            "acb8f24d-8d1d-48aa-a534-238e969a474c",
+            "f74223e1-b66b-42fa-aaac-001f5dab2aac",
+            "b045c28a-39f9-4cd9-8f3a-a626b697f409",
+            "ac2a2cf5-80cf-4c06-8b04-bc04a5460de5",
+            "4331a7a6-e98e-4517-b0f9-ace379426a94",
+            "4331a7a6-e98e-4517-b0f9-ace379426a94",
+            "eab58d87-bf01-45dc-8958-e2b3375f914b"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Torrent Sculptor // Flamethrower Sonata",
+                    "id": "87463b68-3642-41c7-a11c-67d524759b60",
+                    "weight": 80
+                },
+                {
+                    "name": "Galazeth Prismari",
+                    "id": "06c9158c-064b-4d12-b860-d2c1450d1897",
+                    "weight": 10
+                },
+                {
+                    "name": "Magma Opus",
+                    "id": "27c914a3-2294-4feb-9450-c012cfd307a6",
+                    "weight": 10
+                }
+            ],
+            [
+                {
+                    "name": "Pigment Storm",
+                    "id": "d285a7a1-bb7e-4a78-a49f-c2add62b829a",
+                    "weight": 34
+                },
+                {
+                    "name": "Burn the Accursed",
+                    "id": "ff4d4e6b-564d-46da-8e32-09ed08c8ddc5",
+                    "weight": 33
+                },
+                {
+                    "name": "Farideh's Fireball",
+                    "id": "57a46987-f05a-4b83-af56-f18000874e65",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Spikefield Hazard // Spikefield Cave",
+                    "id": "a69541db-3f4e-412f-aa8e-dec1e74f74dc",
+                    "weight": 50
+                },
+                {
+                    "name": "Beyeen Veil // Beyeen Coast",
+                    "id": "5f411f08-45dd-4d73-8894-daf51c175150",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Witherbloom",
+        "colors": [
+            "B",
+            "G"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_witherbloom.png",
+        "cards": [
+            "9cd2b567-0cf7-4441-b3ce-e31141dd91c8",
+            "096d3c0c-98e2-4cfc-a6e1-fddb0359c63f",
+            "3e35e9ba-a10e-4926-a7a6-3a65efc2a730",
+            "8347f2e8-ef70-4879-860a-12f7cab25902",
+            "8347f2e8-ef70-4879-860a-12f7cab25902",
+            "840600a9-3e78-48a6-b75b-860446b82c1b",
+            "f1f39fe7-dc12-49c9-80ac-4135dc1f8f08",
+            "98496d5b-1519-4f0c-8b46-0a43be643dfb"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Honor Troll",
+                    "id": "a9c6a6b9-f00c-46a5-8dab-796483e3a262",
+                    "weight": 50
+                },
+                {
+                    "name": "Lurking Roper",
+                    "id": "2cce25d7-3f22-48ce-9428-184e661696b9",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Froghemoth",
+                    "id": "728e9567-2585-4c03-99a5-3e84fd8044d2",
+                    "weight": 40
+                },
+                {
+                    "name": "Blex, Vexing Pest // Search for Blex",
+                    "id": "c204b7ca-0904-40fa-b20c-92400fae20b8",
+                    "weight": 40
+                },
+                {
+                    "name": "Beledros Witherbloom",
+                    "id": "93f786a2-a7b7-4f9e-92e8-9a6a11efe290",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Ravenous Lindwurm",
+                    "id": "9961e3fc-167e-4043-8510-cc5cf08d473e",
+                    "weight": 50
+                },
+                {
+                    "name": "Hill Giant Herdgorger",
+                    "id": "b69315cc-c230-4704-9d66-411f624f3e49",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Rabid Bite",
+                    "id": "effe3fab-6d13-4603-8a21-8a3c2a0d9e08",
+                    "weight": 50
+                },
+                {
+                    "name": "Mage Duel",
+                    "id": "92325638-0321-4409-8910-2287c64c182e",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Lorehold",
+        "colors": [
+            "R",
+            "W"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_lorehold.png",
+        "cards": [
+            "56cc4e7d-3b06-4938-9023-d903912350c0",
+            "7ce76a38-fc5f-4e29-ba24-4a877179a62c",
+            "06c55ef1-8e62-4d43-bd4c-b2c3c5203338",
+            "7aa0e762-0fec-4f6b-b3d7-ad8295bf557d",
+            "c0b1dcd7-6dd9-4134-bc6c-9dc7754006a2"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Stonerise Spirit",
+                    "id": "388f2e45-570f-4a35-b205-37e1345b5d06",
+                    "weight": 50
+                },
+                {
+                    "name": "Chaplain of Alms // Chapel Shieldgeist",
+                    "id": "20e94e17-2e4c-41cd-8cc5-39ab41037287",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Stonebound Mentor",
+                    "id": "9c64e954-adfc-40a2-a3b2-85f1b4626976",
+                    "weight": 50
+                },
+                {
+                    "name": "Mourning Patrol // Morning Apparition",
+                    "id": "2d3687e2-09e0-4753-aa02-88a19bde3330",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Combat Professor",
+                    "id": "3f669ac4-98ed-4e23-91a9-281f8277ab04",
+                    "weight": 50
+                },
+                {
+                    "name": "Pillardrop Rescuer",
+                    "id": "0884666e-8f9b-44b1-a1e3-c1c8941e2152",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Venerable Warsinger",
+                    "id": "006313f8-cc60-4a4e-8ec6-953cdf1c16e3",
+                    "weight": 34
+                },
+                {
+                    "name": "Lorehold Command",
+                    "id": "e4f0885f-1049-4a19-853d-f4e6d4bec29e",
+                    "weight": 33
+                },
+                {
+                    "name": "Velomachus Lorehold",
+                    "id": "04ea9067-ad50-4c43-ae4d-3f66890cd898",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Heated Debate",
+                    "id": "f40c88e2-28ed-4e5b-bcb3-4397d6a15a6f",
+                    "weight": 67
+                },
+                {
+                    "name": "Expel",
+                    "id": "be517a58-b7ee-4213-98a5-8c19e1b2def6",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Homestead Courage",
+                    "id": "73a9c49f-fcd3-4572-bac7-6eb06fdc0815",
+                    "weight": 50
+                },
+                {
+                    "name": "Abandon the Post",
+                    "id": "983da138-f0f5-46c4-90c2-d3c34cc37d1f",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Spikefield Hazard // Spikefield Cave",
+                    "id": "a69541db-3f4e-412f-aa8e-dec1e74f74dc",
+                    "weight": 50
+                },
+                {
+                    "name": "Sejiri Shelter // Sejiri Glacier",
+                    "id": "f25d56f9-aa54-4657-9ac9-e93fbba3e715",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Quandrix",
+        "colors": [
+            "G",
+            "U"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_quandrix.png",
+        "cards": [
+            "0ca14c17-dc72-4f68-92f2-14a6c4019f4e",
+            "7327289d-eed8-44b1-8495-7172e2b49d5f",
+            "b41a35ef-dae1-4534-a12a-d3951b285273",
+            "e3ca9ff7-0dcf-4ecc-879c-957d290ad7f5",
+            "4edfbed0-0c0d-4aa5-bfe0-5268aff0f958",
+            "04a81975-5f0e-4593-a2da-b9689f9a985f",
+            "e400c9b7-c789-49dd-9f72-b9d1df03fcca",
+            "b6551442-d74c-4f16-a9de-0cfdc88208a5",
+            "99535539-aa73-41ed-86ab-21c97b92620d"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Manifestation Sage",
+                    "id": "76fc5cd2-fbb0-4d13-9089-0292b356de48",
+                    "weight": 60
+                },
+                {
+                    "name": "Tanazir Quandrix",
+                    "id": "3bd62ee4-e654-44ba-a650-889782cc9ac3",
+                    "weight": 20
+                },
+                {
+                    "name": "Body of Research",
+                    "id": "98b56823-0076-49cc-b5aa-4accb8e2782e",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Bury in Books",
+                    "id": "ac2a2cf5-80cf-4c06-8b04-bc04a5460de5",
+                    "weight": 50
+                },
+                {
+                    "name": "Bubble Snare",
+                    "id": "1bfba7a0-d5ca-4197-9e58-21f28345f1a6",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Decisive Denial",
+                    "id": "b2e9d132-95f7-4ee7-9c91-be19e4ad7a5d",
+                    "weight": 50
+                },
+                {
+                    "name": "Winterthorn Blessing",
+                    "id": "f1e9edd3-151d-4bf6-b491-03db9db32234",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Flashback",
+        "colors": [
+            "G",
+            "U"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_flashback.png",
+        "cards": [
+            "658ec634-3eb2-4967-b938-d20d31ab77e3",
+            "0291c909-bb87-47cb-9b06-5e409e654f15",
+            "07633b7f-4150-458b-89c3-d05dc0e3c4bd",
+            "74729320-f6ee-4176-9463-397d6e477d7a",
+            "1b12e978-4deb-4ccc-8ae6-462bc4598c90",
+            "4edfbed0-0c0d-4aa5-bfe0-5268aff0f958",
+            "f1e9edd3-151d-4bf6-b491-03db9db32234",
+            "805faf2e-97dc-4b77-bc02-a4cae980f041",
+            "5c0aa3eb-0aa8-42da-b437-a3f336df585d",
+            "9b022ba8-07b6-4993-99c8-89c6dcb19e60"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Mage Duel",
+                    "id": "92325638-0321-4409-8910-2287c64c182e",
+                    "weight": 67
+                },
+                {
+                    "name": "Rabid Bite",
+                    "id": "effe3fab-6d13-4603-8a21-8a3c2a0d9e08",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Curate",
+                    "id": "f2a0e716-22b7-4a5e-9b7a-d4a806ee7427",
+                    "weight": 25
+                },
+                {
+                    "name": "Glacial Grasp",
+                    "id": "381d84d6-7b34-44cb-a697-54b835ba1281",
+                    "weight": 25
+                },
+                {
+                    "name": "Snakeskin Veil",
+                    "id": "e692c208-c171-4964-9207-43c2cbc62845",
+                    "weight": 25
+                },
+                {
+                    "name": "You Come to a River",
+                    "id": "ebf9bab7-98a0-4394-90c0-e7c52e14eb37",
+                    "weight": 25
+                }
+            ],
+            [
+                {
+                    "name": "Khalni Ambush // Khalni Territory",
+                    "id": "99535539-aa73-41ed-86ab-21c97b92620d",
+                    "weight": 34
+                },
+                {
+                    "name": "Beyeen Veil // Beyeen Coast",
+                    "id": "5f411f08-45dd-4d73-8894-daf51c175150",
+                    "weight": 33
+                },
+                {
+                    "name": "Silundi Vision // Silundi Isle",
+                    "id": "11568cdf-6148-494c-8b98-f5ca5797d775",
+                    "weight": 33
+                }
+            ]
+        ]
+    }
+]

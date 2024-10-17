@@ -25,8 +25,19 @@ import JumpInWOE from "./data/JumpInBoosters_woe.json" with { type: "json" };
 import JumpInLTR from "./data/JumpInBoosters_ltr.json" with { type: "json" };
 import JumpInONE from "./data/JumpInBoosters_one.json" with { type: "json" };
 import JumpInBRO from "./data/JumpInBoosters_bro.json" with { type: "json" };
+import JumpInDMU from "./data/JumpInBoosters_dmu.json" with { type: "json" };
+import JumpInHBG from "./data/JumpInBoosters_hbg.json" with { type: "json" };
+import JumpInSNC from "./data/JumpInBoosters_snc.json" with { type: "json" };
+import JumpInNEO from "./data/JumpInBoosters_neo.json" with { type: "json" };
+import JumpInVOW from "./data/JumpInBoosters_vow.json" with { type: "json" };
+import JumpInMID from "./data/JumpInBoosters_mid.json" with { type: "json" };
+import JumpInAFR from "./data/JumpInBoosters_afr.json" with { type: "json" };
+import JumpInSTX from "./data/JumpInBoosters_stx.json" with { type: "json" };
+import JumpInKHM from "./data/JumpInBoosters_khm.json" with { type: "json" };
+import JumpInZNR from "./data/JumpInBoosters_znr.json" with { type: "json" };
+import { SocketError } from "./Message.js";
 
-const JumpInBoosters: Record<string, JumpInBoosterPattern[]> = {
+export const JumpInBoosters: Record<string, JumpInBoosterPattern[]> = {
 	blb: JumpInBLB,
 	otj: JumpInOTJ,
 	mkm: JumpInMKM,
@@ -35,11 +46,18 @@ const JumpInBoosters: Record<string, JumpInBoosterPattern[]> = {
 	ltr: JumpInLTR,
 	one: JumpInONE,
 	bro: JumpInBRO,
+	dmu: JumpInDMU,
+	hbg: JumpInHBG,
+	snc: JumpInSNC,
+	neo: JumpInNEO,
+	vow: JumpInVOW,
+	mid: JumpInMID,
+	afr: JumpInAFR,
+	stx: JumpInSTX,
+	khm: JumpInKHM,
+	znr: JumpInZNR,
 };
-
-for (const [, value] of Object.entries(JumpInBoosters)) {
-	Object.freeze(value);
-}
+Object.freeze(JumpInBoosters);
 
 export const JumpInSets = Object.keys(JumpInBoosters);
 
@@ -85,17 +103,22 @@ export function genJHHPackChoices(): [JumpInBooster[], JumpInBooster[][]] {
 	return choices;
 }
 
-export function genJumpInPackChoices(sets: string[]): [JumpInBooster[], JumpInBooster[][]] {
+export function genJumpInPackChoices(sets: string[]): [JumpInBooster[], JumpInBooster[][]] | SocketError {
 	const choices: [JumpInBooster[], JumpInBooster[][]] = [[], []];
 	// https://mtg.fandom.com/wiki/Jump_In!
 	const Boosters = sets.map((set) => JumpInBoosters[set]).flat();
+	if (Boosters.length < 4)
+		return new SocketError("Not enough packs!", "Not enough possible packs. Please select more sets.");
+
+	// The following is very messy. It will try to stick to pack selection rules, while being as safe as possible. It achieve this by providing fallbacks at (almost) every step.
+
 	// At least one packet will be a mono-colored option and at least one will be a multicolored option. None of the three packets will have the same color identity as any other.
 	{
 		const first: JumpInBoosterPattern[] = [];
 		const mono = Boosters.filter((p) => p.colors.length === 1);
 		const multi = Boosters.filter((p) => p.colors.length > 1);
 		first.push(getRandom(mono.length > 0 ? mono : Boosters));
-		first.push(getRandom(multi.length > 0 ? multi : Boosters.filter((p) => p.name !== first[0].name)));
+		first.push(getRandom((multi.length > 0 ? multi : Boosters).filter((p) => p.name !== first[0].name)));
 		const thirdChoice = Boosters.filter((p) => {
 			const colors = new Set(p.colors);
 			return (
@@ -116,12 +139,12 @@ export function genJumpInPackChoices(sets: string[]): [JumpInBooster[], JumpInBo
 		if (mono.length === 0) mono = Boosters.filter((p) => p.name !== choices[0][i].name);
 		let multi = Boosters.filter((p) => p.colors.length > 1).filter((p) => p.name !== choices[0][i].name);
 		if (multi.length === 0) multi = Boosters.filter((p) => p.name !== choices[0][i].name);
-
 		if (firstColors.length == 1) {
 			// At least one mono-color option and at least one multicolor option.
 			second.push(getRandom(mono));
 			// All multicolor options will include the color of the first packet.
-			multi = multi.filter((p) => p.colors.includes(firstColors[0]));
+			const tmp = multi.filter((p) => p.colors.includes(firstColors[0]));
+			if (tmp.length > 0) multi = tmp;
 			second.push(getRandom(multi));
 			second.push(getRandom([...mono, ...multi].filter((p) => !second.includes(p))));
 		} else if (firstColors.length == 2) {
@@ -131,21 +154,46 @@ export function genJumpInPackChoices(sets: string[]): [JumpInBooster[], JumpInBo
 			const two = mono.filter((p) => p.name !== second[0].name && p.colors.includes(firstColors[1]));
 			second.push(getRandom(two.length > 0 ? two : mono));
 			// If there is a multicolor option, either its colors will be the same as the first packet selected or it will contain both of those colors plus a third color.
-			multi = multi.filter((p) => p.colors.includes(firstColors[0]) && p.colors.includes(firstColors[1]));
-			second.push(getRandom([...mono, ...multi].filter((p) => !second.includes(p))));
+			const filteredMulti = multi.filter(
+				(p) => p.colors.includes(firstColors[0]) && p.colors.includes(firstColors[1])
+			);
+			const three = [...mono, ...filteredMulti].filter((p) => !second.includes(p));
+			second.push(getRandom(three.length > 0 ? three : [...mono, ...multi]));
 		} else {
 			// At least two mono-color options, covering two of the three colors.
 			const pickedColors = getNDisctinctRandom(firstColors, 2);
-			second.push(getRandom(mono.filter((p) => p.colors.includes(pickedColors[0]))));
-			second.push(getRandom(mono.filter((p) => p.colors.includes(pickedColors[1]))));
+			const one = mono.filter((p) => p.colors.includes(pickedColors[0]));
+			second.push(getRandom(one.length > 0 ? one : mono));
+			const two = mono.filter((p) => p.colors.includes(pickedColors[1]));
+			const twoMonoFallback = mono.filter((p) => !second.includes(p));
+			second.push(
+				getRandom(
+					two.length > 0
+						? two
+						: twoMonoFallback.length > 0
+							? twoMonoFallback
+							: [...mono, ...multi].filter((p) => !second.includes(p))
+				)
+			);
 			// If there is a multicolor option, it will only contain colors within the first packet selection's color. Note - there are not currently any three-color packets available.
-			multi = multi.filter(
+			const filteredMulti = multi.filter(
 				(p) =>
 					p.colors.includes(firstColors[0]) &&
 					p.colors.includes(firstColors[1]) &&
 					p.colors.includes(firstColors[2])
 			);
-			second.push(getRandom([...mono, ...multi].filter((p) => !second.includes(p))));
+			const three = [...mono, ...filteredMulti].filter((p) => !second.includes(p));
+			second.push(getRandom(three.length > 0 ? three : [...mono, ...multi].filter((p) => !second.includes(p))));
+		}
+		if (second.some((p) => p === undefined)) {
+			console.error("Error generation JumpIn packs.");
+			console.error("  sets: ", sets);
+			console.error("  firstColors: ", firstColors);
+			console.error("  ", second);
+			return new SocketError(
+				"Invalid JumpIn Pack",
+				"An error occured while generating your pack choices. Please report the issue so I can fix it! In the meantime, broadening your set selection might help."
+			);
 		}
 		choices[1].push(second.map(generateJumpInBooster));
 	}

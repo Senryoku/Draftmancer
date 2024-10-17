@@ -1,0 +1,182 @@
+[
+    {
+        "name": "Celestial",
+        "colors": [
+            "W"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_celestial.png",
+        "cards": [
+            "ffe93b27-f8ae-4abf-8ade-90f503f132c2",
+            "02fb5f9f-8750-4eb5-a03a-6dacc60e0b90",
+            "c06cc03f-da73-4ba5-96c9-618b497a7ea3",
+            "89ecb530-e429-4b50-a24c-8437614cf224",
+            "a9e7457a-8ab4-4f3c-a2d8-2da4d81b7470",
+            "2fe82bbf-9b92-4684-a42d-fbc50c4c5903",
+            "0da7c6dc-9325-4866-8c09-78c7021f8f17",
+            "3eeef24b-b937-408e-a32e-1a546d3e7b0f",
+            "014027c4-7f9d-4096-b308-ea4be574c0d4"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Starnheim Aspirant",
+                    "id": "ea007a18-b31a-4881-92c4-86120dc5729b",
+                    "weight": 60
+                },
+                {
+                    "name": "Bloodline Pretender",
+                    "id": "eb8a16f6-55c1-40eb-998f-592bf31916b1",
+                    "weight": 40
+                }
+            ],
+            [
+                {
+                    "name": "Valkyrie's Sword",
+                    "id": "97873c66-6bff-4d79-850c-1e2663098ef4",
+                    "weight": 60
+                },
+                {
+                    "name": "Serra Angel",
+                    "id": "9067f035-3437-4c5c-bae9-d3c9001a3411",
+                    "weight": 40
+                }
+            ],
+            [
+                {
+                    "name": "Wings of the Cosmos",
+                    "id": "d6b26c95-f90d-43fb-8c99-2a3aa13ac2c6",
+                    "weight": 50
+                },
+                {
+                    "name": "Beaming Defiance",
+                    "id": "7e22411c-11c1-4770-8491-7952dd406e01",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Elves",
+        "colors": [
+            "G",
+            "B"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_elves.png",
+        "cards": [
+            "ca6f8996-bf72-4e55-944f-5b8202b6068c",
+            "5e8bded3-46c3-474f-9d09-978df8705ad1",
+            "34c599c7-bcc1-4005-b830-1fa4811af66e",
+            "593aa59a-4025-4df8-9f27-188fc7712fde"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Tajuru Blightblade",
+                    "id": "7f3d6020-6767-406c-bf28-6b3e9ae72f50",
+                    "weight": 50
+                },
+                {
+                    "name": "Jaspera Sentinel",
+                    "id": "1a68615d-9808-479d-aa80-50651246954e",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Reckless Amplimancer",
+                    "id": "bc8072b1-6080-45cd-b1c7-353b54a55931",
+                    "weight": 50
+                },
+                {
+                    "name": "Guardian Gladewalker",
+                    "id": "587eed42-5111-4161-9af5-bf76556c542a",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Elvish Warmaster",
+                    "id": "58da074a-a776-4e3f-be04-9e7f18320ae1",
+                    "weight": 80
+                },
+                {
+                    "name": "Canopy Tactician",
+                    "id": "3eaf48c9-09bc-4d81-a3a5-432219a71754",
+                    "weight": 10
+                },
+                {
+                    "name": "Tyvar Kell",
+                    "id": "8d18008f-10d2-4cdf-b4b5-7675782a8b0d",
+                    "weight": 10
+                }
+            ],
+            [
+                {
+                    "name": "Elturgard Ranger",
+                    "id": "f6898737-957f-44a6-bef7-fb196658176f",
+                    "weight": 50
+                },
+                {
+                    "name": "Grizzled Outrider",
+                    "id": "4a1d4473-5317-4bdd-9cb9-93670acf52e9",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Rabid Bite",
+                    "id": "effe3fab-6d13-4603-8a21-8a3c2a0d9e08",
+                    "weight": 50
+                },
+                {
+                    "name": "Mage Duel",
+                    "id": "92325638-0321-4409-8910-2287c64c182e",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Big Play",
+                    "id": "9016d667-50a9-4093-9a99-b34dcdafe60b",
+                    "weight": 34
+                },
+                {
+                    "name": "Snakeskin Veil",
+                    "id": "e692c208-c171-4964-9207-43c2cbc62845",
+                    "weight": 33
+                },
+                {
+                    "name": "Stony Strength",
+                    "id": "8bbab274-69dd-44a9-9310-a15779c35cad",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Choose Your Weapon",
+                    "id": "213726e4-e2f5-4e52-b05a-21c4bab9927c",
+                    "weight": 50
+                },
+                {
+                    "name": "Clear Shot",
+                    "id": "27476d9c-006d-4227-a5f2-49c7234b84a1",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Vastwood Fortification // Vastwood Thicket",
+                    "id": "3a7fd24e-84d8-405d-86e4-0571a9e23cc2",
+                    "weight": 50
+                },
+                {
+                    "name": "Bala Ged Recovery // Bala Ged Sanctuary",
+                    "id": "c5cb3052-358d-44a7-8cfd-cd31b236494a",
+                    "weight": 50
+                }
+            ]
+        ]
+    }
+]

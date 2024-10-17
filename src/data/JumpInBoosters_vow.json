@@ -1,0 +1,1425 @@
+[
+    {
+        "name": "Training",
+        "colors": [
+            "W"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_training.png",
+        "cards": [
+            "24e58478-c6a8-4f86-854a-a489c99bd777",
+            "ba77e83b-1846-4c42-bea0-2e304429fbe0",
+            "792d5b41-27f3-455b-890e-a1771944fc7d",
+            "9845cdf2-e5ba-44a0-8136-72a1eb03a6a1",
+            "5317077b-370e-41a9-9162-c713362fd7f4",
+            "0e6b9a3b-8a19-4094-8dbb-08a0a9ca04a0",
+            "f25d56f9-aa54-4657-9ac9-e93fbba3e715"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Cathar Commando",
+                    "id": "98cbc1c2-b76e-4da3-aa43-00e10b2ce532",
+                    "weight": 50
+                },
+                {
+                    "name": "Dwarfhold Champion",
+                    "id": "2404a028-05f5-469b-80e0-e820721ff266",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Estwald Shieldbasher",
+                    "id": "61c7d889-8cc0-4e80-b6d5-d41961820224",
+                    "weight": 67
+                },
+                {
+                    "name": "Gavony Silversmith",
+                    "id": "2c53b007-96aa-4db6-8c3e-529d1e845b19",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Devoted Paladin",
+                    "id": "3620ed96-1d15-4942-b9e5-9f9a64b0cab4",
+                    "weight": 67
+                },
+                {
+                    "name": "Makindi Ox",
+                    "id": "fd0d164a-bce2-4474-abe0-b735eb6c9442",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Homestead Courage",
+                    "id": "73a9c49f-fcd3-4572-bac7-6eb06fdc0815",
+                    "weight": 67
+                },
+                {
+                    "name": "Hedgewitch's Mask",
+                    "id": "97321072-1f7f-413b-9246-e6b3ec7a8c30",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Sigarda's Imprisonment",
+                    "id": "118995a6-8471-47ac-9404-700ce7fc46f6",
+                    "weight": 50
+                },
+                {
+                    "name": "Bound in Gold",
+                    "id": "074d526a-1eef-4045-bd38-f6d68c4bc4b9",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Spooky",
+        "colors": [
+            "U"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_spooky.png",
+        "cards": [
+            "a4d3652a-6774-4b16-aa8b-cb11d72ec7aa",
+            "36e71d16-0964-489d-bea2-9cec7991fc99",
+            "832288fd-8031-4c2b-ad3e-b1ec9f94d379",
+            "9716d384-88d1-415e-882f-7fed9be1adc6",
+            "823ad188-bd56-476d-9853-bed90bfad582",
+            "03a3ea4b-d292-4602-985f-7a7971ca73ec",
+            "3c0fae23-1278-499f-9df7-4a29691726b1",
+            "29306305-cb71-4fef-bf86-f5deb4e7e561"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Drownyard Amalgam",
+                    "id": "71b05d44-d987-45e1-bbd9-842dbe58c2b5",
+                    "weight": 50
+                },
+                {
+                    "name": "Skywarp Skaab",
+                    "id": "73168804-3c22-4fcb-907a-2f08999c0cea",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Screaming Swarm",
+                    "id": "3c9faf98-11bb-4407-aec9-d0d43dbaba34",
+                    "weight": 50
+                },
+                {
+                    "name": "Sudden Insight",
+                    "id": "06ec3c87-d5aa-4f8a-a9bf-ef4e38e21ad1",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Fear of Death",
+                    "id": "b81704d2-d555-4894-b36c-6b65d1ebe681",
+                    "weight": 50
+                },
+                {
+                    "name": "Locked in the Cemetery",
+                    "id": "68593c6d-8d1b-4c36-84a1-f1144669825e",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Beyeen Veil // Beyeen Coast",
+                    "id": "5f411f08-45dd-4d73-8894-daf51c175150",
+                    "weight": 50
+                },
+                {
+                    "name": "Jwari Disruption // Jwari Ruins",
+                    "id": "301750a7-d1fd-435e-bfa8-9d2fb22ad627",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Bloodthirsty",
+        "colors": [
+            "B"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_bloodthirsty.png",
+        "cards": [
+            "18c07288-1c71-4e71-bdf5-910eb583a1d8",
+            "8b12c378-1103-4a50-88fa-cf5a2deef463",
+            "043926fe-d25f-40b4-b556-181503434e68",
+            "1ddfdd10-2a99-4376-abee-f868b0d5e7c1",
+            "71f67ac0-7901-4248-9cb7-2200fb8f893e",
+            "730ddbcd-0814-4e22-85e9-78b0878324b6",
+            "076deb63-f7e2-498f-a66a-8a190370a3b3",
+            "0713adf7-1770-4d5b-80f7-d6cbd24f7890",
+            "98496d5b-1519-4f0c-8b46-0a43be643dfb"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Voldaren Bloodcaster // Bloodbat Summoner",
+                    "id": "ca5297a5-bcaa-41fd-a397-e44dc4e00ba3",
+                    "weight": 50
+                },
+                {
+                    "name": "Falkenrath Forebear",
+                    "id": "451559d0-b62d-4757-8eb5-f6b0e240899c",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Desperate Farmer // Depraved Harvester",
+                    "id": "467c566e-7f6a-40c9-8fd7-da6ae96df56c",
+                    "weight": 50
+                },
+                {
+                    "name": "Vampire Spawn",
+                    "id": "b8975c72-b2ec-4c5f-86a4-4e1e3bb41c15",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Defenestrate",
+                    "id": "df3abdcc-83a8-45c3-9bfd-23f929705018",
+                    "weight": 50
+                },
+                {
+                    "name": "Feed the Swarm",
+                    "id": "f6b2eba7-862a-4efd-9f65-065fb2070855",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Double Trouble",
+        "colors": [
+            "R"
+        ],
+        "cycling_land": false,
+        "image": "/img/cardback.webp",
+        "cards": [
+            "397ffd01-c090-4233-9f5a-5f765886d498",
+            "0bd17b9f-fd93-47d4-9cc4-cd333d0004f5",
+            "2be804ab-1024-4eee-b339-48ed8b84d363",
+            "d1814fc8-011f-4cd4-825b-f00ae6ec0fe0",
+            "04e491a1-b195-45bb-bf06-345eaee30b81",
+            "782ca27f-9f18-476c-b582-89c06fb2e322"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Fearless Pup",
+                    "id": "0eba2250-0e9b-46fd-a4b5-23f30329e063",
+                    "weight": 50
+                },
+                {
+                    "name": "Voldaren Stinger",
+                    "id": "f27a7c78-3a64-42fc-8808-15b1f41976a1",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Teeterpeak Ambusher",
+                    "id": "ad57c2f3-d9cb-4165-bb39-897b5b12689e",
+                    "weight": 50
+                },
+                {
+                    "name": "Blood Petal Celebrant",
+                    "id": "0c3a4927-f06c-424d-92a9-b40cf8e3e209",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Daybreak Combatants",
+                    "id": "8697a861-0f67-4ed3-bed8-f264fc78565e",
+                    "weight": 67
+                },
+                {
+                    "name": "Valor Singer",
+                    "id": "89bc162c-bdf1-43f7-882f-d8cee4f3f415",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Sure Strike",
+                    "id": "1d872736-fafb-44e8-a809-48c5436c665a",
+                    "weight": 50
+                },
+                {
+                    "name": "Run Amok",
+                    "id": "44c8136f-2826-476c-a103-7094670506a6",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Rending Flame",
+                    "id": "51332c31-41df-4379-aa63-6a734a4df618",
+                    "weight": 50
+                },
+                {
+                    "name": "Thundering Rebuke",
+                    "id": "dc671707-4708-44d8-8ec8-d5332599adf9",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Burn the Accursed",
+                    "id": "ff4d4e6b-564d-46da-8e32-09ed08c8ddc5",
+                    "weight": 34
+                },
+                {
+                    "name": "Farideh's Fireball",
+                    "id": "57a46987-f05a-4b83-af56-f18000874e65",
+                    "weight": 33
+                },
+                {
+                    "name": "Lacerate Flesh",
+                    "id": "c7e0c0dc-2d35-4e5a-81da-dd5f35b8e579",
+                    "weight": 33
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Wolf Pack",
+        "colors": [
+            "G"
+        ],
+        "cycling_land": false,
+        "image": "/img/cardback.webp",
+        "cards": [
+            "142c5b67-5de9-41da-b57f-7ce771457a3e",
+            "3fb04879-9348-4d4f-9a23-c82fd99d04c6",
+            "60e53d61-fcc3-4def-8206-052b46f62deb",
+            "54a4b031-0919-44aa-a35e-68da7a27235a",
+            "7a743426-6333-4ca6-9207-163b325ba435",
+            "7a48a42e-5cc5-4f9a-8745-99936f4cae5f",
+            "02e9cd00-7ffd-44e1-aa0f-c94489ff4a0f",
+            "99535539-aa73-41ed-86ab-21c97b92620d"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Oakshade Stalker // Moonlit Ambusher",
+                    "id": "8bcaa944-4e45-457c-be9c-07377b6ed08b",
+                    "weight": 50
+                },
+                {
+                    "name": "Hound Tamer // Untamed Pup",
+                    "id": "28e2119b-ed78-4b98-a956-f2b453d0b164",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Weaver of Blossoms // Blossom-Clad Werewolf",
+                    "id": "73bf2a0a-b97d-4b90-abd6-d1755734ea15",
+                    "weight": 50
+                },
+                {
+                    "name": "Bird Admirer // Wing Shredder",
+                    "id": "71ccc444-54c8-4f7c-a425-82bc3eea1eb0",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Infestation Expert // Infested Werewolf",
+                    "id": "0936761c-7cdc-49ef-8a0d-ed79219f1056",
+                    "weight": 50
+                },
+                {
+                    "name": "Burly Breaker // Dire-Strain Demolisher",
+                    "id": "3849ad37-f80d-4ffc-9240-25a63326b3dd",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Big Play",
+                    "id": "9016d667-50a9-4093-9a99-b34dcdafe60b",
+                    "weight": 50
+                },
+                {
+                    "name": "Snakeskin Veil",
+                    "id": "e692c208-c171-4964-9207-43c2cbc62845",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Disturbed",
+        "colors": [
+            "U",
+            "W"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_disturbed.png",
+        "cards": [
+            "a4d3652a-6774-4b16-aa8b-cb11d72ec7aa",
+            "f88e269e-ff3d-4775-8520-5b7a6dddf23d",
+            "8d233bc5-8a08-4d38-abd4-21a112141afd",
+            "83bacf4a-4e99-4008-97e4-3a82dddd4e45",
+            "7302b5da-cac5-4ce7-ad38-2ff4e410891b",
+            "dc5c6675-6e0f-427d-9399-a6e7fc6215f1",
+            "366e9845-019d-47cc-adb8-8fbbaad35b6d"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Twinblade Geist // Twinblade Invocation",
+                    "id": "f1deb24b-3d8f-4251-a901-85eeb891f26f",
+                    "weight": 34
+                },
+                {
+                    "name": "Mischievous Catgeist // Catlike Curiosity",
+                    "id": "a3ff628a-ef8e-45c4-84e7-a33ec28f025a",
+                    "weight": 33
+                },
+                {
+                    "name": "Stormchaser Drake",
+                    "id": "3dd5c860-9d27-40d9-af38-aaf40bd52423",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Dorothea, Vengeful Victim // Dorothea's Retribution",
+                    "id": "8c927707-abb5-4a9d-ac53-25df182d6e9b",
+                    "weight": 50
+                },
+                {
+                    "name": "Katilda, Dawnhart Martyr // Katilda's Rising Dawn",
+                    "id": "0ef240aa-2a88-4ec4-888a-918466372adb",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Kindly Ancestor // Ancestor's Embrace",
+                    "id": "25193485-7f41-4b05-9a69-4c112679f97c",
+                    "weight": 50
+                },
+                {
+                    "name": "Binding Geist // Spectral Binding",
+                    "id": "730e4629-dc54-415d-9493-88885788ca19",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Geistwave",
+                    "id": "f0e3d1ac-bec2-4bba-a6cf-a823996dde2d",
+                    "weight": 50
+                },
+                {
+                    "name": "Alchemist's Retrieval",
+                    "id": "edbf9d4f-6027-40b8-81c1-7f001a9119dd",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Fear of Death",
+                    "id": "b81704d2-d555-4894-b36c-6b65d1ebe681",
+                    "weight": 50
+                },
+                {
+                    "name": "Sigarda's Imprisonment",
+                    "id": "118995a6-8471-47ac-9404-700ce7fc46f6",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Fangs",
+        "colors": [
+            "R",
+            "B"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_fangs.png",
+        "cards": [
+            "f0192cf7-3391-4720-b9c8-72dec5dde01e",
+            "706fafd4-443f-4e16-972e-86c16f22670a",
+            "4c3c5778-4760-4a8c-8d8d-693e29a0a74b",
+            "9ccb4b1e-ef8f-4c5f-8b5b-6148455442f7",
+            "059e8447-6b1c-4651-a734-a8fea2cbf7b2",
+            "782ca27f-9f18-476c-b582-89c06fb2e322"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Voldaren Epicure",
+                    "id": "ae154e64-f626-45fb-bd52-840c1c27b2d3",
+                    "weight": 50
+                },
+                {
+                    "name": "Voldaren Stinger",
+                    "id": "f27a7c78-3a64-42fc-8808-15b1f41976a1",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Gluttonous Guest",
+                    "id": "18c07288-1c71-4e71-bdf5-910eb583a1d8",
+                    "weight": 50
+                },
+                {
+                    "name": "Vampire Spawn",
+                    "id": "b8975c72-b2ec-4c5f-86a4-4e1e3bb41c15",
+                    "weight": 25
+                },
+                {
+                    "name": "Arrogant Outlaw",
+                    "id": "496a9d45-6197-44b6-b0fc-17aeae281b2f",
+                    "weight": 25
+                }
+            ],
+            [
+                {
+                    "name": "Anje, Maid of Dishonor",
+                    "id": "1bfac4ab-97f1-448c-8554-42ed03eb5656",
+                    "weight": 75
+                },
+                {
+                    "name": "Olivia, Crimson Bride",
+                    "id": "301dacc9-ef92-4515-b907-a70d6c3fd73e",
+                    "weight": 25
+                }
+            ],
+            [
+                {
+                    "name": "Bloodcrazed Socialite",
+                    "id": "8b12c378-1103-4a50-88fa-cf5a2deef463",
+                    "weight": 50
+                },
+                {
+                    "name": "Bat Whisperer",
+                    "id": "4412c901-0ec8-437a-9d1e-ce318bbe2b03",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Inordinate Rage",
+                    "id": "d0f62bdc-50a0-41a0-ac37-9b0eeb21b6aa",
+                    "weight": 33
+                },
+                {
+                    "name": "Stolen Vitality",
+                    "id": "d50df2dd-8d14-4d92-ab4e-bf9f9f147e91",
+                    "weight": 67
+                }
+            ],
+            [
+                {
+                    "name": "Lacerate Flesh",
+                    "id": "c7e0c0dc-2d35-4e5a-81da-dd5f35b8e579",
+                    "weight": 67
+                },
+                {
+                    "name": "Grisly Ritual",
+                    "id": "53cdf2ab-3acd-49bd-8273-84c1cfc92883",
+                    "weight": 33
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Tough",
+        "colors": [
+            "G",
+            "B"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_tough.png",
+        "cards": [
+            "1a68615d-9808-479d-aa80-50651246954e",
+            "e61b3afa-66e0-4f7b-84bc-7ae2cc6d28d4",
+            "22264087-bac4-4746-b6ce-0d44cce163e6",
+            "d5ec541b-1799-4c0e-a3fb-c008cf2eb911",
+            "2abc54df-773d-4f46-b241-e1f42af8ab95",
+            "e7d3012e-1798-4f72-8d9a-b2d16f817502",
+            "213726e4-e2f5-4e52-b05a-21c4bab9927c",
+            "235d1ffc-72aa-40a2-95dc-3f6a8d495061"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Sporeback Wolf",
+                    "id": "3fb04879-9348-4d4f-9a23-c82fd99d04c6",
+                    "weight": 50
+                },
+                {
+                    "name": "Masked Vandal",
+                    "id": "f0a9c72a-e450-41e3-80e5-06f2f1171245",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Old Rutstein",
+                    "id": "625b8023-2ef1-4b7b-9e48-4f774fee14e0",
+                    "weight": 50
+                },
+                {
+                    "name": "Saryth, the Viper's Fang",
+                    "id": "bc8b3a09-75e8-428c-91f7-8fac62fadc98",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Bladebrand",
+                    "id": "64d4713d-321a-447f-a318-88b552ec5d0c",
+                    "weight": 50
+                },
+                {
+                    "name": "Infuse with Vitality",
+                    "id": "840600a9-3e78-48a6-b75b-860446b82c1b",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Eaten Alive",
+                    "id": "e7975a3c-570a-4bff-a60d-d274f758b93f",
+                    "weight": 34
+                },
+                {
+                    "name": "Grim Bounty",
+                    "id": "b98e0ab1-dea8-492b-a712-2057f2b1d020",
+                    "weight": 33
+                },
+                {
+                    "name": "Defenestrate",
+                    "id": "df3abdcc-83a8-45c3-9bfd-23f929705018",
+                    "weight": 33
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Multitalented",
+        "colors": [
+            "W",
+            "R"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_multitalented.png",
+        "cards": [
+            "389f0045-218d-41cd-bdca-8a9a0ab1b31b",
+            "ef3b2961-559f-42b1-be13-ff3d03e62809",
+            "02eedf9d-e26c-405c-aee5-1b3493dc5e9b",
+            "81a79f5f-a65a-4b43-b58c-cdfa09cc7855",
+            "6b75855c-88dc-4491-8045-080debfeb7b5",
+            "3f669ac4-98ed-4e23-91a9-281f8277ab04",
+            "c1cb483f-c567-4cfd-9fe8-1503e7b40542",
+            "d8ed0335-daa6-4dbe-a94d-4d56c8cfd093"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Story Seeker",
+                    "id": "e3dae817-3db1-4edf-86ba-c2c2b238fcf5",
+                    "weight": 50
+                },
+                {
+                    "name": "Fencing Ace",
+                    "id": "495d074f-63b8-463f-b7e8-cc20e272208c",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Thundering Rebuke",
+                    "id": "dc671707-4708-44d8-8ec8-d5332599adf9",
+                    "weight": 50
+                },
+                {
+                    "name": "Cathartic Pyre",
+                    "id": "b045c28a-39f9-4cd9-8f3a-a626b697f409",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Adamant Will",
+                    "id": "bd091f3e-5fcc-4d12-b0c3-3b6340ab01d8",
+                    "weight": 50
+                },
+                {
+                    "name": "Beaming Defiance",
+                    "id": "7e22411c-11c1-4770-8491-7952dd406e01",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Lacerate Flesh",
+                    "id": "c7e0c0dc-2d35-4e5a-81da-dd5f35b8e579",
+                    "weight": 34
+                },
+                {
+                    "name": "Burn the Accursed",
+                    "id": "ff4d4e6b-564d-46da-8e32-09ed08c8ddc5",
+                    "weight": 33
+                },
+                {
+                    "name": "Pigment Storm",
+                    "id": "d285a7a1-bb7e-4a78-a49f-c2add62b829a",
+                    "weight": 33
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Crawlies",
+        "colors": [
+            "G",
+            "U"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_crawlies.png",
+        "cards": [
+            "a2cda10b-7cd5-4cf5-87bd-c3b8c6aa2b47",
+            "10edf37a-ee35-491d-b83a-39035f7df65a",
+            "6040c573-cd8c-4593-8ade-d9922482035c",
+            "6ad9ae64-6526-4747-9b0c-77d113f58c33",
+            "b5339f6e-9ed7-4734-91c9-c2ed59ca1052",
+            "9716d384-88d1-415e-882f-7fed9be1adc6",
+            "5252ea27-63d1-4b80-beae-8e016373d004",
+            "99535539-aa73-41ed-86ab-21c97b92620d"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Grolnok, the Omnivore",
+                    "id": "7aaba76b-9cec-4c2b-b0eb-8f44201f6422",
+                    "weight": 50
+                },
+                {
+                    "name": "Overcharged Amalgam",
+                    "id": "dbbcd63d-6c25-47a6-a76c-ac53bf12949c",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Crawling Infestation",
+                    "id": "0ab55dae-5393-4356-9f81-66d6ea5d23c0",
+                    "weight": 50
+                },
+                {
+                    "name": "Soulcipher Board // Cipherbound Spirit",
+                    "id": "3c0fae23-1278-499f-9df7-4a29691726b1",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Fear of Death",
+                    "id": "b81704d2-d555-4894-b36c-6b65d1ebe681",
+                    "weight": 50
+                },
+                {
+                    "name": "Locked in the Cemetery",
+                    "id": "68593c6d-8d1b-4c36-84a1-f1144669825e",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Mulch",
+                    "id": "950dd57e-b2e1-4a27-a212-86fbfdbf914d",
+                    "weight": 25
+                },
+                {
+                    "name": "Strategic Planning",
+                    "id": "29306305-cb71-4fef-bf86-f5deb4e7e561",
+                    "weight": 25
+                },
+                {
+                    "name": "Tapping at the Window",
+                    "id": "ba75dc52-7ab2-43ec-afac-0a9bcf24cde9",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Training",
+        "colors": [
+            "W"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_training.png",
+        "cards": [
+            "f7a659bf-9d85-4011-980e-c3a8dc4513e9",
+            "ba77e83b-1846-4c42-bea0-2e304429fbe0",
+            "792d5b41-27f3-455b-890e-a1771944fc7d",
+            "3620ed96-1d15-4942-b9e5-9f9a64b0cab4",
+            "9845cdf2-e5ba-44a0-8136-72a1eb03a6a1",
+            "5317077b-370e-41a9-9162-c713362fd7f4",
+            "0e6b9a3b-8a19-4094-8dbb-08a0a9ca04a0",
+            "985d1b57-42e0-41a2-a9c6-2f5427c0c1c9"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Cathar Commando",
+                    "id": "98cbc1c2-b76e-4da3-aa43-00e10b2ce532",
+                    "weight": 50
+                },
+                {
+                    "name": "Flaming Fist Duskguard",
+                    "id": "7818f932-989a-4a29-8deb-77619c760d04",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Estwald Shieldbasher",
+                    "id": "61c7d889-8cc0-4e80-b6d5-d41961820224",
+                    "weight": 67
+                },
+                {
+                    "name": "Gavony Silversmith",
+                    "id": "2c53b007-96aa-4db6-8c3e-529d1e845b19",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Homestead Courage",
+                    "id": "73a9c49f-fcd3-4572-bac7-6eb06fdc0815",
+                    "weight": 67
+                },
+                {
+                    "name": "Hedgewitch's Mask",
+                    "id": "97321072-1f7f-413b-9246-e6b3ec7a8c30",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Sigarda's Imprisonment",
+                    "id": "118995a6-8471-47ac-9404-700ce7fc46f6",
+                    "weight": 50
+                },
+                {
+                    "name": "Hold for Ransom",
+                    "id": "53e74a99-11d9-40b8-b1d6-8f68a3f490fa",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Spooky",
+        "colors": [
+            "U"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_spooky.png",
+        "cards": [
+            "a4d3652a-6774-4b16-aa8b-cb11d72ec7aa",
+            "9716d384-88d1-415e-882f-7fed9be1adc6",
+            "823ad188-bd56-476d-9853-bed90bfad582",
+            "3c9faf98-11bb-4407-aec9-d0d43dbaba34",
+            "03a3ea4b-d292-4602-985f-7a7971ca73ec",
+            "832288fd-8031-4c2b-ad3e-b1ec9f94d379",
+            "3c0fae23-1278-499f-9df7-4a29691726b1",
+            "86382685-e54c-4152-a500-2148a2d6b5a4"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Baithook Angler // Hook-Haunt Drifter",
+                    "id": "36e71d16-0964-489d-bea2-9cec7991fc99",
+                    "weight": 50
+                },
+                {
+                    "name": "Binding Geist // Spectral Binding",
+                    "id": "730e4629-dc54-415d-9493-88885788ca19",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Drownyard Amalgam",
+                    "id": "71b05d44-d987-45e1-bbd9-842dbe58c2b5",
+                    "weight": 50
+                },
+                {
+                    "name": "Skywarp Skaab",
+                    "id": "73168804-3c22-4fcb-907a-2f08999c0cea",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Fear of Death",
+                    "id": "b81704d2-d555-4894-b36c-6b65d1ebe681",
+                    "weight": 50
+                },
+                {
+                    "name": "Locked in the Cemetery",
+                    "id": "68593c6d-8d1b-4c36-84a1-f1144669825e",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Scattered Thoughts",
+                    "id": "dc5c6675-6e0f-427d-9399-a6e7fc6215f1",
+                    "weight": 50
+                },
+                {
+                    "name": "Secrets of the Key",
+                    "id": "9b022ba8-07b6-4993-99c8-89c6dcb19e60",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Bloodthirsty",
+        "colors": [
+            "B"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_bloodthirsty.png",
+        "cards": [
+            "18c07288-1c71-4e71-bdf5-910eb583a1d8",
+            "8b12c378-1103-4a50-88fa-cf5a2deef463",
+            "702315d7-dec9-49e8-a508-feacd47198dc",
+            "1ddfdd10-2a99-4376-abee-f868b0d5e7c1",
+            "6b23b3e4-58cf-4b5d-bdcb-410a403b4987",
+            "71f67ac0-7901-4248-9cb7-2200fb8f893e",
+            "0713adf7-1770-4d5b-80f7-d6cbd24f7890",
+            "90183d4d-c231-4e45-b1fc-2699b33a3733"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Voldaren Bloodcaster // Bloodbat Summoner",
+                    "id": "ca5297a5-bcaa-41fd-a397-e44dc4e00ba3",
+                    "weight": 50
+                },
+                {
+                    "name": "Falkenrath Forebear",
+                    "id": "451559d0-b62d-4757-8eb5-f6b0e240899c",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Desperate Farmer // Depraved Harvester",
+                    "id": "467c566e-7f6a-40c9-8fd7-da6ae96df56c",
+                    "weight": 50
+                },
+                {
+                    "name": "Vampire Spawn",
+                    "id": "b8975c72-b2ec-4c5f-86a4-4e1e3bb41c15",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Pointed Discussion",
+                    "id": "076deb63-f7e2-498f-a66a-8a190370a3b3",
+                    "weight": 50
+                },
+                {
+                    "name": "Blood Fountain",
+                    "id": "dd03651e-ada0-41dc-8722-0eba476943e3",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Bleed Dry",
+                    "id": "3db65755-f104-4de9-bcc9-0a4a7bc66b51",
+                    "weight": 50
+                },
+                {
+                    "name": "Twisted Embrace",
+                    "id": "e4c7919a-de62-46df-a937-593647473ef5",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Double Trouble",
+        "colors": [
+            "R"
+        ],
+        "cycling_land": false,
+        "image": "/img/cardback.webp",
+        "cards": [
+            "397ffd01-c090-4233-9f5a-5f765886d498",
+            "0bd17b9f-fd93-47d4-9cc4-cd333d0004f5",
+            "fdbe6937-ceda-4367-a101-562fd5e0e09d",
+            "d1814fc8-011f-4cd4-825b-f00ae6ec0fe0",
+            "04e491a1-b195-45bb-bf06-345eaee30b81",
+            "8697a861-0f67-4ed3-bed8-f264fc78565e",
+            "f8532b98-b69e-4d43-9ec8-0587572a0dff"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Goldhound",
+                    "id": "c059e4b4-1542-4b5c-810a-9f0abac5792b",
+                    "weight": 50
+                },
+                {
+                    "name": "Voldaren Stinger",
+                    "id": "f27a7c78-3a64-42fc-8808-15b1f41976a1",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Falkenrath Perforator",
+                    "id": "c40998e0-d7d0-4d79-a40a-9a381debd2cb",
+                    "weight": 50
+                },
+                {
+                    "name": "Blood Petal Celebrant",
+                    "id": "0c3a4927-f06c-424d-92a9-b40cf8e3e209",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Sure Strike",
+                    "id": "1d872736-fafb-44e8-a809-48c5436c665a",
+                    "weight": 50
+                },
+                {
+                    "name": "Raze the Effigy",
+                    "id": "e0dd378c-5050-48c9-9a16-6d91afa62d21",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Rending Flame",
+                    "id": "51332c31-41df-4379-aa63-6a734a4df618",
+                    "weight": 50
+                },
+                {
+                    "name": "Torch Breath",
+                    "id": "d9fbd4a8-c44c-42fc-b946-bdc7e20e1668",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Burn the Accursed",
+                    "id": "ff4d4e6b-564d-46da-8e32-09ed08c8ddc5",
+                    "weight": 50
+                },
+                {
+                    "name": "Farideh's Fireball",
+                    "id": "57a46987-f05a-4b83-af56-f18000874e65",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Wolf Pack",
+        "colors": [
+            "G"
+        ],
+        "cycling_land": false,
+        "image": "/img/cardback.webp",
+        "cards": [
+            "54a4b031-0919-44aa-a35e-68da7a27235a",
+            "3849ad37-f80d-4ffc-9240-25a63326b3dd",
+            "7a743426-6333-4ca6-9207-163b325ba435",
+            "60e53d61-fcc3-4def-8206-052b46f62deb",
+            "7a48a42e-5cc5-4f9a-8745-99936f4cae5f",
+            "02e9cd00-7ffd-44e1-aa0f-c94489ff4a0f",
+            "a902d474-0d02-449e-ab6c-8c2f32c99384"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Ascendant Packleader",
+                    "id": "142c5b67-5de9-41da-b57f-7ce771457a3e",
+                    "weight": 60
+                },
+                {
+                    "name": "Tovolar's Huntmaster // Tovolar's Packleader",
+                    "id": "3983a304-5040-4b8d-945a-bf4ede3104a8",
+                    "weight": 30
+                },
+                {
+                    "name": "Avabruck Caretaker // Hollowhenge Huntmaster",
+                    "id": "c0c358b4-5af2-438f-8bd5-beb0ee6b518b",
+                    "weight": 10
+                }
+            ],
+            [
+                {
+                    "name": "Oakshade Stalker // Moonlit Ambusher",
+                    "id": "8bcaa944-4e45-457c-be9c-07377b6ed08b",
+                    "weight": 50
+                },
+                {
+                    "name": "Hound Tamer // Untamed Pup",
+                    "id": "28e2119b-ed78-4b98-a956-f2b453d0b164",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Weaver of Blossoms // Blossom-Clad Werewolf",
+                    "id": "73bf2a0a-b97d-4b90-abd6-d1755734ea15",
+                    "weight": 50
+                },
+                {
+                    "name": "Bird Admirer // Wing Shredder",
+                    "id": "71ccc444-54c8-4f7c-a425-82bc3eea1eb0",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Sporeback Wolf",
+                    "id": "3fb04879-9348-4d4f-9a23-c82fd99d04c6",
+                    "weight": 50
+                },
+                {
+                    "name": "Pestilent Wolf",
+                    "id": "e2686431-8d9c-4b9c-998f-38b5ae113d4a",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Massive Might",
+                    "id": "3a5cd50b-4825-4d85-b0f9-e2a51d2a7df1",
+                    "weight": 50
+                },
+                {
+                    "name": "Tamiyo's Safekeeping",
+                    "id": "fd4b7ee2-de65-4288-872d-486065a4f226",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Spirits",
+        "colors": [
+            "U",
+            "W"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_spirits.png",
+        "cards": [
+            "965e6bd5-dc32-406c-bc99-ceb15be4d3f2",
+            "8d233bc5-8a08-4d38-abd4-21a112141afd",
+            "ceb84515-7b8f-444d-b6a9-61231621f9b7",
+            "83bacf4a-4e99-4008-97e4-3a82dddd4e45",
+            "f88e269e-ff3d-4775-8520-5b7a6dddf23d",
+            "7302b5da-cac5-4ce7-ad38-2ff4e410891b",
+            "dc5c6675-6e0f-427d-9399-a6e7fc6215f1",
+            "985d1b57-42e0-41a2-a9c6-2f5427c0c1c9"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Dorothea, Vengeful Victim // Dorothea's Retribution",
+                    "id": "8c927707-abb5-4a9d-ac53-25df182d6e9b",
+                    "weight": 50
+                },
+                {
+                    "name": "Katilda, Dawnhart Martyr // Katilda's Rising Dawn",
+                    "id": "0ef240aa-2a88-4ec4-888a-918466372adb",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Kindly Ancestor // Ancestor's Embrace",
+                    "id": "25193485-7f41-4b05-9a69-4c112679f97c",
+                    "weight": 50
+                },
+                {
+                    "name": "Binding Geist // Spectral Binding",
+                    "id": "730e4629-dc54-415d-9493-88885788ca19",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Geistwave",
+                    "id": "f0e3d1ac-bec2-4bba-a6cf-a823996dde2d",
+                    "weight": 50
+                },
+                {
+                    "name": "Alchemist's Retrieval",
+                    "id": "edbf9d4f-6027-40b8-81c1-7f001a9119dd",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Fear of Death",
+                    "id": "b81704d2-d555-4894-b36c-6b65d1ebe681",
+                    "weight": 50
+                },
+                {
+                    "name": "Sigarda's Imprisonment",
+                    "id": "118995a6-8471-47ac-9404-700ce7fc46f6",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Vampires",
+        "colors": [
+            "R",
+            "B"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_vampires.png",
+        "cards": [
+            "f0192cf7-3391-4720-b9c8-72dec5dde01e",
+            "4c3c5778-4760-4a8c-8d8d-693e29a0a74b",
+            "706fafd4-443f-4e16-972e-86c16f22670a",
+            "d50df2dd-8d14-4d92-ab4e-bf9f9f147e91",
+            "c1b0751e-3a7e-4568-8c64-7429d6829687",
+            "076deb63-f7e2-498f-a66a-8a190370a3b3",
+            "f8532b98-b69e-4d43-9ec8-0587572a0dff"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Voldaren Epicure",
+                    "id": "ae154e64-f626-45fb-bd52-840c1c27b2d3",
+                    "weight": 50
+                },
+                {
+                    "name": "Voldaren Stinger",
+                    "id": "f27a7c78-3a64-42fc-8808-15b1f41976a1",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Gluttonous Guest",
+                    "id": "18c07288-1c71-4e71-bdf5-910eb583a1d8",
+                    "weight": 50
+                },
+                {
+                    "name": "Vampire Spawn",
+                    "id": "b8975c72-b2ec-4c5f-86a4-4e1e3bb41c15",
+                    "weight": 25
+                },
+                {
+                    "name": "Arrogant Outlaw",
+                    "id": "496a9d45-6197-44b6-b0fc-17aeae281b2f",
+                    "weight": 25
+                }
+            ],
+            [
+                {
+                    "name": "Anje, Maid of Dishonor",
+                    "id": "1bfac4ab-97f1-448c-8554-42ed03eb5656",
+                    "weight": 75
+                },
+                {
+                    "name": "Olivia, Crimson Bride",
+                    "id": "301dacc9-ef92-4515-b907-a70d6c3fd73e",
+                    "weight": 25
+                }
+            ],
+            [
+                {
+                    "name": "Bloodcrazed Socialite",
+                    "id": "8b12c378-1103-4a50-88fa-cf5a2deef463",
+                    "weight": 50
+                },
+                {
+                    "name": "Bat Whisperer",
+                    "id": "4412c901-0ec8-437a-9d1e-ce318bbe2b03",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Lacerate Flesh",
+                    "id": "c7e0c0dc-2d35-4e5a-81da-dd5f35b8e579",
+                    "weight": 67
+                },
+                {
+                    "name": "Grisly Ritual",
+                    "id": "53cdf2ab-3acd-49bd-8273-84c1cfc92883",
+                    "weight": 33
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Tough",
+        "colors": [
+            "B",
+            "G"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_tough.png",
+        "cards": [
+            "b723d9cd-05f5-4894-9f2b-52a434a3019c",
+            "e61b3afa-66e0-4f7b-84bc-7ae2cc6d28d4",
+            "22264087-bac4-4746-b6ce-0d44cce163e6",
+            "d5ec541b-1799-4c0e-a3fb-c008cf2eb911",
+            "2abc54df-773d-4f46-b241-e1f42af8ab95",
+            "3fb04879-9348-4d4f-9a23-c82fd99d04c6",
+            "e7d3012e-1798-4f72-8d9a-b2d16f817502",
+            "213726e4-e2f5-4e52-b05a-21c4bab9927c",
+            "a902d474-0d02-449e-ab6c-8c2f32c99384"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Old Rutstein",
+                    "id": "625b8023-2ef1-4b7b-9e48-4f774fee14e0",
+                    "weight": 50
+                },
+                {
+                    "name": "Saryth, the Viper's Fang",
+                    "id": "bc8b3a09-75e8-428c-91f7-8fac62fadc98",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Bladebrand",
+                    "id": "64d4713d-321a-447f-a318-88b552ec5d0c",
+                    "weight": 50
+                },
+                {
+                    "name": "Sheltering Boughs",
+                    "id": "915dd4c2-0e9f-440c-8e4c-80db351a5eba",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Eaten Alive",
+                    "id": "e7975a3c-570a-4bff-a60d-d274f758b93f",
+                    "weight": 34
+                },
+                {
+                    "name": "Twisted Embrace",
+                    "id": "e4c7919a-de62-46df-a937-593647473ef5",
+                    "weight": 33
+                },
+                {
+                    "name": "Defenestrate",
+                    "id": "df3abdcc-83a8-45c3-9bfd-23f929705018",
+                    "weight": 33
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Crawlies",
+        "colors": [
+            "G",
+            "U"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/ji_crawlies.png",
+        "cards": [
+            "a2cda10b-7cd5-4cf5-87bd-c3b8c6aa2b47",
+            "6ad9ae64-6526-4747-9b0c-77d113f58c33",
+            "b5339f6e-9ed7-4734-91c9-c2ed59ca1052",
+            "9716d384-88d1-415e-882f-7fed9be1adc6",
+            "5252ea27-63d1-4b80-beae-8e016373d004",
+            "10edf37a-ee35-491d-b83a-39035f7df65a",
+            "f1e9edd3-151d-4bf6-b491-03db9db32234",
+            "a902d474-0d02-449e-ab6c-8c2f32c99384"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Grolnok, the Omnivore",
+                    "id": "7aaba76b-9cec-4c2b-b0eb-8f44201f6422",
+                    "weight": 50
+                },
+                {
+                    "name": "Slogurk, the Overslime",
+                    "id": "f94e888b-6eeb-4ef3-ab21-5ed2bf0036a3",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Fear of Death",
+                    "id": "b81704d2-d555-4894-b36c-6b65d1ebe681",
+                    "weight": 50
+                },
+                {
+                    "name": "Locked in the Cemetery",
+                    "id": "68593c6d-8d1b-4c36-84a1-f1144669825e",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Mulch",
+                    "id": "950dd57e-b2e1-4a27-a212-86fbfdbf914d",
+                    "weight": 50
+                },
+                {
+                    "name": "Tapping at the Window",
+                    "id": "ba75dc52-7ab2-43ec-afac-0a9bcf24cde9",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Crawling Infestation",
+                    "id": "0ab55dae-5393-4356-9f81-66d6ea5d23c0",
+                    "weight": 50
+                },
+                {
+                    "name": "Soulcipher Board // Cipherbound Spirit",
+                    "id": "3c0fae23-1278-499f-9df7-4a29691726b1",
+                    "weight": 50
+                }
+            ]
+        ]
+    }
+]

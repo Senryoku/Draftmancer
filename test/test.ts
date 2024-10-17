@@ -2395,7 +2395,7 @@ describe("Sealed", function () {
 	});
 });
 
-import { JumpstartBoosters, Jumpstart2022Boosters, JumpInSets } from "../src/Jumpstart.js";
+import { JumpstartBoosters, Jumpstart2022Boosters, JumpInSets, JumpInBoosters } from "../src/Jumpstart.js";
 import { Card, CardColor, CardID, DeckList, UniqueCard } from "../src/CardTypes.js";
 import { SessionID, UserID } from "../src/IDTypes.js";
 import { SetCode } from "../src/Types.js";
@@ -2406,7 +2406,7 @@ import { JumpInBooster } from "../src/JumpInTypes.js";
 import { parseLine } from "../src/parseCardList.js";
 import { SocketError, isSocketError } from "../src/Message.js";
 import { isNumber } from "../src/TypeChecks.js";
-import { getNDisctinctRandom, random, randomInt } from "../src/utils.js";
+import { getNDisctinctRandom, random, randomInt, sum } from "../src/utils.js";
 
 describe("Jumpstart", function () {
 	let clients: ReturnType<typeof makeClients> = [];
@@ -2595,8 +2595,15 @@ describe("Jumpstart: Historic Horizons", function () {
 });
 
 describe("Jump In!", function () {
+	// Set selections with a total of 3 ot less packs will return an error by design. Avoid those for tests.
+	const testCases = JumpInSets.filter((s) => JumpInBoosters[s].length >= 4).map((s) => [s]);
 	for (let i = 0; i < 8; ++i) {
-		const sets = getNDisctinctRandom(JumpInSets, randomInt(1, JumpInSets.length));
+		let testCase = getNDisctinctRandom(JumpInSets, randomInt(1, JumpInSets.length));
+		while (sum(testCase.map((s) => JumpInBoosters[s].length)) < 4)
+			testCase = getNDisctinctRandom(JumpInSets, randomInt(1, JumpInSets.length));
+		testCases.push();
+	}
+	for (const sets of testCases) {
 		describe(sets.join(", "), function () {
 			let clients: ReturnType<typeof makeClients> = [];
 			const sessionID = "JumpInSession";

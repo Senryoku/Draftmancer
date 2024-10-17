@@ -5,7 +5,11 @@
 		</template>
 		<template v-slot:body>
 			<div class="dialog">
-				<p>Select one or multiple sets:</p>
+				<div>Select one or multiple sets:</div>
+				<div style="display: flex; justify-content: space-evenly">
+					<button @click="all">All</button>
+					<button @click="none">None</button>
+				</div>
 				<div class="sets">
 					<div v-for="set in Sets" :key="set" class="set">
 						<input
@@ -38,9 +42,28 @@ import Modal from "./Modal.vue";
 
 import SetsInfos from "../../../src/SetInfos";
 
-const Sets = ["blb", "otj", "mkm", "lci", "woe", "ltr", "one", "bro"];
+const Sets = [
+	"blb",
+	"otj",
+	"mkm",
+	"lci",
+	"woe",
+	"ltr",
+	"one",
+	"bro",
+	"dmu",
+	"hbg",
+	"snc",
+	"neo",
+	"vow",
+	"mid",
+	"afr",
+	"stx",
+	"khm",
+	"znr",
+];
 
-const sets = ref<string[]>(["blb", "otj", "mkm", "lci", "woe", "ltr", "one", "bro"]);
+const sets = ref<string[]>(["blb", "otj", "mkm", "lci", "woe", "ltr", "one", "bro", "dmu"]);
 
 const emit = defineEmits<{
 	(e: "close"): void;
@@ -52,6 +75,14 @@ const start = () => {
 	emit("start", sets.value);
 	emit("close");
 };
+
+function all() {
+	sets.value = Sets;
+}
+
+function none() {
+	sets.value = [];
+}
 </script>
 
 <style scoped src="../css/start-game-dialog.css" />
@@ -64,8 +95,9 @@ const start = () => {
 .sets {
 	display: flex;
 	flex-direction: column;
+	flex-wrap: wrap;
 	gap: 0.5em;
-	margin: 1em;
+	margin: 0 1em;
 }
 
 .set {
@@ -80,7 +112,7 @@ const start = () => {
 .set label {
 	flex-grow: 1;
 
-	height: 2em;
+	height: 1.5em;
 	display: flex;
 	gap: 0.5em;
 	align-items: center;

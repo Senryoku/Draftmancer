@@ -1,0 +1,746 @@
+[
+    {
+        "name": "Invaders",
+        "colors": [
+            "R",
+            "W"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/invaders.png",
+        "cards": [
+            "83d89bd5-95cc-41fc-aea2-2dde52231919",
+            "49e206f2-1647-4456-8f2f-b67d053413e2",
+            "2777f8b5-2f8e-4cb8-9206-8a4978488657",
+            "165357cc-ec74-490f-aec3-7048bb43c8f9",
+            "d387b608-ba4e-49c8-bd81-37594290a352",
+            "194ad785-21bb-4ce6-8776-31c67259fb99",
+            "b0a45d4d-d16a-43c6-843c-916d4629aae1",
+            "2ccc29cc-025d-402e-9fe3-75998eb290c9"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Sun-Blessed Guardian // Furnace-Blessed Conqueror",
+                    "id": "630ce82b-0d09-4a12-8cba-0b0ed8415128",
+                    "weight": 50
+                },
+                {
+                    "name": "Phyrexian Awakening",
+                    "id": "6b9ed068-b6bb-4c9e-a8c9-56aa9b62037a",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Progenitor Exarch",
+                    "id": "f86f7d03-ce71-498d-9dc5-2bd853ac0eae",
+                    "weight": 80
+                },
+                {
+                    "name": "Elesh Norn // The Argent Etchings",
+                    "id": "d8999135-ddb1-4e4c-b885-e25f23dac3d3",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Aerial Boost",
+                    "id": "f7017afb-4c7c-4c8d-9c9d-3f056a55561e",
+                    "weight": 50
+                },
+                {
+                    "name": "Angelic Intervention",
+                    "id": "09fb5876-5b47-4a05-be57-7ad3890c8953",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Scrollshift",
+                    "id": "6fc278d1-2ea4-4fbc-95cd-a9cd48c3c630",
+                    "weight": 50
+                },
+                {
+                    "name": "Inspired Charge",
+                    "id": "9f17e624-219a-4e76-bfe0-f49c9ddd4a6d",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Convertible",
+        "colors": [
+            "R",
+            "G",
+            "U"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/convertible.png",
+        "cards": [
+            "70668650-0fb1-4486-a4e6-ab9a12be5626",
+            "cd1c8e1a-bd38-47a2-a55a-682ebaede960",
+            "58b35399-79af-49fa-989e-867a85320cc2",
+            "2e943948-2326-4446-9a16-64d6040b8856",
+            "c4303347-3fbd-4bbd-ab3f-e7ddbe0e0a9d",
+            "0e896a87-2a93-488c-a0c9-0bed8404da44",
+            "38211d78-ebac-4150-ac11-7613a0e9e1bc",
+            "f6ee12ba-0e6c-485a-a1ff-61726ed72fea"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Order of the Mirror // Order of the Alabaster Host",
+                    "id": "103295ed-5ddc-4528-8848-4fd2cfec4b88",
+                    "weight": 50
+                },
+                {
+                    "name": "Furtive Analyst",
+                    "id": "98c55aff-baed-4fb5-a490-abd59b8df5e7",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Chrome Host Seedshark",
+                    "id": "febaaeae-5c0d-45fa-8169-b27b4996f18e",
+                    "weight": 80
+                },
+                {
+                    "name": "Jin-Gitaxias // The Great Synthesis",
+                    "id": "41c83142-b948-4ee5-a486-41306d2bb411",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Meeting of Minds",
+                    "id": "508b8650-c283-4e54-abdc-32ec2fb1ee34",
+                    "weight": 50
+                },
+                {
+                    "name": "Temporal Cleansing",
+                    "id": "6e67031a-8216-4c66-b6fb-6628bd02d279",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Invasion of Kamigawa // Rooftop Saboteurs",
+                    "id": "3140320d-b932-441f-bff3-9bdf4419b88a",
+                    "weight": 50
+                },
+                {
+                    "name": "Invasion of Vryn // Overloaded Mage-Ring",
+                    "id": "c0ef6737-8e85-42ca-8ee6-6a34f9462de3",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Phyrexian",
+        "colors": [
+            "B"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/phyrexian.png",
+        "cards": [
+            "4fc23af5-18dd-45f9-8d82-76b48aaf6d4d",
+            "4616a548-269b-4530-97e8-c690ccc138f3",
+            "025a5338-133f-486d-9f73-0896226685c0",
+            "91fd7350-cc97-4c35-a072-2c826984293c",
+            "97e08244-bbdb-402a-8dde-93e17d989467",
+            "a28f5de4-2af6-44ff-9bb8-d874f8ae7dd1",
+            "9f9825ac-c186-4a10-b9e3-e73b10f75ed9",
+            "1ec1a02f-128c-44aa-b708-6fcda34b40c0"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Grafted Butcher",
+                    "id": "e22f11a1-0cbd-4b36-8dbd-37ba29ad4608",
+                    "weight": 80
+                },
+                {
+                    "name": "Sheoldred // The True Scriptures",
+                    "id": "bf2249e6-af74-4b88-8eb7-144ce8fa7f6b",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Blightreaper Thallid // Blightsower Thallid",
+                    "id": "f1150ea9-02b5-4767-a529-6149d758830e",
+                    "weight": 50
+                },
+                {
+                    "name": "Phyrexian Gargantua",
+                    "id": "a2be7576-bea6-4c20-b594-a058115f7acf",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Tenured Oilcaster",
+                    "id": "65721bc1-87fa-45b9-8b45-ee77c1aab6ac",
+                    "weight": 50
+                },
+                {
+                    "name": "Etched Host Doombringer",
+                    "id": "b2f1afa2-ca71-49cf-953b-d5dfc60c178f",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Invasion of Eldraine // Prickle Faeries",
+                    "id": "92f5b177-b0c6-4573-b860-f75dad1941bd",
+                    "weight": 50
+                },
+                {
+                    "name": "Invasion of Ulgrotha // Grandmother Ravi Sengir",
+                    "id": "49ec5e00-22f4-486e-8e99-e950725f6fbc",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Resistance",
+        "colors": [
+            "R"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/resistance.png",
+        "cards": [
+            "c2551b01-4d88-47f3-b54d-96ec03e093f8",
+            "ab6c877a-25f7-4ee7-8cf0-33728ef085fc",
+            "4e317d1d-3f20-4f0d-8b1e-31df351e8f83",
+            "ee7a4ccb-c0c9-491f-9475-e78895fa9d03",
+            "a53088da-25b5-4c7e-9a11-456fbc814dfc",
+            "74d0bb76-075c-49d7-9afb-e5bcf5b654f7",
+            "04113b3c-cc8f-4b15-9091-f82ea3df2e7c",
+            "032720a1-410b-4638-9294-35fd8e27375f"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Voldaren Thrillseeker",
+                    "id": "1dbcd466-fb99-4388-a118-4534b85544f0",
+                    "weight": 80
+                },
+                {
+                    "name": "Chandra, Hope's Beacon",
+                    "id": "a146ea07-ec1c-448d-b67a-dd9f9e27c2e0",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Redcap Heelslasher",
+                    "id": "3c7ca435-aa84-4d35-80db-d1c74b878b12",
+                    "weight": 50
+                },
+                {
+                    "name": "War-Trained Slasher",
+                    "id": "c2a87c5d-5efc-4ceb-b165-27f807117f71",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Mirran Banesplitter",
+                    "id": "ee4d00b8-1373-47b2-9be5-2199e0b12540",
+                    "weight": 50
+                },
+                {
+                    "name": "Burning Sun's Fury",
+                    "id": "2731e181-f59c-446c-bb86-8f93bfbb10e9",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Invasion of Mercadia // Kyren Flamewright",
+                    "id": "407d6723-bf58-403e-b2ac-ba52c51d356f",
+                    "weight": 50
+                },
+                {
+                    "name": "Ramosian Greatsword",
+                    "id": "efd6f04e-e83d-4580-ae3f-583ada848868",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Rooted",
+        "colors": [
+            "G",
+            "B"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/rooted.png",
+        "cards": [
+            "40ab763d-05ee-408d-aeba-eaf18c4f2e21",
+            "70b2cdc5-35b9-443d-b499-c8b75c0d0a64",
+            "5f73cd60-cd89-4c7a-85a6-e0ae34ca101b",
+            "af527344-9d88-4641-8f6d-0263a6797df3",
+            "a1e04eed-9a6c-491b-8f1f-1c76ac40452d",
+            "8278069a-bd92-40ee-b7d5-e740dddb00fa",
+            "0eb51be0-6a2e-464a-86d1-aa36179c8c18",
+            "e0bbfb58-8b22-4e8d-991c-855c29964d94"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Deeproot Wayfinder",
+                    "id": "b4066d41-0eb5-4dfd-93ec-2f242c3a27a4",
+                    "weight": 80
+                },
+                {
+                    "name": "Vorinclex // The Grand Evolution",
+                    "id": "e24b5289-d3b5-4b4d-bb37-69bf2c3b48bc",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Bonded Herdbeast // Plated Kilnbeast",
+                    "id": "61972ddb-3421-4f22-a47a-89cea944dd02",
+                    "weight": 50
+                },
+                {
+                    "name": "Wildwood Escort",
+                    "id": "a8c6fc26-df6e-44de-96e6-a6e34086edc2",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Serpent-Blade Assailant",
+                    "id": "6fabc49f-b665-4c56-b06e-03220f7918bb",
+                    "weight": 50
+                },
+                {
+                    "name": "War Historian",
+                    "id": "0007efdf-417d-48a7-b119-3a2fda3e1158",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Invasion of Zendikar // Awakened Skyclave",
+                    "id": "8fed056f-a8f5-41ec-a7d2-a80a238872d1",
+                    "weight": 50
+                },
+                {
+                    "name": "Invasion of Muraganda // Primordial Plasm",
+                    "id": "93345804-dda4-42a2-84d4-8fcd376dd2d4",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Knights",
+        "colors": [
+            "U",
+            "W"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/knights.png",
+        "cards": [
+            "c2418f5c-a85f-4249-8a53-c94b011b9714",
+            "277e5b49-c53f-4bf7-aac0-950d8708b957",
+            "8eaa0946-591f-4136-9d8a-e56934151383",
+            "aa0461fc-4298-45b9-90a0-939093cf2544",
+            "e446a380-0316-46f7-8ac9-22bce773b35f",
+            "4fb0eb2d-9cb7-4e72-a970-5009b046df2a",
+            "6c8c9c33-569c-4b67-a18d-4cd0f18d01f4"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Preening Champion",
+                    "id": "44178ece-af31-4a94-88bc-c9ce43bb4573",
+                    "weight": 50
+                },
+                {
+                    "name": "Sigiled Sentinel",
+                    "id": "7f65b178-51d6-4dcb-a1cc-4b4dcb2237cd",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Knight of the New Coalition",
+                    "id": "56a3108b-c33d-47c5-984b-01fa257fbd79",
+                    "weight": 50
+                },
+                {
+                    "name": "Protocol Knight",
+                    "id": "af6cb380-0b4d-4870-abef-928eb63e1702",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Knight-Errant of Eos",
+                    "id": "ab2ad652-2406-491a-9f22-23e974f943d7",
+                    "weight": 80
+                },
+                {
+                    "name": "Invasion of New Phyrexia // Teferi Akosa of Zhalfir",
+                    "id": "1b83af86-e1a9-4be1-83dc-0c1ab81b129e",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Stasis Field",
+                    "id": "38211d78-ebac-4150-ac11-7613a0e9e1bc",
+                    "weight": 50
+                },
+                {
+                    "name": "Realmbreaker's Grasp",
+                    "id": "67a41675-47dd-40ca-a30c-0fd0faa32b76",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Gate to the Citadel",
+                    "id": "985d1b57-42e0-41a2-a9c6-2f5427c0c1c9",
+                    "weight": 50
+                },
+                {
+                    "name": "Gate to Seatower",
+                    "id": "86382685-e54c-4152-a500-2148a2d6b5a4",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Convoke",
+        "colors": [
+            "U",
+            "R"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/convoke.png",
+        "cards": [
+            "dc1454ce-bb49-4b4f-bbca-d77387fa4966",
+            "c4dabe69-a88f-4e61-a5fb-c4b9ef1c7569",
+            "e585631c-bd41-4b48-aac4-4b6f5636ecd5",
+            "69490262-afc2-4692-8fac-b771a972c8f8",
+            "508b8650-c283-4e54-abdc-32ec2fb1ee34",
+            "032720a1-410b-4638-9294-35fd8e27375f",
+            "74d0bb76-075c-49d7-9afb-e5bcf5b654f7"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Saiba Cryptomancer",
+                    "id": "3934d535-740d-471a-bbf1-c3b26b1cd596",
+                    "weight": 50
+                },
+                {
+                    "name": "Expedition Lookout",
+                    "id": "7e14dfd2-5805-46ef-bd19-dab7ac23fbce",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Preening Champion",
+                    "id": "44178ece-af31-4a94-88bc-c9ce43bb4573",
+                    "weight": 50
+                },
+                {
+                    "name": "Hangar Scrounger",
+                    "id": "c2551b01-4d88-47f3-b54d-96ec03e093f8",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Invasion of Segovia // Caetus, Sea Tyrant of Segovia",
+                    "id": "9df3e743-7bb8-482a-afd1-4d51119d416c",
+                    "weight": 60
+                },
+                {
+                    "name": "Baral and Kari Zev",
+                    "id": "cc43a788-ab06-4d28-b45a-aa47801d6ace",
+                    "weight": 40
+                }
+            ],
+            [
+                {
+                    "name": "Wicked Slumber",
+                    "id": "140cd8bd-b74d-4cb1-b78f-8de3cbd878ff",
+                    "weight": 50
+                },
+                {
+                    "name": "Astral Wingspan",
+                    "id": "be2ef728-a2c7-45ee-8594-372ed135b482",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Gate to Tumbledown",
+                    "id": "f8532b98-b69e-4d43-9ec8-0587572a0dff",
+                    "weight": 50
+                },
+                {
+                    "name": "Gate to Seatower",
+                    "id": "86382685-e54c-4152-a500-2148a2d6b5a4",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Expendable",
+        "colors": [
+            "B",
+            "R"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/expendable.png",
+        "cards": [
+            "792e7386-4c2d-4fa9-b499-fa3681f2a50e",
+            "4ef82b33-82ba-4521-846b-e651764ef46d",
+            "3b00c6e1-dfda-4c47-b1d8-4c114a921477",
+            "445b3315-6587-4d57-ab7e-faab1eec0241",
+            "ce133ad5-8748-4a3d-ae8c-7b2a5938927d",
+            "e91bfea6-0e80-4239-bede-7cb971e64c1a",
+            "ae2e1244-f05b-45f9-8afc-59f190524798"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Pyretic Prankster // Glistening Goremonger",
+                    "id": "0ee40c4b-2ca3-4cda-bc9e-451455c17adc",
+                    "weight": 50
+                },
+                {
+                    "name": "Nezumi Informant",
+                    "id": "e36fbff8-471e-4cf8-8946-e1e5cdf598af",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Ichor Shade",
+                    "id": "0fd86fbf-eac2-456b-b4bb-437ff9be9b58",
+                    "weight": 50
+                },
+                {
+                    "name": "Hangar Scrounger",
+                    "id": "c2551b01-4d88-47f3-b54d-96ec03e093f8",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Ayara, Widow of the Realm // Ayara, Furnace Queen",
+                    "id": "a21b1734-a773-4107-95c1-b44d5ccdfd82",
+                    "weight": 60
+                },
+                {
+                    "name": "Rankle and Torbran",
+                    "id": "d92c191e-329c-41f5-ae4f-1bb91fc001a0",
+                    "weight": 40
+                }
+            ],
+            [
+                {
+                    "name": "Final Flourish",
+                    "id": "09a4dcdb-6939-4d9f-8921-549e0ddc9f63",
+                    "weight": 50
+                },
+                {
+                    "name": "Volcanic Spite",
+                    "id": "69490262-afc2-4692-8fac-b771a972c8f8",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Gate of the Black Dragon",
+                    "id": "90183d4d-c231-4e45-b1fc-2699b33a3733",
+                    "weight": 50
+                },
+                {
+                    "name": "Gate to Tumbledown",
+                    "id": "f8532b98-b69e-4d43-9ec8-0587572a0dff",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Incubation",
+        "colors": [
+            "B",
+            "G"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/incubation.png",
+        "cards": [
+            "91fd7350-cc97-4c35-a072-2c826984293c",
+            "bc6104d4-d0af-40da-8227-14243d778e96",
+            "b3227c07-9ef2-46a6-9b4f-bbd6ef12f4a5",
+            "1bdd3ecb-8c11-4a4c-a503-bc29f79a9dcb",
+            "e08e0ef1-a8e0-4c0a-a996-3eee89e37fee",
+            "007324b3-b8a9-4a32-a5a1-ad78f3a07bc3",
+            "93f623da-616e-4067-9ea8-5dfbeef8ce0b"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Bloated Processor",
+                    "id": "66ddcca8-5720-4341-acce-c6694ddc97f8",
+                    "weight": 60
+                },
+                {
+                    "name": "Glissa, Herald of Predation",
+                    "id": "6c299066-dfdd-47a3-85e6-225508ba95fe",
+                    "weight": 40
+                }
+            ],
+            [
+                {
+                    "name": "Traumatic Revelation",
+                    "id": "59d40511-c9ff-466c-8eb9-cc7afc5c2eab",
+                    "weight": 50
+                },
+                {
+                    "name": "Nezumi Informant",
+                    "id": "e36fbff8-471e-4cf8-8946-e1e5cdf598af",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Arachnoid Adaptation",
+                    "id": "8278069a-bd92-40ee-b7d5-e740dddb00fa",
+                    "weight": 50
+                },
+                {
+                    "name": "Mirrodin Avenged",
+                    "id": "750b2090-7fd4-4048-a148-9a5fc7b6f265",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Collective Nightmare",
+                    "id": "05864d3a-d8bb-4ddf-b721-883632050cb1",
+                    "weight": 50
+                },
+                {
+                    "name": "Glistening Deluge",
+                    "id": "83ca46ac-0698-4651-940d-3fd20c266b74",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Gate of the Black Dragon",
+                    "id": "90183d4d-c231-4e45-b1fc-2699b33a3733",
+                    "weight": 50
+                },
+                {
+                    "name": "Gate to Manorborn",
+                    "id": "a902d474-0d02-449e-ab6c-8c2f32c99384",
+                    "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Boosted",
+        "colors": [
+            "G",
+            "W"
+        ],
+        "cycling_land": false,
+        "image": "/img/jumpin/boosted.png",
+        "cards": [
+            "977c15c9-2aad-4d1d-86a6-1f9d78ad7af6",
+            "e83f9565-4c04-449d-b337-0eff3fd0c295",
+            "5c644650-3861-4a78-9e39-a413b073ddac",
+            "7f65b178-51d6-4dcb-a1cc-4b4dcb2237cd",
+            "8b2f3c52-8d6a-411a-aa62-cbb08a144351",
+            "09fb5876-5b47-4a05-be57-7ad3890c8953",
+            "e454bf31-5aa0-4109-a3f5-c3f9cc838682"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Chomping Kavu",
+                    "id": "31c249d9-37c0-451d-866b-e834c4c57214",
+                    "weight": 50
+                },
+                {
+                    "name": "Bola Slinger",
+                    "id": "896043a7-c7a2-4542-8739-7b4f09c6e1f1",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Placid Rottentail",
+                    "id": "7a87c5d2-3ebc-442b-8618-963cfc63855f",
+                    "weight": 50
+                },
+                {
+                    "name": "Enduring Bondwarden",
+                    "id": "eb0680eb-ceca-44d9-9654-78ea2ccfce17",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Dusk Legion Duelist",
+                    "id": "7305a8d3-5403-4483-92af-863dc91c6084",
+                    "weight": 50
+                },
+                {
+                    "name": "Ozolith, the Shattered Spire",
+                    "id": "c9eee658-29e8-4ab5-8a0e-31f2f28a9a92",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Cosmic Hunger",
+                    "id": "b8eef541-6851-4312-ad2b-74f45c7ede6c",
+                    "weight": 50
+                },
+                {
+                    "name": "Realmbreaker's Grasp",
+                    "id": "67a41675-47dd-40ca-a30c-0fd0faa32b76",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Gate to Manorborn",
+                    "id": "a902d474-0d02-449e-ab6c-8c2f32c99384",
+                    "weight": 50
+                },
+                {
+                    "name": "Gate to the Citadel",
+                    "id": "985d1b57-42e0-41a2-a9c6-2f5427c0c1c9",
+                    "weight": 50
+                }
+            ]
+        ]
+    }
+]

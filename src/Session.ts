@@ -3226,6 +3226,7 @@ export class Session implements IIndexable {
 					: set === "j21"
 						? genJHHPackChoices()
 						: genSuperJumpPackChoices();
+				if (isSocketError(choices)) return choices;
 				Connections[user].socket.emit("selectJumpstartPacks", choices, (user: UserID, cardIDs: CardID[]) => {
 					if (!this.draftLog) return;
 					updateLog(user, cardIDs);
