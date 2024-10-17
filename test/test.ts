@@ -2601,7 +2601,7 @@ describe("Jump In!", function () {
 		let testCase = getNDisctinctRandom(JumpInSets, randomInt(1, JumpInSets.length));
 		while (sum(testCase.map((s) => JumpInBoosters[s].length)) < 4)
 			testCase = getNDisctinctRandom(JumpInSets, randomInt(1, JumpInSets.length));
-		testCases.push();
+		testCases.push(testCase);
 	}
 	for (const sets of testCases) {
 		describe(sets.join(", "), function () {

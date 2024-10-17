@@ -23,6 +23,7 @@ import JumpInMKM from "./data/JumpInBoosters_mkm.json" with { type: "json" };
 import JumpInLCI from "./data/JumpInBoosters_lci.json" with { type: "json" };
 import JumpInWOE from "./data/JumpInBoosters_woe.json" with { type: "json" };
 import JumpInLTR from "./data/JumpInBoosters_ltr.json" with { type: "json" };
+import JumpInMOM from "./data/JumpInBoosters_mom.json" with { type: "json" };
 import JumpInONE from "./data/JumpInBoosters_one.json" with { type: "json" };
 import JumpInBRO from "./data/JumpInBoosters_bro.json" with { type: "json" };
 import JumpInDMU from "./data/JumpInBoosters_dmu.json" with { type: "json" };
@@ -35,6 +36,7 @@ import JumpInAFR from "./data/JumpInBoosters_afr.json" with { type: "json" };
 import JumpInSTX from "./data/JumpInBoosters_stx.json" with { type: "json" };
 import JumpInKHM from "./data/JumpInBoosters_khm.json" with { type: "json" };
 import JumpInZNR from "./data/JumpInBoosters_znr.json" with { type: "json" };
+import JumpIntoMiddleEarth from "./data/JumpIntoMiddleEath.json" with { type: "json" };
 import { SocketError } from "./Message.js";
 
 export const JumpInBoosters: Record<string, JumpInBoosterPattern[]> = {
@@ -44,6 +46,8 @@ export const JumpInBoosters: Record<string, JumpInBoosterPattern[]> = {
 	lci: JumpInLCI,
 	woe: JumpInWOE,
 	ltr: JumpInLTR,
+	jime: JumpIntoMiddleEarth,
+	mom: JumpInMOM,
 	one: JumpInONE,
 	bro: JumpInBRO,
 	dmu: JumpInDMU,

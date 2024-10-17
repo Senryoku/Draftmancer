@@ -8,6 +8,10 @@
 				<div>Select one or multiple sets:</div>
 				<div style="display: flex; justify-content: space-evenly">
 					<button @click="all">All</button>
+					<button @click="current">Current</button>
+					<button @click="jumpIntoMiddleEarth">Jump into Middle-Earth</button>
+					<button @click="firstRotation">First Rotation</button>
+					<button @click="initial">Initial</button>
 					<button @click="none">None</button>
 				</div>
 				<div class="sets">
@@ -19,8 +23,8 @@
 							@change="sets.includes(set) ? sets.splice(sets.indexOf(set), 1) : sets.push(set)"
 						/>
 						<label :for="set">
-							<img class="set-icon" :src="SetsInfos[set].icon" />
-							<span>{{ SetsInfos[set].fullName }}</span>
+							<img class="set-icon" :src="setInfo(set).icon" />
+							<span>{{ setInfo(set).fullName }}</span>
 						</label>
 					</div>
 				</div>
@@ -49,6 +53,8 @@ const Sets = [
 	"lci",
 	"woe",
 	"ltr",
+	"jime",
+	"mom",
 	"one",
 	"bro",
 	"dmu",
@@ -62,8 +68,9 @@ const Sets = [
 	"khm",
 	"znr",
 ];
+const CurrentSets = ["blb", "otj", "mkm", "lci", "woe", "ltr", "mom", "one", "bro", "dmu"];
 
-const sets = ref<string[]>(["blb", "otj", "mkm", "lci", "woe", "ltr", "one", "bro", "dmu"]);
+const sets = ref<string[]>([...CurrentSets]);
 
 const emit = defineEmits<{
 	(e: "close"): void;
@@ -76,8 +83,29 @@ const start = () => {
 	emit("close");
 };
 
+function setInfo(set: string) {
+	if (set === "jime") return { fullName: "Jump Into Middle-Earth", icon: SetsInfos["ltr"].icon };
+	return SetsInfos[set];
+}
+
 function all() {
 	sets.value = Sets;
+}
+
+function current() {
+	sets.value = [...CurrentSets];
+}
+
+function jumpIntoMiddleEarth() {
+	sets.value = ["ltr", "jime"];
+}
+
+function firstRotation() {
+	sets.value = ["snc", "neo", "vow", "mid", "afr", "stx", "khm", "znr"];
+}
+
+function initial() {
+	sets.value = ["mid", "afr", "stx", "khm", "znr"];
 }
 
 function none() {
@@ -88,16 +116,16 @@ function none() {
 <style scoped src="../css/start-game-dialog.css" />
 
 <style scoped>
-.dialog {
-	max-width: min(500px, 100vw);
-}
-
 .sets {
 	display: flex;
 	flex-direction: column;
-	flex-wrap: wrap;
 	gap: 0.5em;
-	margin: 0 1em;
+	margin: 0.5em 1em;
+	max-height: 60vh;
+	overflow-y: scroll;
+
+	padding: 0.5em 1em;
+	background: rgba(0, 0, 0, 0.1);
 }
 
 .set {
