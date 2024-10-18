@@ -626,15 +626,15 @@
 					<font-awesome-icon icon="fa-solid fa-random"></font-awesome-icon>
 				</div>
 			</div>
-			<template v-if="!drafting">
-				<transition-group type="transition">
+			<div class="player-list-container">
+				<template v-if="!drafting">
 					<Sortable
 						:key="`draggable-${userOrder.length}`"
 						:list="userOrder"
 						:item-key="(uid: string) => uid"
 						:options="{ animation: 200, disabled: userID !== sessionOwner }"
 						@update="changePlayerOrder"
-						class="player-list-container player-list"
+						class="player-list"
 						tag="ul"
 					>
 						<template #item="{ element, index }">
@@ -759,10 +759,8 @@
 							</li>
 						</template>
 					</Sortable>
-				</transition-group>
-			</template>
-			<template v-else>
-				<div class="player-list-container">
+				</template>
+				<template v-else>
 					<ul class="player-list">
 						<Player
 							v-for="(user, idx) in virtualPlayers"
@@ -781,8 +779,8 @@
 							@setSessionOwner="setSessionOwner"
 						/>
 					</ul>
-				</div>
-			</template>
+				</template>
+			</div>
 			<div class="chat">
 				<form @submit.prevent="sendChatMessage">
 					<input
