@@ -204,8 +204,7 @@
         "name": "Treasure",
         "colors": [
             "R",
-            "G",
-            "B"
+            "G"
         ],
         "cycling_land": false,
         "image": "/img/jumpin/ji_treasure.png",
@@ -909,8 +908,7 @@
         "name": "Treasure",
         "colors": [
             "R",
-            "G",
-            "B"
+            "G"
         ],
         "cycling_land": false,
         "image": "/img/jumpin/ji_treasure.png",

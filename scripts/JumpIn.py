@@ -8,6 +8,7 @@ import urllib.parse
 import html
 
 Sets = [
+    {"set": "dsk", "url": "https://magic.wizards.com/en/news/mtg-arena/jump-in-packets-update-for-duskmourn-house-of-horror"},
     {"set": "blb", "url": "https://magic.wizards.com/en/news/mtg-arena/jump-in-packets-update-for-bloomburrow"},
     {"set": "otj", "url": "https://magic.wizards.com/en/news/mtg-arena/jump-in-packets-update-for-outlaws-of-thunder-junction"},
     {"set": "mkm", "url": "https://magic.wizards.com/en/news/mtg-arena/jump-in-packets-update-for-murders-at-karlov-manor"},
