@@ -59,6 +59,7 @@ import { ButtonColor, Alert, fireToast } from "./alerts";
 import parseCSV from "./parseCSV";
 
 import LoadingComponent from "./components/LoadingComponent.vue";
+import SessionUser from "./components/SessionUser.vue";
 import News from "./components/News.vue";
 import Communities from "./components/Communities.vue";
 import BoosterCard from "./components/BoosterCard.vue";
@@ -147,7 +148,7 @@ const defaultSettings = {
 const storedSettings = JSON.parse(localStorage.getItem(localStorageSettingsKey) ?? "{}");
 const initialSettings: typeof defaultSettings = Object.assign({ ...defaultSettings }, storedSettings);
 
-type SessionUser = {
+export type SessionUser = {
 	userID: string;
 	userName: string;
 	collection: boolean;
@@ -198,6 +199,7 @@ export default defineComponent({
 		DraftQueue: defineAsyncComponent(() => import("./components/DraftQueue.vue")),
 		RotisserieDraft: defineAsyncComponent(() => import("./components/RotisserieDraft.vue")),
 		ScaleSlider: defineAsyncComponent(() => import("./components/ScaleSlider.vue")),
+		SessionUser,
 		SetRestrictionComponent: defineAsyncComponent(() => import("./components/SetRestriction.vue")),
 		SetSelect,
 		SolomonDraft: defineAsyncComponent(() => import("./components/SolomonDraft.vue")),

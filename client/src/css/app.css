@@ -934,11 +934,6 @@ ul.player-list {
 	flex: 1 1 6em;
 }
 
-/* Applying a transition to draggable item break SortableJS animations, here it's only applied for other player to get feedback when owner changes the order */
-.player-list li:not(.draggable) {
-	transition: all 0.2s;
-}
-
 .player-list li.self,
 .player-table li.self,
 .player-list-log li.self {
@@ -968,6 +963,16 @@ ul.player-list {
 	box-shadow:
 		inset 0 0 5px 0px rgba(255, 255, 255, 0.3),
 		3px 3px 5px 0 rgba(0, 0, 0, 0.75);
+}
+
+.player-list-transition-move,
+.player-list-transition-enter-active,
+.player-list-transition-leave-active {
+	transition: all 0.25s ease !important;
+}
+.player-list-transition-enter-from,
+.player-list-transition-leave-to {
+	opacity: 0;
 }
 
 .player-name {

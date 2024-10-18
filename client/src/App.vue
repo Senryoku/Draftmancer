@@ -628,137 +628,52 @@
 			</div>
 			<div class="player-list-container">
 				<template v-if="!drafting">
-					<Sortable
-						:key="`draggable-${userOrder.length}`"
-						:list="userOrder"
-						:item-key="(uid: string) => uid"
-						:options="{ animation: 200, disabled: userID !== sessionOwner }"
-						@update="changePlayerOrder"
-						class="player-list"
-						tag="ul"
-					>
-						<template #item="{ element, index }">
-							<li
+					<template v-if="sessionOwner === userID">
+						<Sortable
+							:key="`draggable-${userOrder.length}`"
+							:list="userOrder"
+							:item-key="(uid: string) => uid"
+							:options="{ animation: 200, disabled: userID !== sessionOwner }"
+							@update="changePlayerOrder"
+							class="player-list"
+							tag="ul"
+						>
+							<template #item="{ element, index }">
+								<SessionUser
+									:index="index"
+									:user="userByID[element]"
+									:self="userID"
+									:sessionOwner="sessionOwner"
+									:pendingReadyCheck="pendingReadyCheck"
+									:teamDraft="teamDraft"
+									:useCustomCardList="useCustomCardList"
+									:ignoreCollections="ignoreCollections"
+									:canRequestTakeover="sessionUsers.length >= 5"
+									@removePlayer="removePlayer"
+									@setSessionOwner="setSessionOwner"
+									@movePlayer="movePlayer"
+								/>
+							</template>
+						</Sortable>
+					</template>
+					<template v-else>
+						<transition-group tag="ul" name="player-list-transition" class="player-list">
+							<SessionUser
+								v-for="(element, index) in userOrder"
 								:key="element"
-								:class="{
-									teama: teamDraft && index % 2 === 0,
-									teamb: teamDraft && index % 2 === 1,
-									draggable: userID === sessionOwner && !drafting,
-									self: userID === element,
-								}"
-								:data-userid="element"
-							>
-								<div class="player-name" v-tooltip="userByID[element].userName">
-									{{ userByID[element].userName }}
-								</div>
-								<template v-if="userID === sessionOwner">
-									<font-awesome-icon
-										icon="fa-solid fa-chevron-left"
-										class="clickable move-player move-player-left"
-										v-tooltip="`Move ${userByID[element].userName} to the left`"
-										@click="movePlayer(index, -1)"
-									></font-awesome-icon>
-									<font-awesome-icon
-										icon="fa-solid fa-chevron-right"
-										class="clickable move-player move-player-right"
-										v-tooltip="`Move ${userByID[element].userName} to the right`"
-										@click="movePlayer(index, 1)"
-									></font-awesome-icon>
-								</template>
-								<div class="status-icons">
-									<font-awesome-icon
-										v-if="element === sessionOwner"
-										icon="fa-solid fa-crown"
-										class="subtle-gold"
-										v-tooltip="`${userByID[element].userName} is the session owner.`"
-									></font-awesome-icon>
-									<font-awesome-icon
-										v-if="
-											element === sessionOwner && element !== userID && sessionUsers.length >= 5
-										"
-										icon="fa-solid fa-user-slash"
-										class="clickable red takeover"
-										v-tooltip="
-											`Vote to remove ${userByID[element].userName} from the session and take ownership.`
-										"
-										@click="requestTakeover"
-									></font-awesome-icon>
-									<template v-if="userID === sessionOwner && element != sessionOwner">
-										<img
-											src="./assets/img/pass_ownership.svg"
-											class="clickable"
-											style="height: 18px; margin-top: -4px"
-											v-tooltip="`Give session ownership to ${userByID[element].userName}`"
-											@click="setSessionOwner(element)"
-										/>
-										<font-awesome-icon
-											icon="fa-solid fa-user-slash"
-											class="clickable red"
-											v-tooltip="`Remove ${userByID[element].userName} from the session`"
-											@click="removePlayer(element)"
-										></font-awesome-icon>
-									</template>
-									<template v-if="!useCustomCardList && !ignoreCollections">
-										<template v-if="!userByID[element].collection">
-											<font-awesome-icon
-												icon="fa-solid fa-book"
-												class="red"
-												v-tooltip="
-													userByID[element].userName +
-													' has not uploaded their collection yet.'
-												"
-											></font-awesome-icon>
-										</template>
-										<template
-											v-else-if="userByID[element].collection && !userByID[element].useCollection"
-										>
-											<font-awesome-icon
-												icon="fa-solid fa-book"
-												class="yellow"
-												v-tooltip="
-													userByID[element].userName +
-													' has uploaded their collection, but is not using it.'
-												"
-											></font-awesome-icon>
-										</template>
-										<template v-else>
-											<font-awesome-icon
-												icon="fa-solid fa-book"
-												class="green"
-												v-tooltip="
-													userByID[element].userName + ' has uploaded their collection.'
-												"
-											></font-awesome-icon>
-										</template>
-									</template>
-									<template v-if="pendingReadyCheck">
-										<template v-if="userByID[element].readyState == ReadyState.Ready">
-											<font-awesome-icon
-												icon="fa-solid fa-check"
-												class="green"
-												v-tooltip="`${userByID[element].userName} is ready!`"
-											></font-awesome-icon>
-										</template>
-										<template v-else-if="userByID[element].readyState == ReadyState.NotReady">
-											<font-awesome-icon
-												icon="fa-solid fa-times"
-												class="red"
-												v-tooltip="`${userByID[element].userName} is NOT ready!`"
-											></font-awesome-icon>
-										</template>
-										<template v-else-if="userByID[element].readyState == ReadyState.Unknown">
-											<font-awesome-icon
-												icon="fa-solid fa-spinner"
-												spin
-												v-tooltip="`Waiting for ${userByID[element].userName} to respond...`"
-											></font-awesome-icon>
-										</template>
-									</template>
-								</div>
-								<div class="chat-bubble" :id="'chat-bubble-' + element"></div>
-							</li>
-						</template>
-					</Sortable>
+								:index="index"
+								:user="userByID[element]"
+								:self="userID"
+								:sessionOwner="sessionOwner"
+								:pendingReadyCheck="pendingReadyCheck"
+								:teamDraft="teamDraft"
+								:useCustomCardList="useCustomCardList"
+								:ignoreCollections="ignoreCollections"
+								:canRequestTakeover="sessionUsers.length >= 5"
+								@requestTakeover="requestTakeover"
+							/>
+						</transition-group>
+					</template>
 				</template>
 				<template v-else>
 					<ul class="player-list">
