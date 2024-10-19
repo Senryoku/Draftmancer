@@ -76,7 +76,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from "vue";
+import { onMounted, watch } from "vue";
 import { Alert } from "../alerts";
 import { ref, useTemplateRef } from "vue";
 import { fitFontSize } from "../helper";
@@ -203,8 +203,9 @@ const select = (idx: number) => {
 	resetTimeout();
 };
 
-for (const c of communities.value) {
-	if (c.links.discord) {
+function checkSelectedDiscordMembers() {
+	const c = communities.value[selected.value];
+	if (c.links.discord && !c.discord_member_count) {
 		fetch(
 			`https://discord.com/api/v9/invites/${c.links.discord.substring(
 				"https://discord.gg/".length
@@ -217,6 +218,9 @@ for (const c of communities.value) {
 			.catch((r) => console.error("Failed to fetch discord stats", r));
 	}
 }
+
+checkSelectedDiscordMembers();
+watch(selected, checkSelectedDiscordMembers);
 
 const explain = () => {
 	Alert.fire({
