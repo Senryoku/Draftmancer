@@ -62,7 +62,7 @@
 		"socket.io-client": "^4.7.5",
 		"sortablejs": "^1.15.3",
 		"sortablejs-vue3": "^1.2.11",
-		"sweetalert2": "^11.10.1",
+		"sweetalert2": "^11.14.4",
 		"threads": "^1.7.0",
 		"uuid": "^10.0.0",
 		"vue": "^3.5.10",
