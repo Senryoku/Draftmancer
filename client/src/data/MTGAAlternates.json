@@ -2687,6 +2687,9 @@
     "Ambergris, Citadel Agent": [
         81561
     ],
+    "Soul Shredder": [
+        95366
+    ],
     "Strength of Solidarity": [
         73415
     ],
@@ -5366,6 +5369,9 @@
     ],
     "A-Civil Servant": [
         84124
+    ],
+    "Polterheist": [
+        95362
     ],
     "Warlord's Elite": [
         82516
@@ -13308,6 +13314,9 @@
     "Penumbra Bobcat": [
         72480
     ],
+    "Gilded Ambusher": [
+        95358
+    ],
     "Flare of Duplication": [
         90968
     ],
@@ -17129,6 +17138,9 @@
     ],
     "Trail of Mystery": [
         58245
+    ],
+    "Wingbright Thief": [
+        95365
     ],
     "Goblin Maskmaker": [
         89045
@@ -21144,6 +21156,9 @@
     ],
     "Assault Strobe": [
         80871
+    ],
+    "Mischievous Lookout": [
+        95361
     ],
     "Vivien's Crocodile": [
         70085
@@ -30163,6 +30178,9 @@
     "Thwart the Grave": [
         73329
     ],
+    "Mangled Soulrager": [
+        95360
+    ],
     "Immolating Gyre": [
         72123
     ],
@@ -30751,6 +30769,9 @@
     ],
     "Mosscoat Goriak": [
         71234
+    ],
+    "Valiant Emberkin": [
+        95364
     ],
     "Hired Hexblade": [
         77214
@@ -32833,6 +32854,9 @@
     "Wingsteed Trainer": [
         79365
     ],
+    "Golden Sidekick": [
+        95359
+    ],
     "Bristlebud Farmer": [
         90678
     ],
@@ -33884,6 +33908,9 @@
     ],
     "Uurg, Spawn of Turg": [
         82277
+    ],
+    "Unnatural Summons": [
+        95363
     ],
     "Evolved Spinoderm": [
         83866
@@ -37917,32 +37944,5 @@
     ],
     "Exultant Skymarcher": [
         66631
-    ],
-    "Gilded Ambusher": [
-        95358
-    ],
-    "Golden Sidekick": [
-        95359
-    ],
-    "Mangled Soulrager": [
-        95360
-    ],
-    "Mischievous Lookout": [
-        95361
-    ],
-    "Polterheist": [
-        95362
-    ],
-    "Unnatural Summons": [
-        95363
-    ],
-    "Valiant Emberkin": [
-        95364
-    ],
-    "Wingbright Thief": [
-        95365
-    ],
-    "Soul Shredder": [
-        95366
     ]
 }

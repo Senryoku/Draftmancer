@@ -2816,6 +2816,11 @@
         "block": "Scars of Mirrodin",
         "icon": "img/sets/psom.svg"
     },
+    "pspl": {
+        "code": "pspl",
+        "fullName": "Spotlight Series",
+        "icon": "img/sets/pspl.svg"
+    },
     "pss1": {
         "code": "pss1",
         "fullName": "BFZ Standard Series",
