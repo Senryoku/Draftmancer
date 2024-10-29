@@ -485,6 +485,11 @@
 									<button @click="sealedDialog(true)">Team Sealed</button>
 								</div>
 								<div v-tooltip.left="'Distributes two Jumpstart boosters to everyone.'">
+									<button @click="deckWarning(() => distributeJumpstart('j25'))">
+										Jumpstart 2025
+									</button>
+								</div>
+								<div v-tooltip.left="'Distributes two Jumpstart boosters to everyone.'">
 									<button @click="deckWarning(() => distributeJumpstart('jmp'))">Jumpstart</button>
 								</div>
 								<div v-tooltip.left="'Distributes two Jumpstart 2022 boosters to everyone.'">
