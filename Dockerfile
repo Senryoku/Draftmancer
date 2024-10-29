@@ -18,8 +18,6 @@ RUN npm run build-client
 
 FROM node:22-alpine
 
-LABEL fly_launch_runtime="nodejs"
-
 COPY --from=builder /app /app
 
 RUN apk add nginx
