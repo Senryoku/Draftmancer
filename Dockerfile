@@ -22,7 +22,14 @@ LABEL fly_launch_runtime="nodejs"
 
 COPY --from=builder /app /app
 
+RUN apk add nginx
+RUN apk add nginx-mod-http-brotli
+
+COPY nginx.conf /etc/nginx/http.d/default.conf
+
+RUN nginx -t
+
 WORKDIR /app
 ENV NODE_ENV production
 
-CMD if [[ ! -z "$SWAP" ]]; then fallocate -l $(($(stat -f -c "(%a*%s/10)*7" .))) _swapfile && mkswap _swapfile && swapon _swapfile && ls -hla; fi; free -m; node --experimental-json-modules .
+CMD if [[ ! -z "$SWAP" ]]; then fallocate -l $(($(stat -f -c "(%a*%s/10)*7" .))) _swapfile && mkswap _swapfile && swapon _swapfile && ls -hla; fi; free -m; nginx && node --experimental-json-modules .
