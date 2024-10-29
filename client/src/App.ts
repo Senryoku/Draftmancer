@@ -74,6 +74,7 @@ import SetSelect from "./components/SetSelect.vue";
 const SupremeDialog = defineAsyncComponent(() => import("./components/SupremeDraftDialog.vue"));
 const GlimpseDialog = defineAsyncComponent(() => import("./components/GlimpseDraftDialog.vue"));
 const JumpInDialog = defineAsyncComponent(() => import("./components/JumpInDialog.vue"));
+const JumpstartDialog = defineAsyncComponent(() => import("./components/JumpstartDialog.vue"));
 const GridDialog = defineAsyncComponent(() => import("./components/GridDraftDialog.vue"));
 const HousmanDialog = defineAsyncComponent(() => import("./components/HousmanDialog.vue"));
 const MinesweeperDialog = defineAsyncComponent(() => import("./components/MinesweeperDraftDialog.vue"));
@@ -2981,6 +2982,14 @@ export default defineComponent({
 		teamSealedPick(uniqueCardID: UniqueCardID) {
 			this.socket.emit("teamSealedPick", uniqueCardID, (r) => {
 				if (r.error) Alert.fire(r.error);
+			});
+		},
+		jumpstartDialog() {
+			if (this.userID !== this.sessionOwner) return;
+			this.spawnDialog(JumpstartDialog, {
+				onStart: (set: string) => {
+					this.deckWarning(() => this.distributeJumpstart(set));
+				},
 			});
 		},
 		distributeJumpstart(set: string) {

@@ -564,6 +564,11 @@
         "fullName": "Duel Decks: Elves vs. Inventors",
         "icon": "img/sets/ddu.svg"
     },
+    "dft": {
+        "code": "dft",
+        "fullName": "Aetherdrift",
+        "icon": "img/sets/dft.svg"
+    },
     "dgm": {
         "code": "dgm",
         "fullName": "Dragon's Maze",
@@ -1140,6 +1145,11 @@
         "fullName": "Iconic Masters",
         "icon": "img/sets/ima.svg"
     },
+    "inr": {
+        "code": "inr",
+        "fullName": "Innistrad Remastered",
+        "icon": "img/sets/inr.svg"
+    },
     "inv": {
         "code": "inv",
         "fullName": "Invasion",
@@ -1220,6 +1230,10 @@
         "code": "j22",
         "fullName": "Jumpstart 2022",
         "icon": "img/sets/j22.svg"
+    },
+    "j25": {
+        "code": "j25",
+        "fullName": "Foundations Jumpstart"
     },
     "jgp": {
         "code": "jgp",
@@ -2143,6 +2157,11 @@
         "code": "pf24",
         "fullName": "MagicFest 2024",
         "icon": "img/sets/pf24.svg"
+    },
+    "pfdn": {
+        "code": "pfdn",
+        "fullName": "Foundations Promos",
+        "icon": "img/sets/pfdn.svg"
     },
     "pfrf": {
         "code": "pfrf",

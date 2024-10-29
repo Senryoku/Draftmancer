@@ -309,9 +309,12 @@
         }
     ],
     "PrimarySets": [
+        "dft",
+        "inr",
+        "fdn",
         "dsk",
-        "mb2",
         "blb",
+        "mb2",
         "mh3",
         "otj",
         "mkm",

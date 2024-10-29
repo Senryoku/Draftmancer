@@ -3270,9 +3270,8 @@ export class Session implements IIndexable {
 				Connections[user].socket.emit("setCardPool", cards);
 				Connections[user].socket.emit("message", {
 					icon: "success",
-					title: "Opened two Jumpstart 2025 boosters!",
-					html: `<div style="display:flex; justify-content: space-evenly;"><img src="/img/${boosters[0].image}.webp" heigth="300"><img src="/img/${boosters[1].image}.webp" heigth="300"></div>
-					You got '${boosters[0].name}' and '${boosters[1].name}'.`,
+					title: "Your Jumpstart packs!",
+					html: `<div style="display:flex; justify-content: space-evenly;"><img src="/img/J25/${boosters[0].image}.webp" height="300px"><img src="/img/J25/${boosters[1].image}.webp" height="300px"></div>`,
 					showConfirmButton: true,
 				} as Message);
 			}

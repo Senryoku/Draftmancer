@@ -484,35 +484,12 @@
 								<div v-tooltip.left="'Starts a Team Sealed.'">
 									<button @click="sealedDialog(true)">Team Sealed</button>
 								</div>
-								<div v-tooltip.left="'Distributes two Jumpstart boosters to everyone.'">
-									<button @click="deckWarning(() => distributeJumpstart('j25'))">
-										Jumpstart 2025
-									</button>
-								</div>
-								<div v-tooltip.left="'Distributes two Jumpstart boosters to everyone.'">
-									<button @click="deckWarning(() => distributeJumpstart('jmp'))">Jumpstart</button>
-								</div>
-								<div v-tooltip.left="'Distributes two Jumpstart 2022 boosters to everyone.'">
-									<button @click="deckWarning(() => distributeJumpstart('j22'))">
-										Jumpstart 2022
-									</button>
-								</div>
 								<div
 									v-tooltip.left="
-										'Distributes two Jumpstart: Historic Horizons boosters to everyone.'
+										'Distributes two Jumpstart boosters to everyone. Multiple sets are available.'
 									"
 								>
-									<button
-										@click="deckWarning(() => distributeJumpstart('j21'))"
-										style="
-											white-space: normal;
-											line-height: normal;
-											height: auto;
-											padding: 0.5em 0.5em;
-										"
-									>
-										Jumpstart: Historic Horizons
-									</button>
+									<button @click="jumpstartDialog">Jumpstart</button>
 								</div>
 								<div
 									v-tooltip.left="
@@ -520,19 +497,6 @@
 									"
 								>
 									<button @click="startJumpIn">Jump In!</button>
-								</div>
-								<div v-tooltip.left="'Distributes two Super Jump! boosters to everyone.'">
-									<button
-										@click="deckWarning(() => distributeJumpstart('super'))"
-										style="
-											white-space: normal;
-											line-height: normal;
-											height: auto;
-											padding: 0.5em 0.5em;
-										"
-									>
-										Super Jump!
-									</button>
 								</div>
 							</div>
 						</template>
