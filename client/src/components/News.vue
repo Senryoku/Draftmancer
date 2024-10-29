@@ -1,6 +1,19 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
+			<em>October, 2024</em>
+			<ul>
+				<li>
+					<img src="img/sets/fdn.svg" class="set-icon" style="--invertedness: 100%" alt="FDN" /> Foundations
+					support.
+				</li>
+				<li>
+					<img src="img/sets/j25.svg" class="set-icon" style="--invertedness: 100%" alt="J25" /> Foundations
+					Jumpstart support. You can find it in the new "Jumpstart" sub menu.
+				</li>
+			</ul>
+		</div>
+		<div class="news">
 			<em>October 16, 2024</em>
 			<ul>
 				<li>Added Alchemy: Duskmourn cards.</li>

@@ -2616,16 +2616,27 @@ class MB2BoosterFactory extends BoosterFactory {
 //   1 Traditional foil wildcard of any rarity. This includes the same range of main set cards that are found in the non-foil wildcard slot.
 //   1 Land card. You can receive 1 of the 10 character lands (25%), 1 of 10 common dual lands (50%), or 1 of 10 regular frame basic lands (25%). In 20% of boosters, this land will be traditional foil.
 class FDNBoosterFactory extends BoosterFactory {
+	static filter(minNumber: number, maxNumber: number, rarity?: string) {
+		return CardsBySet["fdn"].filter((cid: CardID) => {
+			const c = getCard(cid);
+			return (
+				(rarity === undefined || c.rarity === rarity) &&
+				parseInt(c.collector_number) >= minNumber &&
+				parseInt(c.collector_number) <= maxNumber
+			);
+		});
+	}
+
 	static readonly SPGRatio: number = 0.015625;
 	static readonly Borderless: Record<string, CardID[]> = {
-		mythic: [],
-		rare: [],
-		uncommon: [],
-		common: [],
+		mythic: FDNBoosterFactory.filter(292, 421, "mythic"),
+		rare: FDNBoosterFactory.filter(292, 421, "rare"),
+		uncommon: FDNBoosterFactory.filter(292, 421, "uncommon"),
+		common: FDNBoosterFactory.filter(292, 421, "common"),
 	};
-	static readonly CharacterLands: CardID[] = [];
-	static readonly DualLands: CardID[] = [];
-	static readonly Basics: CardID[] = [];
+	static readonly CharacterLands: CardID[] = FDNBoosterFactory.filter(282, 291);
+	static readonly DualLands: CardID[] = FDNBoosterFactory.filter(696, 705);
+	static readonly Basics: CardID[] = FDNBoosterFactory.filter(272, 281);
 	static readonly WildCardOdds = cumulativeSum([0.167, 0.583, 0.163, 0.026, 0.016, 0.003, 0.018, 0.024]);
 
 	spg: CardPool = new CardPool(); // Special Guests
