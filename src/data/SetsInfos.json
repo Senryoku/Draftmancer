@@ -838,6 +838,11 @@
         "fullName": "Ravnica: Clue Edition Front Cards",
         "icon": "img/sets/fclu.svg"
     },
+    "fdc": {
+        "code": "fdc",
+        "fullName": "Foundations Commander",
+        "icon": "img/sets/fdc.svg"
+    },
     "fdmu": {
         "code": "fdmu",
         "fullName": "Dominaria United Jumpstart Front Cards",
