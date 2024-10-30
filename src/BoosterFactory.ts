@@ -2635,7 +2635,7 @@ class FDNBoosterFactory extends BoosterFactory {
 		common: FDNBoosterFactory.filter(292, 421, "common"),
 	};
 	static readonly CharacterLands: CardID[] = FDNBoosterFactory.filter(282, 291);
-	static readonly DualLands: CardID[] = FDNBoosterFactory.filter(696, 705);
+	static readonly DualLands: CardID[] = FDNBoosterFactory.filter(696, 705); // FIXME: Which ones?
 	static readonly Basics: CardID[] = FDNBoosterFactory.filter(272, 281);
 	static readonly WildCardOdds = cumulativeSum([0.167, 0.583, 0.163, 0.026, 0.016, 0.003, 0.018, 0.024]);
 
