@@ -38,6 +38,9 @@ const checkColorBalance = function (booster: Card[]) {
 };
 
 const checkDuplicates = function (booster: UniqueCard[]) {
+	// Wildcard slots can introduce duplicates.
+	if (booster.every((card) => card.set === "fdn" || card.set === "spg")) return;
+
 	// Foils can be duplicates
 	const sorted = [...booster].sort((lhs, rhs) => (lhs.id < rhs.id ? -1 : 1));
 	for (let idx = 0; idx < sorted.length - 1; ++idx) {

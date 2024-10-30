@@ -1233,7 +1233,8 @@
     },
     "j25": {
         "code": "j25",
-        "fullName": "Foundations Jumpstart"
+        "fullName": "Foundations Jumpstart",
+        "icon": "img/sets/j25.svg"
     },
     "jgp": {
         "code": "jgp",
