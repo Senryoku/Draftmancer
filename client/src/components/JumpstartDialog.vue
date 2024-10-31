@@ -5,13 +5,25 @@
 		</template>
 		<template v-slot:body>
 			<div class="dialog">
-				<div>Select a set:</div>
-				<div style="display: flex; flex-direction: column">
-					<button @click="start('j25')">Foundations Jumpstart</button>
-					<button @click="start('super')">Super Jump</button>
-					<button @click="start('j22')">Jumpstart 2022</button>
-					<button @click="start('j21')">Jumpstart: Historic Horizons</button>
-					<button @click="start('jmp')">Jumpstart</button>
+				<div>Choose a set:</div>
+				<div class="set-list">
+					<button @click="start('j25')">
+						<img src="../../public/img/sets/j25.svg" class="set-icon" alt="J25" />
+						<div>Foundations Jumpstart</div>
+					</button>
+					<button @click="start('super')"><div>Super Jump</div></button>
+					<button @click="start('j22')">
+						<img src="../../public/img/sets/j22.svg" class="set-icon" alt="J22" />
+						<div>Jumpstart 2022</div>
+					</button>
+					<button @click="start('j21')">
+						<img src="../../public/img/sets/j21.svg" class="set-icon" alt="J21" />
+						<div>Jumpstart: Historic Horizons</div>
+					</button>
+					<button @click="start('jmp')">
+						<img src="../../public/img/sets/jmp.svg" class="set-icon" alt="JMP" />
+						<div>Jumpstart</div>
+					</button>
 				</div>
 			</div>
 		</template>
@@ -40,4 +52,26 @@ const start = (set: string) => {
 
 <style scoped src="../css/start-game-dialog.css" />
 
-<style scoped></style>
+<style scoped>
+.set-list {
+	display: flex;
+	flex-direction: column;
+}
+
+.set-list button {
+	height: 4em !important;
+	line-height: 2em !important;
+}
+
+.set-list button div {
+	margin: 0 4em;
+}
+
+.set-icon {
+	--invertedness: 100%;
+	float: left;
+	height: 2em;
+	transform: translateX(-50%);
+	margin-left: 1em;
+}
+</style>
