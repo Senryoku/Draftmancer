@@ -1572,7 +1572,7 @@
 							<a href="/draftqueue">
 								<div class="draft-queue-banner">
 									<img
-										src="./assets/img/dsk_draft_queue_banner.webp"
+										src="./assets/img/fdn_draft_queue_banner.webp"
 										alt="Practice Duskmourn: House of Horror draft with human players right now in the Draft Queue!"
 										width="500"
 										height="260"
