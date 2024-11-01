@@ -196,7 +196,7 @@ function jsonParsingErrorMessage(e: { message: string }, jsonStr: string): strin
 	if (positionStr) {
 		const position = parseInt(positionStr[1]);
 		msg += `<pre>${escapeHTML(
-			jsonStr.slice(Math.max(0, position - 50), Math.max(0, position - 1))
+			jsonStr.slice(Math.max(0, position - 50), Math.max(0, position))
 		)}<span style="color: red; text-decoration: underline red;">${escapeHTML(jsonStr[position])}</span>${escapeHTML(
 			jsonStr.slice(Math.min(position + 1, jsonStr.length), Math.min(position + 50, jsonStr.length))
 		)}</pre>`;
@@ -236,7 +236,7 @@ function extractJSON(
 	} catch (e) {
 		return ackError({
 			title: `JSON Parsing Error`,
-			html: jsonParsingErrorMessage(e as { message: string }, r.str),
+			html: jsonParsingErrorMessage(e as { message: string }, str),
 		});
 	}
 }
