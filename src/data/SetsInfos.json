@@ -2428,6 +2428,11 @@
         "fullName": "The List",
         "icon": "img/sets/plst.svg"
     },
+    "pltc": {
+        "code": "pltc",
+        "fullName": "Tales of Middle-earth Deluxe Commander Kit",
+        "icon": "img/sets/pltc.svg"
+    },
     "pltr": {
         "code": "pltr",
         "fullName": "Tales of Middle-earth Promos",
