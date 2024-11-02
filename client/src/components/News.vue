@@ -1,7 +1,7 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
-			<em>October, 2024</em>
+			<em>November 2, 2024</em>
 			<ul>
 				<li>
 					<img src="img/sets/fdn.svg" class="set-icon" style="--invertedness: 100%" alt="FDN" /> Foundations
