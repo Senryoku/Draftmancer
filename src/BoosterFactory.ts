@@ -2600,6 +2600,7 @@ class MB2BoosterFactory extends BoosterFactory {
 	}
 }
 
+// Foundations
 // 14 Magic: The Gathering cards
 //   6–7 Commons
 //     There are 80 commons from the main set of Magic: The Gathering Foundations that can show up in these slots.
@@ -2635,8 +2636,8 @@ class FDNBoosterFactory extends BoosterFactory {
 		common: FDNBoosterFactory.filter(292, 421, "common"),
 	};
 	static readonly CharacterLands: CardID[] = FDNBoosterFactory.filter(282, 291);
-	static readonly DualLands: CardID[] = FDNBoosterFactory.filter(259, 271).filter((cid) =>
-		[262, 264, 267].includes(parseInt(getCard(cid).collector_number))
+	static readonly DualLands: CardID[] = FDNBoosterFactory.filter(259, 271).filter(
+		(cid) => ![262, 264, 267].includes(parseInt(getCard(cid).collector_number))
 	);
 	static readonly Basics: CardID[] = FDNBoosterFactory.filter(272, 281);
 	static readonly WildCardOdds = cumulativeSum([0.167, 0.583, 0.163, 0.026, 0.016, 0.003, 0.018, 0.024]);

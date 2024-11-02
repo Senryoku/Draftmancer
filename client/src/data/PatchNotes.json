@@ -1,5 +1,12 @@
 [
 	{
+		"date": "02/11/2024",
+		"notes": [
+			"Foundations support.",
+			"Foundations Jumpstart support."
+		]
+	},
+	{
 		"date": "16/10/2024",
 		"notes": [
 			"Experimental Jump In! game mode."
