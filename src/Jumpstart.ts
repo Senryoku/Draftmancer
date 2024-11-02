@@ -7,14 +7,17 @@ import { JumpInBooster, JumpInBoosterPattern } from "./JumpInTypes.js";
 
 import _JumpstartBoosters from "./data/JumpstartBoosters.json" with { type: "json" };
 import _Jumpstart2022Boosters from "./data/Jumpstart2022Boosters.json" with { type: "json" };
+import _Jumpstart2025Boosters from "./data/JumpstartFDN.json" with { type: "json" };
 import _SuperJumpBoosters from "./data/SuperJumpBoosters.json" with { type: "json" };
 
 Object.freeze(_JumpstartBoosters);
 Object.freeze(_Jumpstart2022Boosters);
+Object.freeze(_Jumpstart2025Boosters);
 Object.freeze(_SuperJumpBoosters);
 
 export const JumpstartBoosters = _JumpstartBoosters;
 export const Jumpstart2022Boosters = _Jumpstart2022Boosters;
+export const Jumpstart2025Boosters = _Jumpstart2025Boosters;
 export const SuperJumpBoosters = _SuperJumpBoosters;
 
 import JumpInDSK from "./data/JumpInBoosters_dsk.json" with { type: "json" };

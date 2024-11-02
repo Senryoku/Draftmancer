@@ -1,10 +1,14 @@
-const webpack = require("webpack");
-const path = require("path");
-const { VueLoaderPlugin } = require("vue-loader");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const CopyPlugin = require("copy-webpack-plugin");
+import webpack from "webpack";
+import path from "path";
+import { VueLoaderPlugin } from "vue-loader";
+import HtmlWebpackPlugin from "html-webpack-plugin";
+import CopyPlugin from "copy-webpack-plugin";
 
-module.exports = {
+import { fileURLToPath } from "url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+export default {
 	entry: { index: "./client/src/index.ts", readOnlyBracket: "./client/src/readOnlyBracket.ts" },
 	output: {
 		filename: "[name].[contenthash].js",

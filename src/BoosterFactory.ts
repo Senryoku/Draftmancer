@@ -1886,6 +1886,7 @@ export const SpecialGuests = {
 	mh3: filterSetByNumber("spg", 39, 48),
 	blb: filterSetByNumber("spg", 54, 63),
 	dsk: filterSetByNumber("spg", 64, 73),
+	fdn: filterSetByNumber("spg", 74, 83),
 };
 
 // NOTE: This mimics the ratios of wildcard set boosters described here: https://magic.wizards.com/en/news/making-magic/set-boosters-2020-07-25
@@ -2599,6 +2600,144 @@ class MB2BoosterFactory extends BoosterFactory {
 	}
 }
 
+// 14 Magic: The Gathering cards
+//   6–7 Commons
+//     There are 80 commons from the main set of Magic: The Gathering Foundations that can show up in these slots.
+//     In 1.5% of Play Boosters, 1 of these commons will be replaced with 1 of the 10 Special Guests cards in non-foil. Of note, Special Guests cards aren't found in the wildcard nor traditional foil slot in Play Boosters.
+//   3 Uncommons
+//     There are 100 possible uncommons in the main set that can appear in this slot.
+//   1 Rare or mythic rare
+//     This slot contains 1 of the 60 rares (78%) or 20 mythic rares (12.8%) in the main set.
+//     It's also possible to open 1 of the 47 borderless rares (7.7%) or 17 borderless mythic rares (1.5%, including 5 borderless planeswalkers).
+//   1 Non-foil wildcard of any rarity. This includes any of the commons, uncommons, rares, or mythic rares mentioned above, including borderless versions.
+//     You can receive a common (16.7%), uncommon (58.3%), rare (16.3%), or mythic rare (2.6%) card from the main set.
+//     You can also receive a borderless rare (1.6%) or borderless mythic rares (0.3%, including 5 borderless planeswalkers).
+//     This is also where you will find 1 of the 2 borderless commons (1.8%) or 8 borderless uncommons (2.4%).
+//   1 Traditional foil wildcard of any rarity. This includes the same range of main set cards that are found in the non-foil wildcard slot.
+//   1 Land card. You can receive 1 of the 10 character lands (25%), 1 of 10 common dual lands (50%), or 1 of 10 regular frame basic lands (25%). In 20% of boosters, this land will be traditional foil.
+class FDNBoosterFactory extends BoosterFactory {
+	static filter(minNumber: number, maxNumber: number, rarity?: string) {
+		return CardsBySet["fdn"].filter((cid: CardID) => {
+			const c = getCard(cid);
+			return (
+				(rarity === undefined || c.rarity === rarity) &&
+				parseInt(c.collector_number) >= minNumber &&
+				parseInt(c.collector_number) <= maxNumber
+			);
+		});
+	}
+
+	static readonly SPGRatio: number = 0.015625;
+	static readonly Borderless: Record<string, CardID[]> = {
+		mythic: FDNBoosterFactory.filter(292, 421, "mythic"),
+		rare: FDNBoosterFactory.filter(292, 421, "rare"),
+		uncommon: FDNBoosterFactory.filter(292, 421, "uncommon"),
+		common: FDNBoosterFactory.filter(292, 421, "common"),
+	};
+	static readonly CharacterLands: CardID[] = FDNBoosterFactory.filter(282, 291);
+	static readonly DualLands: CardID[] = FDNBoosterFactory.filter(259, 271).filter((cid) =>
+		[262, 264, 267].includes(parseInt(getCard(cid).collector_number))
+	);
+	static readonly Basics: CardID[] = FDNBoosterFactory.filter(272, 281);
+	static readonly WildCardOdds = cumulativeSum([0.167, 0.583, 0.163, 0.026, 0.016, 0.003, 0.018, 0.024]);
+
+	spg: CardPool = new CardPool(); // Special Guests
+	borderless: Record<string, CardPool> = {
+		common: new CardPool(),
+		uncommon: new CardPool(),
+		rare: new CardPool(),
+		mythic: new CardPool(),
+	};
+
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
+		const opt = { ...options };
+		opt.foil = false; // We'll handle the garanteed foil slot ourselves.
+		super(cardPool, landSlot, opt);
+		for (const c of SpecialGuests.fdn)
+			this.spg.set(c, options.maxDuplicates?.[getCard(c).rarity] ?? DefaultMaxDuplicates);
+		for (const rarity of ["common", "uncommon", "rare", "mythic"])
+			for (const c of FDNBoosterFactory.Borderless[rarity])
+				this.borderless[rarity].set(c, options.maxDuplicates?.[rarity] ?? DefaultMaxDuplicates);
+	}
+
+	generateBooster(targets: Targets) {
+		const updatedTargets = structuredClone(targets);
+		const booster: UniqueCard[] = [];
+
+		if (targets === DefaultBoosterTargets) {
+			// 10 -> 6 or 7
+			updatedTargets.common = Math.max(0, updatedTargets.common - 3);
+			updatedTargets.rare = 0; // We'll handle the rare ourselves.
+		} else {
+			// Two commons will be replaced by wildcards.
+			updatedTargets.common = Math.max(0, updatedTargets.common - 2);
+			updatedTargets.rare = Math.max(0, updatedTargets.rare - 1); // We'll handle the rare ourselves.
+		}
+
+		// 6th Common or Special Guest
+		if (random.realZeroToOneInclusive() < FDNBoosterFactory.SPGRatio) {
+			--updatedTargets.common;
+			booster.push(pickCard(this.spg));
+		}
+
+		// Don't force a rare if the initial targets don't allow it.
+		if (targets.rare > 0) {
+			const rareRoll = random.realZeroToOneInclusive();
+			booster.push(
+				pickCard(
+					rareRoll < 0.015
+						? this.borderless.mythic
+						: rareRoll < 0.077 + 0.015
+							? this.borderless.rare
+							: rareRoll < 0.128 + 0.077 + 0.015
+								? this.cardPool["mythic"]
+								: this.cardPool["rare"]
+				)
+			);
+		}
+
+		// 1 Wildcard of any rarity
+		// Traditional foil card of any rarity
+		for (let i = 0; i < 2; ++i) {
+			const wildcardRoll = random.realZeroToOneInclusive();
+			const pools = [
+				this.cardPool.common,
+				this.cardPool.uncommon,
+				this.cardPool.rare,
+				this.cardPool.mythic,
+				this.borderless.rare,
+				this.borderless.mythic,
+				this.borderless.common,
+				this.borderless.uncommon,
+			];
+			let poolIdx = 0;
+			while (wildcardRoll > FDNBoosterFactory.WildCardOdds[poolIdx]) poolIdx++;
+			booster.push(pickCard(pools[poolIdx]));
+		}
+		booster[booster.length - 1].foil = true;
+
+		// Make sure there are no negative counts
+		for (const key in updatedTargets) updatedTargets[key] = Math.max(0, updatedTargets[key]);
+		const boosterOrError = super.generateBooster(updatedTargets); // Allow duplicates here.
+		if (isMessageError(boosterOrError)) return boosterOrError;
+
+		// Land card
+		const landRoll = random.realZeroToOneInclusive();
+		const land = getUnique(
+			getRandom(
+				landRoll < 0.25
+					? FDNBoosterFactory.CharacterLands
+					: landRoll < 0.75
+						? FDNBoosterFactory.DualLands
+						: FDNBoosterFactory.Basics
+			)
+		);
+		land.foil = random.realZeroToOneInclusive() < 0.2;
+
+		return [...booster, ...boosterOrError, land];
+	}
+}
+
 // Set specific rules.
 // Neither DOM, WAR or ZNR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
 export const SetSpecificFactories: {
@@ -2644,6 +2783,7 @@ export const SetSpecificFactories: {
 	blb: BLBBoosterFactory,
 	dsk: DSKBoosterFactory,
 	mb2: MB2BoosterFactory,
+	fdn: FDNBoosterFactory,
 };
 
 export const getBoosterFactory = function (

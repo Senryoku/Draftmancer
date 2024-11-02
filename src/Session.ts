@@ -59,6 +59,7 @@ import {
 	genSuperJumpPackChoices,
 	JumpInSets,
 	Jumpstart2022Boosters,
+	Jumpstart2025Boosters,
 	JumpstartBoosters,
 } from "./Jumpstart.js";
 import { IDraftState } from "./IDraftState.js";
@@ -3253,6 +3254,24 @@ export class Session implements IIndexable {
 					imageUrl: BoosterImage,
 					title: "Opened two Jumpstart boosters!",
 					text: `You got '${boosters[0].name}' and '${boosters[1].name}'.`,
+					showConfirmButton: true,
+				} as Message);
+			}
+			this.sendLogs();
+			logSession("Jumpstart", this);
+		} else if (set === "j25") {
+			for (const user of this.users) {
+				const boosters = [getRandom(Jumpstart2025Boosters), getRandom(Jumpstart2025Boosters)];
+				const cards = boosters.map((b) => b.cards.map((cid: CardID) => getUnique(cid))).flat();
+				updateLog(
+					user,
+					cards.map((c) => c.id)
+				);
+				Connections[user].socket.emit("setCardPool", cards);
+				Connections[user].socket.emit("message", {
+					icon: "success",
+					title: "Your Jumpstart packs!",
+					html: `<div style="display:flex; justify-content: space-evenly;"><img src="/img/J25/${boosters[0].image}.webp" height="300px"><img src="/img/J25/${boosters[1].image}.webp" height="300px"></div>`,
 					showConfirmButton: true,
 				} as Message);
 			}

@@ -167,7 +167,7 @@ export default defineComponent({
 	align-items: center;
 	justify-content: center;
 	width: 100%;
-	margin: 1.25em auto 0;
+	margin: 1em auto 0;
 	padding: 0;
 }
 

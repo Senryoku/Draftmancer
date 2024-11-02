@@ -515,6 +515,9 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
         if c['set'] == "mb2":
             selection['in_booster'] = True
 
+        if c['set'] == "fdn":
+            selection['in_booster'] = (int(c['collector_number']) > 0 and int(c['collector_number']) < 259) or int(c['collector_number']) == 262 or int(c['collector_number']) == 264 or int(c['collector_number']) == 267
+
         if c['layout'] == "split":
             if 'Aftermath' in c['keywords']:
                 selection['layout'] = 'split-left'
@@ -919,6 +922,6 @@ constants = {}
 with open("src/data/constants.json", 'r', encoding="utf8") as constantsFile:
     constants = json.loads(constantsFile.read())
 constants['PrimarySets'] = [
-    s for s in PrimarySets if s in setinfos and s not in subsets and s not in ["ren", "rin", "a22", "y22", "j22", "sis", "ltc", "who", "wot", "acr", "fdn"]]  # Exclude some codes that are actually part of larger sets (tsb, fmb1, h1r... see subsets), or aren't out yet
+    s for s in PrimarySets if s in setinfos and s not in subsets and s not in ["ren", "rin", "a22", "y22", "j22", "sis", "ltc", "who", "wot", "acr", "dft", "inr"]]  # Exclude some codes that are actually part of larger sets (tsb, fmb1, h1r... see subsets), or aren't out yet
 with open("src/data/constants.json", 'w', encoding="utf8") as constantsFile:
     json.dump(constants, constantsFile, ensure_ascii=False, indent=4)

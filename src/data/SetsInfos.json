@@ -564,6 +564,11 @@
         "fullName": "Duel Decks: Elves vs. Inventors",
         "icon": "img/sets/ddu.svg"
     },
+    "dft": {
+        "code": "dft",
+        "fullName": "Aetherdrift",
+        "icon": "img/sets/dft.svg"
+    },
     "dgm": {
         "code": "dgm",
         "fullName": "Dragon's Maze",
@@ -832,6 +837,11 @@
         "code": "fclu",
         "fullName": "Ravnica: Clue Edition Front Cards",
         "icon": "img/sets/fclu.svg"
+    },
+    "fdc": {
+        "code": "fdc",
+        "fullName": "Foundations Commander",
+        "icon": "img/sets/fdc.svg"
     },
     "fdmu": {
         "code": "fdmu",
@@ -1140,6 +1150,11 @@
         "fullName": "Iconic Masters",
         "icon": "img/sets/ima.svg"
     },
+    "inr": {
+        "code": "inr",
+        "fullName": "Innistrad Remastered",
+        "icon": "img/sets/inr.svg"
+    },
     "inv": {
         "code": "inv",
         "fullName": "Invasion",
@@ -1220,6 +1235,11 @@
         "code": "j22",
         "fullName": "Jumpstart 2022",
         "icon": "img/sets/j22.svg"
+    },
+    "j25": {
+        "code": "j25",
+        "fullName": "Foundations Jumpstart",
+        "icon": "img/sets/j25.svg"
     },
     "jgp": {
         "code": "jgp",
@@ -2144,6 +2164,11 @@
         "fullName": "MagicFest 2024",
         "icon": "img/sets/pf24.svg"
     },
+    "pfdn": {
+        "code": "pfdn",
+        "fullName": "Foundations Promos",
+        "icon": "img/sets/pfdn.svg"
+    },
     "pfrf": {
         "code": "pfrf",
         "fullName": "Fate Reforged Promos",
@@ -2402,6 +2427,11 @@
         "code": "plst",
         "fullName": "The List",
         "icon": "img/sets/plst.svg"
+    },
+    "pltc": {
+        "code": "pltc",
+        "fullName": "Tales of Middle-earth Deluxe Commander Kit",
+        "icon": "img/sets/pltc.svg"
     },
     "pltr": {
         "code": "pltr",

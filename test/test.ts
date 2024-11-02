@@ -38,6 +38,9 @@ const checkColorBalance = function (booster: Card[]) {
 };
 
 const checkDuplicates = function (booster: UniqueCard[]) {
+	// Wildcard slots can introduce duplicates.
+	if (booster.every((card) => card.set === "fdn" || card.set === "spg")) return;
+
 	// Foils can be duplicates
 	const sorted = [...booster].sort((lhs, rhs) => (lhs.id < rhs.id ? -1 : 1));
 	for (let idx = 0; idx < sorted.length - 1; ++idx) {
@@ -277,6 +280,7 @@ describe("Sets content", function () {
 		mh3: { common: 80, uncommon: 101, rare: 60, mythic: 20 },
 		blb: { common: 81, uncommon: 100, rare: 60, mythic: 20 },
 		dsk: { common: 91, uncommon: 100, rare: 60, mythic: 20 }, // 81 commons plus 10 dual basics?
+		fdn: { common: 80, uncommon: 100, rare: 60, mythic: 20 },
 	};
 
 	beforeEach(function (done) {
@@ -765,6 +769,7 @@ describe("Single Draft (Two Players)", function () {
 							(set === "mh3" && (c.set === "spg" || c.set === "m3c")) ||
 							(set === "blb" && c.set === "spg") ||
 							(set === "dsk" && c.set === "spg") ||
+							(set === "fdn" && c.set === "spg") ||
 							(set === "mb2" && c.set === "plst")
 					),
 					`All cards in booster should be of the desired set, got [${[...new Set(b.map((c) => c.set))]}].`
@@ -2406,7 +2411,7 @@ import { JumpInBooster } from "../src/JumpInTypes.js";
 import { parseLine } from "../src/parseCardList.js";
 import { SocketError, isSocketError } from "../src/Message.js";
 import { isNumber } from "../src/TypeChecks.js";
-import { getNDisctinctRandom, random, randomInt, sum } from "../src/utils.js";
+import { getNDisctinctRandom, randomInt, sum } from "../src/utils.js";
 
 describe("Jumpstart", function () {
 	let clients: ReturnType<typeof makeClients> = [];

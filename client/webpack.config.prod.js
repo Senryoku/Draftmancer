@@ -1,10 +1,10 @@
-const { merge } = require("webpack-merge");
-const commonConfig = require("./webpack.config.cjs");
+import { merge } from "webpack-merge";
+import commonConfig from "./webpack.config.js";
 
-const CompressionPlugin = require("compression-webpack-plugin");
-const zlib = require("zlib");
+import CompressionPlugin from "compression-webpack-plugin";
+import zlib from "zlib";
 
-module.exports = merge(commonConfig, {
+export default merge(commonConfig, {
 	mode: "production",
 	plugins: [
 		new CompressionPlugin({

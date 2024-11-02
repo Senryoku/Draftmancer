@@ -196,7 +196,7 @@ function jsonParsingErrorMessage(e: { message: string }, jsonStr: string): strin
 	if (positionStr) {
 		const position = parseInt(positionStr[1]);
 		msg += `<pre>${escapeHTML(
-			jsonStr.slice(Math.max(0, position - 50), Math.max(0, position - 1))
+			jsonStr.slice(Math.max(0, position - 50), Math.max(0, position))
 		)}<span style="color: red; text-decoration: underline red;">${escapeHTML(jsonStr[position])}</span>${escapeHTML(
 			jsonStr.slice(Math.min(position + 1, jsonStr.length), Math.min(position + 50, jsonStr.length))
 		)}</pre>`;
@@ -236,7 +236,7 @@ function extractJSON(
 	} catch (e) {
 		return ackError({
 			title: `JSON Parsing Error`,
-			html: jsonParsingErrorMessage(e as { message: string }, r.str),
+			html: jsonParsingErrorMessage(e as { message: string }, str),
 		});
 	}
 }
@@ -637,9 +637,8 @@ export function parseCardList(
 		let lineIdx = 0;
 
 		const skipEmptyLinesAndComments = () => {
-			while (lines[lineIdx] === "" || lines[lineIdx].startsWith(CommentDelimiter)) {
+			while (lineIdx < lines.length && (lines[lineIdx] === "" || lines[lineIdx].startsWith(CommentDelimiter))) {
 				++lineIdx;
-				if (lineIdx >= lines.length) throw new Error(`Unexpected end-of-file.`);
 			}
 		};
 		skipEmptyLinesAndComments();
@@ -808,19 +807,19 @@ export function parseCardList(
 							if (!Object.prototype.hasOwnProperty.call(cardList.sheets, sheet.name))
 								return ackError({
 									title: `Parsing Error`,
-									text: `Layout '${layoutName}' refers to slot '${sheet.name}' which is not defined.`,
+									text: `Layout '${layoutName}' refers to sheet '${sheet.name}' which is not defined.`,
 								});
 						}
 						if (!isInteger(slot.count) || slot.count <= 0)
 							return ackError({
-								title: `Parsing Error`,
-								text: `Layout '${layoutName}' slot '${slot.name}' value is invalid, must be a positive integer (got '${slot.count}').`,
+								title: `Layout Error`,
+								text: `Layout '${layoutName}' slot '${slot.name}' card count is invalid, must be a positive integer (got '${slot.count}').`,
 							});
 						packSize += slot.count;
 					}
 					if (packSize <= 0)
 						return ackError({
-							title: `Parsing Error`,
+							title: `Layout Error`,
 							text: `Layout '${layoutName}' is empty.`,
 						});
 				}
@@ -828,8 +827,8 @@ export function parseCardList(
 				// No explicit or default (via slot sizes) layout, expect a single slot.
 				if (Object.keys(cardList.sheets).length === 0)
 					return ackError({
-						title: `Parsing Error`,
-						text: `No slot defined.`,
+						title: `Missing Card Sheet`,
+						text: `You must declare at least one card sheet.`,
 					});
 				else if (Object.keys(cardList.sheets).length !== 1)
 					return ackError({

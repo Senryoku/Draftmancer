@@ -82,7 +82,8 @@
         "otj",
         "mh3",
         "blb",
-        "dsk"
+        "dsk",
+        "fdn"
     ],
     "AlchemySets": [
         "hbg",
@@ -100,7 +101,8 @@
         "mkm",
         "otj",
         "blb",
-        "dsk"
+        "dsk",
+        "fdn"
     ],
     "BasicLandNames": {
         "en": {
@@ -309,6 +311,7 @@
         }
     ],
     "PrimarySets": [
+        "fdn",
         "dsk",
         "mb2",
         "blb",
