@@ -58,6 +58,8 @@ import { eraseCookie, getCookie, setCookie } from "./cookies";
 import { ButtonColor, Alert, fireToast } from "./alerts";
 import parseCSV from "./parseCSV";
 
+import type CardPool from "./components/CardPool.vue";
+
 import LoadingComponent from "./components/LoadingComponent.vue";
 import SessionUser from "./components/SessionUser.vue";
 import News from "./components/News.vue";
@@ -65,7 +67,6 @@ import Communities from "./components/Communities.vue";
 import BoosterCard from "./components/BoosterCard.vue";
 import CardComponent from "./components/Card.vue";
 import CardPlaceholder from "./components/CardPlaceholder.vue";
-import CardPool from "./components/CardPool.vue";
 import DelayedInput from "./components/DelayedInput.vue";
 import Dropdown from "./components/Dropdown.vue";
 import Modal from "./components/Modal.vue";
