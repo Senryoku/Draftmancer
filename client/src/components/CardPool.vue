@@ -199,6 +199,7 @@ export default defineComponent({
 			type: Boolean,
 			default: false,
 		},
+		backupKey: { type: String, required: false },
 	},
 	data() {
 		return {
@@ -258,7 +259,52 @@ export default defineComponent({
 		},
 		sync() {
 			this.reset();
-			for (let card of this.cards) this.addCard(card, undefined);
+			if (!this.tryRecover()) for (let card of this.cards) this.addCard(card, undefined);
+		},
+		tryRecover(): boolean {
+			// Attempts to recover the row/column arrangement from localStorage.
+			// Returns true if successful. No changes are made if unsuccessful.
+			if (!this.backupKey) return false;
+			try {
+				const savedPoolStr = localStorage.getItem("card-pool-backup-" + this.backupKey);
+				if (savedPoolStr) {
+					const toStr = (col: { id: string; uniqueID: number }[]) =>
+						col
+							.map((c) => c.id + "," + c.uniqueID)
+							.sort()
+							.join(";");
+					const savedPool: { id: string; uniqueID: number }[][][] = JSON.parse(savedPoolStr);
+
+					if (savedPool.length !== this.rows.length) return false;
+					if (savedPool[0].length !== this.rows[0].length) return false;
+
+					if (toStr(savedPool.flat().flat()) === toStr(this.cards)) {
+						const rows = [];
+
+						for (let r of savedPool) {
+							const row = [];
+							for (let c of r) {
+								const col = [];
+								for (let { id, uniqueID } of c) {
+									const uniqueCard = this.cards.find(
+										(card) => card.id === id && card.uniqueID === uniqueID
+									);
+									if (!uniqueCard) return false;
+									col.push(uniqueCard);
+								}
+								row.push(col);
+							}
+							rows.push(row);
+						}
+
+						this.rows = rows;
+						return true;
+					}
+				}
+			} catch (e) {
+				console.error("[CardPool] Failed to recover card pool from localStorage: ", e);
+			}
+			return false;
 		},
 		filterBasics() {
 			// Removes basics without affecting other cards ordering.
@@ -654,6 +700,23 @@ export default defineComponent({
 					name: this.rows[1].flat().every((card) => !card.type.includes("Creature")) ? "Non-Creatures" : "-",
 				},
 			];
+		},
+	},
+	watch: {
+		rows: {
+			handler: function () {
+				if (!this.backupKey || this.cards.length === 0 || this.rows.flat().flat().length !== this.cards.length)
+					return;
+				const serialized = this.rows.map((r) =>
+					r.map((c) =>
+						c.map((card) => {
+							return { id: card.id, uniqueID: card.uniqueID };
+						})
+					)
+				);
+				localStorage.setItem("card-pool-backup-" + this.backupKey, JSON.stringify(serialized));
+			},
+			deep: true,
 		},
 	},
 });

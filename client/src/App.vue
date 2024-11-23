@@ -1270,6 +1270,7 @@
 								@dragleave="onDragLeave($event)"
 								@drop="dropBoosterCard($event)"
 								:cardConditionalClasses="cardConditionalClasses"
+								backupKey="deck"
 							>
 								<template v-slot:title>
 									Deck ({{ deck.length
@@ -1530,6 +1531,7 @@
 							@dragleave="onDragLeave($event)"
 							@drop="dropBoosterCard($event, { toSideboard: true })"
 							:cardConditionalClasses="cardConditionalClasses"
+							backupKey="sideboard"
 						>
 							<template v-slot:title> Sideboard ({{ sideboard.length }}) </template>
 							<template v-slot:right-controls>
