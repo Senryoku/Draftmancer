@@ -423,9 +423,6 @@ div:where(.swal2-container) .swal2-checkbox {
 	margin: 0;
 }
 
-.option-column {
-}
-
 .option-tooltip {
 	max-width: 20vw;
 }
@@ -1025,26 +1022,25 @@ ul.player-list {
 .booster-count {
 	position: relative;
 	min-width: 14px;
-}
 
-.booster-count img {
-	width: 1em;
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform-origin: center bottom;
-	transform: translate(-50%, -50%);
-	filter: drop-shadow(0 0 2px #00000080);
-}
-
-.booster-count div {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	font-weight: 900;
-	color: black;
-	font-family: "Brush Script MT";
+	img {
+		width: 1em;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform-origin: center bottom;
+		transform: translate(-50%, -50%);
+		filter: drop-shadow(0 0 2px #00000080);
+	}
+	div {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		font-weight: 900;
+		color: black;
+		font-family: "Brush Script MT";
+	}
 }
 
 /* Booster passing animation */
@@ -1160,14 +1156,18 @@ ul.player-list {
 	text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
 	font-weight: 600;
 	white-space: nowrap;
-}
 
-.booster-waiting .wait .passing-order {
-	margin: 0 2em;
-}
+	& .passing-order {
+		margin: 0 2em;
+	}
 
-.booster-waiting .wait .booster-wait-passing-order-right {
-	animation: passing-order-right 3s infinite;
+	& .booster-wait-passing-order-right {
+		animation: passing-order-right 3s infinite;
+	}
+
+	& .booster-wait-passing-order-left {
+		animation: passing-order-left 3s infinite;
+	}
 }
 
 @keyframes passing-order-right {
@@ -1187,10 +1187,6 @@ ul.player-list {
 		transform: translateX(2em);
 		opacity: 0;
 	}
-}
-
-.booster-waiting .wait .booster-wait-passing-order-left {
-	animation: passing-order-left 3s infinite;
 }
 
 @keyframes passing-order-left {
@@ -1244,13 +1240,12 @@ ul.player-list {
 	margin-left: 1em;
 	margin-right: 1em;
 	min-height: 35px;
-}
-
-.section-title h2 {
-	display: inline-block;
-	margin: 0;
-	font-variant: small-caps;
-	font-size: 28px;
+	h2 {
+		display: inline-block;
+		margin: 0;
+		font-variant: small-caps;
+		font-size: 28px;
+	}
 }
 
 @media (max-width: 700px) {
@@ -1303,14 +1298,14 @@ ul.player-list {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-}
 
-.deck-stat img {
-	width: 16px;
-	height: 16px;
-	object-fit: contain;
-	margin-left: 2px;
-	filter: brightness(0.5);
+	img {
+		width: 16px;
+		height: 16px;
+		object-fit: contain;
+		margin-left: 2px;
+		filter: brightness(0.5);
+	}
 }
 
 .deck-search input {
@@ -1326,11 +1321,11 @@ ul.player-list {
 	flex: 0 0 auto;
 	margin-left: 1em;
 	box-sizing: border-box;
-}
 
-.collapsed-sideboard h2 {
-	font-size: 20px;
-	line-height: 28px;
+	h2 {
+		font-size: 20px;
+		line-height: 28px;
+	}
 }
 
 .selected {
@@ -1352,8 +1347,6 @@ ul.player-list {
 }
 
 .burned img {
-	-webkit-box-shadow: 0px 0px 20px 1px rgb(161, 0, 3);
-	-moz-box-shadow: 0px 0px 20px 1px rgb(161, 0, 3);
 	box-shadow: 0px 0px 20px 1px rgb(161, 0, 3);
 }
 
@@ -1366,29 +1359,29 @@ ul.player-list {
 	flex-direction: column;
 	margin-bottom: 0.5em;
 	min-height: 300px;
-}
 
-.card-column > .column-card-container,
-.card-column > .column-card-container > .card,
-.card-column > .card {
-	height: 0;
-	padding-bottom: calc(
-		var(--card-title-height-factor, 1) * 13.5%
-	); /* As a percentage of the container width, used to display card name (instead of setting a height), makes its 'responsive' */
-	margin: 0;
-	z-index: 0;
-}
+	& > .column-card-container,
+	& > .column-card-container > .card,
+	& > .card {
+		height: 0;
+		padding-bottom: calc(
+			var(--card-title-height-factor, 1) * 13.5%
+		); /* As a percentage of the container width, used to display card name (instead of setting a height), makes its 'responsive' */
+		margin: 0;
+		z-index: 0;
+	}
 
-/* Bug in webkit applies with style to another element while drag & dropping https://bugs.webkit.org/show_bug.cgi?id=134555 */
-.card-column > .column-card-container:hover,
-.card-column > .card:hover {
-	z-index: 800;
-}
+	/* Bug in webkit applies with style to another element while drag & dropping https://bugs.webkit.org/show_bug.cgi?id=134555 */
+	& > .column-card-container:hover,
+	& > .card:hover {
+		z-index: 800;
+	}
 
-.card-column > .column-card-container:last-child,
-.card-column > .column-card-container:last-child > .card,
-.card-column > .card:last-child {
-	margin-bottom: calc(142.5% - var(--card-title-height-factor, 1) * 13.5%);
+	& > .column-card-container:last-child,
+	& > .column-card-container:last-child > .card,
+	& > .card:last-child {
+		margin-bottom: calc(142.5% - var(--card-title-height-factor, 1) * 13.5%);
+	}
 }
 
 /* Only use this hover rule on desktop (hover capabilities and a mouse or equivalent device) */
@@ -1444,167 +1437,81 @@ ul.player-list {
 	left: 0;
 	bottom: 0;
 	right: 0;
-}
 
-/* Transparent Overlay */
-.loading:before {
-	content: "";
-	display: block;
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	background-color: rgba(0, 0, 0, 0.8);
-}
-
-.loading + span {
-	position: fixed;
-	top: calc(50vh + 2em);
-	right: 0;
-	left: 0;
-	z-index: 1000;
-	text-align: center;
-}
-
-/* :not(:required) hides these rules from IE9 and below */
-.loading:not(:required) {
-	/* hide "loading..." text */
-	font: 0/0 a;
-	color: transparent;
-	text-shadow: none;
-	background-color: transparent;
-	border: 0;
-}
-
-.loading:not(:required):after {
-	--spinner-color: rgba(255, 255, 255, 0.75);
-	content: "";
-	display: block;
-	font-size: 10px;
-	width: 1em;
-	height: 1em;
-	margin-top: -0.5em;
-	-webkit-animation: spinner 1500ms infinite linear;
-	-moz-animation: spinner 1500ms infinite linear;
-	-ms-animation: spinner 1500ms infinite linear;
-	-o-animation: spinner 1500ms infinite linear;
-	animation: spinner 1500ms infinite linear;
-	border-radius: 0.5em;
-	-webkit-box-shadow:
-		var(--spinner-color) 1.5em 0 0 0,
-		var(--spinner-color) 1.1em 1.1em 0 0,
-		var(--spinner-color) 0 1.5em 0 0,
-		var(--spinner-color) -1.1em 1.1em 0 0,
-		rgba(0, 0, 0, 0.5) -1.5em 0 0 0,
-		rgba(0, 0, 0, 0.5) -1.1em -1.1em 0 0,
-		var(--spinner-color) 0 -1.5em 0 0,
-		var(--spinner-color) 1.1em -1.1em 0 0;
-	box-shadow:
-		var(--spinner-color) 1.5em 0 0 0,
-		var(--spinner-color) 1.1em 1.1em 0 0,
-		var(--spinner-color) 0 1.5em 0 0,
-		var(--spinner-color) -1.1em 1.1em 0 0,
-		var(--spinner-color) -1.5em 0 0 0,
-		var(--spinner-color) -1.1em -1.1em 0 0,
-		var(--spinner-color) 0 -1.5em 0 0,
-		var(--spinner-color) 1.1em -1.1em 0 0;
-}
-
-/* Animation */
-
-@-webkit-keyframes spinner {
-	0% {
-		-webkit-transform: rotate(0deg);
-		-moz-transform: rotate(0deg);
-		-ms-transform: rotate(0deg);
-		-o-transform: rotate(0deg);
-		transform: rotate(0deg);
+	/* Transparent Overlay */
+	&:before {
+		content: "";
+		display: block;
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-color: rgba(0, 0, 0, 0.8);
 	}
-	100% {
-		-webkit-transform: rotate(360deg);
-		-moz-transform: rotate(360deg);
-		-ms-transform: rotate(360deg);
-		-o-transform: rotate(360deg);
-		transform: rotate(360deg);
+
+	& + span {
+		position: fixed;
+		top: calc(50vh + 2em);
+		right: 0;
+		left: 0;
+		z-index: 1000;
+		text-align: center;
+	}
+
+	/* :not(:required) hides these rules from IE9 and below */
+	&:not(:required) {
+		/* hide "loading..." text */
+		font: 0/0 a;
+		color: transparent;
+		text-shadow: none;
+		background-color: transparent;
+		border: 0;
+	}
+
+	&:not(:required):after {
+		--spinner-color: rgba(255, 255, 255, 0.75);
+		content: "";
+		display: block;
+		font-size: 10px;
+		width: 1em;
+		height: 1em;
+		margin-top: -0.5em;
+		-webkit-animation: spinner 1500ms infinite linear;
+		-moz-animation: spinner 1500ms infinite linear;
+		-ms-animation: spinner 1500ms infinite linear;
+		-o-animation: spinner 1500ms infinite linear;
+		animation: spinner 1500ms infinite linear;
+		border-radius: 0.5em;
+		-webkit-box-shadow:
+			var(--spinner-color) 1.5em 0 0 0,
+			var(--spinner-color) 1.1em 1.1em 0 0,
+			var(--spinner-color) 0 1.5em 0 0,
+			var(--spinner-color) -1.1em 1.1em 0 0,
+			rgba(0, 0, 0, 0.5) -1.5em 0 0 0,
+			rgba(0, 0, 0, 0.5) -1.1em -1.1em 0 0,
+			var(--spinner-color) 0 -1.5em 0 0,
+			var(--spinner-color) 1.1em -1.1em 0 0;
+		box-shadow:
+			var(--spinner-color) 1.5em 0 0 0,
+			var(--spinner-color) 1.1em 1.1em 0 0,
+			var(--spinner-color) 0 1.5em 0 0,
+			var(--spinner-color) -1.1em 1.1em 0 0,
+			var(--spinner-color) -1.5em 0 0 0,
+			var(--spinner-color) -1.1em -1.1em 0 0,
+			var(--spinner-color) 0 -1.5em 0 0,
+			var(--spinner-color) 1.1em -1.1em 0 0;
 	}
 }
-@-moz-keyframes spinner {
-	0% {
-		-webkit-transform: rotate(0deg);
-		-moz-transform: rotate(0deg);
-		-ms-transform: rotate(0deg);
-		-o-transform: rotate(0deg);
-		transform: rotate(0deg);
-	}
-	100% {
-		-webkit-transform: rotate(360deg);
-		-moz-transform: rotate(360deg);
-		-ms-transform: rotate(360deg);
-		-o-transform: rotate(360deg);
-		transform: rotate(360deg);
-	}
-}
-@-o-keyframes spinner {
-	0% {
-		-webkit-transform: rotate(0deg);
-		-moz-transform: rotate(0deg);
-		-ms-transform: rotate(0deg);
-		-o-transform: rotate(0deg);
-		transform: rotate(0deg);
-	}
-	100% {
-		-webkit-transform: rotate(360deg);
-		-moz-transform: rotate(360deg);
-		-ms-transform: rotate(360deg);
-		-o-transform: rotate(360deg);
-		transform: rotate(360deg);
-	}
-}
+
 @keyframes spinner {
 	0% {
-		-webkit-transform: rotate(0deg);
-		-moz-transform: rotate(0deg);
-		-ms-transform: rotate(0deg);
-		-o-transform: rotate(0deg);
 		transform: rotate(0deg);
 	}
 	100% {
-		-webkit-transform: rotate(360deg);
-		-moz-transform: rotate(360deg);
-		-ms-transform: rotate(360deg);
-		-o-transform: rotate(360deg);
 		transform: rotate(360deg);
 	}
 }
-
-/* Collection stats */
-.set-stats {
-	margin: 0.5em;
-}
-
-.set-stats table {
-	margin: auto;
-}
-
-.set-stats caption {
-	font-size: 1.25em;
-}
-
-.set-stats tr:nth-child(odd) {
-	background-color: rgba(0, 0, 0, 0.2);
-}
-
-.set-stats th,
-.set-stats td {
-	padding: 0.25em;
-}
-
-.set-stats td:not(:first-child) {
-	text-align: center;
-}
-
-/* Animations */
 
 .shaking {
 	animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
@@ -1668,9 +1575,11 @@ ul.player-list {
 Can't be applied to .card-filtered directly as it creates a bug with the rotation handle position.
 See: https://stackoverflow.com/questions/52937708/why-does-applying-a-css-filter-on-the-parent-break-the-child-positioning
 */
-.card-filtered .card-image i,
-.card-filtered .card-image img {
-	filter: brightness(35%) saturate(50%);
+.card-filtered .card-image {
+	i,
+	img {
+		filter: brightness(35%) saturate(50%);
+	}
 }
 
 .card-image img {

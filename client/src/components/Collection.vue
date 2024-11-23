@@ -252,19 +252,43 @@ export default defineComponent({
 
 	background: #444;
 	padding: 1em;
+
+	h3 {
+		margin: 0;
+	}
+
+	table {
+		margin: 0.25em;
+		text-align: right;
+	}
+
+	tr {
+		margin: 0.1em;
+	}
 }
 
-.resources h3 {
-	margin: 0;
-}
+.set-stats {
+	margin: 0.5em;
 
-.resources table {
-	margin: 0.25em;
-	text-align: right;
-}
+	table {
+		margin: auto;
+	}
 
-.resources tr {
-	margin: 0.1em;
+	caption {
+		font-size: 1.25em;
+	}
+
+	tr:nth-child(odd) {
+		background-color: rgba(0, 0, 0, 0.2);
+	}
+
+	th,
+	td {
+		padding: 0.25em;
+	}
+
+	td:not(:first-child) {
+		text-align: center;
+	}
 }
 </style>
-../../../src/SetInfos
