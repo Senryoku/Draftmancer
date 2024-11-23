@@ -183,18 +183,46 @@ const slotName = computed(() => {
 	transition: transform 0.08s ease-out;
 }
 
+.selected {
+	&.booster-card:not(.zoomedin) {
+		transform: scale(1.04);
+	}
+
+	&.foil .inner-card-image, /* .foil .card-image has an 'overflow:hidden' preventing the box-shadow to show up. We'll apply it earlier in this case. */
+	& .card-image .front-image,
+	& .card-image .back-image,
+	& .card-placeholder {
+		animation: selected-pulse 5s infinite ease-in-out;
+	}
+}
+
+@keyframes selected-pulse {
+	0%,
+	10% {
+		filter: drop-shadow(var(--selected-card-shadow-color) 0px 0px 1px);
+	}
+	30%,
+	35% {
+		filter: drop-shadow(var(--selected-card-shadow-color) 0px 0px 10px);
+	}
+	100% {
+		filter: drop-shadow(var(--selected-card-shadow-color) 0px 0px 1px);
+	}
+}
+
+.bot-picked {
+	&.foil .inner-card-image, /* .foil .card-image has an 'overflow:hidden' preventing the box-shadow to show up. We'll apply it earlier in this case. */
+	& .card-image .front-image,
+	& .card-image .back-image,
+	& .card-placeholder {
+		box-shadow: 0px 0px 20px 1px rgb(0, 111, 175);
+	}
+}
+
 .booster-card:hover:not(.zoomedin) {
 	transform: scale(1.08);
 }
 .skipped .booster-card:hover:not(.zoomedin) {
 	transform: inherit;
-}
-
-.bot-picked .card-image .front-image,
-.bot-picked .card-image .back-image,
-.bot-picked .card-placeholder {
-	-webkit-box-shadow: 0px 0px 20px 1px rgb(0, 111, 175);
-	-moz-box-shadow: 0px 0px 20px 1px rgb(0, 111, 175);
-	box-shadow: 0px 0px 20px 1px rgb(0, 111, 175);
 }
 </style>

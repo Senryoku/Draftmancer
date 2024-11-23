@@ -1333,21 +1333,22 @@ ul.player-list {
 	line-height: 28px;
 }
 
-.selected.foil .inner-card-image, /* .foil .card-image has an 'overflow:hidden' preventing the box-shadow to show up. We'll apply it earlier in this case. */
-.selected .card-image .front-image,
-.selected .card-image .back-image,
-.selected .card-placeholder {
-	-webkit-box-shadow: 0px 0px 20px 1px rgba(0, 115, 2, 1);
-	-moz-box-shadow: 0px 0px 20px 1px rgba(0, 115, 2, 1);
-	box-shadow: 0px 0px 20px 1px rgba(0, 115, 2, 1);
+.selected {
+	&.foil .inner-card-image, /* .foil .card-image has an 'overflow:hidden' preventing the box-shadow to show up. We'll apply it earlier in this case. */
+	& .card-image .front-image,
+	& .card-image .back-image,
+	& .card-placeholder {
+		--selected-card-shadow-color: rgb(3, 139, 6);
+		box-shadow: 0px 0px 4px 2px var(--selected-card-shadow-color);
+	}
 }
 
-.selected-high .card-image .front-image,
-.selected-high .card-image .back-image,
-.selected-high .card-placeholder {
-	-webkit-box-shadow: 0px 0px 20px 4px rgba(0, 200, 2, 1);
-	-moz-box-shadow: 0px 0px 20px 4px rgba(0, 200, 2, 1);
-	box-shadow: 0px 0px 20px 4px rgba(0, 200, 2, 1);
+.selected-high {
+	& .card-image .front-image,
+	& .card-image .back-image,
+	& .card-placeholder {
+		box-shadow: 0px 0px 20px 4px rgba(0, 200, 2, 1);
+	}
 }
 
 .burned img {
