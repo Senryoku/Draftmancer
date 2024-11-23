@@ -1158,7 +1158,11 @@ export default defineComponent({
 					this.draftState = data.state;
 					if (this.draftState.booster) {
 						this.gameState = GameState.Picking;
-					} else if (this.gameState !== GameState.Reviewing) this.gameState = GameState.Waiting;
+					} else if (this.gameState !== GameState.Reviewing) {
+						this.gameState = GameState.Waiting;
+						// Workaround: Still set an empty current booster for the UI to display *something*
+						this.draftState.booster = [];
+					}
 
 					this.selectedCards = [];
 					this.burningCards = [];
