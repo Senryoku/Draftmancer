@@ -565,7 +565,7 @@ describe("Single Draft (Two Players)", function () {
 		});
 	}
 
-	function startDraft(boosterValidation?: (booster: UniqueCard[]) => void) {
+	function startDraft(boosterValidation?: (booster: UniqueCard[], cid: string) => void) {
 		it("When session owner launches draft, everyone should receive a startDraft event", function (done) {
 			let connectedClients = 0;
 			let receivedBoosters = 0;
@@ -577,7 +577,7 @@ describe("Single Draft (Two Players)", function () {
 
 				c.once("draftState", (s) => {
 					expect(s.booster).to.exist;
-					boosterValidation?.(s.booster!);
+					boosterValidation?.(s.booster!, getUID(c));
 					clientStates[getUID(c)] = { state: s, pickedCards: [] };
 					receivedBoosters += 1;
 					if (connectedClients === clients.length && receivedBoosters === clients.length) done();
@@ -612,7 +612,7 @@ describe("Single Draft (Two Players)", function () {
 		});
 	}
 
-	function endDraft(boosterValidation?: (booster: UniqueCard[]) => void) {
+	function endDraft(boosterValidation?: (booster: UniqueCard[], clientID: string) => void) {
 		it("Pick enough times, and the draft should end.", function (done) {
 			let draftEnded = 0;
 			for (const client of clients) {
@@ -631,7 +631,7 @@ describe("Single Draft (Two Players)", function () {
 									.map((card) => `${card.name} (${card.id})`)
 									.join("\n")}`
 							).to.be.true;
-							boosterValidation?.(s.booster!);
+							boosterValidation?.(s.booster!, getUID(client));
 						}
 						const choice = Math.floor(Math.random() * s.booster!.length);
 						clientState.pickedCards.push(s.booster![choice]);
@@ -1299,7 +1299,9 @@ describe("Single Draft (Two Players)", function () {
 	});
 
 	describe("With custom boosters and bots", function () {
-		const CustomBoosters = ["xln", "rix", latestSetCardPerBooster === 14 ? "" : "dmu"];
+		const boostersPerClient: { [cid: string]: UniqueCard[][] } = {};
+
+		const CustomBoosters = ["xln", "rix", "dmu"];
 		connect();
 		it("Clients should receive the updated bot count.", function (done) {
 			ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
@@ -1332,9 +1334,8 @@ describe("Single Draft (Two Players)", function () {
 				clients[ownerIdx].emit("setDistributionMode", distributionMode);
 			});
 
-			startDraft();
 			let idx = 0;
-			endDraft((b) => {
+			const boosterValidation = (b: UniqueCard[], cid: string) => {
 				if (distributionMode === "regular") {
 					expect(
 						b.every((c) => CustomBoosters[idx] === "" || c.set === CustomBoosters[idx]),
@@ -1342,8 +1343,30 @@ describe("Single Draft (Two Players)", function () {
 					);
 					++idx;
 				}
-			});
+				if (distributionMode === "shufflePlayerBoosters") {
+					if (!boostersPerClient[cid]) boostersPerClient[cid] = [];
+					boostersPerClient[cid].push(b);
+				}
+			};
+
+			startDraft(boosterValidation);
+			endDraft(boosterValidation);
 			if (distributionMode !== "shuffleBoosterPool") expectCardCount(2 * 15 + 14);
+
+			if (distributionMode === "shufflePlayerBoosters") {
+				it("each player should have one booster of each set", function () {
+					for (const cid in boostersPerClient) {
+						const boosters = boostersPerClient[cid];
+						//console.error(boosters);
+						expect(boosters.length).to.equal(CustomBoosters.length);
+						const sets = [...new Set(boosters.flat().map((c) => c.set))];
+						expect(sets.length).to.equal(CustomBoosters.length);
+						expect(sets).to.include(CustomBoosters[0]);
+						expect(sets).to.include(CustomBoosters[1]);
+						expect(sets).to.include(CustomBoosters[2]);
+					}
+				});
+			}
 		}
 		disconnect();
 	});
