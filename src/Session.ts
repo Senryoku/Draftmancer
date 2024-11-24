@@ -784,9 +784,12 @@ export class Session implements IIndexable {
 
 		// Implements distribution mode 'shufflePlayerBoosters'
 		if (this.distributionMode === "shufflePlayerBoosters") {
-			const chunkSize = Math.floor(boosterFactories.length / playerCount);
-			for (let i = 0; i < boosterFactories.length; i += chunkSize) {
-				shuffleArray(boosterFactories, i, i + chunkSize);
+			const boosterPerPlayer = Math.floor(boosterFactories.length / playerCount);
+			for (let offset = 0; offset < playerCount; ++offset) {
+				const tmp = [];
+				for (let i = 0; i < boosterPerPlayer; ++i) tmp.push(boosterFactories[offset + i * playerCount]);
+				shuffleArray(tmp);
+				for (let i = 0; i < boosterPerPlayer; ++i) boosterFactories[offset + i * playerCount] = tmp[i];
 			}
 		}
 
