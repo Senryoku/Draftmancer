@@ -295,9 +295,7 @@ img {
 	height: 100%;
 	top: 0;
 	left: 0;
-}
 
-.flip-back {
 	transform: rotateY(180deg) translateZ(0);
 }
 

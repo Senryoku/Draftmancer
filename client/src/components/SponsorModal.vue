@@ -44,14 +44,14 @@
 				</form>
 			</div>
 			<p>
-				ruler101, developper of mtgdraftbots (which Draftmancer uses when possible) and
+				ruler501, developper of mtgdraftbots (which Draftmancer uses when possible) and
 				<a href="https://cubeartisan.net" target="_blank" rel="noopener nofollow">cubeartisan</a>, also has a
 				<a href="https://www.patreon.com/cubeartisan" target="_blank" rel="noopener nofollow">Patreon</a>
 				were you can support her and help cover the cost of bot training:
 			</p>
 			<p style="margin-left: 1em">
 				<a href="https://www.patreon.com/cubeartisan" target="_blank" rel="noopener nofollow">
-					<font-awesome-icon icon="fa-brands fa-patreon"></font-awesome-icon> ruler101's Patreon
+					<font-awesome-icon icon="fa-brands fa-patreon"></font-awesome-icon> ruler501's Patreon
 				</a>
 			</p>
 			<p>Thank you very much!</p>

@@ -9,13 +9,16 @@
 			</p>
 			<strong>Are custom cards supported?</strong>
 			<p>
-				There is an experimental support for custom cards in cube, see the
-				<a href="cubeformat.html" target="_blank" rel="noopener nofollow">Cube Format</a> for more information.
+				Yes! Cubes support custom cards, see the
+				<a href="http://localhost:3000/cubeformat.html#custom-cards" target="_blank" rel="noopener nofollow"
+					>Cube Format documentation</a
+				>
+				for more information.
 			</p>
-			<strong>Are Conspiray draft matters cards supported?</strong>
+			<strong>Are Conspiracy draft matters cards supported?</strong>
 			<p>
 				Yes! Well, some of them at least. I tried to implement the most popular ones (Cogwork Librarian, Lore
-				Seeker...), you can find the status of each card in
+				Seeker...). You can find the status of each card in
 				<a
 					href="https://github.com/Senryoku/Draftmancer/wiki/Conspiracy-cards-support"
 					target="_blank"
@@ -23,6 +26,27 @@
 					>this page of the GitHub wiki</a
 				>.
 			</p>
+			<strong>How do bots work?</strong>
+			<p>There are multiple types of bots, depending on the card pool:</p>
+			<ul>
+				<li>
+					Recent sets (~after 2021): For each official set drafts, I train a set-specific Machine Learning
+					model on drafts conducted on Draftmancer, and
+					<a href="https://www.17lands.com/public_datasets" target="_blank" rel="noopener nofollow"
+						>17lands</a
+					>
+					data when available.
+				</li>
+				<li>
+					Cube: Another Machine Learning model developed by
+					<a href="https://www.patreon.com/cubeartisan" target="_blank" rel="noopener nofollow">ruler501</a>.
+				</li>
+				<li>
+					If neither of the above models can be used, a simple fallback algorithm takes over. It will choose
+					cards based on a fixed 0-5 score assigned to each card, and the colors of cards it already picked.
+				</li>
+			</ul>
+
 			Your question isn't answered here? Head to the
 			<a href="https://discord.gg/ZkMyKpPYSz" target="_blank" rel="noopener nofollow"
 				>Help section of the Draftmancer Discord</a
@@ -36,11 +60,11 @@
 				(Only accessible to the session owner, shared by everyone in your session)
 				<ul>
 					<li>
-						<span class="option-name">Ignore Collections</span>
-						: Draft with all cards of the selected set(s), ignoring player collections and preferences.
+						<span class="option-name">Restrict card pool to Player Collections</span>
+						: When enabled, card pool will be limited to cards present in all player collections.
 					</li>
 					<li>
-						<span class="option-name">Set(s)</span>
+						<span class="option-name">Card Pool</span>
 						: Select one or multiple sets to draft with. All chosen sets will form the card pool out of
 						which mixed boosters will be generated for all players. If you want every player to receive
 						certain pure set boosters in a particular order (e.g. for original block drafts) you have to use
@@ -48,8 +72,7 @@
 					</li>
 					<li>
 						<span class="option-name">Bots</span>
-						: Adds virtual players to your draft. They are
-						<strong>pretty dumb</strong>, but they are doing their best. :(
+						: Adds virtual players to your draft.
 					</li>
 					<li>
 						<span class="option-name">Pick Timer</span>
