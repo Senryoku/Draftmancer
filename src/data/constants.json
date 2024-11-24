@@ -295,9 +295,9 @@
             "description": "A cube community delivering balanced, fun design through player feedback & data analysis. Play, discuss, and check out our data on <a href=\"https://discord.gg/RMaEexX\" target=\"_blank\">Discord</a>."
         },
         {
-            "name": "JiRock's Historic Cube",
-            "cubeCobraID": "historiccuberemastered",
-            "description": "Latest version of Jean-Emmanuel Depraz (JiRock) Historic Cube."
+            "name": "JiRock's Explorer Cube",
+            "cubeCobraID": "ExplorerCube",
+            "description": "Latest version of Jean-Emmanuel Depraz (JiRock) Explorer Cube."
         },
         {
             "name": "JiRock's Historic Cube 3.3 (Jumpstart Edition)",
