@@ -1346,8 +1346,13 @@ ul.player-list {
 	}
 }
 
-.burned img {
-	box-shadow: 0px 0px 20px 1px rgb(161, 0, 3);
+.burned {
+	&.foil .inner-card-image, /* .foil .card-image has an 'overflow:hidden' preventing the box-shadow to show up. We'll apply it earlier in this case. */
+	& .card-image .front-image,
+	& .card-image .back-image,
+	& .card-placeholder {
+		box-shadow: 0px 0px 12px 4px rgb(161, 0, 3);
+	}
 }
 
 .card:hover {
