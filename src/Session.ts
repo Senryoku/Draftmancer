@@ -174,15 +174,14 @@ export class Session implements IIndexable {
 
 	lastTakeOverRequest: number = 0;
 
-	constructor(id: SessionID, owner: UserID | undefined, options: Options = {}) {
+	constructor(id: SessionID, owner: UserID | undefined, options: Partial<Session> = {}) {
 		this.id = id;
 		this.owner = owner;
-		if (!owner) this.managed = true;
 
 		// Validate and set session settings
 		for (const p in options)
-			if (p in SessionsSettingsProps && SessionsSettingsProps[p](options[p]))
-				(this as IIndexable)[p] = options[p];
+			if (p in SessionsSettingsProps && SessionsSettingsProps[p](options[p as keyof Session]))
+				(this as IIndexable)[p] = options[p as keyof Session];
 	}
 
 	// Expected to be called before disposing of a Session.

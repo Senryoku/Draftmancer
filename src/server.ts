@@ -5,13 +5,14 @@ export const DraftmancerPort = process.env.PORT || 3000;
 import fs from "fs";
 import axios, { AxiosResponse } from "axios";
 import compression from "compression";
+import cors from "cors";
 import express, { json as ExpressJSON, text as ExpressText, static as ExpressStatic } from "express";
 import http from "http";
 import { Server, Socket } from "socket.io";
 import cookieParser from "cookie-parser";
 import { v1 as uuidv1 } from "uuid";
 
-import { Options, shuffleArray } from "./utils.js";
+import { isEmpty, Options, shuffleArray } from "./utils.js";
 import {
 	ackError,
 	isSocketError,
@@ -161,22 +162,21 @@ const parseCustomCardList = function (
 		name?: string | undefined;
 		fallbackToCardName?: boolean | undefined;
 		ignoreUnknownCards?: boolean | undefined;
-	},
-	ack: (result: SocketAck) => void
-) {
+	}
+): SocketAck {
 	let parsedList = null;
 	try {
 		parsedList = parseCardList(txtlist, options);
 	} catch (e) {
 		console.error(e);
-		return ack?.(new SocketError("Internal server error"));
+		return new SocketError("Internal server error");
 	}
 
-	if (isSocketError(parsedList)) return ack?.(parsedList);
+	if (isSocketError(parsedList)) return parsedList;
 
 	useCustomCardList(session, parsedList);
 
-	ack?.(new SocketAck());
+	return new SocketAck();
 };
 
 const checkDraftAction = function (userID: UserID, sess: Session, type: string, ack?: (result: SocketAck) => void) {
@@ -959,7 +959,7 @@ function parseCustomCardListEvent(
 	ack: (result: SocketAck) => void
 ) {
 	if (!isString(customCardList) || customCardList === "") return ack?.(new SocketError("No list supplied."));
-	parseCustomCardList(Sessions[sessionID], customCardList, {}, ack);
+	ack(parseCustomCardList(Sessions[sessionID], customCardList, {}));
 }
 
 function importCube(userID: UserID, sessionID: SessionID, data: unknown, ack: (result: SocketAck) => void) {
@@ -1013,7 +1013,7 @@ function importCube(userID: UserID, sessionID: SessionID, data: unknown, ack: (r
 			.get(url, { timeout: 3000 })
 			.then((response) => {
 				if (validateResponse(response, data, ack))
-					parseCustomCardList(Sessions[sessionID], response.data, { name: data.name }, ack);
+					ack?.(parseCustomCardList(Sessions[sessionID], response.data, { name: data.name }));
 			})
 			.catch((err) =>
 				ack?.(
@@ -1042,11 +1042,11 @@ function importCube(userID: UserID, sessionID: SessionID, data: unknown, ack: (r
 					// Fallback to plain text list
 					if (!converted) fromTextList(sessionID, data, ack);
 					else
-						parseCustomCardList(
-							Sessions[sessionID],
-							converted,
-							{ name: data.name, fallbackToCardName: true },
-							ack
+						ack?.(
+							parseCustomCardList(Sessions[sessionID], converted, {
+								name: data.name,
+								fallbackToCardName: true,
+							})
 						);
 				}
 			})
@@ -2058,8 +2058,50 @@ app.get("/getSessions/:key", requireAPIKey, (req, res) => {
 	returnCircularJSON(res, localSess);
 });
 
+app.use("/api", cors());
+
 app.get("/api/getDraftQueueStatus", (req, res) => {
 	res.json(getQueueStatus());
+});
+
+// Create a new session with the supplied settings and place it in InactiveSessions, waiting for a player to connect.
+// Returns the sessionID of the newly created session.
+app.post("/api/createSession", (req, res) => {
+	try {
+		const invalidRequest = (msg: string = "Invalid Request") => {
+			res.status(400).json({ error: msg });
+		};
+
+		if (!req.body) return invalidRequest();
+		const settings: unknown = typeof req.body == "string" ? JSON.parse(req.body) : req.body;
+		if (!settings || !isObject(settings) || isEmpty(settings)) return invalidRequest();
+
+		let sessionID = shortguid();
+		while (sessionID in Sessions) sessionID = shortguid();
+
+		const sess = new Session(sessionID, "invalidOwnerID");
+		sess.owner = undefined;
+
+		if (hasProperty("customCardList", isString)(settings)) {
+			const result = parseCustomCardList(sess, settings.customCardList, {});
+			if (isSocketError(result)) return invalidRequest(result.error?.text);
+		}
+
+		InactiveSessions[sessionID] = getPoDSession(sess);
+		InactiveSessions[sessionID].deleteTimeout = setTimeout(
+			() => {
+				process.nextTick(() => {
+					if (InactiveSessions[sessionID]) delete InactiveSessions[sessionID];
+				});
+			},
+			2 * 60 * 1000 // User have 2min to connect to the session
+		);
+
+		res.status(201).json({ sessionID: sessionID });
+	} catch (e) {
+		console.error("/api/createSession", e);
+		res.sendStatus(500);
+	}
 });
 
 Promise.all([InactiveConnections, InactiveSessions]).then(() => {

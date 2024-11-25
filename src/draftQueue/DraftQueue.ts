@@ -125,7 +125,7 @@ function launchSession(queueDescription: QueueDescription, users: UserID[], botC
 	let sessionID = `DraftQueue-${queueDescription.setCode.toUpperCase()}-${uuidv4()}`;
 	while (sessionID in Sessions) sessionID = `DraftQueue-${queueDescription.setCode.toUpperCase()}-${uuidv4()}`;
 
-	const session = new Session(sessionID, undefined);
+	const session = new Session(sessionID, undefined, { managed: true });
 
 	if (queueDescription.settings) {
 		if (queueDescription.settings.pickedCardsPerRound)

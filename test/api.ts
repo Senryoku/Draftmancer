@@ -289,4 +289,48 @@ describe("HTTP API", function () {
 				.catch(done);
 		});
 	});
+
+	describe("Session creation", function () {
+		it("Creation request without body should fail.", function (done) {
+			fetch(`http://localhost:${DraftmancerPort}/api/createSession`, { method: "POST" })
+				.then(async (res) => {
+					expect(res.status).to.equal(400);
+					done();
+				})
+				.catch(done);
+		});
+
+		it("Creation request without settings should fail.", function (done) {
+			fetch(`http://localhost:${DraftmancerPort}/api/createSession`, { method: "POST", body: JSON.stringify({}) })
+				.then(async (res) => {
+					expect(res.status).to.equal(400);
+					done();
+				})
+				.catch(done);
+		});
+
+		it("Creation request with invalid customCardList should fail.", function (done) {
+			fetch(`http://localhost:${DraftmancerPort}/api/createSession`, {
+				method: "POST",
+				body: JSON.stringify({ customCardList: `999 This is not a card.` }),
+			})
+				.then(async (res) => {
+					expect(res.status).to.equal(400);
+					done();
+				})
+				.catch(done);
+		});
+
+		it("Creation request with customCardList should succeed with 'Created' status.", function (done) {
+			fetch(`http://localhost:${DraftmancerPort}/api/createSession`, {
+				method: "POST",
+				body: JSON.stringify({ customCardList: `999 Lightning Bolt` }),
+			})
+				.then(async (res) => {
+					expect(res.status).to.equal(201);
+					done();
+				})
+				.catch(done);
+		});
+	});
 });
