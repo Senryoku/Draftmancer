@@ -174,10 +174,14 @@ export class Session implements IIndexable {
 
 	lastTakeOverRequest: number = 0;
 
-	constructor(id: SessionID, owner: UserID | undefined, options: Options = {}) {
+	constructor(
+		id: SessionID,
+		owner: UserID | undefined,
+		options: { managed?: boolean } & Record<keyof typeof SessionsSettingsProps, unknown> = {}
+	) {
 		this.id = id;
 		this.owner = owner;
-		if (!owner) this.managed = true;
+		if (options.managed) this.managed = options.managed;
 
 		// Validate and set session settings
 		for (const p in options)

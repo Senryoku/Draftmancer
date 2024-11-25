@@ -71,6 +71,7 @@ export const SessionsSettingsProps: { [propName: string]: (val: unknown) => bool
 	},
 	useCustomCardList: isBoolean,
 	customCardListWithReplacement: isBoolean,
+	customCardListDuplicateProtection: isBoolean,
 	customCardList: isObject,
 	distributionMode(val: unknown): val is DistributionMode {
 		if (!isString(val)) return false;
