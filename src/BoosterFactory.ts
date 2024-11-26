@@ -2630,10 +2630,10 @@ class FDNBoosterFactory extends BoosterFactory {
 
 	static readonly SPGRatio: number = 0.015625;
 	static readonly Borderless: Record<string, CardID[]> = {
-		mythic: FDNBoosterFactory.filter(292, 421, "mythic"),
-		rare: FDNBoosterFactory.filter(292, 421, "rare"),
-		uncommon: FDNBoosterFactory.filter(292, 421, "uncommon"),
-		common: FDNBoosterFactory.filter(292, 421, "common"),
+		mythic: FDNBoosterFactory.filter(292, 361, "mythic"),
+		rare: FDNBoosterFactory.filter(292, 361, "rare"),
+		uncommon: FDNBoosterFactory.filter(292, 361, "uncommon"),
+		common: FDNBoosterFactory.filter(292, 361, "common"),
 	};
 	static readonly CharacterLands: CardID[] = FDNBoosterFactory.filter(282, 291);
 	static readonly DualLands: CardID[] = FDNBoosterFactory.filter(259, 271).filter(
