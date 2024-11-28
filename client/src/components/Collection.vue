@@ -252,43 +252,35 @@ export default defineComponent({
 
 	background: #444;
 	padding: 1em;
-
-	& h3 {
-		margin: 0;
-	}
-
-	& table {
-		margin: 0.25em;
-		text-align: right;
-	}
-
-	& tr {
-		margin: 0.1em;
-	}
+}
+.resources h3 {
+	margin: 0;
+}
+.resources table {
+	margin: 0.25em;
+	text-align: right;
+}
+.resources tr {
+	margin: 0.1em;
 }
 
 .set-stats {
 	margin: 0.5em;
-
-	& table {
-		margin: auto;
-	}
-
-	& caption {
-		font-size: 1.25em;
-	}
-
-	& tr:nth-child(odd) {
-		background-color: rgba(0, 0, 0, 0.2);
-	}
-
-	& th,
-	& td {
-		padding: 0.25em;
-	}
-
-	& td:not(:first-child) {
-		text-align: center;
-	}
+}
+.set-stats table {
+	margin: auto;
+}
+.set-stats caption {
+	font-size: 1.25em;
+}
+.set-stats tr:nth-child(odd) {
+	background-color: rgba(0, 0, 0, 0.2);
+}
+.set-stats th,
+.set-stats td {
+	padding: 0.25em;
+}
+.set-stats td:not(:first-child) {
+	text-align: center;
 }
 </style>

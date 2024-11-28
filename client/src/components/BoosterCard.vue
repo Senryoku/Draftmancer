@@ -183,17 +183,15 @@ const slotName = computed(() => {
 	transition: transform 0.08s ease-out;
 }
 
-.selected {
-	&.booster-card:not(.zoomedin) {
-		transform: scale(1.04);
-	}
+.selected.booster-card:not(.zoomedin) {
+	transform: scale(1.04);
+}
 
-	&.foil .inner-card-image, /* .foil .card-image has an 'overflow:hidden' preventing the box-shadow to show up. We'll apply it earlier in this case. */
-	& .card-image .front-image,
-	& .card-image .back-image,
-	& .card-placeholder {
-		animation: selected-pulse 5s infinite ease-in-out;
-	}
+.selected.foil .inner-card-image, /* .foil .card-image has an 'overflow:hidden' preventing the box-shadow to show up. We'll apply it earlier in this case. */
+.selected .card-image .front-image,
+.selected .card-image .back-image,
+.selected .card-placeholder {
+	animation: selected-pulse 5s infinite ease-in-out;
 }
 
 @keyframes selected-pulse {
@@ -210,13 +208,11 @@ const slotName = computed(() => {
 	}
 }
 
-.bot-picked {
-	&.foil .inner-card-image, /* .foil .card-image has an 'overflow:hidden' preventing the box-shadow to show up. We'll apply it earlier in this case. */
-	& .card-image .front-image,
-	& .card-image .back-image,
-	& .card-placeholder {
-		box-shadow: 0px 0px 20px 1px rgb(0, 111, 175);
-	}
+.bot-picked.foil .inner-card-image, /* .foil .card-image has an 'overflow:hidden' preventing the box-shadow to show up. We'll apply it earlier in this case. */
+.bot-picked .card-image .front-image,
+.bot-picked .card-image .back-image,
+.bot-picked .card-placeholder {
+	box-shadow: 0px 0px 20px 1px rgb(0, 111, 175);
 }
 
 .booster-card:hover:not(.zoomedin) {
