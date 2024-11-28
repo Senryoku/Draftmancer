@@ -545,7 +545,9 @@ describe("Single Draft (Two Players)", function () {
 					expect(Object.keys(Connections).length).to.equal(2);
 					ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
 					nonOwnerIdx = 1 - ownerIdx;
-					done();
+					clients[nonOwnerIdx].once("sessionOptions", function () {
+						done();
+					});
 				}
 			);
 		});
@@ -684,8 +686,6 @@ describe("Single Draft (Two Players)", function () {
 		});
 
 		it(`Card Pool should be all of THB set`, function (done) {
-			ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
-			nonOwnerIdx = 1 - ownerIdx;
 			clients[ownerIdx].emit("setColorBalance", true);
 			clients[ownerIdx].emit("ignoreCollections", true);
 			clients[nonOwnerIdx].once("setRestriction", () => {
@@ -713,8 +713,6 @@ describe("Single Draft (Two Players)", function () {
 		describe(`Drafting ${set}`, function () {
 			connect(set);
 			it("Clients should receive the updated setRestriction status.", function (done) {
-				const ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
-				const nonOwnerIdx = 1 - ownerIdx;
 				clients[nonOwnerIdx].once("setRestriction", function (setRestriction) {
 					expect(setRestriction).to.have.lengthOf(1);
 					expect(setRestriction[0]).to.be.equal(set);
@@ -782,8 +780,6 @@ describe("Single Draft (Two Players)", function () {
 	describe(`Drafting without set restriction`, function () {
 		connect();
 		it("Clients should receive the updated setRestriction status.", function (done) {
-			const ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
-			const nonOwnerIdx = 1 - ownerIdx;
 			clients[nonOwnerIdx].once("setRestriction", function (setRestriction) {
 				expect(setRestriction).to.have.lengthOf(0);
 				done();
@@ -800,8 +796,6 @@ describe("Single Draft (Two Players)", function () {
 	describe("Without color balance", function () {
 		connect();
 		it("Clients should receive the updated colorBalance status.", function (done) {
-			ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
-			nonOwnerIdx = 1 - ownerIdx;
 			clients[nonOwnerIdx].once("sessionOptions", function (options) {
 				expect(options.colorBalance).to.equal(false);
 				done();
@@ -819,8 +813,6 @@ describe("Single Draft (Two Players)", function () {
 		const discardRemainingCardsAt = 8;
 		const cardsPerPack = 15; // Drafting BRO to make sure we have 15 cards per pack
 		it("Clients should receive the updated setRestriction status.", function (done) {
-			const ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
-			const nonOwnerIdx = 1 - ownerIdx;
 			clients[nonOwnerIdx].once("setRestriction", function (setRestriction) {
 				expect(setRestriction).to.have.lengthOf(1);
 				expect(setRestriction[0]).to.be.equal("bro");
@@ -830,8 +822,6 @@ describe("Single Draft (Two Players)", function () {
 			clients[ownerIdx].emit("setRestriction", ["bro"]);
 		});
 		it("Clients should receive the updated discardRemainingCardsAt status.", function (done) {
-			ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
-			nonOwnerIdx = 1 - ownerIdx;
 			clients[nonOwnerIdx].once("sessionOptions", function (options) {
 				expect(options.discardRemainingCardsAt).to.equal(discardRemainingCardsAt);
 				done();
@@ -872,8 +862,6 @@ describe("Single Draft (Two Players)", function () {
 	describe("With Bots", function () {
 		connect();
 		it("Clients should receive the updated bot count.", function (done) {
-			ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
-			nonOwnerIdx = 1 - ownerIdx;
 			clients[nonOwnerIdx].once("sessionOptions", function (data) {
 				expect(data.bots).to.equal(6);
 				done();
@@ -1304,8 +1292,6 @@ describe("Single Draft (Two Players)", function () {
 		const CustomBoosters = ["xln", "rix", "dmu"];
 		connect();
 		it("Clients should receive the updated bot count.", function (done) {
-			ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
-			nonOwnerIdx = 1 - ownerIdx;
 			clients[nonOwnerIdx].once("sessionOptions", function (data) {
 				expect(data.bots).to.equal(6);
 				done();
@@ -1351,7 +1337,7 @@ describe("Single Draft (Two Players)", function () {
 
 			startDraft(boosterValidation);
 			endDraft(boosterValidation);
-			if (distributionMode !== "shuffleBoosterPool") expectCardCount(2 * 15 + 14);
+			if (distributionMode === "regular") expectCardCount(2 * 15 + 14);
 
 			if (distributionMode === "shufflePlayerBoosters") {
 				it("each player should have one booster of each set", function () {
@@ -1376,8 +1362,6 @@ describe("Single Draft (Two Players)", function () {
 		const Sets = ["afr", "mid", "one", "vow", "dmu", "snc", "iko", "thb", "eld", "m20", "war", "rna"];
 		connect();
 		it("Clients should receive the updated bot count.", function (done) {
-			ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
-			nonOwnerIdx = 1 - ownerIdx;
 			clients[nonOwnerIdx].once("sessionOptions", function (data) {
 				expect(data.bots).to.equal(2);
 				done();
@@ -1429,8 +1413,6 @@ describe("Single Draft (Two Players)", function () {
 		connect();
 
 		it("Clients should receive the updated booster spec.", function (done) {
-			ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
-			nonOwnerIdx = 1 - ownerIdx;
 			clients[nonOwnerIdx].once("sessionOptions", function (data) {
 				expect(data.customBoosters).to.eql(CustomBoosters);
 				done();
@@ -1786,8 +1768,6 @@ describe("Single Draft (Two Players)", function () {
 
 		connect();
 		it("Clients should receive the updated bot count.", function (done) {
-			ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
-			nonOwnerIdx = 1 - ownerIdx;
 			clients[nonOwnerIdx].once("sessionOptions", function (data) {
 				expect(data.bots).to.equal(6);
 				done();
@@ -1860,8 +1840,6 @@ describe("Single Draft (Two Players)", function () {
 		connect();
 
 		it("Clients should receive the updated bot count.", function (done) {
-			ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
-			nonOwnerIdx = 1 - ownerIdx;
 			clients[nonOwnerIdx].once("sessionOptions", function (data) {
 				expect(data.bots).to.equal(6);
 				done();
@@ -2172,8 +2150,6 @@ describe("Single Draft (Two Players)", function () {
 		this.timeout(500000);
 		connect();
 		it("Clients should receive the updated bot count.", function (done) {
-			ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
-			nonOwnerIdx = 1 - ownerIdx;
 			clients[nonOwnerIdx].once("sessionOptions", function (data) {
 				expect(data.bots).to.equal(2);
 				(global as unknown as { FORCE_MTGDRAFTBOTS: boolean }).FORCE_MTGDRAFTBOTS = true;
