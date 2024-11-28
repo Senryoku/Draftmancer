@@ -1023,7 +1023,7 @@ ul.player-list {
 	position: relative;
 	min-width: 14px;
 
-	img {
+	& img {
 		width: 1em;
 		position: absolute;
 		top: 50%;
@@ -1032,7 +1032,7 @@ ul.player-list {
 		transform: translate(-50%, -50%);
 		filter: drop-shadow(0 0 2px #00000080);
 	}
-	div {
+	& div {
 		position: absolute;
 		top: 50%;
 		left: 50%;
@@ -1240,7 +1240,7 @@ ul.player-list {
 	margin-left: 1em;
 	margin-right: 1em;
 	min-height: 35px;
-	h2 {
+	& h2 {
 		display: inline-block;
 		margin: 0;
 		font-variant: small-caps;
@@ -1299,7 +1299,7 @@ ul.player-list {
 	justify-content: center;
 	align-items: center;
 
-	img {
+	& img {
 		width: 16px;
 		height: 16px;
 		object-fit: contain;
@@ -1322,7 +1322,7 @@ ul.player-list {
 	margin-left: 1em;
 	box-sizing: border-box;
 
-	h2 {
+	& h2 {
 		font-size: 20px;
 		line-height: 28px;
 	}
@@ -1581,8 +1581,8 @@ Can't be applied to .card-filtered directly as it creates a bug with the rotatio
 See: https://stackoverflow.com/questions/52937708/why-does-applying-a-css-filter-on-the-parent-break-the-child-positioning
 */
 .card-filtered .card-image {
-	i,
-	img {
+	& i,
+	& img {
 		filter: brightness(35%) saturate(50%);
 	}
 }

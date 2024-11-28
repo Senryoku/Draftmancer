@@ -253,16 +253,16 @@ export default defineComponent({
 	background: #444;
 	padding: 1em;
 
-	h3 {
+	& h3 {
 		margin: 0;
 	}
 
-	table {
+	& table {
 		margin: 0.25em;
 		text-align: right;
 	}
 
-	tr {
+	& tr {
 		margin: 0.1em;
 	}
 }
@@ -270,24 +270,24 @@ export default defineComponent({
 .set-stats {
 	margin: 0.5em;
 
-	table {
+	& table {
 		margin: auto;
 	}
 
-	caption {
+	& caption {
 		font-size: 1.25em;
 	}
 
-	tr:nth-child(odd) {
+	& tr:nth-child(odd) {
 		background-color: rgba(0, 0, 0, 0.2);
 	}
 
-	th,
-	td {
+	& th,
+	& td {
 		padding: 0.25em;
 	}
 
-	td:not(:first-child) {
+	& td:not(:first-child) {
 		text-align: center;
 	}
 }
