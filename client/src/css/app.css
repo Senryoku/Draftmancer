@@ -923,7 +923,7 @@ ul.player-list {
 	display: inline-flex;
 	justify-content: space-between;
 	align-items: center;
-	padding: 0.5em;
+	padding: 0.49em;
 	min-width: 6em;
 	max-width: 12em;
 	background: #282828;
