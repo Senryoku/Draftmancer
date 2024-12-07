@@ -2763,7 +2763,6 @@ class PIOBoosterFactory extends BoosterFactory {
 			options.bonusSheet ??
 			(Math.floor((new Date().getTime() - 1733785200000) / (1000 * 60 * 60 * 24 * 7 * 2)) + 1) %
 				PIOBoosterFactory.BonusLists.length;
-		console.log("currentSheet", currentSheet);
 		for (const c of PIOBoosterFactory.BonusLists[currentSheet]) {
 			const rarity = getCard(c).rarity;
 			if (!this.bonus[rarity]) this.bonus[rarity] = new CardPool();
