@@ -3870,5 +3870,23 @@
         "fullName": "SIR: Abominable All Stars!",
         "block": "Shadows over Innistrad Remastered",
         "icon": "img/sets/sir.svg"
+    },
+    "pio0": {
+        "code": "pio0",
+        "fullName": "Pioneer Masters: Devotion",
+        "block": "Pioneer Masters",
+        "icon": "img/sets/pio.svg"
+    },
+    "pio1": {
+        "code": "pio1",
+        "fullName": "Pioneer Masters: Planeswalkers",
+        "block": "Pioneer Masters",
+        "icon": "img/sets/pio.svg"
+    },
+    "pio2": {
+        "code": "pio2",
+        "fullName": "Pioneer Masters: Spells",
+        "block": "Pioneer Masters",
+        "icon": "img/sets/pio.svg"
     }
 }

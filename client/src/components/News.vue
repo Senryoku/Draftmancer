@@ -1,6 +1,14 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
+			<em>December 7, 2024</em>
+			<p>
+				<img src="img/sets/pio.svg" class="set-icon" style="--invertedness: 100%" alt="PIO" /> Pioneer Masters
+				experimental support.<br />
+				This set has a rotating bonus sheet. You can select a specific bonus sheet in the "More sets" menu.
+			</p>
+		</div>
+		<div class="news">
 			<em>November 2, 2024</em>
 			<ul>
 				<li>
@@ -36,28 +44,6 @@
 			<p>
 				Added <img src="img/sets/mb2.svg" class="set-icon" style="--invertedness: 100%" alt="MB2" />
 				Mystery Booster 2 support!
-			</p>
-		</div>
-		<div class="news">
-			<em>September 14, 2024</em>
-			<p>
-				<img src="img/sets/dsk.svg" class="set-icon" style="--invertedness: 100%" alt="DSK" />
-				Duskmourn: House of Horror is now available!
-			</p>
-		</div>
-		<div class="news">
-			<em>July 18, 2024</em>
-			<p>
-				<img src="img/sets/blb.svg" class="set-icon" style="--invertedness: 100%" alt="BLB" />
-				Bloomburrow is now available!
-			</p>
-			<p>Winston Draft: The number of piles can now be customized.</p>
-		</div>
-		<div class="news">
-			<em>May 30, 2024</em>
-			<p>
-				<img src="img/sets/mh3.svg" class="set-icon" style="--invertedness: 100%" alt="MH3" />
-				Modern Horizons 3 is now available!
 			</p>
 		</div>
 	</div>

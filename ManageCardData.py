@@ -517,6 +517,9 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
 
         if c['set'] == "fdn":
             selection['in_booster'] = (int(c['collector_number']) > 0 and int(c['collector_number']) < 259) or int(c['collector_number']) == 262 or int(c['collector_number']) == 264 or int(c['collector_number']) == 267
+          
+        if c['set'] == "pio":
+            selection['in_booster'] = int(c['collector_number']) < 279
 
         if c['layout'] == "split":
             if 'Aftermath' in c['keywords']:
@@ -911,6 +914,21 @@ with open("src/data/shadow_of_the_past.json", "r") as bonusSheetsFile:
                                "isPrimary": True,
                                })
         bonusSheetsIndex += 1
+        
+# Pioneer Masters
+PrimarySets.append("pio")
+for i in range(0,3):
+    code = f"pio{i}"
+    PrimarySets.append(code)
+    setinfos[code] = {}
+    setinfos[code].update(setinfos["pio"])
+    setinfos[code].update({"code": code,
+                            "block": "Pioneer Masters",
+                            "isPrimary": True,
+                            })
+setinfos["pio0"]["fullName"] = "Pioneer Masters: Devotion"
+setinfos["pio1"]["fullName"] = "Pioneer Masters: Planeswalkers"
+setinfos["pio2"]["fullName"] = "Pioneer Masters: Spells"
 
 with open(SetsInfosPath, 'w+', encoding="utf8") as setinfosfile:
     setinfos_disk = {}

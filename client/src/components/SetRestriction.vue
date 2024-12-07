@@ -95,6 +95,10 @@ const blocks = [
 		sets: ["sir0", "sir1", "sir2", "sir3"].map((s) => SetsInfos[s]),
 	}, // Manually added to hoist it
 	{
+		name: "Pioneer Masters",
+		sets: ["pio0", "pio1", "pio2"].map((s) => SetsInfos[s]),
+	},
+	{
 		name: "Masters",
 		sets: [
 			"tsr",

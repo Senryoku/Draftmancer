@@ -83,7 +83,8 @@
         "mh3",
         "blb",
         "dsk",
-        "fdn"
+        "fdn",
+        "pio"
     ],
     "AlchemySets": [
         "hbg",
@@ -494,6 +495,10 @@
         "sir0",
         "sir1",
         "sir2",
-        "sir3"
+        "sir3",
+        "pio",
+        "pio0",
+        "pio1",
+        "pio2"
     ]
 }

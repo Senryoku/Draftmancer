@@ -1902,7 +1902,7 @@ function rollSetBoosterWildcardRarity(pool?: SlotedCardPool, options?: BoosterFa
 		common: 1.0,
 	};
 	for (const r in thresholds)
-		if (rarityRoll <= thresholds[r as keyof typeof thresholds] && (!pool || pool[r].size > 0)) return r;
+		if (rarityRoll <= thresholds[r as keyof typeof thresholds] && (!pool || pool[r]?.size > 0)) return r;
 	return "common";
 }
 
@@ -2739,6 +2739,60 @@ class FDNBoosterFactory extends BoosterFactory {
 	}
 }
 
+class PIOBoosterFactory extends BoosterFactory {
+	static readonly BonusLists = [
+		CardsBySet["pio"].filter(
+			(c) => parseInt(getCard(c).collector_number) >= 279 && parseInt(getCard(c).collector_number) <= 318
+		),
+		CardsBySet["pio"].filter(
+			(c) => parseInt(getCard(c).collector_number) >= 319 && parseInt(getCard(c).collector_number) <= 358
+		),
+		CardsBySet["pio"].filter(
+			(c) => parseInt(getCard(c).collector_number) >= 359 && parseInt(getCard(c).collector_number) <= 398
+		),
+	];
+
+	bonus: SlotedCardPool;
+
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
+		super(cardPool, landSlot, options);
+		this.bonus = {};
+		const currentSheet =
+			options.bonusSheet ??
+			(Math.floor((new Date().getTime() - 1733785200000) / (1000 * 60 * 60 * 24 * 7 * 2)) + 1) %
+				PIOBoosterFactory.BonusLists.length;
+		console.log("currentSheet", currentSheet);
+		for (const c of PIOBoosterFactory.BonusLists[currentSheet]) {
+			const rarity = getCard(c).rarity;
+			if (!this.bonus[rarity]) this.bonus[rarity] = new CardPool();
+			this.bonus[rarity].set(c, options.maxDuplicates?.[rarity] ?? DefaultMaxDuplicates);
+		}
+	}
+
+	generateBooster(targets: Targets) {
+		const booster: UniqueCard[] = [];
+		for (let i = 0; i < targets.bonus; ++i) {
+			booster.push(pickCard(this.bonus[rollSetBoosterWildcardRarity(this.bonus, this.options)], booster)); // FIXME: Rairity ratios?
+		}
+		return super.generateBooster(targets, booster);
+	}
+}
+class PIOBoosterFactoryBonusSheet0 extends PIOBoosterFactory {
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
+		super(cardPool, landSlot, Object.assign({ bonusSheet: 0 }, options));
+	}
+}
+class PIOBoosterFactoryBonusSheet1 extends PIOBoosterFactory {
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
+		super(cardPool, landSlot, Object.assign({ bonusSheet: 1 }, options));
+	}
+}
+class PIOBoosterFactoryBonusSheet2 extends PIOBoosterFactory {
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
+		super(cardPool, landSlot, Object.assign({ bonusSheet: 2 }, options));
+	}
+}
+
 // Set specific rules.
 // Neither DOM, WAR or ZNR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
 export const SetSpecificFactories: {
@@ -2785,6 +2839,10 @@ export const SetSpecificFactories: {
 	dsk: DSKBoosterFactory,
 	mb2: MB2BoosterFactory,
 	fdn: FDNBoosterFactory,
+	pio: PIOBoosterFactory,
+	pio0: PIOBoosterFactoryBonusSheet0,
+	pio1: PIOBoosterFactoryBonusSheet1,
+	pio2: PIOBoosterFactoryBonusSheet2,
 };
 
 export const getBoosterFactory = function (

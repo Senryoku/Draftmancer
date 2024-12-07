@@ -281,6 +281,7 @@ describe("Sets content", function () {
 		blb: { common: 81, uncommon: 100, rare: 60, mythic: 20 },
 		dsk: { common: 91, uncommon: 100, rare: 60, mythic: 20 }, // 81 commons plus 10 dual basics?
 		fdn: { common: 80, uncommon: 101, rare: 60, mythic: 20 },
+		pio: { common: 91, uncommon: 100, rare: 60, mythic: 27 },
 	};
 
 	beforeEach(function (done) {
@@ -737,6 +738,9 @@ describe("Single Draft (Two Players)", function () {
 							c.set === "sis" ||
 							(set === "sir3" && c.set === "sir") ||
 							c.set === "sis" ||
+							(set === "pio0" && c.set === "pio") ||
+							(set === "pio1" && c.set === "pio") ||
+							(set === "pio2" && c.set === "pio") ||
 							(set === "ydmu" && c.set === "dmu") ||
 							(set === "planeshifted_snc" && c.set === "snc") ||
 							(set === "mb1_convention_2019" && ["mb1", "cmb1"].includes(c.set)) ||

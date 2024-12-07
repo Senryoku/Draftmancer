@@ -123,6 +123,8 @@ BoosterCardsBySet["dbl"] = BoosterCardsBySet["mid"].concat(BoosterCardsBySet["vo
 BoosterCardsBySet["ydmu"] = BoosterCardsBySet["dmu"]; // Dominaria United Alchemy
 // Shadows over Innistrad with specific Bonus Sheet
 for (let i = 0; i < 4; ++i) CardsBySet["sir" + i] = BoosterCardsBySet["sir" + i] = BoosterCardsBySet["sir"];
+// Pioneer Masters with specific Bonus Sheet
+for (let i = 0; i < 3; ++i) CardsBySet["pio" + i] = BoosterCardsBySet["pio" + i] = BoosterCardsBySet["pio"];
 // Mystery boosters convention editions with playtest cards
 BoosterCardsBySet["mb1_convention_2019"] = BoosterCardsBySet["mb1"].concat(CardsBySet["cmb1"]);
 BoosterCardsBySet["mb1_convention_2021"] = BoosterCardsBySet["mb1"].concat(CardsBySet["cmb2"]);
