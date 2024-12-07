@@ -459,6 +459,11 @@
         "fullName": "Innistrad: Double Feature",
         "icon": "img/sets/dbl.svg"
     },
+    "dci": {
+        "code": "dci",
+        "fullName": "DCI Promos",
+        "icon": "img/sets/dci.svg"
+    },
     "dd1": {
         "code": "dd1",
         "fullName": "Duel Decks: Elves vs. Goblins",
@@ -1258,6 +1263,11 @@
         "block": "Theros",
         "icon": "img/sets/jou.svg"
     },
+    "jp1": {
+        "code": "jp1",
+        "fullName": "Hobby Japan Promos",
+        "icon": "img/sets/jp1.svg"
+    },
     "jud": {
         "code": "jud",
         "fullName": "Judgment",
@@ -1941,11 +1951,6 @@
         "block": "Kamigawa",
         "icon": "img/sets/pbok.svg"
     },
-    "pbook": {
-        "code": "pbook",
-        "fullName": "Miscellaneous Book Promos",
-        "icon": "img/sets/pbook.svg"
-    },
     "pbro": {
         "code": "pbro",
         "fullName": "The Brothers' War Promos",
@@ -2025,11 +2030,6 @@
         "code": "pd3",
         "fullName": "Premium Deck Series: Graveborn",
         "icon": "img/sets/pd3.svg"
-    },
-    "pdci": {
-        "code": "pdci",
-        "fullName": "DCI Promos",
-        "icon": "img/sets/pdci.svg"
     },
     "pdgm": {
         "code": "pdgm",
@@ -2164,6 +2164,11 @@
         "fullName": "MagicFest 2024",
         "icon": "img/sets/pf24.svg"
     },
+    "pf25": {
+        "code": "pf25",
+        "fullName": "MagicFest 2025",
+        "icon": "img/sets/pf25.svg"
+    },
     "pfdn": {
         "code": "pfdn",
         "fullName": "Foundations Promos",
@@ -2245,11 +2250,6 @@
         "block": "Heroes of the Realm",
         "icon": "img/sets/ph22.svg"
     },
-    "phj": {
-        "code": "phj",
-        "fullName": "Hobby Japan Promos",
-        "icon": "img/sets/phj.svg"
-    },
     "phou": {
         "code": "phou",
         "fullName": "Hour of Devastation Promos",
@@ -2287,6 +2287,11 @@
         "fullName": "Invasion Promos",
         "block": "Invasion",
         "icon": "img/sets/pinv.svg"
+    },
+    "pio": {
+        "code": "pio",
+        "fullName": "Pioneer Masters",
+        "icon": "img/sets/pio.svg"
     },
     "pip": {
         "code": "pip",
@@ -2501,7 +2506,7 @@
     },
     "pmei": {
         "code": "pmei",
-        "fullName": "Media Inserts",
+        "fullName": "Media and Collaboration Promos",
         "icon": "img/sets/pmei.svg"
     },
     "pmh1": {
@@ -2714,11 +2719,6 @@
         "code": "pred",
         "fullName": "Redemption Program",
         "icon": "img/sets/pred.svg"
-    },
-    "pres": {
-        "code": "pres",
-        "fullName": "Resale Promos",
-        "icon": "img/sets/pres.svg"
     },
     "prix": {
         "code": "prix",
