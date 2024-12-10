@@ -28,6 +28,7 @@ for (const [set, cards] of Object.entries(BoosterCardsBySet)) {
 	if (!isNaN(mythicRate) && mythicRate > 1 / 9 && mythicRate < 1 / 6)
 		SetMythicRates[set] = mythicCount / (2 * rareCount + mythicCount);
 }
+SetMythicRates["pio"] = 1.0 / 5.0;
 Object.freeze(SetMythicRates);
 
 export function getSetMythicRate(set: string | null): number {
@@ -2741,6 +2742,13 @@ class FDNBoosterFactory extends BoosterFactory {
 	}
 }
 
+// 14 Pioneer Masters cards
+// 8 Commons from the main set
+// 3 Uncommons from the main set
+// 1 Rare or mythic rare from the main set
+// 	 A rare can upgrade to mythic rare at a rate of approximately 1:5.
+// 1 Variety slot from the main set
+// 1 Card from the scheduled bonus sheet
 class PIOBoosterFactory extends BoosterFactory {
 	static readonly BonusLists = [
 		CardsBySet["pio"].filter(
@@ -2771,11 +2779,62 @@ class PIOBoosterFactory extends BoosterFactory {
 	}
 
 	generateBooster(targets: Targets) {
+		const updatedTargets = structuredClone(targets);
+		updatedTargets.common = Math.max(0, updatedTargets.common - 1 - (updatedTargets.bonus ?? 0));
+
 		const booster: UniqueCard[] = [];
-		for (let i = 0; i < targets.bonus; ++i) {
-			booster.push(pickCard(this.bonus[rollSetBoosterWildcardRarity(this.bonus, this.options)], booster)); // FIXME: Rairity ratios?
+
+		// 1 Card from the scheduled bonus sheet (see schedule above)
+		// 	 Uncommons are more likely than commons in this slot, appearing at an approximate rate of 5:4.
+		// 	 For the Planeswalkers and Devotion bonus sheets:
+		// 		A common or uncommon can upgrade to mythic rare at a rate of approximately 1:10. There are no rares in these bonus sheets.
+		// 	 For the Spells bonus sheet:
+		// 		A common or uncommon can upgrade to a rare at a rate of approximately 1:10.
+		// 		A rare can upgrade to a mythic rare at a rate of approximately 1:5.
+		for (let i = 0; i < updatedTargets.bonus; ++i) {
+			let rarity = "common";
+			const rarityRoll = random.realZeroToOneInclusive();
+			if (this.bonus["rare"]?.size > 0) {
+				if (rarityRoll < this.ratio(1, 10) * this.ratio(1, 5)) {
+					rarity = "mythic";
+				} else if (rarityRoll < this.ratio(1, 10)) {
+					rarity = "rare";
+				} else if (rarityRoll < this.ratio(5, 4)) {
+					rarity = "uncommon";
+				}
+			} else {
+				if (rarityRoll < this.ratio(1, 10)) {
+					rarity = "mythic";
+				} else if (rarityRoll < this.ratio(5, 4)) {
+					rarity = "uncommon";
+				}
+			}
+			booster.push(pickCard(this.bonus[rarity], booster));
 		}
-		return super.generateBooster(targets, booster);
+
+		// 1 Variety slot from the main set
+		// 	 Uncommons are more likely than commons in this slot, appearing at an approximate rate of 4:1.
+		// 	 An uncommon can upgrade to a rare at a rate of approximately 1:5.
+		// 	 A rare can upgrade to a mythic rare at a rate of approximately 1:4.
+		{
+			const ratios = { u: this.ratio(4, 1), r: this.ratio(1, 5), m: this.ratio(1, 4) };
+			const rarityRoll = random.realZeroToOneInclusive();
+			const rarity =
+				rarityRoll < ratios.m * ratios.r * ratios.u
+					? "mythic"
+					: rarityRoll < ratios.r * ratios.u
+						? "rare"
+						: rarityRoll < ratios.u
+							? "uncommon"
+							: "common";
+			booster.push(pickCard(this.cardPool[rarity], booster));
+		}
+
+		return super.generateBooster(updatedTargets, booster);
+	}
+
+	ratio(cat0: number, cat1: number): number {
+		return cat0 / (cat0 + cat1);
 	}
 }
 class PIOBoosterFactoryBonusSheet0 extends PIOBoosterFactory {
