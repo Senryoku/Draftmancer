@@ -4,7 +4,7 @@ import { launchMode, pages, setupBrowsers, waitAndClickXpath } from "./src/commo
 
 async function pickCard(page: Page, random = false) {
 	const next = await page.waitForSelector(
-		"xpath/.//div[contains(., 'Team Sealed stopped!')] | //span[contains(., 'Card Pool')]"
+		"xpath/.//div[contains(., 'Team Sealed stopped!')] | //h2[contains(., 'Card Pool')]"
 	);
 	const text = await page.evaluate((next) => (next as HTMLElement).innerText, next);
 	if (text === "Team Sealed stopped!") return true;
@@ -12,14 +12,9 @@ async function pickCard(page: Page, random = false) {
 	const cards = await page.$$(".team-sealed-container .card:not(.card-picked)");
 	const card = cards[random ? Math.floor(Math.random() * cards.length) : 0];
 	expect(card).to.exist;
+	const uniqueID = await page.evaluate((card) => (card as HTMLElement).dataset.uniqueid, card);
 	await card.click();
-	await page.waitForFunction(
-		(el) => {
-			return el.classList.contains("card-picked");
-		},
-		{},
-		card
-	);
+	await page.$$(".team-sealed-container .card.card-picked[data-uniqueid='" + uniqueID + "']");
 	return false;
 }
 

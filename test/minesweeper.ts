@@ -55,7 +55,12 @@ describe("Minesweeper Draft", function () {
 					userName: "Client4",
 				},
 			],
-			done
+			() => {
+				const nonOwnerIdx = (ownerIdx + 1) % clients.length;
+				clients[nonOwnerIdx].once("sessionOptions", function () {
+					done();
+				});
+			}
 		);
 	});
 
@@ -83,7 +88,6 @@ describe("Minesweeper Draft", function () {
 			clients[nonOwnerIdx].once("sessionOptions", function (options) {
 				if (options.useCustomCardList) done();
 			});
-			clients[ownerIdx].emit("setUseCustomCardList", true);
 			clients[ownerIdx].emit("loadLocalCustomCardList", "Arena Historic Cube #1", ackNoError);
 		});
 	};
@@ -109,13 +113,12 @@ describe("Minesweeper Draft", function () {
 					}
 				});
 			}
-			if (picksPerGrid === -1) picksPerGrid = clients.length * 9;
 			clients[ownerIdx].emit(
 				"startMinesweeperDraft",
 				gridCount,
 				gridWidth,
 				gridHeight,
-				picksPerGrid,
+				picksPerGrid === -1 ? clients.length * 9 : picksPerGrid,
 				revealCenter,
 				revealCorners,
 				revealBorders,
@@ -253,13 +256,12 @@ describe("Minesweeper Draft", function () {
 		revealCorners = true,
 		revealBorders = false
 	) => {
-		const _picksPerGrid = picksPerGrid === -1 ? clients.length * 3 + 1 : picksPerGrid;
 		clients[ownerIdx].emit(
 			"startMinesweeperDraft",
 			gridCount,
 			gridWidth,
 			gridHeight,
-			_picksPerGrid,
+			picksPerGrid === -1 ? clients.length * 3 + 1 : picksPerGrid,
 			revealCenter,
 			revealCorners,
 			revealBorders,
