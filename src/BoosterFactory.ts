@@ -2560,9 +2560,7 @@ class MB2BoosterFactory extends BoosterFactory {
 			} else if (collector_number >= 265) {
 				this.playtest.set(cid, copies);
 			}
-			console.log(collector_number);
 		}
-		console.log("this.playtest", this.playtest);
 	}
 
 	generateBooster(targets: Targets) {
