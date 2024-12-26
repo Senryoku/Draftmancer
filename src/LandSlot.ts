@@ -1,7 +1,7 @@
 "use strict";
 
 import { CardID, CardPool } from "./CardTypes.js";
-import { getUnique, getCard } from "./Cards.js";
+import { getUnique, getCard, BoosterCardsBySet } from "./Cards.js";
 import { random, getRandomMapKey, getRandom } from "./utils.js";
 import BasicLandIDs from "./data/BasicLandIDs.json" with { type: "json" };
 
@@ -268,6 +268,11 @@ export const SpecialLandSlots: { [set: string]: SpecialLandSlot } = {
 			"c1ce9250-bdbe-4c77-9243-6db9ffffe69b",
 		],
 		0.5
+	),
+	pio: new SpecialLandSlot(
+		"pio",
+		BoosterCardsBySet["pio"].filter((c) => getCard(c).name.endsWith(" Guildgate")),
+		1.0
 	),
 };
 
