@@ -2740,13 +2740,14 @@ class FDNBoosterFactory extends BoosterFactory {
 	}
 }
 
-// 14 Pioneer Masters cards
-// 8 Commons from the main set
-// 3 Uncommons from the main set
-// 1 Rare or mythic rare from the main set
-// 	 A rare can upgrade to mythic rare at a rate of approximately 1:5.
-// 1 Variety slot from the main set
-// 1 Card from the scheduled bonus sheet
+// 15 Pioneer Masters cards
+//   8 Commons from the main set
+//   3 Uncommons from the main set
+//   1 Rare or mythic rare from the main set
+//     A rare can upgrade to mythic rare at a rate of approximately 1:5.
+//   1 Variety slot from the main set
+//   1 Card from the scheduled bonus sheet
+//   1 Guildgate land (LandSlot)
 class PIOBoosterFactory extends BoosterFactory {
 	static readonly BonusLists = [
 		CardsBySet["pio"].filter(

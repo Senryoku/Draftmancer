@@ -856,6 +856,7 @@
     "fdn": {
         "code": "fdn",
         "fullName": "Foundations",
+        "block": "Core Set",
         "icon": "img/sets/fdn.svg"
     },
     "fem": {
@@ -2325,6 +2326,11 @@
         "fullName": "Journey into Nyx Promos",
         "block": "Theros",
         "icon": "img/sets/pjou.svg"
+    },
+    "pjsc": {
+        "code": "pjsc",
+        "fullName": "Japan Standard Cup",
+        "icon": "img/sets/pjsc.svg"
     },
     "pjse": {
         "code": "pjse",
