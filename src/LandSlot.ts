@@ -51,6 +51,12 @@ export class SpecialLandSlot extends BasicLandSlot {
 	}
 }
 
+const PIOLandSlot = new SpecialLandSlot(
+	"pio",
+	BoosterCardsBySet["pio"].filter((c) => getCard(c).name.endsWith(" Guildgate")),
+	1.0
+);
+
 // Eldraine common lands appears in the standard common slot, no need for a special rule.
 export const SpecialLandSlots: { [set: string]: SpecialLandSlot } = {
 	grn: new SpecialLandSlot(
@@ -269,11 +275,10 @@ export const SpecialLandSlots: { [set: string]: SpecialLandSlot } = {
 		],
 		0.5
 	),
-	pio: new SpecialLandSlot(
-		"pio",
-		BoosterCardsBySet["pio"].filter((c) => getCard(c).name.endsWith(" Guildgate")),
-		1.0
-	),
+	pio: PIOLandSlot,
+	pio0: PIOLandSlot,
+	pio1: PIOLandSlot,
+	pio2: PIOLandSlot,
 };
 
 export const BasicLandSlots: { [set: string]: BasicLandSlot } = {};
