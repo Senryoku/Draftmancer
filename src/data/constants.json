@@ -84,7 +84,8 @@
         "blb",
         "dsk",
         "fdn",
-        "pio"
+        "pio",
+        "inr"
     ],
     "AlchemySets": [
         "hbg",
@@ -103,7 +104,8 @@
         "otj",
         "blb",
         "dsk",
-        "fdn"
+        "fdn",
+        "inr"
     ],
     "BasicLandNames": {
         "en": {
@@ -312,6 +314,7 @@
         }
     ],
     "PrimarySets": [
+        "inr",
         "pio",
         "fdn",
         "dsk",

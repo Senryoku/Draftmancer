@@ -3,7 +3,7 @@ import { getUnique, BoosterCardsBySet, CardsBySet, getCard, DefaultMaxDuplicates
 import { shuffleArray, randomInt, Options, random, getRandom, cumulativeSum } from "./utils.js";
 import { pickCard } from "./cardUtils.js";
 import { BasicLandSlot } from "./LandSlot.js";
-import { MessageError, isMessageError } from "./Message.js";
+import { MessageError, isMessageError, isSocketError } from "./Message.js";
 import { Session } from "./Session.js";
 
 // Generates booster for regular MtG Sets
@@ -2852,6 +2852,73 @@ class PIOBoosterFactoryBonusSheet2 extends PIOBoosterFactory {
 	}
 }
 
+// Innistrad Remastered (INR) : 14 Magic: The Gathering cards
+//   5 Single-faced common cards
+//   1 Double-faced common card
+//   3 Uncommon cards
+//       There is a 0.6% chance for an equinox treatment uncommon here or in the wildcard slot.
+//   1 Wildcard of any rarity
+//       There is a 3% chance for a borderless common.
+//       There is a 0.7% chance for a borderless uncommon.
+//       There is a 0.3% chance for a showcase fang uncommon.
+//   1 Rare or mythic rare card
+//       There is a 2.8% chance for a Booster Fun rare here or in the wildcard slot.
+//       There is a 0.5% chance for a Booster Fun mythic rare here or in the wildcard slot.
+//   1 Non-foil retro frame card of any rarity
+//   1 Traditional foil card of any rarity
+//       There is a 2.7% chance for a traditional foil Booster Fun common.
+//       There is a 0.1% chance for a traditional foil Booster Fun uncommon.
+//       There is a 0.9% chance for a traditional foil Booster Fun rare.
+//       There is a 0.1% chance for a traditional foil Booster Fun mythic rare.
+//           Excludes retro frame cards
+//   1 Basic land (20% chance for a traditional foil basic land)
+
+class INRBoosterFactory extends BoosterFactory {
+	doubleFacedCommons: CardPool;
+	// retroFrameCards: SlotedCardPool; // ...
+
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
+		const [doubleFacedCommons, filteredCardPool] = filterCardPool(cardPool, (cid: CardID) => {
+			const c = getCard(cid);
+			return c.rarity === "common" && c.back !== undefined;
+		});
+		super(filteredCardPool, landSlot, options);
+		this.doubleFacedCommons = doubleFacedCommons.common;
+	}
+
+	generateBooster(targets: Targets) {
+		const updatedTargets = structuredClone(targets);
+		updatedTargets.common = Math.max(0, updatedTargets.common - 5);
+
+		const booster: UniqueCard[] = [];
+		const doubleFacedCommon = pickCard(this.doubleFacedCommons);
+
+		// Traditional foil card of any rarity
+		{
+			const rarityRoll = rollSetBoosterWildcardRarity(this.cardPool, {});
+			booster.push(pickCard(this.cardPool[rarityRoll], booster, { foil: true }));
+		}
+		// Non-foil retro frame card of any rarity
+		// TODO
+		// Wildcard of any rarity
+		{
+			const rarityRoll = rollSetBoosterWildcardRarity(this.cardPool, {});
+			booster.push(pickCard(this.cardPool[rarityRoll], booster, { foil: false }));
+		}
+
+		const rest = super.generateBooster(updatedTargets);
+		if (isMessageError(rest)) return rest;
+
+		// Insert double-faced common
+		rest.splice(rest.findIndex((c) => c.rarity === "common") - 1, 0, doubleFacedCommon);
+		return [...booster, ...rest];
+	}
+
+	ratio(cat0: number, cat1: number): number {
+		return cat0 / (cat0 + cat1);
+	}
+}
+
 // Set specific rules.
 // Neither DOM, WAR or ZNR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
 export const SetSpecificFactories: {
@@ -2902,6 +2969,7 @@ export const SetSpecificFactories: {
 	pio0: PIOBoosterFactoryBonusSheet0,
 	pio1: PIOBoosterFactoryBonusSheet1,
 	pio2: PIOBoosterFactoryBonusSheet2,
+	inr: INRBoosterFactory,
 };
 
 export const getBoosterFactory = function (
