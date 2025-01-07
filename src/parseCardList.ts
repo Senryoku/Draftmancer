@@ -623,7 +623,7 @@ function parsePackLayoutsDeprecated(
 //   - ignoreUnknownCards: boolean, If true, don't error on unknown cards, report the unknown card by mutating the 'outIgnoredCards' parameter and continue.
 export function parseCardList(
 	txtcardlist: string,
-	options: { name?: string; fallbackToCardName?: boolean; ignoreUnknownCards?: boolean },
+	options: { name?: string; fallbackToCardName?: boolean; ignoreUnknownCards?: boolean; cubeCobraID?: string },
 	outIgnoredCards?: string[]
 ): CustomCardList | SocketError {
 	try {
@@ -868,6 +868,7 @@ export function parseCardList(
 			cardList.layouts = false;
 		}
 		if (options?.name) cardList.name = options.name;
+		if (options?.cubeCobraID) cardList.cubeCobraID = options.cubeCobraID;
 		if (Object.values(cardList.sheets).every((sheet) => getSheetCardIDs(sheet).length === 0))
 			return ackError({
 				title: "Empty List",

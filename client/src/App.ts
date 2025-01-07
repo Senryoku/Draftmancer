@@ -213,6 +213,7 @@ export default defineComponent({
 	},
 	data: () => {
 		const path = window.location.pathname.substring(1).split("/");
+		const urlParams = getUrlVars();
 		const validPages = ["", "draftqueue"];
 		const page = validPages.includes(path[0]) ? path[0] : "";
 
@@ -227,7 +228,7 @@ export default defineComponent({
 		let userID: UserID = getCookie("userID", guid());
 		setCookie("userID", userID);
 
-		const urlParamSession = getUrlVars()["session"];
+		const urlParamSession = urlParams["session"];
 		let sessionID: string | undefined = urlParamSession
 			? decodeURIComponent(urlParamSession)
 			: getCookie("sessionID", shortguid());
@@ -257,12 +258,27 @@ export default defineComponent({
 
 		if (page === "draftqueue") sessionID = undefined;
 
-		const storedSessionSettings = localStorage.getItem(localStorageSessionSettingsKey) ?? "{}";
+		const storedSessionSettingsStr = localStorage.getItem(localStorageSessionSettingsKey) ?? "{}";
+		let storedSessionSettings: Options = {};
+		try {
+			storedSessionSettings = JSON.parse(storedSessionSettingsStr);
+		} catch (e) {
+			console.error("Error parsing stored session settings: ", e);
+		}
+
+		const cubeCobraID = urlParams["cubeCobraID"];
+		if (cubeCobraID) {
+			storedSessionSettings.cubeCobraID = cubeCobraID;
+			const cubeCobraName = decodeURI(urlParams["cubeCobraName"]);
+			if (cubeCobraName) storedSessionSettings.cubeCobraName = cubeCobraName;
+			sessionID = "CC_" + shortguid(); // NOTE: Setting the sessionID here to avoid having it visually set to a wrong value client-side until we hear back from the server.
+			//                                        The server will have the last word on the actually used ID (making sure we're in a fresh session).
+		}
 
 		const query: Record<string, string> = {
 			userID: userID,
 			userName: userName,
-			sessionSettings: storedSessionSettings,
+			sessionSettings: JSON.stringify(storedSessionSettings),
 		};
 		if (sessionID) query.sessionID = sessionID; // Note: Setting sessionID to undefined will send it as the "undefined" string, and that's not what we want...
 
