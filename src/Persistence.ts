@@ -8,6 +8,7 @@ import path from "path";
 import JSONStream from "JSONStream";
 import { Connections, clearConnections, getPODConnection } from "./Connection.js";
 import { Session, Sessions, clearSessions } from "./Session.js";
+import { sendDraftLogToCubeCobra } from "./cubeCobraIntegration.js";
 import { TeamSealedState } from "./TeamSealed.js";
 import { MinesweeperDraftState } from "./MinesweeperDraft.js";
 import { Bot, IBot, SimpleBot } from "./Bot.js";
@@ -340,6 +341,7 @@ export function logSession(type: string, session: Session) {
 	} catch (err) {
 		console.error("Error saving logs: ", err);
 	}
+	sendDraftLogToCubeCobra(session);
 
 	if (!MixInstance) return;
 	const mixdata: Record<string, unknown> = {

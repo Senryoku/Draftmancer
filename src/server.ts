@@ -158,9 +158,10 @@ const parseCustomCardList = function (
 	session: Session,
 	txtlist: string,
 	options: {
-		name?: string | undefined;
-		fallbackToCardName?: boolean | undefined;
-		ignoreUnknownCards?: boolean | undefined;
+		name?: string;
+		cubeCobraID?: string;
+		fallbackToCardName?: boolean;
+		ignoreUnknownCards?: boolean;
 	},
 	ack: (result: SocketAck) => void
 ) {
@@ -872,7 +873,7 @@ function removePlayer(userID: UserID, sessionID: SessionID, userToRemove: UserID
 	Sessions[sessionID].replaceDisconnectedPlayers();
 	Sessions[sessionID].notifyUserChange();
 
-	const newSession = shortguid();
+	const newSession = newSessionID();
 	joinSession(newSession, userToRemove);
 	Connections[userToRemove].socket.emit("setSession", newSession);
 	Connections[userToRemove].socket.emit(
@@ -999,6 +1000,9 @@ function importCube(userID: UserID, sessionID: SessionID, data: unknown, ack: (r
 		return true;
 	};
 
+	const parseCustomCardListOptions: Options = { name: data.name };
+	if (data.service === "Cube Cobra" && data.cubeID) parseCustomCardListOptions.cubeCobraID = data.cubeID;
+
 	// Plain text card list
 	const fromTextList = (
 		sessionID: SessionID,
@@ -1013,7 +1017,7 @@ function importCube(userID: UserID, sessionID: SessionID, data: unknown, ack: (r
 			.get(url, { timeout: 3000 })
 			.then((response) => {
 				if (validateResponse(response, data, ack))
-					parseCustomCardList(Sessions[sessionID], response.data, { name: data.name }, ack);
+					parseCustomCardList(Sessions[sessionID], response.data, parseCustomCardListOptions, ack);
 			})
 			.catch((err) =>
 				ack?.(
@@ -1045,7 +1049,7 @@ function importCube(userID: UserID, sessionID: SessionID, data: unknown, ack: (r
 						parseCustomCardList(
 							Sessions[sessionID],
 							converted,
-							{ name: data.name, fallbackToCardName: true },
+							{ ...parseCustomCardListOptions, fallbackToCardName: true },
 							ack
 						);
 				}
@@ -1556,7 +1560,7 @@ io.on("connection", async function (socket) {
 	socket.on("requestTakeover", prepareSocketCallback(requestTakeover));
 	socket.on("convertMTGOLog", prepareSocketCallback(convertMTGOLog));
 
-	if (query.sessionID) {
+	if (isString(query.sessionID)) {
 		socket.on("setSession", function (this: typeof socket, sessionID: SessionID, sessionSettings: Options) {
 			try {
 				const userID = this.data.userID;
@@ -1649,9 +1653,10 @@ io.on("connection", async function (socket) {
 
 		// Apply preferred session settings in case we're creating a new one, filtering out invalid ones.
 		const filteredSettings: Options = {};
+		let sessionSettings: Options = {};
 		try {
 			if (query.sessionSettings) {
-				const sessionSettings: Options = JSON.parse(query.sessionSettings as string);
+				sessionSettings = JSON.parse(query.sessionSettings as string);
 				for (const prop of Object.keys(SessionsSettingsProps))
 					if (prop in sessionSettings && SessionsSettingsProps[prop](sessionSettings[prop]))
 						filteredSettings[prop] = sessionSettings[prop];
@@ -1660,7 +1665,32 @@ io.on("connection", async function (socket) {
 			console.error("Error parsing default session setting on user connection: ", e);
 			console.error("query.sessionSettings: ", query.sessionSettings);
 		}
-		joinSession(query.sessionID as string, userID, filteredSettings);
+
+		let sessionID: string = query.sessionID;
+		if (sessionSettings.cubeCobraID) {
+			// Make sure the session ID isn't in use for redirections from Cube Cobra.
+			if (sessionIDInUse(sessionID)) sessionID = newSessionID("CC_");
+		}
+
+		joinSession(sessionID, userID, filteredSettings);
+
+		if (sessionSettings.cubeCobraID) {
+			if (sessionID !== query.sessionID) Connections[userID].socket.emit("setSession", sessionID);
+
+			const cubeName = sessionSettings.cubeCobraName ?? sessionSettings.cubeCobraID;
+			importCube(
+				userID,
+				sessionID,
+				{
+					service: "Cube Cobra",
+					name: cubeName,
+					cubeID: sessionSettings.cubeCobraID,
+				},
+				(err) => {
+					if (isSocketError(err)) console.error("Error importing Cube Cobra cube: ", err);
+				}
+			);
+		}
 	} else {
 		// Not in a session, allow registering to draft queues.
 		socket.on(
@@ -1686,12 +1716,22 @@ io.on("connection", async function (socket) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
+function sessionIDInUse(sid: SessionID) {
+	return sid in Sessions || sid in InactiveSessions;
+}
+
+function newSessionID(prefix: string = ""): SessionID {
+	let sid = prefix + shortguid();
+	while (sessionIDInUse(sid)) sid = prefix + shortguid();
+	return sid;
+}
+
 function joinSession(sessionID: SessionID, userID: UserID, defaultSessionSettings: Options = {}) {
 	// Fallback to previous session if possible, or generate a new one
 	const refuse = (msg: string) => {
 		Connections[userID].socket.emit("message", new Message("Cannot join session", "", "", msg));
-		const newSessionID = Connections[userID].sessionID ? Connections[userID].sessionID! : shortguid();
-		Connections[userID].socket.emit("setSession", newSessionID);
+		const newSID = Connections[userID].sessionID ? Connections[userID].sessionID! : newSessionID();
+		Connections[userID].socket.emit("setSession", newSID);
 	};
 
 	if (sessionID in InactiveSessions) {
