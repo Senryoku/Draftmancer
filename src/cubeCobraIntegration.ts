@@ -3,8 +3,8 @@ import { InTesting, InProduction } from "./Context.js";
 import { Session } from "./Session.js";
 import { DraftPick } from "./DraftLog.js";
 
-const CUBECOBRA_LOG_ENDPOINT = "https://";
-const CUBECOBRA_API_KEY = "ApiKey";
+const CUBECOBRA_LOG_ENDPOINT = process.env.CUBECOBRA_LOG_ENDPOINT;
+const CUBECOBRA_API_KEY = process.env.CUBECOBRA_API_KEY;
 
 interface Pick {
 	booster: string[]; // oracle id
@@ -40,7 +40,7 @@ interface PublishDraftBody {
 }
 
 export function sendDraftLogToCubeCobra(session: Session) {
-	if (!InProduction || InTesting || !CUBECOBRA_API_KEY) return;
+	if (!InProduction || InTesting || !CUBECOBRA_API_KEY || !CUBECOBRA_LOG_ENDPOINT) return;
 
 	try {
 		if (session.useCustomCardList && session.customCardList.cubeCobraID && session.draftLog) {
@@ -82,7 +82,7 @@ export function sendDraftLogToCubeCobra(session: Session) {
 				})),
 			};
 
-			// TODO: Send the payload.
+			axios.post(CUBECOBRA_LOG_ENDPOINT, payload);
 		}
 	} catch (err) {
 		console.error("Error sending draft log to CubeCobra: ", err);
