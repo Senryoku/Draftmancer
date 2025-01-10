@@ -692,7 +692,13 @@ export class Session implements IIndexable {
 		if (!options?.useCustomBoosters || customBoosters.some((v: string) => v === "")) {
 			// Use PaperBoosterFactory if possible (avoid computing cardPoolByRarity in this case)
 			if (this.setRestriction.length === 1 && usePaperBoosterFactory(this.setRestriction[0])) {
-				defaultFactory = getPaperBoosterFactory(this.setRestriction[0], boosterFactoryOptions);
+				const paperBoosterFactory = getPaperBoosterFactory(this.setRestriction[0], boosterFactoryOptions);
+				if (!paperBoosterFactory)
+					return new MessageError(
+						"Error generating boosters",
+						`Could not find paper booster factory for ${this.setRestriction[0]}`
+					);
+				defaultFactory = paperBoosterFactory;
 			} else {
 				defaultFactory = getBoosterFactory(
 					this.setRestriction.length === 1 ? this.setRestriction[0] : null,
@@ -761,7 +767,13 @@ export class Session implements IIndexable {
 			if (!usedSets[boosterSet]) {
 				// Use the corresponding PaperBoosterFactories if possible (is available and of the excepted size when addLandSlot is needed)
 				if (usePaperBoosterFactory(boosterSet)) {
-					usedSets[boosterSet] = getPaperBoosterFactory(boosterSet, boosterFactoryOptions);
+					const paperBoosterFactory = getPaperBoosterFactory(boosterSet, boosterFactoryOptions);
+					if (!paperBoosterFactory)
+						return new MessageError(
+							"Error generating boosters",
+							`Could not find paper booster factory for ${this.setRestriction[0]}`
+						);
+					usedSets[boosterSet] = paperBoosterFactory;
 				} else {
 					usedSets[boosterSet] = getBoosterFactory(
 						boosterSet,

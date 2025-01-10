@@ -39,7 +39,7 @@ const checkColorBalance = function (booster: Card[]) {
 
 const checkDuplicates = function (booster: UniqueCard[]) {
 	// Wildcard slots can introduce duplicates.
-	if (booster.every((card) => card.set === "fdn" || card.set === "spg")) return;
+	if (booster.every((card) => ["fdn", "spg", "inr"].includes(card.set))) return;
 
 	// Foils can be duplicates
 	const sorted = [...booster].sort((lhs, rhs) => (lhs.id < rhs.id ? -1 : 1));
@@ -744,8 +744,9 @@ describe("Single Draft (Two Players)", function () {
 							(set === "pio2" && c.set === "pio") ||
 							(set === "ydmu" && c.set === "dmu") ||
 							(set === "planeshifted_snc" && c.set === "snc") ||
-							(set === "mb1_convention_2019" && ["mb1", "cmb1"].includes(c.set)) ||
-							(set === "mb1_convention_2021" && ["mb1", "cmb2"].includes(c.set)) ||
+							(set === "mb1" && ["plst"].includes(c.set)) ||
+							(set === "mb1_convention_2019" && ["plst", "cmb1"].includes(c.set)) ||
+							(set === "mb1_convention_2021" && ["plst", "cmb2"].includes(c.set)) ||
 							(set === "unf" && c.set === "sunf") ||
 							(set === "con" && c.set === "ala") ||
 							(set === "arb" && c.set === "ala") ||

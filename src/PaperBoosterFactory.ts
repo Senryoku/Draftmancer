@@ -136,12 +136,17 @@ export class PaperBoosterFactory implements IBoosterFactory {
 export const isPaperBoosterFactoryAvailable = (set: string) => {
 	const excludedSets = ["mh2"]; // Workaround for sets failing our tests (we already have a working implementation anyway, and I don't want to debug it honestly.)
 	if (["mb1_convention_2019", "mb1_convention_2021"].includes(set)) return true;
-	return (set in PaperBoosterFactories || `${set}-arena` in PaperBoosterFactories) && !excludedSets.includes(set);
+	return (
+		(set in PaperBoosterFactories ||
+			`${set}-draft` in PaperBoosterFactories ||
+			`${set}-arena` in PaperBoosterFactories) &&
+		!excludedSets.includes(set)
+	);
 };
 
 export const getPaperBoosterFactory = (set: string, boosterFactoryOptions: BoosterFactoryOptions) => {
-	if (set === "mb1_convention_2019") return PaperBoosterFactories["cmb1"](boosterFactoryOptions);
-	if (set === "mb1_convention_2021") return PaperBoosterFactories["cmb2"](boosterFactoryOptions);
+	if (set === "mb1_convention_2019") return PaperBoosterFactories["mb1-convention"](boosterFactoryOptions);
+	if (set === "mb1_convention_2021") return PaperBoosterFactories["mb1-convention-2021"](boosterFactoryOptions);
 
 	// FIXME: Collation data has arena/paper variants, but isn't perfect right now, for example:
 	//   - Paper IKO has promo versions of the cards that are not available on Arena (as separate cards at least, and with proper collector number), preventing to always rely on the paper collation by default.
@@ -149,7 +154,13 @@ export const getPaperBoosterFactory = (set: string, boosterFactoryOptions: Boost
 	// Hacking this in for now by forcing arena collation for affected sets.
 	if (["iko", "klr", "akr"].includes(set)) return PaperBoosterFactories[`${set}-arena`](boosterFactoryOptions);
 
-	return PaperBoosterFactories[set](boosterFactoryOptions);
+	if (PaperBoosterFactories[set]) return PaperBoosterFactories[set](boosterFactoryOptions);
+	else if (PaperBoosterFactories[`${set}-draft`]) return PaperBoosterFactories[`${set}-draft`](boosterFactoryOptions);
+	else if (PaperBoosterFactories[`${set}-arena`]) return PaperBoosterFactories[`${set}-arena`](boosterFactoryOptions);
+	else {
+		console.error(`Could not find PaperBoosterFactories for '${set}'.`);
+		return undefined;
+	}
 
 	// Proper-ish implementation:
 	/*
@@ -171,7 +182,8 @@ for (const s of PaperBoosterData) {
 	if (
 		!Constants.PrimarySets.includes(set.code) &&
 		!set.code.includes("-arena") &&
-		!["cmb1", "cmb2"].includes(set.code)
+		!set.code.includes("-draft") &&
+		!["mb1-convention", "mb1-convention-2021"].includes(set.code)
 	) {
 		// console.log(`PaperBoosterFactories: Found '${set.code}' collation data but set is not in PrimarySets, skippink it.`);
 		continue;
@@ -183,10 +195,10 @@ for (const s of PaperBoosterData) {
 			card.id = CardsBySetAndCollectorNumber[`${card.set}:${num}`];
 			if (!card.id) {
 				// Special case for double faced cards
-				if (["a", "★"].includes(num[num.length - 1])) num = num.substr(0, num.length - 1);
+				if (["a", "★"].includes(num[num.length - 1])) num = num.substring(0, num.length - 1);
 				card.id = CardsBySetAndCollectorNumber[`${card.set}:${num}`];
 			}
-			if (!card.id) console.log("Error! Could not find corresponding card:", card);
+			if (!card.id) console.error("Error! Could not find corresponding card:", card);
 		}
 		if (set.sheets[sheetName].balance_colors) {
 			set.colorBalancedSheets[sheetName] = {

@@ -16,7 +16,6 @@ console.time("Total");
 let tmpCards: Map<CardID, Card> = new Map<CardID, Card>();
 console.time("Parsing Cards");
 const DBFiles = await glob("data/MTGCards.*.json");
-DBFiles.push("data/mb1_cards.json"); // Scryfall removed the mb1 set and merged it with the rest of The List. We still rely on those. FIXME: Images will break at some point.
 if (process.env.NODE_ENV !== "production") {
 	for (const file of DBFiles) {
 		tmpCards = new Map<CardID, Card>([
@@ -40,6 +39,13 @@ if (process.env.NODE_ENV !== "production") {
 }
 console.timeEnd("Parsing Cards");
 //memoryReport();
+
+import MB1Cards from "../data/mb1_cards.json" with { type: "json" };
+for (const cid in MB1Cards) {
+	if (!tmpCards.has(cid)) {
+		tmpCards.set(cid, MB1Cards[cid as keyof typeof MB1Cards] as Card);
+	}
+}
 
 export const Cards: ReadonlyMap<CardID, Card> = tmpCards;
 
@@ -125,6 +131,8 @@ BoosterCardsBySet["ydmu"] = BoosterCardsBySet["dmu"]; // Dominaria United Alchem
 for (let i = 0; i < 4; ++i) CardsBySet["sir" + i] = BoosterCardsBySet["sir" + i] = BoosterCardsBySet["sir"];
 // Pioneer Masters with specific Bonus Sheet
 for (let i = 0; i < 3; ++i) CardsBySet["pio" + i] = BoosterCardsBySet["pio" + i] = BoosterCardsBySet["pio"];
+
+BoosterCardsBySet["mb1"] = Object.keys(MB1Cards);
 // Mystery boosters convention editions with playtest cards
 BoosterCardsBySet["mb1_convention_2019"] = BoosterCardsBySet["mb1"].concat(CardsBySet["cmb1"]);
 BoosterCardsBySet["mb1_convention_2021"] = BoosterCardsBySet["mb1"].concat(CardsBySet["cmb2"]);
