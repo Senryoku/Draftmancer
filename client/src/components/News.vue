@@ -1,6 +1,14 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
+			<em>January 10, 2025</em>
+			<p>Happy new year everyone! :)</p>
+			<p>
+				Initial <img src="img/sets/inr.svg" class="set-icon" style="--invertedness: 100%" alt="INR" />Innistrad
+				Remastered support is live!<br />
+			</p>
+		</div>
+		<div class="news">
 			<em>December 7, 2024</em>
 			<p>
 				<img src="img/sets/pio.svg" class="set-icon" style="--invertedness: 100%" alt="PIO" /> Pioneer Masters

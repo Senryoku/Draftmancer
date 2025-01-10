@@ -1,5 +1,17 @@
 [
 	{
+		"date": "10/01/2025",
+		"notes": [
+			"Innistrad Remastered support."
+		]
+	},
+	{
+		"date": "07/12/2024",
+		"notes": [
+			"Pioneer Masters support."
+		]
+	},
+	{
 		"date": "02/11/2024",
 		"notes": [
 			"Foundations support.",
