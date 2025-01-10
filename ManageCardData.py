@@ -576,7 +576,10 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
 
         if c["set"] == "inr":
             try:
-                selection["in_booster"] = int(c["collector_number"]) < 288
+                if c["collector_number"].endswith("a"):
+                    selection["in_booster"] = int(c["collector_number"][:-1]) < 288
+                else:
+                    selection["in_booster"] = int(c["collector_number"]) < 288
             except:
                 selection["in_booster"] = False
 
