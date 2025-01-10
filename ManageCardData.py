@@ -574,6 +574,12 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
         if c["set"] == "pio":
             selection["in_booster"] = int(c["collector_number"]) < 279
 
+        if c["set"] == "inr":
+            try:
+                selection["in_booster"] = int(c["collector_number"]) < 288
+            except:
+                selection["in_booster"] = False
+
         if c["layout"] == "split":
             if "Aftermath" in c["keywords"]:
                 selection["layout"] = "split-left"

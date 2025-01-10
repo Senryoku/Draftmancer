@@ -3,7 +3,7 @@ import { getUnique, BoosterCardsBySet, CardsBySet, getCard, DefaultMaxDuplicates
 import { shuffleArray, randomInt, Options, random, getRandom, cumulativeSum } from "./utils.js";
 import { pickCard } from "./cardUtils.js";
 import { BasicLandSlot } from "./LandSlot.js";
-import { MessageError, isMessageError, isSocketError } from "./Message.js";
+import { MessageError, isMessageError } from "./Message.js";
 import { Session } from "./Session.js";
 
 // Generates booster for regular MtG Sets
@@ -2852,7 +2852,18 @@ class PIOBoosterFactoryBonusSheet2 extends PIOBoosterFactory {
 	}
 }
 
+function cidsToSlotedCardPool(cids: CardID[], maxDuplicates?: Record<string, number>): SlotedCardPool {
+	const r: SlotedCardPool = {};
+	for (const cid of cids) {
+		const card = getCard(cid);
+		if (!r[card.rarity]) r[card.rarity] = new CardPool();
+		r[card.rarity]!.set(card.id, maxDuplicates?.[card.rarity] ?? DefaultMaxDuplicates);
+	}
+	return r;
+}
+
 // Innistrad Remastered (INR) : 14 Magic: The Gathering cards
+// FIXME: Special treatments outside of retro frame not implemented. Remove this when a better collation method is available?
 //   5 Single-faced common cards
 //   1 Double-faced common card
 //   3 Uncommon cards
@@ -2872,10 +2883,27 @@ class PIOBoosterFactoryBonusSheet2 extends PIOBoosterFactory {
 //       There is a 0.1% chance for a traditional foil Booster Fun mythic rare.
 //           Excludes retro frame cards
 //   1 Basic land (20% chance for a traditional foil basic land)
-
 class INRBoosterFactory extends BoosterFactory {
+	static filter(min: number, max: number) {
+		return CardsBySet["inr"].filter(
+			(c) => parseInt(getCard(c).collector_number) >= min && parseInt(getCard(c).collector_number) <= max
+		);
+	}
+
+	static readonly Borderless = INRBoosterFactory.filter(298, 322);
+	static readonly ShowcaseEquinox = INRBoosterFactory.filter(323, 325);
+	static readonly ShowcaseFang = INRBoosterFactory.filter(326, 328);
+	static readonly RetroFrameCards = INRBoosterFactory.filter(329, 480);
+	static readonly MoviePosterCards = INRBoosterFactory.filter(481, 490); // Collector Boosters only
+	static readonly SerializedMoviePosterCards = INRBoosterFactory.filter(491, 491); // Collector Boosters only
+	static readonly BoosterFunCards = [
+		...INRBoosterFactory.Borderless,
+		...INRBoosterFactory.ShowcaseEquinox,
+		...INRBoosterFactory.ShowcaseFang,
+	];
+
 	doubleFacedCommons: CardPool;
-	// retroFrameCards: SlotedCardPool; // ...
+	retroFrameCards: SlotedCardPool = {};
 
 	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
 		const [doubleFacedCommons, filteredCardPool] = filterCardPool(cardPool, (cid: CardID) => {
@@ -2884,11 +2912,13 @@ class INRBoosterFactory extends BoosterFactory {
 		});
 		super(filteredCardPool, landSlot, options);
 		this.doubleFacedCommons = doubleFacedCommons.common;
+		this.retroFrameCards = cidsToSlotedCardPool(INRBoosterFactory.RetroFrameCards, options.maxDuplicates);
 	}
 
 	generateBooster(targets: Targets) {
 		const updatedTargets = structuredClone(targets);
-		updatedTargets.common = Math.max(0, updatedTargets.common - 5);
+		if (targets === DefaultBoosterTargets) updatedTargets.common = Math.max(0, updatedTargets.common - 5);
+		else updatedTargets.common = Math.max(1, updatedTargets.common - 4);
 
 		const booster: UniqueCard[] = [];
 		const doubleFacedCommon = pickCard(this.doubleFacedCommons);
@@ -2899,7 +2929,10 @@ class INRBoosterFactory extends BoosterFactory {
 			booster.push(pickCard(this.cardPool[rarityRoll], booster, { foil: true }));
 		}
 		// Non-foil retro frame card of any rarity
-		// TODO
+		{
+			const rarityRoll = rollSetBoosterWildcardRarity(this.retroFrameCards, {});
+			booster.push(pickCard(this.retroFrameCards[rarityRoll], booster, { foil: false }));
+		}
 		// Wildcard of any rarity
 		{
 			const rarityRoll = rollSetBoosterWildcardRarity(this.cardPool, {});
@@ -2910,12 +2943,8 @@ class INRBoosterFactory extends BoosterFactory {
 		if (isMessageError(rest)) return rest;
 
 		// Insert double-faced common
-		rest.splice(rest.findIndex((c) => c.rarity === "common") - 1, 0, doubleFacedCommon);
+		rest.splice(rest.length - updatedTargets.common, 0, doubleFacedCommon);
 		return [...booster, ...rest];
-	}
-
-	ratio(cat0: number, cat1: number): number {
-		return cat0 / (cat0 + cat1);
 	}
 }
 
