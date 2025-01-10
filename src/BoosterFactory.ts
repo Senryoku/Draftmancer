@@ -2864,6 +2864,7 @@ function cidsToSlotedCardPool(cids: CardID[], maxDuplicates?: Record<string, num
 
 // Innistrad Remastered (INR) : 14 Magic: The Gathering cards
 // FIXME: Special treatments outside of retro frame not implemented. Remove this when a better collation method is available?
+// FIXME: Color Balance can't be applied as-is, single faced common slot only has 5 cards.
 //   5 Single-faced common cards
 //   1 Double-faced common card
 //   3 Uncommon cards
