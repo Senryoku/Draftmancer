@@ -20,7 +20,7 @@ import {
 } from "./TypeChecks.js";
 
 const lineRegex =
-	/^(?:(?<count>\d+)\s+)?(?<name>[^\v\n]+?)(?:\s\((?<set>\w+)\)(?:\s+(?<number>[^+\s()]+))?)?(?:\s+\+?(F))?$/;
+	/^(?:(?<count>\d+)\s+)?(?<name>[^\v\n]+?)(?:\s+\((?<set>\w+)\)(?:\s+(?<number>[^+\s()]+))?)?(?:\s+\+?(F))?$/;
 
 const CommentDelimiter = "#";
 const commentRegex = /^\s*#.*$/gm;
