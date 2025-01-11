@@ -82,7 +82,9 @@ export function sendDraftLogToCubeCobra(session: Session) {
 				})),
 			};
 
-			axios.post(CUBECOBRA_LOG_ENDPOINT, payload);
+			axios
+				.post(CUBECOBRA_LOG_ENDPOINT, payload)
+				.catch((err) => console.error("Error sending draft log to CubeCobra: ", err));
 		}
 	} catch (err) {
 		console.error("Error sending draft log to CubeCobra: ", err);
