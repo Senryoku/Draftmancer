@@ -51,6 +51,7 @@ export type CollationType = "random" | "printRun" | "striped";
 
 export type CustomCardList = {
 	name?: string;
+	cubeCobraID?: string;
 	sheets: Record<SheetName, Sheet>;
 	layouts: Record<LayoutName, PackLayout> | false;
 	customCards: Record<CardID, Card> | null;

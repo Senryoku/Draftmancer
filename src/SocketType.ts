@@ -391,7 +391,13 @@ export interface ClientToServerEvents {
 	setRestriction: (setRestriction: Array<SetCode>) => void;
 	parseCustomCardList: (customCardList: string, ack: (result: SocketAck) => void) => void;
 	importCube: (
-		data: { name?: string; service: string; matchVersions: boolean; cubeID: string },
+		data: {
+			name?: string;
+			service: string;
+			matchVersions: boolean;
+			cubeID: string;
+			sendResultsToCubeCobra?: boolean;
+		},
 		ack: (result: SocketAck) => void
 	) => void;
 	loadLocalCustomCardList: (cubeName: string, ack: (result: SocketAck) => void) => void;

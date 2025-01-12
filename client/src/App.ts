@@ -213,6 +213,7 @@ export default defineComponent({
 	},
 	data: () => {
 		const path = window.location.pathname.substring(1).split("/");
+		const urlParams = getUrlVars();
 		const validPages = ["", "draftqueue"];
 		const page = validPages.includes(path[0]) ? path[0] : "";
 
@@ -227,7 +228,7 @@ export default defineComponent({
 		let userID: UserID = getCookie("userID", guid());
 		setCookie("userID", userID);
 
-		const urlParamSession = getUrlVars()["session"];
+		const urlParamSession = urlParams["session"];
 		let sessionID: string | undefined = urlParamSession
 			? decodeURIComponent(urlParamSession)
 			: getCookie("sessionID", shortguid());
@@ -257,12 +258,27 @@ export default defineComponent({
 
 		if (page === "draftqueue") sessionID = undefined;
 
-		const storedSessionSettings = localStorage.getItem(localStorageSessionSettingsKey) ?? "{}";
+		const storedSessionSettingsStr = localStorage.getItem(localStorageSessionSettingsKey) ?? "{}";
+		let storedSessionSettings: Options = {};
+		try {
+			storedSessionSettings = JSON.parse(storedSessionSettingsStr);
+		} catch (e) {
+			console.error("Error parsing stored session settings: ", e);
+		}
+
+		const cubeCobraID = urlParams["cubeCobraID"];
+		if (cubeCobraID) {
+			storedSessionSettings.cubeCobraID = cubeCobraID;
+			const cubeCobraName = decodeURI(urlParams["cubeCobraName"]);
+			if (cubeCobraName) storedSessionSettings.cubeCobraName = cubeCobraName;
+			sessionID = "CC_" + shortguid(); // NOTE: Setting the sessionID here to avoid having it visually set to a wrong value client-side until we hear back from the server.
+			//                                        The server will have the last word on the actually used ID (making sure we're in a fresh session).
+		}
 
 		const query: Record<string, string> = {
 			userID: userID,
 			userName: userName,
-			sessionSettings: storedSessionSettings,
+			sessionSettings: JSON.stringify(storedSessionSettings),
 		};
 		if (sessionID) query.sessionID = sessionID; // Note: Setting sessionID to undefined will send it as the "undefined" string, and that's not what we want...
 
@@ -2722,13 +2738,22 @@ export default defineComponent({
 		},
 		importCube(service: "Cube Cobra" | "CubeArtisan") {
 			const defaultMatchCardVersions = (localStorage.getItem("import-match-versions") ?? "true") === "true";
+			const defaultSendResultsToCubeCobra =
+				(localStorage.getItem("send-results-to-cubecobra") ?? "true") === "true";
 			const defaultCubeID = localStorage.getItem("import-cubeID") ?? "";
+			const sendResultsToCubeCobraInput =
+				service === "Cube Cobra"
+					? `<div><input type="checkbox" id="send-results-to-cubecobra" ${
+							defaultSendResultsToCubeCobra ? "checked" : ""
+						}><label for="send-results-to-cubecobra">Send results to Cube Cobra</label></div>`
+					: "";
 			Alert.fire({
 				title: `Import from ${service}`,
 				html: `<p>Enter a Cube ID or an URL to import a cube directly from ${service}</p>
-				<input type="checkbox" id="input-match-card-versions" ${
+				<div><input type="checkbox" id="input-match-card-versions" ${
 					defaultMatchCardVersions ? "checked" : ""
-				}><label for="input-match-card-versions">Match exact card versions</label>`,
+				}><label for="input-match-card-versions">Match exact card versions</label></div>
+				${sendResultsToCubeCobraInput}`,
 				inputPlaceholder: "Cube ID/URL",
 				input: "text",
 				inputValue: defaultCubeID,
@@ -2736,10 +2761,15 @@ export default defineComponent({
 				confirmButtonColor: ButtonColor.Safe,
 				cancelButtonColor: ButtonColor.Critical,
 				confirmButtonText: "Import",
-				preConfirm(cubeID: string): Promise<{ cubeID: string; matchVersions: boolean }> {
-					const matchVersions = (document.getElementById("input-match-card-versions") as HTMLInputElement)
-						?.checked;
-					localStorage.setItem("import-match-versions", matchVersions.toString());
+				preConfirm(
+					cubeID: string
+				): Promise<{ cubeID: string; matchVersions: boolean; sendResultsToCubeCobra: boolean }> {
+					let matchVersions = (
+						document.getElementById("input-match-card-versions") as HTMLInputElement | null
+					)?.checked;
+					if (matchVersions !== undefined)
+						localStorage.setItem("import-match-versions", matchVersions.toString());
+					else matchVersions = true;
 					if (cubeID) {
 						// Convert from URL to cubeID if necessary.
 						const urlTest = cubeID.match(
@@ -2748,26 +2778,41 @@ export default defineComponent({
 						if (urlTest) cubeID = urlTest[1];
 					}
 					localStorage.setItem("import-cubeID", cubeID);
+					let sendResultsToCubeCobra = (
+						document.getElementById("send-results-to-cubecobra") as HTMLInputElement | null
+					)?.checked;
+					if (sendResultsToCubeCobra !== undefined)
+						localStorage.setItem("send-results-to-cubecobra", sendResultsToCubeCobra.toString());
+					else sendResultsToCubeCobra = true;
 					return new Promise(function (resolve) {
 						resolve({
 							cubeID: cubeID,
 							matchVersions: matchVersions,
+							sendResultsToCubeCobra: sendResultsToCubeCobra,
 						});
 					});
 				},
-			}).then((result: SweetAlertResult<{ cubeID: string; matchVersions: boolean }>) => {
-				if (result.value && result.value.cubeID) {
-					const cube: CubeDescription = {
-						name: "Imported Cube",
-						description: `Imported from ${service}: '${result.value.cubeID}'`,
-					};
-					if (service === "Cube Cobra") cube.cubeCobraID = result.value.cubeID;
-					if (service === "CubeArtisan") cube.cubeArtisanID = result.value.cubeID;
-					this.selectCube(cube, result.value.matchVersions);
+			}).then(
+				(
+					result: SweetAlertResult<{
+						cubeID: string;
+						matchVersions: boolean;
+						sendResultsToCubeCobra: boolean;
+					}>
+				) => {
+					if (result.value && result.value.cubeID) {
+						const cube: CubeDescription = {
+							name: "Imported Cube",
+							description: `Imported from ${service}: '${result.value.cubeID}'`,
+						};
+						if (service === "Cube Cobra") cube.cubeCobraID = result.value.cubeID;
+						if (service === "CubeArtisan") cube.cubeArtisanID = result.value.cubeID;
+						this.selectCube(cube, result.value.matchVersions, result.value.sendResultsToCubeCobra);
+					}
 				}
-			});
+			);
 		},
-		selectCube(cube: CubeDescription, matchVersions = false) {
+		selectCube(cube: CubeDescription, matchVersions = false, sendResultsToCubeCobra: boolean = false) {
 			const ack = (r: SocketAck) => {
 				if (r?.error) {
 					Alert.fire(r.error);
@@ -2791,7 +2836,13 @@ export default defineComponent({
 				});
 				this.socket.emit(
 					"importCube",
-					{ name: cube.name, cubeID: cubeID, service: service, matchVersions: matchVersions },
+					{
+						name: cube.name,
+						cubeID: cubeID,
+						service: service,
+						matchVersions: matchVersions,
+						sendResultsToCubeCobra: sendResultsToCubeCobra,
+					},
 					ack
 				);
 			} else if (cube.name) {
