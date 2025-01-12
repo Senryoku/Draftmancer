@@ -151,6 +151,7 @@ export class Session implements IIndexable {
 	};
 	customCardListWithReplacement: boolean = false;
 	customCardListDuplicateProtection: boolean = true;
+	sendResultsToCubeCobra: boolean = true; // Allow opting-out of sending results to Cube Cobra when importing a cube via Draftmancer UI.
 	distributionMode: DistributionMode = "regular"; // Specifies how boosters are distributed when using boosters from different sets (see customBoosters)
 	customBoosters: Array<string> = ["", "", ""]; // Specify a set for an individual booster (Draft Only)
 	doubleMastersMode: boolean = false; // Apply the pickedCardsPerRound rule only for the first pick then revert to one.

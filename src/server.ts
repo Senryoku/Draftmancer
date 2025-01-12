@@ -970,6 +970,8 @@ function importCube(userID: UserID, sessionID: SessionID, data: unknown, ack: (r
 		return ack?.(new SocketError("Invalid data: name should be a string."));
 	if (!hasOptionalProperty("matchVersions", isBoolean)(data))
 		return ack?.(new SocketError("Invalid data: matchVersions should be a boolean."));
+	if (!hasOptionalProperty("sendResultsToCubeCobra", isBoolean)(data))
+		return ack?.(new SocketError("Invalid data: sendResultsToCubeCobra should be a boolean."));
 	if (!["Cube Cobra", "CubeArtisan"].includes(data.service))
 		return ack?.(new SocketError(`Invalid cube service ('${data.service}').`));
 	if (!hasProperty("cubeID", isString)(data)) return ack?.(new SocketError("Invalid data: Missing cubeID."));
@@ -1001,7 +1003,11 @@ function importCube(userID: UserID, sessionID: SessionID, data: unknown, ack: (r
 	};
 
 	const parseCustomCardListOptions: Options = { name: data.name };
-	if (data.service === "Cube Cobra" && data.cubeID) parseCustomCardListOptions.cubeCobraID = data.cubeID;
+	if (data.service === "Cube Cobra" && data.cubeID) {
+		parseCustomCardListOptions.cubeCobraID = data.cubeID;
+		if (isBoolean(data.sendResultsToCubeCobra))
+			Sessions[sessionID].sendResultsToCubeCobra = data.sendResultsToCubeCobra;
+	}
 
 	// Plain text card list
 	const fromTextList = (
@@ -1676,6 +1682,8 @@ io.on("connection", async function (socket) {
 
 		if (sessionSettings.cubeCobraID) {
 			if (sessionID !== query.sessionID) Connections[userID].socket.emit("setSession", sessionID);
+
+			Sessions[sessionID].sendResultsToCubeCobra = true; // Make sure this is enabled when user comes from Cube Cobra.
 
 			const cubeName = sessionSettings.cubeCobraName ?? sessionSettings.cubeCobraID;
 			importCube(

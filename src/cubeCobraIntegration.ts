@@ -43,7 +43,12 @@ export function sendDraftLogToCubeCobra(session: Session) {
 	if (!InProduction || InTesting || !CUBECOBRA_API_KEY || !CUBECOBRA_LOG_ENDPOINT) return;
 
 	try {
-		if (session.useCustomCardList && session.customCardList.cubeCobraID && session.draftLog) {
+		if (
+			session.useCustomCardList &&
+			session.customCardList.cubeCobraID &&
+			session.sendResultsToCubeCobra &&
+			session.draftLog
+		) {
 			console.log(`Sending draft log to CubeCobra (CubeID: ${session.customCardList.cubeCobraID})...`);
 
 			const payload: PublishDraftBody = {
