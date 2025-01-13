@@ -38,9 +38,13 @@
 					data when available.
 				</li>
 				<li>
+					Cube: Bots provided by
+					<a href="https://www.cubecobra.com/" target="_blank" rel="noopener nofollow">Cube Cobra</a>.
+				</li>
+				<!--<li>
 					Cube: Another Machine Learning model developed by
 					<a href="https://www.patreon.com/cubeartisan" target="_blank" rel="noopener nofollow">ruler501</a>.
-				</li>
+				</li>-->
 				<li>
 					If neither of the above models can be used, a simple fallback algorithm takes over. It will choose
 					cards based on a fixed 0-5 score assigned to each card, and the colors of cards it already picked.

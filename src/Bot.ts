@@ -8,22 +8,24 @@ import { isArrayOf, isNumber, isString } from "./TypeChecks.js";
 import { MTGDraftBotParameters, RequestParameters } from "./bots/ExternalBotInterface.js";
 import { DraftmancerAI, getScores as draftmancerAIGetScores } from "./bots/DraftmancerAI.js";
 import { MTGDraftBotsAPI, getScores as MTGDraftBotsAPIGetScores } from "./bots/MTGDraftBots.js";
+import { CubeCobraBots, getScores as cubeCobraGetScores } from "./bots/CubeCobraBots.js";
 
 export function fallbackToSimpleBots(oracleIds: Array<OracleID>, wantedModel?: string): boolean {
 	// No bot servers available
 	if (!MTGDraftBotsAPI.available && !DraftmancerAI.available) return true;
 
 	// Querying the mtgdraftbots API is too slow for the test suite, always fallback to simple bots while testing. FIXME: This feels hackish.
-	// FORCE_MTGDRAFTBOTS will force them on for specific tests.
+	// FORCE_BOTS_EXTERNAL_API will force them on for specific tests.
 	if (
 		typeof (global as { it?: unknown }).it === "function" && // Check for the presence of mocha's 'it' function.
-		!(global as { FORCE_MTGDRAFTBOTS?: boolean }).FORCE_MTGDRAFTBOTS
+		!(global as { FORCE_BOTS_EXTERNAL_API?: boolean }).FORCE_BOTS_EXTERNAL_API
 	)
 		return true;
 
 	// In order of preference:
 	//  - MTGDraftBots set model
 	//  - DraftmancerAI set model
+	//  - Cube Cobra bots
 	//  - MTGDraftBots prod model
 	//  - Fallback to simple bots
 
@@ -31,6 +33,8 @@ export function fallbackToSimpleBots(oracleIds: Array<OracleID>, wantedModel?: s
 		if (MTGDraftBotsAPI.available && MTGDraftBotsAPI.models.includes(wantedModel)) return false;
 		if (DraftmancerAI.available && DraftmancerAI.models.includes(wantedModel)) return false;
 	}
+
+	if (CubeCobraBots.available) return false;
 
 	if (MTGDraftBotsAPI.available) {
 		// At this point only the MTGDraftBots prod model is suitable, make sure it knows most of the requested cards.
@@ -149,14 +153,16 @@ export class SimpleBot implements IBot {
 	}
 }
 
+// Select an appropriate external bot API, calls it, and returns the result
 async function getScores(parameters: MTGDraftBotParameters, request: RequestParameters): Promise<number[]> {
-	if (
-		DraftmancerAI.available &&
-		DraftmancerAI.models.includes(parameters.wantedModel) &&
-		(!MTGDraftBotsAPI.available || !MTGDraftBotsAPI.models.includes(parameters.wantedModel)) // Prefer MTGDraftBots set model if available.
-	)
+	// DraftmancerAI set model if available.
+	if (DraftmancerAI.available && DraftmancerAI.models.includes(parameters.wantedModel))
 		return draftmancerAIGetScores(parameters.wantedModel, request);
 
+	// Otherwise, try Cube Cobra bots
+	if (CubeCobraBots.available) return cubeCobraGetScores(request);
+
+	// Lastly, CubeArtisan bots (prod model)
 	let model = parameters.wantedModel;
 	if (!MTGDraftBotsAPI.models.includes(model)) model = "prod";
 	return MTGDraftBotsAPIGetScores(request);
@@ -164,11 +170,11 @@ async function getScores(parameters: MTGDraftBotParameters, request: RequestPara
 
 export type BotScores = { chosenOption: number; scores: number[] };
 
-// Uses the mtgdraftbots API
+// Uses one of the external bot API
 export class Bot implements IBot {
 	name: string;
 	id: string;
-	type: string = "mtgdraftbots";
+	type: string = "mtgdraftbots"; // Now just means "External Bot", kept for backwards compatibility.
 	parameters: MTGDraftBotParameters;
 	cards: Card[] = [];
 	lastScores: BotScores = { chosenOption: 0, scores: [] };

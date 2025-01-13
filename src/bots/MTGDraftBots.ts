@@ -3,6 +3,8 @@ import { OracleID } from "../CardTypes.js";
 import { RequestParameters } from "./ExternalBotInterface.js";
 import { isArrayOf, isNumber, isString } from "../TypeChecks.js";
 
+// Cube Artisan Draft Bots
+
 const MTGDraftBotsAPITimeout = 10000;
 export const MTGDraftBotsAPI = {
 	available: false,

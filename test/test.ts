@@ -2152,14 +2152,14 @@ describe("Single Draft (Two Players)", function () {
 		disconnect();
 	});
 
-	// Explicitly tests mtgdraftbots since the external API calls are too slow for standard tests
-	describe("With mtgdraftbots external API", function () {
+	// Explicitly tests external bots here since the external API calls are too slow for standard tests
+	describe("With bots external API", function () {
 		this.timeout(500000);
 		connect();
 		it("Clients should receive the updated bot count.", function (done) {
 			clients[nonOwnerIdx].once("sessionOptions", function (data) {
 				expect(data.bots).to.equal(2);
-				(global as unknown as { FORCE_MTGDRAFTBOTS: boolean }).FORCE_MTGDRAFTBOTS = true;
+				(global as unknown as { FORCE_BOTS_EXTERNAL_API: boolean }).FORCE_BOTS_EXTERNAL_API = true;
 				done();
 			});
 			clients[ownerIdx].emit("setRestriction", ["one"]);
@@ -2168,7 +2168,7 @@ describe("Single Draft (Two Players)", function () {
 		startDraft();
 		endDraft();
 		disconnect(() => {
-			(global as unknown as { FORCE_MTGDRAFTBOTS: boolean }).FORCE_MTGDRAFTBOTS = false;
+			(global as unknown as { FORCE_BOTS_EXTERNAL_API: boolean }).FORCE_BOTS_EXTERNAL_API = false;
 		});
 	});
 });
