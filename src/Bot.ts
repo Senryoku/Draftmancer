@@ -230,7 +230,11 @@ export class Bot implements IBot {
 			this.lastScores = { chosenOption, scores };
 			return this.lastScores;
 		} catch (e) {
-			console.error("Error requesting bots scores:", e);
+			if (e instanceof AxiosError) {
+				console.error(`Error requesting bots scores: (${e.status}) ${e.message}.`);
+			} else {
+				console.error("Error requesting bots scores:", e);
+			}
 			return await this.getScoresFallback(booster, boosterNum, numBoosters, pickNum, numPicks);
 		}
 	}
