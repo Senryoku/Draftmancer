@@ -1,6 +1,7 @@
 import { v1 as uuidv1 } from "uuid";
 import { negMod } from "./utils.js";
-import { IBot, SimpleBot, Bot, MTGDraftBotParameters } from "./Bot.js";
+import { IBot, SimpleBot, Bot } from "./Bot.js";
+import { MTGDraftBotParameters } from "./bots/ExternalBotInterface.js";
 import { UniqueCard } from "./CardTypes.js";
 import { Connections } from "./Connection.js";
 import { IDraftState } from "./IDraftState.js";
