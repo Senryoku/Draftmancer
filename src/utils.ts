@@ -114,6 +114,10 @@ export function arrayIntersect<T>(args: Array<Array<T>>) {
 	return g;
 }
 
+export function* chunks<T>(arr: T[], n: number): Generator<T[], void> {
+	for (let i = 0; i < arr.length; i += n) yield arr.slice(i, i + n);
+}
+
 // From https://stackoverflow.com/a/12646864
 // Modified to optionaly work only on the [start, end[ slice of array.
 export function shuffleArray<T>(array: Array<T>, start = 0, end = array.length) {
