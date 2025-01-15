@@ -24,6 +24,15 @@ describe("Custom Card List Parsing", function () {
 		});
 	}
 
+	it(`should parse Top Level Properties`, function () {
+		const r = parseCardList(fs.readFileSync(`./test/data/TopLevelProperties.txt`, "utf8"), {});
+		expect(isSocketError(r), `Got ${JSON.stringify((r as SocketError).error)}`).to.be.false;
+		if (!isSocketError(r)) {
+			expect(r.name).to.eql("CubeWithTopLevelProperties");
+			expect(r.cubeCobraID).to.eql("ACubeCobraID");
+		}
+	});
+
 	it(`should parse LayoutSlotArray`, function () {
 		const r = parseCardList(fs.readFileSync(`./test/data/LayoutSlotArray.txt`, "utf8"), {});
 		expect(isSocketError(r), `Got ${JSON.stringify((r as SocketError).error)}`).to.be.false;

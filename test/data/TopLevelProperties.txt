@@ -1,0 +1,9 @@
+[Settings]
+{
+	"name": "CubeWithTopLevelProperties",
+	"cubeCobraID": "ACubeCobraID",
+	
+	"withReplacement": true,
+}
+[Default]
+Adventure Awaits

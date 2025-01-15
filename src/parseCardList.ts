@@ -245,7 +245,9 @@ function parseSettings(
 	lines: string[],
 	startIdx: number,
 	customCardList: CustomCardList
-): SocketError | { advance: number; settings: CCLSettings } {
+):
+	| SocketError
+	| { advance: number; settings: CCLSettings; topLevelProperties: { name?: string; cubeCobraID?: string } } {
 	const r = extractJSON(lines, startIdx, "{", "}");
 	if (isSocketError(r)) return r;
 	const parsedSettings = r.json;
@@ -258,10 +260,15 @@ function parseSettings(
 		);
 
 	const settings: CCLSettings = {};
+	const topLevelProperties: { name?: string; cubeCobraID?: string } = {};
 
 	if ("name" in parsedSettings) {
 		if (!isString(parsedSettings.name)) return err(`'name' must be a string.`);
-		settings.name = parsedSettings.name;
+		topLevelProperties.name = parsedSettings.name;
+	}
+	if ("cubeCobraID" in parsedSettings) {
+		if (!isString(parsedSettings.cubeCobraID)) return err(`'cubeCobraID' must be a string.`);
+		topLevelProperties.cubeCobraID = parsedSettings.cubeCobraID;
 	}
 
 	if ("cardBack" in parsedSettings) {
@@ -468,6 +475,7 @@ function parseSettings(
 	return {
 		advance: r.linesToSkip,
 		settings: settings,
+		topLevelProperties,
 	};
 }
 
@@ -667,7 +675,10 @@ export function parseCardList(
 					const settingsOrError = parseSettings(lines, lineIdx, cardList);
 					if (isSocketError(settingsOrError)) return settingsOrError;
 					cardList.settings = settingsOrError.settings;
-					if (settingsOrError.settings.name) cardList.name = settingsOrError.settings.name;
+					if (settingsOrError.topLevelProperties.name)
+						cardList.name = settingsOrError.topLevelProperties.name;
+					if (settingsOrError.topLevelProperties.cubeCobraID)
+						cardList.cubeCobraID = settingsOrError.topLevelProperties.cubeCobraID;
 					lineIdx += settingsOrError.advance;
 					skipEmptyLinesAndComments();
 				} else if (lowerCaseHeader === "customcards") {

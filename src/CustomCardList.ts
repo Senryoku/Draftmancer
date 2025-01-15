@@ -33,7 +33,6 @@ export type PackLayout = {
 };
 
 export type CCLSettings = {
-	name?: string;
 	cardBack?: string;
 	cardTitleHeightFactor?: number;
 	showSlots?: boolean;
