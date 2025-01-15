@@ -11,7 +11,7 @@ import { ReadyState } from "../Session/SessionTypes.js";
 
 import { QueueID, QueueDescription } from "./QueueDescription.js";
 import { AvailableQueues } from "./AvailableQueues.js";
-import { DraftmancerAI } from "../Bot.js";
+import { DraftmancerAI } from "../bots/DraftmancerAI.js";
 
 type PlayerQueue = { description: QueueDescription; users: UserID[]; botCount: number; noBotsUntil: number };
 

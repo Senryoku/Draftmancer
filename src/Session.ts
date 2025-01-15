@@ -26,7 +26,8 @@ import {
 	getCard,
 	DefaultMaxDuplicates,
 } from "./Cards.js";
-import { fallbackToSimpleBots, isBot, MTGDraftBotParameters } from "./Bot.js";
+import { fallbackToSimpleBots, isBot } from "./Bot.js";
+import { MTGDraftBotParameters } from "./bots/ExternalBotInterface.js";
 import { computeHashes } from "./DeckHashes.js";
 import { SpecialLandSlots } from "./LandSlot.js";
 import {
