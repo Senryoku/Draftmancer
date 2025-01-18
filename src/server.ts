@@ -1683,8 +1683,6 @@ io.on("connection", async function (socket) {
 		if (sessionSettings.cubeCobraID) {
 			if (sessionID !== query.sessionID) Connections[userID].socket.emit("setSession", sessionID);
 
-			Sessions[sessionID].sendResultsToCubeCobra = true; // Make sure this is enabled when user comes from Cube Cobra.
-
 			const cubeName = sessionSettings.cubeCobraName ?? sessionSettings.cubeCobraID;
 			importCube(
 				userID,
@@ -1693,6 +1691,8 @@ io.on("connection", async function (socket) {
 					service: "Cube Cobra",
 					name: cubeName,
 					cubeID: sessionSettings.cubeCobraID,
+					matchVersions: true,
+					sendResultsToCubeCobra: true,
 				},
 				(err) => {
 					if (isSocketError(err)) console.error("Error importing Cube Cobra cube: ", err);
