@@ -43,6 +43,9 @@
 							<a v-if="c.links.website" :href="c.links.website" target="_blank">
 								<font-awesome-icon :icon="['fas', 'globe']" /><span class="link-label"> Website</span>
 							</a>
+							<a v-if="c.links.cube" :href="c.links.cube" target="_blank">
+								<font-awesome-icon :icon="['fas', 'cube']" /><span class="link-label"> Cube</span>
+							</a>
 						</div>
 						<div class="tags">
 							<div v-for="t in c.tags" :key="t" class="tag">{{ t }}</div>
@@ -172,6 +175,17 @@ const communities = ref([
 		tags: ["Remastered", "Set design", "Cubes with rarity", "XMage"],
 		links: {
 			discord: "https://discord.gg/PnkqwGu6sf",
+		},
+	},
+	{
+		name: "Magic Set Editor Modern",
+		brief: "<span><strong>Magic Set Editor Modern</strong> (MSEM) is a non-rotating custom Magic the Gathering format consisting of over 70 player-designed sets launched in 2017. We have monthly competitive Grand Prix tournament events, continuous open Constructed League, and weekly Draft Night events! As of January 2025 we also have twice-weekly free to play Cube League events with fun digital prizes to win!</span>",
+		icon: "MSEM.webp",
+		tags: ["Constructed", "Limited", "Cube", "Custom", "Cockatrice"],
+		links: {
+			discord: "https://discord.gg/KUd2PvFn2V",
+			website: "https://lackeybot.com/msem/gps",
+			cube: "https://timespiraled.github.io/",
 		},
 	},
 ]);
