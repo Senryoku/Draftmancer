@@ -1811,8 +1811,9 @@ export class Session implements IIndexable {
 		)
 			botParameters.wantedModel = this.setRestriction[0];
 
+		const customCards = this.useCustomCardList && this.customCardList.customCards !== null;
 		const oracleIds = boosters.flat().map((card) => card.oracle_id);
-		const simpleBots = fallbackToSimpleBots([...new Set(oracleIds)], botParameters.wantedModel);
+		const simpleBots = fallbackToSimpleBots(customCards, [...new Set(oracleIds)], botParameters.wantedModel);
 
 		const boosterSettings =
 			this.useCustomCardList && this.customCardList.settings?.boosterSettings

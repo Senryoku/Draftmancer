@@ -10,9 +10,12 @@ import { DraftmancerAI, getScores as draftmancerAIGetScores } from "./bots/Draft
 import { MTGDraftBotsAPI, getScores as MTGDraftBotsAPIGetScores } from "./bots/MTGDraftBots.js";
 import { CubeCobraBots, getScores as cubeCobraGetScores } from "./bots/CubeCobraBots.js";
 
-export function fallbackToSimpleBots(oracleIds: Array<OracleID>, wantedModel?: string): boolean {
+export function fallbackToSimpleBots(customCards: boolean, oracleIds: Array<OracleID>, wantedModel?: string): boolean {
 	// No bot servers available
-	if (!MTGDraftBotsAPI.available && !DraftmancerAI.available) return true;
+	if (!MTGDraftBotsAPI.available && !DraftmancerAI.available && !CubeCobraBots.available) return true;
+
+	// No external bot handles custom cards.
+	if (customCards) return true;
 
 	// Querying the mtgdraftbots API is too slow for the test suite, always fallback to simple bots while testing. FIXME: This feels hackish.
 	// FORCE_BOTS_EXTERNAL_API will force them on for specific tests.
