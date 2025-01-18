@@ -92,10 +92,20 @@ function shuffleArray<T>(array: Array<T>, start = 0, end = array.length) {
 }
 
 const communitiesEl = useTemplateRef("communitiesEl");
-onMounted(() => {
+
+function fitDescriptionTexts() {
 	communitiesEl.value?.querySelectorAll(".community").forEach((c: Element) => {
 		fitFontSize(c.querySelector(".description")!);
 	});
+}
+
+onMounted(() => {
+	if ("requestIdleCallback" in window) {
+		// Fit the first description immediately
+		fitFontSize(communitiesEl.value!.querySelector(".community .description")!);
+		// And the others on idle
+		requestIdleCallback(fitDescriptionTexts);
+	} else fitDescriptionTexts();
 });
 
 const communities = ref([
