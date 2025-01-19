@@ -1779,7 +1779,7 @@ class LCIBoosterFactory extends BoosterFactory {
 			return super.generateBooster(targets);
 		} else {
 			// Roll for MDFC rarity
-			const pickedRarity = random.bool(3 / 9) ? "uncommon" : "common"; // FIXME: We don't know the actual rate.
+			const pickedRarity = random.bool(6 / 11) ? "uncommon" : "common";
 			const pickedMDFC = pickCard(this.dfcByRarity[pickedRarity], []);
 
 			const updatedTargets = structuredClone(targets);
