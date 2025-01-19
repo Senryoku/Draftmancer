@@ -1695,7 +1695,10 @@ io.on("connection", async function (socket) {
 					sendResultsToCubeCobra: true,
 				},
 				(err) => {
-					if (isSocketError(err)) console.error("Error importing Cube Cobra cube: ", err);
+					if (isSocketError(err)) {
+						console.error("Error importing Cube Cobra cube: ", err);
+						if (err.error) Connections[userID]?.socket.emit("message", err.error);
+					}
 				}
 			);
 		}

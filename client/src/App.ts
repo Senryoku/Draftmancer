@@ -660,6 +660,7 @@ export default defineComponent({
 					toast: !!data.toast,
 					icon: data.icon as SweetAlertIcon,
 					title: data.title,
+					footer: data.footer,
 					text: data.text,
 					html: data.html,
 					imageUrl: data.imageUrl,
