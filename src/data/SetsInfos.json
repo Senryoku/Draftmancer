@@ -218,6 +218,7 @@
     "blc": {
         "code": "blc",
         "fullName": "Bloomburrow Commander",
+        "block": "Commander",
         "icon": "img/sets/blc.svg"
     },
     "bng": {
@@ -1416,6 +1417,7 @@
     "m3c": {
         "code": "m3c",
         "fullName": "Modern Horizons 3 Commander",
+        "block": "Commander",
         "icon": "img/sets/m3c.svg"
     },
     "mat": {
