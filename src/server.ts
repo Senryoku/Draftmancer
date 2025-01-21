@@ -873,6 +873,9 @@ function removePlayer(userID: UserID, sessionID: SessionID, userToRemove: UserID
 	Sessions[sessionID].replaceDisconnectedPlayers();
 	Sessions[sessionID].notifyUserChange();
 
+	if (!Connections[userToRemove])
+		return console.error(`removePlayer: No connection found for userID ${userToRemove}`);
+
 	const newSession = newSessionID();
 	joinSession(newSession, userToRemove);
 	Connections[userToRemove].socket.emit("setSession", newSession);
@@ -1738,6 +1741,8 @@ function newSessionID(prefix: string = ""): SessionID {
 }
 
 function joinSession(sessionID: SessionID, userID: UserID, defaultSessionSettings: Options = {}) {
+	if (!Connections[userID]) return console.error(`joinSession: No connection found for userID ${userID}`);
+
 	// Fallback to previous session if possible, or generate a new one
 	const refuse = (msg: string) => {
 		Connections[userID].socket.emit("message", new Message("Cannot join session", "", "", msg));
@@ -1806,6 +1811,8 @@ function joinSession(sessionID: SessionID, userID: UserID, defaultSessionSetting
 }
 
 function addUserToSession(userID: UserID, sessionID: SessionID, defaultSessionSettings: Options = {}) {
+	if (!Connections[userID]) return console.error(`addUserToSession: No connection found for userID ${userID}`);
+
 	const currentSession = Connections[userID].sessionID;
 	if (currentSession && currentSession in Sessions) removeUserFromSession(userID);
 
