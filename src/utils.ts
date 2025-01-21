@@ -1,3 +1,4 @@
+import assert from "node:assert";
 import { Random, nodeCrypto } from "random-js";
 export const random = new Random(nodeCrypto);
 
@@ -67,6 +68,15 @@ export function weightedRandomIdx<T extends { weight: number }>(arr: Array<T>, t
 		acc += arr[idx].weight;
 	}
 	return idx;
+}
+
+export function chooseWeighted<T>(weights: number[], arr: T[]): T {
+	assert(weights.length === arr.length);
+	const cumsum = cumulativeSum(weights);
+	const rarityRoll = random.real(0, cumsum[cumsum.length - 1], true);
+	let idx = 0;
+	while (rarityRoll > cumsum[idx]) idx += 1;
+	return arr[idx];
 }
 
 // Returns [start, start + step, ..., end]

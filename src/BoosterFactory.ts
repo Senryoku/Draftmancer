@@ -1,6 +1,15 @@
 import { CardID, Card, CardPool, SlotedCardPool, UniqueCard } from "./CardTypes.js";
 import { getUnique, BoosterCardsBySet, CardsBySet, getCard, DefaultMaxDuplicates } from "./Cards.js";
-import { shuffleArray, randomInt, Options, random, getRandom, cumulativeSum } from "./utils.js";
+import {
+	shuffleArray,
+	randomInt,
+	Options,
+	random,
+	getRandom,
+	cumulativeSum,
+	weightedRandomIdx,
+	chooseWeighted,
+} from "./utils.js";
 import { pickCard } from "./cardUtils.js";
 import { BasicLandSlot } from "./LandSlot.js";
 import { MessageError, isMessageError } from "./Message.js";
@@ -1888,6 +1897,7 @@ export const SpecialGuests = {
 	blb: filterSetByNumber("spg", 54, 63),
 	dsk: filterSetByNumber("spg", 64, 73),
 	fdn: filterSetByNumber("spg", 74, 83),
+	dft: filterSetByNumber("spg", 84, 93),
 };
 
 // NOTE: This mimics the ratios of wildcard set boosters described here: https://magic.wizards.com/en/news/making-magic/set-boosters-2020-07-25
@@ -2949,6 +2959,129 @@ class INRBoosterFactory extends BoosterFactory {
 	}
 }
 
+// Aetherdrift (DFT) - https://magic.wizards.com/en/news/feature/collecting-aetherdrift
+// 14 Magic: The Gathering cards
+//   6–7 Commons
+//     There are 81 commons from Aetherdrift that can show up in these slots.
+//     In 1.5% of Play Boosters, 1 of these commons will be replaced with 1 of the 10 Special Guests cards in non-foil. Of note, Special Guests cards aren't found in the wildcard nor traditional foil slot in Play Boosters.
+//   3 Uncommons
+//     There are 100 possible uncommons from Aetherdrift that can appear in this slot.
+//   1 Wildcard of any rarity
+//     You can receive a common (8.3%), uncommon (62.5%), or rare or mythic rare (20.8%; same proportion as below) from Aetherdrift, or a (2.6%) borderless revved up common or uncommon card.
+//   1 Rare or mythic rare
+//     This slot contains 1 of the 60 rares (78%) or 20 mythic rares (13%) in the main set.
+//     	It's also possible to open 1 of 28 borderless rare cards (8%).
+//     	It's also possible to open 1 of 13 borderless mythic rare cards (1%).
+//   1 Traditional foil card of any rarity
+//     From the main set of Aetherdrift, you can receive a common (60.5%), uncommon (30%), rare (6.4%), or mythic rare (1.1%) card.
+//     From the borderless cards of Aetherdrift, you can receive a common (0.5%), uncommon (0.5%), rare (0.9%), or mythic rare (0.1%) card.
+//   1 Land card. This land will be traditional foil in 20% of boosters.
+//     A common dual land appears 50% of the time.
+//     A default frame basic land appears 37.5% of the time.
+//     A full-art driver's seat basic land appears 12.5% of the time.
+class DFTBoosterFactory extends BoosterFactory {
+	static filter(min: number, max: number) {
+		return CardsBySet["dft"].filter(
+			(c) => parseInt(getCard(c).collector_number) >= min && parseInt(getCard(c).collector_number) <= max
+		);
+	}
+
+	static readonly Borderless = DFTBoosterFactory.filter(292, 400); // FIXME
+	static readonly Basics = DFTBoosterFactory.filter(277, 291);
+	static readonly FullArtBasics = DFTBoosterFactory.filter(277, 291); // FIXME
+	static readonly CommonDualLands = DFTBoosterFactory.filter(277, 291); // FIXME
+
+	borderless: SlotedCardPool = {};
+	spg: SlotedCardPool = {};
+
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
+		super(cardPool, landSlot, options);
+		this.borderless = cidsToSlotedCardPool(DFTBoosterFactory.Borderless, options.maxDuplicates);
+		this.spg = cidsToSlotedCardPool(SpecialGuests.dft, options.maxDuplicates);
+	}
+
+	generateBooster(targets: Targets) {
+		const updatedTargets = structuredClone(targets);
+		if (targets === DefaultBoosterTargets) updatedTargets.common = Math.max(0, updatedTargets.common - 3);
+		else updatedTargets.common = Math.max(1, updatedTargets.common - 2);
+
+		const booster: UniqueCard[] = [];
+
+		const spgRoll = random.realZeroToOneInclusive();
+		if (spgRoll < 0.015) {
+			updatedTargets.common = Math.max(0, updatedTargets.common - 1);
+			booster.push(pickCard(this.spg.mythic, booster, { foil: false }));
+		}
+
+		// Traditional foil card of any rarity
+		{
+			const pool = chooseWeighted(
+				[0.605, 0.3, 0.064, 0.011, 0.005, 0.005, 0.009, 0.001],
+				[
+					this.cardPool.common,
+					this.cardPool.uncommon,
+					this.cardPool.rare,
+					this.cardPool.mythic,
+					this.borderless.common,
+					this.borderless.uncommon,
+					this.borderless.rare,
+					this.borderless.mythic,
+				]
+			);
+			booster.push(pickCard(pool, booster, { foil: true }));
+		}
+		// Rare or mythic rare
+		while (updatedTargets.rare > 0) {
+			updatedTargets.rare -= 1;
+			const pool = chooseWeighted(
+				[0.78, 0.13, 0.08, 0.01],
+				[this.cardPool.rare, this.cardPool.mythic, this.borderless.rare, this.borderless.mythic]
+			);
+			booster.push(pickCard(pool, booster));
+		}
+		// Wildcard of any rarity
+		{
+			const pool = chooseWeighted(
+				[
+					0.083,
+					0.625,
+					0.026 * (0.083 / (0.083 + 0.625)), // FIXME: Total guess, looks very wrong.
+					0.026 * (0.625 / (0.083 + 0.625)),
+					0.208 * 0.78,
+					0.208 * 0.13,
+					0.208 * 0.08,
+					0.208 * 0.01,
+				], // FIXME: These do not add up to 1.0...
+				[
+					this.cardPool.common,
+					this.cardPool.uncommon,
+					this.borderless.common,
+					this.borderless.uncommon,
+					this.cardPool.rare,
+					this.cardPool.mythic,
+					this.borderless.rare,
+					this.borderless.mythic,
+				]
+			);
+			booster.push(pickCard(pool, booster));
+		}
+
+		const rest = super.generateBooster(updatedTargets, booster);
+		if (isMessageError(rest)) return rest;
+
+		// Land card
+		{
+			const pool = chooseWeighted(
+				[0.5, 0.375, 0.125],
+				[DFTBoosterFactory.CommonDualLands, DFTBoosterFactory.Basics, DFTBoosterFactory.FullArtBasics]
+			);
+			rest.push(getUnique(getRandom(pool)));
+		}
+
+		return [...booster, ...rest];
+	}
+}
+
 // Set specific rules.
 // Neither DOM, WAR or ZNR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
 export const SetSpecificFactories: {
@@ -3000,6 +3133,7 @@ export const SetSpecificFactories: {
 	pio1: PIOBoosterFactoryBonusSheet1,
 	pio2: PIOBoosterFactoryBonusSheet2,
 	inr: INRBoosterFactory,
+	dft: DFTBoosterFactory,
 };
 
 export const getBoosterFactory = function (

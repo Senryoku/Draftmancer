@@ -284,6 +284,7 @@ describe("Sets content", function () {
 		fdn: { common: 80, uncommon: 101, rare: 60, mythic: 20 },
 		pio: { common: 91, uncommon: 100, rare: 60, mythic: 27 },
 		inr: { common: 88, uncommon: 104, rare: 72, mythic: 23 },
+		dft: { common: 81, uncommon: 100, rare: 60, mythic: 20 },
 	};
 
 	beforeEach(function (done) {
