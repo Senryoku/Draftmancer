@@ -2774,7 +2774,7 @@ export default defineComponent({
 					if (cubeID) {
 						// Convert from URL to cubeID if necessary.
 						const urlTest = cubeID.match(
-							/https?:\/\/(?:cubecobra\.com|cubeartisan\.net)\/cube\/(?:overview|list)\/?([^/\n]*)/
+							/https?:\/\/(?:cubecobra\.com|cubeartisan\.net)\/cube\/(?:overview|list)\/?([^/\n?]*)/
 						);
 						if (urlTest) cubeID = urlTest[1];
 					}
