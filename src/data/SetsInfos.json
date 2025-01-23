@@ -629,6 +629,12 @@
         "fullName": "From the Vault: Dragons",
         "icon": "img/sets/drb.svg"
     },
+    "drc": {
+        "code": "drc",
+        "fullName": "Aetherdrift Commander",
+        "block": "Commander",
+        "icon": "img/sets/drc.svg"
+    },
     "drk": {
         "code": "drk",
         "fullName": "The Dark",
