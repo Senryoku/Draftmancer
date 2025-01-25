@@ -2967,7 +2967,7 @@ class INRBoosterFactory extends BoosterFactory {
 //   3 Uncommons
 //     There are 100 possible uncommons from Aetherdrift that can appear in this slot.
 //   1 Wildcard of any rarity
-//     You can receive a common (8.3%), uncommon (62.5%), or rare or mythic rare (20.8%; same proportion as below) from Aetherdrift, or a (2.6%) borderless revved up common or uncommon card.
+//     You can receive a common (8.3%), uncommon (62.5%), or rare or mythic rare (20.8%; same proportion as below) from Aetherdrift, or a (8.3%) borderless revved up common or uncommon card.
 //   1 Rare or mythic rare
 //     This slot contains 1 of the 60 rares (78%) or 20 mythic rares (13%) in the main set.
 //     	It's also possible to open 1 of 28 borderless rare cards (8%).
@@ -3045,13 +3045,13 @@ class DFTBoosterFactory extends BoosterFactory {
 				[
 					0.083,
 					0.625,
-					0.026 * (0.083 / (0.083 + 0.625)), // FIXME: Total guess, looks very wrong.
-					0.026 * (0.625 / (0.083 + 0.625)),
+					0.083 * (0.083 / (0.083 + 0.625)), // Borderless common and uncommon:
+					0.083 * (0.625 / (0.083 + 0.625)), //   Ratio unknown, using the same as the regular versions in the same slot.
 					0.208 * 0.78,
 					0.208 * 0.13,
 					0.208 * 0.08,
 					0.208 * 0.01,
-				], // FIXME: These do not add up to 1.0...
+				],
 				[
 					this.cardPool.common,
 					this.cardPool.uncommon,
