@@ -629,6 +629,12 @@
         "fullName": "From the Vault: Dragons",
         "icon": "img/sets/drb.svg"
     },
+    "drc": {
+        "code": "drc",
+        "fullName": "Aetherdrift Commander",
+        "block": "Commander",
+        "icon": "img/sets/drc.svg"
+    },
     "drk": {
         "code": "drk",
         "fullName": "The Dark",
@@ -3031,6 +3037,11 @@
         "fullName": "Wizards Play Network 2024",
         "icon": "img/sets/pw24.svg"
     },
+    "pw25": {
+        "code": "pw25",
+        "fullName": "Wizards Play Network 2025",
+        "icon": "img/sets/pw25.svg"
+    },
     "pwar": {
         "code": "pwar",
         "fullName": "War of the Spark Promos",
@@ -3392,6 +3403,11 @@
         "fullName": "Defeat a God",
         "block": "Theros",
         "icon": "img/sets/tdag.svg"
+    },
+    "tdrc": {
+        "code": "tdrc",
+        "fullName": "Aetherdrift Commander Tokens",
+        "icon": "img/sets/tdrc.svg"
     },
     "tfth": {
         "code": "tfth",
