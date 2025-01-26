@@ -1,9 +1,10 @@
 import { QueueDescription } from "./QueueDescription";
 
 export const AvailableQueues: readonly QueueDescription[] = [
+	{ id: "dft", name: "Aetherdrift", playerCount: 8, setCode: "dft" },
 	{ id: "inr", name: "Innistrad Remastered", playerCount: 8, setCode: "inr" },
 	{ id: "fdn", name: "Foundations", playerCount: 8, setCode: "fdn" },
-	{ id: "dsk", name: "Duskmourn: House of Horror ", playerCount: 8, setCode: "dsk" },
+	// { id: "dsk", name: "Duskmourn: House of Horror ", playerCount: 8, setCode: "dsk" },
 	// { id: "blb", name: "Bloomburrow", playerCount: 8, setCode: "blb" },
 	// { id: "mh3", name: "Modern Horizons 3", playerCount: 8, setCode: "mh3" },
 	// { id: "otj", name: "Outlaws of Thunder Junction", playerCount: 8, setCode: "otj" },
