@@ -10,7 +10,7 @@
 			<strong>Are custom cards supported?</strong>
 			<p>
 				Yes! Cubes support custom cards, see the
-				<a href="http://localhost:3000/cubeformat.html#custom-cards" target="_blank" rel="noopener nofollow"
+				<a href="cubeformat.html#custom-cards" target="_blank" rel="noopener nofollow"
 					>Cube Format documentation</a
 				>
 				for more information.
