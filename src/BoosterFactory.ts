@@ -2986,16 +2986,19 @@ class DFTBoosterFactory extends BoosterFactory {
 		);
 	}
 
-	static readonly Borderless = DFTBoosterFactory.filter(292, 400); // FIXME
+	static readonly Borderless = DFTBoosterFactory.filter(292, 375);
 	static readonly Basics = DFTBoosterFactory.filter(277, 291);
-	static readonly FullArtBasics = DFTBoosterFactory.filter(277, 291); // FIXME
-	static readonly CommonDualLands = DFTBoosterFactory.filter(277, 291); // FIXME
+	static readonly FullArtBasics = DFTBoosterFactory.filter(272, 276);
+	static readonly CommonDualLands = DFTBoosterFactory.filter(248, 271).filter((c) => getCard(c).rarity === "common");
 
 	borderless: SlotedCardPool = {};
 	spg: SlotedCardPool = {};
 
 	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
-		super(cardPool, landSlot, options);
+		const [, filteredCardPool] = filterCardPool(cardPool, (cid: CardID) =>
+			DFTBoosterFactory.CommonDualLands.includes(cid)
+		);
+		super(filteredCardPool, landSlot, options);
 		this.borderless = cidsToSlotedCardPool(DFTBoosterFactory.Borderless, options.maxDuplicates);
 		this.spg = cidsToSlotedCardPool(SpecialGuests.dft, options.maxDuplicates);
 	}
@@ -3078,7 +3081,7 @@ class DFTBoosterFactory extends BoosterFactory {
 			rest.push(getUnique(getRandom(pool)));
 		}
 
-		return [...booster, ...rest];
+		return rest;
 	}
 }
 
