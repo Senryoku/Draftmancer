@@ -2774,9 +2774,9 @@ export default defineComponent({
 					if (cubeID) {
 						// Convert from URL to cubeID if necessary.
 						const urlTest = cubeID.match(
-							/https?:\/\/(?:cubecobra\.com|cubeartisan\.net)\/cube\/(?:overview|list)\/?([^/\n]*)/
+							/https?:\/\/(?:cubecobra\.com|cubeartisan\.net)\/cube\/(?:overview|list)\/?([^/\n?]*)/
 						);
-						if (urlTest) cubeID = urlTest[1];
+						if (urlTest) cubeID = decodeURIComponent(urlTest[1]);
 					}
 					localStorage.setItem("import-cubeID", cubeID);
 					let sendResultsToCubeCobra = (
