@@ -10,7 +10,7 @@ import { DraftmancerAI, getScores as draftmancerAIGetScores } from "./bots/Draft
 import { MTGDraftBotsAPI, getScores as MTGDraftBotsAPIGetScores } from "./bots/MTGDraftBots.js";
 import { CubeCobraBots, getScores as cubeCobraGetScores } from "./bots/CubeCobraBots.js";
 
-export function fallbackToSimpleBots(customCards: boolean, oracleIds: Array<OracleID>, wantedModel?: string): boolean {
+export function fallbackToSimpleBots(customCards: boolean, oracleIds: Array<OracleID>, wantedModel: string): boolean {
 	// No bot servers available
 	if (!MTGDraftBotsAPI.available && !DraftmancerAI.available && !CubeCobraBots.available) return true;
 
@@ -37,7 +37,7 @@ export function fallbackToSimpleBots(customCards: boolean, oracleIds: Array<Orac
 		if (DraftmancerAI.available && DraftmancerAI.models.includes(wantedModel)) return false;
 	}
 
-	if (CubeCobraBots.available) return false;
+	if (CubeCobraBots.available && !["dft"].includes(wantedModel)) return false;
 
 	if (MTGDraftBotsAPI.available) {
 		// At this point only the MTGDraftBots prod model is suitable, make sure it knows most of the requested cards.

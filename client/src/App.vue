@@ -1574,8 +1574,8 @@
 							<a href="/draftqueue">
 								<div class="draft-queue-banner">
 									<img
-										src="./assets/img/inr_draft_queue_banner.webp"
-										alt="Practice Duskmourn: House of Horror draft with human players right now in the Draft Queue!"
+										src="./assets/img/dft_draft_queue_banner.webp"
+										alt="Practice Aetherdrift draft with human players right now in the Draft Queue!"
 										width="500"
 										height="260"
 									/>

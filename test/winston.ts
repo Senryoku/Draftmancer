@@ -66,7 +66,7 @@ describe(`Winston Draft`, function () {
 				const states: WinstonDraftSyncData[] = [];
 				it("When session owner launch Winston draft, everyone should receive a startWinstonDraft event", function (done) {
 					ownerIdx = clients.findIndex((c) => getUID(c) === Sessions[sessionID].owner);
-					nonOwnerIdx = 1 - ownerIdx;
+					nonOwnerIdx = (ownerIdx + 1) % clients.length;
 					let connectedClients = 0;
 					let receivedState = 0;
 					let index = 0;

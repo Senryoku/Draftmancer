@@ -1,6 +1,13 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
+			<em>February 1, 2025</em>
+			<p>
+				<img src="img/sets/dft.svg" class="set-icon" style="--invertedness: 100%" alt="DFT" /> Aetherdrift is
+				now available!<br />
+			</p>
+		</div>
+		<div class="news">
 			<em>January 10, 2025</em>
 			<p>Happy new year everyone! :)</p>
 			<p>
@@ -46,13 +53,6 @@
 				</li>
 				<li>Usual maintenance and minor tweaks and fixes.</li>
 			</ul>
-		</div>
-		<div class="news">
-			<em>September 24, 2024</em>
-			<p>
-				Added <img src="img/sets/mb2.svg" class="set-icon" style="--invertedness: 100%" alt="MB2" />
-				Mystery Booster 2 support!
-			</p>
 		</div>
 	</div>
 </template>

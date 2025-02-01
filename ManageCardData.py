@@ -175,7 +175,7 @@ if not os.path.isfile(ManaSymbolsFile) or ForceSymbology:
 ManaSymbols = json.load(open(ManaSymbolsFile, "r"))
 
 
-def parseCost(mana_cost):
+def parseCost(mana_cost: str) -> [int, list[str]]:
     if "//" in mana_cost:
         mana_cost = mana_cost.split("//")[0].strip()
     matches = re.findall(r"({[^}]+})", mana_cost)
@@ -248,7 +248,7 @@ if FetchSet:
         json.dump(allcards, file)
 
 
-def handleTypeLine(typeLine):
+def handleTypeLine(typeLine: str) -> [str, list[str]]:
     arr = typeLine.split(" — ")
     types = arr[0]
     subtypes = []  # Unused for now
@@ -286,9 +286,17 @@ else:
     with open(RatingsDest, "r", encoding="utf8") as file:
         CardRatings = dict(CardRatings, **json.loads(file.read()))
 
-NonProcessedCards = (
-    {}
-)  # Keep track of cards that were not added to the database (by (name, set, collector number))). After the first pass this will contain cards never printed in English.
+
+def safeInBoosterCheck(card: dict, max: int) -> bool:
+    try:
+        number = int(card["collector_number"])
+        return number > 0 and number <= max
+    except:
+        return False
+
+
+# Keep track of cards that were not added to the database (by (name, set, collector number))). After the first pass this will contain cards never printed in English.
+NonProcessedCards = {}
 if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
     all_cards = []
     with open(BulkDataPath, "r", encoding="utf8") as file:
@@ -394,7 +402,7 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
     Translations = {}
     print("Generating card data cache...")
 
-    def addCard(c):
+    def addCard(c: dict):
         if c["name"] in cardsByName:
             cardsByName[c["name"]].append(c)
         else:
@@ -411,15 +419,34 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
             print(f"/!\\ {c['name']}: Missing mana cost.")
             selection["mana_cost"] = "{0}"
         selection["type"], selection["subtypes"] = handleTypeLine(c["type_line"].split(" //")[0])
+
         if selection["name"] in CardRatings:
             selection["rating"] = CardRatings[selection["name"]]
         elif selection["name"].split(" //")[0] in CardRatings:
             selection["rating"] = CardRatings[selection["name"].split(" //")[0]]
         else:
-            selection["rating"] = 0.5
+            match selection["rarity"]:
+                case "mythic":
+                    selection["rating"] = 1.0
+                case "rare":
+                    selection["rating"] = 0.8
+                case "uncommon":
+                    selection["rating"] = 0.7
+                case "common":
+                    selection["rating"] = 0.5
+                case _:
+                    selection["rating"] = 0.5
+
         selection["in_booster"] = c["booster"] and (
             c["layout"] != "meld" or not selection["collector_number"].endswith("b")
         )  # Exclude melded cards from boosters
+
+        if not c["booster"]:
+            selection["in_booster"] = False
+
+        if c["type_line"].startswith("Basic"):
+            selection["in_booster"] = False
+            selection["rating"] = 0
 
         cmc, colors = parseCost(selection["mana_cost"])
         selection["cmc"] = cmc
@@ -428,33 +455,6 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
         # Conspiracy Draft Effects
         if c["oracle_id"] in DraftEffects:
             selection["draft_effects"] = [{"type": t} for t in DraftEffects[c["oracle_id"]]]
-
-        if c["set"] == "war":
-            if "promo_types" in c and "jpwalker" in c["promo_types"]:
-                selection["in_booster"] = False
-
-        if c["set"] == "akr" or c["set"] == "klr":
-            selection["in_booster"] = c["booster"] and not c["type_line"].startswith("Basic")
-        elif not c["booster"] or c["type_line"].startswith("Basic"):
-            selection["in_booster"] = False
-            selection["rating"] = 0
-        if c["set"] in ["sta"]:  # Force STA in booster
-            selection["in_booster"] = not selection["collector_number"].endswith("e")
-
-        # Commanders from CLB commanders deck are incorrectly marked as in_booster by scryfall
-        if c["set"] == "clb" and int(c["collector_number"]) >= 646 and int(c["collector_number"]) <= 649:
-            selection["in_booster"] = False
-        # Manually remove special printing from Double Masters 2022 packs
-        if c["set"] == "2x2" and int(c["collector_number"]) >= 332:
-            selection["in_booster"] = False
-
-        # Make sure retro cards from DMR are marked as in_booster
-        if c["set"] == "dmr" and (int(c["collector_number"]) >= 262 and int(c["collector_number"]) <= 401):
-            selection["in_booster"] = True
-
-        # Cards from SIR are not marked as in_booster for some reason
-        if c["set"] == "sir" and not c["type_line"].startswith("Basic") and not c["collector_number"].endswith("b"):
-            selection["in_booster"] = True
 
         # Workaround: Not sure why this printing is marked as in booster, but it causes a doubled entry in stx rares
         if c["id"] == "0826e210-2002-43fe-942d-41922dfd7bc2":
@@ -470,118 +470,95 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
         ]:
             selection["in_booster"] = False
 
-        if c["set"] == "ltr":
-            # Workaround: Remove alternate printings and Jumpstart cards from LTR draft boosters (and the 20 basics)
-            try:
-                selection["in_booster"] = int(c["collector_number"]) > 0 and int(c["collector_number"]) <= 261
-            except:
-                selection["in_booster"] = False
-            if "Ring tempts you" in c["oracle_text"] and (
-                "all_parts" not in c
-                or next((x for x in c["all_parts"] if x["id"] == "7215460e-8c06-47d0-94e5-d1832d0218af"), None) == None
-            ):
-                if "related_cards" not in selection:
-                    selection["related_cards"] = []
-                selection["related_cards"].append("7215460e-8c06-47d0-94e5-d1832d0218af")
+        match c["set"]:
+            case "sta":
+                selection["in_booster"] = not selection["collector_number"].endswith("e")
+            case "akr" | "klr":
+                selection["in_booster"] = c["booster"] and not c["type_line"].startswith("Basic")
+            case "war":
+                if "promo_types" in c and "jpwalker" in c["promo_types"]:
+                    selection["in_booster"] = False
+            # Commanders from CLB commanders deck are incorrectly marked as in_booster by scryfall
+            case "clb":
+                if int(c["collector_number"]) >= 646 and int(c["collector_number"]) <= 649:
+                    selection["in_booster"] = False
+            # Manually remove special printing from Double Masters 2022 packs
+            case "2x2":
+                if int(c["collector_number"]) >= 332:
+                    selection["in_booster"] = False
+            # Make sure retro cards from DMR are marked as in_booster
+            case "dmr":
+                if int(c["collector_number"]) >= 262 and int(c["collector_number"]) <= 401:
+                    selection["in_booster"] = True
+            # Cards from SIR are not marked as in_booster for some reason
+            case "sir":
+                if not c["type_line"].startswith("Basic") and not c["collector_number"].endswith("b"):
+                    selection["in_booster"] = True
+            case "ltr":
+                # Workaround: Remove alternate printings and Jumpstart cards from LTR draft boosters (and the 20 basics)
+                selection["in_booster"] = safeInBoosterCheck(c, 261)
+                if "Ring tempts you" in c["oracle_text"] and (
+                    "all_parts" not in c
+                    or next((x for x in c["all_parts"] if x["id"] == "7215460e-8c06-47d0-94e5-d1832d0218af"), None)
+                    == None
+                ):
+                    if "related_cards" not in selection:
+                        selection["related_cards"] = []
+                    selection["related_cards"].append("7215460e-8c06-47d0-94e5-d1832d0218af")
 
-        if c["set"] == "cmm":
-            try:
-                selection["in_booster"] = int(c["collector_number"]) > 0 and int(c["collector_number"]) <= 436
-            except:
-                selection["in_booster"] = False
-
-        if c["set"] == "woe":
-            try:
-                selection["in_booster"] = int(c["collector_number"]) > 0 and int(c["collector_number"]) <= 261
-            except:
-                selection["in_booster"] = False
-
-        if c["set"] == "lci":
-            try:
-                selection["in_booster"] = int(c["collector_number"]) > 0 and int(c["collector_number"]) <= 286
-            except:
-                selection["in_booster"] = False
-
-        if c["set"] == "ktk":
-            if c["collector_number"].endswith("y"):  # Duplicates; These versions from Arena should not be in boosters
-                selection["in_booster"] = False
-
-        if c["set"] == "rvr":
-            try:
-                selection["in_booster"] = int(c["collector_number"]) > 0 and int(c["collector_number"]) <= 291
-            except:
-                selection["in_booster"] = False
-
-        if c["set"] == "mkm":
-            try:
-                selection["in_booster"] = int(c["collector_number"]) > 0 and int(c["collector_number"]) < 272
-            except:
-                selection["in_booster"] = False
-
-        if c["set"] == "otj":
-            try:
-                selection["in_booster"] = int(c["collector_number"]) > 0 and int(c["collector_number"]) < 272
-            except:
-                selection["in_booster"] = False
-
-        if c["set"] == "otp":
-            try:
-                selection["in_booster"] = int(c["collector_number"]) > 0 and int(c["collector_number"]) <= 65
-            except:
-                selection["in_booster"] = False
-
-        if c["set"] == "big":
-            try:
-                selection["in_booster"] = int(c["collector_number"]) > 0 and int(c["collector_number"]) <= 30
-            except:
-                selection["in_booster"] = False
-
-        if c["set"] == "mh3":
-            try:
-                selection["in_booster"] = int(c["collector_number"]) > 0 and int(c["collector_number"]) <= 261
-            except:
-                selection["in_booster"] = False
-
-        if c["set"] == "blb":
-            try:
-                selection["in_booster"] = int(c["collector_number"]) > 0 and int(c["collector_number"]) <= 261
-            except:
-                selection["in_booster"] = False
-
-        if c["set"] == "dsk":
-            try:
-                selection["in_booster"] = int(c["collector_number"]) > 0 and int(c["collector_number"]) <= 271
-            except:
-                selection["in_booster"] = False
-
-        if c["set"] in ["usg", "5ed", "6ed", "7ed", "8ed"] and c["collector_number"].endswith("s"):
-            selection["in_booster"] = False
+            case "cmm":
+                selection["in_booster"] = safeInBoosterCheck(c, 436)
+            case "woe":
+                selection["in_booster"] = safeInBoosterCheck(c, 261)
+            case "lci":
+                selection["in_booster"] = safeInBoosterCheck(c, 286)
+            case "ktk":
+                # Duplicates; These versions from Arena should not be in boosters
+                if c["collector_number"].endswith("y"):
+                    selection["in_booster"] = False
+            case "rvr":
+                selection["in_booster"] = safeInBoosterCheck(c, 291)
+            case "mkm":
+                selection["in_booster"] = safeInBoosterCheck(c, 271)
+            case "otj":
+                selection["in_booster"] = safeInBoosterCheck(c, 271)
+            case "otp":
+                selection["in_booster"] = safeInBoosterCheck(c, 65)
+            case "big":
+                selection["in_booster"] = safeInBoosterCheck(c, 30)
+            case "mh3":
+                selection["in_booster"] = safeInBoosterCheck(c, 261)
+            case "blb":
+                selection["in_booster"] = safeInBoosterCheck(c, 261)
+            case "dsk":
+                selection["in_booster"] = safeInBoosterCheck(c, 271)
+            case "usg" | "5ed" | "6ed" | "7ed" | "8ed":
+                if c["collector_number"].endswith("s"):
+                    selection["in_booster"] = False
+            case "mb2":
+                selection["in_booster"] = True
+            case "fdn":
+                selection["in_booster"] = (
+                    (int(c["collector_number"]) > 0 and int(c["collector_number"]) < 259)
+                    or int(c["collector_number"]) == 262
+                    or int(c["collector_number"]) == 264
+                    or int(c["collector_number"]) == 267
+                )
+            case "pio":
+                selection["in_booster"] = int(c["collector_number"]) < 279
+            case "inr":
+                try:
+                    if c["collector_number"].endswith("a"):
+                        selection["in_booster"] = int(c["collector_number"][:-1]) < 288
+                    else:
+                        selection["in_booster"] = int(c["collector_number"]) < 288
+                except:
+                    selection["in_booster"] = False
+            case "dft":
+                selection["in_booster"] = safeInBoosterCheck(c, 271)
 
         if c["collector_number"].endswith("†"):
             selection["in_booster"] = False
-
-        if c["set"] == "mb2":
-            selection["in_booster"] = True
-
-        if c["set"] == "fdn":
-            selection["in_booster"] = (
-                (int(c["collector_number"]) > 0 and int(c["collector_number"]) < 259)
-                or int(c["collector_number"]) == 262
-                or int(c["collector_number"]) == 264
-                or int(c["collector_number"]) == 267
-            )
-
-        if c["set"] == "pio":
-            selection["in_booster"] = int(c["collector_number"]) < 279
-
-        if c["set"] == "inr":
-            try:
-                if c["collector_number"].endswith("a"):
-                    selection["in_booster"] = int(c["collector_number"][:-1]) < 288
-                else:
-                    selection["in_booster"] = int(c["collector_number"]) < 288
-            except:
-                selection["in_booster"] = False
 
         if c["layout"] == "split":
             if "Aftermath" in c["keywords"]:
@@ -597,7 +574,7 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
 
     for c in all_cards:
         # Some dual faced Secret Lair cards have some key information hidden in the card_faces array. Extract it.
-        def copyFromFaces(prop):
+        def copyFromFaces(prop: str) -> bool:
             if prop not in c:
                 if (
                     "card_faces" in c
@@ -1078,7 +1055,7 @@ constants["PrimarySets"] = [
     for s in PrimarySets
     if s in setinfos
     and s not in subsets
-    and s not in ["ren", "rin", "a22", "y22", "j22", "sis", "ltc", "who", "wot", "acr", "dft"]
+    and s not in ["ren", "rin", "a22", "y22", "j22", "sis", "ltc", "who", "wot", "acr"]
 ]  # Exclude some codes that are actually part of larger sets (tsb, fmb1, h1r... see subsets), or aren't out yet
 with open("src/data/constants.json", "w", encoding="utf8") as constantsFile:
     json.dump(constants, constantsFile, ensure_ascii=False, indent=4)
