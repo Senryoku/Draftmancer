@@ -1,0 +1,12 @@
+[Settings]
+{
+	"name": "Settings Test",
+	"withReplacement": false,
+	"refillWhenEmpty": true,
+}
+[Slot1(3)]
+7 Adventure Awaits
+[Slot2(5)]
+12 Akoum Hellhound
+[Slot3(2)]
+3 Angelheart Protector

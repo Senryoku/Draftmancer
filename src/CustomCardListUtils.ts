@@ -35,7 +35,7 @@ export function generateBoosterFromCustomCardList(
 		return new MessageError("Error generating boosters", "No custom card list provided.");
 	}
 
-	const allowReplenishing = customCardList.settings?.allowReplenishing;
+	const refillWhenEmpty = customCardList.settings?.refillWhenEmpty ?? false;
 	if (options.colorBalance === undefined) options.colorBalance = false;
 	if (options.duplicateProtection === undefined) options.duplicateProtection = true;
 	if (options.withReplacement === undefined) options.withReplacement = false;
@@ -55,13 +55,18 @@ export function generateBoosterFromCustomCardList(
 		const cardsBySheet: SlotedCardPool = {};
 
 		const fillSheet = (sheetName: string) => {
-			if (customCardList.sheets[sheetName].collation === "random") {
-				for (const [cardID, count] of Object.entries(customCardList.sheets[sheetName].cards))
-					cardsBySheet[sheetName].set(cardID, count);
-			}
+			if (customCardList.sheets[sheetName].collation !== "random")
+				return console.error(
+					`Called fillSheet on sheet with '${customCardList.sheets[sheetName].collation}' collation.`
+				);
+			for (const [cardID, count] of Object.entries(customCardList.sheets[sheetName].cards))
+				cardsBySheet[sheetName].set(cardID, count);
 		};
 		for (const sheetName of Object.keys(customCardList.sheets)) {
-			fillSheet(sheetName);
+			if (customCardList.sheets[sheetName].collation === "random") {
+				cardsBySheet[sheetName] = new CardPool();
+				fillSheet(sheetName);
+			}
 		}
 
 		// Workaround to handle the LoreSeeker draft effect with a limited number of cards
@@ -198,7 +203,7 @@ export function generateBoosterFromCustomCardList(
 						}
 						case "random":
 						default: {
-							const sheetPickOption = allowReplenishing
+							const sheetPickOption = refillWhenEmpty
 								? {
 										...pickOptions,
 										onEmpty: () => {
@@ -292,14 +297,14 @@ export function generateBoosterFromCustomCardList(
 		}
 
 		const cardTarget = cardsPerBooster * boosterQuantity;
-		if (!options.withReplacement && !allowReplenishing && cardCount < cardTarget) {
+		if (!options.withReplacement && !refillWhenEmpty && cardCount < cardTarget) {
 			return new MessageError(
 				"Error generating boosters",
 				`Not enough cards (${cardCount}/${cardTarget}) in custom list.`
 			);
 		}
 
-		if (allowReplenishing) pickOptions.onEmpty = fillPool;
+		if (refillWhenEmpty) pickOptions.onEmpty = fillPool;
 
 		const boosters = [];
 

@@ -44,7 +44,7 @@ export type CCLSettings = {
 	boostersPerPlayer?: number;
 	withReplacement?: boolean;
 	colorBalance?: boolean;
-	allowReplenishing: boolean;
+	refillWhenEmpty: boolean;
 };
 
 export type CollationType = "random" | "printRun" | "striped";
