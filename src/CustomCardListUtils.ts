@@ -35,6 +35,7 @@ export function generateBoosterFromCustomCardList(
 		return new MessageError("Error generating boosters", "No custom card list provided.");
 	}
 
+	const allowReplenishing = customCardList.settings?.allowReplenishing;
 	if (options.colorBalance === undefined) options.colorBalance = false;
 	if (options.duplicateProtection === undefined) options.duplicateProtection = true;
 	if (options.withReplacement === undefined) options.withReplacement = false;
@@ -43,6 +44,7 @@ export function generateBoosterFromCustomCardList(
 		withReplacement: options.withReplacement,
 		duplicateProtection: options.duplicateProtection,
 		getCard: generateCustomGetCardFunction(customCardList),
+		onEmpty: undefined as undefined | (() => void),
 	};
 
 	// List is using custom layouts
@@ -51,11 +53,15 @@ export function generateBoosterFromCustomCardList(
 		const layoutsTotalWeights = Object.keys(layouts).reduce((acc, key) => acc + layouts[key].weight, 0);
 
 		const cardsBySheet: SlotedCardPool = {};
-		for (const [sheetName, sheet] of Object.entries(customCardList.sheets)) {
-			if (sheet.collation === "random") {
-				cardsBySheet[sheetName] = new CardPool();
-				for (const [cardID, count] of Object.entries(sheet.cards)) cardsBySheet[sheetName].set(cardID, count);
+
+		const fillSheet = (sheetName: string) => {
+			if (customCardList.sheets[sheetName].collation === "random") {
+				for (const [cardID, count] of Object.entries(customCardList.sheets[sheetName].cards))
+					cardsBySheet[sheetName].set(cardID, count);
 			}
+		};
+		for (const sheetName of Object.keys(customCardList.sheets)) {
+			fillSheet(sheetName);
 		}
 
 		// Workaround to handle the LoreSeeker draft effect with a limited number of cards
@@ -192,18 +198,27 @@ export function generateBoosterFromCustomCardList(
 						}
 						case "random":
 						default: {
+							const sheetPickOption = allowReplenishing
+								? {
+										...pickOptions,
+										onEmpty: () => {
+											fillSheet(sheetName);
+										},
+									}
+								: pickOptions;
+
 							if (useColorBalance) {
 								pickedCards = colorBalancedGenerators[sheetName].generate(
 									slot.count,
 									booster,
-									pickOptions
+									sheetPickOption
 								);
 							} else {
 								for (let i = 0; i < slot.count; ++i) {
 									const pickedCard = pickCard(
 										cardsBySheet[sheetName],
 										booster.concat(pickedCards),
-										pickOptions
+										sheetPickOption
 									);
 									pickedCards.push(pickedCard);
 									if (colorBalancedGenerators[sheetName] && !pickOptions.withReplacement)
@@ -259,25 +274,32 @@ export function generateBoosterFromCustomCardList(
 		// Getting custom card list
 		const localCollection: CardPool = new CardPool();
 
-		let cardCount = 0;
-		for (const [cardID, count] of Object.entries(defaultSlot.cards)) {
-			localCollection.set(cardID, count);
-			cardCount += count;
-		}
+		const fillPool = () => {
+			let cardCount = 0;
+			for (const [cardID, count] of Object.entries(defaultSlot.cards)) {
+				localCollection.set(cardID, count);
+				cardCount += count;
+			}
+			return cardCount;
+		};
+		const cardCount = fillPool();
 		const cardsPerBooster = options.cardsPerBooster ?? 15;
 
-		const cardTarget = cardsPerBooster * boosterQuantity;
-		if (!options.withReplacement && cardCount < cardTarget) {
-			return new MessageError(
-				"Error generating boosters",
-				`Not enough cards (${cardCount}/${cardTarget}) in custom list.`
-			);
-		}
 		// Workaround to handle the LoreSeeker draft effect with a limited number of cards
 		if (!options.withReplacement && options.removeFromCardPool) {
 			for (const cardId of options.removeFromCardPool)
 				if (localCollection.has(cardId)) localCollection.removeCard(cardId);
 		}
+
+		const cardTarget = cardsPerBooster * boosterQuantity;
+		if (!options.withReplacement && !allowReplenishing && cardCount < cardTarget) {
+			return new MessageError(
+				"Error generating boosters",
+				`Not enough cards (${cardCount}/${cardTarget}) in custom list.`
+			);
+		}
+
+		if (allowReplenishing) pickOptions.onEmpty = fillPool;
 
 		const boosters = [];
 

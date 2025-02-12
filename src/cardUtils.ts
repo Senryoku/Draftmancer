@@ -32,11 +32,20 @@ export function pickCard(
 		foil?: boolean;
 		duplicateProtection?: boolean;
 		getCard?: (cid: CardID) => Card;
+		onEmpty?: () => void; // Expected to refill the card pool
 	}
 ): UniqueCard {
 	if (cardPool.size === 0) {
-		console.trace(`Called pickCard on an empty card pool.`);
-		throw `Called pickCard on an empty card pool.`;
+		if (options?.onEmpty) {
+			options.onEmpty();
+			if (cardPool.size === 0) {
+				console.trace(`pickCard: Card pool still empty after onEmpty() call.`);
+				throw new Error(`pickCard: Card pool still empty after onEmpty() call.`);
+			}
+		} else {
+			console.trace(`Called pickCard on an empty card pool.`);
+			throw new Error(`Called pickCard on an empty card pool.`);
+		}
 	}
 	// if uniformAll is false, distribution will be uniform across UNIQUE cards
 	// (the probability of picking a card with a given ID is the same for any ID, regardeless of the number of copies)
