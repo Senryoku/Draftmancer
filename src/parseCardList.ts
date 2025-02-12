@@ -718,8 +718,7 @@ export function parseCardList(
 				} else {
 					let sheet: Sheet = { collation: "random", cards: {} };
 					let sheetName = header;
-					const match =
-						/(?<name>[a-zA-Z0-9# ]*[a-zA-Z0-9#])\s*(?<count>\(\d+\))?\s*(?<settings>\{.*\})?/.exec(header);
+					const match = /^(?<name>[^"()[\]{}]+?)\s*(?<count>\(\d+\))?\s*(?<settings>\{.*\})?$/.exec(header);
 					if (match) {
 						const { name, count, settings } = match.groups!;
 						sheetName = name;
