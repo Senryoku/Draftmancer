@@ -2538,6 +2538,23 @@
 									v-tooltip.up="{
 										popperClass: 'option-tooltip',
 										content:
+											'<p>If checked, sheets will be refilled when empty. This allows to draft with more players that originally intended for a specific cube without skewing the distribution too far from the original intent.</p><p>No effect when With Replacement is enabled</p>',
+										html: true,
+									}"
+									:class="{ disabled: customCardListWithReplacement }"
+								>
+									<input
+										type="checkbox"
+										:checked="customCardList?.settings?.refillWhenEmpty ?? false"
+										id="custom-card-list-refill-when-empty"
+										@change="updateCCLRefillWhenEmpty"
+									/>
+									<label for="custom-card-list-refill-when-empty">Refill when empty</label>
+								</div>
+								<div
+									v-tooltip.up="{
+										popperClass: 'option-tooltip',
+										content:
 											'<p>When enabled, duplicates of the exact same card in a booster will be avoided as much as possible.</p>',
 										html: true,
 									}"

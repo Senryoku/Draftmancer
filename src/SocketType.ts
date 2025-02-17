@@ -31,7 +31,7 @@ import { HousmanDraftSyncData } from "./HousmanDraft";
 import { SolomonDraftSyncData } from "./SolomonDraft";
 import { QueueID } from "./draftQueue/QueueDescription";
 import { BracketType, IBracket } from "./Brackets";
-import { CustomCardList } from "./CustomCardList";
+import { CCLSettings, CustomCardList } from "./CustomCardList";
 
 export type LoaderOptions = { title: string };
 
@@ -101,6 +101,7 @@ export interface ServerToClientEvents {
 			virtualPlayersData: Record<UserID, UserData>;
 		}>
 	) => void;
+	updateCustomCardListSetting: (name: keyof CCLSettings, value: unknown) => void;
 	setRestriction: (setRestriction: Array<SetCode>) => void;
 	ignoreCollections: (ignoreCollections: boolean) => void;
 	setPickTimer: (pickTimer: number) => void;
@@ -422,6 +423,7 @@ export interface ClientToServerEvents {
 	setUseCustomCardList: (useCustomCardList: boolean) => void;
 	setCustomCardListWithReplacement: (customCardListWithReplacement: boolean) => void;
 	setCustomCardListDuplicateProtection: (customCardListDuplicateProtection: boolean) => void;
+	setCustomCardListSetting: (key: unknown, value: unknown) => void;
 	setDoubleMastersMode: (doubleMastersMode: boolean) => void;
 	setPickedCardsPerRound: (pickedCardsPerRound: number) => void;
 	setBurnedCardsPerRound: (burnedCardsPerRound: number) => void;

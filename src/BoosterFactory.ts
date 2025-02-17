@@ -90,25 +90,35 @@ function isEmpty(slotedCardPool: SlotedCardPool): boolean {
 }
 
 class ColorBalancedSlotCache {
-	byColor: { [color: string]: CardPool } = {};
-	monocolored: CardPool;
-	others: CardPool;
+	originalCardPool: CardPool;
 
-	constructor(cardPool: CardPool, options: Options = {}) {
+	byColor: { [color: string]: CardPool } = {};
+	monocolored: CardPool = new CardPool();
+	others: CardPool = new CardPool();
+
+	constructor(cardPool: CardPool, options: { getCard?: (cid: CardID) => Card }) {
+		this.originalCardPool = cardPool;
+
 		const localGetCard = options.getCard ?? getCard;
 		for (const [cid, count] of cardPool) {
 			if (!(localGetCard(cid).colors.join() in this.byColor))
 				this.byColor[localGetCard(cid).colors.join()] = new CardPool();
+		}
+
+		this.reset(options);
+	}
+
+	reset(options: { getCard?: (cid: CardID) => Card }) {
+		const localGetCard = options.getCard ?? getCard;
+		for (const [cid, count] of this.originalCardPool) {
 			this.byColor[localGetCard(cid).colors.join()].set(cid, count);
 		}
 
-		this.monocolored = new CardPool();
 		for (const cardPool of Object.keys(this.byColor)
 			.filter((k) => k.length === 1)
 			.map((k) => this.byColor[k]))
 			for (const [cid, val] of cardPool.entries()) this.monocolored.set(cid, val);
 
-		this.others = new CardPool();
 		for (const cardPool of Object.keys(this.byColor)
 			.filter((k) => k.length !== 1)
 			.map((k) => this.byColor[k]))

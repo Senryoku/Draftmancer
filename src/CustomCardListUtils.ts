@@ -4,7 +4,8 @@ import { getCard } from "./Cards.js";
 import { pickCard, pickPrintRun, pickStriped } from "./cardUtils.js";
 import { MessageError } from "./Message.js";
 import { isEmpty, random, weightedRandomIdx, shuffleArray } from "./utils.js";
-import { CustomCardList, getSheetCardIDs } from "./CustomCardList.js";
+import { CCLSettings, CustomCardList, getSheetCardIDs } from "./CustomCardList.js";
+import { hasProperty, isArrayOf, isBoolean, isNumber, isObject, isString } from "./TypeChecks.js";
 
 export function generateCustomGetCardFunction(customCardList: CustomCardList): (cid: CardID) => Card {
 	if (!customCardList?.customCards) return getCard;
@@ -203,22 +204,28 @@ export function generateBoosterFromCustomCardList(
 						}
 						case "random":
 						default: {
-							const sheetPickOption = refillWhenEmpty
-								? {
-										...pickOptions,
-										onEmpty: () => {
-											fillSheet(sheetName);
-										},
-									}
-								: pickOptions;
-
 							if (useColorBalance) {
+								const sheetPickOption = refillWhenEmpty
+									? {
+											...pickOptions,
+											onEmpty: () => {
+												fillSheet(sheetName);
+												colorBalancedGenerators[sheetName].cache.reset(pickOptions);
+											},
+										}
+									: pickOptions;
 								pickedCards = colorBalancedGenerators[sheetName].generate(
 									slot.count,
 									booster,
 									sheetPickOption
 								);
 							} else {
+								const sheetPickOption = refillWhenEmpty
+									? {
+											...pickOptions,
+											onEmpty: () => fillSheet(sheetName),
+										}
+									: pickOptions;
 								for (let i = 0; i < slot.count; ++i) {
 									const pickedCard = pickCard(
 										cardsBySheet[sheetName],
@@ -304,15 +311,19 @@ export function generateBoosterFromCustomCardList(
 			);
 		}
 
-		if (refillWhenEmpty) pickOptions.onEmpty = fillPool;
-
 		const boosters = [];
 
 		if (options.colorBalance && cardsPerBooster >= 5) {
 			const colorBalancedSlotGenerator = new ColorBalancedSlot(localCollection, pickOptions);
+			if (refillWhenEmpty)
+				pickOptions.onEmpty = () => {
+					fillPool();
+					colorBalancedSlotGenerator.cache.reset(pickOptions);
+				};
 			for (let i = 0; i < boosterQuantity; ++i)
 				boosters.push(colorBalancedSlotGenerator.generate(cardsPerBooster, [], pickOptions));
 		} else {
+			if (refillWhenEmpty) pickOptions.onEmpty = fillPool;
 			for (let i = 0; i < boosterQuantity; ++i) {
 				const booster: Array<UniqueCard> = [];
 				for (let j = 0; j < cardsPerBooster; ++j) booster.push(pickCard(localCollection, booster, pickOptions));
@@ -320,5 +331,58 @@ export function generateBoosterFromCustomCardList(
 			}
 		}
 		return boosters;
+	}
+}
+
+const CCLSettingsKeys = [
+	"cardBack",
+	"cardTitleHeightFactor",
+	"showSlots",
+	"boosterSettings",
+	"predeterminedLayouts",
+	"layoutWithReplacement",
+	"duplicateProtection",
+	"boostersPerPlayer",
+	"withReplacement",
+	"colorBalance",
+	"refillWhenEmpty",
+] as const;
+
+export function isKeyOfCCLSettings(key: unknown): key is keyof CCLSettings {
+	return CCLSettingsKeys.includes(key as keyof CCLSettings);
+}
+
+export function checkCCLSettingType(key: keyof CCLSettings, value: unknown): value is CCLSettings[keyof CCLSettings] {
+	switch (key) {
+		case "cardBack":
+			return isString(value);
+		case "cardTitleHeightFactor":
+			return isNumber(value);
+		case "showSlots":
+			return isBoolean(value);
+		case "boosterSettings":
+			return (
+				isObject(value) &&
+				hasProperty("picks", isArrayOf(isNumber))(value) &&
+				hasProperty("burns", isArrayOf(isNumber))(value)
+			);
+		case "predeterminedLayouts":
+			return isArrayOf(
+				isArrayOf(
+					(val) => isObject(val) && hasProperty("name", isString)(val) && hasProperty("weight", isNumber)(val)
+				)
+			)(value);
+		case "layoutWithReplacement":
+			return isBoolean(value);
+		case "duplicateProtection":
+			return isBoolean(value);
+		case "boostersPerPlayer":
+			return isNumber(value);
+		case "withReplacement":
+			return isBoolean(value);
+		case "colorBalance":
+			return isBoolean(value);
+		case "refillWhenEmpty":
+			return isBoolean(value);
 	}
 }
