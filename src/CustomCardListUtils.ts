@@ -204,28 +204,23 @@ export function generateBoosterFromCustomCardList(
 						}
 						case "random":
 						default: {
+							const sheetPickOption = refillWhenEmpty
+								? {
+										...pickOptions,
+										onEmpty: () => {
+											fillSheet(sheetName);
+											colorBalancedGenerators[sheetName].cache.reset(pickOptions);
+										},
+									}
+								: pickOptions;
+
 							if (useColorBalance) {
-								const sheetPickOption = refillWhenEmpty
-									? {
-											...pickOptions,
-											onEmpty: () => {
-												fillSheet(sheetName);
-												colorBalancedGenerators[sheetName].cache.reset(pickOptions);
-											},
-										}
-									: pickOptions;
 								pickedCards = colorBalancedGenerators[sheetName].generate(
 									slot.count,
 									booster,
 									sheetPickOption
 								);
 							} else {
-								const sheetPickOption = refillWhenEmpty
-									? {
-											...pickOptions,
-											onEmpty: () => fillSheet(sheetName),
-										}
-									: pickOptions;
 								for (let i = 0; i < slot.count; ++i) {
 									const pickedCard = pickCard(
 										cardsBySheet[sheetName],
