@@ -71,6 +71,7 @@ export type CardFace = {
 	power?: number | string;
 	toughness?: number | string;
 	loyalty?: number | string; // Planeswalker starting loyalty.
+	layout?: string;
 };
 
 export type CardRarity = string;

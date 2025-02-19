@@ -1,5 +1,5 @@
 <template>
-	<div class="card-image" v-if="!fixedLayout">
+	<div class="card-image" :class="{ 'has-back': hasBack }" v-if="!fixedLayout">
 		<div v-if="hasBack" class="flip-button">
 			<font-awesome-layers>
 				<font-awesome-icon
@@ -24,11 +24,7 @@
 				<font-awesome-icon icon="fa-solid fa-sync" class="vertical-flip-icon" size="lg"></font-awesome-icon>
 			</font-awesome-layers>
 		</div>
-		<div
-			v-if="card.layout === 'split' || card.type.includes('Battle')"
-			class="split-button"
-			:class="{ 'battle-button': card.type.includes('Battle') }"
-		>
+		<div v-if="card.layout === 'split' || card.type.includes('Battle')" class="split-button">
 			<img src="../assets/img/tap-icon.svg" class="split-icon" />
 		</div>
 		<div v-if="card.layout === 'split-left'" class="split-left-button">
@@ -102,7 +98,12 @@
 			loadingClass="card-loading"
 			:forceLoad="!lazyLoad"
 			class="card-individual-image"
-			:class="{ 'battle-front': card.type.includes('Battle') }"
+			:class="{
+				'split-and-back':
+					card.type.includes('Battle') ||
+					((card.layout === 'split' || card.layout === 'split-left') && hasBack),
+				left: card.layout === 'split-left',
+			}"
 		>
 			<img :src="imageURI" />
 			<CardText v-if="displayCardText" :card="cardFrontAdditionalData!" />
@@ -115,6 +116,10 @@
 			loadingClass="card-loading"
 			:forceLoad="!lazyLoad"
 			class="card-individual-image"
+			:class="{
+				'split-back': card.back?.layout === 'split' || card.back?.layout === 'split-left',
+				left: card.back?.layout === 'split-left',
+			}"
 			v-if="hasBack"
 		>
 			<img :src="backImageURI" />
@@ -244,15 +249,10 @@ img {
 	transform: translateZ(0);
 }
 
-.battle-button {
+.has-back .vertical-flip-button,
+.has-back .split-left-button,
+.has-back .split-button {
 	right: 1.4em;
-}
-
-.booster .flip-button,
-.booster .vertical-flip-button {
-	top: -0.75em;
-	right: -0.7em;
-	padding: 0.5em;
 }
 
 .flip-button .fa-layers {
@@ -410,16 +410,32 @@ img {
 	background-size: cover;
 }
 
-.battle-front {
+.split-and-back,
+.split-back {
 	width: var(--image-height);
+	--rotation: 90deg;
 }
 
-.battle-front img {
-	transform: translateX(20.5%) rotate(90deg);
+.split-and-back.left,
+.split-back.left {
+	--rotation: -90deg;
 }
 
-.card-popup.right .battle-front img {
-	transform: translateX(-20.5%) rotate(90deg);
+.split-and-back {
+	--translate-x: 20.5%;
+}
+.split-back {
+	--translate-x: calc(2 * 20.5%); /* This assumes both sides are landscape (split)... Good enough :) */
+}
+
+.split-and-back img,
+.split-back img {
+	transform: translateX(var(--translate-x)) rotate(var(--rotation));
+}
+
+.card-popup.right .split-and-back img,
+.card-popup.right .split-back img {
+	transform: translateX(calc(-1 * var(--translate-x))) rotate(var(--rotation));
 }
 
 .pending-alt-card-text {

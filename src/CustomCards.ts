@@ -77,11 +77,13 @@ export function validateCustomCardFace(face: unknown): SocketError | CardFace {
 	if (!hasOptionalProperty("oracle_text", isString)(face))
 		return errorWithJSON(`Invalid Oracle Text`, `Face property 'oracle_text' must be a string.`, face);
 	if (!hasOptionalProperty("power", isUnion(isNumber, isString))(face))
-		return errorWithJSON(`Invalid Oracle Text`, `Face property 'power' must be a string.`, face);
+		return errorWithJSON(`Invalid Oracle Text`, `Face property 'power' must be a number or a string.`, face);
 	if (!hasOptionalProperty("toughness", isUnion(isNumber, isString))(face))
-		return errorWithJSON(`Invalid Oracle Text`, `Face property 'toughness' must be a string.`, face);
+		return errorWithJSON(`Invalid Oracle Text`, `Face property 'toughness' must be a number or a string.`, face);
 	if (!hasOptionalProperty("loyalty", isUnion(isNumber, isString))(face))
-		return errorWithJSON(`Invalid Oracle Text`, `Face property 'loyalty' must be a string.`, face);
+		return errorWithJSON(`Invalid Oracle Text`, `Face property 'loyalty' must be a number of string.`, face);
+	if (!hasOptionalProperty("layout", isString)(face))
+		return errorWithJSON(`Invalid Oracle Text`, `Face property 'layout' must be a string.`, face);
 
 	return {
 		name: face.name,
@@ -93,6 +95,7 @@ export function validateCustomCardFace(face: unknown): SocketError | CardFace {
 		power: face.power,
 		toughness: face.toughness,
 		loyalty: face.loyalty,
+		layout: face.layout,
 	};
 }
 
