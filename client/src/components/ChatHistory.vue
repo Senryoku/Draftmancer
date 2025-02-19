@@ -6,7 +6,7 @@
 				:title="new Date(msg.timestamp).toLocaleTimeString()"
 				:key="msg.timestamp"
 			>
-				<span class="chat-author">
+				<span v-if="msg.author" class="chat-author">
 					<template v-if="msg.author !== userID">
 						<template v-if="!mutedUsers.has(msg.author)">
 							<font-awesome-icon
@@ -33,8 +33,9 @@
 								: "(Left)"
 					}}
 				</span>
+				<span class="chat-system" v-else>{{ new Date(msg.timestamp).toLocaleTimeString() }}</span>
 				<span class="chat-message">
-					<template v-if="!mutedUsers.has(msg.author)">{{ msg.text }}</template>
+					<template v-if="!msg.author || !mutedUsers.has(msg.author)">{{ msg.text }}</template>
 					<template v-else><em>(Muted)</em></template>
 				</span>
 			</li>
@@ -49,7 +50,7 @@ import { UserData } from "../../../src/Session/SessionTypes";
 
 const props = defineProps<{
 	messagesHistory: {
-		author: string;
+		author?: string;
 		text: string;
 		timestamp: number;
 	}[];
@@ -127,16 +128,22 @@ const reversedMessages = computed(() => props.messagesHistory.slice().reverse())
 	padding: 0.25em;
 }
 
+.chat-history li .chat-system,
 .chat-history li .chat-author {
 	border-radius: 0.25em 0 0 0.25em;
 	background: #444;
 	color: #ddd;
 	font-weight: bold;
 	white-space: nowrap;
-	min-width: 18ch;
+	min-width: 14ch;
 	max-width: 18ch;
 	overflow: hidden;
 	text-overflow: ellipsis;
+}
+
+.chat-history li .chat-system {
+	background: #222;
+	min-width: auto;
 }
 
 .chat-history li .chat-message {

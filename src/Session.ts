@@ -2016,6 +2016,18 @@ export class Session implements IIndexable {
 				return reportError(`Invalid request: '${card.name}' do not have effect '${draftEffect.effect}'.`);
 			if (!card.state?.faceUp) return reportError("Already used this effect (Card is face down).");
 
+			const notifyDraftEffectUse = () => {
+				try {
+					const str = `${Connections[userID].userName} used the effect of '${card.name}'.`;
+					const msg = new ToastMessage(str);
+					this.forUsers((uid) => {
+						if (uid !== userID) Connections[uid]?.socket.emit("message", msg, true);
+					});
+				} catch (e) {
+					console.error("Error notifying of draft effect use: ", e);
+				}
+			};
+
 			switch (draftEffect.effect) {
 				// Draft Cogwork Librarian face up.
 				// As you draft a card, you may draft an additional card from that booster pack. If you do, put Cogwork Librarian into that booster pack.
@@ -2033,6 +2045,7 @@ export class Session implements IIndexable {
 						const cogworkLibrarian = Connections[userID].pickedCards[list].splice(index, 1)[0];
 						cogworkLibrarian.state = undefined;
 						booster.push(cogworkLibrarian); // Pushing the cogwork librarian at the end right away should be safe as it won't change indices of other cards.
+						notifyDraftEffectUse();
 					});
 					picksThisRound++; // Allow an additional pick.
 					break;
@@ -2045,6 +2058,7 @@ export class Session implements IIndexable {
 					applyDraftEffects.push(() => {
 						if (!card.state) card.state = {};
 						card.state.faceUp = false;
+						notifyDraftEffectUse();
 						updatedCardStates.push({ cardID: card.uniqueID, state: card.state });
 						if (!s.players[userID].effect) s.players[userID].effect = {};
 						s.players[userID].effect!.skipUntilNextRound = true;
@@ -2060,6 +2074,7 @@ export class Session implements IIndexable {
 					applyDraftEffects.push(() => {
 						if (!card.state) card.state = {};
 						card.state.faceUp = false;
+						notifyDraftEffectUse();
 						updatedCardStates.push({ cardID: card.uniqueID, state: card.state });
 						if (!s.players[userID].effect) s.players[userID].effect = {};
 						s.players[userID].effect!.skipNPicks = 1;
@@ -2086,6 +2101,7 @@ export class Session implements IIndexable {
 					applyDraftEffects.push(() => {
 						if (!card.state) card.state = {};
 						card.state.faceUp = false;
+						notifyDraftEffectUse();
 						card.state.cardName = cardName;
 						updatedCardStates.push({ cardID: card.uniqueID, state: card.state });
 					});
@@ -2098,6 +2114,7 @@ export class Session implements IIndexable {
 					applyDraftEffects.push(() => {
 						if (!card.state) card.state = {};
 						card.state.faceUp = false;
+						notifyDraftEffectUse();
 						card.state.creatureName = creatureName;
 						updatedCardStates.push({ cardID: card.uniqueID, state: card.state });
 					});
@@ -2111,6 +2128,7 @@ export class Session implements IIndexable {
 					applyDraftEffects.push(() => {
 						if (!card.state) card.state = {};
 						card.state.faceUp = false;
+						notifyDraftEffectUse();
 						card.state.creatureTypes = creatureTypes;
 						updatedCardStates.push({ cardID: card.uniqueID, state: card.state });
 					});
@@ -2121,6 +2139,16 @@ export class Session implements IIndexable {
 			}
 		}
 		if (optionalOnPickDraftEffect) {
+			const notify = (str: string) => {
+				try {
+					this.forUsers((uid) => {
+						if (uid !== userID) Connections[uid]?.socket.emit("message", new ToastMessage(str), true);
+					});
+				} catch (e) {
+					console.error("Error notifying of draft effect use: ", e);
+				}
+			};
+
 			switch (optionalOnPickDraftEffect.effect) {
 				case OptionalOnPickDraftEffect.LoreSeeker: {
 					const index = booster.findIndex((c) => c.uniqueID === optionalOnPickDraftEffect.cardID);
@@ -2149,6 +2177,7 @@ export class Session implements IIndexable {
 									this.draftLog.carddata[card.id] = getCard(card.id);
 							}
 							s.players[userID].boosters.unshift(additionalBooster[0]);
+							notify(`${Connections[userID].userName} used the effect of 'Lore Seeker'.`);
 						});
 					}
 					break;
@@ -2366,7 +2395,7 @@ export class Session implements IIndexable {
 					}
 					const msg = new ToastMessage(str);
 					this.forUsers((uid) => {
-						if (uid !== userID) Connections[uid]?.socket.emit("message", msg);
+						if (uid !== userID) Connections[uid]?.socket.emit("message", msg, true);
 					});
 				}
 			}

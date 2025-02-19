@@ -41,7 +41,7 @@ export interface ServerToClientEvents {
 	alreadyConnected: (uid: UserID) => void;
 	stillAlive: (callback: () => void) => void;
 	setSession: (sid: SessionID) => void;
-	message: (msg: Message) => void;
+	message: (msg: Message, pushToHistory?: boolean) => void;
 	chatMessage: (msg: { author: string; text: string; timestamp: number }) => void;
 	readyCheck: () => void;
 	setReady: (userID: UserID, readyState: ReadyState) => void;

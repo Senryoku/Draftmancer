@@ -461,7 +461,7 @@ export default defineComponent({
 			currentChatMessage: "",
 			displayChatHistory: false,
 			messagesHistory: [] as {
-				author: string;
+				author?: string;
 				text: string;
 				timestamp: number;
 			}[],
@@ -645,9 +645,17 @@ export default defineComponent({
 				callback(r.isConfirmed ? true : r.isDenied ? false : null);
 			});
 
-			this.socket.on("message", (data) => {
+			this.socket.on("message", (data, pushToHistory) => {
 				if (data.icon === undefined) data.icon = "info";
 				if (data.title === undefined) data.title = "[Missing Title]";
+
+				if (pushToHistory) {
+					this.messagesHistory.push({
+						author: undefined,
+						text: data.title,
+						timestamp: Date.now(),
+					});
+				}
 
 				const toast = !!data.toast;
 				if (toast) {
