@@ -591,6 +591,11 @@ export default defineComponent({
 				// FIXME: Use accurate key type once we have it.
 				for (const prop in sessionOptions) (this as IIndexable)[prop] = (sessionOptions as IIndexable)[prop];
 			});
+			this.socket.on("updateCustomCardListSetting", (key, value) => {
+				if (!this.customCardList) return;
+				if (!this.customCardList.settings) this.customCardList.settings = { refillWhenEmpty: false };
+				(this.customCardList.settings as IIndexable)[key] = value;
+			});
 
 			this.socket.on("virtualPlayersDataUpdate", (virtualPlayersData) => {
 				if (!this.virtualPlayersData) return;
@@ -2849,6 +2854,10 @@ export default defineComponent({
 			} else if (cube.name) {
 				this.socket.emit("loadLocalCustomCardList", cube.name, ack);
 			}
+		},
+		updateCCLRefillWhenEmpty(event: Event) {
+			const value = (event.target as HTMLInputElement).checked;
+			this.socket.emit("setCustomCardListSetting", "refillWhenEmpty", value);
 		},
 		async importDeck() {
 			const response = await fetch("/getDeck", {

@@ -4,7 +4,8 @@ import { getCard } from "./Cards.js";
 import { pickCard, pickPrintRun, pickStriped } from "./cardUtils.js";
 import { MessageError } from "./Message.js";
 import { isEmpty, random, weightedRandomIdx, shuffleArray } from "./utils.js";
-import { CustomCardList, getSheetCardIDs } from "./CustomCardList.js";
+import { CCLSettings, CustomCardList, getSheetCardIDs } from "./CustomCardList.js";
+import { hasProperty, isArrayOf, isBoolean, isNumber, isObject, isString } from "./TypeChecks.js";
 
 export function generateCustomGetCardFunction(customCardList: CustomCardList): (cid: CardID) => Card {
 	if (!customCardList?.customCards) return getCard;
@@ -35,6 +36,7 @@ export function generateBoosterFromCustomCardList(
 		return new MessageError("Error generating boosters", "No custom card list provided.");
 	}
 
+	const refillWhenEmpty = customCardList.settings?.refillWhenEmpty ?? false;
 	if (options.colorBalance === undefined) options.colorBalance = false;
 	if (options.duplicateProtection === undefined) options.duplicateProtection = true;
 	if (options.withReplacement === undefined) options.withReplacement = false;
@@ -43,6 +45,7 @@ export function generateBoosterFromCustomCardList(
 		withReplacement: options.withReplacement,
 		duplicateProtection: options.duplicateProtection,
 		getCard: generateCustomGetCardFunction(customCardList),
+		onEmpty: undefined as undefined | (() => void),
 	};
 
 	// List is using custom layouts
@@ -51,10 +54,19 @@ export function generateBoosterFromCustomCardList(
 		const layoutsTotalWeights = Object.keys(layouts).reduce((acc, key) => acc + layouts[key].weight, 0);
 
 		const cardsBySheet: SlotedCardPool = {};
-		for (const [sheetName, sheet] of Object.entries(customCardList.sheets)) {
-			if (sheet.collation === "random") {
+
+		const fillSheet = (sheetName: string) => {
+			if (customCardList.sheets[sheetName].collation !== "random")
+				return console.error(
+					`Called fillSheet on sheet with '${customCardList.sheets[sheetName].collation}' collation.`
+				);
+			for (const [cardID, count] of Object.entries(customCardList.sheets[sheetName].cards))
+				cardsBySheet[sheetName].set(cardID, count);
+		};
+		for (const sheetName of Object.keys(customCardList.sheets)) {
+			if (customCardList.sheets[sheetName].collation === "random") {
 				cardsBySheet[sheetName] = new CardPool();
-				for (const [cardID, count] of Object.entries(sheet.cards)) cardsBySheet[sheetName].set(cardID, count);
+				fillSheet(sheetName);
 			}
 		}
 
@@ -192,18 +204,28 @@ export function generateBoosterFromCustomCardList(
 						}
 						case "random":
 						default: {
+							const sheetPickOption = refillWhenEmpty
+								? {
+										...pickOptions,
+										onEmpty: () => {
+											fillSheet(sheetName);
+											colorBalancedGenerators[sheetName].cache.reset(pickOptions);
+										},
+									}
+								: pickOptions;
+
 							if (useColorBalance) {
 								pickedCards = colorBalancedGenerators[sheetName].generate(
 									slot.count,
 									booster,
-									pickOptions
+									sheetPickOption
 								);
 							} else {
 								for (let i = 0; i < slot.count; ++i) {
 									const pickedCard = pickCard(
 										cardsBySheet[sheetName],
 										booster.concat(pickedCards),
-										pickOptions
+										sheetPickOption
 									);
 									pickedCards.push(pickedCard);
 									if (colorBalancedGenerators[sheetName] && !pickOptions.withReplacement)
@@ -259,33 +281,44 @@ export function generateBoosterFromCustomCardList(
 		// Getting custom card list
 		const localCollection: CardPool = new CardPool();
 
-		let cardCount = 0;
-		for (const [cardID, count] of Object.entries(defaultSlot.cards)) {
-			localCollection.set(cardID, count);
-			cardCount += count;
-		}
+		const fillPool = () => {
+			let cardCount = 0;
+			for (const [cardID, count] of Object.entries(defaultSlot.cards)) {
+				localCollection.set(cardID, count);
+				cardCount += count;
+			}
+			return cardCount;
+		};
+		const cardCount = fillPool();
 		const cardsPerBooster = options.cardsPerBooster ?? 15;
 
-		const cardTarget = cardsPerBooster * boosterQuantity;
-		if (!options.withReplacement && cardCount < cardTarget) {
-			return new MessageError(
-				"Error generating boosters",
-				`Not enough cards (${cardCount}/${cardTarget}) in custom list.`
-			);
-		}
 		// Workaround to handle the LoreSeeker draft effect with a limited number of cards
 		if (!options.withReplacement && options.removeFromCardPool) {
 			for (const cardId of options.removeFromCardPool)
 				if (localCollection.has(cardId)) localCollection.removeCard(cardId);
 		}
 
+		const cardTarget = cardsPerBooster * boosterQuantity;
+		if (!options.withReplacement && !refillWhenEmpty && cardCount < cardTarget) {
+			return new MessageError(
+				"Error generating boosters",
+				`Not enough cards (${cardCount}/${cardTarget}) in custom list.`
+			);
+		}
+
 		const boosters = [];
 
 		if (options.colorBalance && cardsPerBooster >= 5) {
 			const colorBalancedSlotGenerator = new ColorBalancedSlot(localCollection, pickOptions);
+			if (refillWhenEmpty)
+				pickOptions.onEmpty = () => {
+					fillPool();
+					colorBalancedSlotGenerator.cache.reset(pickOptions);
+				};
 			for (let i = 0; i < boosterQuantity; ++i)
 				boosters.push(colorBalancedSlotGenerator.generate(cardsPerBooster, [], pickOptions));
 		} else {
+			if (refillWhenEmpty) pickOptions.onEmpty = fillPool;
 			for (let i = 0; i < boosterQuantity; ++i) {
 				const booster: Array<UniqueCard> = [];
 				for (let j = 0; j < cardsPerBooster; ++j) booster.push(pickCard(localCollection, booster, pickOptions));
@@ -293,5 +326,58 @@ export function generateBoosterFromCustomCardList(
 			}
 		}
 		return boosters;
+	}
+}
+
+const CCLSettingsKeys = [
+	"cardBack",
+	"cardTitleHeightFactor",
+	"showSlots",
+	"boosterSettings",
+	"predeterminedLayouts",
+	"layoutWithReplacement",
+	"duplicateProtection",
+	"boostersPerPlayer",
+	"withReplacement",
+	"colorBalance",
+	"refillWhenEmpty",
+] as const;
+
+export function isKeyOfCCLSettings(key: unknown): key is keyof CCLSettings {
+	return CCLSettingsKeys.includes(key as keyof CCLSettings);
+}
+
+export function checkCCLSettingType(key: keyof CCLSettings, value: unknown): value is CCLSettings[keyof CCLSettings] {
+	switch (key) {
+		case "cardBack":
+			return isString(value);
+		case "cardTitleHeightFactor":
+			return isNumber(value);
+		case "showSlots":
+			return isBoolean(value);
+		case "boosterSettings":
+			return (
+				isObject(value) &&
+				hasProperty("picks", isArrayOf(isNumber))(value) &&
+				hasProperty("burns", isArrayOf(isNumber))(value)
+			);
+		case "predeterminedLayouts":
+			return isArrayOf(
+				isArrayOf(
+					(val) => isObject(val) && hasProperty("name", isString)(val) && hasProperty("weight", isNumber)(val)
+				)
+			)(value);
+		case "layoutWithReplacement":
+			return isBoolean(value);
+		case "duplicateProtection":
+			return isBoolean(value);
+		case "boostersPerPlayer":
+			return isNumber(value);
+		case "withReplacement":
+			return isBoolean(value);
+		case "colorBalance":
+			return isBoolean(value);
+		case "refillWhenEmpty":
+			return isBoolean(value);
 	}
 }

@@ -1,0 +1,15 @@
+[Settings]
+{
+	"name": "Settings Test",
+	"withReplacement": false,
+	"refillWhenEmpty": true,
+	"colorBalance": true,
+}
+[Slot0(15)]
+Healing Salve
+Ancestral Recall
+Dark Ritual
+Lightning Bolt
+Giant Growth
+Black Lotus
+

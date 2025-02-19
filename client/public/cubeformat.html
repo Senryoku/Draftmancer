@@ -228,6 +228,7 @@ Card Name 6
 	// They can still be overridden by the user via the UI.</comment>
 	boostersPerPlayer: <type>number</type>;          <comment>// Specify the default value of the "boostersPerPlayer" session setting.</comment>
 	withReplacement: <type>boolean</type>;           <comment>// Specify the default value of the "withReplacement" session setting. When enabled, cards are in illimited quantities and their count only affect their probability of being selected (defaults to false).</comment>
+	refillWhenEmpty: <type>boolean</type>;           <comment>// Resets the sheets when emptied instead of erroring. Allows playing a cube with more players than intended without skewing the distribution too far from the original intent (defaults to false).</comment>
 	duplicateProtection: <type>boolean</type>;       <comment>// Specify the default value of the "duplicateProtection" session setting. Prevents duplicates within a booster (defaults to true).</comment>
 	colorBalance: <type>boolean</type>;              <comment>// Specify the default value of the "colorBalance" session setting. Tries to include one card of each color in the largest slot (defaults to true).</comment>
 

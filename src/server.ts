@@ -42,6 +42,7 @@ import { MTGACards, getUnique, getCard } from "./Cards.js";
 import { parseLine, parseCardList, XMageToArena } from "./parseCardList.js";
 import { SessionID, UserID } from "./IDTypes.js";
 import { CustomCardList } from "./CustomCardList.js";
+import { checkCCLSettingType, isKeyOfCCLSettings } from "./CustomCardListUtils.js";
 import { DraftLog } from "./DraftLog.js";
 import {
 	hasOptionalProperty,
@@ -1254,6 +1255,25 @@ function setCustomCardListDuplicateProtection(
 	Sessions[sessionID].emitToConnectedNonOwners("sessionOptions", { customCardListDuplicateProtection });
 }
 
+function setCustomCardListSetting(userID: UserID, sessionID: SessionID, key: unknown, value: unknown) {
+	if (!isString(key)) return console.error(`setCustomCardListSetting: Invalid key type '${typeof key}': '${key}'`);
+	if (!isKeyOfCCLSettings(key)) return console.error(`setCustomCardListSetting: Invalid key '${key}'`);
+	if (!checkCCLSettingType(key, value))
+		return console.error(
+			`setCustomCardListSetting: Invalid value type '${typeof value}': '${value}' for key '${key}'`
+		);
+
+	if (!Sessions[sessionID].customCardList) return;
+	if (!Sessions[sessionID].customCardList.settings)
+		Sessions[sessionID].customCardList.settings = { refillWhenEmpty: false };
+
+	if (Sessions[sessionID].customCardList.settings[key] === value) return;
+
+	(Sessions[sessionID].customCardList.settings as IIndexable)[key] = value;
+	console.log(Sessions[sessionID].customCardList.settings);
+	Sessions[sessionID].emitToConnectedUsers("updateCustomCardListSetting", key, value);
+}
+
 function setDoubleMastersMode(userID: UserID, sessionID: SessionID, doubleMastersMode: boolean) {
 	if (!SessionsSettingsProps.doubleMastersMode(doubleMastersMode)) return;
 	if (doubleMastersMode === Sessions[sessionID].doubleMastersMode) return;
@@ -1648,6 +1668,7 @@ io.on("connection", async function (socket) {
 			"setCustomCardListDuplicateProtection",
 			prepareSocketCallback(setCustomCardListDuplicateProtection, true)
 		);
+		socket.on("setCustomCardListSetting", prepareSocketCallback(setCustomCardListSetting, true));
 		socket.on("setDoubleMastersMode", prepareSocketCallback(setDoubleMastersMode, true));
 		socket.on("setPickedCardsPerRound", prepareSocketCallback(setPickedCardsPerRound, true));
 		socket.on("setBurnedCardsPerRound", prepareSocketCallback(setBurnedCardsPerRound, true));

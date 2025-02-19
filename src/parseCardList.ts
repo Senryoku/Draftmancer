@@ -259,7 +259,7 @@ function parseSettings(
 			`Settings must be an object. Refer to <a href="https://draftmancer.com/cubeformat.html" target="_blank">the documentation</a> for more information.`
 		);
 
-	const settings: CCLSettings = {};
+	const settings: CCLSettings = { refillWhenEmpty: false };
 	const topLevelProperties: { name?: string; cubeCobraID?: string } = {};
 
 	if ("name" in parsedSettings) {
@@ -456,6 +456,11 @@ function parseSettings(
 	if ("colorBalance" in parsedSettings) {
 		if (!isBoolean(parsedSettings.colorBalance)) return err(`'colorBalance' must be a boolean.`);
 		settings.colorBalance = parsedSettings.colorBalance;
+	}
+
+	if ("refillWhenEmpty" in parsedSettings) {
+		if (!isBoolean(parsedSettings.refillWhenEmpty)) return err(`'refillWhenEmpty' must be a boolean.`);
+		settings.refillWhenEmpty = parsedSettings.refillWhenEmpty;
 	}
 
 	if (settings.predeterminedLayouts) {

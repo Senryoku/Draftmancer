@@ -30,6 +30,9 @@ export const ValidCubes: { [name: string]: string } = {
 	CustomCards_Props: fs.readFileSync(`./test/data/CustomCards_Props.txt`, "utf8"),
 	ZRWK: fs.readFileSync(`./test/data/ZRWK_draftmancer_showslots.txt`, "utf8"),
 	StripedCollation_LEB: fs.readFileSync(`./test/data/StripedCollation_LEB.txt`, "utf8"),
+	RefillWhenEmpty_NoLayout: fs.readFileSync(`./test/data/RefillWhenEmpty_NoLayout.txt`, "utf8"),
+	RefillWhenEmpty_Layouts: fs.readFileSync(`./test/data/RefillWhenEmpty_Layouts.txt`, "utf8"),
+	RefillWhenEmpty_ColorBalance: fs.readFileSync(`./test/data/RefillWhenEmpty_ColorBalance.txt`, "utf8"),
 };
 
 export const InvalidCubes: { [name: string]: string } = {

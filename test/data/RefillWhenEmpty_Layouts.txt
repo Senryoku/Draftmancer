@@ -1,0 +1,31 @@
+[Settings]
+{
+	"name": "Settings Test",
+	"withReplacement": false,
+	"refillWhenEmpty": true,
+	"layouts": {
+		"Normal" : {
+			"weight": 3,
+			"slots": {
+				"Slot1" : 10,
+				"Slot2" : 3,
+				"Slot3" : 1
+			}
+		},
+		"Lucky": {
+			"weight": 1,
+			"slots": {
+				"Slot1" : 9,
+				"Slot2" : 3,
+				"Slot3" : 2
+			}
+		}
+	}
+}
+[Slot1]
+7 Adventure Awaits
+[Slot2]
+13 Akoum Hellhound
+[Slot3]
+1 Underworld Breach
+1 Angelheart Protector
