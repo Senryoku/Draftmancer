@@ -845,6 +845,11 @@
         "fullName": "The Brothers' War Jumpstart Front Cards",
         "icon": "img/sets/fbro.svg"
     },
+    "fca": {
+        "code": "fca",
+        "fullName": "Final Fantasy: Through the Ages",
+        "icon": "img/sets/fca.svg"
+    },
     "fclu": {
         "code": "fclu",
         "fullName": "Ravnica: Clue Edition Front Cards",
@@ -875,6 +880,16 @@
         "code": "ffdn",
         "fullName": "Foundations Front Cards",
         "icon": "img/sets/ffdn.svg"
+    },
+    "fic": {
+        "code": "fic",
+        "fullName": "Final Fantasy Commander",
+        "icon": "img/sets/fic.svg"
+    },
+    "fin": {
+        "code": "fin",
+        "fullName": "Final Fantasy",
+        "icon": "img/sets/fin.svg"
     },
     "fj22": {
         "code": "fj22",
@@ -2040,6 +2055,11 @@
         "fullName": "Premium Deck Series: Graveborn",
         "icon": "img/sets/pd3.svg"
     },
+    "pdft": {
+        "code": "pdft",
+        "fullName": "Aetherdrift Promos",
+        "icon": "img/sets/pdft.svg"
+    },
     "pdgm": {
         "code": "pdgm",
         "fullName": "Dragon's Maze Promos",
@@ -2387,6 +2407,11 @@
         "code": "pl24",
         "fullName": "Year of the Dragon 2024",
         "icon": "img/sets/pl24.svg"
+    },
+    "pl25": {
+        "code": "pl25",
+        "fullName": "Year of the Snake 2025",
+        "icon": "img/sets/pl25.svg"
     },
     "plc": {
         "code": "plc",
@@ -3403,6 +3428,17 @@
         "fullName": "Defeat a God",
         "block": "Theros",
         "icon": "img/sets/tdag.svg"
+    },
+    "tdc": {
+        "code": "tdc",
+        "fullName": "Tarkir: Dragonstorm Commander",
+        "block": "Commander",
+        "icon": "img/sets/tdc.svg"
+    },
+    "tdm": {
+        "code": "tdm",
+        "fullName": "Tarkir: Dragonstorm",
+        "icon": "img/sets/tdm.svg"
     },
     "tdrc": {
         "code": "tdrc",
