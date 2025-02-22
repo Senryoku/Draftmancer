@@ -55,11 +55,16 @@ export function matchCardVersion(
 		(c) => (!set || c.set === set) && (!collector_number || c.collector_number === collector_number)
 	);
 
-	if (candidates.length > 0)
+	if (candidates.length > 0) {
 		return candidates.reduce((best, c) => {
-			if (parseInt(c.collector_number) < parseInt(best.collector_number)) return c;
+			const c_cn = Number(c.collector_number);
+			const best_cn = Number(best.collector_number);
+			if (isNaN(c_cn)) return best;
+			if (isNaN(best_cn)) return c;
+			if (c_cn < best_cn) return c;
 			return best;
 		}, candidates[0]).id;
+	}
 
 	if (fallbackToCardName && name in CardsByName) return CardsByName[name];
 
