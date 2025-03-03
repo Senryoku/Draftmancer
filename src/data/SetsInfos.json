@@ -2444,6 +2444,11 @@
         "fullName": "Love Your LGS 2024",
         "icon": "img/sets/plg24.svg"
     },
+    "plg25": {
+        "code": "plg25",
+        "fullName": "Love Your LGS 2025",
+        "icon": "img/sets/plg25.svg"
+    },
     "plgm": {
         "code": "plgm",
         "fullName": "DCI Legend Membership",
@@ -2861,6 +2866,11 @@
         "fullName": "Shadowmoor Promos",
         "block": "Shadowmoor",
         "icon": "img/sets/pshm.svg"
+    },
+    "psldsc": {
+        "code": "psldsc",
+        "fullName": "Secret Lair Showcase Planes",
+        "icon": "img/sets/psldsc.svg"
     },
     "psnc": {
         "code": "psnc",
@@ -3316,6 +3326,11 @@
         "fullName": "Scars of Mirrodin",
         "block": "Scars of Mirrodin",
         "icon": "img/sets/som.svg"
+    },
+    "spe": {
+        "code": "spe",
+        "fullName": "Marvel's Spider-Man Eternal",
+        "icon": "img/sets/spe.svg"
     },
     "spg": {
         "code": "spg",
