@@ -47,7 +47,8 @@ export function sendDraftLogToCubeCobra(session: Session) {
 			session.useCustomCardList &&
 			session.customCardList.cubeCobraID &&
 			session.sendResultsToCubeCobra &&
-			session.draftLog
+			session.draftLog &&
+			!session.draftLog.delayed
 		) {
 			console.log(`Sending draft log to CubeCobra (CubeID: ${session.customCardList.cubeCobraID})...`);
 

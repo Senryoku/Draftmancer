@@ -49,7 +49,7 @@ import {
 	ToastMessage,
 } from "./Message.js";
 import { InactiveSessions, logSession } from "./Persistence.js";
-import { sendDecks } from "./BotTrainingAPI.js";
+import { sendDecksToCubeArtisan } from "./BotTrainingAPI.js";
 import { IBracket, SingleBracket, TeamBracket, SwissBracket, DoubleBracket, BracketType } from "./Brackets.js";
 import { CustomCardList, getSheetCardIDs } from "./CustomCardList.js";
 import { generateBoosterFromCustomCardList, generateCustomGetCardFunction } from "./CustomCardListUtils.js";
@@ -86,6 +86,7 @@ import { askColors, choosePlayer } from "./Conspiracy.js";
 import { InProduction, InTesting, TestingOnly } from "./Context.js";
 
 import { MatchResults, EventCompleted, Result } from "./MTGOAPI.js";
+import { sendDraftLogToCubeCobra } from "./cubeCobraIntegration.js";
 
 // Tournament timer depending on the number of remaining cards in a pack.
 const TournamentTimer = [
@@ -110,6 +111,8 @@ const TournamentTimer = [
 function removeBasics(cards: UniqueCard[]): UniqueCard[] {
 	return cards.filter((card) => !EnglishBasicLandNames.includes(card.name));
 }
+
+const StableLogTimeout = 5 * 60 * 1000; // ms
 
 export class Session implements IIndexable {
 	id: SessionID;
@@ -172,7 +175,7 @@ export class Session implements IIndexable {
 	disconnectedUsers: { [uid: UserID]: DisconnectedUser } = {};
 	draftPaused: boolean = false;
 
-	sendDecklogTimeout?: NodeJS.Timeout = undefined; // Timeout for sending deck logs to cube artisan.
+	stableLogTimeout?: NodeJS.Timeout = undefined; // Timeout for sending final logs to Cube Cobra/CubeArtisan.
 
 	lastTakeOverRequest: number = 0;
 
@@ -193,8 +196,11 @@ export class Session implements IIndexable {
 
 	// Expected to be called before disposing of a Session.
 	beforeDelete() {
-		// We had a pending sendDecklog, cancel the timeout and execute it immediately.
-		if (this.sendDecklogTimeout) this.sendDecklog();
+		// If we had a pending onStableLog, cancel the timeout and execute it immediately.
+		if (this.stableLogTimeout) {
+			clearTimeout(this.stableLogTimeout);
+			this.onStableLog();
+		}
 		if (isDraftState(this.draftState) && this.draftState.pendingTimeout)
 			clearTimeout(this.draftState.pendingTimeout);
 		if (this.bracket?.MTGOSynced)
@@ -2739,7 +2745,8 @@ export class Session implements IIndexable {
 							);
 					this.finalizeLogs();
 					this.sendLogs();
-					this.initSendDecklogTimeout();
+					// Avoid making the logs public elsewhere when they're not sent to players.
+					if (this.draftLogRecipients !== "none") this.initStableLogTimeout();
 				} catch (e) {
 					console.error(`Error handling log in endDraft for session ${this.id}:`, e);
 				}
@@ -2812,7 +2819,7 @@ export class Session implements IIndexable {
 	///////////////////// Traditional Draft End  //////////////////////
 
 	initLogs(type: string = "Draft", boosters: UniqueCard[][]): DraftLog {
-		if (this.draftLog && this.sendDecklogTimeout) this.sendDecklog(); // Immediately send pending decklog, if any, before overwriting the logs.
+		if (this.draftLog && this.stableLogTimeout) this.onStableLogTimeout(); // Immediately send pending decklog, if any, before overwriting the logs.
 
 		const carddata: { [cid: string]: Card } = {};
 		const customGetCard = this.getCustomGetCardFunction();
@@ -2957,6 +2964,9 @@ export class Session implements IIndexable {
 		if (!this.draftLog || !this.draftLog.delayed || this.draftLog.time !== logTimestamp) return;
 		this.draftLog.delayed = false;
 		this.draftLog.lastUpdated = Date.now();
+		// If there's no scheduled log upload (for example if the session was closed before the logs were unlocked),
+		// send them to Cube Cobra now.
+		if (!this.stableLogTimeout) sendDraftLogToCubeCobra(this);
 		this.emitToConnectedUsers("draftLog", this.draftLog);
 	}
 
@@ -2988,7 +2998,7 @@ export class Session implements IIndexable {
 		this.draftLog.users[userID].decklist = computeHashes(this.draftLog.users[userID].decklist!, {
 			getCard: this.getCustomGetCardFunction(),
 		});
-		this.rescheduleSendDecklogTimeout();
+		this.rescheduleStableLogTimeout();
 		this.draftLog.lastUpdated = Date.now();
 	}
 
@@ -3068,28 +3078,44 @@ export class Session implements IIndexable {
 	}
 
 	// Send decklogs to CubeArtisan after 5min of inactivity (or when the session is closed).
-	initSendDecklogTimeout() {
-		if (this.sendDecklogTimeout) return;
-		this.sendDecklogTimeout = setTimeout(this.sendDecklog.bind(this), 5 * 60 * 1000);
+	initStableLogTimeout() {
+		if (this.stableLogTimeout) return;
+		this.stableLogTimeout = setTimeout(this.onStableLogTimeout.bind(this), StableLogTimeout);
 	}
 
 	// Delay sending deck logs to CubeArtisan. Intended to be called repeatedly while users are still tweaking their decks.
-	rescheduleSendDecklogTimeout() {
+	rescheduleStableLogTimeout() {
 		// Not scheduled, ignore (we don't want to send the same log twice).
-		if (!this.sendDecklogTimeout) return;
+		if (!this.stableLogTimeout) return;
 
-		clearTimeout(this.sendDecklogTimeout);
-		this.sendDecklogTimeout = setTimeout(this.sendDecklog.bind(this), 5 * 60 * 1000);
+		clearTimeout(this.stableLogTimeout);
+		this.stableLogTimeout = setTimeout(this.onStableLogTimeout.bind(this), StableLogTimeout);
 	}
 
-	// Sends decks to CubeArtisan for bot training.
-	sendDecklog() {
+	// Executed when logs (decks) have not been updated for a while.
+	onStableLogTimeout() {
 		// Not scheduled, ignore (we don't want to send the same log twice).
-		if (!this.sendDecklogTimeout) return;
+		if (!this.stableLogTimeout) return;
 
-		clearTimeout(this.sendDecklogTimeout);
-		this.sendDecklogTimeout = undefined;
-		if (this.draftLog) sendDecks(this.draftLog);
+		// Logs are not public yet, reschedule.
+		if (this.draftLog?.delayed) {
+			this.rescheduleStableLogTimeout();
+			return;
+		}
+
+		clearTimeout(this.stableLogTimeout);
+		this.stableLogTimeout = undefined;
+		this.onStableLog();
+	}
+
+	// Called when logs are stable (i.e. players haven't changed their decks in a while) or when disposing of the session.
+	//   Sends decks to CubeArtisan for bot training.
+	//   Sends logs to Cube Cobra for storing.
+	onStableLog() {
+		if (this.draftLog) {
+			sendDecksToCubeArtisan(this.draftLog);
+			sendDraftLogToCubeCobra(this);
+		}
 	}
 
 	distributeSealed(boostersPerPlayer: number, customBoosters: Array<string>): SocketAck {

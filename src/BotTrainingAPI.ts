@@ -39,13 +39,12 @@ export function sendLog(type: string, session: Session) {
 			UsableDraftEffect.LeovoldsOperative,
 		];
 		if (
-			Object.values(session.draftLog.carddata).some(
-				(c) => c.draft_effects?.some((effect) => excludedEffects.includes(effect.type))
+			Object.values(session.draftLog.carddata).some((c) =>
+				c.draft_effects?.some((effect) => excludedEffects.includes(effect.type))
 			)
 		)
 			return;
 
-		// Send log to MTGDraftbots endpoint
 		if (type === "Draft" && !session.customCardList?.customCards) {
 			const players = [];
 			for (const uid in session.draftLog.users) {
@@ -89,6 +88,7 @@ export function sendLog(type: string, session: Session) {
 				}
 			}
 
+			// Send to CubeArtisan
 			if (MTGDraftbotsAPIKey && !InTesting && InProduction && players.length > 0) {
 				const data: MTGDraftbotsLog = {
 					players: players,
@@ -106,6 +106,7 @@ export function sendLog(type: string, session: Session) {
 					.catch((err) => console.error("Error sending logs to CubeArtisan: ", err.message));
 			}
 
+			// Send to DraftmancerAI
 			if (
 				LogStoreEndpoint &&
 				!InTesting &&
@@ -136,7 +137,7 @@ export function sendLog(type: string, session: Session) {
 	}
 }
 
-export function sendDecks(log: DraftLog) {
+export function sendDecksToCubeArtisan(log: DraftLog) {
 	if (!InTesting && InProduction && MTGDraftbotsAPIKey) {
 		// Ignore drafts containing custom cards
 		if (Object.values(log.carddata).some((c) => c.is_custom)) return;
