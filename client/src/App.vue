@@ -2664,7 +2664,7 @@
 									<span v-if="cube.cubeCobraID" style="font-size: 0.75em">(Cube Cobra)</span>
 								</option>
 							</select>
-							<button @click="selectCube(selectedCube)" style="min-width: auto">
+							<button @click="selectCube(selectedCube, true, true)" style="min-width: auto">
 								<img
 									v-if="selectedCube.cubeCobraID"
 									class="set-icon"
