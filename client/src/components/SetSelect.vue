@@ -324,4 +324,3 @@ onUnmounted(() => {
 	padding-left: 0;
 }
 </style>
-../../../src/SetInfos
