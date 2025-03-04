@@ -2867,11 +2867,6 @@
         "block": "Shadowmoor",
         "icon": "img/sets/pshm.svg"
     },
-    "psldsc": {
-        "code": "psldsc",
-        "fullName": "Secret Lair Showcase Planes",
-        "icon": "img/sets/psldsc.svg"
-    },
     "psnc": {
         "code": "psnc",
         "fullName": "Streets of New Capenna Promos",
@@ -3820,6 +3815,11 @@
         "fullName": "Alchemy: The Brothers' War",
         "block": "Alchemy 2023",
         "icon": "img/sets/ybro.svg"
+    },
+    "ydft": {
+        "code": "ydft",
+        "fullName": "Alchemy: Aetherdrift",
+        "icon": "img/sets/ydft.svg"
     },
     "ydmu": {
         "code": "ydmu",
