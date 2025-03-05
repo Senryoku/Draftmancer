@@ -70,6 +70,10 @@
 			"en": "https://cards.scryfall.io/large/front/b/9/b9b6ec63-7df4-450e-b849-920121fe245c.jpg?1695422185"
 		},
 	},
+	{
+		"name": "Image Prop.",
+		"collector_number": "729-DefaultImage",
+	},
 ]
 [DefaultSlot]
 Nazgûl
@@ -80,4 +84,5 @@ Nazgûl (LTR) 334
 Image Prop.
 Image Prop. (LTR) 729
 Image Prop. (LTR) 730
+Image Prop. (LTR) 729-DefaultImage
 Card related to Nazgûl somehow

@@ -133,23 +133,24 @@ export function validateCustomCard(inputCard: any): SocketError | Card {
 	if ("image_uris" in inputCard && "image" in inputCard)
 		return valErr("Invalid Property", "Only one of 'image_uris' or 'image' can be used.");
 
+	// Defaults to an invalid image. The client will display a placeholder.
+	// This might seem odd, but the client will always have to handle the case where the image is invalid or unreachable anyway.
+	let image_uris = { en: "" };
+
 	if ("image_uris" in inputCard) {
 		if (Object.keys(inputCard["image_uris"]).length === 0)
 			return valErr(
 				`Invalid Property`,
 				`Invalid property 'image_uris' in custom card: Should have at least one entry.`
 			);
-		if (!Object.keys(inputCard["image_uris"]).includes("en")) {
+		if (!Object.keys(inputCard["image_uris"]).includes("en"))
 			return valErr(`Invalid Property`, `Invalid property 'image_uris' in custom card: Missing 'en' property.`);
-		}
+		image_uris = inputCard["image_uris"];
 	} else if ("image" in inputCard) {
 		// Shortcut for specifying a single image
 		if (!isString(inputCard.image))
 			return valErr("Invalid Property", "Invalid  property 'image' in custom card, must be a string.");
-		inputCard.image_uris = { en: inputCard.image };
-	} else {
-		inputCard.image_uris = { en: "" }; // Defaults to an invalid image. The client will display a placeholder.
-		// This might seem odd, but the client will always have to handle the case where the image is invalid or unreachable anyway.
+		image_uris = { en: inputCard.image };
 	}
 
 	if ("colors" in inputCard) {
@@ -193,7 +194,7 @@ export function validateCustomCard(inputCard: any): SocketError | Card {
 	card.in_booster = inputCard.in_booster ?? true;
 	card.layout = inputCard.layout;
 	card.printed_names = inputCard.printed_names ?? { en: inputCard.name };
-	card.image_uris = inputCard.image_uris;
+	card.image_uris = image_uris;
 	card.foil = inputCard.foil;
 	card.oracle_text = inputCard.oracle_text;
 	card.power = inputCard.power;
