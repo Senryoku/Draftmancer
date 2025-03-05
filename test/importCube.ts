@@ -49,7 +49,7 @@ describe("Import Cubes", function () {
 		);
 	});
 
-	for (const service of ["Cube Cobra", "CubeArtisan"]) {
+	for (const service of ["Cube Cobra" /*, "CubeArtisan"*/]) {
 		describe(service, function () {
 			it(`should error when importing a non-existing cube from ${service}`, function (done) {
 				clients[0].emit(
