@@ -2020,7 +2020,8 @@ export class Session implements IIndexable {
 			const card = cardOrNull;
 			if (!hasEffect(card, draftEffect.effect))
 				return reportError(`Invalid request: '${card.name}' do not have effect '${draftEffect.effect}'.`);
-			if (!card.state?.faceUp) return reportError("Already used this effect (Card is face down).");
+			if (hasEffect(card, OnPickDraftEffect.FaceUp) && !card.state?.faceUp)
+				return reportError("Already used this effect (Card is face down).");
 
 			const notifyDraftEffectUse = () => {
 				try {
