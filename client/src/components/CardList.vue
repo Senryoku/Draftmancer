@@ -291,10 +291,9 @@ async function getCards() {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-evenly;
-}
-
-.category-wrapper > .card-column {
-	margin-right: 1em;
+	margin-left: 2em;
+	margin-right: 2em;
+	gap: 1em;
 }
 
 .card-wrapper {
