@@ -2025,11 +2025,13 @@ export class Session implements IIndexable {
 
 			const notifyDraftEffectUse = () => {
 				try {
-					const str = `${Connections[userID].userName} used the effect of '${card.name}'.`;
-					const msg = new ToastMessage(str);
-					this.forUsers((uid) => {
-						if (uid !== userID) Connections[uid]?.socket.emit("message", msg, true);
-					});
+					if (hasEffect(card, OnPickDraftEffect.FaceUp)) {
+						const str = `${Connections[userID].userName} used the effect of '${card.name}'.`;
+						const msg = new ToastMessage(str);
+						this.forUsers((uid) => {
+							if (uid !== userID) Connections[uid]?.socket.emit("message", msg, true);
+						});
+					}
 				} catch (e) {
 					console.error("Error notifying of draft effect use: ", e);
 				}
