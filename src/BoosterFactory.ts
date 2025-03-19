@@ -3104,13 +3104,13 @@ class TDMBoosterFactory extends BoosterFactory {
 		);
 	}
 
-	static readonly Showcase = TDMBoosterFactory.filter(292, 375); // TODO
-	static readonly BorderlessClan = TDMBoosterFactory.filter(292, 375); // TODO
-	static readonly Borderless = TDMBoosterFactory.filter(292, 375); // TODO
-	static readonly BorderlessReversible = TDMBoosterFactory.filter(292, 375); // TODO
-	static readonly Basics = TDMBoosterFactory.filter(277, 291); // TODO
-	static readonly FullArtBasics = TDMBoosterFactory.filter(272, 276); // TODO
-	static readonly CommonDualLands = TDMBoosterFactory.filter(248, 271).filter((c) => getCard(c).rarity === "common"); // TODO
+	static readonly Showcase = TDMBoosterFactory.filter(292, 326); // TODO
+	static readonly BorderlessClan = TDMBoosterFactory.filter(327, 375); // TODO
+	static readonly Borderless = TDMBoosterFactory.filter(376, 408); // TODO
+	static readonly BorderlessReversible = TDMBoosterFactory.filter(377, 383); // TODO
+	static readonly Basics = TDMBoosterFactory.filter(277, 291);
+	static readonly FullArtBasics = TDMBoosterFactory.filter(272, 276);
+	static readonly CommonDualLands = TDMBoosterFactory.filter(250, 271).filter((c) => getCard(c).rarity === "common");
 
 	showcase: SlotedCardPool = {};
 	borderlessClan: SlotedCardPool = {};
@@ -3161,14 +3161,14 @@ class TDMBoosterFactory extends BoosterFactory {
 					0.011,
 					0.016,
 					0.014,
-					0.001, // FIXME: "less than 1%"
-					0.001, // FIXME: "less than 1%"
+					0.001 / 4, // FIXME: "less than 0.1%"
+					0.001 / 4, // FIXME: "less than 0.1%"
 					0.005,
 					0.001,
 					0.002,
-					0.001, // FIXME: "less than 1%"
+					0.001 / 4, // FIXME: "less than 0.1%"
 					0.001,
-					0.001, // FIXME: "less than 1%"
+					0.001 / 4, // FIXME: "less than 0.1%"
 				],
 				[
 					this.cardPool.common,
@@ -3199,7 +3199,7 @@ class TDMBoosterFactory extends BoosterFactory {
 		while (updatedTargets.rare > 0) {
 			updatedTargets.rare -= 1;
 			const pool = chooseWeighted(
-				[0.75, 0.125, 0.008, 0.006, 0.064, 0.012, 0.027, 0.001, 0.008, 0.009],
+				[0.75, 0.125, 0.008, 0.006, 0.064, 0.012, 0.027, 0.001, 0.008, 0.009], //  FIXME: Doesn't add up to 1
 				[
 					this.cardPool.rare,
 					this.cardPool.mythic,
@@ -3218,13 +3218,26 @@ class TDMBoosterFactory extends BoosterFactory {
 
 		// 1 Wildcard of any rarity from among the following:
 		//   A common (12.5%), uncommon (58.3%), rare (15.6%), or mythic rare (2.6%) from Tarkir: Dragonstorm's main set
-		//   A rare (0.2%) or mythic rare (0.1%) showcase draconic frame card
+		//   A rare (4.6%) or mythic rare (3.8%) showcase draconic frame card
 		//   A rare (1.3%) or mythic rare (0.2%) borderless clan card
 		//   A rare (0.6%) from among the borderless Sagas, Sieges, and lands or a borderless mythic rare Elspeth, Storm Slayer (less than 0.1%)
 		//   A rare (0.2%) or mythic rare (less than 0.1%) borderless reversible dragon
 		{
 			const pool = chooseWeighted(
-				[0.125, 0.583, 0.156, 0.026, 0.002, 0.001, 0.013, 0.002, 0.006, 0.001, 0.002, 0.001],
+				[
+					0.125,
+					0.583,
+					0.156,
+					0.026,
+					0.046,
+					0.038,
+					0.013,
+					0.002,
+					0.006,
+					0.006 / 7, // FIXME: "less than 0.1%"
+					0.002,
+					0.001, // FIXME: "less than 0.1%"
+				], //  FIXME: Doesn't add up to 1
 				[
 					this.cardPool.common,
 					this.cardPool.uncommon,
@@ -3252,7 +3265,7 @@ class TDMBoosterFactory extends BoosterFactory {
 		//   Can be 1 of 10 common two-color lands in non-foil (70.0%) or traditional foil (17.4%)
 		{
 			const pool = chooseWeighted(
-				[0.07 + 0.017, 0.035 + 0.009, 0.7 + 0.174],
+				[0.07 + 0.017, 0.035 + 0.009, 0.7 + 0.174], //  FIXME: Doesn't add up to 1
 				[TDMBoosterFactory.Basics, TDMBoosterFactory.FullArtBasics, TDMBoosterFactory.CommonDualLands]
 			);
 			const foil = random.realZeroToOneInclusive() <= 0.4;

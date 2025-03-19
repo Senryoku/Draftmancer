@@ -3450,11 +3450,6 @@
         "fullName": "Tarkir: Dragonstorm",
         "icon": "img/sets/tdm.svg"
     },
-    "tdrc": {
-        "code": "tdrc",
-        "fullName": "Aetherdrift Commander Tokens",
-        "icon": "img/sets/tdrc.svg"
-    },
     "tfth": {
         "code": "tfth",
         "fullName": "Face the Hydra",
