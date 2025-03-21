@@ -37,7 +37,7 @@ export function fallbackToSimpleBots(customCards: boolean, oracleIds: Array<Orac
 		if (DraftmancerAI.available && DraftmancerAI.models.includes(wantedModel)) return false;
 	}
 
-	if (CubeCobraBots.available && !["dft"].includes(wantedModel)) return false;
+	if (CubeCobraBots.available && !["dft", "tdm"].includes(wantedModel)) return false;
 
 	if (MTGDraftBotsAPI.available) {
 		// At this point only the MTGDraftBots prod model is suitable, make sure it knows most of the requested cards.
