@@ -314,7 +314,9 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
             handled += 1
 
             if c["oversized"] or c["layout"] in ["token", "double_faced_token", "emblem", "art_series"]:
-                continue
+                # Essence of Ajani is an playtest emblem that can played as a normal card.
+                if c["name"] not in ["Essence of Ajani"]:
+                    continue
 
             # Tag this card as a candidate for AKR card images (to avoid using MTGA images)
             if c["name"] in AKRCards:
