@@ -3104,10 +3104,10 @@ class TDMBoosterFactory extends BoosterFactory {
 		);
 	}
 
-	static readonly Showcase = TDMBoosterFactory.filter(292, 326); // TODO
-	static readonly BorderlessClan = TDMBoosterFactory.filter(327, 375); // TODO
-	static readonly Borderless = TDMBoosterFactory.filter(376, 408); // TODO
-	static readonly BorderlessReversible = TDMBoosterFactory.filter(377, 383); // TODO
+	static readonly Showcase = TDMBoosterFactory.filter(292, 326);
+	static readonly BorderlessClan = TDMBoosterFactory.filter(327, 376);
+	static readonly BorderlessReversible = TDMBoosterFactory.filter(377, 382); // TODO
+	static readonly Borderless = TDMBoosterFactory.filter(383, 398); // TODO
 	static readonly Basics = TDMBoosterFactory.filter(277, 291);
 	static readonly FullArtBasics = TDMBoosterFactory.filter(272, 276);
 	static readonly CommonDualLands = TDMBoosterFactory.filter(250, 271).filter((c) => getCard(c).rarity === "common");
