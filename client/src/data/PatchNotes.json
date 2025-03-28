@@ -1,5 +1,11 @@
 [
 	{
+		"date": "28/03/2025",
+		"notes": [
+			"Tarkir: Dragonstorm support."
+		]
+	},
+	{
 		"date": "01/02/2025",
 		"notes": [
 			"Aetherdrift support."

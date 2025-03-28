@@ -1,6 +1,13 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
+			<em>March 28, 2025</em>
+			<p>
+				<img src="img/sets/tdm.svg" class="set-icon" style="--invertedness: 100%" alt="TDM" /> Tarkir:
+				Dragonstorm is now available!<br />
+			</p>
+		</div>
+		<div class="news">
 			<em>February 1, 2025</em>
 			<p>
 				<img src="img/sets/dft.svg" class="set-icon" style="--invertedness: 100%" alt="DFT" /> Aetherdrift is
