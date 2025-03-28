@@ -450,11 +450,6 @@
         "block": "Ice Age",
         "icon": "img/sets/cst.svg"
     },
-    "da1": {
-        "code": "da1",
-        "fullName": "Unknown Event",
-        "icon": "img/sets/da1.svg"
-    },
     "dbl": {
         "code": "dbl",
         "fullName": "Innistrad: Double Feature",
