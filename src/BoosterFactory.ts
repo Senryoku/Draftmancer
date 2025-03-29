@@ -3218,7 +3218,8 @@ class TDMBoosterFactory extends BoosterFactory {
 
 		// 1 Wildcard of any rarity from among the following:
 		//   A common (12.5%), uncommon (58.3%), rare (15.6%), or mythic rare (2.6%) from Tarkir: Dragonstorm's main set
-		//   A rare (4.6%) or mythic rare (3.8%) showcase draconic frame card
+		//   A common (4.6%) or uncommon (3.8%) showcase draconic frame card
+		//   A rare (0.2%) or mythic rare (0.1%) showcase draconic frame card
 		//   A rare (1.3%) or mythic rare (0.2%) borderless clan card
 		//   A rare (0.6%) from among the borderless Sagas, Sieges, and lands or a borderless mythic rare Elspeth, Storm Slayer (less than 0.1%)
 		//   A rare (0.2%) or mythic rare (less than 0.1%) borderless reversible dragon
@@ -3229,26 +3230,38 @@ class TDMBoosterFactory extends BoosterFactory {
 					0.583,
 					0.156,
 					0.026,
+
 					0.046,
 					0.038,
+					0.002,
+					0.001,
+
 					0.013,
 					0.002,
+
 					0.006,
 					0.006 / 7, // FIXME: "less than 0.1%"
+
 					0.002,
-					0.001, // FIXME: "less than 0.1%"
+					0.0005, // FIXME: "less than 0.1%"
 				], //  FIXME: Doesn't add up to 1
 				[
 					this.cardPool.common,
 					this.cardPool.uncommon,
 					this.cardPool.rare,
 					this.cardPool.mythic,
+
+					this.showcase.common,
+					this.showcase.uncommon,
 					this.showcase.rare,
 					this.showcase.mythic,
-					this.borderlessClan.common,
-					this.borderlessClan.uncommon,
+
+					this.borderlessClan.rare,
+					this.borderlessClan.mythic,
+
 					this.borderless.rare,
 					this.borderless.mythic,
+
 					this.borderlessReversible.rare,
 					this.borderlessReversible.mythic,
 				]
