@@ -1908,7 +1908,7 @@ export const SpecialGuests = {
 	dsk: filterSetByNumber("spg", 64, 73),
 	fdn: filterSetByNumber("spg", 74, 83),
 	dft: filterSetByNumber("spg", 84, 93),
-	tdm: filterSetByNumber("spg", 104, 113), // FIXME: Double check.
+	tdm: filterSetByNumber("spg", 104, 113), // Next 5 SPG are exclusive to Collector Boosters
 };
 
 // NOTE: This mimics the ratios of wildcard set boosters described here: https://magic.wizards.com/en/news/making-magic/set-boosters-2020-07-25

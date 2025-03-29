@@ -3615,6 +3615,11 @@
         "fullName": "Unhinged",
         "icon": "img/sets/unh.svg"
     },
+    "unk": {
+        "code": "unk",
+        "fullName": "Unknown Event",
+        "icon": "img/sets/unk.svg"
+    },
     "usg": {
         "code": "usg",
         "fullName": "Urza's Saga",
