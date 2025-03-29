@@ -251,7 +251,7 @@ function parseCollection(
 		ack?.(cardList);
 		return;
 	}
-	if (cardList.sheets["default"].collation !== "random") {
+	if (!cardList.sheets["default"] || cardList.sheets["default"].collation !== "random") {
 		ack?.(new SocketError("Unexpected collection."));
 		return;
 	}
