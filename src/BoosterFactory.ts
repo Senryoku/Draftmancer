@@ -1908,6 +1908,7 @@ export const SpecialGuests = {
 	dsk: filterSetByNumber("spg", 64, 73),
 	fdn: filterSetByNumber("spg", 74, 83),
 	dft: filterSetByNumber("spg", 84, 93),
+	tdm: filterSetByNumber("spg", 104, 113), // Next 5 SPG are exclusive to Collector Boosters
 };
 
 // NOTE: This mimics the ratios of wildcard set boosters described here: https://magic.wizards.com/en/news/making-magic/set-boosters-2020-07-25
@@ -3095,6 +3096,199 @@ class DFTBoosterFactory extends BoosterFactory {
 	}
 }
 
+// Tarkir: Dragonstorm  (TDM) - https://magic.wizards.com/en/news/feature/collecting-tarkir-dragonstorm
+class TDMBoosterFactory extends BoosterFactory {
+	static filter(min: number, max: number) {
+		return CardsBySet["tdm"].filter(
+			(c) => parseInt(getCard(c).collector_number) >= min && parseInt(getCard(c).collector_number) <= max
+		);
+	}
+
+	static readonly Showcase = TDMBoosterFactory.filter(292, 326);
+	static readonly BorderlessClan = TDMBoosterFactory.filter(327, 376);
+	static readonly BorderlessReversible = TDMBoosterFactory.filter(377, 382); // TODO
+	static readonly Borderless = TDMBoosterFactory.filter(383, 398); // TODO
+	static readonly Basics = TDMBoosterFactory.filter(277, 291);
+	static readonly FullArtBasics = TDMBoosterFactory.filter(272, 276);
+	static readonly CommonDualLands = TDMBoosterFactory.filter(250, 271).filter((c) => getCard(c).rarity === "common");
+
+	showcase: SlotedCardPool = {};
+	borderlessClan: SlotedCardPool = {};
+	borderless: SlotedCardPool = {};
+	borderlessReversible: SlotedCardPool = {};
+	spg: SlotedCardPool = {};
+
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
+		const [, filteredCardPool] = filterCardPool(cardPool, (cid: CardID) =>
+			TDMBoosterFactory.CommonDualLands.includes(cid)
+		);
+		super(filteredCardPool, landSlot, options);
+		this.showcase = cidsToSlotedCardPool(TDMBoosterFactory.Showcase, options.maxDuplicates);
+		this.borderlessClan = cidsToSlotedCardPool(TDMBoosterFactory.BorderlessClan, options.maxDuplicates);
+		this.borderless = cidsToSlotedCardPool(TDMBoosterFactory.Borderless, options.maxDuplicates);
+		this.borderlessReversible = cidsToSlotedCardPool(TDMBoosterFactory.BorderlessReversible, options.maxDuplicates);
+		this.spg = cidsToSlotedCardPool(SpecialGuests.tdm, options.maxDuplicates);
+	}
+
+	generateBooster(targets: Targets) {
+		const updatedTargets = structuredClone(targets);
+		// 6–7 Commons
+		if (targets === DefaultBoosterTargets) updatedTargets.common = Math.max(0, updatedTargets.common - 3);
+		else updatedTargets.common = Math.max(1, updatedTargets.common - 2);
+		// 3 Uncommons
+
+		const booster: UniqueCard[] = [];
+
+		// In 1.5% of Play Boosters, 1 of these commons will be replaced with 1 of the 10 Special Guests cards in non-foil. Of note, Special Guests cards aren't found in the wildcard nor traditional foil slot in Play Boosters.
+		const spgRoll = random.realZeroToOneInclusive();
+		if (spgRoll < 0.015) {
+			updatedTargets.common = Math.max(0, updatedTargets.common - 1);
+			booster.push(pickCard(this.spg.mythic, booster, { foil: false }));
+		}
+
+		// 1 Traditional foil card of any rarity from among the following:
+		//   A common (56.5%), uncommon (32%), rare (6.4%), or mythic rare (1.1%) from Tarkir: Dragonstorm's main set
+		//   A common (1.6%), uncommon (1.4%), rare (less than 0.1%), or mythic rare (less than 0.1%) showcase draconic frame card
+		//   A rare (0.5%) or mythic rare (0.1%) borderless clan card
+		//   A rare (0.2%) from among the borderless Sagas, Sieges, and lands or a borderless mythic rare Elspeth, Storm Slayer (less than 0.1%)
+		//   A rare (0.1%) or mythic rare (less than 0.1%) borderless reversible dragon
+		{
+			const pool = chooseWeighted(
+				[
+					0.565,
+					0.32,
+					0.064,
+					0.011,
+					0.016,
+					0.014,
+					0.001 / 4, // FIXME: "less than 0.1%"
+					0.001 / 4, // FIXME: "less than 0.1%"
+					0.005,
+					0.001,
+					0.002,
+					0.001 / 4, // FIXME: "less than 0.1%"
+					0.001,
+					0.001 / 4, // FIXME: "less than 0.1%"
+				],
+				[
+					this.cardPool.common,
+					this.cardPool.uncommon,
+					this.cardPool.rare,
+					this.cardPool.mythic,
+					this.showcase.common,
+					this.showcase.uncommon,
+					this.showcase.rare,
+					this.showcase.mythic,
+					this.borderlessClan.rare,
+					this.borderlessClan.mythic,
+					this.borderless.rare,
+					this.borderless.mythic,
+					this.borderlessReversible.rare,
+					this.borderlessReversible.mythic,
+				]
+			);
+			booster.push(pickCard(pool, booster, { foil: true }));
+		}
+
+		// 1 Rare or mythic rare card from among the following:
+		//   A rare (75%) or mythic rare (12.5%) from Tarkir: Dragonstorm's main set
+		//   A rare (0.8%) or mythic rare (0.6%) showcase draconic frame card
+		//   A rare (6.4%) or mythic rare (1.2%) borderless clan card
+		//   A rare (2.7%) from among the borderless Sagas, Sieges, and lands or a borderless mythic rare Elspeth, Storm Slayer (0.1%)
+		//   A rare (0.8%) or mythic rare (0.9%) borderless reversible dragon
+		while (updatedTargets.rare > 0) {
+			updatedTargets.rare -= 1;
+			const pool = chooseWeighted(
+				[0.75, 0.125, 0.008, 0.006, 0.064, 0.012, 0.027, 0.001, 0.008, 0.009], //  FIXME: Doesn't add up to 1
+				[
+					this.cardPool.rare,
+					this.cardPool.mythic,
+					this.showcase.rare,
+					this.showcase.mythic,
+					this.borderlessClan.rare,
+					this.borderlessClan.mythic,
+					this.borderless.rare,
+					this.borderless.mythic,
+					this.borderlessReversible.rare,
+					this.borderlessReversible.mythic,
+				]
+			);
+			booster.push(pickCard(pool, booster));
+		}
+
+		// 1 Wildcard of any rarity from among the following:
+		//   A common (12.5%), uncommon (58.3%), rare (15.6%), or mythic rare (2.6%) from Tarkir: Dragonstorm's main set
+		//   A common (4.6%) or uncommon (3.8%) showcase draconic frame card
+		//   A rare (0.2%) or mythic rare (0.1%) showcase draconic frame card
+		//   A rare (1.3%) or mythic rare (0.2%) borderless clan card
+		//   A rare (0.6%) from among the borderless Sagas, Sieges, and lands or a borderless mythic rare Elspeth, Storm Slayer (less than 0.1%)
+		//   A rare (0.2%) or mythic rare (less than 0.1%) borderless reversible dragon
+		{
+			const pool = chooseWeighted(
+				[
+					0.125,
+					0.583,
+					0.156,
+					0.026,
+
+					0.046,
+					0.038,
+					0.002,
+					0.001,
+
+					0.013,
+					0.002,
+
+					0.006,
+					0.006 / 7, // FIXME: "less than 0.1%"
+
+					0.002,
+					0.0005, // FIXME: "less than 0.1%"
+				], //  FIXME: Doesn't add up to 1
+				[
+					this.cardPool.common,
+					this.cardPool.uncommon,
+					this.cardPool.rare,
+					this.cardPool.mythic,
+
+					this.showcase.common,
+					this.showcase.uncommon,
+					this.showcase.rare,
+					this.showcase.mythic,
+
+					this.borderlessClan.rare,
+					this.borderlessClan.mythic,
+
+					this.borderless.rare,
+					this.borderless.mythic,
+
+					this.borderlessReversible.rare,
+					this.borderlessReversible.mythic,
+				]
+			);
+			booster.push(pickCard(pool, booster));
+		}
+
+		const rest = super.generateBooster(updatedTargets, booster);
+		if (isMessageError(rest)) return rest;
+
+		// 1 Land card from among the following:
+		//   A non-foil default frame basic land (7.0%) or full-art dragon's presence basic land (3.5%)
+		//   A traditional foil default frame basic land (1.7%) or full-art dragon's presence basic land (0.9%)
+		//   Can be 1 of 10 common two-color lands in non-foil (70.0%) or traditional foil (17.4%)
+		{
+			const pool = chooseWeighted(
+				[0.07 + 0.017, 0.035 + 0.009, 0.7 + 0.174], //  FIXME: Doesn't add up to 1
+				[TDMBoosterFactory.Basics, TDMBoosterFactory.FullArtBasics, TDMBoosterFactory.CommonDualLands]
+			);
+			const foil = random.realZeroToOneInclusive() <= 0.4;
+			rest.push(getUnique(getRandom(pool), { foil }));
+		}
+
+		return rest;
+	}
+}
+
 // Set specific rules.
 // Neither DOM, WAR or ZNR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
 export const SetSpecificFactories: {
@@ -3147,6 +3341,7 @@ export const SetSpecificFactories: {
 	pio2: PIOBoosterFactoryBonusSheet2,
 	inr: INRBoosterFactory,
 	dft: DFTBoosterFactory,
+	tdm: TDMBoosterFactory,
 };
 
 export const getBoosterFactory = function (

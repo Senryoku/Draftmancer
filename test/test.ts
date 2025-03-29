@@ -285,6 +285,7 @@ describe("Sets content", function () {
 		pio: { common: 91, uncommon: 100, rare: 60, mythic: 27 },
 		inr: { common: 88, uncommon: 104, rare: 72, mythic: 23 },
 		dft: { common: 91, uncommon: 100, rare: 60, mythic: 20 }, // 81 commons plus 10 dual basics
+		tdm: { common: 91, uncommon: 100, rare: 60, mythic: 20 }, // 81 commons plus 10 dual basics
 	};
 
 	beforeEach(function (done) {
@@ -774,7 +775,7 @@ describe("Single Draft (Two Players)", function () {
 							set === "mkm" || // With the List, I give up.
 							set === "otj" ||
 							(set === "mh3" && (c.set === "spg" || c.set === "m3c")) ||
-							(["blb", "dsk", "fdn", "dft"].includes(set) && c.set === "spg") ||
+							(["blb", "dsk", "fdn", "dft", "tdm"].includes(set) && c.set === "spg") ||
 							(set === "mb2" && c.set === "plst")
 					),
 					`All cards in booster should be of the desired set, got [${[...new Set(b.map((c) => c.set))]}].`

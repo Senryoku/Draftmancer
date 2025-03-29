@@ -450,11 +450,6 @@
         "block": "Ice Age",
         "icon": "img/sets/cst.svg"
     },
-    "da1": {
-        "code": "da1",
-        "fullName": "Unknown Event",
-        "icon": "img/sets/da1.svg"
-    },
     "dbl": {
         "code": "dbl",
         "fullName": "Innistrad: Double Feature",
@@ -3450,11 +3445,6 @@
         "fullName": "Tarkir: Dragonstorm",
         "icon": "img/sets/tdm.svg"
     },
-    "tdrc": {
-        "code": "tdrc",
-        "fullName": "Aetherdrift Commander Tokens",
-        "icon": "img/sets/tdrc.svg"
-    },
     "tfth": {
         "code": "tfth",
         "fullName": "Face the Hydra",
@@ -3552,6 +3542,11 @@
         "fullName": "Time Spiral Remastered",
         "icon": "img/sets/tsr.svg"
     },
+    "ttdc": {
+        "code": "ttdc",
+        "fullName": "Tarkir: Dragonstorm Commander Tokens",
+        "icon": "img/sets/ttdc.svg"
+    },
     "tund": {
         "code": "tund",
         "fullName": "Unsanctioned Tokens",
@@ -3619,6 +3614,11 @@
         "code": "unh",
         "fullName": "Unhinged",
         "icon": "img/sets/unh.svg"
+    },
+    "unk": {
+        "code": "unk",
+        "fullName": "Unknown Event",
+        "icon": "img/sets/unk.svg"
     },
     "usg": {
         "code": "usg",

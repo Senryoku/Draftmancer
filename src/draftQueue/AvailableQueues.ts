@@ -1,8 +1,9 @@
 import { QueueDescription } from "./QueueDescription";
 
 export const AvailableQueues: readonly QueueDescription[] = [
+	{ id: "tdm", name: "Tarkir: Dragonstorm", playerCount: 8, setCode: "tdm" },
 	{ id: "dft", name: "Aetherdrift", playerCount: 8, setCode: "dft" },
-	{ id: "inr", name: "Innistrad Remastered", playerCount: 8, setCode: "inr" },
+	//{ id: "inr", name: "Innistrad Remastered", playerCount: 8, setCode: "inr" },
 	{ id: "fdn", name: "Foundations", playerCount: 8, setCode: "fdn" },
 	// { id: "dsk", name: "Duskmourn: House of Horror ", playerCount: 8, setCode: "dsk" },
 	// { id: "blb", name: "Bloomburrow", playerCount: 8, setCode: "blb" },

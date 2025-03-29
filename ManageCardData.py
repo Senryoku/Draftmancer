@@ -314,7 +314,9 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
             handled += 1
 
             if c["oversized"] or c["layout"] in ["token", "double_faced_token", "emblem", "art_series"]:
-                continue
+                # Essence of Ajani is an playtest emblem that can played as a normal card.
+                if c["name"] not in ["Essence of Ajani"]:
+                    continue
 
             # Tag this card as a candidate for AKR card images (to avoid using MTGA images)
             if c["name"] in AKRCards:
@@ -555,6 +557,8 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
                 except:
                     selection["in_booster"] = False
             case "dft":
+                selection["in_booster"] = safeInBoosterCheck(c, 271)
+            case "tdm":
                 selection["in_booster"] = safeInBoosterCheck(c, 271)
 
         if c["collector_number"].endswith("†"):
@@ -1055,7 +1059,7 @@ constants["PrimarySets"] = [
     for s in PrimarySets
     if s in setinfos
     and s not in subsets
-    and s not in ["ren", "rin", "a22", "y22", "j22", "sis", "ltc", "who", "wot", "acr", "fin", "tdm"]
+    and s not in ["ren", "rin", "a22", "y22", "j22", "sis", "ltc", "who", "wot", "acr", "fin"]
 ]  # Exclude some codes that are actually part of larger sets (tsb, fmb1, h1r... see subsets), or aren't out yet
 with open("src/data/constants.json", "w", encoding="utf8") as constantsFile:
     json.dump(constants, constantsFile, ensure_ascii=False, indent=4)
