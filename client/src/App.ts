@@ -3589,10 +3589,22 @@ export default defineComponent({
 		},
 		updateURLQuery(): void {
 			if (this.sessionID) {
+				const urlParams = getUrlVars();
+				const params = new URLSearchParams();
+
+				// Add session ID
+				params.append("session", this.sessionID);
+
+				// Add userName if it exists in the URL
+				if (urlParams.userName) {
+					params.append("userName", urlParams.userName);
+				}
+
+				// Update the URL
 				history.replaceState(
 					{ sessionID: this.sessionID },
 					`Draftmancer Session ${this.sessionID}`,
-					`/?session=${encodeURIComponent(this.sessionID)}`
+					`/?${params.toString()}`
 				);
 			}
 		},
@@ -3897,6 +3909,13 @@ export default defineComponent({
 		try {
 			this.emitter.on("notification", this.pushNotification);
 			this.emitter.on("requestNotificationPermission", this.requestNotificationPermission);
+
+			// Check for userName parameter in URL and set it if present
+			const urlParams = getUrlVars();
+			if (urlParams.userName) {
+				this.userName = decodeURIComponent(urlParams.userName);
+				console.log(`Setting username from URL parameter: ${this.userName}`);
+			}
 
 			this.initializeSocket();
 			this.updateURLQuery();
