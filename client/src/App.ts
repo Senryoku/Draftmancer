@@ -3589,11 +3589,9 @@ export default defineComponent({
 		},
 		updateURLQuery(): void {
 			if (this.sessionID) {
-				history.replaceState(
-					{ sessionID: this.sessionID },
-					`Draftmancer Session ${this.sessionID}`,
-					`/?session=${encodeURIComponent(this.sessionID)}`
-				);
+				const params = new URLSearchParams();
+				params.append("session", this.sessionID);
+				history.replaceState({ sessionID: this.sessionID }, "", `/?${params.toString()}`);
 			}
 		},
 		requestTakeover() {
