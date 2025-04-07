@@ -254,6 +254,8 @@ export default defineComponent({
 			} catch (e) {
 				console.error("Error retrieving window-specific data:", e);
 			}
+		} else if (urlParams["userName"]) {
+			userName = decodeURIComponent(urlParams["userName"]);
 		}
 
 		if (page === "draftqueue") sessionID = undefined;
