@@ -229,7 +229,8 @@ export default defineComponent({
 		setCookie("userID", userID);
 
 		const urlParamSession = urlParams.get("session");
-		let sessionID: string | undefined = urlParamSession ?? getCookie("sessionID", shortguid());
+		let sessionID: string | undefined =
+			urlParamSession && urlParamSession !== "" ? urlParamSession : getCookie("sessionID", shortguid());
 
 		let userName = initialSettings.userName;
 
@@ -252,7 +253,7 @@ export default defineComponent({
 			} catch (e) {
 				console.error("Error retrieving window-specific data:", e);
 			}
-		} else if (urlParams.has("userName")) {
+		} else if (urlParams.has("userName") && urlParams.get("userName") !== "") {
 			userName = urlParams.get("userName")!;
 		}
 

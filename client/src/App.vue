@@ -213,8 +213,14 @@
 		<div class="generic-container" v-if="sessionID !== undefined && !managed">
 			<div id="limited-controls" class="main-controls" v-bind:class="{ disabled: drafting }">
 				<span id="session-controls">
-					<div class="inline" v-tooltip="'Unique ID of your game session.'" style="margin-right: 0.25em">
-						<label for="session-id">Session ID</label>
+					<div
+						class="inline"
+						v-tooltip="
+							'Unique ID of your game session. Create a new session by entering a name of your choice.'
+						"
+						style="margin-right: 0.25em"
+					>
+						<label for="session-id">Session</label>
 						<delayed-input
 							v-model="sessionID"
 							autocomplete="off"
