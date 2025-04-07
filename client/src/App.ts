@@ -48,7 +48,7 @@ import {
 	randomStr4,
 	guid,
 	shortguid,
-	getUrlVars,
+	getURLParameters,
 	copyToClipboard,
 	escapeHTML,
 	sortableUpdate,
@@ -213,7 +213,7 @@ export default defineComponent({
 	},
 	data: () => {
 		const path = window.location.pathname.substring(1).split("/");
-		const urlParams = getUrlVars();
+		const urlParams = getURLParameters();
 		const validPages = ["", "draftqueue"];
 		const page = validPages.includes(path[0]) ? path[0] : "";
 
@@ -228,10 +228,8 @@ export default defineComponent({
 		let userID: UserID = getCookie("userID", guid());
 		setCookie("userID", userID);
 
-		const urlParamSession = urlParams["session"];
-		let sessionID: string | undefined = urlParamSession
-			? decodeURIComponent(urlParamSession)
-			: getCookie("sessionID", shortguid());
+		const urlParamSession = urlParams.get("session");
+		let sessionID: string | undefined = urlParamSession ?? getCookie("sessionID", shortguid());
 
 		let userName = initialSettings.userName;
 
@@ -254,8 +252,8 @@ export default defineComponent({
 			} catch (e) {
 				console.error("Error retrieving window-specific data:", e);
 			}
-		} else if (urlParams["userName"]) {
-			userName = decodeURIComponent(urlParams["userName"]);
+		} else if (urlParams.has("userName")) {
+			userName = urlParams.get("userName")!;
 		}
 
 		if (page === "draftqueue") sessionID = undefined;
@@ -268,10 +266,10 @@ export default defineComponent({
 			console.error("Error parsing stored session settings: ", e);
 		}
 
-		const cubeCobraID = urlParams["cubeCobraID"];
+		const cubeCobraID = urlParams.get("cubeCobraID");
 		if (cubeCobraID) {
 			storedSessionSettings.cubeCobraID = cubeCobraID;
-			const cubeCobraName = decodeURI(urlParams["cubeCobraName"]);
+			const cubeCobraName = urlParams.get("cubeCobraName");
 			if (cubeCobraName) storedSessionSettings.cubeCobraName = cubeCobraName;
 			sessionID = "CC_" + shortguid(); // NOTE: Setting the sessionID here to avoid having it visually set to a wrong value client-side until we hear back from the server.
 			//                                        The server will have the last word on the actually used ID (making sure we're in a fresh session).

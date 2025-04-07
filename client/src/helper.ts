@@ -32,12 +32,8 @@ export function shortguid() {
 	return s4() + s4() + s4();
 }
 
-export function getUrlVars() {
-	const vars: { [key: string]: string } = {};
-	window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, (m, key: string, value: string) => {
-		return (vars[key] = value);
-	});
-	return vars;
+export function getURLParameters() {
+	return new URLSearchParams(window.location.search);
 }
 
 // https://hackernoon.com/copying-text-to-clipboard-with-javascript-df4d4988697f

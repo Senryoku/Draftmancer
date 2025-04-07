@@ -33,7 +33,7 @@ import type { SessionID } from "@/IDTypes";
 import type { DraftLog } from "@/DraftLog";
 
 import { defineComponent } from "vue";
-import { getUrlVars } from "./helper";
+import { getURLParameters } from "./helper";
 import BracketComponent from "./components/Bracket.vue";
 import "floating-vue/dist/style.css";
 import { Language } from "../../src/Types";
@@ -52,8 +52,8 @@ export default defineComponent({
 		};
 	},
 	mounted: async function () {
-		let urlParamSession = getUrlVars()["session"];
-		if (urlParamSession) this.sessionID = decodeURI(urlParamSession);
+		let urlParamSession = getURLParameters().get("session");
+		if (urlParamSession) this.sessionID = urlParamSession;
 
 		try {
 			this.response = await fetch(`/getBracket/${this.sessionID}`);
