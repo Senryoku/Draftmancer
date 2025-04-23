@@ -871,7 +871,7 @@ function removePlayer(userID: UserID, sessionID: SessionID, userToRemove: UserID
 	)
 		return;
 
-	removeUserFromSession(userToRemove);
+	removeUserFromSession(sessionID, userToRemove);
 	Sessions[sessionID].replaceDisconnectedPlayers();
 	Sessions[sessionID].notifyUserChange();
 
@@ -1560,14 +1560,14 @@ io.on("connection", async function (socket) {
 			console.error("disconnect Error: Missing userID on socket.");
 			return;
 		}
-		if (userID in Connections && Connections[userID].socket === this) {
+		if (Connections[userID] && Connections[userID].socket === this) {
 			if (process.env.NODE_ENV !== "production")
 				console.log(
 					`${Connections[userID].userName} [${userID}] disconnected (${reason}). (${
 						Object.keys(Connections).length - 1
 					} players online)`
 				);
-			removeUserFromSession(userID);
+			if (Connections[userID].sessionID) removeUserFromSession(Connections[userID].sessionID, userID);
 			process.nextTick(() => {
 				if (Connections[userID]?.socket === this) delete Connections[userID];
 			});
@@ -1864,7 +1864,7 @@ function addUserToSession(userID: UserID, sessionID: SessionID, defaultSessionSe
 	if (!Connections[userID]) return console.error(`addUserToSession: No connection found for userID ${userID}`);
 
 	const currentSession = Connections[userID].sessionID;
-	if (currentSession && currentSession in Sessions) removeUserFromSession(userID);
+	if (currentSession && currentSession in Sessions) removeUserFromSession(currentSession, userID);
 
 	if (!(sessionID in Sessions)) {
 		if (currentSession && currentSession in Sessions)
@@ -1893,15 +1893,14 @@ function deleteSession(sessionID: SessionID) {
 }
 
 // Remove user from previous session and cleanup if empty
-function removeUserFromSession(userID: UserID) {
-	const sessionID = Connections[userID]?.sessionID;
-	if (sessionID && sessionID in Sessions) {
+function removeUserFromSession(sessionID: SessionID, userID: UserID) {
+	if (sessionID in Sessions) {
 		const sess = Sessions[sessionID];
 		if (sess.users.has(userID)) {
 			sess.remUser(userID);
 			if (sess.isPublic) updatePublicSession(sessionID);
 
-			Connections[userID].sessionID = undefined;
+			if (Connections[userID]) Connections[userID].sessionID = undefined;
 
 			//                           Keep session alive if the owner wasn't a player and is still connected.
 			if (sess.users.size === 0 && (sess.ownerIsPlayer || !(sess.owner && sess.owner in Connections))) {
