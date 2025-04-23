@@ -21,6 +21,7 @@ import {
 	SocketAck,
 	SocketError,
 	ToastMessage,
+	MessageError,
 } from "./Message.js";
 import { Constants } from "./Constants.js";
 import { InactiveConnections, InactiveSessions, restoreSession, getPoDSession, copyPODProps } from "./Persistence.js";
@@ -1469,7 +1470,7 @@ const prepareSocketCallback = <T extends Array<unknown>>(
 
 io.on("connection", async function (socket) {
 	const query = socket.handshake.query;
-	if (query.userID === undefined || query.userName === undefined) {
+	if (!isString(query.userID) || !isString(query.userName)) {
 		socket.disconnect(true);
 		return;
 	}
@@ -1479,7 +1480,7 @@ io.on("connection", async function (socket) {
 			`${query.userName} [${query.userID}] connected. (${Object.keys(Connections).length + 1} players online)`
 		);
 
-	if ((query.userID as string) in Connections) {
+	if (query.userID in Connections) {
 		console.log(`${query.userName} [${query.userID}] already connected.`);
 		// For some reason sockets doesn't always cleanly disconnects.
 		// Give 3sec. for the original socket to respond or we'll close it.
@@ -1487,40 +1488,68 @@ io.on("connection", async function (socket) {
 		const msg = new Message("Connecting...");
 		msg.allowOutsideClick = false;
 		socket.emit("message", msg);
-		await new Promise<void>((resolve) => {
-			((targetSocket) => {
+		const acceptConnection = await new Promise<boolean>((resolve) => {
+			((previousSocket) => {
 				const timeout = setTimeout(() => {
 					// Previous connection did not respond in time, close it and continue as normal.
-					targetSocket.disconnect();
+					previousSocket.disconnect();
 					// Wait for the socket to be properly disconnected and the previous Connection deleted.
 					process.nextTick(() => {
 						socket.emit("message", new ToastMessage("Connected"));
-						resolve();
+						resolve(true);
 					});
 				}, 3000);
-				targetSocket.emit("stillAlive", () => {
-					// Previous connection is still alive, generate a new userID.
+				previousSocket.emit("stillAlive", () => {
+					// Previous connection is still alive
 					clearTimeout(timeout);
+					const sessionID = Connections[query.userID as string].sessionID;
+					if (sessionID && Sessions[sessionID] && Sessions[sessionID].drafting) {
+						// The previous connection is in a game. If this was not intentional, assigning a new userID will prevent the user from reconnecting.
+						// I don't know what's the best way to handle this, and it seems like there's no good way to simulate a accidental lost websocket connection to properly test this.
+						// For now I'll reject this connection, hoping that the previous connection will close eventually if the reconnection was indeed not intentional.
+						//   FIXME: If the previous connection anwsered this message, I don't think I should rely on it magically closing...
+						// We could also force close the previous connection and proceed with this one. This might be a better choice in some cases, but we could end up accepting
+						// multiple connections from the same user (because we're asynchronously checking for the previous connection first) which will leave us in another type of broken mess.
+						console.log(
+							`${query.userName} [${query.userID}] previous connection still alive and in a game. Rejecting connection.`
+						);
+						socket.emit(
+							"message",
+							new MessageError(
+								"Already Connected",
+								`You appear to already be connected and in a game. 
+								Check if Draftmancer is open in another tab. 
+								If it isn't, wait a few seconds for the previous connection to close, or restart your browser, and try joining again.`
+							)
+						);
+						resolve(false);
+						return;
+					}
+					// Here we'll assume the user simply opened a new tab. Accept the connection and generate a new userID for the tab.
 					query.userID = uuidv1();
 					socket.emit("alreadyConnected", query.userID);
-					resolve();
+					resolve(true);
 				});
 			})(Connections[query.userID as string].socket);
 		});
+		if (!acceptConnection) {
+			socket.disconnect(true);
+			return;
+		}
 	}
 
-	const userID = query.userID as string;
+	const userID = query.userID;
 	socket.data.userID = userID;
 
 	if (userID in InactiveConnections) {
 		// Restore previously saved connection
 		// TODO: Front and Back end may be out of sync after this!
-		const connection = new Connection(socket, userID, query.userName as string);
+		const connection = new Connection(socket, userID, query.userName);
 		copyPODProps(connection, InactiveConnections[userID]);
 		Connections[userID] = connection;
 		delete InactiveConnections[userID];
 	} else {
-		Connections[userID] = new Connection(socket, userID, query.userName as string);
+		Connections[userID] = new Connection(socket, userID, query.userName);
 	}
 
 	// Messages
