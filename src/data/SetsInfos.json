@@ -2938,6 +2938,11 @@
         "fullName": "Pro Tour Collector Set",
         "icon": "img/sets/ptc.svg"
     },
+    "ptdm": {
+        "code": "ptdm",
+        "fullName": "Tarkir: Dragonstorm Promos",
+        "icon": "img/sets/ptdm.svg"
+    },
     "ptg": {
         "code": "ptg",
         "fullName": "Ponies: The Galloping",
