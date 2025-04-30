@@ -3879,6 +3879,11 @@
         "block": "Alchemy 2022",
         "icon": "img/sets/ysnc.svg"
     },
+    "ytdm": {
+        "code": "ytdm",
+        "fullName": "Alchemy: Tarkir",
+        "icon": "img/sets/ytdm.svg"
+    },
     "ywoe": {
         "code": "ywoe",
         "fullName": "Alchemy: Wilds of Eldraine",
