@@ -209,7 +209,7 @@ export function generateBoosterFromCustomCardList(
 										...pickOptions,
 										onEmpty: () => {
 											fillSheet(sheetName);
-											colorBalancedGenerators[sheetName].cache.reset(pickOptions);
+											colorBalancedGenerators[sheetName]?.cache.reset(pickOptions);
 										},
 									}
 								: pickOptions;
