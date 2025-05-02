@@ -9,6 +9,7 @@ import {
 	hasOptionalProperty,
 	hasProperty,
 	isAny,
+	isArray,
 	isArrayOf,
 	isBoolean,
 	isInteger,
@@ -309,21 +310,32 @@ function parseSettings(
 						return err(`Layout '${key}': slot 'foil' property must be a boolean.`);
 
 					const sheets: { name: SheetName; weight: number }[] = [];
-					if (hasProperty("sheets", isArrayOf(isObject))(slot)) {
-						for (const sheet of slot.sheets) {
-							if (!("name" in sheet))
-								return err(`Layout '${key}': Missing required property 'name' in sheet.`);
-							if (!isString(sheet.name)) return err(`Layout '${key}': sheet 'name' must be a string.`);
+					const errorHeader = `Layout '${key}', slot '${slot.name}':`;
+					if ("sheets" in slot) {
+						if (!isArray(slot.sheets))
+							return err(`${errorHeader} slot 'sheets' property must be an array.`);
 
-							let weight = 1;
-							if (hasProperty("weight", isNumber)(sheet)) {
-								if (!isInteger(sheet.weight))
-									return err(`Layout '${key}': sheet 'weight' must be an integer.`);
-								weight = sheet.weight;
+						for (const sheet of slot.sheets) {
+							if (isObject(sheet)) {
+								if (!("name" in sheet))
+									return err(`${errorHeader} Missing required property 'name' in sheet.`);
+								if (!isString(sheet.name)) return err(`${errorHeader} sheet 'name' must be a string.`);
+
+								let weight = 1;
+								if ("weight" in sheet) {
+									if (!isInteger(sheet.weight))
+										return err(`${errorHeader} sheet 'weight' must be an integer.`);
+									weight = sheet.weight;
+								}
+								sheets.push({ name: sheet.name, weight });
+							} else if (isString(sheet)) {
+								sheets.push({ name: sheet, weight: 1 });
+							} else {
+								return err(`${errorHeader} sheet must be an object or a string.`);
 							}
-							sheets.push({ name: sheet.name, weight });
 						}
 					} else {
+						// No sheets explicitly specified, inferred from the slot name.
 						sheets.push({ name: slot.name, weight: 1 });
 					}
 					slots.push({ name: slot.name, count: slot.count, foil: slot.foil ?? false, sheets });
