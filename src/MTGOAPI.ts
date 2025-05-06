@@ -21,7 +21,7 @@ class WebSocketWithBearer extends WebSocket {
 			? structuredClone(options)
 			: { headers: { Authorization: `Bearer ${MTGBOT_APIKEY}` } };
 		if (!updatedOptions?.headers) updatedOptions.headers = { Authorization: `Bearer ${MTGBOT_APIKEY}` };
-		else updatedOptions.headers.Authorization = `Bearer ${MTGBOT_APIKEY}`;
+		else (updatedOptions.headers as { [key: string]: string })["Authorization"] = `Bearer ${MTGBOT_APIKEY}`;
 		super(address, protocols, updatedOptions);
 	}
 }
