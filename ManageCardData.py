@@ -361,7 +361,6 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
                     c["name"] = frontName
                 # And some reversible cards also have an adventure... e.g. Bloomvine Regent, becomes "Bloomvine Regent // Claim Territory // Bloomvine Regent"
                 if len(faceNames) == 3 and faceNames[0] == faceNames[2].strip():
-                    print(f"FIXED? '{c['name']}' => '{faceNames[0]} //{faceNames[1]}'")
                     c["name"] = f"{faceNames[0]} //{faceNames[1]}"
             if (c["name"], c["collector_number"], c["set"].lower()) in CardsCollectorNumberAndSet:
                 c["arena_id"] = CardsCollectorNumberAndSet[(c["name"], c["collector_number"], c["set"].lower())]
@@ -595,8 +594,8 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
                 ):
                     c[prop] = c["card_faces"][0][prop]
                 elif (
-                    c["layout"]
-                    == "reversible_card"  # Very special case for TDM reversible cards with adventures (e.g. Bloomvine Regent)
+                    # Very special case for TDM reversible cards with adventures (e.g. Bloomvine Regent)
+                    c["layout"] == "reversible_card"
                     and "card_faces" in c
                     and prop in c["card_faces"][0]
                 ):
