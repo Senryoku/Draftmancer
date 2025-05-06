@@ -302,12 +302,12 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
     with open(BulkDataPath, "r", encoding="utf8") as file:
         # objects = ijson.items(file, 'item')
         # ScryfallCards = (o for o in objects if not(o['oversized'] or o['layout'] in ["token", "double_faced_token", "emblem", "art_series"]))
+        print("Loading Scryfall bulk data... ")
         ScryfallCards = json.load(file)
 
         akr_candidates = {}
         klr_candidates = {}
-        sys.stdout.write("PreProcessing... ")
-        sys.stdout.flush()
+        print("\rPreProcessing... ", end="", flush=True)
         copied = 0
         handled = 0
         for c in ScryfallCards:
@@ -354,7 +354,15 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
 
             frontName = c["name"]
             if " //" in frontName:
-                frontName = frontName.split(" //")[0]
+                faceNames = frontName.split(" //")
+                frontName = faceNames[0]
+                # Reversible cards (both sides are the same, just with a different art) special case: There's some inconsistency in the Scryfall data, sometimes the name is repeated, sometimes not. Never repeat it.
+                if faceNames[0] == faceNames[1].strip():
+                    c["name"] = frontName
+                # And some reversible cards also have an adventure... e.g. Bloomvine Regent, becomes "Bloomvine Regent // Claim Territory // Bloomvine Regent"
+                if len(faceNames) == 3 and faceNames[0] == faceNames[2].strip():
+                    print(f"FIXED? '{c['name']}' => '{faceNames[0]} //{faceNames[1]}'")
+                    c["name"] = f"{faceNames[0]} //{faceNames[1]}"
             if (c["name"], c["collector_number"], c["set"].lower()) in CardsCollectorNumberAndSet:
                 c["arena_id"] = CardsCollectorNumberAndSet[(c["name"], c["collector_number"], c["set"].lower())]
             elif (frontName, c["collector_number"], c["set"].lower()) in CardsCollectorNumberAndSet:
@@ -375,12 +383,10 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
             all_cards.append(c)
             copied += 1
             if handled % 1000 == 0:
-                sys.stdout.write("\b" * 100)  # return to start of line
-                sys.stdout.write(f"PreProcessing...    {copied}/{handled} cards added...")
-        sys.stdout.write("\b" * 100)
-        sys.stdout.write(f"PreProcessing done! {copied}/{handled} cards added.\n")
+                print(f"\rPreProcessing...    {copied}/{handled} cards added...", end="", flush=True)
+        print(f"\rPreProcessing done! {copied}/{handled} cards added.")
 
-        sys.stdout.write("Fixing AKR images...")
+        print("Fixing AKR images...", end="", flush=True)
         MissingAKRCards = AKRCards.copy()
         for name in akr_candidates:
             del MissingAKRCards[name]
@@ -398,7 +404,7 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
             if c["set"] == "klr" and c["name"] in klr_candidates and c["lang"] in klr_candidates[c["name"]]:
                 c["image_uris"]["border_crop"] = klr_candidates[c["name"]][c["lang"]]["image_uris"]["border_crop"]
 
-        sys.stdout.write(" Done!\n")
+        print(" Done!\n")
     cards = {}
     cardsByName = {}
     Translations = {}
@@ -588,6 +594,13 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
                     and c["card_faces"][0][prop] == c["card_faces"][1][prop]
                 ):
                     c[prop] = c["card_faces"][0][prop]
+                elif (
+                    c["layout"]
+                    == "reversible_card"  # Very special case for TDM reversible cards with adventures (e.g. Bloomvine Regent)
+                    and "card_faces" in c
+                    and prop in c["card_faces"][0]
+                ):
+                    c[prop] = c["card_faces"][0][prop]
                 else:
                     print(f"Warning: Missing '{prop}' for card '{c['name']}'.")
                     return False
@@ -621,7 +634,7 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
             Translations[key]["image_uris"][c["lang"]] = c["card_faces"][0]["image_uris"]["border_crop"]
 
         # Handle back side of double sided cards
-        if c["layout"] == "transform" or c["layout"] == "modal_dfc":
+        if c["layout"] == "transform" or c["layout"] == "modal_dfc" or c["layout"] == "reversible_card":
             if "card_faces" not in c:
                 print(f"/!\\ {c['name']}: Missing card faces with layout {c['layout']}.")
             else:
