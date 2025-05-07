@@ -84,12 +84,12 @@ export function generateBoosterFromCustomCardList(
 		const colorBalancedGenerators: { [slotName: string]: ColorBalancedSlot } = {};
 		if (options.colorBalance) {
 			for (const layoutName in layouts) {
-				colorBalancedSlots[layoutName] = 0;
+				let largest_slot = 0;
 				for (let i = 1; i < layouts[layoutName].slots.length; ++i) {
-					if (layouts[layoutName].slots[i].count > colorBalancedSlots[layoutName]) {
-						colorBalancedSlots[layoutName] = i;
-					}
+					if (layouts[layoutName].slots[i].count > layouts[layoutName].slots[largest_slot].count)
+						largest_slot = i;
 				}
+				colorBalancedSlots[layoutName] = largest_slot;
 			}
 			for (const sheetName in customCardList.sheets) {
 				if (customCardList.sheets[sheetName].collation === "random") {
@@ -173,11 +173,11 @@ export function generateBoosterFromCustomCardList(
 							slot.sheets.reduce((acc, curr) => acc + curr.weight, 0)
 						)
 					].name;
-				const useColorBalance =
+				const useColorBalance: boolean =
 					options.colorBalance &&
 					index === colorBalancedSlots[pickedLayoutName] &&
 					slot.count > ColorBalancedSlot.CardCountThreshold &&
-					colorBalancedGenerators[sheetName];
+					!!colorBalancedGenerators[sheetName];
 				// Checking the card count beforehand is tricky, we'll rely on pickCard throwing an exception if we run out of cards to pick.
 				try {
 					let pickedCards: UniqueCard[] = [];
