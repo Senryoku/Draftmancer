@@ -32,6 +32,7 @@ import { SolomonDraftSyncData } from "./SolomonDraft";
 import { QueueID } from "./draftQueue/QueueDescription";
 import { BracketType, IBracket } from "./Brackets";
 import { CCLSettings, CustomCardList } from "./CustomCardList";
+import { SilentAuctionDraftState, SilentAuctionDraftSyncData } from "./SilentAuctionDraft";
 
 export type LoaderOptions = { title: string };
 
@@ -227,6 +228,12 @@ export interface ServerToClientEvents {
 		pickedCards: { main: UniqueCard[]; side: UniqueCard[] };
 	}) => void;
 
+	startSilentAuctionDraft: (syncData: SilentAuctionDraftSyncData) => void;
+	silentAuctionDraftSync: (syncData: SilentAuctionDraftSyncData) => void;
+	silentAuctionDraftResults: (results: ReturnType<SilentAuctionDraftState["solveBids"]>) => void;
+	silentAuctionDraftNotifyBid: (userID: UserID) => void;
+	silentAuctionDraftEnd: () => void;
+
 	startTeamSealed: (data: {
 		state: {
 			cards: (UniqueCard & {
@@ -301,6 +308,7 @@ export interface ClientToServerEvents {
 	solomonDraftConfirmPiles: (ack: (result: SocketAck) => void) => void;
 	solomonDraftPick: (pile: 0 | 1, ack: (result: SocketAck) => void) => void;
 	teamSealedPick: (uniqueCardID: UniqueCardID, ack: (result: SocketAck) => void) => void;
+	silentAuctionDraftBid: (bids: number[], ack: (result: SocketAck) => void) => void;
 	updateBracket: (matchIndex: number, playerIndex: number, value: number) => void;
 	updateDeckLands: (lands: DeckBasicLands) => void;
 	moveCard: (uniqueID: UniqueCardID, destStr: string) => void;
@@ -378,6 +386,7 @@ export interface ClientToServerEvents {
 		teams: UserID[][],
 		ack: (result: SocketAck) => void
 	) => void;
+	startSilentAuctionDraft: (boosterCount: number, startingFunds: number, ack: (result: SocketAck) => void) => void;
 	setSessionOwner: (newOwnerID: UserID) => void;
 	removePlayer: (userToRemove: UserID) => void;
 	setSeating: (seating: Array<UserID>) => void;

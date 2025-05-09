@@ -35,6 +35,7 @@ import { DraftLog } from "./DraftLog";
 import { WinchesterDraftState } from "./WinchesterDraft.js";
 import { HousmanDraftState } from "./HousmanDraft.js";
 import { SolomonDraftState } from "./SolomonDraft.js";
+import { SilentAuctionDraftState } from "./SilentAuctionDraft.js";
 import { sendLog } from "./BotTrainingAPI.js";
 import { deserializeBracket } from "./BracketSerialization.js";
 import { hasProperty, isString } from "./TypeChecks.js";
@@ -145,6 +146,11 @@ export function restoreSession(s: any, owner: UserID) {
 					draftState.players[userID].botInstance = bot;
 				}
 				r.draftState = draftState;
+				return r;
+			}
+			case "silentAuction": {
+				r.draftState = new SilentAuctionDraftState([], [], 0);
+				copyPODProps(s.draftState, r.draftState);
 				return r;
 			}
 			case "housman": {

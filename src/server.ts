@@ -656,6 +656,26 @@ function resumeDraft(userID: UserID, sessionID: SessionID) {
 	Sessions[sessionID].resumeDraft();
 }
 
+function startSilentAuctionDraft(
+	userID: UserID,
+	sessionID: SessionID,
+	boosterCount: unknown,
+	startingFunds: unknown,
+	ack: (result: SocketAck) => void
+) {
+	const sess = Sessions[sessionID];
+	const localBoosterCount = !isNumber(boosterCount) ? parseInt(boosterCount as string) : boosterCount;
+	const localStartingFunds = !isNumber(startingFunds) ? parseInt(startingFunds as string) : startingFunds;
+	if (!isInteger(localBoosterCount) || localBoosterCount <= 0)
+		return ack?.(new SocketError("Invalid parameter 'boosterCount'."));
+	if (!isInteger(localStartingFunds) || localStartingFunds <= 0)
+		return ack?.(new SocketError("Invalid parameter 'startingFunds'."));
+	const r = sess.startSilentAuctionDraft(localBoosterCount, localStartingFunds);
+	if (isSocketError(r)) return ack(r);
+	startPublicSession(sess);
+	ack?.(new SocketAck());
+}
+
 function startGridDraft(
 	userID: UserID,
 	sessionID: SessionID,
@@ -1644,6 +1664,7 @@ io.on("connection", async function (socket) {
 		socket.on("stopDraft", prepareSocketCallback(stopDraft, true));
 		socket.on("pauseDraft", prepareSocketCallback(pauseDraft, true));
 		socket.on("resumeDraft", prepareSocketCallback(resumeDraft, true));
+		socket.on("startSilentAuctionDraft", prepareSocketCallback(startSilentAuctionDraft, true));
 		socket.on("startGlimpseDraft", prepareSocketCallback(startGlimpseDraft, true));
 		socket.on("startSupremeDraft", prepareSocketCallback(startSupremeDraft, true));
 		socket.on("startGridDraft", prepareSocketCallback(startGridDraft, true));
