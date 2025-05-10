@@ -3451,7 +3451,8 @@ export class Session implements IIndexable {
 				| "rejoinRotisserieDraft"
 				| "rejoinMinesweeperDraft"
 				| "rejoinTeamSealed"
-				| "rejoinSolomonDraft";
+				| "rejoinSolomonDraft"
+				| "rejoinSilentAuctionDraft";
 			const EventNames: Record<string, RejoinEventNames> = {
 				winston: "rejoinWinstonDraft",
 				winchester: "rejoinWinchesterDraft",
@@ -3462,6 +3463,7 @@ export class Session implements IIndexable {
 				minesweeper: "rejoinMinesweeperDraft",
 				teamSealed: "rejoinTeamSealed",
 				solomon: "rejoinSolomonDraft",
+				silentAuction: "rejoinSilentAuctionDraft",
 			} as const;
 			if (!(this.draftState.type in EventNames))
 				return console.error(`Unknown draft state type: ${this.draftState.type}`);

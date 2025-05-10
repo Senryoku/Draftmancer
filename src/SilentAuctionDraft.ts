@@ -107,6 +107,7 @@ export class SilentAuctionDraftState extends IDraftState {
 }
 
 export type SilentAuctionDraftSyncData = ReturnType<SilentAuctionDraftState["syncData"]>;
+export type SilentAuctionDraftResults = ReturnType<SilentAuctionDraftState["solveBids"]>;
 
 export function isSilentAuctionDraftState(s: unknown): s is SilentAuctionDraftState {
 	return s instanceof SilentAuctionDraftState;

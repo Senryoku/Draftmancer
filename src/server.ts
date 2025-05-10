@@ -676,6 +676,13 @@ function startSilentAuctionDraft(
 	ack?.(new SocketAck());
 }
 
+function silentAuctionDraftBid(userID: UserID, sessionID: SessionID, bids: unknown, ack: (result: SocketAck) => void) {
+	const sess = Sessions[sessionID];
+	if (!isArrayOf(isInteger)(bids)) return ack?.(new SocketError("Invalid parameter 'bids'."));
+	const r = sess.silentAuctionDraftBid(userID, bids);
+	ack?.(r);
+}
+
 function startGridDraft(
 	userID: UserID,
 	sessionID: SessionID,
@@ -1626,6 +1633,7 @@ io.on("connection", async function (socket) {
 	socket.on("solomonDraftOrganize", prepareSocketCallback(solomonDraftOrganize));
 	socket.on("solomonDraftConfirmPiles", prepareSocketCallback(solomonDraftConfirmPiles));
 	socket.on("solomonDraftPick", prepareSocketCallback(solomonDraftPick));
+	socket.on("silentAuctionDraftBid", prepareSocketCallback(silentAuctionDraftBid));
 	socket.on("teamSealedPick", prepareSocketCallback(teamSealedPick));
 	socket.on("updateBracket", prepareSocketCallback(updateBracket));
 	socket.on("updateDeckLands", prepareSocketCallback(updateDeckLands));

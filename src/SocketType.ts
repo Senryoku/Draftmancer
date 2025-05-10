@@ -233,6 +233,10 @@ export interface ServerToClientEvents {
 	silentAuctionDraftResults: (results: ReturnType<SilentAuctionDraftState["solveBids"]>) => void;
 	silentAuctionDraftNotifyBid: (userID: UserID) => void;
 	silentAuctionDraftEnd: () => void;
+	rejoinSilentAuctionDraft: (data: {
+		state: SilentAuctionDraftSyncData;
+		pickedCards: { main: UniqueCard[]; side: UniqueCard[] };
+	}) => void;
 
 	startTeamSealed: (data: {
 		state: {
