@@ -31,6 +31,14 @@ export class SilentAuctionDraftState extends IDraftState {
 
 	solveBids() {
 		const results = [];
+		const playerCardCounts: Record<UserID, number> = this.players.reduce(
+			(acc, p) => ({
+				...acc,
+				[p.userID]:
+					Connections[p.userID].pickedCards.main.length + Connections[p.userID].pickedCards.side.length,
+			}),
+			{}
+		);
 		for (let i = 0; i < this.currentPack!.length; ++i) {
 			const bids = this.players.map((p) => ({
 				userID: p.userID,
@@ -51,12 +59,8 @@ export class SilentAuctionDraftState extends IDraftState {
 						if (lhs.funds !== rhs.funds) return rhs.funds - lhs.funds;
 						else {
 							// Current card count: Lower card count wins.
-							const lCount =
-								Connections[lhs.userID].pickedCards.main.length +
-								Connections[lhs.userID].pickedCards.side.length;
-							const rCount =
-								Connections[rhs.userID].pickedCards.main.length +
-								Connections[rhs.userID].pickedCards.side.length;
+							const lCount = playerCardCounts[lhs.userID];
+							const rCount = playerCardCounts[rhs.userID];
 							if (lCount !== rCount) return lCount - rCount;
 							else {
 								// Everything else failed: Random.
@@ -74,6 +78,7 @@ export class SilentAuctionDraftState extends IDraftState {
 			});
 			const winner = this.players.find((p) => p.userID === bids[0].userID)!;
 			winner.funds -= winner.bids![i];
+			playerCardCounts[bids[0].userID]++;
 		}
 		return results;
 	}

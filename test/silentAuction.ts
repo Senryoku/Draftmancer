@@ -11,7 +11,7 @@ import {
 	ackNoError,
 	getUID,
 } from "./src/common.js";
-import { random, shuffleArray, sum } from "../src/utils.js";
+import { random, shuffleArray } from "../src/utils.js";
 import { SilentAuctionDraftSyncData } from "../src/SilentAuctionDraft.js";
 
 describe(`Silent Auction Draft`, function () {
@@ -117,6 +117,14 @@ describe(`Silent Auction Draft`, function () {
 				done();
 			});
 			clients[ownerIdx].emit("silentAuctionDraftBid", [10, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], ackNoError);
+		});
+
+		it("Tries to bid again, receives an error", function (done) {
+			clients[ownerIdx].emit("silentAuctionDraftBid", [5, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], (err) => {
+				expect(err.code).to.not.equal(0);
+				expect(err.code).to.not.equal(500);
+				done();
+			});
 		});
 
 		it("Second player bids, both player should receive the results and the next state", function (done) {
