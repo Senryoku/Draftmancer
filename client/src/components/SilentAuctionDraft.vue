@@ -33,8 +33,8 @@
 					<Card :card="card" :language="language" :lazyLoad="false" />
 					<div v-if="results" class="results">
 						<div v-for="bid in results[idx].bids" :key="bid.userID" :class="{ winner: bid.won }">
-							<div>{{ sessionUsers[bid.userID].userName }}</div>
-							<div>
+							<div class="name">{{ sessionUsers[bid.userID].userName }}</div>
+							<div class="bid">
 								{{ bid.bid }}
 								<div class="currency-icon" />
 							</div>
@@ -263,7 +263,14 @@ function end() {
 		width: 100%;
 
 		&.winner {
-			font-weight: bold;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			margin-bottom: 0.5em;
+
+			.name {
+				font-size: 1.5em;
+			}
 		}
 	}
 }
