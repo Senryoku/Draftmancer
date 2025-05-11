@@ -2,7 +2,7 @@ import { UniqueCard } from "./CardTypes.js";
 import { IDraftState } from "./IDraftState.js";
 import { UserID } from "./IDTypes.js";
 import { random, shuffleArray, sum } from "./utils.js";
-import { SocketError } from "./Message.js";
+import { MessageError } from "./Message.js";
 import { Connections } from "./Connection.js";
 
 export class SilentAuctionDraftState extends IDraftState {
@@ -19,12 +19,12 @@ export class SilentAuctionDraftState extends IDraftState {
 	}
 
 	// Returns true if everyone bid for this round
-	bid(userID: UserID, bids: number[]): boolean | SocketError {
-		if (bids.length !== this.currentPack!.length) return new SocketError("Invalid number of bids.");
+	bid(userID: UserID, bids: number[]): boolean | MessageError {
+		if (bids.length !== this.currentPack!.length) return new MessageError("Invalid number of bids.");
 		const player = this.players.find((p) => p.userID === userID);
-		if (!player) return new SocketError("Invalid userID.");
-		if (sum(bids) > player.funds) return new SocketError("Insufficient funds.");
-		if (player.bids != null) return new SocketError("You have already bid this round.");
+		if (!player) return new MessageError("Invalid userID.");
+		if (sum(bids) > player.funds) return new MessageError(`Insufficient funds (${sum(bids)} > ${player.funds}).`);
+		if (player.bids != null) return new MessageError("You have already bid this round.");
 		player.bids = bids;
 		return this.players.filter((p) => p.bids === null).length === 0;
 	}
@@ -32,59 +32,48 @@ export class SilentAuctionDraftState extends IDraftState {
 	solveBids() {
 		const results = [];
 		for (let i = 0; i < this.currentPack!.length; ++i) {
-			const insufficientFunds: UserID[] = [];
-			let highestBidder = 0;
-			while (
-				highestBidder < this.players.length &&
-				this.players[highestBidder].bids![i] > this.players[highestBidder].funds
-			) {
-				// NOTE: This should not be possible: Players cannot bid more than they have accross the whole round.
-				//       Let's call this future proofing.
-				insufficientFunds.push(this.players[highestBidder].userID);
-				highestBidder++;
-			}
-			const bids = this.players.map((p) => p.bids![i]);
-			if (highestBidder >= this.players.length) {
-				results.push({ winner: null, bids, insufficientFunds });
-				continue;
-			}
-			for (let pidx = highestBidder + 1; pidx < this.players.length; ++pidx) {
-				const player = this.players[pidx];
-				const winningPlayer = this.players[highestBidder];
-				if (player.funds < player.bids![i]) {
-					insufficientFunds.push(player.userID);
-				} else {
-					if (player.bids![i] > winningPlayer.bids![i]) {
-						highestBidder = pidx;
-					} else if (player.bids![i] === winningPlayer.bids![i]) {
+			const bids = this.players.map((p) => ({
+				userID: p.userID,
+				bid: p.bids![i],
+				funds: p.funds,
+				won: false,
+			}));
+			bids.sort((lhs, rhs) => {
+				const lhsFunded = lhs.funds >= lhs.bid;
+				const rhsFunded = rhs.funds >= rhs.bid;
+				if (lhsFunded && !rhsFunded) return -1;
+				else if (!lhsFunded && rhsFunded) return 1;
+				else {
+					if (lhs.bid !== rhs.bid) return rhs.bid - lhs.bid;
+					else {
 						// Tiebreakers:
 						//  Funds
-						if (player.funds > winningPlayer.funds) {
-							highestBidder = pidx;
-						} else if (player.funds === winningPlayer.funds) {
-							// Current card count
-							const candidate =
-								Connections[player.userID].pickedCards.main.length +
-								Connections[player.userID].pickedCards.side.length;
-							const highest =
-								Connections[winningPlayer.userID].pickedCards.main.length +
-								Connections[winningPlayer.userID].pickedCards.side.length;
-							if (candidate < highest) {
-								highestBidder = pidx;
-							} else if (candidate === highest) {
+						if (lhs.funds !== rhs.funds) return rhs.funds - lhs.funds;
+						else {
+							// Current card count: Lower card count wins.
+							const lCount =
+								Connections[lhs.userID].pickedCards.main.length +
+								Connections[lhs.userID].pickedCards.side.length;
+							const rCount =
+								Connections[rhs.userID].pickedCards.main.length +
+								Connections[rhs.userID].pickedCards.side.length;
+							if (lCount !== rCount) return lCount - rCount;
+							else {
 								// Everything else failed: Random.
-								if (random.bool()) highestBidder = pidx;
+								if (random.bool()) return -1;
+								else return 1;
 							}
 						}
 					}
 				}
-			}
-			results.push({
-				winner: this.players[highestBidder].userID,
-				bids,
-				insufficientFunds,
 			});
-			this.players[highestBidder].funds -= this.players[highestBidder].bids![i];
+			bids[0].won = true;
+			results.push({
+				winner: bids[0].userID,
+				bids,
+			});
+			const winner = this.players.find((p) => p.userID === bids[0].userID)!;
+			winner.funds -= winner.bids![i];
 		}
 		return results;
 	}

@@ -1,4 +1,3 @@
-"use strict";
 import { before, after, beforeEach, afterEach, describe, it } from "mocha";
 import { expect } from "chai";
 import { Sessions } from "../src/Session.js";

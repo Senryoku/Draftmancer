@@ -1818,7 +1818,7 @@ export class Session implements IIndexable {
 			for (const p of this.draftState.players)
 				Connections[p.userID]?.socket.emit("silentAuctionDraftResults", results);
 			if (this.draftState.nextRound()) {
-				this.silentAuctionDraftEnd();
+				this.endSilentAuctionDraft();
 			} else {
 				const syncState = this.draftState.syncData();
 				for (const p of this.draftState.players)
@@ -1831,7 +1831,7 @@ export class Session implements IIndexable {
 		return new SocketAck();
 	}
 
-	silentAuctionDraftEnd(): SocketAck {
+	endSilentAuctionDraft(): SocketAck {
 		if (!this.drafting || !isSilentAuctionDraftState(this.draftState))
 			return new SocketError("Not Playing", "There's no Silent Auction Draft running on this session.");
 		for (const p of this.draftState.players) Connections[p.userID]?.socket.emit("silentAuctionDraftEnd");
@@ -2852,20 +2852,20 @@ export class Session implements IIndexable {
 			case "minesweeper":
 				this.endMinesweeperDraft({ immediate: true });
 				break;
-			case "draft": {
+			case "draft":
 				this.endDraft();
 				break;
-			}
-			case "teamSealed": {
+			case "teamSealed":
 				this.endTeamSealed();
 				break;
-			}
 			case "solomon":
 				this.endSolomonDraft(true);
 				break;
-			default: {
+			case "silentAuction":
+				this.endSilentAuctionDraft();
+				break;
+			default:
 				console.error("Session.stopDraft: Unhandled draft type: " + this.draftState.type);
-			}
 		}
 	}
 

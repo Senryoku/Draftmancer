@@ -148,11 +148,6 @@ export function restoreSession(s: any, owner: UserID) {
 				r.draftState = draftState;
 				return r;
 			}
-			case "silentAuction": {
-				r.draftState = new SilentAuctionDraftState([], [], 0);
-				copyPODProps(s.draftState, r.draftState);
-				return r;
-			}
 			case "housman": {
 				r.draftState = new HousmanDraftState([], []);
 				copyPODProps(s.draftState, r.draftState);
@@ -205,6 +200,11 @@ export function restoreSession(s: any, owner: UserID) {
 					console.error(`[Persistence::restoreSession] Error: Invalid solomon draft state.`, s.draftState);
 					r.drafting = false;
 				}
+				return r;
+			}
+			case "silentAuction": {
+				r.draftState = new SilentAuctionDraftState([], [], 0);
+				copyPODProps(s.draftState, r.draftState);
 				return r;
 			}
 			default: {

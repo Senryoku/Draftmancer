@@ -1,26 +1,27 @@
 <template>
-	<div class="silent-auction-draft" :style="`--card-scale: ${cardScale}`">
-		<div>
+	<div class="silent-auction-draft">
+		<div class="header">
+			<button @click="end()" class="confirm" v-if="ended">Close</button>
 			<button @click="nextRound()" class="confirm" v-if="results">Continue</button>
 			<button @click="confirmBids()" class="confirm" v-else>Confirm Bids</button>
 			<div v-for="player in state.players" :key="player.userID" class="player">
 				<div class="player-name">{{ sessionUsers[player.userID].userName }}</div>
-				<div>{{ player.funds }} points</div>
+				<div>{{ player.funds }} ¤</div>
+				<div>
+					<font-awesome-icon icon="fa-solid fa-check" v-if="player.bidCast"></font-awesome-icon>
+					<font-awesome-icon icon="fa-solid fa-spinner" spin v-else></font-awesome-icon>
+				</div>
 			</div>
 		</div>
 		<div v-if="state.currentPack" class="card-container pack">
 			<div v-for="(card, idx) in state.currentPack" :key="card.uniqueID">
-				<div class="card-display" :class="{ 'card-won': results && results[idx].winner === userID }">
-					<div class="card-won-animation"></div>
+				<div class="card-display">
+					<div class="card-won-animation" v-if="results && results[idx].winner === userID"></div>
 					<Card :card="card" :language="language" :lazyLoad="false" />
 					<div v-if="results" class="results">
-						<div
-							v-for="pidx in state.players.length"
-							:key="pidx"
-							:class="{ winner: state.players[pidx - 1].userID === results[idx].winner }"
-						>
-							{{ sessionUsers[state.players[pidx - 1].userID].userName }}:
-							{{ results[idx].bids[pidx - 1] }}
+						<div v-for="bid in results[idx].bids" :key="bid.userID" :class="{ winner: bid.won }">
+							<span>{{ sessionUsers[bid.userID].userName }}</span>
+							<span>{{ bid.bid }}</span>
 						</div>
 					</div>
 					<div v-else>
@@ -38,12 +39,11 @@ import { UserData } from "@/Session/SessionTypes";
 import type { SilentAuctionDraftSyncData, SilentAuctionDraftResults } from "@/SilentAuctionDraft";
 import { Language } from "../../../src/Types";
 import Card from "./Card.vue";
-import ScaleSlider from "./ScaleSlider.vue";
-import { computed, onMounted, onUnmounted, ref, watch } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 import { Socket } from "socket.io-client";
 import { ClientToServerEvents, ServerToClientEvents } from "@/SocketType";
 import { Alert } from "../alerts";
-import { UniqueCard, UniqueCardID } from "@/CardTypes";
+import { UniqueCard } from "@/CardTypes";
 
 const props = defineProps<{
 	userID: UserID;
@@ -53,11 +53,11 @@ const props = defineProps<{
 	state: SilentAuctionDraftSyncData;
 }>();
 
-const inTransition = ref(false);
-const cardScale = ref(1.0);
 const bids = ref<number[]>(new Array(props.state.currentPack!.length).fill(0));
 const results = ref<SilentAuctionDraftResults | null>(null);
 const nextState = ref<SilentAuctionDraftSyncData | null>(null);
+
+const ended = ref(false);
 
 const emit = defineEmits<{
 	(e: "update:state", state: SilentAuctionDraftSyncData): void;
@@ -71,16 +71,24 @@ onMounted(() => {
 			nextState.value = state;
 		} else setState(state);
 	});
+	props.socket.on("silentAuctionDraftNotifyBid", (userID) => {
+		const player = props.state.players.find((p) => p.userID === userID);
+		if (player) player.bidCast = true;
+	});
 	props.socket.on("silentAuctionDraftResults", (r) => {
 		results.value = r;
 	});
 	props.socket.on("silentAuctionDraftEnd", () => {
-		// TODO: Display results of final round and a button to close them.
+		ended.value = true;
+		// If we have results to display, wait for the user to dismiss them. Otherwise end immediately.
+		if (!results.value) end();
 	});
 });
 
 onUnmounted(() => {
 	props.socket.off("silentAuctionDraftEnd");
+	props.socket.off("silentAuctionDraftResults");
+	props.socket.off("silentAuctionDraftNotifyBid");
 	props.socket.off("silentAuctionDraftSync");
 });
 
@@ -107,9 +115,34 @@ function nextRound() {
 	}
 	results.value = null;
 }
+
+function end() {
+	emit("end");
+}
 </script>
 
 <style scoped>
+.header {
+	display: flex;
+	align-items: center;
+	gap: 1em;
+	padding: 0.5em;
+}
+
+.player {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 1em;
+
+	.player-name {
+		max-width: 20em;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+}
+
 .pack {
 	display: flex;
 	flex-wrap: wrap;
@@ -122,10 +155,15 @@ function nextRound() {
 
 .card-display {
 	position: relative;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap: 0.5em;
 }
 
 .card-won-animation {
-	--size: 4em;
+	--size: 3em;
 
 	pointer-events: none;
 
@@ -171,18 +209,18 @@ function nextRound() {
 	left: 0;
 	right: 0;
 
-	padding: 1em;
+	padding: 1% 7%;
 
 	background-color: #00000080;
+
+	> div {
+		display: flex;
+		justify-content: space-between;
+		width: 100%;
+	}
 }
 
 .winner {
-	/*TODO*/
-	&::after {
-		content: "🎉";
-		position: absolute;
-		top: 0;
-		right: 0;
-	}
+	font-weight: bold;
 }
 </style>
