@@ -21,7 +21,7 @@
 			</div>
 			<div>
 				<button @click="end()" v-if="ended">Close</button>
-				<button @click="nextRound()" v-if="results">Next Pack</button>
+				<button @click="nextRound()" v-else-if="results">Next Pack</button>
 				<div v-else-if="bidCast">Waiting for bids...</div>
 				<button @click="confirmBids()" :disabled="!bidsAreValid" v-else>Confirm Bids</button>
 			</div>
