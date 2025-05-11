@@ -28,8 +28,9 @@
 		</div>
 		<div v-if="state.currentPack" class="card-container pack">
 			<div v-for="(card, idx) in state.currentPack" :key="card.uniqueID">
-				<div class="card-display">
-					<div class="card-won-animation" v-if="results && results[idx].winner === userID"></div>
+				<div class="card-display" :class="{ won: results && results[idx].winner === userID }">
+					<!-- <div class="card-won-animation" v-if="results && results[idx].winner === userID"></div> -->
+					<div class="card-won-animation"></div>
 					<Card :card="card" :language="language" :lazyLoad="false" />
 					<div v-if="results" class="results">
 						<div v-for="bid in results[idx].bids" :key="bid.userID" :class="{ winner: bid.won }">
@@ -177,7 +178,7 @@ function end() {
 	padding: 0.5em;
 
 	.name {
-		max-width: 20em;
+		max-width: 10em;
 		white-space: nowrap;
 		text-overflow: ellipsis;
 		overflow: hidden;
@@ -205,10 +206,14 @@ function end() {
 	justify-content: center;
 	align-items: center;
 	gap: 0.5em;
+
+	&.won {
+		z-index: 1;
+	}
 }
 
 .card-won-animation {
-	--size: 3em;
+	--size: 10%;
 
 	pointer-events: none;
 
@@ -231,12 +236,14 @@ function end() {
 		z-index: -1;
 		height: 100%;
 		aspect-ratio: 1;
-		background: repeating-conic-gradient(
-			from 0deg,
-			rgba(255, 255, 255, 0.4) 0deg 6deg,
-			rgba(255, 255, 255, 0.05) 8deg 22deg,
-			rgba(255, 255, 255, 0.4) 24deg
-		);
+		background:
+			radial-gradient(ellipse 100% 100% at center, rgba(255, 255, 255, 0.4) 0, transparent 45%),
+			repeating-conic-gradient(
+				from 0deg,
+				rgba(255, 255, 255, 0.4) 0deg 6deg,
+				rgba(255, 255, 255, 0) 8deg 22deg,
+				rgba(255, 255, 255, 0.4) 24deg
+			);
 		animation: rotate 10s linear infinite;
 	}
 }
@@ -261,6 +268,17 @@ function end() {
 		display: flex;
 		justify-content: space-between;
 		width: 100%;
+		gap: 0.5em;
+
+		.name {
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			overflow: hidden;
+		}
+
+		.bid {
+			white-space: nowrap;
+		}
 
 		&.winner {
 			display: flex;
@@ -270,6 +288,7 @@ function end() {
 
 			.name {
 				font-size: 1.5em;
+				max-width: 100%;
 			}
 		}
 	}
