@@ -27,24 +27,25 @@
 			</div>
 		</div>
 		<div v-if="state.currentPack" class="card-container pack">
-			<div v-for="(card, idx) in state.currentPack" :key="card.uniqueID">
+			<div v-for="(card, idx) in state.currentPack" :key="card.uniqueID" :style="`--nth: ${idx}`">
 				<div class="card-display" :class="{ won: results && results[idx].winner === userID }">
-					<!-- <div class="card-won-animation" v-if="results && results[idx].winner === userID"></div> -->
-					<div class="card-won-animation"></div>
+					<div class="card-won-animation" v-if="results && results[idx].winner === userID"></div>
 					<Card :card="card" :language="language" :lazyLoad="false" />
-					<div v-if="results" class="results">
-						<div v-for="bid in results[idx].bids" :key="bid.userID" :class="{ winner: bid.won }">
-							<div class="name">{{ sessionUsers[bid.userID].userName }}</div>
-							<div class="bid">
-								{{ bid.bid }}
-								<div class="currency-icon" />
+					<Transition name="fade">
+						<div v-if="results" class="results">
+							<div v-for="bid in results[idx].bids" :key="bid.userID" :class="{ winner: bid.won }">
+								<div class="name">{{ sessionUsers[bid.userID].userName }}</div>
+								<div class="bid">
+									{{ bid.bid }}
+									<div class="currency-icon" />
+								</div>
 							</div>
 						</div>
-					</div>
-					<div v-else>
-						<input type="number" v-model="bids[idx]" min="0" :max="currentFunds" />
-						<div class="currency-icon" />
-					</div>
+						<div v-else class="bid-input">
+							<input type="number" v-model="bids[idx]" min="0" :max="currentFunds" />
+							<div class="currency-icon" />
+						</div>
+					</Transition>
 				</div>
 			</div>
 		</div>
@@ -189,27 +190,8 @@ function end() {
 	}
 }
 
-.pack {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 1em;
-
-	& > div {
-		flex-basis: 200px;
-	}
-}
-
-.card-display {
-	position: relative;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	gap: 0.5em;
-
-	&.won {
-		z-index: 1;
-	}
+.fade-enter-active {
+	transition-delay: calc(0.05s * var(--nth));
 }
 
 .card-won-animation {
@@ -231,6 +213,10 @@ function end() {
 	justify-content: center;
 	align-items: center;
 
+	animation: calc(0.05s * var(--nth)) delayed;
+	animation-fill-mode: forwards;
+	visibility: hidden;
+
 	&::after {
 		content: "";
 		z-index: -1;
@@ -248,61 +234,20 @@ function end() {
 	}
 }
 
+@keyframes delayed {
+	99% {
+		visibility: hidden;
+	}
+	100% {
+		visibility: visible;
+	}
+}
+
 @keyframes rotate {
 	100% {
 		transform: rotate(1turn);
 	}
 }
-
-.results {
-	position: absolute;
-	top: 10%;
-	left: 0;
-	right: 0;
-
-	padding: 1.5% 7.5%;
-
-	background-color: #000000a0;
-
-	> div {
-		display: flex;
-		justify-content: space-between;
-		width: 100%;
-		gap: 0.5em;
-
-		.name {
-			white-space: nowrap;
-			text-overflow: ellipsis;
-			overflow: hidden;
-		}
-
-		.bid {
-			white-space: nowrap;
-		}
-
-		&.winner {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			margin-bottom: 0.5em;
-
-			.name {
-				font-size: 1.5em;
-				max-width: 100%;
-			}
-		}
-	}
-}
-
-.currency-icon {
-	display: inline-block;
-	width: 1em;
-	height: 1em;
-
-	vertical-align: text-top;
-	background-image: url("../assets/img/acorn.svg");
-	background-size: contain;
-	background-repeat: no-repeat;
-	filter: invert(100%);
-}
 </style>
+
+<style scoped src="../css/silentAuction.css" />

@@ -3668,6 +3668,7 @@ export default defineComponent({
 			if (this.winchesterDraftState) return "Winchester Draft";
 			if (this.housmanDraftState) return "Housman Draft";
 			if (this.solomonDraftState) return "Solomon Draft";
+			if (this.silentAuctionDraftState) return "Silent Auction Draft";
 			if (this.gridDraftState) return "Grid Draft";
 			if (this.minesweeperDraftState) return "Minesweeper Draft";
 			if (this.useCustomCardList) return "Cube Draft";

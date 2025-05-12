@@ -5,7 +5,11 @@
 		</template>
 		<template v-slot:body>
 			<div class="dialog">
-				<p>(TODO)</p>
+				<p>
+					Each round a pack will be presented and players will secretly bid on any card (up to their current
+					funds). Once all bids are in, they are resolved from left to right. Higher funds then lower card
+					count are used as tiebreakers.
+				</p>
 				<div class="dialog-settings">
 					<label for="booster-count-input">Pack count</label>
 					<div>

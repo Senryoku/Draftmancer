@@ -2,6 +2,7 @@ import { Card, CardID, DeckList } from "./CardTypes.js";
 import { SessionID, UserID } from "./IDTypes.js";
 import { Session } from "./Session.js";
 import { UserData } from "./Session/SessionTypes.js";
+import { SilentAuctionDraftResults, SilentAuctionDraftSyncData } from "./SilentAuctionDraft.js";
 
 // Used in DraftLogs Version 2.0, used in the client for backwards compatibility.
 export type DeprecatedDraftPick = { pick: number[]; burn?: number[]; booster: CardID[] };
@@ -57,6 +58,8 @@ export class DraftLog {
 	customBoosters: string[] = [];
 	boosters: CardID[][];
 	carddata: { [cid: string]: Card };
+
+	silentAuction?: { state: SilentAuctionDraftSyncData; results: SilentAuctionDraftResults }[] = undefined;
 
 	delayed: boolean = false;
 	personalLogs: boolean = true; // Necessary for the front-end to know when not to show the owner its own draft log

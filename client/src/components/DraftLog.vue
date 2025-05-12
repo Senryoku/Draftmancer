@@ -59,6 +59,52 @@
 			</ul>
 		</div>
 
+		<div v-if="draftlog.type === 'Silent Auction Draft' && draftlog.silentAuction">
+			<div style="display: flex; align-items: center; gap: 1em; margin-left: 1em">
+				<font-awesome-icon
+					:class="{ disabled: displayOptions.pack <= 0 }"
+					icon="fa-solid fa-chevron-left"
+					class="clickable"
+					@click="displayOptions.pack--"
+				/>
+				<label>Pack #</label>
+				<select v-model="displayOptions.pack" style="width: 4em">
+					<option v-for="index in draftlog.silentAuction.length" :key="index" :value="index - 1">
+						{{ index }}
+					</option>
+				</select>
+				<font-awesome-icon
+					:class="{ disabled: displayOptions.pack >= draftlog.silentAuction.length - 1 }"
+					icon="fa-solid fa-chevron-right"
+					class="clickable"
+					@click="displayOptions.pack++"
+				/>
+			</div>
+			<div class="card-container pack">
+				<div
+					v-for="(card, idx) in draftlog.silentAuction[displayOptions.pack].state.currentPack"
+					:key="card.uniqueID"
+				>
+					<div class="card-display">
+						<Card :card="card" :language="language" :lazyLoad="false" />
+						<div class="results">
+							<div
+								v-for="bid in draftlog.silentAuction[displayOptions.pack].results[idx].bids"
+								:key="bid.userID"
+								:class="{ winner: bid.won }"
+							>
+								<div class="name">{{ draftlog.users[bid.userID].userName }}</div>
+								<div class="bid">
+									{{ bid.bid }}
+									<div class="currency-icon" />
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
 		<!-- Cards of selected player -->
 		<div v-if="validSelectedUser">
 			<!-- Display the log if available (contains cards) and is not delayed or is personal, otherwise only display the deck hash -->
@@ -258,6 +304,7 @@ import { UserID } from "@/IDTypes";
 import * as helper from "../helper";
 import { fireToast } from "../alerts";
 
+import Card from "./Card.vue";
 import CardPool from "./CardPool.vue";
 import Decklist from "./Decklist.vue";
 import DraftLogPick from "./DraftLogPick.vue";
@@ -277,7 +324,7 @@ let uniqueID = 0;
 
 export default defineComponent({
 	name: "DraftLog",
-	components: { CardPool, DraftLogPick, DraftLogPicksSummary, Decklist, ExportDropdown },
+	components: { Card, CardPool, DraftLogPick, DraftLogPicksSummary, Decklist, ExportDropdown },
 	props: {
 		draftlog: { type: Object as PropType<DraftLog>, required: true },
 		language: { type: String as PropType<Language>, required: true },
@@ -799,3 +846,5 @@ ul.player-table.six li:nth-child(5):before {
 		inset -2px -2px 2px 0px rgba(255, 255, 255, 0.2);
 }
 </style>
+
+<style scoped src="../css/silentAuction.css" />

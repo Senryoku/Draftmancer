@@ -1784,7 +1784,7 @@ export class Session implements IIndexable {
 			useCustomBoosters: true,
 		});
 		if (isMessageError(boosters)) return new SocketAck(boosters);
-		const s = (this.draftState = new SilentAuctionDraftState(playerIds, boosters, startingFunds));
+		const s = (this.draftState = new SilentAuctionDraftState(playerIds, structuredClone(boosters), startingFunds));
 		const syncData = s.syncData();
 		for (const uid of this.users) {
 			Connections[uid].pickedCards = { main: [], side: [] };
@@ -1800,7 +1800,14 @@ export class Session implements IIndexable {
 		const roundEnd = this.draftState.bid(userID, bids);
 		if (isMessageError(roundEnd)) return new SocketAck(roundEnd);
 		if (roundEnd) {
+			const prevState = structuredClone(this.draftState.syncData());
 			const results = this.draftState.solveBids();
+
+			if (this.draftLog) {
+				if (!this.draftLog.silentAuction) this.draftLog.silentAuction = [];
+				this.draftLog.silentAuction.push({ state: prevState, results });
+			}
+
 			const cardsToSend: Record<UserID, UniqueCard[]> = {};
 			for (let i = 0; i < results.length; i++) {
 				if (results[i].winner) {
@@ -1815,6 +1822,7 @@ export class Session implements IIndexable {
 					Connections[p.userID]?.socket.emit("addCards", "You won: ", cardsToSend[p.userID]);
 				}
 			}
+
 			for (const p of this.draftState.players)
 				Connections[p.userID]?.socket.emit("silentAuctionDraftResults", results);
 			if (this.draftState.nextRound()) {
