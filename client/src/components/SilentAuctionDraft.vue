@@ -14,7 +14,11 @@
 						<div class="currency-icon" />
 					</div>
 					<div>
-						<font-awesome-icon icon="fa-solid fa-check" v-if="player.bidCast"></font-awesome-icon>
+						<font-awesome-icon
+							icon="fa-solid fa-check"
+							class="green"
+							v-if="player.bidCast"
+						></font-awesome-icon>
 						<font-awesome-icon icon="fa-solid fa-spinner" spin v-else></font-awesome-icon>
 					</div>
 				</div>
@@ -22,7 +26,7 @@
 			<div>
 				<button @click="end()" v-if="ended">Close</button>
 				<button @click="nextRound()" v-else-if="results">Next Pack</button>
-				<div v-else-if="bidCast">Waiting for bids...</div>
+				<div v-else-if="bidCast">Waiting for other players...</div>
 				<button @click="confirmBids()" :disabled="!bidsAreValid" v-else>Confirm Bids</button>
 			</div>
 		</div>
@@ -42,7 +46,8 @@
 							</div>
 						</div>
 						<div v-else class="bid-input">
-							<input type="number" v-model="bids[idx]" min="0" :max="currentFunds" />
+							<input type="number" v-model="bids[idx]" min="0" :max="currentFunds" v-if="!bidCast" />
+							<div v-else style="display: inline-block; margin: 0.25em">{{ bids[idx] }}</div>
 							<div class="currency-icon" />
 						</div>
 					</Transition>
@@ -166,7 +171,7 @@ function end() {
 .players {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 1em;
+	gap: 0.2em 1em;
 }
 
 .player {

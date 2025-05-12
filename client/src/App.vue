@@ -1815,10 +1815,11 @@
 										<td>
 											<button v-if="s.id !== sessionID" @click="sessionID = s.id">Join</button>
 											<font-awesome-icon
-												icon="fa-solid fa-check green"
+												icon="fa-solid fa-check"
+												class="green"
 												v-tooltip="`You are in this session!`"
 												v-else
-											></font-awesome-icon>
+											/>
 										</td>
 									</tr>
 								</tbody>
