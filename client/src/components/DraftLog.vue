@@ -213,17 +213,48 @@
 							:carddata="draftlog.carddata"
 							:language="language"
 							:type="draftlog.type"
-						></draft-log-pick>
-						<card-pool
-							v-if="selectedLogCardsUpToPick.length > 0"
-							:cards="selectedLogCardsUpToPick"
-							:language="language"
-							:readOnly="true"
-							:group="`cardPool-${selectedUser.userID}-pack-${displayOptions.pack}-pick-${displayOptions.pick}`"
-							:key="`cardPool-${selectedUser.userID}-pack-${displayOptions.pack}-pick-${displayOptions.pick}`"
+						/>
+						<div
+							v-if="
+								selectedLogCardsUpToPick &&
+								(selectedLogCardsUpToPick.main.length > 0 || selectedLogCardsUpToPick.side.length > 0)
+							"
+							style="display: flex"
 						>
-							<template v-slot:title>Cards ({{ selectedLogCardsUpToPick.length }})</template>
-						</card-pool>
+							<card-pool
+								style="flex: 1 1 auto"
+								:cards="selectedLogCardsUpToPick.main"
+								:language="language"
+								:readOnly="true"
+								:group="`cardPool-${selectedUser.userID}-pack-${displayOptions.pack}-pick-${displayOptions.pick}`"
+								:key="`cardPool-${selectedUser.userID}-pack-${displayOptions.pack}-pick-${displayOptions.pick}`"
+							>
+								<template v-slot:title>Cards ({{ selectedLogCardsUpToPick.main.length }})</template>
+							</card-pool>
+							<div v-if="selectedLogCardsUpToPick.side.length > 0" class="collapsed-sideboard">
+								<div class="section-title">
+									<h2>
+										Sideboard
+										<span style="font-size: 0.8em">
+											({{ selectedLogCardsUpToPick.side.length }})
+										</span>
+									</h2>
+								</div>
+								<div class="card-container">
+									<Sortable
+										:key="`collapsed-sideboard-col-${selectedLogCardsUpToPick.side.map((c) => c.uniqueID).join('-')}`"
+										class="card-column drag-column"
+										:list="selectedLogCardsUpToPick.side"
+										item-key="uniqueID"
+										:options="{ animation: '200', ghostClass: 'ghost' }"
+									>
+										<template #item="{ element }">
+											<card :card="element" :language="language"></card>
+										</template>
+									</Sortable>
+								</div>
+							</div>
+						</div>
 					</template>
 					<template v-else><div class="log-container">No picks.</div></template>
 				</template>
@@ -310,6 +341,7 @@ import Decklist from "./Decklist.vue";
 import DraftLogPick from "./DraftLogPick.vue";
 import DraftLogPicksSummary from "./DraftLogPicksSummary.vue";
 import ExportDropdown from "./ExportDropdown.vue";
+import { Sortable } from "sortablejs-vue3";
 import { CardColor, CardID, UniqueCard } from "@/CardTypes";
 import { Language } from "@/Types";
 
@@ -324,7 +356,7 @@ let uniqueID = 0;
 
 export default defineComponent({
 	name: "DraftLog",
-	components: { Card, CardPool, DraftLogPick, DraftLogPicksSummary, Decklist, ExportDropdown },
+	components: { Card, CardPool, DraftLogPick, DraftLogPicksSummary, Decklist, ExportDropdown, Sortable },
 	props: {
 		draftlog: { type: Object as PropType<DraftLog>, required: true },
 		language: { type: String as PropType<Language>, required: true },
@@ -488,10 +520,10 @@ export default defineComponent({
 		selectedUser(): DraftLogUserData {
 			return this.draftlog.users[this.displayOptions.detailsUserID!];
 		},
-		selectedLogCardsUpToPick(): UniqueCard[] {
+		selectedLogCardsUpToPick(): { main: UniqueCard[]; side: UniqueCard[] } | null {
 			switch (this.type) {
 				default:
-					return [];
+					return null;
 				case "Draft": {
 					const cards: UniqueCard[] = [];
 					const add = (pick: DraftPick) => {
@@ -503,14 +535,42 @@ export default defineComponent({
 					// Previous packs
 					for (let pack = 0; pack < Math.min(this.picksPerPack.length, this.displayOptions.pack); ++pack)
 						for (const pick of this.picksPerPack[pack]) add(pick as DraftPick);
-					// Current pack
-					for (
-						let pick = 0;
-						pick < Math.min(this.picksPerPack[this.displayOptions.pack].length, this.displayOptions.pick);
-						++pick
-					)
+					// Current pack, up to the currently displayed pick.
+					const picksInCurrentPack = Math.min(
+						this.picksPerPack[this.displayOptions.pack].length,
+						this.displayOptions.pick
+					);
+					for (let pick = 0; pick < picksInCurrentPack; ++pick)
 						add(this.picksPerPack[this.displayOptions.pack][pick] as DraftPick);
-					return cards;
+
+					const r: { main: UniqueCard[]; side: UniqueCard[] } = { main: [], side: [] };
+					if (this.selectedUser.decklist) {
+						for (const cid of this.selectedUser.decklist.main) {
+							const card_idx = cards.findIndex((c) => c.id === cid);
+							if (card_idx >= 0) {
+								r.main.push(cards[card_idx]);
+								cards.splice(card_idx, 1);
+							}
+						}
+						for (const cid of this.selectedUser.decklist.side) {
+							const card_idx = cards.findIndex((c) => c.id === cid);
+							if (card_idx >= 0) {
+								r.side.push(cards[card_idx]);
+								cards.splice(card_idx, 1);
+							}
+						}
+						if (cards.length > 0) {
+							console.error(
+								"selectedLogCardsUpToPick: Some were not assigned to either main or sideboard. Weird.",
+								this.selectedUser.decklist,
+								cards
+							);
+							r.main.push(...cards);
+						}
+					} else r.main = cards;
+
+					console.log(r);
+					return r;
 				}
 			}
 		},
