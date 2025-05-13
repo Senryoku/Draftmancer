@@ -481,6 +481,9 @@
 								<div v-tooltip.left="'Starts a Solo Supreme Draft.'">
 									<button @click="startSupremeDraft()">Supreme (1p.)</button>
 								</div>
+								<div v-tooltip.left="'Starts a Silent Auction Draft.'">
+									<button @click="startSilentAuctionDraft()">Silent Auction</button>
+								</div>
 							</div>
 							<div class="game-modes-cat">
 								<span class="game-modes-cat-title">Sealed</span>
@@ -985,6 +988,18 @@
 					@notifyTurn="notifyTurn"
 					@addToDeck="addToDeck"
 					@end="solomonDraftEnd"
+				/>
+				<silent-auction-draft
+					v-if="gameState === GameState.SilentAuctionDraft && silentAuctionDraftState"
+					class="container"
+					:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
+					:socket="socket"
+					:language="language"
+					:userID="userID"
+					:sessionUsers="userByID"
+					v-model:state="silentAuctionDraftState"
+					@addToDeck="addToDeck"
+					@end="silentAuctionDraftEnd"
 				/>
 				<!-- Grid Draft -->
 				<div
@@ -1800,10 +1815,11 @@
 										<td>
 											<button v-if="s.id !== sessionID" @click="sessionID = s.id">Join</button>
 											<font-awesome-icon
-												icon="fa-solid fa-check green"
+												icon="fa-solid fa-check"
+												class="green"
 												v-tooltip="`You are in this session!`"
 												v-else
-											></font-awesome-icon>
+											/>
 										</td>
 									</tr>
 								</tbody>

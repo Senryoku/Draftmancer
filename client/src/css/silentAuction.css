@@ -1,0 +1,74 @@
+.pack {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1em;
+
+	& > div {
+		flex-basis: 200px;
+	}
+}
+
+.card-display {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap: 0.5em;
+
+	&.won {
+		z-index: 1;
+	}
+}
+
+.results {
+	position: absolute;
+	top: 10%;
+	left: 0;
+	right: 0;
+
+	padding: 1.5% 7.5%;
+
+	background-color: #000000a0;
+
+	> div {
+		display: flex;
+		justify-content: space-between;
+		width: 100%;
+		gap: 0.5em;
+
+		.name {
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			overflow: hidden;
+		}
+
+		.bid {
+			white-space: nowrap;
+		}
+
+		&.winner {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			margin-bottom: 0.5em;
+
+			.name {
+				font-size: 1.5em;
+				max-width: 100%;
+			}
+		}
+	}
+}
+
+.currency-icon {
+	display: inline-block;
+	width: 1em;
+	height: 1em;
+
+	vertical-align: text-top;
+	background-image: url("../assets/img/acorn.svg");
+	background-size: contain;
+	background-repeat: no-repeat;
+	filter: invert(100%);
+}

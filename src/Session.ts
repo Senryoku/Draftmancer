@@ -87,6 +87,7 @@ import { InProduction, InTesting, TestingOnly } from "./Context.js";
 
 import { MatchResults, EventCompleted, Result } from "./MTGOAPI.js";
 import { sendDraftLogToCubeCobra } from "./cubeCobraIntegration.js";
+import { isSilentAuctionDraftState, SilentAuctionDraftState } from "./SilentAuctionDraft.js";
 
 // Tournament timer depending on the number of remaining cards in a pack.
 const TournamentTimer = [
@@ -1775,6 +1776,79 @@ export class Session implements IIndexable {
 		return new SocketAck();
 	}
 
+	startSilentAuctionDraft(boosterCount: number, startingFunds: number): SocketAck {
+		this.drafting = true;
+		this.disconnectedUsers = {};
+		const playerIds = this.getSortedHumanPlayersIDs();
+		const boosters = this.generateBoosters(boosterCount, {
+			useCustomBoosters: true,
+		});
+		if (isMessageError(boosters)) return new SocketAck(boosters);
+		const s = (this.draftState = new SilentAuctionDraftState(playerIds, structuredClone(boosters), startingFunds));
+		const syncData = s.syncData();
+		for (const uid of this.users) {
+			Connections[uid].pickedCards = { main: [], side: [] };
+			Connections[uid].socket.emit("startSilentAuctionDraft", syncData);
+		}
+		this.initLogs("Silent Auction Draft", boosters);
+		return new SocketAck();
+	}
+
+	silentAuctionDraftBid(userID: UserID, bids: number[]): SocketAck {
+		if (!this.drafting || !isSilentAuctionDraftState(this.draftState))
+			return new SocketError("Not Playing", "There's no Silent Auction Draft running on this session.");
+		const roundEnd = this.draftState.bid(userID, bids);
+		if (isMessageError(roundEnd)) return new SocketAck(roundEnd);
+		if (roundEnd) {
+			const prevState = structuredClone(this.draftState.syncData());
+			const results = this.draftState.solveBids();
+
+			if (this.draftLog) {
+				if (!this.draftLog.silentAuction) this.draftLog.silentAuction = [];
+				this.draftLog.silentAuction.push({ state: prevState, results });
+			}
+
+			const cardsToSend: Record<UserID, UniqueCard[]> = {};
+			for (let i = 0; i < results.length; i++) {
+				if (results[i].winner) {
+					const card = this.draftState.currentPack![i];
+					if (!cardsToSend[results[i].winner!]) cardsToSend[results[i].winner!] = [card];
+					else cardsToSend[results[i].winner!].push(card);
+				}
+			}
+			for (const p of this.draftState.players) {
+				if (cardsToSend[p.userID] && cardsToSend[p.userID].length > 0) {
+					Connections[p.userID]?.pickedCards.main.push(...cardsToSend[p.userID]!);
+					Connections[p.userID]?.socket.emit("addCards", "You won: ", cardsToSend[p.userID]);
+				}
+			}
+
+			for (const p of this.draftState.players)
+				Connections[p.userID]?.socket.emit("silentAuctionDraftResults", results);
+			if (this.draftState.nextRound()) {
+				this.endSilentAuctionDraft();
+			} else {
+				const syncState = this.draftState.syncData();
+				for (const p of this.draftState.players)
+					Connections[p.userID]?.socket.emit("silentAuctionDraftSync", syncState);
+			}
+		} else {
+			for (const p of this.draftState.players)
+				Connections[p.userID]?.socket.emit("silentAuctionDraftNotifyBid", userID);
+		}
+		return new SocketAck();
+	}
+
+	endSilentAuctionDraft(): SocketAck {
+		if (!this.drafting || !isSilentAuctionDraftState(this.draftState))
+			return new SocketError("Not Playing", "There's no Silent Auction Draft running on this session.");
+		for (const p of this.draftState.players) Connections[p.userID]?.socket.emit("silentAuctionDraftEnd");
+		this.finalizeLogs();
+		this.sendLogs();
+		this.cleanDraftState();
+		return new SocketAck();
+	}
+
 	///////////////////// Traditional Draft Methods //////////////////////
 	startDraft(overrides?: {
 		boostersPerPlayer?: number;
@@ -2786,20 +2860,20 @@ export class Session implements IIndexable {
 			case "minesweeper":
 				this.endMinesweeperDraft({ immediate: true });
 				break;
-			case "draft": {
+			case "draft":
 				this.endDraft();
 				break;
-			}
-			case "teamSealed": {
+			case "teamSealed":
 				this.endTeamSealed();
 				break;
-			}
 			case "solomon":
 				this.endSolomonDraft(true);
 				break;
-			default: {
+			case "silentAuction":
+				this.endSilentAuctionDraft();
+				break;
+			default:
 				console.error("Session.stopDraft: Unhandled draft type: " + this.draftState.type);
-			}
 		}
 	}
 
@@ -3385,7 +3459,8 @@ export class Session implements IIndexable {
 				| "rejoinRotisserieDraft"
 				| "rejoinMinesweeperDraft"
 				| "rejoinTeamSealed"
-				| "rejoinSolomonDraft";
+				| "rejoinSolomonDraft"
+				| "rejoinSilentAuctionDraft";
 			const EventNames: Record<string, RejoinEventNames> = {
 				winston: "rejoinWinstonDraft",
 				winchester: "rejoinWinchesterDraft",
@@ -3396,6 +3471,7 @@ export class Session implements IIndexable {
 				minesweeper: "rejoinMinesweeperDraft",
 				teamSealed: "rejoinTeamSealed",
 				solomon: "rejoinSolomonDraft",
+				silentAuction: "rejoinSilentAuctionDraft",
 			} as const;
 			if (!(this.draftState.type in EventNames))
 				return console.error(`Unknown draft state type: ${this.draftState.type}`);

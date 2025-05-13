@@ -23,6 +23,7 @@ import { minesweeperApplyDiff } from "../../src/MinesweeperDraftTypes";
 import Constants, { CubeDescription, EnglishBasicLandNames } from "../../src/Constants";
 import { CardColor, OptionalOnPickDraftEffect, UsableDraftEffect } from "../../src/CardTypes";
 import { SolomonDraftSyncData } from "@/SolomonDraft";
+import { SilentAuctionDraftSyncData } from "@/SilentAuctionDraft";
 import { isSomeEnum } from "../../src/TypeChecks";
 import { DraftSyncData } from "@/DraftState";
 
@@ -81,6 +82,7 @@ const HousmanDialog = defineAsyncComponent(() => import("./components/HousmanDia
 const MinesweeperDialog = defineAsyncComponent(() => import("./components/MinesweeperDraftDialog.vue"));
 const RotisserieDraftDialog = defineAsyncComponent(() => import("./components/RotisserieDraftDialog.vue"));
 const SolomonDialog = defineAsyncComponent(() => import("./components/SolomonDialog.vue"));
+const SilentAuctionDraftDialog = defineAsyncComponent(() => import("./components/SilentAuctionDraftDialog.vue"));
 const WinchesterDialog = defineAsyncComponent(() => import("./components/WinchesterDraftDialog.vue"));
 const WinstonDialog = defineAsyncComponent(() => import("./components/WinstonDraftDialog.vue"));
 const SealedDialog = defineAsyncComponent(() => import("./components/SealedDialog.vue"));
@@ -104,6 +106,7 @@ enum GameState {
 	WinchesterWaiting = "WinchesterWaiting",
 	HousmanDraft = "HousmanDraft",
 	SolomonDraft = "SolomonDraft",
+	SilentAuctionDraft = "SilentAuctionDraft",
 	GridPicking = "GridPicking",
 	GridWaiting = "GridWaiting",
 	RochesterPicking = "RochesterPicking",
@@ -205,6 +208,7 @@ export default defineComponent({
 		SetRestrictionComponent: defineAsyncComponent(() => import("./components/SetRestriction.vue")),
 		SetSelect,
 		SolomonDraft: defineAsyncComponent(() => import("./components/SolomonDraft.vue")),
+		SilentAuctionDraft: defineAsyncComponent(() => import("./components/SilentAuctionDraft.vue")),
 		Sortable,
 		SponsorModal: defineAsyncComponent(() => import("./components/SponsorModal.vue")),
 		TeamSealed: defineAsyncComponent(() => import("./components/TeamSealed.vue")),
@@ -387,6 +391,7 @@ export default defineComponent({
 			winchesterDraftState: null as WinchesterDraftSyncData | null,
 			housmanDraftState: null as HousmanDraftSyncData | null,
 			solomonDraftState: null as SolomonDraftSyncData | null,
+			silentAuctionDraftState: null as SilentAuctionDraftSyncData | null,
 
 			draftPaused: false,
 
@@ -872,6 +877,30 @@ export default defineComponent({
 						position: "center",
 						icon: "success",
 						title: "Reconnected to the Solomon draft!",
+						showConfirmButton: false,
+						timer: 1500,
+					});
+				});
+			});
+
+			this.socket.on("startSilentAuctionDraft", (state) => {
+				startDraftSetup("Silent Auction draft");
+				this.silentAuctionDraftState = state;
+				this.gameState = GameState.SilentAuctionDraft;
+			});
+			this.socket.on("rejoinSilentAuctionDraft", (data) => {
+				this.clearState();
+				this.drafting = true;
+				this.gameState = GameState.SilentAuctionDraft;
+				this.silentAuctionDraftState = data.state;
+				this.$nextTick(() => {
+					for (const c of data.pickedCards.main) this.addToDeck(c);
+					for (const c of data.pickedCards.side) this.addToSideboard(c);
+
+					Alert.fire({
+						position: "center",
+						icon: "success",
+						title: "Reconnected to the Silent Auction draft!",
 						showConfirmButton: false,
 						timer: 1500,
 					});
@@ -2148,6 +2177,12 @@ export default defineComponent({
 			this.gameState = GameState.Brewing;
 			fireToast("success", "Done drafting!");
 		},
+		silentAuctionDraftEnd() {
+			this.drafting = false;
+			this.silentAuctionDraftState = null;
+			this.gameState = GameState.Brewing;
+			fireToast("success", "Done drafting!");
+		},
 		startGridDraft() {
 			if (this.userID !== this.sessionOwner || this.drafting) return;
 
@@ -2363,6 +2398,17 @@ export default defineComponent({
 			this.spawnDialog(SupremeDialog, {
 				onStart: (boostersPerPlayer: number, pickedCardsPerRound: number) => {
 					this.socket.emit("startSupremeDraft", boostersPerPlayer, pickedCardsPerRound, (response) => {
+						if (response?.error) Alert.fire(response.error);
+					});
+				},
+			});
+		},
+		startSilentAuctionDraft() {
+			if (this.userID !== this.sessionOwner || this.drafting) return;
+
+			this.spawnDialog(SilentAuctionDraftDialog, {
+				onStart: (boosterCount: number, startingFunds: number) => {
+					this.socket.emit("startSilentAuctionDraft", boosterCount, startingFunds, (response) => {
 						if (response?.error) Alert.fire(response.error);
 					});
 				},
@@ -3622,6 +3668,7 @@ export default defineComponent({
 			if (this.winchesterDraftState) return "Winchester Draft";
 			if (this.housmanDraftState) return "Housman Draft";
 			if (this.solomonDraftState) return "Solomon Draft";
+			if (this.silentAuctionDraftState) return "Silent Auction Draft";
 			if (this.gridDraftState) return "Grid Draft";
 			if (this.minesweeperDraftState) return "Minesweeper Draft";
 			if (this.useCustomCardList) return "Cube Draft";
