@@ -234,7 +234,7 @@ export class Bot implements IBot {
 			return this.lastScores;
 		} catch (e) {
 			if (e instanceof AxiosError) {
-				console.error(`Error requesting bots scores: (${e.status}) ${e.message}.`);
+				console.error(`Error requesting bots scores: (${e.status ?? "No status code"}) ${e.message}.`);
 			} else {
 				console.error("Error requesting bots scores:", e);
 			}

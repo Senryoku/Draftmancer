@@ -88,9 +88,14 @@ export function sendDraftLogToCubeCobra(session: Session) {
 				})),
 			};
 
-			axios
-				.post(CUBECOBRA_LOG_ENDPOINT, payload)
-				.catch((err) => console.error("Error sending draft log to CubeCobra: ", err));
+			axios.post(CUBECOBRA_LOG_ENDPOINT, payload).catch((err) => {
+				console.error("Error sending draft log to CubeCobra, will retry once in 5 seconds. ", err.cause ?? err);
+				setTimeout(() => {
+					axios.post(CUBECOBRA_LOG_ENDPOINT, payload).catch((final_err) => {
+						console.error("Error sending draft log to CubeCobra (second attempt): ", final_err);
+					});
+				}, 5000);
+			});
 		}
 	} catch (err) {
 		console.error("Error sending draft log to CubeCobra: ", err);
