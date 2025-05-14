@@ -1,5 +1,54 @@
 <template>
 	<div v-if="draftlog.version === '2.0' || draftlog.version === '2.1'">
+		<div v-if="!draftlog.delayed && draftlog.type === 'Silent Auction Draft' && draftlog.silentAuction">
+			<div class="section-title">
+				<h2>Auction Results</h2>
+				<div class="controls">
+					<font-awesome-icon
+						:class="{ disabled: displayOptions.pack <= 0 }"
+						icon="fa-solid fa-chevron-left"
+						class="clickable"
+						@click="displayOptions.pack--"
+					/>
+					<label>Pack #</label>
+					<select v-model="displayOptions.pack" style="width: 4em">
+						<option v-for="index in draftlog.silentAuction.length" :key="index" :value="index - 1">
+							{{ index }}
+						</option>
+					</select>
+					<font-awesome-icon
+						:class="{ disabled: displayOptions.pack >= draftlog.silentAuction.length - 1 }"
+						icon="fa-solid fa-chevron-right"
+						class="clickable"
+						@click="displayOptions.pack++"
+					/>
+				</div>
+			</div>
+			<div class="card-container pack">
+				<div
+					v-for="(card, idx) in draftlog.silentAuction[displayOptions.pack].state.currentPack"
+					:key="card.uniqueID"
+				>
+					<div class="card-display">
+						<Card :card="card" :language="language" :lazyLoad="false" />
+						<div class="results">
+							<div
+								v-for="bid in draftlog.silentAuction[displayOptions.pack].results[idx].bids"
+								:key="bid.userID"
+								:class="{ winner: bid.won }"
+							>
+								<div class="name">{{ draftlog.users[bid.userID].userName }}</div>
+								<div class="bid">
+									{{ bid.bid }}
+									<div class="currency-icon" />
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
 		<div
 			v-if="!draftlog.delayed"
 			style="display: flex; justify-content: space-between; align-items: center; margin: 0.5em 1em"
@@ -17,6 +66,7 @@
 				</button>
 			</div>
 		</div>
+
 		<!-- Table -->
 		<div>
 			<ul
@@ -57,52 +107,6 @@
 					</span>
 				</li>
 			</ul>
-		</div>
-
-		<div v-if="draftlog.type === 'Silent Auction Draft' && draftlog.silentAuction">
-			<div style="display: flex; align-items: center; gap: 1em; margin-left: 1em">
-				<font-awesome-icon
-					:class="{ disabled: displayOptions.pack <= 0 }"
-					icon="fa-solid fa-chevron-left"
-					class="clickable"
-					@click="displayOptions.pack--"
-				/>
-				<label>Pack #</label>
-				<select v-model="displayOptions.pack" style="width: 4em">
-					<option v-for="index in draftlog.silentAuction.length" :key="index" :value="index - 1">
-						{{ index }}
-					</option>
-				</select>
-				<font-awesome-icon
-					:class="{ disabled: displayOptions.pack >= draftlog.silentAuction.length - 1 }"
-					icon="fa-solid fa-chevron-right"
-					class="clickable"
-					@click="displayOptions.pack++"
-				/>
-			</div>
-			<div class="card-container pack">
-				<div
-					v-for="(card, idx) in draftlog.silentAuction[displayOptions.pack].state.currentPack"
-					:key="card.uniqueID"
-				>
-					<div class="card-display">
-						<Card :card="card" :language="language" :lazyLoad="false" />
-						<div class="results">
-							<div
-								v-for="bid in draftlog.silentAuction[displayOptions.pack].results[idx].bids"
-								:key="bid.userID"
-								:class="{ winner: bid.won }"
-							>
-								<div class="name">{{ draftlog.users[bid.userID].userName }}</div>
-								<div class="bid">
-									{{ bid.bid }}
-									<div class="currency-icon" />
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
 		</div>
 
 		<!-- Cards of selected player -->
@@ -497,13 +501,15 @@ export default defineComponent({
 				} else {
 					if (this.displayOptions.category === "Deck") this.displayOptions.category = "Cards";
 				}
-				this.$nextTick(() => {
-					this.displayOptions.pack = Math.min(this.displayOptions.pack, this.picksPerPack.length - 1);
-					this.displayOptions.pick = Math.min(
-						this.displayOptions.pick,
-						(this.picksPerPack[this.displayOptions.pack]?.length ?? 0) - 1
-					);
-				});
+				if (this.draftlog.type !== "Silent Auction Draft") {
+					this.$nextTick(() => {
+						this.displayOptions.pack = Math.min(this.displayOptions.pack, this.picksPerPack.length - 1);
+						this.displayOptions.pick = Math.min(
+							this.displayOptions.pick,
+							(this.picksPerPack[this.displayOptions.pack]?.length ?? 0) - 1
+						);
+					});
+				}
 			}
 		},
 	},

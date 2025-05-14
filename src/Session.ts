@@ -1799,6 +1799,8 @@ export class Session implements IIndexable {
 			return new SocketError("Not Playing", "There's no Silent Auction Draft running on this session.");
 		const roundEnd = this.draftState.bid(userID, bids);
 		if (isMessageError(roundEnd)) return new SocketAck(roundEnd);
+		for (const p of this.draftState.players)
+			Connections[p.userID]?.socket.emit("silentAuctionDraftNotifyBid", userID);
 		if (roundEnd) {
 			const prevState = structuredClone(this.draftState.syncData());
 			const results = this.draftState.solveBids();
@@ -1832,9 +1834,6 @@ export class Session implements IIndexable {
 				for (const p of this.draftState.players)
 					Connections[p.userID]?.socket.emit("silentAuctionDraftSync", syncState);
 			}
-		} else {
-			for (const p of this.draftState.players)
-				Connections[p.userID]?.socket.emit("silentAuctionDraftNotifyBid", userID);
 		}
 		return new SocketAck();
 	}

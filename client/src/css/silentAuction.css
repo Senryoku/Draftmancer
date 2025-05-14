@@ -1,7 +1,7 @@
 .pack {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 1em;
+	gap: 0.5em 1.5em;
 
 	& > div {
 		flex-basis: 200px;
@@ -12,7 +12,7 @@
 	position: relative;
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
+	justify-content: start;
 	align-items: center;
 	gap: 0.5em;
 

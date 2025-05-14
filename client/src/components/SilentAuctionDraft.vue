@@ -14,12 +14,8 @@
 						<div class="currency-icon" />
 					</div>
 					<div>
-						<font-awesome-icon
-							icon="fa-solid fa-check"
-							class="green"
-							v-if="player.bidCast"
-						></font-awesome-icon>
-						<font-awesome-icon icon="fa-solid fa-spinner" spin v-else></font-awesome-icon>
+						<font-awesome-icon icon="fa-solid fa-check" class="green" v-if="player.bidCast" />
+						<font-awesome-icon icon="fa-solid fa-spinner" spin v-else />
 					</div>
 				</div>
 			</div>
@@ -33,8 +29,10 @@
 		<div v-if="state.currentPack" class="card-container pack">
 			<div v-for="(card, idx) in state.currentPack" :key="card.uniqueID" :style="`--nth: ${idx}`">
 				<div class="card-display" :class="{ won: results && results[idx].winner === userID }">
-					<div class="card-won-animation" v-if="results && results[idx].winner === userID"></div>
-					<Card :card="card" :language="language" :lazyLoad="false" />
+					<div style="position: relative">
+						<div class="card-won-animation" v-if="results && results[idx].winner === userID" />
+						<Card :card="card" :language="language" :lazyLoad="false" />
+					</div>
 					<Transition name="fade">
 						<div v-if="results" class="results">
 							<div v-for="bid in results[idx].bids" :key="bid.userID" :class="{ winner: bid.won }">
@@ -47,8 +45,8 @@
 						</div>
 						<div v-else class="bid-input">
 							<input type="number" v-model="bids[idx]" min="0" :max="currentFunds" v-if="!bidCast" />
-							<div v-else style="display: inline-block; margin: 0.25em">{{ bids[idx] }}</div>
-							<div class="currency-icon" />
+							<span v-else style="margin: 0.25em">{{ bids[idx] }}</span>
+							<span class="currency-icon" />
 						</div>
 					</Transition>
 				</div>
@@ -95,7 +93,9 @@ onMounted(() => {
 		} else setState(state);
 	});
 	props.socket.on("silentAuctionDraftNotifyBid", (userID) => {
-		const player = props.state.players.find((p) => p.userID === userID);
+		// When viewing results, the real current state is nextState.
+		const state = nextState.value ?? props.state;
+		const player = state.players.find((p) => p.userID === userID);
 		if (player) player.bidCast = true;
 	});
 	props.socket.on("silentAuctionDraftResults", (r) => {
@@ -199,16 +199,22 @@ function end() {
 	transition-delay: calc(0.05s * var(--nth));
 }
 
+.card-display {
+	/* Avoid vertical shifting (Keep space for bid input) */
+	min-height: 330px;
+}
+
 .card-won-animation {
-	--size: 10%;
+	--size-x: 10%;
+	--size-y: 8%;
 
 	pointer-events: none;
 
 	position: absolute;
-	top: calc(-1 * var(--size));
-	left: calc(-1 * var(--size));
-	right: calc(-1 * var(--size));
-	bottom: calc(-1 * var(--size));
+	top: calc(-1 * var(--size-y));
+	left: calc(-1 * var(--size-x));
+	right: calc(-1 * var(--size-x));
+	bottom: calc(-1 * var(--size-y));
 
 	mask-image: radial-gradient(ellipse 100% 100% at center, black 40%, transparent 50%);
 	overflow: hidden;

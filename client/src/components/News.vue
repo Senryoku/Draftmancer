@@ -1,6 +1,13 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
+			<em>May 14, 2025</em>
+			<p>
+				New experimental game mode: Silent Auction Draft.<br />
+				Accessible from the "Other Game Modes" dropdown.
+			</p>
+		</div>
+		<div class="news">
 			<em>March 28, 2025</em>
 			<p>
 				<img src="img/sets/tdm.svg" class="set-icon" style="--invertedness: 100%" alt="TDM" /> Tarkir:
