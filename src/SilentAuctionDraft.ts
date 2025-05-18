@@ -6,6 +6,7 @@ import { MessageError } from "./Message.js";
 import { Connections } from "./Connection.js";
 
 export class SilentAuctionDraftState extends IDraftState {
+	readonly packCount: number;
 	packs: UniqueCard[][];
 	players: { userID: UserID; bids: number[] | null; funds: number }[];
 	currentPack: UniqueCard[] | null = null;
@@ -14,6 +15,7 @@ export class SilentAuctionDraftState extends IDraftState {
 		super("silentAuction");
 		this.players = players.map((uid) => ({ userID: uid, bids: null, funds: startingFunds }));
 		this.packs = packs;
+		this.packCount = packs.length;
 		shuffleArray(this.packs);
 		this.nextRound();
 	}
@@ -95,6 +97,8 @@ export class SilentAuctionDraftState extends IDraftState {
 	syncData() {
 		return {
 			currentPack: this.currentPack,
+			packCount: this.packCount,
+			remainingPacks: this.packs.length,
 			players: this.players.map((p) => ({ userID: p.userID, funds: p.funds, bidCast: p.bids !== null })),
 		};
 	}

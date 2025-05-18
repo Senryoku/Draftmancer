@@ -2,6 +2,9 @@
 	<div class="silent-auction-draft">
 		<div class="header">
 			<div class="players">
+				<div style="padding: 0.5em 0">
+					Pack {{ state.packCount - state.remainingPacks }}/{{ state.packCount }}
+				</div>
 				<div
 					v-for="player in state.players"
 					:key="player.userID"
