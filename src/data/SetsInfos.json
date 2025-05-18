@@ -923,6 +923,11 @@
         "block": "Khans of Tarkir",
         "icon": "img/sets/frf.svg"
     },
+    "fspl": {
+        "code": "fspl",
+        "fullName": "FIN Magic Spotlight",
+        "icon": "img/sets/fspl.svg"
+    },
     "fut": {
         "code": "fut",
         "fullName": "Future Sight",
@@ -2912,6 +2917,11 @@
         "fullName": "MKM Standard Showdown",
         "icon": "img/sets/pss4.svg"
     },
+    "pss5": {
+        "code": "pss5",
+        "fullName": "FIN Standard Showdown",
+        "icon": "img/sets/pss5.svg"
+    },
     "psth": {
         "code": "psth",
         "fullName": "Stronghold Promos",
@@ -3156,6 +3166,11 @@
         "code": "rex",
         "fullName": "Jurassic World Collection",
         "icon": "img/sets/rex.svg"
+    },
+    "rfin": {
+        "code": "rfin",
+        "fullName": "Final Fantasy Regional Promos",
+        "icon": "img/sets/rfin.svg"
     },
     "rin": {
         "code": "rin",
@@ -3484,11 +3499,6 @@
         "fullName": "Theros",
         "block": "Theros",
         "icon": "img/sets/ths.svg"
-    },
-    "tkhm": {
-        "code": "tkhm",
-        "fullName": "Kaldheim Tokens",
-        "icon": "img/sets/tkhm.svg"
     },
     "tmbs": {
         "code": "tmbs",
