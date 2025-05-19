@@ -3280,6 +3280,141 @@ class TDMBoosterFactory extends BoosterFactory {
 	}
 }
 
+// Final Fantasy (FIN) - https://magic.wizards.com/en/news/feature/collecting-final-fantasy
+class FINBoosterFactory extends BoosterFactory {
+	static filter(min: number, max: number) {
+		return CardsBySet["fin"].filter(
+			(c) => parseInt(getCard(c).collector_number) >= min && parseInt(getCard(c).collector_number) <= max
+		);
+	}
+
+	static readonly ThroughTheAges = FINBoosterFactory.filter(292, 326);
+	static readonly Borderless = FINBoosterFactory.filter(292, 326);
+	static readonly Artist = FINBoosterFactory.filter(292, 326);
+
+	showcase: SlotedCardPool = {};
+	throughTheAges: SlotedCardPool = {};
+	borderless: SlotedCardPool = {};
+	artist: SlotedCardPool = {};
+
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
+		const [, filteredCardPool] = filterCardPool(cardPool, (cid: CardID) =>
+			TDMBoosterFactory.CommonDualLands.includes(cid)
+		);
+		super(filteredCardPool, landSlot, options);
+		this.throughTheAges = cidsToSlotedCardPool(FINBoosterFactory.ThroughTheAges, options.maxDuplicates);
+		this.borderless = cidsToSlotedCardPool(FINBoosterFactory.Borderless, options.maxDuplicates);
+		this.artist = cidsToSlotedCardPool(FINBoosterFactory.Artist, options.maxDuplicates);
+	}
+
+	generateBooster(targets: Targets) {
+		const updatedTargets = structuredClone(targets);
+		// 6–7 Commons
+		if (targets === DefaultBoosterTargets) updatedTargets.common = Math.max(0, updatedTargets.common - 3);
+		else updatedTargets.common = Math.max(1, updatedTargets.common - 2);
+
+		const booster: UniqueCard[] = [];
+
+		// In one third of Play Boosters, one of these commons will be replaced by a card from the FINAL FANTASY Through the Ages bonus sheet.
+		// Cards from the bonus sheet aren't found in the wildcard or traditional foil slot in Play Boosters.
+		// You can receive an uncommon (63.25%), rare (29.75%), or mythic rare (7%) FINAL FANTASY Through the Ages bonus sheet card.
+		const agesRoll = random.realZeroToOneInclusive();
+		if (agesRoll < 1.0 / 3.0) {
+			updatedTargets.common = Math.max(0, updatedTargets.common - 1);
+			const pool = chooseWeighted(
+				[0.6325, 0.2975, 0.07],
+				[this.throughTheAges.uncommon, this.throughTheAges.rare, this.throughTheAges.mythic]
+			);
+			booster.push(pickCard(pool, booster, { foil: false }));
+		}
+		// 3 Uncommons
+		//   Of these uncommons, 0.3% will be a double-faced uncommon borderless woodblock or borderless character card.
+		//   One of those uncommons—Cid, Timeless Artificer—has 15 different alternate-art variants. Cid, Timeless Artificer appears at the same rate as other uncommons, and all variants of the card appear at equal rates. Since there are 109 uncommons that can appear in this slot, any given uncommon has a 0.9% chance to be Cid, Timeless Artificer.
+		{
+			// TODO
+		}
+		// 1 Wildcard of any rarity
+		//   Common (16.7%), uncommon (58.3%; same proportion as above), a borderless woodblock common (2.6%), borderless woodblock or borderless character uncommon (5.7%), or rare or mythic rare (16.7%; same proportion as below).
+		{
+			const pool = chooseWeighted(
+				[
+					0.167,
+					0.583,
+					0.026,
+					0.057 / 2, // FIXME
+					0.057 / 2, // FIXME
+					(0.167 * 6) / 7, // FIXME
+					(0.167 * 1) / 7, // FIXME
+				],
+				[
+					this.cardPool.common,
+					this.cardPool.uncommon,
+					this.borderlessWoodblock.common,
+					this.borderlessWoodblock.uncommon,
+					this.borderlessCharacter.uncommon,
+					this.cardPool.rare,
+					this.cardPool.mythic,
+				]
+			);
+			booster.push(pickCard(pool, booster, { foil: false }));
+		}
+		// 1 Non-foil rare or mythic rare
+		//   Default frame rare (80%) or mythic rare (10%)
+		//   Borderless rare (8%) or mythic rare (1%)
+		//   FINAL FANTASY artist rare (0.5%) or mythic rare (0.5%)
+		for (let i = 0; i < updatedTargets.rare; ++i) {
+			const pool = chooseWeighted(
+				[0.8, 0.1, 0.08, 0.01, 0.05, 0.05],
+				[
+					this.cardPool.rare,
+					this.options.mythicPromotion ? this.cardPool.mythic : this.cardPool.rare,
+					this.borderless.rare,
+					this.options.mythicPromotion ? this.borderless.mythic : this.borderless.rare,
+					this.artist.rare,
+					this.options.mythicPromotion ? this.artist.mythic : this.artist.rare,
+				]
+			);
+			booster.push(pickCard(pool, booster, { foil: false }));
+		}
+		updatedTargets.rare = 0;
+		// 1 Traditional foil card
+		//   Default frame common (55.75%), uncommon (35.9%), rare (5.5%), or mythic rare (0.75%)
+		//   Booster Fun common (0.1%), uncommon (0.5%), rare (1%), or mythic rare (0.25%)
+		//   1 of 15 Cid variants (0.25%)
+		{
+			const pool = chooseWeighted(
+				[0.5575, 0.359, 0.055, 0.075, 0.001, 0.005, 0.01, 0.0025, 0.0025],
+				[
+					this.cardPool.common,
+					this.cardPool.uncommon,
+					this.cardPool.rare,
+					this.cardPool.mythic,
+					this.boosterFun.common,
+					this.boosterFun.uncommon,
+					this.boosterFun.rare,
+					this.boosterFun.mythic,
+					this.cidVariants,
+				]
+			);
+			booster.push(pickCard(pool, booster, { foil: true }));
+		}
+
+		const rest = super.generateBooster(updatedTargets, booster);
+		if (isMessageError(rest)) return rest;
+
+		//	1 Land
+		//		Common two-color land (55%) or basic land (45%)
+		//		This card is traditional foil 20% of the time.
+		{
+			const pool = chooseWeighted([0.55, 0.45], [FINBoosterFactory.Basics, FINBoosterFactory.CommonDualLands]);
+			const foil = random.realZeroToOneInclusive() <= 0.2;
+			rest.push(getUnique(getRandom(pool), { foil }));
+		}
+
+		return rest;
+	}
+}
+
 // Set specific rules.
 // Neither DOM, WAR or ZNR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
 export const SetSpecificFactories: {
@@ -3333,6 +3468,7 @@ export const SetSpecificFactories: {
 	inr: INRBoosterFactory,
 	dft: DFTBoosterFactory,
 	tdm: TDMBoosterFactory,
+	fin: FINBoosterFactory,
 };
 
 export const getBoosterFactory = function (
