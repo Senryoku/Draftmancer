@@ -2418,7 +2418,7 @@ import { JumpInBooster } from "../src/JumpInTypes.js";
 import { parseLine } from "../src/parseCardList.js";
 import { SocketError, isSocketError } from "../src/Message.js";
 import { isNumber } from "../src/TypeChecks.js";
-import { getNDisctinctRandom, randomInt, sum } from "../src/utils.js";
+import { getNDisctinctRandom, random, sum } from "../src/utils.js";
 
 describe("Jumpstart", function () {
 	let clients: ReturnType<typeof makeClients> = [];
@@ -2610,9 +2610,9 @@ describe("Jump In!", function () {
 	// Set selections with a total of 3 ot less packs will return an error by design. Avoid those for tests.
 	const testCases = JumpInSets.filter((s) => JumpInBoosters[s].length >= 4).map((s) => [s]);
 	for (let i = 0; i < 8; ++i) {
-		let testCase = getNDisctinctRandom(JumpInSets, randomInt(1, JumpInSets.length));
+		let testCase = getNDisctinctRandom(JumpInSets, random.integer(1, JumpInSets.length));
 		while (sum(testCase.map((s) => JumpInBoosters[s].length)) < 4)
-			testCase = getNDisctinctRandom(JumpInSets, randomInt(1, JumpInSets.length));
+			testCase = getNDisctinctRandom(JumpInSets, random.integer(1, JumpInSets.length));
 		testCases.push(testCase);
 	}
 	for (const sets of testCases) {

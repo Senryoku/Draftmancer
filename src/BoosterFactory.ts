@@ -1,15 +1,6 @@
 import { CardID, Card, CardPool, SlotedCardPool, UniqueCard } from "./CardTypes.js";
 import { getUnique, BoosterCardsBySet, CardsBySet, getCard, DefaultMaxDuplicates } from "./Cards.js";
-import {
-	shuffleArray,
-	randomInt,
-	Options,
-	random,
-	getRandom,
-	cumulativeSum,
-	weightedRandomIdx,
-	chooseWeighted,
-} from "./utils.js";
+import { shuffleArray, Options, random, getRandom, cumulativeSum, chooseWeighted } from "./utils.js";
 import { pickCard } from "./cardUtils.js";
 import { BasicLandSlot } from "./LandSlot.js";
 import { MessageError, isMessageError } from "./Message.js";
@@ -784,7 +775,7 @@ class MIDBoosterFactory extends BoosterFactory {
 			if (pickedDoubleFacedRareOrUncommon) {
 				booster.splice(
 					pickedDoubleFacedRareOrUncommon.rarity === "uncommon"
-						? randomInt(
+						? random.integer(
 								updatedTargets["rare"] + hasFoil,
 								updatedTargets["rare"] + updatedTargets["uncommon"] + hasFoil
 							)

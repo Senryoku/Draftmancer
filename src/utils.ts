@@ -7,10 +7,6 @@ export function isEmpty(obj: object) {
 	return true;
 }
 
-export function randomInt(min: number, max: number) {
-	return random.integer(min, max);
-}
-
 export function negMod(m: number, n: number) {
 	return ((m % n) + n) % n;
 }
@@ -58,9 +54,11 @@ export function getRandomKey(obj: object) {
 	return keys[random.integer(0, keys.length - 1)];
 }
 
-export function weightedRandomIdx<T extends { weight: number }>(arr: Array<T>, totalWeight: number) {
+// totalWeight: Precomputed sum of all weights. Will be computed internally from arr if left undefined.
+export function weightedRandomIdx<T extends { weight: number }>(arr: Array<T>, totalWeight?: number) {
 	if (arr.length < 2) return 0;
-	const pick = randomInt(1, totalWeight);
+	const max = totalWeight ?? arr.reduce((acc, val) => acc + val.weight, 0);
+	const pick = random.integer(1, max);
 	let idx = 0;
 	let acc = arr[idx].weight;
 	while (acc < pick) {

@@ -84,8 +84,7 @@ export function generateJumpInBooster(boosterPattern: JumpInBoosterPattern): Jum
 	// Random variations
 	if (boosterPattern.alts) {
 		for (const slot of boosterPattern.alts) {
-			const totalWeight = slot.map((o) => o.weight).reduce((p, c) => p + c, 0); // FIXME: Should always be 100, but since cards are still missing from the database, we'll compute it correctly.
-			const pickIdx = weightedRandomIdx(slot, totalWeight);
+			const pickIdx = weightedRandomIdx(slot);
 			booster.cards.push(getUnique(slot[pickIdx].id));
 		}
 	}

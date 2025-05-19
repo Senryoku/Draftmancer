@@ -81,13 +81,7 @@ export class PaperBoosterFactory implements IBoosterFactory {
 	generateBooster() {
 		const booster: Array<CardInfo> = [];
 		// Select one of the possible sheet arrangement
-		const boosterContent =
-			this.possibleContent[
-				weightedRandomIdx(
-					this.possibleContent,
-					this.possibleContent.reduce((acc: number, val: BoosterInfo) => acc + val.weight, 0)
-				)
-			];
+		const boosterContent = this.possibleContent[weightedRandomIdx(this.possibleContent)];
 		// Pick cards from each sheet, color balancing if necessary
 		for (const sheetName in boosterContent.sheets) {
 			if (this.set.sheets[sheetName].balance_colors) {

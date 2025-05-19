@@ -121,12 +121,7 @@ export function generateBoosterFromCustomCardList(
 					(index: number): string => {
 						const choices = predeterminedLayouts[index % predeterminedLayouts.length]!;
 						if (choices.length === 1) return choices[0].name;
-						return choices[
-							weightedRandomIdx(
-								choices,
-								choices.reduce((acc, curr) => acc + curr.weight, 0)
-							)
-						].name;
+						return choices[weightedRandomIdx(choices)].name;
 					}
 			: customCardList.settings?.layoutWithReplacement === false
 				? // Random layouts without replacement (until we have no other choice)
@@ -166,13 +161,7 @@ export function generateBoosterFromCustomCardList(
 			const pickedLayout = layouts[pickedLayoutName];
 
 			for (const [index, slot] of pickedLayout.slots.entries()) {
-				const sheetName =
-					slot.sheets[
-						weightedRandomIdx(
-							slot.sheets,
-							slot.sheets.reduce((acc, curr) => acc + curr.weight, 0)
-						)
-					].name;
+				const sheetName = slot.sheets[weightedRandomIdx(slot.sheets)].name;
 				const useColorBalance: boolean =
 					options.colorBalance &&
 					index === colorBalancedSlots[pickedLayoutName] &&
