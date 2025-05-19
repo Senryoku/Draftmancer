@@ -3288,11 +3288,10 @@ class FINBoosterFactory extends BoosterFactory {
 		);
 	}
 
-	static readonly ThroughTheAges = FINBoosterFactory.filter(292, 326);
+	static readonly ThroughTheAges = CardsBySet["fca"];
 	static readonly Borderless = FINBoosterFactory.filter(292, 326);
 	static readonly Artist = FINBoosterFactory.filter(292, 326);
 
-	showcase: SlotedCardPool = {};
 	throughTheAges: SlotedCardPool = {};
 	borderless: SlotedCardPool = {};
 	artist: SlotedCardPool = {};
@@ -3318,8 +3317,8 @@ class FINBoosterFactory extends BoosterFactory {
 		// In one third of Play Boosters, one of these commons will be replaced by a card from the FINAL FANTASY Through the Ages bonus sheet.
 		// Cards from the bonus sheet aren't found in the wildcard or traditional foil slot in Play Boosters.
 		// You can receive an uncommon (63.25%), rare (29.75%), or mythic rare (7%) FINAL FANTASY Through the Ages bonus sheet card.
-		const agesRoll = random.realZeroToOneInclusive();
-		if (agesRoll < 1.0 / 3.0) {
+		const bonusRoll = random.realZeroToOneInclusive();
+		if (bonusRoll < 1.0 / 3.0) {
 			updatedTargets.common = Math.max(0, updatedTargets.common - 1);
 			const pool = chooseWeighted(
 				[0.6325, 0.2975, 0.07],
