@@ -1841,6 +1841,7 @@ export class Session implements IIndexable {
 	endSilentAuctionDraft(): SocketAck {
 		if (!this.drafting || !isSilentAuctionDraftState(this.draftState))
 			return new SocketError("Not Playing", "There's no Silent Auction Draft running on this session.");
+		logSession("SilentAuctionDraft", this);
 		for (const p of this.draftState.players) Connections[p.userID]?.socket.emit("silentAuctionDraftEnd");
 		this.finalizeLogs();
 		this.sendLogs();
