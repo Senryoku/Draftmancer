@@ -20,10 +20,9 @@
 							max="128"
 							step="1"
 							placeholder="Pack count"
-							class="small-number-input"
 							v-model.number="boosterCount"
 						/>
-						<ResetButton v-model="boosterCount" :default-value="18" />
+						<ResetButton v-model="boosterCount" :default-value="defaultBoosterCount" />
 					</div>
 					<label for="starting-funds-input">Starting Funds</label>
 					<div>
@@ -33,10 +32,9 @@
 							min="1"
 							step="1"
 							placeholder="Starting Funds"
-							class="small-number-input"
 							v-model.number="startingFunds"
 						/>
-						<ResetButton v-model="startingFunds" :default-value="200" />
+						<ResetButton v-model="startingFunds" :default-value="defaultStartingFunds" />
 					</div>
 				</div>
 			</div>
@@ -55,8 +53,19 @@ import { ref } from "vue";
 import Modal from "./Modal.vue";
 import ResetButton from "./ResetButton.vue";
 
-const boosterCount = ref(18);
-const startingFunds = ref(200);
+const props = withDefaults(
+	defineProps<{
+		defaultBoosterCount: number;
+		defaultStartingFunds: number;
+	}>(),
+	{
+		defaultBoosterCount: 18,
+		defaultStartingFunds: 200,
+	}
+);
+
+const boosterCount = ref(props.defaultBoosterCount);
+const startingFunds = ref(props.defaultStartingFunds);
 
 const emit = defineEmits<{
 	(e: "close"): void;
@@ -75,5 +84,9 @@ const start = () => {
 <style scoped>
 .dialog {
 	max-width: min(500px, 100vw);
+}
+
+input[type="number"] {
+	width: 4em;
 }
 </style>

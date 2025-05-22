@@ -2407,6 +2407,7 @@ export default defineComponent({
 			if (this.userID !== this.sessionOwner || this.drafting) return;
 
 			this.spawnDialog(SilentAuctionDraftDialog, {
+				defaultBoosterCount: 3 * this.sessionUsers.length,
 				onStart: (boosterCount: number, startingFunds: number) => {
 					this.socket.emit("startSilentAuctionDraft", boosterCount, startingFunds, (response) => {
 						if (response?.error) Alert.fire(response.error);
