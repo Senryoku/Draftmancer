@@ -913,4 +913,4 @@ ul.player-table.six li:nth-child(5):before {
 }
 </style>
 
-<style scoped src="../css/silentAuction.css" />
+<style scoped src="../css/silent-auction.css" />

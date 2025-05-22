@@ -264,4 +264,4 @@ function end() {
 }
 </style>
 
-<style scoped src="../css/silentAuction.css" />
+<style scoped src="../css/silent-auction.css" />
