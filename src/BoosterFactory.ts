@@ -3289,21 +3289,35 @@ class FINBoosterFactory extends BoosterFactory {
 	}
 
 	static readonly ThroughTheAges = CardsBySet["fca"];
-	static readonly Borderless = FINBoosterFactory.filter(292, 326);
-	static readonly Artist = FINBoosterFactory.filter(292, 326);
+	static readonly Borderless = FINBoosterFactory.filter(310, 405);
+	static readonly BorderlessAdventure = FINBoosterFactory.filter(310, 314);
+	static readonly BorderlessArtist = FINBoosterFactory.filter(315, 323); // FIXME: Should be 10?
+	static readonly BorderlessWoodblock = FINBoosterFactory.filter(324, 373); // 50
+	static readonly BorderlessCharacter = FINBoosterFactory.filter(374, 405); // 32
+	static readonly CidVariants = [...FINBoosterFactory.filter(216, 216), ...FINBoosterFactory.filter(407, 420)];
+	static readonly Basics = FINBoosterFactory.filter(294, 309); // FIXME: There's only one waste variant instead of 3 for other basics. Should I fix the ratio?
+	static readonly CommonDualLands = FINBoosterFactory.filter(286, 293).filter((c) => getCard(c).rarity === "common");
 
 	throughTheAges: SlotedCardPool = {};
 	borderless: SlotedCardPool = {};
-	artist: SlotedCardPool = {};
+	borderlessArtist: SlotedCardPool = {};
+	borderlessAdventure: SlotedCardPool = {};
+	borderlessWoodblock: SlotedCardPool = {};
+	borderlessCharacter: SlotedCardPool = {};
+	cid: SlotedCardPool = {};
 
 	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
 		const [, filteredCardPool] = filterCardPool(cardPool, (cid: CardID) =>
-			TDMBoosterFactory.CommonDualLands.includes(cid)
+			FINBoosterFactory.CommonDualLands.includes(cid)
 		);
 		super(filteredCardPool, landSlot, options);
 		this.throughTheAges = cidsToSlotedCardPool(FINBoosterFactory.ThroughTheAges, options.maxDuplicates);
-		this.borderless = cidsToSlotedCardPool(FINBoosterFactory.Borderless, options.maxDuplicates);
-		this.artist = cidsToSlotedCardPool(FINBoosterFactory.Artist, options.maxDuplicates);
+		this.borderless = cidsToSlotedCardPool(FINBoosterFactory.Borderless, options.maxDuplicates); // NOTE: The multiple card pools means maxDuplicates might not be respected...
+		this.borderlessArtist = cidsToSlotedCardPool(FINBoosterFactory.BorderlessArtist, options.maxDuplicates);
+		this.borderlessAdventure = cidsToSlotedCardPool(FINBoosterFactory.BorderlessAdventure, options.maxDuplicates);
+		this.borderlessWoodblock = cidsToSlotedCardPool(FINBoosterFactory.BorderlessWoodblock, options.maxDuplicates);
+		this.borderlessCharacter = cidsToSlotedCardPool(FINBoosterFactory.BorderlessCharacter, options.maxDuplicates);
+		this.cid = cidsToSlotedCardPool(["7fb99393-d2b6-40a6-8de7-317efdc4c50b"], options.maxDuplicates);
 	}
 
 	generateBooster(targets: Targets) {
@@ -3329,8 +3343,20 @@ class FINBoosterFactory extends BoosterFactory {
 		// 3 Uncommons
 		//   Of these uncommons, 0.3% will be a double-faced uncommon borderless woodblock or borderless character card.
 		//   One of those uncommons—Cid, Timeless Artificer—has 15 different alternate-art variants. Cid, Timeless Artificer appears at the same rate as other uncommons, and all variants of the card appear at equal rates. Since there are 109 uncommons that can appear in this slot, any given uncommon has a 0.9% chance to be Cid, Timeless Artificer.
+		const specialUncommons: UniqueCard[] = [];
 		{
-			// TODO
+			const count = updatedTargets.uncommon;
+			for (let i = 0; i < count; i++) {
+				if (random.realZeroToOneInclusive() < 0.003) {
+					const pool = chooseWeighted(
+						[12 / (12 + 4), 4 / (12 + 4)],
+						[this.borderlessWoodblock.uncommon, this.borderlessCharacter.uncommon]
+					);
+					specialUncommons.push(pickCard(pool, specialUncommons, { foil: false }));
+					updatedTargets.uncommon -= 1;
+				}
+			}
+			// See bellow for Cid variants.
 		}
 		// 1 Wildcard of any rarity
 		//   Common (16.7%), uncommon (58.3%; same proportion as above), a borderless woodblock common (2.6%), borderless woodblock or borderless character uncommon (5.7%), or rare or mythic rare (16.7%; same proportion as below).
@@ -3340,10 +3366,10 @@ class FINBoosterFactory extends BoosterFactory {
 					0.167,
 					0.583,
 					0.026,
-					0.057 / 2, // FIXME
-					0.057 / 2, // FIXME
-					(0.167 * 6) / 7, // FIXME
-					(0.167 * 1) / 7, // FIXME
+					0.057 * (4 / (12 + 4)),
+					0.057 * (12 / (12 + 4)),
+					(0.167 * 8) / 9, // FIXME: 80:10 ratio? Really?
+					(0.167 * 1) / 9, // FIXME
 				],
 				[
 					this.cardPool.common,
@@ -3369,8 +3395,8 @@ class FINBoosterFactory extends BoosterFactory {
 					this.options.mythicPromotion ? this.cardPool.mythic : this.cardPool.rare,
 					this.borderless.rare,
 					this.options.mythicPromotion ? this.borderless.mythic : this.borderless.rare,
-					this.artist.rare,
-					this.options.mythicPromotion ? this.artist.mythic : this.artist.rare,
+					this.borderlessArtist.rare,
+					this.options.mythicPromotion ? this.borderlessArtist.mythic : this.borderlessArtist.rare,
 				]
 			);
 			booster.push(pickCard(pool, booster, { foil: false }));
@@ -3388,11 +3414,11 @@ class FINBoosterFactory extends BoosterFactory {
 					this.cardPool.uncommon,
 					this.cardPool.rare,
 					this.cardPool.mythic,
-					this.boosterFun.common,
-					this.boosterFun.uncommon,
-					this.boosterFun.rare,
-					this.boosterFun.mythic,
-					this.cidVariants,
+					this.borderless.common, // FIXME: Booster fun means borderless here?
+					this.borderless.uncommon,
+					this.borderless.rare,
+					this.borderless.mythic,
+					this.cid.uncommon,
 				]
 			);
 			booster.push(pickCard(pool, booster, { foil: true }));
@@ -3400,6 +3426,15 @@ class FINBoosterFactory extends BoosterFactory {
 
 		const rest = super.generateBooster(updatedTargets, booster);
 		if (isMessageError(rest)) return rest;
+
+		rest.splice(updatedTargets.rare, 0, ...specialUncommons);
+
+		for (let i = 0; i < rest.length; ++i) {
+			// Cid, Timeless Artificer. Reroll it into any of its variant.
+			if (rest[i].oracle_id === "87050537-99c9-4993-a770-4329b2e749e4") {
+				rest[i] = getUnique(getRandom(FINBoosterFactory.CidVariants), { foil: rest[i].foil });
+			}
+		}
 
 		//	1 Land
 		//		Common two-color land (55%) or basic land (45%)
