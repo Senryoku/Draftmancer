@@ -33,7 +33,7 @@ export function fixSetCode(set: SetCode) {
 	return r;
 }
 
-function exportCardToMTGA(c: Card, language: Language, full: boolean) {
+function MTGACardLine(c: Card, language: Language, full: boolean) {
 	const set = fixSetCode(c.set);
 	let name = c.name;
 	if (language in c.printed_names) name = c.printed_names[language];
@@ -52,8 +52,8 @@ function exportCardToMTGA(c: Card, language: Language, full: boolean) {
 			: c.collector_number;
 	if (collector_number?.startsWith("A-")) collector_number = collector_number.substr(2);
 
-	if (full) return `1 ${name} (${set}) ${collector_number}\n`;
-	else return `1 ${name}\n`;
+	if (full) return `${name} (${set}) ${collector_number}`;
+	else return `${name}`;
 }
 
 class MTGAExportOptions {
@@ -69,14 +69,23 @@ export function exportToMTGA(
 	lands: { [c in CardColor]: number } | null = null,
 	options: MTGAExportOptions = new MTGAExportOptions()
 ) {
-	// Note: The importer requires the collector number, but it can be wrong and the import will succeed        ↓
+	// Note: The importer requires the collector number, but it can be wrong and the import will succeed
 	const basicsSet =
 		options.full && options.preferredBasics && options.preferredBasics !== ""
 			? ` (${fixSetCode(options.preferredBasics)}) 1`
 			: "";
 
 	let str = options.full ? "Deck\n" : "";
-	for (const c of deck) str += exportCardToMTGA(c, language, options.full);
+
+	const deckLines = new Map<string, number>();
+	for (const c of deck) {
+		const line = MTGACardLine(c, language, options.full);
+		if (deckLines.has(line)) deckLines.set(line, deckLines.get(line)! + 1);
+		else deckLines.set(line, 1);
+	}
+	str += [...deckLines].map((l) => `${l[1]} ${l[0]}`).join("\n");
+	str += "\n";
+
 	if (lands) {
 		for (const c in lands)
 			if (lands[c as CardColor] > 0)
@@ -93,7 +102,16 @@ export function exportToMTGA(
 					? 1
 					: 0
 		);
-		for (const c of sideboard) str += exportCardToMTGA(c, language, options.full);
+
+		const sideboardLines = new Map<string, number>();
+		for (const c of sideboard) {
+			const line = MTGACardLine(c, language, options.full);
+			if (sideboardLines.has(line)) sideboardLines.set(line, sideboardLines.get(line)! + 1);
+			else sideboardLines.set(line, 1);
+		}
+		str += [...sideboardLines].map((l) => `${l[1]} ${l[0]}`).join("\n");
+		str += "\n";
+
 		// Add some basic lands to the sideboard
 		if (options.sideboardBasics && options.sideboardBasics > 0)
 			for (const c of ["W", "U", "B", "R", "G"])
