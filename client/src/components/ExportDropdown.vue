@@ -66,6 +66,7 @@ const FaBAlwaysAvailableCards = {
 	MST: ["MST002", "MST003", "MST003", "MST130", "MST159"],
 	ROS: ["ROS002", "ROS003", "ROS009", "ROS015", "ROS021"],
 	HNT: ["HNT099", "HNT100", "HNT100", "HNT056", "HNT056", "HNT010", "HNT010"],
+	SEA: ["SEA002", "SEA006", "SEA007", "SEA044", "SEA045", "SEA083", "SEA084", "SEA094", "SEA124"],
 };
 
 export default defineComponent({
