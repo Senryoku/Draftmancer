@@ -33,6 +33,7 @@ import { QueueID } from "./draftQueue/QueueDescription";
 import { BracketType, IBracket } from "./Brackets";
 import { CCLSettings, CustomCardList } from "./CustomCardList";
 import { SilentAuctionDraftState, SilentAuctionDraftSyncData } from "./SilentAuctionDraft";
+import { Tiebreaker } from "./SilentAuctionDraftTiebreakers";
 
 export type LoaderOptions = { title: string };
 
@@ -395,6 +396,7 @@ export interface ClientToServerEvents {
 		startingFunds: number,
 		pricePaid: "first" | "second",
 		reservePrice: number,
+		tiebreakers: Tiebreaker[],
 		ack: (result: SocketAck) => void
 	) => void;
 	setSessionOwner: (newOwnerID: UserID) => void;

@@ -7,8 +7,7 @@
 			<div class="dialog">
 				<p>
 					Each round a pack will be presented and players will secretly bid on any card (up to their current
-					funds). Once all bids are in, they are resolved from left to right. Higher funds then lower card
-					count are used as tiebreakers.
+					funds). Once all bids are in, they are resolved from left to right.
 				</p>
 				<div class="dialog-settings">
 					<label for="booster-count-input">Pack count</label>
@@ -64,6 +63,50 @@
 						Example: If bids are 25, 10 and 5, the winner will pay 25 with the first-price option, and 10
 						with the second-price option.
 					</div>
+					<div class="tiebreakers">
+						<label>Tiebreakers</label>
+						<Sortable
+							:list="tiebreakers"
+							item-key="property"
+							:options="{ animation: 200 }"
+							class="tiebreakers-list"
+							:key="tiebreakers.map((t) => t.property).join('-')"
+							@end="(event: SortableEvent) => moveTiebreaker(event.oldIndex!, event.newIndex!)"
+						>
+							<template #item="{ element }">
+								<div class="tiebreaker" :key="element.property">
+									<font-awesome-icon icon="fa-solid fa-list" class="draggable" />
+									<select v-model="element.property">
+										<option
+											value="funds"
+											v-if="element.property === 'funds' || isAvailable('funds')"
+										>
+											Funds
+										</option>
+										<option
+											value="cards"
+											v-if="element.property === 'cards' || isAvailable('cards')"
+										>
+											Cards
+										</option>
+									</select>
+									<select v-model="element.winner">
+										<option value="higher">Higher</option>
+										<option value="lower">Lower</option>
+									</select>
+									<font-awesome-icon
+										icon="fa-solid fa-trash"
+										class="clickable"
+										@click="removeTiebreaker(element.property)"
+									/>
+								</div>
+							</template>
+						</Sortable>
+						<div v-if="availableTiebreakers.length > 0"><button @click="addTiebreaker">Add</button></div>
+					</div>
+					<div class="help">
+						Tiebreakers can be re-ordered. If everything is equal, winner will be chosen randomly.
+					</div>
 				</div>
 			</div>
 		</template>
@@ -77,20 +120,28 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref, nextTick } from "vue";
 import Modal from "./Modal.vue";
 import ResetButton from "./ResetButton.vue";
+import { Tiebreaker, TiebreakerProperties } from "../../../src/SilentAuctionDraftTiebreakers";
+import { Sortable } from "sortablejs-vue3";
+import { SortableEvent } from "sortablejs";
 
 const props = withDefaults(
 	defineProps<{
 		defaultBoosterCount: number;
 		defaultStartingFunds?: number;
 		defaultReservePrice?: number;
+		defaultTiebreakers?: Tiebreaker[];
 	}>(),
 	{
 		defaultBoosterCount: 18,
 		defaultStartingFunds: 200,
 		defaultReservePrice: 0,
+		defaultTiebreakers: () => [
+			{ property: "funds", winner: "higher" },
+			{ property: "cards", winner: "lower" },
+		],
 	}
 );
 
@@ -98,6 +149,7 @@ const boosterCount = ref(props.defaultBoosterCount);
 const startingFunds = ref(props.defaultStartingFunds);
 const pricePaid = ref<"first" | "second">("first");
 const reservePrice = ref(props.defaultReservePrice);
+const tiebreakers = ref(props.defaultTiebreakers);
 
 const emit = defineEmits<{
 	(e: "close"): void;
@@ -106,15 +158,40 @@ const emit = defineEmits<{
 		boosterCount: number,
 		startingFunds: number,
 		pricePaid: "first" | "second",
-		reservePrice: number
+		reservePrice: number,
+		tiebreakers: Tiebreaker[]
 	): void;
 }>();
 
 const cancel = () => emit("close");
 const start = () => {
-	emit("start", boosterCount.value, startingFunds.value, pricePaid.value, reservePrice.value);
+	emit("start", boosterCount.value, startingFunds.value, pricePaid.value, reservePrice.value, tiebreakers.value);
 	emit("close");
 };
+
+const availableTiebreakers = computed((): (typeof TiebreakerProperties)[number][] =>
+	TiebreakerProperties.filter((p) => !tiebreakers.value.some((t) => t.property === p))
+);
+
+function addTiebreaker() {
+	if (availableTiebreakers.value.length <= 0) return;
+	tiebreakers.value.push({ property: availableTiebreakers.value[0], winner: "higher" });
+}
+
+function removeTiebreaker(property: (typeof TiebreakerProperties)[number]) {
+	nextTick(() => {
+		tiebreakers.value = tiebreakers.value.filter((t) => t.property !== property);
+	});
+}
+
+function moveTiebreaker(from: number, to: number) {
+	const item = tiebreakers.value.splice(from, 1)[0];
+	nextTick(() => tiebreakers.value.splice(to, 0, item));
+}
+
+function isAvailable(property: (typeof TiebreakerProperties)[number]): boolean {
+	return availableTiebreakers.value.includes(property);
+}
 </script>
 
 <style scoped src="../css/start-game-dialog.css" />
@@ -126,5 +203,29 @@ const start = () => {
 
 input[type="number"] {
 	width: 4em;
+}
+
+.tiebreakers {
+	grid-column: span 2;
+	width: 100%;
+	min-height: 130px;
+}
+
+.tiebreakers-list {
+	display: flex;
+	flex-direction: column;
+	justify-items: center;
+	align-items: center;
+	gap: 0.25em;
+	padding: 0.25em;
+}
+
+.tiebreaker {
+	display: flex;
+	align-items: center;
+	gap: 0.25em;
+	padding: 0.2em 2em;
+	background: #383838;
+	border-radius: 0.25em;
 }
 </style>

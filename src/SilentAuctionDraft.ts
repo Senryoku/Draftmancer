@@ -4,11 +4,24 @@ import { UserID } from "./IDTypes.js";
 import { random, shuffleArray, sum } from "./utils.js";
 import { MessageError } from "./Message.js";
 import { Connections } from "./Connection.js";
+import { Tiebreaker, TiebreakerProperties } from "./SilentAuctionDraftTiebreakers.js";
+
+import { hasProperty, isObject, isString } from "./TypeChecks.js";
+export function isTiebreaker(t: unknown): t is Tiebreaker {
+	return (
+		isObject(t) &&
+		hasProperty("property", isString)(t) &&
+		hasProperty("winner", isString)(t) &&
+		(TiebreakerProperties as unknown as string[]).includes(t.property) &&
+		["lower", "higher"].includes(t.winner)
+	);
+}
 
 export class SilentAuctionDraftState extends IDraftState {
 	readonly packCount: number;
 	readonly pricePaid: "first" | "second"; // See "sealed-bid first-price auction" / "sealed-bid second-price auction"
 	readonly reservePrice: number;
+	readonly tiebreakers: readonly Tiebreaker[];
 	packs: UniqueCard[][];
 	players: { userID: UserID; bids: number[] | null; funds: number }[];
 	currentPack: UniqueCard[] | null = null;
@@ -16,7 +29,12 @@ export class SilentAuctionDraftState extends IDraftState {
 	constructor(
 		players: UserID[],
 		packs: UniqueCard[][],
-		options: { startingFunds: number; pricePaid: "first" | "second"; reservePrice: number }
+		options: {
+			startingFunds: number;
+			pricePaid: "first" | "second";
+			reservePrice: number;
+			tiebreakers: readonly Tiebreaker[];
+		}
 	) {
 		super("silentAuction");
 		this.players = players.map((uid) => ({ userID: uid, bids: null, funds: options.startingFunds }));
@@ -24,6 +42,7 @@ export class SilentAuctionDraftState extends IDraftState {
 		this.packCount = packs.length;
 		this.pricePaid = options.pricePaid;
 		this.reservePrice = options.reservePrice;
+		this.tiebreakers = options.tiebreakers;
 		shuffleArray(this.packs);
 		this.nextRound();
 	}
@@ -40,7 +59,10 @@ export class SilentAuctionDraftState extends IDraftState {
 	}
 
 	solveBids() {
-		const results: { winner: UserID | null; bids: { userID: UserID; bid: number; won: boolean }[] }[] = [];
+		const results: {
+			winner: UserID | null;
+			bids: { userID: UserID; bid: number; won: boolean; funds: number }[];
+		}[] = [];
 		const playerCardCounts: Record<UserID, number> = this.players.reduce(
 			(acc, p) => ({
 				...acc,
@@ -64,20 +86,28 @@ export class SilentAuctionDraftState extends IDraftState {
 				else {
 					if (lhs.bid !== rhs.bid) return rhs.bid - lhs.bid;
 					else {
-						// Tiebreakers:
-						//  Funds
-						if (lhs.funds !== rhs.funds) return rhs.funds - lhs.funds;
-						else {
-							// Current card count: Lower card count wins.
-							const lCount = playerCardCounts[lhs.userID];
-							const rCount = playerCardCounts[rhs.userID];
-							if (lCount !== rCount) return lCount - rCount;
-							else {
-								// Everything else failed: Random.
-								if (random.bool()) return -1;
-								else return 1;
+						for (const tiebreaker of this.tiebreakers) {
+							switch (tiebreaker.property) {
+								case "funds":
+									if (lhs.funds !== rhs.funds) {
+										if (tiebreaker.winner === "lower") return lhs.funds - rhs.funds;
+										return rhs.funds - lhs.funds;
+									}
+									break;
+								case "cards": {
+									const lCount = playerCardCounts[lhs.userID];
+									const rCount = playerCardCounts[rhs.userID];
+									if (lCount !== rCount) {
+										if (tiebreaker.winner === "lower") return lCount - rCount;
+										return rCount - lCount;
+									}
+									break;
+								}
 							}
 						}
+						// Everything else failed: Random.
+						if (random.bool()) return -1;
+						else return 1;
 					}
 				}
 			});

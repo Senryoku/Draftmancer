@@ -68,6 +68,7 @@ import expressStaticGzip from "express-static-gzip";
 import { parseMTGOLog } from "./parseMTGOLog.js";
 
 import { init as MTGOAPIInit } from "./MTGOAPI.js";
+import { isTiebreaker } from "./SilentAuctionDraft.js";
 
 if (process.env.NODE_ENV === "production") MTGOAPIInit();
 
@@ -663,6 +664,7 @@ function startSilentAuctionDraft(
 	startingFunds: unknown,
 	pricePaid: unknown,
 	reservePrice: unknown,
+	tiebreakers: unknown,
 	ack: (result: SocketAck) => void
 ) {
 	const sess = Sessions[sessionID];
@@ -672,6 +674,10 @@ function startSilentAuctionDraft(
 
 	if (pricePaid !== "first" && pricePaid !== "second")
 		return ack?.(new SocketError("Invalid parameter 'pricePaid'."));
+
+	if (!isArrayOf(isTiebreaker)(tiebreakers)) return ack?.(new SocketError("Invalid parameter 'tiebreakers'."));
+	if (new Set(tiebreakers.map((t) => t.property)).size !== tiebreakers.length)
+		return ack?.(new SocketError("Duplicate properties in parameter 'tiebreakers'."));
 
 	if (!isInteger(localBoosterCount) || localBoosterCount <= 0)
 		return ack?.(new SocketError("Invalid parameter 'boosterCount'."));
@@ -684,6 +690,7 @@ function startSilentAuctionDraft(
 		startingFunds: localStartingFunds,
 		pricePaid,
 		reservePrice: localReservePrice,
+		tiebreakers,
 	});
 	if (isSocketError(r)) return ack(r);
 	startPublicSession(sess);

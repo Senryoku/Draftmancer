@@ -19,6 +19,11 @@
 	padding: 0.2em;
 
 	.help {
+		margin: 0.2em 1em;
+		color: #bbb;
+		width: -moz-available;
+		justify-self: center;
+		text-align: center;
 		font-size: 0.7em;
 		grid-column: span 2;
 		background-color: #383838;

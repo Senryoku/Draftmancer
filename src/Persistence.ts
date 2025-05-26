@@ -39,6 +39,7 @@ import { SilentAuctionDraftState } from "./SilentAuctionDraft.js";
 import { sendLog } from "./BotTrainingAPI.js";
 import { deserializeBracket } from "./BracketSerialization.js";
 import { hasProperty, isString } from "./TypeChecks.js";
+import { DefaultTiebreakers } from "./SilentAuctionDraftTiebreakers.js";
 
 const PersistenceLocalPath = process.env.PERSISTENCE_LOCAL_PATH ?? ".";
 const LocalPersitenceDirectory = "tmp";
@@ -207,6 +208,7 @@ export function restoreSession(s: any, owner: UserID) {
 					startingFunds: 0,
 					pricePaid: "first",
 					reservePrice: 0,
+					tiebreakers: DefaultTiebreakers,
 				});
 				copyPODProps(s.draftState, r.draftState);
 				return r;

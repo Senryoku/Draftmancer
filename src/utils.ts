@@ -1,3 +1,4 @@
+import util from "node:util";
 import assert from "node:assert";
 import { Random, nodeCrypto } from "random-js";
 export const random = new Random(nodeCrypto);
@@ -157,3 +158,7 @@ export function escapeHTML(str: string) {
 }
 
 export type Options = { [key: string]: any };
+
+export function dump(obj: unknown) {
+	console.error(util.inspect(obj, { showHidden: false, depth: null, colors: true }));
+}

@@ -90,6 +90,7 @@ const SealedPresentation = defineAsyncComponent(() => import("./components/Seale
 
 // Preload Carback
 import CardBack from /* webpackPrefetch: true */ "./assets/img/cardback.webp";
+import { Tiebreaker } from "../../src/SilentAuctionDraftTiebreakers";
 const img = new Image();
 img.src = CardBack;
 
@@ -2412,7 +2413,8 @@ export default defineComponent({
 					boosterCount: number,
 					startingFunds: number,
 					pricePaid: "first" | "second",
-					reservePrice: number
+					reservePrice: number,
+					tiebreakers: Tiebreaker[]
 				) => {
 					this.socket.emit(
 						"startSilentAuctionDraft",
@@ -2420,6 +2422,7 @@ export default defineComponent({
 						startingFunds,
 						pricePaid,
 						reservePrice,
+						tiebreakers,
 						(response) => {
 							if (response?.error) Alert.fire(response.error);
 						}

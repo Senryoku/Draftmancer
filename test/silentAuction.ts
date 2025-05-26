@@ -11,8 +11,9 @@ import {
 	ackNoError,
 	getUID,
 } from "./src/common.js";
-import { random, shuffleArray } from "../src/utils.js";
-import { SilentAuctionDraftSyncData } from "../src/SilentAuctionDraft.js";
+import { dump, random, shuffleArray } from "../src/utils.js";
+import { SilentAuctionDraftResults, SilentAuctionDraftSyncData } from "../src/SilentAuctionDraft.js";
+import { DefaultTiebreakers, Tiebreaker } from "../src/SilentAuctionDraftTiebreakers.js";
 
 describe(`Silent Auction Draft`, function () {
 	describe(`2 players`, function () {
@@ -21,6 +22,7 @@ describe(`Silent Auction Draft`, function () {
 		let ownerIdx: number;
 		let nonOwnerIdx: number;
 		let state: SilentAuctionDraftSyncData | null;
+		let result: SilentAuctionDraftResults | null;
 
 		const CardsPerPack = 14; // Using TDM packs.
 
@@ -68,40 +70,91 @@ describe(`Silent Auction Draft`, function () {
 			clients[ownerIdx].emit("setRestriction", ["tdm"]);
 		});
 
-		function randomBids(done: () => void) {
-			let receivedResults = 0;
-			let receivedStates = 0;
-			for (const c of clients) {
-				c.once("silentAuctionDraftSync", function (newState) {
-					state = newState;
-					receivedStates++;
-					if (receivedResults === clients.length && receivedStates === clients.length) done();
-				});
-				c.once("silentAuctionDraftResults", function () {
-					receivedResults++;
-					if (receivedResults === clients.length && receivedStates === clients.length) done();
-				});
-				const bids: number[] = [];
-				let remainingFunds = state!.players.find((p) => p.userID === getUID(c))!.funds!;
-				const bidCount = random.integer(1, CardsPerPack);
-				for (let i = 0; i < bidCount; ++i) {
-					const bid = random.integer(0, remainingFunds);
-					bids.push(bid);
-					remainingFunds -= bid;
+		function randomBids() {
+			return new Promise<void>((done) => {
+				let receivedResults = 0;
+				let receivedStates = 0;
+				for (const c of clients) {
+					if (state?.remainingPacks === 0) {
+						c.once("silentAuctionDraftEnd", function () {
+							receivedStates++;
+							if (receivedResults === clients.length && receivedStates === clients.length) done();
+						});
+					} else {
+						c.once("silentAuctionDraftSync", function (newState) {
+							state = newState;
+							receivedStates++;
+							if (receivedResults === clients.length && receivedStates === clients.length) done();
+						});
+					}
+					c.once("silentAuctionDraftResults", function () {
+						receivedResults++;
+						if (receivedResults === clients.length && receivedStates === clients.length) done();
+					});
+					const bids: number[] = [];
+					let remainingFunds = state!.players.find((p) => p.userID === getUID(c))!.funds!;
+					const bidCount = random.integer(1, CardsPerPack);
+					for (let i = 0; i < bidCount; ++i) {
+						const bid = random.integer(0, remainingFunds);
+						bids.push(bid);
+						remainingFunds -= bid;
+					}
+					while (bids.length < CardsPerPack) bids.push(0);
+					shuffleArray(bids);
+					c.emit("silentAuctionDraftBid", bids, ackNoError);
 				}
-				while (bids.length < CardsPerPack) bids.push(0);
-				shuffleArray(bids);
-				c.emit("silentAuctionDraftBid", bids, ackNoError);
-			}
+			});
+		}
+
+		function clientBids(bids: number[][]) {
+			return new Promise<void>((done) => {
+				let receivedResults = 0;
+				let receivedStates = 0;
+
+				let nextState = null;
+
+				const onUpdate = () => {
+					if (receivedResults === clients.length && receivedStates === clients.length) {
+						state = nextState!;
+						clients.map((c) => c.off("silentAuctionDraftSync"));
+						done();
+					}
+				};
+
+				for (let idx = 0; idx < clients.length; ++idx) {
+					const c = clients.find((c) => getUID(c) === state!.players[idx].userID)!;
+					if (state?.remainingPacks === 0) {
+						c.once("silentAuctionDraftEnd", function () {
+							receivedStates++;
+							onUpdate();
+						});
+					} else {
+						c.on("silentAuctionDraftSync", function (newState) {
+							if (newState.remainingPacks !== state!.remainingPacks) {
+								nextState = newState;
+								receivedStates++;
+								onUpdate();
+							}
+						});
+					}
+					c.once("silentAuctionDraftResults", function (newResults) {
+						result = newResults;
+						receivedResults++;
+						onUpdate();
+					});
+					c.emit("silentAuctionDraftBid", bids[idx], ackNoError);
+				}
+			});
 		}
 
 		function startSilentAuctionDraft(
 			packCount: number = 18,
 			startingFunds: number = 200,
 			price: "first" | "second" = "first",
-			reservePrice: number = 0
+			reservePrice: number = 0,
+			tiebreakers: readonly Tiebreaker[] = DefaultTiebreakers
 		) {
-			it("When session owner launch Silent Auction draft, everyone should receive a startSilentAuctionDraft event", function (done) {
+			return new Promise<void>((done) => {
 				let receivedStates = 0;
 				for (const c of clients) {
 					c.once("startSilentAuctionDraft", function (s) {
@@ -116,12 +169,15 @@ describe(`Silent Auction Draft`, function () {
 					startingFunds,
 					price,
 					reservePrice,
+					tiebreakers as Tiebreaker[],
 					ackNoError
 				);
 			});
 		}
 
-		startSilentAuctionDraft();
+		it("When session owner launch Silent Auction draft, everyone should receive a startSilentAuctionDraft event", async function () {
+			await startSilentAuctionDraft(18, 200, "first", 0, []);
+		});
 
 		it("One player bids, the other receives a notification", function (done) {
 			clients[nonOwnerIdx].once("silentAuctionDraftNotifyBid", function (userID) {
@@ -203,8 +259,8 @@ describe(`Silent Auction Draft`, function () {
 			);
 		});
 
-		it("They play one round.", function (done) {
-			randomBids(done);
+		it("They play one round.", async function () {
+			await randomBids();
 		});
 
 		it("Non-owner disconnects, owner receives updated user infos.", function (done) {
@@ -224,8 +280,8 @@ describe(`Silent Auction Draft`, function () {
 			clients[nonOwnerIdx].connect();
 		});
 
-		it("They play one round.", function (done) {
-			randomBids(done);
+		it("They play one round.", async function () {
+			await randomBids();
 		});
 
 		it("Owner disconnects, non-owner receives updated user infos.", function (done) {
@@ -246,8 +302,8 @@ describe(`Silent Auction Draft`, function () {
 			clients[ownerIdx].connect();
 		});
 
-		it("They play one round.", function (done) {
-			randomBids(done);
+		it("They play one round.", async function () {
+			await randomBids();
 		});
 
 		it("Both the owner and a non-owner disconnects.", function (done) {
@@ -276,8 +332,8 @@ describe(`Silent Auction Draft`, function () {
 			clients[nonOwnerIdx].connect();
 		});
 
-		it("They play one round.", function (done) {
-			randomBids(done);
+		it("They play one round.", async function () {
+			await randomBids();
 		});
 
 		it("Every player picks randomly until the draft ends.", function (done) {
@@ -291,16 +347,22 @@ describe(`Silent Auction Draft`, function () {
 				});
 			}
 
-			function nextRound() {
-				if (endReceived === 0) randomBids(nextRound);
+			async function nextRound() {
+				if (endReceived === 0) {
+					await randomBids();
+					nextRound();
+				}
 			}
 
 			nextRound();
 		});
 
-		startSilentAuctionDraft();
-		it("They play one round.", function (done) {
-			randomBids(done);
+		it("When session owner launch Silent Auction draft, everyone should receive a startSilentAuctionDraft event", async function () {
+			await startSilentAuctionDraft(18, 200, "first", 0, []);
+		});
+
+		it("They play one round.", async function () {
+			await randomBids();
 		});
 
 		it("Owner stops the draft", function (done) {
@@ -315,6 +377,125 @@ describe(`Silent Auction Draft`, function () {
 				expect(err.code).to.not.equal(0);
 				expect(err.code).to.not.equal(500);
 				done();
+			});
+		});
+
+		it("First price", async function () {
+			await startSilentAuctionDraft(2, 100, "first");
+			await clientBids([
+				[10, 0, 10, 5, 15, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+				[0, 10, 5, 10, 1, 15, 0, 0, 0, 0, 0, 0, 0, 0],
+			]);
+			const pids = state!.players.map((p) => p.userID);
+			expect(result).to.not.be.null;
+			if (result) {
+				expect(result).to.have.length(14);
+				expect(result[0].winner).to.equal(pids[0]);
+				expect(result[1].winner).to.equal(pids[1]);
+				expect(result[2].winner).to.equal(pids[0]);
+
+				expect(result[3].winner).to.equal(pids[1]);
+
+				expect(result[4].winner).to.equal(pids[0]);
+				expect(result[4].bids[0].userID).to.equal(pids[0]);
+				expect(result[4].bids[0].funds).to.equal(100 - (10 + 10));
+
+				expect(result[5].winner).to.equal(pids[1]);
+				expect(result[5].bids[0].userID).to.equal(pids[1]);
+				expect(result[5].bids[0].funds).to.equal(100 - (10 + 10));
+				expect(result[5].bids[1].funds).to.equal(100 - (10 + 10 + 15));
+			}
+			expect(state).to.not.be.null;
+			if (state) {
+				expect(state.players[0].funds).to.equal(100 - 35);
+				expect(state.players[1].funds).to.equal(100 - 35);
+			}
+			// End draft
+			await randomBids();
+		});
+
+		it("Second price", async function () {
+			await startSilentAuctionDraft(2, 100, "second");
+			await clientBids([
+				[10, 0, 10, 5, 15, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+				[0, 10, 5, 10, 1, 15, 0, 0, 0, 0, 0, 0, 0, 0],
+			]);
+			const pids = state!.players.map((p) => p.userID);
+			expect(result).to.not.be.null;
+			if (result) {
+				expect(result).to.have.length(14);
+				expect(result[0].winner).to.equal(pids[0]);
+				expect(result[1].winner).to.equal(pids[1]);
+				expect(result[2].winner).to.equal(pids[0]);
+
+				expect(result[3].winner).to.equal(pids[1]);
+
+				expect(result[4].winner).to.equal(pids[0]);
+				expect(result[4].bids[0].userID).to.equal(pids[0]);
+				expect(result[4].bids[0].funds).to.equal(100 - 5);
+
+				expect(result[5].winner).to.equal(pids[1]);
+				expect(result[5].bids[0].userID).to.equal(pids[1]);
+				expect(result[5].bids[0].funds).to.equal(100 - 5);
+				expect(result[5].bids[1].funds).to.equal(100 - (5 + 1));
+			}
+			expect(state).to.not.be.null;
+			if (state) {
+				expect(state.players[0].funds).to.equal(100 - (5 + 1));
+				expect(state.players[1].funds).to.equal(100 - (5 + 1));
+			}
+			await randomBids();
+		});
+
+		describe("Tiebreakers", function () {
+			it("Default settings", async function () {
+				await startSilentAuctionDraft(2, 100, "first");
+				await clientBids([
+					[10, 0, 10, 5, 15, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+					[0, 10, 5, 10, 1, 14, 0, 1, 0, 0, 0, 0, 0, 0],
+					//0  1  2  3   4   5  6  7  8  9 10 11 12 13
+				]);
+				const pids = state!.players.map((p) => p.userID);
+				expect(result).to.not.be.null;
+				if (result) {
+					expect(result).to.have.length(14);
+					expect(result[0].winner).to.equal(pids[0]);
+					expect(result[1].winner).to.equal(pids[1]);
+					expect(result[2].winner).to.equal(pids[0]);
+					expect(result[3].winner).to.equal(pids[1]);
+					expect(result[4].winner).to.equal(pids[0]);
+					expect(result[5].winner).to.equal(pids[1]);
+					//
+					expect(result[6].winner).to.equal(pids[1]);
+					expect(result[7].winner).to.equal(pids[1]);
+					// pids[1] has 2 more cards
+					expect(result[8].winner).to.equal(pids[0]);
+					expect(result[9].winner).to.equal(pids[0]);
+					// Even ones are random, then it should alternate.
+					for (let i = 10; i < 13; i += 2) expect(result[i].winner).to.not.equal(result[i + 1].winner);
+				}
+				expect(state).to.not.be.null;
+				if (state) {
+					expect(state.players[0].funds).to.equal(100 - 35);
+					expect(state.players[1].funds).to.equal(100 - 35);
+				}
+				await randomBids();
+			});
+
+			it(`[{ property: "cards", winner: "lower" }]`, async function () {
+				await startSilentAuctionDraft(2, 100, "first", 0, [{ property: "cards", winner: "lower" }]);
+				await clientBids([
+					[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+					[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+				]);
+				expect(result).to.not.be.null;
+				if (result) {
+					expect(result).to.have.length(14);
+					// Even ones are random, then it should alternate.
+					for (let i = 0; i < 13; i += 2) expect(result[i].winner).to.not.equal(result[i + 1].winner);
+				}
+				expect(state).to.not.be.null;
+				await randomBids();
 			});
 		});
 	});

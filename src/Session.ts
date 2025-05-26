@@ -88,6 +88,7 @@ import { InProduction, InTesting, TestingOnly } from "./Context.js";
 import { MatchResults, EventCompleted, Result } from "./MTGOAPI.js";
 import { sendDraftLogToCubeCobra } from "./cubeCobraIntegration.js";
 import { isSilentAuctionDraftState, SilentAuctionDraftState } from "./SilentAuctionDraft.js";
+import { Tiebreaker } from "./SilentAuctionDraftTiebreakers.js";
 
 // Tournament timer depending on the number of remaining cards in a pack.
 const TournamentTimer = [
@@ -1782,6 +1783,7 @@ export class Session implements IIndexable {
 			startingFunds: number;
 			pricePaid: "first" | "second";
 			reservePrice: number;
+			tiebreakers: Tiebreaker[];
 		}
 	): SocketAck {
 		this.drafting = true;
