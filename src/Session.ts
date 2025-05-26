@@ -1776,7 +1776,14 @@ export class Session implements IIndexable {
 		return new SocketAck();
 	}
 
-	startSilentAuctionDraft(boosterCount: number, startingFunds: number): SocketAck {
+	startSilentAuctionDraft(
+		boosterCount: number,
+		options: {
+			startingFunds: number;
+			pricePaid: "first" | "second";
+			reservePrice: number;
+		}
+	): SocketAck {
 		this.drafting = true;
 		this.disconnectedUsers = {};
 		const playerIds = this.getSortedHumanPlayersIDs();
@@ -1784,7 +1791,7 @@ export class Session implements IIndexable {
 			useCustomBoosters: true,
 		});
 		if (isMessageError(boosters)) return new SocketAck(boosters);
-		const s = (this.draftState = new SilentAuctionDraftState(playerIds, structuredClone(boosters), startingFunds));
+		const s = (this.draftState = new SilentAuctionDraftState(playerIds, structuredClone(boosters), options));
 		const syncData = s.syncData();
 		for (const uid of this.users) {
 			Connections[uid].pickedCards = { main: [], side: [] };

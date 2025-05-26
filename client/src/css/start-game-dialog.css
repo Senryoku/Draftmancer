@@ -17,6 +17,14 @@
 	background-color: #303030;
 	border-radius: 0.2em;
 	padding: 0.2em;
+
+	.help {
+		font-size: 0.7em;
+		grid-column: span 2;
+		background-color: #383838;
+		padding: 0.2em;
+		border-radius: 0.2em;
+	}
 }
 
 .dialog-settings > label {

@@ -661,16 +661,30 @@ function startSilentAuctionDraft(
 	sessionID: SessionID,
 	boosterCount: unknown,
 	startingFunds: unknown,
+	pricePaid: unknown,
+	reservePrice: unknown,
 	ack: (result: SocketAck) => void
 ) {
 	const sess = Sessions[sessionID];
 	const localBoosterCount = !isNumber(boosterCount) ? parseInt(boosterCount as string) : boosterCount;
 	const localStartingFunds = !isNumber(startingFunds) ? parseInt(startingFunds as string) : startingFunds;
+	const localReservePrice = !isNumber(reservePrice) ? parseInt(reservePrice as string) : reservePrice;
+
+	if (pricePaid !== "first" && pricePaid !== "second")
+		return ack?.(new SocketError("Invalid parameter 'pricePaid'."));
+
 	if (!isInteger(localBoosterCount) || localBoosterCount <= 0)
 		return ack?.(new SocketError("Invalid parameter 'boosterCount'."));
 	if (!isInteger(localStartingFunds) || localStartingFunds <= 0)
 		return ack?.(new SocketError("Invalid parameter 'startingFunds'."));
-	const r = sess.startSilentAuctionDraft(localBoosterCount, localStartingFunds);
+	if (!isInteger(localReservePrice) || localReservePrice < 0)
+		return ack?.(new SocketError("Invalid parameter 'reservePrice'."));
+
+	const r = sess.startSilentAuctionDraft(localBoosterCount, {
+		startingFunds: localStartingFunds,
+		pricePaid,
+		reservePrice: localReservePrice,
+	});
 	if (isSocketError(r)) return ack(r);
 	startPublicSession(sess);
 	ack?.(new SocketAck());

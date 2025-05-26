@@ -2408,10 +2408,22 @@ export default defineComponent({
 
 			this.spawnDialog(SilentAuctionDraftDialog, {
 				defaultBoosterCount: 3 * this.sessionUsers.length,
-				onStart: (boosterCount: number, startingFunds: number) => {
-					this.socket.emit("startSilentAuctionDraft", boosterCount, startingFunds, (response) => {
-						if (response?.error) Alert.fire(response.error);
-					});
+				onStart: (
+					boosterCount: number,
+					startingFunds: number,
+					pricePaid: "first" | "second",
+					reservePrice: number
+				) => {
+					this.socket.emit(
+						"startSilentAuctionDraft",
+						boosterCount,
+						startingFunds,
+						pricePaid,
+						reservePrice,
+						(response) => {
+							if (response?.error) Alert.fire(response.error);
+						}
+					);
 				},
 			});
 		},

@@ -31,7 +31,13 @@
 		</div>
 		<div v-if="state.currentPack" class="card-container pack">
 			<div v-for="(card, idx) in state.currentPack" :key="card.uniqueID" :style="`--nth: ${idx}`">
-				<div class="card-display" :class="{ won: results && results[idx].winner === userID }">
+				<div
+					class="card-display"
+					:class="{
+						won: results && results[idx].winner === userID,
+						'no-bid': results && results[idx].winner === null,
+					}"
+				>
 					<div style="position: relative">
 						<div style="position: relative">
 							<div class="card-won-animation" v-if="results && results[idx].winner === userID" />
@@ -44,7 +50,10 @@
 									:key="bid.userID"
 									:class="[
 										`player-${playerIndices[bid.userID]}`,
-										{ 'no-bid': bid.bid === 0 },
+										{
+											'no-bid':
+												state.reservePrice === 0 ? bid.bid === 0 : bid.bid < state.reservePrice,
+										},
 										{ winner: bid.won },
 									]"
 								>
@@ -62,6 +71,12 @@
 							<input type="number" v-model="bids[idx]" min="0" :max="currentFunds" v-if="!bidCast" />
 							<span v-else style="margin: 0.25em">{{ bids[idx] }}</span>
 							<span class="currency-icon" />
+							<font-awesome-icon
+								icon="fa-solid fa-warning"
+								class="reserve-warning yellow"
+								v-if="bids[idx] > 0 && bids[idx] < state.reservePrice"
+								v-tooltip="`Warning: Bid is too low. Reserve price is ${state.reservePrice}`"
+							/>
 						</div>
 					</Transition>
 				</div>
@@ -221,6 +236,21 @@ function end() {
 .card-display {
 	/* Avoid vertical shifting (Keep space for bid input) */
 	min-height: 330px;
+
+	&.no-bid {
+		filter: brightness(0.5);
+	}
+
+	.bid-input {
+		position: relative;
+
+		.reserve-warning {
+			position: absolute;
+			top: 50%;
+			right: -1em;
+			transform: translate(100%, -50%);
+		}
+	}
 }
 
 .card-won-animation {

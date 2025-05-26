@@ -7,15 +7,23 @@ import { Connections } from "./Connection.js";
 
 export class SilentAuctionDraftState extends IDraftState {
 	readonly packCount: number;
+	readonly pricePaid: "first" | "second"; // See "sealed-bid first-price auction" / "sealed-bid second-price auction"
+	readonly reservePrice: number;
 	packs: UniqueCard[][];
 	players: { userID: UserID; bids: number[] | null; funds: number }[];
 	currentPack: UniqueCard[] | null = null;
 
-	constructor(players: UserID[], packs: UniqueCard[][], startingFunds: number) {
+	constructor(
+		players: UserID[],
+		packs: UniqueCard[][],
+		options: { startingFunds: number; pricePaid: "first" | "second"; reservePrice: number }
+	) {
 		super("silentAuction");
-		this.players = players.map((uid) => ({ userID: uid, bids: null, funds: startingFunds }));
+		this.players = players.map((uid) => ({ userID: uid, bids: null, funds: options.startingFunds }));
 		this.packs = packs;
 		this.packCount = packs.length;
+		this.pricePaid = options.pricePaid;
+		this.reservePrice = options.reservePrice;
 		shuffleArray(this.packs);
 		this.nextRound();
 	}
@@ -32,7 +40,7 @@ export class SilentAuctionDraftState extends IDraftState {
 	}
 
 	solveBids() {
-		const results = [];
+		const results: { winner: UserID | null; bids: { userID: UserID; bid: number; won: boolean }[] }[] = [];
 		const playerCardCounts: Record<UserID, number> = this.players.reduce(
 			(acc, p) => ({
 				...acc,
@@ -73,14 +81,33 @@ export class SilentAuctionDraftState extends IDraftState {
 					}
 				}
 			});
-			bids[0].won = true;
-			results.push({
-				winner: bids[0].userID,
+			const result: (typeof results)[number] = {
+				winner: null,
 				bids,
-			});
-			const winner = this.players.find((p) => p.userID === bids[0].userID)!;
-			winner.funds -= winner.bids![i];
-			playerCardCounts[bids[0].userID]++;
+			};
+			if (bids[0].bid >= this.reservePrice) {
+				bids[0].won = true;
+				result.winner = bids[0].userID;
+				const winner = this.players.find((p) => p.userID === bids[0].userID)!;
+				switch (this.pricePaid) {
+					default:
+					case "first":
+						winner.funds -= bids[0].bid;
+						break;
+					case "second":
+						if (bids.length < 2) {
+							if (this.reservePrice > 0) winner.funds = Math.max(0, winner.funds - this.reservePrice);
+							else winner.funds -= bids[0].bid;
+						} else if (bids[1].bid < this.reservePrice) {
+							winner.funds = Math.max(0, winner.funds - this.reservePrice);
+						} else {
+							winner.funds -= bids[1].bid;
+						}
+						break;
+				}
+				playerCardCounts[bids[0].userID]++;
+			}
+			results.push(result);
 		}
 		return results;
 	}
@@ -99,6 +126,7 @@ export class SilentAuctionDraftState extends IDraftState {
 			currentPack: this.currentPack,
 			packCount: this.packCount,
 			remainingPacks: this.packs.length,
+			reservePrice: this.reservePrice,
 			players: this.players.map((p) => ({ userID: p.userID, funds: p.funds, bidCast: p.bids !== null })),
 		};
 	}

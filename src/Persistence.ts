@@ -203,7 +203,11 @@ export function restoreSession(s: any, owner: UserID) {
 				return r;
 			}
 			case "silentAuction": {
-				r.draftState = new SilentAuctionDraftState([], [], 0);
+				r.draftState = new SilentAuctionDraftState([], [], {
+					startingFunds: 0,
+					pricePaid: "first",
+					reservePrice: 0,
+				});
 				copyPODProps(s.draftState, r.draftState);
 				return r;
 			}

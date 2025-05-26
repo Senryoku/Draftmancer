@@ -390,7 +390,13 @@ export interface ClientToServerEvents {
 		teams: UserID[][],
 		ack: (result: SocketAck) => void
 	) => void;
-	startSilentAuctionDraft: (boosterCount: number, startingFunds: number, ack: (result: SocketAck) => void) => void;
+	startSilentAuctionDraft: (
+		boosterCount: number,
+		startingFunds: number,
+		pricePaid: "first" | "second",
+		reservePrice: number,
+		ack: (result: SocketAck) => void
+	) => void;
 	setSessionOwner: (newOwnerID: UserID) => void;
 	removePlayer: (userToRemove: UserID) => void;
 	setSeating: (seating: Array<UserID>) => void;

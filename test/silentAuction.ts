@@ -95,7 +95,12 @@ describe(`Silent Auction Draft`, function () {
 			}
 		}
 
-		function startSilentAuctionDraft() {
+		function startSilentAuctionDraft(
+			packCount: number = 18,
+			startingFunds: number = 200,
+			price: "first" | "second" = "first",
+			reservePrice: number = 0
+		) {
 			it("When session owner launch Silent Auction draft, everyone should receive a startSilentAuctionDraft event", function (done) {
 				let receivedStates = 0;
 				for (const c of clients) {
@@ -105,7 +110,14 @@ describe(`Silent Auction Draft`, function () {
 						if (receivedStates === clients.length) done();
 					});
 				}
-				clients[ownerIdx].emit("startSilentAuctionDraft", 18, 200, ackNoError);
+				clients[ownerIdx].emit(
+					"startSilentAuctionDraft",
+					packCount,
+					startingFunds,
+					price,
+					reservePrice,
+					ackNoError
+				);
 			});
 		}
 
