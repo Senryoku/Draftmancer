@@ -5,32 +5,40 @@
 	--color-player-3: #8f6a23;
 	--color-player-4: #6b238f;
 	--color-player-5: #737373;
-	--color-player-6: #ffd400;
-	--color-player-7: #00eaff;
+	--color-player-6: #e76f51;
+	--color-player-7: #006d77;
 }
 
 .player-0 {
+	--player-color: var(--color-player-0);
 	background-color: var(--color-player-0);
 }
 .player-1 {
+	--player-color: var(--color-player-1);
 	background-color: var(--color-player-1);
 }
 .player-2 {
+	--player-color: var(--color-player-2);
 	background-color: var(--color-player-2);
 }
 .player-3 {
+	--player-color: var(--color-player-3);
 	background-color: var(--color-player-3);
 }
 .player-4 {
+	--player-color: var(--color-player-4);
 	background-color: var(--color-player-4);
 }
 .player-5 {
+	--player-color: var(--color-player-5);
 	background-color: var(--color-player-5);
 }
 .player-6 {
+	--player-color: var(--color-player-6);
 	background-color: var(--color-player-6);
 }
 .player-7 {
+	--player-color: var(--color-player-7);
 	background-color: var(--color-player-7);
 }
 

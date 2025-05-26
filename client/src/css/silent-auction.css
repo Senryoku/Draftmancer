@@ -23,19 +23,34 @@
 
 .results {
 	position: absolute;
-	top: 10%;
+	top: 9.6%;
 	left: 0;
 	right: 0;
 
-	padding: 1.5% 7.5%;
+	padding: 0 7%;
 
 	background-color: #000000a0;
+	backdrop-filter: blur(1px);
+
+	display: flex;
+	flex-direction: column;
+	gap: 0.2em;
 
 	> div {
 		display: flex;
 		justify-content: space-between;
-		width: 100%;
-		gap: 0.5em;
+		align-content: stretch;
+		gap: 0.25em;
+		padding: 0.25em 0.5em;
+		border-radius: 0.25em;
+
+		background: linear-gradient(
+			to right,
+			transparent,
+			var(--player-color) 5%,
+			var(--player-color) 95%,
+			transparent
+		);
 
 		.name {
 			white-space: nowrap;
@@ -51,12 +66,16 @@
 			display: flex;
 			flex-direction: column;
 			align-items: center;
-			margin-bottom: 0.5em;
+			margin-bottom: 0.2em;
 
 			.name {
 				font-size: 1.5em;
 				max-width: 100%;
 			}
+		}
+
+		&.no-bid {
+			opacity: 0.5;
 		}
 	}
 }

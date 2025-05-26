@@ -1,15 +1,15 @@
 <template>
-	<div class="silent-auction-draft">
+	<div class="silent-auction-draft player-colors">
 		<div class="header">
 			<div class="players">
 				<div style="padding: 0.5em 0">
 					Pack {{ state.packCount - state.remainingPacks }}/{{ state.packCount }}
 				</div>
 				<div
-					v-for="player in state.players"
+					v-for="(player, idx) in state.players"
 					:key="player.userID"
 					class="player"
-					:class="{ self: player.userID === userID }"
+					:class="[`player-${idx}`, { self: player.userID === userID }]"
 				>
 					<div class="name">{{ sessionUsers[player.userID].userName }}</div>
 					<div>
@@ -17,7 +17,7 @@
 						<div class="currency-icon" />
 					</div>
 					<div>
-						<font-awesome-icon icon="fa-solid fa-check" class="green" v-if="player.bidCast" />
+						<font-awesome-icon icon="fa-solid fa-check" v-if="player.bidCast" />
 						<font-awesome-icon icon="fa-solid fa-spinner" spin v-else />
 					</div>
 				</div>
@@ -33,20 +33,32 @@
 			<div v-for="(card, idx) in state.currentPack" :key="card.uniqueID" :style="`--nth: ${idx}`">
 				<div class="card-display" :class="{ won: results && results[idx].winner === userID }">
 					<div style="position: relative">
-						<div class="card-won-animation" v-if="results && results[idx].winner === userID" />
-						<Card :card="card" :language="language" :lazyLoad="false" />
-					</div>
-					<Transition name="fade">
-						<div v-if="results" class="results">
-							<div v-for="bid in results[idx].bids" :key="bid.userID" :class="{ winner: bid.won }">
-								<div class="name">{{ sessionUsers[bid.userID].userName }}</div>
-								<div class="bid">
-									{{ bid.bid }}
-									<div class="currency-icon" />
+						<div style="position: relative">
+							<div class="card-won-animation" v-if="results && results[idx].winner === userID" />
+							<Card :card="card" :language="language" :lazyLoad="false" />
+						</div>
+						<Transition name="fade">
+							<div v-if="results" class="results">
+								<div
+									v-for="bid in results[idx].bids"
+									:key="bid.userID"
+									:class="[
+										`player-${playerIndices[bid.userID]}`,
+										{ 'no-bid': bid.bid === 0 },
+										{ winner: bid.won },
+									]"
+								>
+									<div class="name">{{ sessionUsers[bid.userID].userName }}</div>
+									<div class="bid">
+										{{ bid.bid }}
+										<div class="currency-icon" />
+									</div>
 								</div>
 							</div>
-						</div>
-						<div v-else class="bid-input">
+						</Transition>
+					</div>
+					<Transition name="fade">
+						<div v-if="!results" class="bid-input">
 							<input type="number" v-model="bids[idx]" min="0" :max="currentFunds" v-if="!bidCast" />
 							<span v-else style="margin: 0.25em">{{ bids[idx] }}</span>
 							<span class="currency-icon" />
@@ -135,6 +147,10 @@ const bidsAreValid = computed(() => {
 
 const bidCast = computed(() => {
 	return props.state.players.find((p) => p.userID === props.userID)?.bidCast;
+});
+
+const playerIndices = computed(() => {
+	return props.state.players.reduce((acc, p, i) => ({ ...acc, [p.userID]: i }), {} as { [key: UserID]: number });
 });
 
 function setState(state: SilentAuctionDraftSyncData) {
@@ -265,3 +281,4 @@ function end() {
 </style>
 
 <style scoped src="../css/silent-auction.css" />
+<style scoped src="../css/player-colors.css" />

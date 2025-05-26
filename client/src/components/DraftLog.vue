@@ -24,7 +24,7 @@
 					/>
 				</div>
 			</div>
-			<div class="card-container pack">
+			<div class="card-container pack player-colors">
 				<div
 					v-for="(card, idx) in draftlog.silentAuction[displayOptions.pack].state.currentPack"
 					:key="card.uniqueID"
@@ -35,7 +35,10 @@
 							<div
 								v-for="bid in draftlog.silentAuction[displayOptions.pack].results[idx].bids"
 								:key="bid.userID"
-								:class="{ winner: bid.won }"
+								:class="[
+									`player-${Object.keys(draftlog.users).findIndex((uid) => uid === bid.userID)}`,
+									{ winner: bid.won },
+								]"
 							>
 								<div class="name">{{ draftlog.users[bid.userID].userName }}</div>
 								<div class="bid">
@@ -914,3 +917,4 @@ ul.player-table.six li:nth-child(5):before {
 </style>
 
 <style scoped src="../css/silent-auction.css" />
+<style scoped src="../css/player-colors.css" />
