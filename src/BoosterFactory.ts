@@ -3289,9 +3289,9 @@ class FINBoosterFactory extends BoosterFactory {
 	}
 
 	static readonly ThroughTheAges = CardsBySet["fca"];
-	static readonly Borderless = FINBoosterFactory.filter(310, 405);
+	static readonly Borderless = [...FINBoosterFactory.filter(310, 405), ...FINBoosterFactory.filter(577, 577)];
 	static readonly BorderlessAdventure = FINBoosterFactory.filter(310, 314);
-	static readonly BorderlessArtist = FINBoosterFactory.filter(315, 323); // FIXME: Should be 10?
+	static readonly BorderlessArtist = [...FINBoosterFactory.filter(315, 323), ...FINBoosterFactory.filter(577, 577)];
 	static readonly BorderlessWoodblock = FINBoosterFactory.filter(324, 373); // 50
 	static readonly BorderlessCharacter = FINBoosterFactory.filter(374, 405); // 32
 	static readonly CidVariants = [...FINBoosterFactory.filter(216, 216), ...FINBoosterFactory.filter(407, 420)];
@@ -3427,6 +3427,7 @@ class FINBoosterFactory extends BoosterFactory {
 		const rest = super.generateBooster(updatedTargets, booster);
 		if (isMessageError(rest)) return rest;
 
+		// Insert special (borderless) uncommons
 		rest.splice(updatedTargets.rare, 0, ...specialUncommons);
 
 		for (let i = 0; i < rest.length; ++i) {
