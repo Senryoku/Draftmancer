@@ -2012,14 +2012,21 @@ export class Session implements IIndexable {
 		let nextPlayer: UserID = s.nextPlayer(userID);
 		// "Each player passes the last card from each booster pack to a player who drafted a card named Canal Dredger."
 		if (s.players[userID].boosters[0].length === 1) {
-			const playersWithCanalDedger = s.getPlayersWithCanalDredger();
-			// Note: This await comes with the possibly of a re-entry before the state is updated.
+			let playersWithCanalDredger = s.getPlayersWithCanalDredger();
+
+			if (s.players[userID].effect?.skipUntilNextRound) {
+				// Prevent passing the booster back to ourself, or we'd be stuck in an infinite loop :)
+				// This is technically allowed by Canal Dredger rullings, so I don't know if preventing it completely is the best way to handle the situation, but it's better than a soft lock!
+				playersWithCanalDredger = playersWithCanalDredger.filter((p) => p !== userID);
+			}
+
+			// NOTE: This await comes with the possibly of a re-entry before the state is updated.
 			//       This is a problem, but I don't think it's worth preventing. It should not be possible in legitimate circumstances.
-			if (playersWithCanalDedger.length > 0)
+			if (playersWithCanalDredger.length > 0)
 				nextPlayer = await choosePlayer(
 					userID,
 					`Choose a player with a Canal Dredger to pass '${s.players[userID].boosters[0][0].name}' to:`,
-					playersWithCanalDedger
+					playersWithCanalDredger
 				);
 		}
 
