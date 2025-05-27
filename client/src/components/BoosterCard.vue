@@ -7,7 +7,7 @@
 		:style="`--booster-card-scale: ${scale}`"
 		:renderCommonBackside="renderCommonBackside"
 	>
-		<div v-if="slotName" class="slot-name">{{ slotName }}</div>
+		<div v-if="sourceInfo" class="source-info">{{ sourceInfo }}</div>
 		<div
 			v-if="wildcardneeded"
 			class="collection-status"
@@ -92,8 +92,9 @@ const displayBotScore = computed(() => {
 	return props.botscore.toFixed(1);
 });
 
-const slotName = computed(() => {
-	return props.card.slot;
+const sourceInfo = computed(() => {
+	if (!props.card.slot && !props.card.sheet) return null;
+	return [props.card.slot, props.card.sheet].filter((s) => typeof s === "string").join(" / ");
 });
 </script>
 
@@ -165,7 +166,7 @@ const slotName = computed(() => {
 	line-height: 2em;
 }
 
-.slot-name {
+.source-info {
 	position: absolute;
 	top: -1.3em;
 	left: 50%;
@@ -175,6 +176,7 @@ const slotName = computed(() => {
 	padding: 0.08em 0.5em 0.5em 0.5em;
 	z-index: -1;
 	font-size: 0.8em;
+	white-space: nowrap;
 }
 </style>
 

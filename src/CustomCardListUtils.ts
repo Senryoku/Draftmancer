@@ -228,6 +228,10 @@ export function generateBoosterFromCustomCardList(
 						const displaySlotName = slot.name.split("##")[0]; // Remove potential 'hidden id' after '##' delimiter.
 						for (const card of pickedCards) card.slot = displaySlotName;
 					}
+					if (customCardList.settings?.showSheets) {
+						const displaySheetName = sheetName.split("##")[0];
+						for (const card of pickedCards) card.sheet = displaySheetName;
+					}
 					if (slot.foil) pickedCards.forEach((card) => (card.foil = true));
 
 					booster.push(...pickedCards);
@@ -322,6 +326,7 @@ const CCLSettingsKeys = [
 	"cardBack",
 	"cardTitleHeightFactor",
 	"showSlots",
+	"showSheets",
 	"boosterSettings",
 	"predeterminedLayouts",
 	"layoutWithReplacement",
@@ -343,6 +348,8 @@ export function checkCCLSettingType(key: keyof CCLSettings, value: unknown): val
 		case "cardTitleHeightFactor":
 			return isNumber(value);
 		case "showSlots":
+			return isBoolean(value);
+		case "showSheets":
 			return isBoolean(value);
 		case "boosterSettings":
 			return (

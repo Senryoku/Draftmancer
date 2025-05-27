@@ -367,6 +367,11 @@ function parseSettings(
 		settings.showSlots = parsedSettings.showSlots;
 	}
 
+	if ("showSheets" in parsedSettings) {
+		if (!isBoolean(parsedSettings.showSheets)) return err(`'showSheets' must be a boolean.`);
+		settings.showSheets = parsedSettings.showSheets;
+	}
+
 	if ("predeterminedLayouts" in parsedSettings) {
 		if (isArrayOf(isString)(parsedSettings.predeterminedLayouts)) {
 			settings.predeterminedLayouts = parsedSettings.predeterminedLayouts.map((name) => {

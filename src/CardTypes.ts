@@ -194,6 +194,7 @@ export class UniqueCard extends Card {
 	foil?: boolean = false;
 	state?: UniqueCardState;
 	slot?: string;
+	sheet?: string;
 }
 
 // JSON can't use numbers as keys, we have to use a string and not ArenaID here.

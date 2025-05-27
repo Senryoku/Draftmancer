@@ -36,6 +36,7 @@ export type CCLSettings = {
 	cardBack?: string;
 	cardTitleHeightFactor?: number;
 	showSlots?: boolean;
+	showSheets?: boolean;
 	boosterSettings?: { picks: number[]; burns: number[] }[];
 	predeterminedLayouts?: { name: LayoutName; weight: number }[][];
 	layoutWithReplacement?: boolean;
