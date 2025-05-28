@@ -920,10 +920,7 @@ export class Session implements IIndexable {
 				`Winston Draft can only be played with 2 or more players. Bots are not supported!`
 			);
 
-		let boosters = this.generateBoosters(boosterCount, {
-			useCustomBoosters: true,
-			playerCount: this.users.size,
-		});
+		let boosters = this.generateBoosters(boosterCount, { useCustomBoosters: true });
 		if (isMessageError(boosters)) return new SocketAck(boosters);
 		if (removeBasicLands) boosters = boosters.map(removeBasics);
 
