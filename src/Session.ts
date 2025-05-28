@@ -832,7 +832,7 @@ export class Session implements IIndexable {
 	}
 
 	// Attempts to generate boosters until N cards are available in total.
-	generateNCards(n: number, removeBasicLands: boolean = false) {
+	generateNCards(n: number, removeBasicLands: boolean = false): MessageError | UniqueCard[][] {
 		// This is only an approximation, generateBoosters is quite complicated.
 		const expectedCardsPerBooster = this.useCustomCardList
 			? this.customCardList.layouts
@@ -1104,28 +1104,10 @@ export class Session implements IIndexable {
 			);
 
 		const cardsPerRound = handSize * this.users.size + revealedCardsCount;
-		const wantedCards = cardsPerRound * roundCount;
-		const cardsPerBooster = this.useCustomCardList
-			? this.cardsPerBooster
-			: Object.values(this.getBoosterContent()).reduce((a, b) => a + b, 0);
-		let boosters = this.generateBoosters(Math.ceil(wantedCards / cardsPerBooster), {
-			useCustomBoosters: true,
-			playerCount: this.users.size,
-		});
+		const boosters = this.generateNCards(cardsPerRound * roundCount, removeBasicLands);
 		if (isMessageError(boosters)) return new SocketAck(boosters);
-		if (removeBasicLands) boosters = boosters.map(removeBasics);
 
 		const cardPool = boosters.flat();
-
-		while (cardPool.length < wantedCards) {
-			const boosterOrError = this.generateBoosters(1);
-			if (isMessageError(boosterOrError)) return new SocketAck(boosterOrError);
-			if (boosterOrError.length === 0 || boosterOrError[0].length === 0)
-				return new SocketError("Internal Error: Couldn't generate enough boosters.");
-			const booster = removeBasicLands ? removeBasics(boosterOrError[0]) : boosterOrError[0];
-			boosters.push(booster);
-			cardPool.push(...booster);
-		}
 
 		this.drafting = true;
 		this.disconnectedUsers = {};
@@ -1222,36 +1204,8 @@ export class Session implements IIndexable {
 		const grids: UniqueCard[][] = [];
 
 		if (regularBoosters) {
-			// Guess how many cards per boosters generateBoosters will return. This is only an approximation, we have no guarantee.
-			const expectedCardsPerBooster = this.useCustomCardList
-				? this.customCardList.layouts
-					? Math.min(
-							...Object.values(this.customCardList.layouts).map((layout) =>
-								sum(layout.slots.map((s) => s.count))
-							)
-						)
-					: this.cardsPerBooster
-				: Object.values(this.getBoosterContent()).reduce((val, acc) => val + acc, 0);
-
-			const boosters = this.generateBoosters(Math.ceil((gridCount * cardsPerGrid) / expectedCardsPerBooster), {
-				useCustomBoosters: true,
-				playerCount: this.users.size,
-			});
-
+			const boosters = this.generateNCards(gridCount * cardsPerGrid, false);
 			if (isMessageError(boosters)) return new SocketAck(boosters);
-
-			// Make sure we have enough cards. Individual set rule may generate less cards per booster than expected, and there's
-			// no garantee that all boosters have the same size anyway.
-			// NOTE: This might introduce some issues, around duplicate limits or collection limits for example, but generateBoosters
-			//       simply doesn't support this use case for now.
-			while (boosters.reduce((acc, b) => acc + b.length, 0) < gridCount * cardsPerGrid) {
-				const boosterOrError = this.generateBoosters(1, {
-					useCustomBoosters: true,
-					playerCount: this.users.size,
-				});
-				if (isMessageError(boosterOrError)) return new SocketAck(boosterOrError);
-				boosters.push(...boosterOrError);
-			}
 
 			// Turn the generated boosters into gridCount grids of cardsPerGrid cards.
 			const cardPool = boosters.flat();
