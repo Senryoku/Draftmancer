@@ -1,11 +1,12 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
-			<em>May 31, 2025</em>
+			<em>May 30, 2025</em>
 			<p>
 				<img src="img/sets/fin.svg" class="set-icon" style="--invertedness: 100%" alt="FIN" /> Final Fantasy is
 				now available!<br />
 			</p>
+			<p>New options for Silent Draft Auction.</p>
 		</div>
 		<div class="news">
 			<em>May 14, 2025</em>
