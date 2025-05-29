@@ -30,4 +30,4 @@ RUN nginx -t
 WORKDIR /app
 ENV NODE_ENV production
 
-CMD if [[ ! -z "$SWAP" ]]; then fallocate -l $(($(stat -f -c "(%a*%s/10)*7" .))) _swapfile && mkswap _swapfile && swapon _swapfile && ls -hla; fi; free -m; nginx && node --experimental-json-modules .
+CMD if [[ ! -z "$SWAP" ]]; then fallocate -l $(($(stat -f -c "(%a*%s/10)*7" .))) _swapfile && mkswap _swapfile && swapon _swapfile && ls -hla; fi; free -m; nginx && node --experimental-json-modules --max-old-space-size=8192 .
