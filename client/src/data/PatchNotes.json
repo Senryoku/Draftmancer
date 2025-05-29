@@ -1,5 +1,17 @@
 [
 	{
+		"date": "31/05/2025",
+		"notes": [
+			"Final Fantasy support."
+		]
+	},
+	{
+		"date": "14/05/2025",
+		"notes": [
+			"New game mode: Silent Auction Draft."
+		]
+	},
+	{
 		"date": "28/03/2025",
 		"notes": [
 			"Tarkir: Dragonstorm support."

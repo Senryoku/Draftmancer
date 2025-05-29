@@ -280,13 +280,13 @@ describe("Sets content", function () {
 		otj: { common: 91, uncommon: 100, rare: 60, mythic: 20 },
 		mh3: { common: 80, uncommon: 101, rare: 60, mythic: 20 },
 		blb: { common: 81, uncommon: 100, rare: 60, mythic: 20 },
-		dsk: { common: 91, uncommon: 100, rare: 60, mythic: 20 }, // 81 commons plus 10 dual basics?
+		dsk: { common: 91, uncommon: 100, rare: 60, mythic: 20 }, // 81 commons plus 10 dual lands
 		fdn: { common: 80, uncommon: 101, rare: 60, mythic: 20 },
 		pio: { common: 91, uncommon: 100, rare: 60, mythic: 27 },
 		inr: { common: 88, uncommon: 104, rare: 72, mythic: 23 },
-		dft: { common: 91, uncommon: 100, rare: 60, mythic: 20 }, // 81 commons plus 10 dual basics
-		tdm: { common: 91, uncommon: 100, rare: 60, mythic: 20 }, // 81 commons plus 10 dual basics
-		fin: { common: 80, uncommon: 111, rare: 74, mythic: 20 },
+		dft: { common: 91, uncommon: 100, rare: 60, mythic: 20 }, // 81 commons plus 10 dual lands
+		tdm: { common: 91, uncommon: 100, rare: 60, mythic: 20 }, // 81 commons plus 10 dual lands
+		fin: { common: 90, uncommon: 109, rare: 74, mythic: 20 }, // 80 commons plus 10 dual lands
 		fca: { uncommon: 17, rare: 32, mythic: 15 },
 	};
 
