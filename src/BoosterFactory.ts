@@ -3295,7 +3295,7 @@ class FINBoosterFactory extends BoosterFactory {
 	static readonly BorderlessWoodblock = FINBoosterFactory.filter(324, 373); // 50
 	static readonly BorderlessCharacter = FINBoosterFactory.filter(374, 405); // 32
 	static readonly CidVariants = [...FINBoosterFactory.filter(216, 216), ...FINBoosterFactory.filter(407, 420)];
-	static readonly Basics = FINBoosterFactory.filter(294, 309); // FIXME: There's only one waste variant instead of 3 for other basics. Should I fix the ratio?
+	static readonly Basics = FINBoosterFactory.filter(294, 309);
 	static readonly CommonDualLands = FINBoosterFactory.filter(286, 293).filter((c) => getCard(c).rarity === "common");
 
 	throughTheAges: SlotedCardPool = {};
@@ -3340,24 +3340,29 @@ class FINBoosterFactory extends BoosterFactory {
 			);
 			booster.push(pickCard(pool, booster, { foil: false }));
 		}
-		// 3 Uncommons
-		//   Of these uncommons, 0.3% will be a double-faced uncommon borderless woodblock or borderless character card.
-		//   One of those uncommons—Cid, Timeless Artificer—has 15 different alternate-art variants. Cid, Timeless Artificer appears at the same rate as other uncommons, and all variants of the card appear at equal rates. Since there are 109 uncommons that can appear in this slot, any given uncommon has a 0.9% chance to be Cid, Timeless Artificer.
-		const specialUncommons: UniqueCard[] = [];
+
+		// 1 Traditional foil card
+		//   Default frame common (55.75%), uncommon (35.9%), rare (5.5%), or mythic rare (0.75%)
+		//   Booster Fun common (0.1%), uncommon (0.5%), rare (1%), or mythic rare (0.25%)
+		//   1 of 15 Cid variants (0.25%)
 		{
-			const count = updatedTargets.uncommon;
-			for (let i = 0; i < count; i++) {
-				if (random.realZeroToOneInclusive() < 0.003) {
-					const pool = chooseWeighted(
-						[12 / (12 + 4), 4 / (12 + 4)],
-						[this.borderlessWoodblock.uncommon, this.borderlessCharacter.uncommon]
-					);
-					specialUncommons.push(pickCard(pool, specialUncommons, { foil: false }));
-					updatedTargets.uncommon -= 1;
-				}
-			}
-			// See bellow for Cid variants.
+			const pool = chooseWeighted(
+				[0.5575, 0.359, 0.055, 0.075, 0.001, 0.005, 0.01, 0.0025, 0.0025],
+				[
+					this.cardPool.common,
+					this.cardPool.uncommon,
+					this.cardPool.rare,
+					this.cardPool.mythic,
+					this.borderless.common, // FIXME: Booster fun means borderless here?
+					this.borderless.uncommon,
+					this.borderless.rare,
+					this.borderless.mythic,
+					this.cid.uncommon,
+				]
+			);
+			booster.push(pickCard(pool, booster, { foil: true }));
 		}
+
 		// 1 Wildcard of any rarity
 		//   Common (16.7%), uncommon (58.3%; same proportion as above), a borderless woodblock common (2.6%), borderless woodblock or borderless character uncommon (5.7%), or rare or mythic rare (16.7%; same proportion as below).
 		{
@@ -3383,6 +3388,7 @@ class FINBoosterFactory extends BoosterFactory {
 			);
 			booster.push(pickCard(pool, booster, { foil: false }));
 		}
+
 		// 1 Non-foil rare or mythic rare
 		//   Default frame rare (80%) or mythic rare (10%)
 		//   Borderless rare (8%) or mythic rare (1%)
@@ -3402,26 +3408,24 @@ class FINBoosterFactory extends BoosterFactory {
 			booster.push(pickCard(pool, booster, { foil: false }));
 		}
 		updatedTargets.rare = 0;
-		// 1 Traditional foil card
-		//   Default frame common (55.75%), uncommon (35.9%), rare (5.5%), or mythic rare (0.75%)
-		//   Booster Fun common (0.1%), uncommon (0.5%), rare (1%), or mythic rare (0.25%)
-		//   1 of 15 Cid variants (0.25%)
+
+		// 3 Uncommons
+		//   Of these uncommons, 0.3% will be a double-faced uncommon borderless woodblock or borderless character card.
+		//   One of those uncommons—Cid, Timeless Artificer—has 15 different alternate-art variants. Cid, Timeless Artificer appears at the same rate as other uncommons, and all variants of the card appear at equal rates. Since there are 109 uncommons that can appear in this slot, any given uncommon has a 0.9% chance to be Cid, Timeless Artificer.
+		const specialUncommons: UniqueCard[] = [];
 		{
-			const pool = chooseWeighted(
-				[0.5575, 0.359, 0.055, 0.075, 0.001, 0.005, 0.01, 0.0025, 0.0025],
-				[
-					this.cardPool.common,
-					this.cardPool.uncommon,
-					this.cardPool.rare,
-					this.cardPool.mythic,
-					this.borderless.common, // FIXME: Booster fun means borderless here?
-					this.borderless.uncommon,
-					this.borderless.rare,
-					this.borderless.mythic,
-					this.cid.uncommon,
-				]
-			);
-			booster.push(pickCard(pool, booster, { foil: true }));
+			const count = updatedTargets.uncommon;
+			for (let i = 0; i < count; i++) {
+				if (random.realZeroToOneInclusive() < 0.003) {
+					const pool = chooseWeighted(
+						[12 / (12 + 4), 4 / (12 + 4)],
+						[this.borderlessWoodblock.uncommon, this.borderlessCharacter.uncommon] // FIXME: "Double-faced" only?
+					);
+					specialUncommons.push(pickCard(pool, specialUncommons, { foil: false }));
+					updatedTargets.uncommon -= 1;
+				}
+			}
+			// See bellow for Cid variants.
 		}
 
 		const rest = super.generateBooster(updatedTargets, booster);
