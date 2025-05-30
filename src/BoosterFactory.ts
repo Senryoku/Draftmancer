@@ -3296,7 +3296,10 @@ class FINBoosterFactory extends BoosterFactory {
 	static readonly BorderlessCharacter = FINBoosterFactory.filter(374, 405); // 32
 	static readonly CidVariants = [...FINBoosterFactory.filter(216, 216), ...FINBoosterFactory.filter(407, 420)];
 	static readonly Basics = FINBoosterFactory.filter(294, 309);
-	static readonly CommonDualLands = FINBoosterFactory.filter(280, 293).filter((c) => getCard(c).rarity === "common");
+	static readonly CommonDualLands = [
+		...FINBoosterFactory.filter(278, 292).filter((c) => getCard(c).rarity === "common"),
+		...FINBoosterFactory.filter(273, 273),
+	];
 
 	throughTheAges: SlotedCardPool = {};
 	borderless: SlotedCardPool = {};
@@ -3412,7 +3415,6 @@ class FINBoosterFactory extends BoosterFactory {
 		// 3 Uncommons
 		//   Of these uncommons, 0.3% will be a double-faced uncommon borderless woodblock or borderless character card.
 		//   One of those uncommons—Cid, Timeless Artificer—has 15 different alternate-art variants. Cid, Timeless Artificer appears at the same rate as other uncommons, and all variants of the card appear at equal rates. Since there are 109 uncommons that can appear in this slot, any given uncommon has a 0.9% chance to be Cid, Timeless Artificer.
-		const specialUncommons: UniqueCard[] = [];
 		{
 			const count = updatedTargets.uncommon;
 			for (let i = 0; i < count; i++) {
@@ -3421,7 +3423,7 @@ class FINBoosterFactory extends BoosterFactory {
 						[12 / (12 + 4), 4 / (12 + 4)],
 						[this.borderlessWoodblock.uncommon, this.borderlessCharacter.uncommon] // FIXME: "Double-faced" only?
 					);
-					specialUncommons.push(pickCard(pool, specialUncommons, { foil: false }));
+					booster.push(pickCard(pool, booster, { foil: false }));
 					updatedTargets.uncommon -= 1;
 				}
 			}
@@ -3430,9 +3432,6 @@ class FINBoosterFactory extends BoosterFactory {
 
 		const rest = super.generateBooster(updatedTargets, booster);
 		if (isMessageError(rest)) return rest;
-
-		// Insert special (borderless) uncommons
-		rest.splice(updatedTargets.rare, 0, ...specialUncommons);
 
 		for (let i = 0; i < rest.length; ++i) {
 			// Cid, Timeless Artificer. Reroll it into any of its variant.
