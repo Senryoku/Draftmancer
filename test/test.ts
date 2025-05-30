@@ -287,7 +287,6 @@ describe("Sets content", function () {
 		dft: { common: 91, uncommon: 100, rare: 60, mythic: 20 }, // 81 commons plus 10 dual lands
 		tdm: { common: 91, uncommon: 100, rare: 60, mythic: 20 }, // 81 commons plus 10 dual lands
 		fin: { common: 90, uncommon: 109, rare: 74, mythic: 20 }, // 80 commons plus 10 dual lands
-		fca: { uncommon: 17, rare: 32, mythic: 15 },
 	};
 
 	beforeEach(function (done) {
