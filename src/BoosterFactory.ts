@@ -3296,7 +3296,7 @@ class FINBoosterFactory extends BoosterFactory {
 	static readonly BorderlessCharacter = FINBoosterFactory.filter(374, 405); // 32
 	static readonly CidVariants = [...FINBoosterFactory.filter(216, 216), ...FINBoosterFactory.filter(407, 420)];
 	static readonly Basics = FINBoosterFactory.filter(294, 309);
-	static readonly CommonDualLands = FINBoosterFactory.filter(286, 293).filter((c) => getCard(c).rarity === "common");
+	static readonly CommonDualLands = FINBoosterFactory.filter(280, 293).filter((c) => getCard(c).rarity === "common");
 
 	throughTheAges: SlotedCardPool = {};
 	borderless: SlotedCardPool = {};
