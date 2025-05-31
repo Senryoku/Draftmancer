@@ -3284,7 +3284,10 @@ class TDMBoosterFactory extends BoosterFactory {
 class FINBoosterFactory extends BoosterFactory {
 	static filter(min: number, max: number) {
 		return CardsBySet["fin"].filter(
-			(c) => parseInt(getCard(c).collector_number) >= min && parseInt(getCard(c).collector_number) <= max
+			(c) =>
+				parseInt(getCard(c).collector_number) >= min &&
+				parseInt(getCard(c).collector_number) <= max &&
+				!getCard(c).collector_number.endsWith("b")
 		);
 	}
 
