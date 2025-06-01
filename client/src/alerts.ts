@@ -11,7 +11,7 @@ export const Alert = Swal.mixin({
 	customClass: SwalCustomClasses,
 });
 
-export function fireToast(type: SweetAlertIcon, title: string, text = "") {
+export function fireToast(type: SweetAlertIcon, title: string, text = "", timer: number = 3000) {
 	Alert.fire({
 		toast: true,
 		position: "top-end",
@@ -19,7 +19,7 @@ export function fireToast(type: SweetAlertIcon, title: string, text = "") {
 		title: escapeHTML(title),
 		text: escapeHTML(text),
 		showConfirmButton: false,
-		timer: 3000,
+		timer: timer,
 		timerProgressBar: true,
 		didOpen: (toast) => {
 			toast.addEventListener("click", (e: Event) => {

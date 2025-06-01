@@ -719,7 +719,7 @@
 								<h1 v-else-if="!draftPaused">Players are drafting...</h1>
 								<h1 v-else>Draft Paused</h1>
 								<div v-if="drafting">Pack #{{ draftState.boosterNumber + 1 }}</div>
-								<div v-else>Players are now brewing their decks</div>
+								<div v-else>Players are now finalizing their decks</div>
 							</div>
 							<div
 								v-if="draftLogLive && draftLogLive.sessionID === sessionID"

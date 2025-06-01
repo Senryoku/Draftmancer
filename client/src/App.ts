@@ -1278,6 +1278,11 @@ export default defineComponent({
 			});
 
 			this.socket.on("startReviewPhase", (timer) => {
+				// Ignore the review phase if we're spectating
+				if (this.gameState === GameState.Watching) {
+					fireToast("info", `Review phase... (${this.reviewTimer}sec)`, "", this.reviewTimer * 1000);
+					return;
+				}
 				this.gameState = GameState.Reviewing;
 				this.pickTimer = Math.ceil(timer);
 				// This one is purely visual.

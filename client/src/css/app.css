@@ -1417,6 +1417,10 @@ ul.player-list {
 
 .draft-watching-state {
 	text-align: center;
+
+	div {
+		margin-bottom: 1em;
+	}
 }
 
 .loading {
