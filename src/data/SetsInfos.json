@@ -923,11 +923,6 @@
         "block": "Khans of Tarkir",
         "icon": "img/sets/frf.svg"
     },
-    "fspl": {
-        "code": "fspl",
-        "fullName": "FIN Magic Spotlight",
-        "icon": "img/sets/fspl.svg"
-    },
     "fut": {
         "code": "fut",
         "fullName": "Future Sight",

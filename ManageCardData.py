@@ -109,9 +109,9 @@ MTGALocalization = {key: {} for key in LangCodes}
 for path in MTGACardDBFiles:
     MTGACardDB = sqlite3.connect(path)
     MTGACardDB.row_factory = sqlite3.Row
-    for row in MTGACardDB.execute(f'SELECT LocId, {", ".join(LangCodes)} FROM Localizations').fetchall():
-        for key in MTGALocalization:
-            MTGALocalization[key][row["LocId"]] = row[key]
+    for lang in LangCodes:
+        for row in MTGACardDB.execute(f"SELECT LocId, Loc FROM Localizations_{lang}").fetchall():
+            MTGALocalization[lang][row["LocId"]] = row["Loc"]
     for o in MTGACardDB.execute(f"SELECT * FROM Cards").fetchall():
         # Ignore... Wildcards?! (TitleId 0)
         if o["TitleId"] not in MTGALocalization["enUS"]:
@@ -836,7 +836,7 @@ if not os.path.isfile(JumpstartBoostersDist) or ForceJumpstart:
     print("Extracting Jumpstart Boosters...")
     jumpstartBoosters = []
 
-    regex = re.compile("(\d+) (.*)")
+    regex = re.compile(r"(\d+) (.*)")
     swaps = {}
     with open(JumpstartSwaps, "r", encoding="utf8") as file:
         swaps = json.loads(file.read())
