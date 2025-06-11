@@ -62,7 +62,7 @@ import { IIndexable, SetCode } from "./Types.js";
 import { SessionsSettingsProps } from "./Session/SessionProps.js";
 import { isRotisserieDraftState, RotisserieDraftStartOptions } from "./RotisserieDraft.js";
 import { BracketType } from "./Brackets.js";
-import { getQueueStatus, registerPlayer, unregisterPlayer } from "./draftQueue/DraftQueue.js";
+import { setDraftQueueSettings, getQueueStatus, registerPlayer, unregisterPlayer } from "./draftQueue/DraftQueue.js";
 
 import expressStaticGzip from "express-static-gzip";
 import { parseMTGOLog } from "./parseMTGOLog.js";
@@ -2213,6 +2213,29 @@ app.get("/getSessions/:key", requireAPIKey, (req, res) => {
 			setRestriction: Sessions[sid].setRestriction,
 		};
 	returnCircularJSON(res, localSess);
+});
+
+app.post("/setDraftQueueSettings/:key", requireAPIKey, (req, res) => {
+	try {
+		if (req.body) {
+			setDraftQueueSettings({
+				AddBotCheckInterval: isNumber(req.body.AddBotCheckInterval) ? req.body.AddBotCheckInterval : undefined,
+				AddBotPauseAfterBotAddition: isNumber(req.body.AddBotPauseAfterBotAddition)
+					? req.body.AddBotPauseAfterBotAddition
+					: undefined,
+				AddBotPauseAfterPlayerJoin: isNumber(req.body.AddBotPauseAfterPlayerJoin)
+					? req.body.AddBotPauseAfterPlayerJoin
+					: undefined,
+				AddBotPauseAfterDraftStart: isNumber(req.body.AddBotPauseAfterDraftStart)
+					? req.body.AddBotPauseAfterDraftStart
+					: undefined,
+			});
+			res.sendStatus(200);
+		} else res.sendStatus(400);
+	} catch (e) {
+		console.error("Error in setDraftQueueSettings: ", e);
+		res.sendStatus(500);
+	}
 });
 
 app.get("/api/getDraftQueueStatus", (req, res) => {

@@ -18,10 +18,30 @@ type PlayerQueue = { description: QueueDescription; users: UserID[]; botCount: n
 const PlayerQueues = new Map<QueueID, PlayerQueue>();
 
 // Controls the frequency at which bots are added to inactive queues (ms).
-const AddBotCheckInterval = 1000 * 10;
-const AddBotPauseAfterBotAddition = 1000 * 60 * 5;
-const AddBotPauseAfterPlayerJoin = 1000 * 60 * 10;
-const AddBotPauseAfterDraftStart = 1000 * 60 * 20;
+let AddBotCheckInterval = 1000 * 10;
+let AddBotPauseAfterBotAddition = 1000 * 60 * 5;
+let AddBotPauseAfterPlayerJoin = 1000 * 60 * 10;
+let AddBotPauseAfterDraftStart = 1000 * 60 * 20;
+
+export function setDraftQueueSettings(
+	settings: Partial<{
+		AddBotCheckInterval: number;
+		AddBotPauseAfterBotAddition: number;
+		AddBotPauseAfterPlayerJoin: number;
+		AddBotPauseAfterDraftStart: number;
+	}>
+) {
+	if (settings.AddBotCheckInterval) AddBotCheckInterval = settings.AddBotCheckInterval;
+	if (settings.AddBotPauseAfterBotAddition) AddBotPauseAfterBotAddition = settings.AddBotPauseAfterBotAddition;
+	if (settings.AddBotPauseAfterPlayerJoin) AddBotPauseAfterPlayerJoin = settings.AddBotPauseAfterPlayerJoin;
+	if (settings.AddBotPauseAfterDraftStart) AddBotPauseAfterDraftStart = settings.AddBotPauseAfterDraftStart;
+	console.log("Draft Queue Settings:", {
+		AddBotCheckInterval,
+		AddBotPauseAfterBotAddition,
+		AddBotPauseAfterPlayerJoin,
+		AddBotPauseAfterDraftStart,
+	});
+}
 
 for (const queue of AvailableQueues) {
 	PlayerQueues.set(queue.id, {
