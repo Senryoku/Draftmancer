@@ -46,6 +46,7 @@ export type CCLSettings = {
 	withReplacement?: boolean;
 	colorBalance?: boolean;
 	refillWhenEmpty: boolean;
+	botModel?: string; // Will attempt to use a set specific model rather than the generic cube model. These models are very specific, no garantee that they'll work properly in any other case, use to your own risk.
 };
 
 export type CollationType = "random" | "printRun" | "striped";

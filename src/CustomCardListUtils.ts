@@ -335,6 +335,7 @@ const CCLSettingsKeys = [
 	"withReplacement",
 	"colorBalance",
 	"refillWhenEmpty",
+	"botModel",
 ] as const;
 
 export function isKeyOfCCLSettings(key: unknown): key is keyof CCLSettings {
@@ -375,5 +376,7 @@ export function checkCCLSettingType(key: keyof CCLSettings, value: unknown): val
 			return isBoolean(value);
 		case "refillWhenEmpty":
 			return isBoolean(value);
+		case "botModel":
+			return isString(value);
 	}
 }

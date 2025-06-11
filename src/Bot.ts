@@ -3,12 +3,13 @@ import axios, { AxiosError } from "axios";
 
 import { arrayIntersect } from "./utils.js";
 import { Card, OracleID } from "./CardTypes.js";
-import { isArrayOf, isNumber, isString } from "./TypeChecks.js";
+import { isArrayOf, isNumber } from "./TypeChecks.js";
 
 import { MTGDraftBotParameters, RequestParameters } from "./bots/ExternalBotInterface.js";
 import { DraftmancerAI, getScores as draftmancerAIGetScores } from "./bots/DraftmancerAI.js";
 import { MTGDraftBotsAPI, getScores as MTGDraftBotsAPIGetScores } from "./bots/MTGDraftBots.js";
 import { CubeCobraBots, getScores as cubeCobraGetScores } from "./bots/CubeCobraBots.js";
+import Constants from "./Constants.js";
 
 export function fallbackToSimpleBots(customCards: boolean, oracleIds: Array<OracleID>, wantedModel: string): boolean {
 	// No bot servers available
@@ -37,7 +38,11 @@ export function fallbackToSimpleBots(customCards: boolean, oracleIds: Array<Orac
 		if (DraftmancerAI.available && DraftmancerAI.models.includes(wantedModel)) return false;
 	}
 
-	if (CubeCobraBots.available && !["dft", "tdm"].includes(wantedModel)) return false;
+	if (
+		CubeCobraBots.available &&
+		!Constants.PrimarySets.slice(0, Constants.PrimarySets.indexOf("dft") + 1).includes(wantedModel)
+	)
+		return false;
 
 	if (MTGDraftBotsAPI.available) {
 		// At this point only the MTGDraftBots prod model is suitable, make sure it knows most of the requested cards.
