@@ -19,9 +19,9 @@ const PlayerQueues = new Map<QueueID, PlayerQueue>();
 
 // Controls the frequency at which bots are added to inactive queues (ms).
 const AddBotCheckInterval = 1000 * 10;
-const AddBotPauseAfterBotAddition = 1000 * 60 * 2;
-const AddBotPauseAfterPlayerJoin = 1000 * 60 * 3;
-const AddBotPauseAfterDraftStart = 1000 * 60 * 10;
+const AddBotPauseAfterBotAddition = 1000 * 60 * 5;
+const AddBotPauseAfterPlayerJoin = 1000 * 60 * 10;
+const AddBotPauseAfterDraftStart = 1000 * 60 * 20;
 
 for (const queue of AvailableQueues) {
 	PlayerQueues.set(queue.id, {
