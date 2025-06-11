@@ -6,7 +6,7 @@
 				<img src="img/sets/fin.svg" class="set-icon" style="--invertedness: 100%" alt="FIN" /> Final Fantasy is
 				now available!<br />
 			</p>
-			<p>New options for Silent Draft Auction.</p>
+			<p>New options for Silent Auction Draft.</p>
 		</div>
 		<div class="news">
 			<em>May 14, 2025</em>
@@ -44,37 +44,6 @@
 				experimental support.<br />
 				This set has a rotating bonus sheet. You can select a specific bonus sheet in the "More sets" menu.
 			</p>
-		</div>
-		<div class="news">
-			<em>November 2, 2024</em>
-			<ul>
-				<li>
-					<img src="img/sets/fdn.svg" class="set-icon" style="--invertedness: 100%" alt="FDN" /> Foundations
-					support.
-				</li>
-				<li>
-					<img src="img/sets/j25.svg" class="set-icon" style="--invertedness: 100%" alt="J25" /> Foundations
-					Jumpstart support. You can find it in the new "Jumpstart" sub menu.
-				</li>
-			</ul>
-		</div>
-		<div class="news">
-			<em>October 16, 2024</em>
-			<ul>
-				<li>Added Alchemy: Duskmourn cards.</li>
-				<li>
-					New experimental game mode: Jump In!<br />Subtleties like dual lands allocations and more sets will
-					be added later on if there's an interest.
-				</li>
-				<li>
-					Extended slots in cubes to support multiple sheets (card lists) per slot.
-					<br />This will help create complex layouts more easily, limiting the number combinaison needed.
-				</li>
-				<li>
-					Added 'striped' collation support. Thanks to tiera3 for the idea and help with the implementation.
-				</li>
-				<li>Usual maintenance and minor tweaks and fixes.</li>
-			</ul>
 		</div>
 	</div>
 </template>
