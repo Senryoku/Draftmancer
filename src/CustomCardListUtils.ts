@@ -165,7 +165,6 @@ export function generateBoosterFromCustomCardList(
 				const useColorBalance: boolean =
 					options.colorBalance &&
 					index === colorBalancedSlots[pickedLayoutName] &&
-					slot.count > ColorBalancedSlot.CardCountThreshold &&
 					!!colorBalancedGenerators[sheetName];
 				// Checking the card count beforehand is tricky, we'll rely on pickCard throwing an exception if we run out of cards to pick.
 				try {

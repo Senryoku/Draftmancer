@@ -134,8 +134,6 @@ const TheList = {
  Provides color balancing for the supplied cardPool
 */
 export class ColorBalancedSlot {
-	static CardCountThreshold = 5;
-
 	cardPool: CardPool;
 	cache: ColorBalancedSlotCache;
 
@@ -154,23 +152,36 @@ export class ColorBalancedSlot {
 		const pickedCards: UniqueCard[] = [];
 		const withReplacement = options?.withReplacement ?? false;
 
-		// Requested card count is too low to color balance, skip it.
-		// NOTE: cardCount === 5 might not be enough, as it would exclude colorless and multicolored cards entirely.
-		if (
-			cardCount < ColorBalancedSlot.CardCountThreshold ||
-			(cardCount === ColorBalancedSlot.CardCountThreshold && this.cache.others.count() > 0)
-		) {
-			for (let i = 0; i < cardCount; ++i) {
-				const pickedCard = pickCard(this.cardPool, pickedCards.concat(duplicateProtection), options);
-				pickedCards.push(pickedCard);
-				if (!withReplacement) {
-					this.cache.removeCard(pickedCard);
+		const forcedColors = ["W", "U", "B", "R", "G"];
+
+		// cardCount is too low to ensure space for non-monocolored cards
+		if (cardCount <= forcedColors.length) {
+			// How many mono-colored cards can we force before running out of space to correct the ratio?
+			const colorBalanceCount = Math.min(
+				forcedColors.length,
+				Math.floor(
+					(cardCount * this.cache.monocolored.count()) /
+						(this.cache.monocolored.count() + this.cache.others.count())
+				)
+			);
+
+			// Not a high enough ratio of mono cards to support even one balanced card, fallback to random picking.
+			if (colorBalanceCount < 1) {
+				for (let i = 0; i < cardCount; ++i) {
+					const pickedCard = pickCard(this.cardPool, pickedCards.concat(duplicateProtection), options);
+					pickedCards.push(pickedCard);
+					if (!withReplacement) this.cache.removeCard(pickedCard);
 				}
+				return pickedCards;
 			}
-			return pickedCards;
+
+			if (colorBalanceCount < forcedColors.length) {
+				shuffleArray(forcedColors);
+				forcedColors.length = colorBalanceCount;
+			}
 		}
 
-		for (const c of "WUBRG") {
+		for (const c of forcedColors) {
 			if (this.cache.byColor[c] && this.cache.byColor[c].size > 0) {
 				const pickedCard = pickCard(this.cache.byColor[c], pickedCards.concat(duplicateProtection), options);
 				pickedCards.push(pickedCard);
@@ -294,7 +305,7 @@ export class BoosterFactory implements IBoosterFactory {
 		// Color balance the booster by adding one common of each color if possible
 		let pickedCommons = [];
 		const commonCount = targets["common"] - addedFoils;
-		if (this.options.colorBalance && this.colorBalancedSlot && commonCount > ColorBalancedSlot.CardCountThreshold) {
+		if (this.options.colorBalance && this.colorBalancedSlot) {
 			pickedCommons = this.colorBalancedSlot.generate(commonCount, booster);
 		} else {
 			for (let i = pickedCommons.length; i < commonCount; ++i) {
