@@ -80,8 +80,8 @@ export function generateBoosterFromCustomCardList(
 		}
 
 		// Color balance the largest slot of each layout
-		const colorBalancedSlots: { [layoutName: string]: number } = {};
-		const colorBalancedGenerators: { [slotName: string]: ColorBalancedSlot } = {};
+		const colorBalancedSlots: Map<string, number> = new Map();
+		const colorBalancedGenerators: Map<string, ColorBalancedSlot> = new Map();
 		if (options.colorBalance) {
 			for (const layoutName in layouts) {
 				let largest_slot = 0;
@@ -89,11 +89,11 @@ export function generateBoosterFromCustomCardList(
 					if (layouts[layoutName].slots[i].count > layouts[layoutName].slots[largest_slot].count)
 						largest_slot = i;
 				}
-				colorBalancedSlots[layoutName] = largest_slot;
+				colorBalancedSlots.set(layoutName, largest_slot);
 			}
 			for (const sheetName in customCardList.sheets) {
 				if (customCardList.sheets[sheetName].collation === "random") {
-					colorBalancedGenerators[sheetName] = new ColorBalancedSlot(cardsBySheet[sheetName], pickOptions);
+					colorBalancedGenerators.set(sheetName, new ColorBalancedSlot(cardsBySheet[sheetName], pickOptions));
 				}
 			}
 		}
@@ -164,9 +164,8 @@ export function generateBoosterFromCustomCardList(
 				const sheetName = slot.sheets[weightedRandomIdx(slot.sheets)].name;
 				const useColorBalance: boolean =
 					options.colorBalance &&
-					index === colorBalancedSlots[pickedLayoutName] &&
-					slot.count > ColorBalancedSlot.CardCountThreshold &&
-					!!colorBalancedGenerators[sheetName];
+					index === colorBalancedSlots.get(pickedLayoutName) &&
+					colorBalancedGenerators.has(sheetName);
 				// Checking the card count beforehand is tricky, we'll rely on pickCard throwing an exception if we run out of cards to pick.
 				try {
 					let pickedCards: UniqueCard[] = [];
@@ -198,17 +197,15 @@ export function generateBoosterFromCustomCardList(
 										...pickOptions,
 										onEmpty: () => {
 											fillSheet(sheetName);
-											colorBalancedGenerators[sheetName]?.cache.reset(pickOptions);
+											colorBalancedGenerators.get(sheetName)?.cache.reset(pickOptions);
 										},
 									}
 								: pickOptions;
 
 							if (useColorBalance) {
-								pickedCards = colorBalancedGenerators[sheetName].generate(
-									slot.count,
-									booster,
-									sheetPickOption
-								);
+								pickedCards = colorBalancedGenerators
+									.get(sheetName)!
+									.generate(slot.count, booster, sheetPickOption);
 							} else {
 								for (let i = 0; i < slot.count; ++i) {
 									const pickedCard = pickCard(
@@ -217,8 +214,8 @@ export function generateBoosterFromCustomCardList(
 										sheetPickOption
 									);
 									pickedCards.push(pickedCard);
-									if (colorBalancedGenerators[sheetName] && !pickOptions.withReplacement)
-										colorBalancedGenerators[sheetName].cache.removeCard(pickedCard);
+									if (colorBalancedGenerators.has(sheetName) && !pickOptions.withReplacement)
+										colorBalancedGenerators.get(sheetName)!.cache.removeCard(pickedCard);
 								}
 							}
 						}
