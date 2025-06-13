@@ -154,19 +154,14 @@ export class ColorBalancedSlot {
 
 		const forcedColors = ["W", "U", "B", "R", "G"];
 
+		// How many mono-colored cards can we force before running out of space to correct the ratio?
+		const maxColorBalanceCount = Math.floor(
+			(cardCount * this.cache.monocolored.count()) / (this.cache.monocolored.count() + this.cache.others.count())
+		);
 		// cardCount is too low to ensure space for non-monocolored cards
-		if (cardCount <= forcedColors.length) {
-			// How many mono-colored cards can we force before running out of space to correct the ratio?
-			const colorBalanceCount = Math.min(
-				forcedColors.length,
-				Math.floor(
-					(cardCount * this.cache.monocolored.count()) /
-						(this.cache.monocolored.count() + this.cache.others.count())
-				)
-			);
-
+		if (maxColorBalanceCount < forcedColors.length) {
 			// Not a high enough ratio of mono cards to support even one balanced card, fallback to random picking.
-			if (colorBalanceCount < 1) {
+			if (maxColorBalanceCount < 1) {
 				for (let i = 0; i < cardCount; ++i) {
 					const pickedCard = pickCard(this.cardPool, pickedCards.concat(duplicateProtection), options);
 					pickedCards.push(pickedCard);
@@ -175,9 +170,9 @@ export class ColorBalancedSlot {
 				return pickedCards;
 			}
 
-			if (colorBalanceCount < forcedColors.length) {
+			if (maxColorBalanceCount < forcedColors.length) {
 				shuffleArray(forcedColors);
-				forcedColors.length = colorBalanceCount;
+				forcedColors.length = maxColorBalanceCount;
 			}
 		}
 
