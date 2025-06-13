@@ -10,6 +10,9 @@ import { parseCardList } from "../../src/parseCardList.js";
 import { getRandomKey, getRandom } from "../../src/utils.js";
 import { SpecialLandSlots } from "../../src/LandSlot.js";
 import { isMessageError, isSocketError, MessageError } from "../../src/Message.js";
+import { CardID } from "../../src/CardTypes.js";
+import { isNumber } from "../../src/TypeChecks.js";
+import { CardPool } from "../../src/CardPool.js";
 
 const ArenaCube = parseCardList(fs.readFileSync(`data/cubes/ArenaHistoricCube1.txt`, "utf8"), {});
 if (isSocketError(ArenaCube)) {
@@ -17,8 +20,6 @@ if (isSocketError(ArenaCube)) {
 }
 
 const CustomSheetsTestFile = fs.readFileSync(`./test/data/CustomSheets.txt`, "utf8");
-import { CardID, CardPool } from "../../src/CardTypes.js";
-import { isNumber } from "../../src/TypeChecks.js";
 
 describe("Statistical color balancing tests", function () {
 	it(`Boosters have <=20% difference in a common artifact's count vs colored common's count while color balancing`, function (done) {

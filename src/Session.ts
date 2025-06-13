@@ -5,8 +5,6 @@ import { Connections, getPickedCardIds } from "./Connection.js";
 import {
 	CardID,
 	Card,
-	CardPool,
-	SlotedCardPool,
 	UniqueCard,
 	UniqueCardID,
 	DeckBasicLands,
@@ -89,6 +87,7 @@ import { MatchResults, EventCompleted, Result } from "./MTGOAPI.js";
 import { sendDraftLogToCubeCobra } from "./cubeCobraIntegration.js";
 import { isSilentAuctionDraftState, SilentAuctionDraftState } from "./SilentAuctionDraft.js";
 import { Tiebreaker } from "./SilentAuctionDraftTiebreakers.js";
+import { CardPool, SlotedCardPool } from "./CardPool.js";
 
 // Tournament timer depending on the number of remaining cards in a pack.
 const TournamentTimer = [

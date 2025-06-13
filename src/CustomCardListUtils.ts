@@ -1,11 +1,12 @@
 import { ColorBalancedSlot } from "./BoosterFactory.js";
-import { CardID, Card, SlotedCardPool, UniqueCard, CardPool } from "./CardTypes.js";
+import { CardID, Card, UniqueCard } from "./CardTypes.js";
 import { getCard } from "./Cards.js";
 import { pickCard, pickPrintRun, pickStriped } from "./cardUtils.js";
 import { MessageError } from "./Message.js";
 import { isEmpty, random, weightedRandomIdx, shuffleArray } from "./utils.js";
 import { CCLSettings, CustomCardList, getSheetCardIDs } from "./CustomCardList.js";
 import { hasProperty, isArrayOf, isBoolean, isNumber, isObject, isString } from "./TypeChecks.js";
+import { CardPool, SlotedCardPool } from "./CardPool.js";
 
 export function generateCustomGetCardFunction(customCardList: CustomCardList): (cid: CardID) => Card {
 	if (!customCardList?.customCards) return getCard;

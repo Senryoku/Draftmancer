@@ -1,4 +1,4 @@
-import { CardID, Card, CardPool, SlotedCardPool, UniqueCard } from "./CardTypes.js";
+import { CardID, Card, UniqueCard } from "./CardTypes.js";
 import { getUnique, BoosterCardsBySet, CardsBySet, getCard, DefaultMaxDuplicates } from "./Cards.js";
 import { shuffleArray, Options, random, getRandom, cumulativeSum, chooseWeighted } from "./utils.js";
 import { pickCard } from "./cardUtils.js";
@@ -91,7 +91,7 @@ class ColorBalancedSlotCache {
 		this.originalCardPool = cardPool;
 
 		const localGetCard = options.getCard ?? getCard;
-		for (const [cid, count] of cardPool) {
+		for (const cid of cardPool.keys()) {
 			if (!(localGetCard(cid).colors.join() in this.byColor))
 				this.byColor[localGetCard(cid).colors.join()] = new CardPool();
 		}
@@ -142,6 +142,12 @@ export class ColorBalancedSlot {
 		this.cache = new ColorBalancedSlotCache(_cardPool, options);
 	}
 
+	static choiceCount(uniformAll: boolean): (cardPool: CardPool) => number {
+		if (uniformAll)
+			return (cardPool: CardPool) => cardPool.count(); // Multiple copies means a higher weight.
+		else return (cardPool: CardPool) => cardPool.size; // All unique cards have the same probability of being picked.
+	}
+
 	// Returns cardCount color balanced cards picked from cardPool.
 	// duplicateProtection can contain pre-selected cards to avoid duplicates.
 	generate(
@@ -151,12 +157,15 @@ export class ColorBalancedSlot {
 	) {
 		const pickedCards: UniqueCard[] = [];
 		const withReplacement = options?.withReplacement ?? false;
+		const uniformAll = options?.uniformAll ?? false;
+		const choiceCount = ColorBalancedSlot.choiceCount(uniformAll);
 
 		const forcedColors = ["W", "U", "B", "R", "G"];
 
 		// How many mono-colored cards can we force before running out of space to correct the ratio?
 		const maxColorBalanceCount = Math.floor(
-			(cardCount * this.cache.monocolored.count()) / (this.cache.monocolored.count() + this.cache.others.count())
+			(cardCount * choiceCount(this.cache.monocolored)) /
+				(choiceCount(this.cache.monocolored) + choiceCount(this.cache.others))
 		);
 		// cardCount is too low to ensure space for non-monocolored cards
 		if (maxColorBalanceCount < forcedColors.length) {
@@ -200,12 +209,13 @@ export class ColorBalancedSlot {
 		// If cr < as, x = 0 is the best we can do.
 		// If c or a are small, we need to ignore x and use remaning cards. Negative x acts like 0.
 		const seededMonocolors = pickedCards.length; // s
-		const c = this.cache.monocolored.count() + seededMonocolors;
-		const a = this.cache.others.count();
+		const c = choiceCount(this.cache.monocolored) + seededMonocolors;
+		const a = choiceCount(this.cache.others);
 		const remainingCards = cardCount - seededMonocolors; // r
 		const x = (c * remainingCards - a * seededMonocolors) / (remainingCards * (c + a));
 		for (let i = pickedCards.length; i < cardCount; ++i) {
-			const type = (random.bool(x) && this.cache.monocolored.count() !== 0) || this.cache.others.count() === 0;
+			const type =
+				(random.bool(x) && choiceCount(this.cache.monocolored) !== 0) || choiceCount(this.cache.others) === 0;
 			const pickedCard = pickCard(
 				type ? this.cache.monocolored : this.cache.others,
 				pickedCards.concat(duplicateProtection),
@@ -2518,6 +2528,7 @@ class DSKBoosterFactory extends BoosterFactory {
 }
 
 import MB2PlistCards from "../data/mb2.json" with { type: "json" };
+import { CardPool, SlotedCardPool } from "./CardPool.js";
 
 // Mystery Booster 2
 //   10 Commons or uncommons
