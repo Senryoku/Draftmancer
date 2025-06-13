@@ -8,7 +8,6 @@ import { SetCode } from "./Types";
 import { DraftLog, DraftPick } from "./DraftLog";
 import {
 	CardID,
-	CardPool,
 	DeckBasicLands,
 	DeckList,
 	UsableDraftEffect,
@@ -283,10 +282,7 @@ export interface ClientToServerEvents {
 
 	// Personal events
 	setUserName: (userName: string) => void;
-	setCollection: (
-		collection: PlainCollection,
-		ack?: (response: SocketAck | { collection: CardPool }) => void
-	) => void;
+	setCollection: (collection: PlainCollection, ack?: (response: SocketAck) => void) => void;
 	parseCollection: (txtcollection: string, ack: (ret: SocketAck & { collection?: PlainCollection }) => void) => void;
 	useCollection: (useCollection: boolean) => void;
 	chatMessage: (message: { author: string; text: string; timestamp: number }) => void;

@@ -1,26 +1,7 @@
-import { CardID, Card, CardPool, UniqueCard } from "./CardTypes.js";
+import { CardPool } from "./CardPool.js";
+import { CardID, Card, UniqueCard } from "./CardTypes.js";
 import { getUnique } from "./Cards.js";
-import { cumulativeSum, getRandomMapKey, random } from "./utils.js";
-
-// Returns a random card from the pool, choosen uniformly across ALL cards (not UNIQUE ones),
-// meaning cards present in multiple copies are more likely to be picked.
-function getRandomCardFromCardPool(cardPool: CardPool): CardID {
-	const idx = random.integer(0, cardPool.count() - 1);
-
-	// Fast path (kinda, sadly we can't directly index into a map) for the singleton case.
-	if (cardPool.size === cardPool.count()) {
-		const r = cardPool.keys();
-		for (let i = 0; i < idx; ++i) r.next();
-		return r.next().value!;
-	}
-
-	let acc = 0;
-	for (const [cid, count] of cardPool) {
-		acc += count;
-		if (acc > idx) return cid;
-	}
-	return cardPool.keys().next().value!;
-}
+import { cumulativeSum, random } from "./utils.js";
 
 // TODO: Prevent multiples by name?
 export function pickCard(
@@ -50,12 +31,12 @@ export function pickCard(
 	// if uniformAll is false, distribution will be uniform across UNIQUE cards
 	// (the probability of picking a card with a given ID is the same for any ID, regardeless of the number of copies)
 	// if it is true, distribution will be uniform across ALL cards (for a given card ID, more copies means a higher chance to be picked).
-	const randomFunc = options?.uniformAll ? getRandomCardFromCardPool : getRandomMapKey;
-	let cid = randomFunc(cardPool);
+	const uniformAll = options?.uniformAll ?? false;
+	let cid = cardPool.pick(uniformAll)!;
 	if (booster && options?.duplicateProtection !== false) {
 		let prevention_attempts = 0;
 		while (booster.findIndex((card) => cid === card.id) !== -1 && prevention_attempts < 3) {
-			cid = randomFunc(cardPool);
+			cid = cardPool.pick(uniformAll);
 			++prevention_attempts;
 		}
 		// Still duplicated, don't rely on random chance anymore. Slow, but should be extremely rare (expect for pathological cases, like a cube with a single card.).
@@ -66,7 +47,7 @@ export function pickCard(
 			if (candidates.length > 0) {
 				const tmpPool = new CardPool();
 				for (const cid of candidates) tmpPool.set(cid, cardPool.get(cid)!);
-				cid = randomFunc(tmpPool);
+				cid = tmpPool.pick(uniformAll);
 			}
 		}
 	}

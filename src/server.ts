@@ -29,7 +29,6 @@ import { Connection, Connections } from "./Connection.js";
 import { DistributionMode, DraftLogRecipients, ReadyState } from "./Session/SessionTypes";
 import { Session, Sessions, getPublicSessionData } from "./Session.js";
 import {
-	CardPool,
 	CardID,
 	Card,
 	UniqueCardID,
@@ -69,6 +68,7 @@ import { parseMTGOLog } from "./parseMTGOLog.js";
 
 import { init as MTGOAPIInit } from "./MTGOAPI.js";
 import { isTiebreaker } from "./SilentAuctionDraft.js";
+import { CardPool } from "./CardPool.js";
 
 if (process.env.NODE_ENV === "production") MTGOAPIInit();
 
@@ -209,13 +209,17 @@ function setUserName(userID: UserID, sessionID: SessionID, userName: string) {
 		})
 	);
 }
+
 function setCollection(
 	userID: UserID,
 	sessionID: SessionID,
 	collection: PlainCollection,
-	ack?: (response: SocketAck | { collection: CardPool }) => void
+	ack?: (response: SocketAck) => void
 ) {
-	if (!isObject(collection) || collection === null) return;
+	if (!isObject(collection) || collection === null) {
+		ack?.(new SocketError("Invalid parameter."));
+		return;
+	}
 
 	const processedCollection: CardPool = new CardPool();
 	// Remove unknown cards immediatly.
@@ -227,7 +231,7 @@ function setCollection(
 
 	Connections[userID].collection = processedCollection;
 
-	ack?.({ collection: processedCollection });
+	ack?.(new SocketAck());
 
 	const hasCollection = processedCollection.size > 0;
 	Sessions[sessionID].forUsers((user) =>
