@@ -35,7 +35,7 @@
 						<input
 							type="number"
 							min="4"
-							max="24"
+							:max="MaxCustomBoosters"
 							step="1"
 							id="input-boostersPerPlayer"
 							:placeholder="`Boosters per ${teamSealed ? 'team' : 'player'}`"
@@ -105,6 +105,8 @@ const props = withDefaults(
 );
 const { users, teamSealed } = toRefs(props);
 
+const MaxCustomBoosters = 24;
+
 const teams = ref([[], [], [], []] as UserID[][]);
 const boostersPerPlayer = ref(teamSealed.value ? 12 : 6);
 const useCustomizedBoosters = ref(false);
@@ -128,7 +130,6 @@ const emit = defineEmits<{
 	(e: "distribute", boostersPerPlayer: number, customBoosters: SetCode[], teams: UserID[][]): void;
 }>();
 
-// Methods
 const userById = (uid: UserID) => users.value.find((user) => user.userID === uid);
 const teamAdd = (evt: SortableEvent, team: UserID[]) => {
 	evt.item.remove();
@@ -148,11 +149,11 @@ const distribute = () => {
 	emit("close");
 };
 
-// Watch
 watch(boostersPerPlayer, () => {
 	if (boostersPerPlayer.value > 0) {
-		while (customBoosters.value.length < boostersPerPlayer.value) customBoosters.value.push("");
-		while (customBoosters.value.length > boostersPerPlayer.value) customBoosters.value.pop();
+		const count = Math.min(MaxCustomBoosters, boostersPerPlayer.value);
+		while (customBoosters.value.length < count) customBoosters.value.push("");
+		while (customBoosters.value.length > count) customBoosters.value.pop();
 	}
 });
 </script>
