@@ -3,7 +3,7 @@ import "source-map-support/register.js";
 export const DraftmancerPort = process.env.PORT || 3000;
 
 import fs from "fs";
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import compression from "compression";
 import express, { json as ExpressJSON, text as ExpressText, static as ExpressStatic } from "express";
 import http from "http";
@@ -37,11 +37,12 @@ import {
 	ArenaID,
 	UsableDraftEffect,
 	OptionalOnPickDraftEffect,
+	CardColor,
 } from "./CardTypes.js";
-import { MTGACards, getUnique, getCard } from "./Cards.js";
-import { parseLine, parseCardList, XMageToArena } from "./parseCardList.js";
+import { MTGACards, getUnique, getCard, CardsByName } from "./Cards.js";
+import { parseLine, parseCardList, XMageToArena, matchCardVersion } from "./parseCardList.js";
 import { SessionID, UserID } from "./IDTypes.js";
-import { CustomCardList } from "./CustomCardList.js";
+import { CustomCardList, Sheet } from "./CustomCardList.js";
 import { checkCCLSettingType, isKeyOfCCLSettings } from "./CustomCardListUtils.js";
 import { DraftLog } from "./DraftLog.js";
 import {
@@ -69,6 +70,7 @@ import { parseMTGOLog } from "./parseMTGOLog.js";
 import { init as MTGOAPIInit } from "./MTGOAPI.js";
 import { isTiebreaker } from "./SilentAuctionDraft.js";
 import { CardPool } from "./CardPool.js";
+import parseCSV from "./parseCSV.js";
 
 if (process.env.NODE_ENV === "production") MTGOAPIInit();
 
@@ -1027,6 +1029,8 @@ function importCube(userID: UserID, sessionID: SessionID, data: unknown, ack: (r
 		return ack?.(new SocketError("Invalid data: name should be a string."));
 	if (!hasOptionalProperty("matchVersions", isBoolean)(data))
 		return ack?.(new SocketError("Invalid data: matchVersions should be a boolean."));
+	if (!hasOptionalProperty("retrieveCustomProperties", isBoolean)(data))
+		return ack?.(new SocketError("Invalid data: retrieveCustomProperties should be a boolean."));
 	if (!hasOptionalProperty("sendResultsToCubeCobra", isBoolean)(data))
 		return ack?.(new SocketError("Invalid data: sendResultsToCubeCobra should be a boolean."));
 	if (!["Cube Cobra", "CubeArtisan"].includes(data.service))
@@ -1037,7 +1041,7 @@ function importCube(userID: UserID, sessionID: SessionID, data: unknown, ack: (r
 		response: AxiosResponse<unknown, unknown>,
 		data: { service: string; cubeID: string },
 		ack: (result: SocketAck) => void
-	) => {
+	): response is AxiosResponse<unknown, unknown> & { data: string } => {
 		if (response.status !== 200) {
 			ack?.(
 				new SocketError(
@@ -1055,6 +1059,9 @@ function importCube(userID: UserID, sessionID: SessionID, data: unknown, ack: (r
 		} else if (!response.data) {
 			ack?.(new SocketError("Empty Cube.", `Cube '${data.cubeID}' on ${data.service} seems empty.`));
 			return false;
+		} else if (!isString(response.data)) {
+			ack?.(new SocketError("Invalid Cube.", `Cube '${data.cubeID}' on ${data.service} is invalid.`));
+			return false;
 		}
 		return true;
 	};
@@ -1065,6 +1072,15 @@ function importCube(userID: UserID, sessionID: SessionID, data: unknown, ack: (r
 		if (isBoolean(data.sendResultsToCubeCobra))
 			Sessions[sessionID].sendResultsToCubeCobra = data.sendResultsToCubeCobra;
 	}
+
+	const errorHandler = (err: AxiosError) =>
+		ack?.(
+			new SocketError(
+				"Error retrieving cube.",
+				`Couldn't retrieve the card list from ${data.service}.`,
+				`Full error: ${err}`
+			)
+		);
 
 	// Plain text card list
 	const fromTextList = (
@@ -1082,19 +1098,104 @@ function importCube(userID: UserID, sessionID: SessionID, data: unknown, ack: (r
 				if (validateResponse(response, data, ack))
 					parseCustomCardList(Sessions[sessionID], response.data, parseCustomCardListOptions, ack);
 			})
-			.catch((err) =>
-				ack?.(
-					new SocketError(
-						"Error retrieving cube.",
-						`Couldn't retrieve the card list from ${data.service}.`,
-						`Full error: ${err}`
-					)
-				)
-			);
+			.catch(errorHandler);
 	};
 
-	if (!data.matchVersions) fromTextList(sessionID, data, ack);
-	else {
+	if (data.retrieveCustomProperties) {
+		// CSV format
+		if (data.service !== "Cube Cobra") return ack?.(new SocketError(`Invalid cube service ('${data.service}').`));
+		const url = `https://cubecobra.com/cube/download/csv/${data.cubeID}`;
+		axios
+			.get(url, { timeout: 3000 })
+			.then((response) => {
+				if (validateResponse(response, data, ack)) {
+					const csv = parseCSV(response.data);
+					if (csv.length < 2) return ack?.(new SocketError(`Empty cube ('${data.cubeID}').`));
+					const header = csv[0];
+					const columns = {
+						name: header.indexOf("name"),
+						cmc: header.indexOf("CMC"),
+						color: header.indexOf("Color"),
+						type: header.indexOf("Type"),
+						set: header.indexOf("Set"),
+						collector_number: header.indexOf("Collector Number"),
+						rarity: header.indexOf("Rarity"),
+						image: header.indexOf("image URL"),
+						image_back: header.indexOf("image Back URL"),
+					};
+					if (Object.values(columns).some((x) => x === -1))
+						return ack?.(new SocketError(`Invalid CSV header ('${data.cubeID}').`));
+					const cards = csv.slice(1).map((row) => {
+						return {
+							name: row[columns.name],
+							cmc: row[columns.cmc],
+							color: row[columns.color],
+							type: row[columns.type],
+							set: row[columns.set],
+							collector_number: row[columns.collector_number],
+							rarity: row[columns.rarity],
+							image: row[columns.image],
+							image_back: row[columns.image_back],
+						};
+					});
+					const defaultSheet: Sheet = { collation: "random", cards: {} };
+					const customCards: Record<string, Card> = {};
+					let customCardID = 0;
+					const cardList: CustomCardList = {
+						customCards: customCards,
+						layouts: false,
+						sheets: { default: defaultSheet },
+					};
+					if (parseCustomCardListOptions.name) cardList.name = parseCustomCardListOptions.name;
+					for (const card of cards) {
+						const cardID = data.matchVersions
+							? matchCardVersion(card.name, card.set.toLowerCase(), card.collector_number, true)
+							: CardsByName[card.name];
+						if (!cardID)
+							return ack?.(
+								new SocketError(
+									`Could not find card '${card.name}' (${card.set}, ${card.collector_number}).`
+								)
+							);
+						if (card.image !== "") {
+							const cardData = { ...getCard(cardID), is_custom: true };
+							const customID = `Custom_${customCardID}`;
+							customCardID += 1;
+							cardData.id = customID;
+							cardData.image_uris = { en: card.image };
+							cardData.type = card.type;
+							cardData.cmc = parseInt(card.cmc);
+							cardData.colors = card.color.split("") as CardColor[];
+							if (card.image_back !== "") {
+								if (!cardData.back) {
+									cardData.back = {
+										name: card.name,
+										printed_names: {},
+										type: card.type,
+										subtypes: [],
+										image_uris: { en: card.image_back },
+									};
+								} else {
+									cardData.back = { ...cardData.back, image_uris: { en: card.image_back } };
+								}
+							}
+							customCards[customID] = cardData;
+							defaultSheet.cards[customID] = 1;
+						} else {
+							if (Object.prototype.hasOwnProperty.call(defaultSheet.cards, cardID))
+								defaultSheet.cards[cardID] += 1;
+							else defaultSheet.cards[cardID] = 1;
+						}
+					}
+					console.log(cardList);
+					useCustomCardList(Sessions[sessionID], cardList);
+					ack?.(new SocketAck());
+				}
+			})
+			.catch(errorHandler);
+	} else if (!data.matchVersions) {
+		fromTextList(sessionID, data, ack);
+	} else {
 		// Xmage (.dck) format
 		let url = null;
 		if (data.service === "Cube Cobra") url = `https://cubecobra.com/cube/download/xmage/${data.cubeID}`;
@@ -1117,15 +1218,7 @@ function importCube(userID: UserID, sessionID: SessionID, data: unknown, ack: (r
 						);
 				}
 			})
-			.catch((err) =>
-				ack?.(
-					new SocketError(
-						"Error retrieving cube",
-						`Couldn't retrieve the card list from ${data.service}.`,
-						`Full error: ${err}`
-					)
-				)
-			);
+			.catch(errorHandler);
 	}
 }
 

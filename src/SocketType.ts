@@ -415,6 +415,7 @@ export interface ClientToServerEvents {
 			matchVersions: boolean;
 			cubeID: string;
 			sendResultsToCubeCobra?: boolean;
+			retrieveCustomProperties?: boolean;
 		},
 		ack: (result: SocketAck) => void
 	) => void;

@@ -57,7 +57,7 @@ import {
 } from "./helper";
 import { eraseCookie, getCookie, setCookie } from "./cookies";
 import { ButtonColor, Alert, fireToast } from "./alerts";
-import parseCSV from "./parseCSV";
+import parseCSV from "../../src/parseCSV";
 
 import type CardPool from "./components/CardPool.vue";
 
@@ -2822,12 +2822,16 @@ export default defineComponent({
 			const defaultMatchCardVersions = (localStorage.getItem("import-match-versions") ?? "true") === "true";
 			const defaultSendResultsToCubeCobra =
 				(localStorage.getItem("send-results-to-cubecobra") ?? "true") === "true";
+			const defaultRetrieveCustomProperties =
+				(localStorage.getItem("cubecobra-retrieve-custom-properties") ?? "false") === "true";
 			const defaultCubeID = localStorage.getItem("import-cubeID") ?? "";
-			const sendResultsToCubeCobraInput =
+			const cubeCobraAdditionalInputs =
 				service === "Cube Cobra"
 					? `<div><input type="checkbox" id="send-results-to-cubecobra" ${
 							defaultSendResultsToCubeCobra ? "checked" : ""
-						}><label for="send-results-to-cubecobra">Send results to Cube Cobra</label></div>`
+						}><label for="send-results-to-cubecobra">Send results to Cube Cobra</label></div><div><input type="checkbox" id="cubecobra-retrieve-custom-properties" ${
+							defaultRetrieveCustomProperties ? "checked" : ""
+						}><label for="cubecobra-retrieve-custom-properties">(Experimental) Retrieve custom properties</label></div>`
 					: "";
 			Alert.fire({
 				title: `Import from ${service}`,
@@ -2835,7 +2839,7 @@ export default defineComponent({
 				<div><input type="checkbox" id="input-match-card-versions" ${
 					defaultMatchCardVersions ? "checked" : ""
 				}><label for="input-match-card-versions">Match exact card versions</label></div>
-				${sendResultsToCubeCobraInput}`,
+				${cubeCobraAdditionalInputs}`,
 				inputPlaceholder: "Cube ID/URL",
 				input: "text",
 				inputValue: defaultCubeID,
@@ -2843,9 +2847,12 @@ export default defineComponent({
 				confirmButtonColor: ButtonColor.Safe,
 				cancelButtonColor: ButtonColor.Critical,
 				confirmButtonText: "Import",
-				preConfirm(
-					cubeID: string
-				): Promise<{ cubeID: string; matchVersions: boolean; sendResultsToCubeCobra: boolean }> {
+				preConfirm(cubeID: string): Promise<{
+					cubeID: string;
+					matchVersions: boolean;
+					sendResultsToCubeCobra: boolean;
+					retrieveCustomProperties: boolean;
+				}> {
 					let matchVersions = (
 						document.getElementById("input-match-card-versions") as HTMLInputElement | null
 					)?.checked;
@@ -2866,11 +2873,23 @@ export default defineComponent({
 					if (sendResultsToCubeCobra !== undefined)
 						localStorage.setItem("send-results-to-cubecobra", sendResultsToCubeCobra.toString());
 					else sendResultsToCubeCobra = true;
+
+					let retrieveCustomProperties = (
+						document.getElementById("cubecobra-retrieve-custom-properties") as HTMLInputElement | null
+					)?.checked;
+					if (retrieveCustomProperties !== undefined)
+						localStorage.setItem(
+							"cubecobra-retrieve-custom-properties",
+							retrieveCustomProperties.toString()
+						);
+					else retrieveCustomProperties = false;
+
 					return new Promise(function (resolve) {
 						resolve({
-							cubeID: cubeID,
-							matchVersions: matchVersions,
-							sendResultsToCubeCobra: sendResultsToCubeCobra,
+							cubeID,
+							matchVersions,
+							sendResultsToCubeCobra,
+							retrieveCustomProperties,
 						});
 					});
 				},
@@ -2880,6 +2899,7 @@ export default defineComponent({
 						cubeID: string;
 						matchVersions: boolean;
 						sendResultsToCubeCobra: boolean;
+						retrieveCustomProperties: boolean;
 					}>
 				) => {
 					if (result.value && result.value.cubeID) {
@@ -2889,12 +2909,22 @@ export default defineComponent({
 						};
 						if (service === "Cube Cobra") cube.cubeCobraID = result.value.cubeID;
 						if (service === "CubeArtisan") cube.cubeArtisanID = result.value.cubeID;
-						this.selectCube(cube, result.value.matchVersions, result.value.sendResultsToCubeCobra);
+						this.selectCube(
+							cube,
+							result.value.matchVersions,
+							result.value.sendResultsToCubeCobra,
+							result.value.retrieveCustomProperties
+						);
 					}
 				}
 			);
 		},
-		selectCube(cube: CubeDescription, matchVersions = false, sendResultsToCubeCobra: boolean = false) {
+		selectCube(
+			cube: CubeDescription,
+			matchVersions = false,
+			sendResultsToCubeCobra: boolean = false,
+			retrieveCustomProperties: boolean = false
+		) {
 			const ack = (r: SocketAck) => {
 				if (r?.error) {
 					Alert.fire(r.error);
@@ -2920,10 +2950,11 @@ export default defineComponent({
 					"importCube",
 					{
 						name: cube.name,
-						cubeID: cubeID,
-						service: service,
-						matchVersions: matchVersions,
-						sendResultsToCubeCobra: sendResultsToCubeCobra,
+						cubeID,
+						service,
+						matchVersions,
+						sendResultsToCubeCobra,
+						retrieveCustomProperties,
 					},
 					ack
 				);
