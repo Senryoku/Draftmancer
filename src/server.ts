@@ -1122,6 +1122,8 @@ function importCube(userID: UserID, sessionID: SessionID, data: unknown, ack: (r
 						rarity: header.indexOf("Rarity"),
 						image: header.indexOf("image URL"),
 						image_back: header.indexOf("image Back URL"),
+						finish: header.indexOf("Finish"),
+						maybeboard: header.indexOf("maybeboard"),
 					};
 					if (Object.values(columns).some((x) => x === -1))
 						return ack?.(new SocketError(`Invalid CSV header ('${data.cubeID}').`));
@@ -1136,6 +1138,8 @@ function importCube(userID: UserID, sessionID: SessionID, data: unknown, ack: (r
 							rarity: row[columns.rarity],
 							image: row[columns.image],
 							image_back: row[columns.image_back],
+							foil: row[columns.finish] === "Foil",
+							maybeboard: row[columns.maybeboard] === "true",
 						};
 					});
 					const defaultSheet: Sheet = { collation: "random", cards: {} };
@@ -1148,6 +1152,8 @@ function importCube(userID: UserID, sessionID: SessionID, data: unknown, ack: (r
 					};
 					if (parseCustomCardListOptions.name) cardList.name = parseCustomCardListOptions.name;
 					for (const card of cards) {
+						if (card.maybeboard) continue;
+
 						const cardID = data.matchVersions
 							? matchCardVersion(card.name, card.set.toLowerCase(), card.collector_number, true)
 							: CardsByName[card.name];
@@ -1158,14 +1164,20 @@ function importCube(userID: UserID, sessionID: SessionID, data: unknown, ack: (r
 								)
 							);
 						if (card.image !== "") {
-							const cardData = { ...getCard(cardID), is_custom: true };
+							const cardData: Card = { ...getCard(cardID), related_cards: [cardID], is_custom: true };
 							const customID = `Custom_${customCardID}`;
 							customCardID += 1;
 							cardData.id = customID;
+							if (!data.matchVersions) {
+								cardData.set = card.set;
+								cardData.collector_number = card.collector_number;
+							}
 							cardData.image_uris = { en: card.image };
 							cardData.type = card.type;
 							cardData.cmc = parseInt(card.cmc);
+							cardData.mana_cost = `{${card.cmc}}`; // NOTE: Cube Cobra currently only exposes the CMC, not the full mana cost. We could try to guess using the color(s), but it would still be an approximation.
 							cardData.colors = card.color.split("") as CardColor[];
+							cardData.foil = card.foil;
 							if (card.image_back !== "") {
 								if (!cardData.back) {
 									cardData.back = {
@@ -1187,7 +1199,6 @@ function importCube(userID: UserID, sessionID: SessionID, data: unknown, ack: (r
 							else defaultSheet.cards[cardID] = 1;
 						}
 					}
-					console.log(cardList);
 					useCustomCardList(Sessions[sessionID], cardList);
 					ack?.(new SocketAck());
 				}
