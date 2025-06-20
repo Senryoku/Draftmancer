@@ -1,5 +1,12 @@
 [
 	{
+		"date": "21/06/2025",
+		"notes": [
+			"Experimental custom card import from Cube Cobra",
+			"Improved color balacing (Thanks tiera!)"
+		]
+	},
+	{
 		"date": "30/05/2025",
 		"notes": [
 			"Final Fantasy support.",

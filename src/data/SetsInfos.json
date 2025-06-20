@@ -704,6 +704,11 @@
         "block": "Shadows over Innistrad",
         "icon": "img/sets/emn.svg"
     },
+    "eoe": {
+        "code": "eoe",
+        "fullName": "Edge of Eternities",
+        "icon": "img/sets/eoe.svg"
+    },
     "eve": {
         "code": "eve",
         "fullName": "Eventide",
