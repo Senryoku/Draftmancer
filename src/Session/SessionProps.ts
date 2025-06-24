@@ -27,8 +27,8 @@ export const SessionsSettingsProps: { [propName: string]: (val: unknown) => bool
 		return val >= 1;
 	},
 	teamDraft: isBoolean,
-	randomizeSeatingOrder: isBoolean,
 	disableBotSuggestions: isBoolean,
+	randomizeSeatingOrder: isBoolean,
 	bots(val: unknown) {
 		if (!isInteger(val)) return false;
 		return val >= 0;
@@ -37,16 +37,16 @@ export const SessionsSettingsProps: { [propName: string]: (val: unknown) => bool
 		if (!isInteger(val)) return false;
 		return val >= 0;
 	},
+	maxPlayers(val: unknown) {
+		if (!isInteger(val)) return false;
+		return val >= 1;
+	},
 	tournamentTimer: isBoolean,
 	reviewTimer(val: unknown) {
 		if (!isInteger(val)) return false;
 		return val >= 0;
 	},
 	hidePicks: isBoolean,
-	maxPlayers(val: unknown) {
-		if (!isInteger(val)) return false;
-		return val >= 1;
-	},
 	mythicPromotion: isBoolean,
 	useBoosterContent: isBoolean,
 	boosterContent(val: unknown) {
@@ -70,9 +70,10 @@ export const SessionsSettingsProps: { [propName: string]: (val: unknown) => bool
 		return ["Paper", "MTGA"].includes(val);
 	},
 	useCustomCardList: isBoolean,
+	customCardList: isObject,
 	customCardListWithReplacement: isBoolean,
 	customCardListDuplicateProtection: isBoolean,
-	customCardList: isObject,
+	sendResultsToCubeCobra: isBoolean,
 	distributionMode(val: unknown): val is DistributionMode {
 		if (!isString(val)) return false;
 		return ["regular", "shufflePlayerBoosters", "shuffleBoosterPool"].includes(val);
@@ -101,7 +102,6 @@ export const SessionsSettingsProps: { [propName: string]: (val: unknown) => bool
 		return val >= 0;
 	},
 	bracketLocked: isBoolean,
-	draftPaused: isBoolean,
 } as const;
 
 export default SessionsSettingsProps;

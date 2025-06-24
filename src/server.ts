@@ -2021,23 +2021,22 @@ function joinSession(sessionID: SessionID, userID: UserID, defaultSessionSetting
 function addUserToSession(userID: UserID, sessionID: SessionID, defaultSessionSettings: Options = {}) {
 	if (!Connections[userID]) return console.error(`addUserToSession: No connection found for userID ${userID}`);
 
-	const currentSession = Connections[userID].sessionID;
-	if (currentSession && currentSession in Sessions) removeUserFromSession(currentSession, userID);
+	const currentSessionID = Connections[userID].sessionID;
 
-	if (!(sessionID in Sessions)) {
-		if (currentSession && currentSession in Sessions)
-			if (userID === Sessions[currentSession].owner)
-				// Transfer session settings to the new one if applicable
-				for (const p of Object.keys(SessionsSettingsProps))
-					defaultSessionSettings[p] = (Sessions[currentSession] as IIndexable)[p];
+	// Transfer session settings to the new one if applicable
+	if (currentSessionID && currentSessionID in Sessions && userID === Sessions[currentSessionID].owner)
+		for (const p of Object.keys(SessionsSettingsProps))
+			defaultSessionSettings[p] = (Sessions[currentSessionID] as IIndexable)[p];
 
-		Sessions[sessionID] = new Session(sessionID, userID, defaultSessionSettings);
-	}
+	if (currentSessionID && currentSessionID in Sessions) removeUserFromSession(currentSessionID, userID);
+
+	if (!(sessionID in Sessions)) Sessions[sessionID] = new Session(sessionID, userID, defaultSessionSettings);
 
 	if (userID === Sessions[sessionID].owner && !Sessions[sessionID].ownerIsPlayer) {
 		Connections[userID].sessionID = sessionID;
 		Sessions[sessionID].syncSessionOptions(userID);
 	} else Sessions[sessionID].addUser(userID);
+
 	if (Sessions[sessionID].isPublic) updatePublicSession(sessionID);
 }
 
