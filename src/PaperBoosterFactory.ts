@@ -1,8 +1,9 @@
 import { BoosterFactoryOptions, IBoosterFactory } from "./BoosterFactory";
-import { Cards, getCard, getUnique } from "./Cards.js";
+import { Cards, CardsBySet, getCard, getUnique } from "./Cards.js";
 import { CardID } from "./CardTypes";
 import { Constants } from "./Constants.js";
 import PaperBoosterData from "./data/sealed_extended_data.json" with { type: "json" };
+import { SetCode } from "./Types";
 import { random, shuffleArray, weightedRandomIdx } from "./utils.js";
 
 /*

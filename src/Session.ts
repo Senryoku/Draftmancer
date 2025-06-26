@@ -23,6 +23,7 @@ import {
 	MTGACardIDs,
 	getCard,
 	DefaultMaxDuplicates,
+	hasMythics,
 } from "./Cards.js";
 import { fallbackToSimpleBots, isBot } from "./Bot.js";
 import { MTGDraftBotParameters } from "./bots/ExternalBotInterface.js";
@@ -684,7 +685,7 @@ export class Session implements IIndexable {
 		const customBoosters = structuredClone(options?.customBoosters ?? this.customBoosters); // Use override value if provided via options
 		const boosterSpecificRules = options.useCustomBoosters && customBoosters.some((v: string) => v !== "");
 		const acceptPaperBoosterFactories =
-			!this.useBoosterContent && this.mythicPromotion && !this.maxDuplicates && this.unrestrictedCardPool();
+			!this.useBoosterContent && !this.maxDuplicates && this.unrestrictedCardPool();
 		// Prefer collation from taw/magic-sealed-data for these sets when possible
 		const setsWithPreferredPaperFactory = [
 			"dbl", // Our implementation uses cards from mid and vow, not dbl (which might be desirable... but it's less accurate)
@@ -693,6 +694,7 @@ export class Session implements IIndexable {
 			return (
 				acceptPaperBoosterFactories &&
 				!(set in SetSpecificFactories && !setsWithPreferredPaperFactory.includes(set)) && // Prefer our implementation if available, barring some exceptions.
+				(this.mythicPromotion || !hasMythics(set)) &&
 				isPaperBoosterFactoryAvailable(set)
 			);
 		};

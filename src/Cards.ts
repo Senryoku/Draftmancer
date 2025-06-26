@@ -41,6 +41,8 @@ console.timeEnd("Parsing Cards");
 //memoryReport();
 
 import MB1Cards from "../data/mb1_cards.json" with { type: "json" };
+import { SetCode } from "./Types.js";
+import Constants from "./Constants.js";
 for (const cid in MB1Cards) {
 	if (!tmpCards.has(cid)) {
 		tmpCards.set(cid, MB1Cards[cid as keyof typeof MB1Cards] as Card);
@@ -139,12 +141,21 @@ BoosterCardsBySet["mb1_convention_2021"] = BoosterCardsBySet["mb1"].concat(Cards
 
 export const MTGACardIDs = [...Cards.keys()].filter((cid) => !!getCard(cid).arena_id);
 
+const SetHasMythics: Record<SetCode, boolean> = {};
+for (const set of Object.keys(CardsBySet)) {
+	SetHasMythics[set] = CardsBySet[set].map((cid) => Cards.get(cid)!).some((card) => card.rarity === "mythic");
+}
+export function hasMythics(set: string) {
+	return set in SetHasMythics ? SetHasMythics[set] : false;
+}
+
 Object.freeze(MTGACards);
 Object.freeze(CardsByName);
 Object.freeze(CardVersionsByName);
 Object.freeze(BoosterCardsBySet);
 Object.freeze(CardsBySet);
 Object.freeze(MTGACardIDs);
+Object.freeze(SetHasMythics);
 
 console.timeEnd("Preparing Cards and caches");
 
