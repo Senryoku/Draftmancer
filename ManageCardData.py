@@ -2,6 +2,7 @@ from html import unescape
 import sqlite3
 import mmap
 import json
+import ijson
 import requests
 import os
 import filecmp
@@ -58,9 +59,16 @@ if len(sys.argv) > 1:
         SetToFetch = sys.argv[2].lower()
         ForceCache = True
 
-MTGAFolder = "H:\\SteamLibrary\\steamapps\\common\\MTGA\\"
-MTGADataFolder = f"{MTGAFolder}MTGA_Data\\Downloads\\Raw\\"
+MTGAFolder = "H:/SteamLibrary/steamapps/common/MTGA/"
+if "--mtga" in sys.argv:
+    MTGAFolder = sys.argv[sys.argv.index("--mtga") + 1]
+
+MTGADataFolder = f"{MTGAFolder}MTGA_Data/Downloads/Raw/"
 MTGACardDBFiles = glob.glob(f"{MTGADataFolder}Raw_CardDatabase_*.mtga")
+
+if len(MTGACardDBFiles) == 0:
+    print(colored(f"No MTGA Card DB files found in {MTGADataFolder}", "red"))
+    sys.exit(1)
 
 db_age = min(
     [(datetime.datetime.now() - datetime.datetime.fromtimestamp(os.path.getmtime(x))).days for x in MTGACardDBFiles]
@@ -300,10 +308,14 @@ NonProcessedCards = {}
 if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
     all_cards = []
     with open(BulkDataPath, "r", encoding="utf8") as file:
-        # objects = ijson.items(file, 'item')
-        # ScryfallCards = (o for o in objects if not(o['oversized'] or o['layout'] in ["token", "double_faced_token", "emblem", "art_series"]))
-        print("Loading Scryfall bulk data... ")
-        ScryfallCards = json.load(file)
+        objects = ijson.items(file, "item")
+        ScryfallCards = (
+            o
+            for o in objects
+            if not (o["oversized"] or o["layout"] in ["token", "double_faced_token", "emblem", "art_series"])
+        )
+        # print("Loading Scryfall bulk data... ")
+        # ScryfallCards = json.load(file)
 
         akr_candidates = {}
         klr_candidates = {}
