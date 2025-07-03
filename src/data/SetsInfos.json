@@ -704,10 +704,21 @@
         "block": "Shadows over Innistrad",
         "icon": "img/sets/emn.svg"
     },
+    "eoc": {
+        "code": "eoc",
+        "fullName": "Edge of Eternities Commander",
+        "block": "Commander",
+        "icon": "img/sets/eoc.svg"
+    },
     "eoe": {
         "code": "eoe",
         "fullName": "Edge of Eternities",
         "icon": "img/sets/eoe.svg"
+    },
+    "eos": {
+        "code": "eos",
+        "fullName": "Edge of Eternities: Stellar Sights",
+        "icon": "img/sets/eos.svg"
     },
     "eve": {
         "code": "eve",
@@ -1837,6 +1848,11 @@
         "block": "Core Set",
         "icon": "img/sets/p9ed.svg"
     },
+    "pa1": {
+        "code": "pa1",
+        "fullName": "Pioneer Anthology 1",
+        "icon": "img/sets/pa1.svg"
+    },
     "paer": {
         "code": "paer",
         "fullName": "Aether Revolt Promos",
@@ -2202,6 +2218,11 @@
         "code": "pfdn",
         "fullName": "Foundations Promos",
         "icon": "img/sets/pfdn.svg"
+    },
+    "pfin": {
+        "code": "pfin",
+        "fullName": "Final Fantasy Promos",
+        "icon": "img/sets/pfin.svg"
     },
     "pfrf": {
         "code": "pfrf",
@@ -3499,6 +3520,11 @@
         "fullName": "Theros",
         "block": "Theros",
         "icon": "img/sets/ths.svg"
+    },
+    "tla": {
+        "code": "tla",
+        "fullName": "Avatar: The Last Airbender",
+        "icon": "img/sets/tla.svg"
     },
     "tmbs": {
         "code": "tmbs",
