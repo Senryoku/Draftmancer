@@ -1,0 +1,722 @@
+[
+    {
+        "name": "CHOCOBO",
+        "cards": [
+            "dda6b4d0-1b60-46b0-b321-b9ffe15afff4",
+            "32eb192b-de6b-4814-8077-628d343d014e",
+            "e5857b1b-73bc-458e-b26b-7ed8bef785f3",
+            "1565813b-6912-42f4-bae0-22136a2d6a92",
+            "0cbf911c-a721-4b84-8645-d83a0966be18",
+            "19ad36d6-8bf4-490c-9980-b98a470af892",
+            "020dee17-d85b-44c4-9faa-b1ef977956f4",
+            "ff8c8be0-8223-499c-8704-cb68e0a42ce2",
+            "d6e1dee0-e2cd-4899-a3ea-7d0df717c9ab",
+            "f73ce8ec-c916-48eb-ae20-c0d6d03d7145"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Traveling Chocobo",
+                    "id": "2462df62-fc35-47ed-9571-40452074dc6d",
+                    "weight": 20
+                },
+                {
+                    "name": "Sazh Katzroy",
+                    "id": "1e2a3566-1390-457e-8077-d776a8671319",
+                    "weight": 40
+                },
+                {
+                    "name": "Bartz and Boko",
+                    "id": "d818d574-2832-4a7a-a13b-aa6e695fdaa5",
+                    "weight": 40
+                }
+            ],
+            [
+                {
+                    "name": "Commune with Beavers",
+                    "id": "784287c2-43c5-4210-93ae-cdd33b9acb1b",
+                    "weight": 50
+                },
+                {
+                    "name": "Town Greeter",
+                    "id": "49cd4efa-4df4-4257-9a42-60330f7781e2",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Reach the Horizon",
+                    "id": "c25960e0-5779-4e20-89f3-03950ad9d91c",
+                    "weight": 50
+                },
+                {
+                    "name": "Summon: Fenrir",
+                    "id": "93feb9d5-d004-4598-a448-b3488c869c05",
+                    "weight": 50
+                }
+            ]
+        ],
+        "image": "https://cards.scryfall.io/border_crop/front/1/e/1e2a3566-1390-457e-8077-d776a8671319.jpg?1748706504",
+        "colors": [
+            "G"
+        ]
+    },
+    {
+        "name": "ARTIFACTS",
+        "cards": [
+            "4572884d-0c0e-41e7-b219-f76b95fdbd01",
+            "ad304c9c-943f-442f-bb82-ff378ad7d7ba",
+            "b40a055f-ea66-44d4-b058-a328a3d10994",
+            "d6e1e3e7-20d4-42cb-ad22-60356b9e8fdc",
+            "932b865c-bfe7-4bb7-82e9-2403cf0e0522",
+            "c2dcfd0a-3f52-4616-a09a-fd2db8b6b93e",
+            "c96cae63-7625-48e3-aaba-5b1632a8642d",
+            "6678501e-6349-4e37-ab4c-a31a3d408d52",
+            "ebd733f0-8883-434a-b36c-ef76b091fe8e",
+            "f73ce8ec-c916-48eb-ae20-c0d6d03d7145"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Edgar, King of Figaro",
+                    "id": "950ee302-5512-43c5-ac7c-b2b06f4177bf",
+                    "weight": 50
+                },
+                {
+                    "name": "The Lunar Whale",
+                    "id": "ae875471-346c-4a76-b26f-b7205dad5b80",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Sage's Nouliths",
+                    "id": "a12ff7c3-6ae0-4098-9240-ff3fd16a5288",
+                    "weight": 50
+                },
+                {
+                    "name": "Scorpion Sentinel",
+                    "id": "08ab5220-e5c1-472e-8217-97fd60e1773c",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Eject",
+                    "id": "aec83c9a-8ec4-4a5a-b27f-0e74a2b3d21e",
+                    "weight": 50
+                },
+                {
+                    "name": "Relm's Sketching",
+                    "id": "6aedac12-3714-4a81-bd4d-1d2555c66f78",
+                    "weight": 50
+                }
+            ]
+        ],
+        "image": "https://cards.scryfall.io/border_crop/front/9/5/950ee302-5512-43c5-ac7c-b2b06f4177bf.jpg?1748705945",
+        "colors": [
+            "U"
+        ]
+    },
+    {
+        "name": "TOKENS",
+        "cards": [
+            "f73a5cbb-905f-4b99-8d23-9d1b6bd47ee8",
+            "f02ce338-4fe2-44b0-a896-3ed7e6c874a3",
+            "7367b257-1a8c-4593-a307-7116e36e0342",
+            "e46d8048-03ce-4e07-ba24-f41ba6140a4e",
+            "c3eb2ae5-10de-4c3d-91c8-8734befc80b2",
+            "ff2bafe7-4d0f-464d-b7ba-55a54366fc68",
+            "945006ea-c6a1-4ee5-abb2-387c2b6d3123",
+            "e1b0739a-dcc4-4034-96d7-69e551b2f36b",
+            "f73ce8ec-c916-48eb-ae20-c0d6d03d7145"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Reno and Rude",
+                    "id": "b5eb0064-c7c4-4e3e-add2-b86269de3fb9",
+                    "weight": 50
+                },
+                {
+                    "name": "Tonberry",
+                    "id": "1a9b8723-4383-4c14-b24d-52863af8703d",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Hecteyes",
+                    "id": "8680d052-c07b-4d9b-bda9-b5f69f44f424",
+                    "weight": 50
+                },
+                {
+                    "name": "Undercity Dire Rat",
+                    "id": "274788f4-fbf3-4a15-bdc0-f513a2fde30d",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Ardyn, the Usurper",
+                    "id": "4627072e-9c72-4084-8021-690777342548",
+                    "weight": 50
+                },
+                {
+                    "name": "Ninja's Blades",
+                    "id": "a6b5af82-3646-44f9-ac12-1d7fa698f037",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Cornered by Black Mages",
+                    "id": "688fcf8a-0a44-416a-8086-83acf9a6fe69",
+                    "weight": 50
+                },
+                {
+                    "name": "Sephiroth's Intervention",
+                    "id": "cf7df82f-937a-443f-813f-2bcc6944c5c0",
+                    "weight": 50
+                }
+            ]
+        ],
+        "image": "https://cards.scryfall.io/border_crop/front/4/6/4627072e-9c72-4084-8021-690777342548.jpg?1748706094",
+        "colors": [
+            "B"
+        ]
+    },
+    {
+        "name": "WEAPONS",
+        "cards": [
+            "f21f9161-5945-40da-8da0-446f6a4a1c23",
+            "1a67a991-1e52-4676-a2e3-2bc7aa943ab3",
+            "ffe0596f-ef99-4862-9386-0fe455259995",
+            "7387bca7-f496-45da-a0ac-6be049303a8f",
+            "96630531-8eb7-4e3e-8d63-60c562a5571b",
+            "04d327a3-1699-4556-b681-a957671ad142",
+            "2df6f515-9d21-4769-b1c4-c219611bccbb",
+            "da6d9529-3cb0-4adc-8209-b9b02db3bf54",
+            "f73ce8ec-c916-48eb-ae20-c0d6d03d7145"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Cloud, Midgar Mercenary",
+                    "id": "2cf7e8a3-fad7-413d-b17c-7519a9cf5fb5",
+                    "weight": 20
+                },
+                {
+                    "name": "Machinist's Arsenal",
+                    "id": "ff976428-2145-4630-aab1-08870b90b2f0",
+                    "weight": 40
+                },
+                {
+                    "name": "Genji Glove",
+                    "id": "f724dde1-84b0-4e3b-a9b8-44cd22bb9f79",
+                    "weight": 40
+                }
+            ],
+            [
+                {
+                    "name": "Monk's Fist",
+                    "id": "995033f0-873d-4e46-b0c9-98ec8ef270ff",
+                    "weight": 50
+                },
+                {
+                    "name": "Gaelicat",
+                    "id": "29606c49-e1a4-49c3-883b-9122c08bbbc7",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Paladin's Arms",
+                    "id": "446506c5-5e1d-4b42-aef3-ea247d7881ef",
+                    "weight": 50
+                },
+                {
+                    "name": "White Mage's Staff",
+                    "id": "30db372e-0b4c-4e16-9667-bf3fda666f72",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Sidequest: Catch a Fish // Cooking Campsite",
+                    "id": "bdb5452e-d97f-409b-91d0-2664f39b09b8",
+                    "weight": 50
+                },
+                {
+                    "name": "Weapons Vendor",
+                    "id": "c9e6b374-3e44-4df7-b0a3-4ef98dc08267",
+                    "weight": 50
+                }
+            ]
+        ],
+        "image": "https://cards.scryfall.io/border_crop/front/f/f/ff976428-2145-4630-aab1-08870b90b2f0.jpg?1748705839",
+        "colors": [
+            "W"
+        ]
+    },
+    {
+        "name": "VALIANT",
+        "cards": [
+            "e17c0d27-e88d-4ba9-acbb-3f916cee3d7e",
+            "b883df14-8d7b-4f6a-9a6a-2f71f5b6ddda",
+            "00546117-018a-4286-bc20-b5446c5be56f",
+            "4f352b5e-9731-4a8e-b872-db5d3bf32211",
+            "32eb192b-de6b-4814-8077-628d343d014e",
+            "ba79d293-bf42-48b6-a868-5249f4beeb76",
+            "59c4a1a2-623c-43b2-8005-ecb5c6436c10",
+            "3123d16c-e1e6-4659-a7a3-2ec6efc6bf08",
+            "c74024bd-b383-468d-9cf5-d112a29f6457"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Snow Villiers",
+                    "id": "399bb699-e61d-4b41-b6e9-e594cbad6194",
+                    "weight": 50
+                },
+                {
+                    "name": "Auron's Inspiration",
+                    "id": "77d82764-563c-4bc2-b568-625ec7215e0d",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Balamb T-Rexaur",
+                    "id": "e5857b1b-73bc-458e-b26b-7ed8bef785f3",
+                    "weight": 50
+                },
+                {
+                    "name": "Cloudbound Moogle",
+                    "id": "7387bca7-f496-45da-a0ac-6be049303a8f",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Summon: Knights of Round",
+                    "id": "44d23652-077e-4c1f-b640-b284685db911",
+                    "weight": 20
+                },
+                {
+                    "name": "Moogles' Valor",
+                    "id": "caa838a7-60a9-4791-af5b-194f7574c4c8",
+                    "weight": 40
+                },
+                {
+                    "name": "Dion, Bahamut's Dominant // Bahamut, Warden of Light",
+                    "id": "8c0f9306-2058-476d-a711-bd37a6e15e42",
+                    "weight": 40
+                }
+            ],
+            [
+                {
+                    "name": "You're Not Alone",
+                    "id": "1867b5cb-2bb0-4f49-b302-036fdffa2344",
+                    "weight": 50
+                },
+                {
+                    "name": "Slash of Light",
+                    "id": "da6d9529-3cb0-4adc-8209-b9b02db3bf54",
+                    "weight": 50
+                }
+            ]
+        ],
+        "image": "https://cards.scryfall.io/border_crop/front/c/a/caa838a7-60a9-4791-af5b-194f7574c4c8.jpg?1748705854",
+        "colors": [
+            "W",
+            "G"
+        ]
+    },
+    {
+        "name": "MERCILESS",
+        "cards": [
+            "e17c0d27-e88d-4ba9-acbb-3f916cee3d7e",
+            "274788f4-fbf3-4a15-bdc0-f513a2fde30d",
+            "162a415c-5465-497e-8f4e-c6f09681641d",
+            "f5fff00b-c9a0-4e90-abc0-349f8716c885",
+            "f9d25b34-990d-416c-aef7-1b5a73f19dd4",
+            "076a8eca-ed73-4ee9-aab4-d9d43d394ee6",
+            "7a50d2ac-101d-41e1-b400-18fa7d2d7125",
+            "6de6d23b-7d42-41c1-be1c-010fe43ee586",
+            "07fca511-a65c-4779-82c0-9215b0dcd068"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel",
+                    "id": "85eaf5e7-77dc-4842-a70c-ce4ac7f724df",
+                    "weight": 20
+                },
+                {
+                    "name": "Vincent Valentine // Galian Beast",
+                    "id": "028ef608-acfe-4e9d-90db-eca4411ba78a",
+                    "weight": 40
+                },
+                {
+                    "name": "Summon: Primal Odin",
+                    "id": "8b1b5f06-e34d-44a3-976e-5157c4b7a0f4",
+                    "weight": 40
+                }
+            ],
+            [
+                {
+                    "name": "Judge Magister Gabranth",
+                    "id": "f9e64cb6-48f7-41d3-99e7-4b0bc3b33fd7",
+                    "weight": 50
+                },
+                {
+                    "name": "Al Bhed Salvagers",
+                    "id": "58ccdcfc-a669-480f-bded-4273cfaf2045",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Summon: Primal Garuda",
+                    "id": "e44497a8-067e-454e-a9c0-684f03df55ff",
+                    "weight": 50
+                },
+                {
+                    "name": "Gaius van Baelsar",
+                    "id": "a4ee8ba5-6a79-4652-b2a4-a3dae804bc28",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Sephiroth's Intervention",
+                    "id": "cf7df82f-937a-443f-813f-2bcc6944c5c0",
+                    "weight": 50
+                },
+                {
+                    "name": "White Auracite",
+                    "id": "2df6f515-9d21-4769-b1c4-c219611bccbb",
+                    "weight": 50
+                }
+            ]
+        ],
+        "image": "https://cards.scryfall.io/border_crop/front/8/b/8b1b5f06-e34d-44a3-976e-5157c4b7a0f4.jpg?1748706216",
+        "colors": [
+            "B",
+            "W"
+        ]
+    },
+    {
+        "name": "BOLD",
+        "cards": [
+            "9921f646-e893-44db-ac89-0633c1009788",
+            "bd2db3f5-fd0d-4817-af90-6bea1f07e16b",
+            "7035d11b-525f-4120-8dcb-610095196681",
+            "1a504dff-5857-4a61-ab99-616d5df7cf5a",
+            "2a8b3e1e-5c10-4360-ac1c-83b2e026278c",
+            "e0579955-75f9-47a9-8b03-e287d120826a",
+            "cb98a7dd-542e-4448-b3bb-ff5d67a36535",
+            "31e2ad37-73cf-4858-8a3a-fc1165cd21a7",
+            "f73ce8ec-c916-48eb-ae20-c0d6d03d7145"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Coral Sword",
+                    "id": "13e81e32-7246-46b9-872e-cde77cedd197",
+                    "weight": 50
+                },
+                {
+                    "name": "Samurai's Katana",
+                    "id": "11f1d378-c78c-402a-ac46-2d32598c23e7",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Self-Destruct",
+                    "id": "7661003c-bf83-46bb-bcc0-8fbf5819ffa8",
+                    "weight": 50
+                },
+                {
+                    "name": "Lion Heart",
+                    "id": "04d327a3-1699-4556-b681-a957671ad142",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Haste Magic",
+                    "id": "3af9d100-70ee-4c6c-a762-11a0c4f3ef6f",
+                    "weight": 50
+                },
+                {
+                    "name": "Laughing Mad",
+                    "id": "cd5b9daf-6325-4eb4-a069-4a8cc7807884",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Suplex",
+                    "id": "f61693a2-7042-44e0-85ba-9bf12ab94e7e",
+                    "weight": 50
+                },
+                {
+                    "name": "Thunder Magic",
+                    "id": "9f2b202c-91da-40ec-8324-6b6be7cb3bc8",
+                    "weight": 50
+                }
+            ]
+        ],
+        "image": "https://cards.scryfall.io/border_crop/front/7/0/7035d11b-525f-4120-8dcb-610095196681.jpg?1748706327",
+        "colors": [
+            "R"
+        ]
+    },
+    {
+        "name": "WILD",
+        "cards": [
+            "12df1295-8b08-4c8e-bac9-55b4f514c0be",
+            "49cd4efa-4df4-4257-9a42-60330f7781e2",
+            "99450143-6ab5-463d-9e04-e8e6703a8b92",
+            "93feb9d5-d004-4598-a448-b3488c869c05",
+            "1565813b-6912-42f4-bae0-22136a2d6a92",
+            "ff8c8be0-8223-499c-8704-cb68e0a42ce2",
+            "d6e1dee0-e2cd-4899-a3ea-7d0df717c9ab",
+            "c25960e0-5779-4e20-89f3-03950ad9d91c",
+            "7beccfa6-3e4b-4460-954e-870cb39e462d"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Traveling Chocobo",
+                    "id": "2462df62-fc35-47ed-9571-40452074dc6d",
+                    "weight": 20
+                },
+                {
+                    "name": "Tifa Lockhart",
+                    "id": "fb781323-2746-405d-a9b2-e778c037a6e9",
+                    "weight": 40
+                },
+                {
+                    "name": "Zell Dincht",
+                    "id": "135d6b27-9168-4513-9d7d-56edae048857",
+                    "weight": 40
+                }
+            ],
+            [
+                {
+                    "name": "Sazh's Chocobo",
+                    "id": "dda6b4d0-1b60-46b0-b321-b9ffe15afff4",
+                    "weight": 50
+                },
+                {
+                    "name": "Ride the Shoopuf",
+                    "id": "19ad36d6-8bf4-490c-9980-b98a470af892",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Hill Gigas",
+                    "id": "2a8b3e1e-5c10-4360-ac1c-83b2e026278c",
+                    "weight": 50
+                },
+                {
+                    "name": "Balamb T-Rexaur",
+                    "id": "e5857b1b-73bc-458e-b26b-7ed8bef785f3",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Gysahl Greens",
+                    "id": "020dee17-d85b-44c4-9faa-b1ef977956f4",
+                    "weight": 50
+                },
+                {
+                    "name": "Call the Mountain Chocobo",
+                    "id": "b2e1986c-2852-4843-bdc4-eddb727ba3d4",
+                    "weight": 50
+                }
+            ]
+        ],
+        "image": "https://cards.scryfall.io/border_crop/front/f/b/fb781323-2746-405d-a9b2-e778c037a6e9.jpg?1748706535",
+        "colors": [
+            "G",
+            "R"
+        ]
+    },
+    {
+        "name": "SCHEMING",
+        "cards": [
+            "ae612312-3a8e-495f-8730-deaaf7505ca1",
+            "572feb8c-6976-40a8-8a34-b4db836cca56",
+            "2d6a2b68-5407-464e-a335-7866fd969c30",
+            "ba752243-2727-4b8a-8e21-e70becfd4ff3",
+            "945006ea-c6a1-4ee5-abb2-387c2b6d3123",
+            "ebd733f0-8883-434a-b36c-ef76b091fe8e",
+            "bbf01770-6d0f-4015-b4b4-a74a53cb767a",
+            "f6285535-bc44-4274-a886-b14d7c7aaba8"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Emet-Selch, Unsundered // Hades, Sorcerer of Eld",
+                    "id": "75cf4eb8-33e7-4dfc-b890-a7e3b5c1b9d5",
+                    "weight": 20
+                },
+                {
+                    "name": "Jill, Shiva's Dominant // Shiva, Warden of Ice",
+                    "id": "1f163763-4802-4a96-a5bc-f3c381db7b5c",
+                    "weight": 40
+                },
+                {
+                    "name": "Jecht, Reluctant Guardian // Braska's Final Aeon",
+                    "id": "4ec91fe8-b3da-47fa-b45e-94b62a260aba",
+                    "weight": 40
+                }
+            ],
+            [
+                {
+                    "name": "Swallowed by Leviathan",
+                    "id": "2270642d-fe2a-4265-aff0-a24a43ebe0a1",
+                    "weight": 50
+                },
+                {
+                    "name": "Sleep Magic",
+                    "id": "c96cae63-7625-48e3-aaba-5b1632a8642d",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Malboro",
+                    "id": "e46d8048-03ce-4e07-ba24-f41ba6140a4e",
+                    "weight": 50
+                },
+                {
+                    "name": "Ice Flan",
+                    "id": "ad304c9c-943f-442f-bb82-ff378ad7d7ba",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Ice Magic",
+                    "id": "9dabd626-7ec3-4913-babb-d5d3fd5e32d5",
+                    "weight": 50
+                },
+                {
+                    "name": "Stuck in Summoner's Sanctum",
+                    "id": "6678501e-6349-4e37-ab4c-a31a3d408d52",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Syncopate",
+                    "id": "83e1cd8d-5b97-427a-be75-2a1947f9c59b",
+                    "weight": 50
+                },
+                {
+                    "name": "Hecteyes",
+                    "id": "8680d052-c07b-4d9b-bda9-b5f69f44f424",
+                    "weight": 50
+                }
+            ]
+        ],
+        "image": "/img/cardback.webp",
+        "colors": [
+            "U",
+            "B"
+        ]
+    },
+    {
+        "name": "MAGE",
+        "cards": [
+            "14379198-9a0a-4853-9d51-fb074a24b1c0",
+            "516940c7-c271-4f64-af75-c7ba98548382",
+            "4c617bcd-05f8-40c2-bb38-489bc863ce6b",
+            "3d75e8fd-6139-4b10-9ce3-195b47d72e0c",
+            "eff984b2-6ea9-4471-91c5-99c47f87f10b",
+            "ba752243-2727-4b8a-8e21-e70becfd4ff3",
+            "9dabd626-7ec3-4913-babb-d5d3fd5e32d5",
+            "6e4bf840-802d-47d5-bffd-8ba495e19cf6"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Vivi Ornitier",
+                    "id": "ecc1027a-8c07-44a0-bdde-fa2844cff694",
+                    "weight": 20
+                },
+                {
+                    "name": "Tellah, Great Sage",
+                    "id": "a67793ef-ef80-4434-9c54-e3fd8a270bbe",
+                    "weight": 40
+                },
+                {
+                    "name": "Memories Returning",
+                    "id": "a753abfc-35d3-4faf-ab35-3b51aa778174",
+                    "weight": 40
+                }
+            ],
+            [
+                {
+                    "name": "Syncopate",
+                    "id": "83e1cd8d-5b97-427a-be75-2a1947f9c59b",
+                    "weight": 50
+                },
+                {
+                    "name": "Light of Judgment",
+                    "id": "98bb716d-ca66-445f-9cb3-0fc656c8ebff",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Sorceress's Schemes",
+                    "id": "7efd7627-0754-4685-9d04-8f5f82f45632",
+                    "weight": 50
+                },
+                {
+                    "name": "The Prima Vista",
+                    "id": "e3998132-5746-4dde-9529-97d3ad7d7361",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Retrieve the Esper",
+                    "id": "ebd733f0-8883-434a-b36c-ef76b091fe8e",
+                    "weight": 50
+                },
+                {
+                    "name": "Call the Mountain Chocobo",
+                    "id": "b2e1986c-2852-4843-bdc4-eddb727ba3d4",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Relm's Sketching",
+                    "id": "6aedac12-3714-4a81-bd4d-1d2555c66f78",
+                    "weight": 50
+                },
+                {
+                    "name": "Laughing Mad",
+                    "id": "cd5b9daf-6325-4eb4-a069-4a8cc7807884",
+                    "weight": 50
+                }
+            ]
+        ],
+        "image": "https://cards.scryfall.io/border_crop/front/a/6/a67793ef-ef80-4434-9c54-e3fd8a270bbe.jpg?1748706698",
+        "colors": [
+            "U",
+            "R"
+        ]
+    }
+]

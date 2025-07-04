@@ -20,6 +20,9 @@ export const Jumpstart2022Boosters = _Jumpstart2022Boosters;
 export const Jumpstart2025Boosters = _Jumpstart2025Boosters;
 export const SuperJumpBoosters = _SuperJumpBoosters;
 
+import JumpInFIN from "./data/JumpInBoosters_fin.json" with { type: "json" };
+import JumpInTDM from "./data/JumpInBoosters_tdm.json" with { type: "json" };
+import JumpInDFT from "./data/JumpInBoosters_dft.json" with { type: "json" };
 import JumpInFDN from "./data/JumpInBoosters_fdn.json" with { type: "json" };
 import JumpInDSK from "./data/JumpInBoosters_dsk.json" with { type: "json" };
 import JumpInBLB from "./data/JumpInBoosters_blb.json" with { type: "json" };
@@ -45,6 +48,9 @@ import JumpIntoMiddleEarth from "./data/JumpIntoMiddleEath.json" with { type: "j
 import { SocketError } from "./Message.js";
 
 export const JumpInBoosters: Record<string, JumpInBoosterPattern[]> = {
+	fin: JumpInFIN,
+	tdm: JumpInTDM,
+	dft: JumpInDFT,
 	fdn: JumpInFDN,
 	dsk: JumpInDSK,
 	blb: JumpInBLB,

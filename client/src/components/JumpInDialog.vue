@@ -47,6 +47,9 @@ import Modal from "./Modal.vue";
 import SetsInfos from "../../../src/SetInfos";
 
 const Sets = [
+	"fin",
+	"tdm",
+	"dft",
 	"fdn",
 	"dsk",
 	"blb",
@@ -70,7 +73,23 @@ const Sets = [
 	"khm",
 	"znr",
 ];
-const CurrentSets = ["fdn", "dsk", "blb", "otj", "mkm", "lci", "woe", "ltr", "mom", "one", "bro", "dmu"];
+const CurrentSets = [
+	"fin",
+	"tdm",
+	"dft",
+	"fdn",
+	"dsk",
+	"blb",
+	"otj",
+	"mkm",
+	"lci",
+	"woe",
+	"ltr",
+	"mom",
+	"one",
+	"bro",
+	"dmu",
+];
 
 const sets = ref<string[]>([...CurrentSets]);
 

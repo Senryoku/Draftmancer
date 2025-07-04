@@ -1,0 +1,879 @@
+[
+    {
+        "name": "TOP SPEED",
+        "cards": [
+            "affbc8db-4ff7-4a86-954a-910493e5a2ef",
+            "7cec5105-3907-40d2-8e46-95acfaaaa0cc",
+            "a8e5205d-d734-4292-a3c8-70cf5f131289",
+            "4e58cb18-f216-4248-8f0d-65b0263c5c28",
+            "ecee6509-1103-4ae5-a2e7-0441f5d4a872",
+            "971286f5-77ea-4824-91de-f0ac88c46238",
+            "38513b53-384f-45e7-9905-80dd2c3c4918",
+            "30077b49-b825-4dbb-a0c7-f3992f647df0",
+            "be722ac5-e8c4-4180-aed0-7c28895afc0d"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Hazoret, Godseeker",
+                    "id": "e2f66043-0872-4334-a91f-0e9bbbdddf66",
+                    "weight": 20
+                },
+                {
+                    "name": "Gas Guzzler",
+                    "id": "4db3a28c-e4b4-4b18-8d56-e3842184d105",
+                    "weight": 40
+                },
+                {
+                    "name": "Burnout Bashtronaut",
+                    "id": "4db66e7b-cb7a-4d86-a563-d570946aeb0d",
+                    "weight": 40
+                }
+            ],
+            [
+                {
+                    "name": "Kalakscion, Hunger Tyrant",
+                    "id": "1214fc6d-ae47-418d-88cc-58633ec2ac7a",
+                    "weight": 50
+                },
+                {
+                    "name": "Tyrox, Saurid Tyrant",
+                    "id": "159dc5a8-5cba-4c20-8c07-28a3d86c8411",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Endrider Catalyzer",
+                    "id": "55a5a67b-d969-4ba4-9dcc-32d0c2e5c04a",
+                    "weight": 50
+                },
+                {
+                    "name": "Grim Javelineer",
+                    "id": "87154116-e306-4e15-bd5a-dcdb5ddbcd36",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Avishkar Raceway",
+                    "id": "08a6b378-c7fa-4226-a310-4ee7e550b4d6",
+                    "weight": 60
+                },
+                {
+                    "name": "Amonkhet Raceway",
+                    "id": "4f312807-ea2a-4385-8774-4e23b4a5d4a6",
+                    "weight": 30
+                },
+                {
+                    "name": "Muraganda Raceway",
+                    "id": "5041ae16-29ff-4ad5-8a37-4736e9409294",
+                    "weight": 10
+                }
+            ]
+        ],
+        "image": "https://cards.scryfall.io/border_crop/front/4/d/4db3a28c-e4b4-4b18-8d56-e3842184d105.jpg?1738356311",
+        "colors": [
+            "R",
+            "B"
+        ]
+    },
+    {
+        "name": "Zombies",
+        "cards": [
+            "949d6137-98d3-4f46-ab1e-08d7492af307",
+            "89ccbd73-9414-48a3-bdcf-e838fcffc08f",
+            "e704fb95-17b7-432a-831c-18abe7d9cc73",
+            "1214fc6d-ae47-418d-88cc-58633ec2ac7a",
+            "5a68482a-401d-48e7-854e-46e3db07ff35",
+            "079dc8d2-0de3-415e-8af8-b8dec669368a",
+            "9192abc8-05a3-4e72-a634-fc5acbe97b26",
+            "be722ac5-e8c4-4180-aed0-7c28895afc0d"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Radiant Lotus",
+                    "id": "be6dac83-39c2-40dc-a322-76a3ea4e7aee",
+                    "weight": 20
+                },
+                {
+                    "name": "Cursecloth Wrappings",
+                    "id": "d5803b32-4a81-46c2-9b10-3198a709611d",
+                    "weight": 80
+                }
+            ],
+            [
+                {
+                    "name": "Risky Shortcut",
+                    "id": "c80aa587-4445-43d7-abc0-654d94ff4cda",
+                    "weight": 50
+                },
+                {
+                    "name": "Ripclaw Wrangler",
+                    "id": "d4981a4a-6eca-4f84-8715-8e2672507b59",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Intimidation Tactics",
+                    "id": "9b4e6022-44d2-4dfe-8f7a-51581e298f23",
+                    "weight": 50
+                },
+                {
+                    "name": "Locust Spray",
+                    "id": "54b3a547-6f74-4cb4-ad98-7e1b75f1a120",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Maximum Overdrive",
+                    "id": "5f6e5bb2-cfe9-48e5-86f9-e21f3d328327",
+                    "weight": 50
+                },
+                {
+                    "name": "Syphon Fuel",
+                    "id": "4af17ae0-1035-4cb2-8974-98b377bfaa48",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Muraganda Raceway",
+                    "id": "5041ae16-29ff-4ad5-8a37-4736e9409294",
+                    "weight": 10
+                },
+                {
+                    "name": "Amonkhet Raceway",
+                    "id": "4f312807-ea2a-4385-8774-4e23b4a5d4a6",
+                    "weight": 30
+                },
+                {
+                    "name": "Avishkar Raceway",
+                    "id": "08a6b378-c7fa-4226-a310-4ee7e550b4d6",
+                    "weight": 60
+                }
+            ]
+        ],
+        "image": "https://cards.scryfall.io/border_crop/front/d/5/d5803b32-4a81-46c2-9b10-3198a709611d.jpg?1738356300",
+        "colors": [
+            "B"
+        ]
+    },
+    {
+        "name": "Wrecked",
+        "cards": [
+            "c8f0b123-fdb0-4f3e-ba78-fa155c227e20",
+            "9efbfd67-e0f5-43e0-9fff-1eb4a2bed0d8",
+            "7364b4dc-8cce-498d-a62e-eabc612b062a",
+            "2ac26341-a100-424d-be84-33fbbf1b4078",
+            "ef537868-b2cb-4bbd-a935-b7f73f19bd06",
+            "4e5590e1-0ac0-4bdd-815b-136bf24ced03",
+            "624335fb-8a0b-4fa9-aefb-60ac641a7934",
+            "339a41a1-b36f-4b81-b74c-220d279c0e26"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Endrider Spikespitter",
+                    "id": "4e58cb18-f216-4248-8f0d-65b0263c5c28",
+                    "weight": 50
+                },
+                {
+                    "name": "Tyrox, Saurid Tyrant",
+                    "id": "159dc5a8-5cba-4c20-8c07-28a3d86c8411",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Gastal Thrillroller",
+                    "id": "d8b1762b-ff03-4312-afcc-cb6b5f280ade",
+                    "weight": 50
+                },
+                {
+                    "name": "Monument to Endurance",
+                    "id": "d21433ba-0a14-42bc-ad0b-a4ef823a3295",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Clamorous Ironclad",
+                    "id": "4701da52-b9c8-4ce9-9d57-53e10899f19d",
+                    "weight": 50
+                },
+                {
+                    "name": "Gilded Ghoda",
+                    "id": "55685602-a18c-43a4-ac60-13b039672fa4",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Lightning Strike",
+                    "id": "30077b49-b825-4dbb-a0c7-f3992f647df0",
+                    "weight": 50
+                },
+                {
+                    "name": "Pedal to the Metal",
+                    "id": "75d07295-78b7-4f90-82c7-e7a639db9993",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Avishkar Raceway",
+                    "id": "08a6b378-c7fa-4226-a310-4ee7e550b4d6",
+                    "weight": 60
+                },
+                {
+                    "name": "Amonkhet Raceway",
+                    "id": "4f312807-ea2a-4385-8774-4e23b4a5d4a6",
+                    "weight": 30
+                },
+                {
+                    "name": "Muraganda Raceway",
+                    "id": "5041ae16-29ff-4ad5-8a37-4736e9409294",
+                    "weight": 10
+                }
+            ]
+        ],
+        "image": "https://cards.scryfall.io/border_crop/front/d/8/d8b1762b-ff03-4312-afcc-cb6b5f280ade.jpg?1738356421",
+        "colors": [
+            "R"
+        ]
+    },
+    {
+        "name": "ARTIFACTS",
+        "cards": [
+            "f6dcdc8c-fba1-4ea1-bf93-65072d10f0da",
+            "fdaeea2c-d8aa-416f-95d6-6af888591fdf",
+            "6b199ce2-0ea0-47e5-a36c-36373be53fec",
+            "3dca0007-42d3-4ee2-8e88-361d80a7103c",
+            "237568e3-7331-4bbb-a091-a766723134fc",
+            "b2e00cd7-925e-4bab-b064-c96aa2935f8c",
+            "dcf6a0e7-1fd4-425f-b634-c93236daea35",
+            "2f96b33b-c952-45ac-9626-40169b2bd4ef",
+            "4ba835da-0247-4716-9079-1b605297f6d5"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Nesting Bot",
+                    "id": "7829c0ae-f72f-4195-ad43-775d7218565c",
+                    "weight": 50
+                },
+                {
+                    "name": "Aether Syphon",
+                    "id": "d7033739-4cd8-4727-b9b5-099fb597006b",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Salvation Engine",
+                    "id": "34ed1bf2-0f3c-4528-b570-e5bdcd7ffda9",
+                    "weight": 20
+                },
+                {
+                    "name": "Voyager Glidecar",
+                    "id": "13eb445a-dd41-4760-8299-9ba5d6de6aaf",
+                    "weight": 40
+                },
+                {
+                    "name": "Mendicant Core, Guidelight",
+                    "id": "f434b103-490f-424e-a0a1-efb1b931c8e6",
+                    "weight": 40
+                }
+            ],
+            [
+                {
+                    "name": "Spectral Interference",
+                    "id": "860cb8af-a5f6-47e7-a34b-7b9f11ddc8c6",
+                    "weight": 50
+                },
+                {
+                    "name": "Stall Out",
+                    "id": "4ea0e0d3-833f-4353-b648-57b0b657cc1c",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Avishkar Raceway",
+                    "id": "08a6b378-c7fa-4226-a310-4ee7e550b4d6",
+                    "weight": 60
+                },
+                {
+                    "name": "Amonkhet Raceway",
+                    "id": "4f312807-ea2a-4385-8774-4e23b4a5d4a6",
+                    "weight": 30
+                },
+                {
+                    "name": "Muraganda Raceway",
+                    "id": "5041ae16-29ff-4ad5-8a37-4736e9409294",
+                    "weight": 10
+                }
+            ]
+        ],
+        "image": "https://cards.scryfall.io/border_crop/front/1/3/13eb445a-dd41-4760-8299-9ba5d6de6aaf.jpg?1738356190",
+        "colors": [
+            "W",
+            "U"
+        ]
+    },
+    {
+        "name": "GRAVEYARD",
+        "cards": [
+            "e704fb95-17b7-432a-831c-18abe7d9cc73",
+            "aeff3db7-81ac-4c51-9954-bc1dbcb8c4e3",
+            "21c7b59f-fdae-4a11-9784-497a8165d75a",
+            "ba78e076-8962-4b3f-b86f-04400b062951",
+            "101d22c6-830d-4908-9003-6b206f694eba",
+            "903b4141-04a3-44c4-9d3e-aa2a773d9883",
+            "ed09139b-a66e-4cd1-b45a-23a4648d3401",
+            "2d1576d4-15a3-4e91-84ef-e71e258185e7"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Bloodghast",
+                    "id": "fdceefe6-f083-4955-b53a-8e6f8aeb2083",
+                    "weight": 50
+                },
+                {
+                    "name": "Aatchik, Emerald Radian",
+                    "id": "fbdaa29b-85ff-4a06-b27e-fcdbdfd4a3fe",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Wretched Doll",
+                    "id": "4983177d-fbf4-47fa-997f-9d08294870f2",
+                    "weight": 50
+                },
+                {
+                    "name": "Carrion Cruiser",
+                    "id": "dc00fdee-3d24-4360-a4d2-ffd3c08a462d",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Migrating Ketradon",
+                    "id": "a9ba2219-8184-4141-8708-845cb0957299",
+                    "weight": 50
+                },
+                {
+                    "name": "Spin Out",
+                    "id": "be722ac5-e8c4-4180-aed0-7c28895afc0d",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Run Over",
+                    "id": "642f8fdd-6c58-49a3-904c-27f717cae980",
+                    "weight": 50
+                },
+                {
+                    "name": "Grim Bauble",
+                    "id": "9bfdf60a-6f67-4872-8961-d63776b192c3",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Avishkar Raceway",
+                    "id": "08a6b378-c7fa-4226-a310-4ee7e550b4d6",
+                    "weight": 60
+                },
+                {
+                    "name": "Amonkhet Raceway",
+                    "id": "4f312807-ea2a-4385-8774-4e23b4a5d4a6",
+                    "weight": 30
+                },
+                {
+                    "name": "Muraganda Raceway",
+                    "id": "5041ae16-29ff-4ad5-8a37-4736e9409294",
+                    "weight": 10
+                }
+            ]
+        ],
+        "image": "https://cards.scryfall.io/border_crop/front/f/d/fdceefe6-f083-4955-b53a-8e6f8aeb2083.jpg?1738356290",
+        "colors": [
+            "B",
+            "G"
+        ]
+    },
+    {
+        "name": "Cats",
+        "cards": [
+            "89ccbd73-9414-48a3-bdcf-e838fcffc08f",
+            "ea3ac678-8b74-4865-a896-c42692c02341",
+            "e08e4107-213f-491b-a032-8e3367009ba8",
+            "4172222f-d871-4354-9a02-7af0001d8956",
+            "b2c7cacc-f15e-46c1-9c25-b567bb3e8680",
+            "f0489108-75b7-441c-888d-12987c0c1080",
+            "75d9ef34-ae95-4465-a30c-372e231bd733"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Basri, Tomorrow's Champion",
+                    "id": "991270fa-a391-4c2e-bd9a-19151386fb67",
+                    "weight": 50
+                },
+                {
+                    "name": "Lifecraft Engine",
+                    "id": "40c92203-17df-4f10-92c6-ebcc79f01357",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Cloudspire Captain",
+                    "id": "3380d87a-c460-409c-8d47-9b2fc5ddd2ea",
+                    "weight": 50
+                },
+                {
+                    "name": "Roadside Assistance",
+                    "id": "8f2a9154-7b43-4b8d-9d81-d11cfda5d597",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Lotusguard Disciple",
+                    "id": "80645651-3804-481f-8f8f-ade762a011e1",
+                    "weight": 50
+                },
+                {
+                    "name": "Daring Mechanic",
+                    "id": "3382552c-2740-409a-83a1-80b60627beb8",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Air Response Unit",
+                    "id": "d77c8e29-de24-4664-baf8-959608dd99ca",
+                    "weight": 50
+                },
+                {
+                    "name": "Patchwork Banner",
+                    "id": "a8a982c8-bc08-44ba-b3ed-9e4b124615d6",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Detention Chariot",
+                    "id": "75d5e64f-7af2-4cb4-abd1-23992e346bee",
+                    "weight": 50
+                },
+                {
+                    "name": "Gallant Strike",
+                    "id": "9bdb58b7-e1ef-496b-b8dd-d1fabf3d2e7a",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Muraganda Raceway",
+                    "id": "5041ae16-29ff-4ad5-8a37-4736e9409294",
+                    "weight": 10
+                },
+                {
+                    "name": "Amonkhet Raceway",
+                    "id": "4f312807-ea2a-4385-8774-4e23b4a5d4a6",
+                    "weight": 30
+                },
+                {
+                    "name": "Avishkar Raceway",
+                    "id": "08a6b378-c7fa-4226-a310-4ee7e550b4d6",
+                    "weight": 60
+                }
+            ]
+        ],
+        "image": "https://cards.scryfall.io/border_crop/front/9/9/991270fa-a391-4c2e-bd9a-19151386fb67.jpg?1738356108",
+        "colors": [
+            "W"
+        ]
+    },
+    {
+        "name": "Primordial",
+        "cards": [
+            "f4b99a61-49f1-46a2-9eb7-b6c88c236215",
+            "68a0569b-65c8-49ce-91ac-e639b8faf939",
+            "496442f6-48c7-464e-bcf3-4c14f49fa065",
+            "b44255cf-5264-4ead-9de0-20cc0f7cac6f",
+            "a311d4b3-ab2a-43c2-8480-6c5daac41178",
+            "642f8fdd-6c58-49a3-904c-27f717cae980",
+            "43e6ac32-a7a4-4c15-81b0-8485d6a0e7ca"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Fang Guardian",
+                    "id": "6db483a7-c9f0-449d-be97-77dbd6d3a27a",
+                    "weight": 50
+                },
+                {
+                    "name": "Autarch Mammoth",
+                    "id": "4d313ea7-2456-48f3-8b12-97d8e8c2a5b3",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Alacrian Jaguar",
+                    "id": "2bd40bca-aa54-4e52-8d48-b3709a11e633",
+                    "weight": 50
+                },
+                {
+                    "name": "Migrating Ketradon",
+                    "id": "a9ba2219-8184-4141-8708-845cb0957299",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Thundering Broodwagon",
+                    "id": "2d1576d4-15a3-4e91-84ef-e71e258185e7",
+                    "weight": 50
+                },
+                {
+                    "name": "Stampeding Scurryfoot",
+                    "id": "7fc713d7-4a7e-4f1f-b461-e89bb1457d7d",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Loxodon Surveyor",
+                    "id": "cd1cecb1-6776-4495-be56-b7dde65453f1",
+                    "weight": 50
+                },
+                {
+                    "name": "Silken Strength",
+                    "id": "ce0e1ded-9b00-4d7b-884c-70a429783b1f",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Thunderous Velocipede",
+                    "id": "98a79557-8ed6-4d9a-b4e1-cece05664984",
+                    "weight": 20
+                },
+                {
+                    "name": "Agonasaur Rex",
+                    "id": "5b11ec26-9e07-45e1-bcaa-5d44d1231586",
+                    "weight": 40
+                },
+                {
+                    "name": "Oviya, Automech Artisan",
+                    "id": "ee5f504c-33fc-4a91-b69b-8ef555987c79",
+                    "weight": 40
+                }
+            ],
+            [
+                {
+                    "name": "Avishkar Raceway",
+                    "id": "08a6b378-c7fa-4226-a310-4ee7e550b4d6",
+                    "weight": 60
+                },
+                {
+                    "name": "Amonkhet Raceway",
+                    "id": "4f312807-ea2a-4385-8774-4e23b4a5d4a6",
+                    "weight": 30
+                },
+                {
+                    "name": "Muraganda Raceway",
+                    "id": "5041ae16-29ff-4ad5-8a37-4736e9409294",
+                    "weight": 10
+                }
+            ]
+        ],
+        "image": "https://cards.scryfall.io/border_crop/front/5/b/5b11ec26-9e07-45e1-bcaa-5d44d1231586.jpg?1738356473",
+        "colors": [
+            "G",
+            "B"
+        ]
+    },
+    {
+        "name": "EXHAUSTED",
+        "cards": [
+            "8dbd9fc0-c0df-4119-a0d3-2e1790998c21",
+            "0ed90a63-5aca-470a-8e1e-518d8aeb6d91",
+            "25dfbcb6-9b67-4151-b10f-dde70c5fd16d",
+            "1b238d2c-d10f-496d-aa34-5a1536e056b5",
+            "67d2d713-8acb-4e3d-bd1d-0416fe9b9ef6",
+            "642f8fdd-6c58-49a3-904c-27f717cae980",
+            "b6a5adee-3482-4c5b-9260-58efa8fec5ba",
+            "273061f3-7aa7-4cb0-afd6-616252b88948"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Stampeding Scurryfoot",
+                    "id": "7fc713d7-4a7e-4f1f-b461-e89bb1457d7d",
+                    "weight": 50
+                },
+                {
+                    "name": "Skystreak Engineer",
+                    "id": "5bc9c501-098d-4560-9826-329b05689e0f",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Afterburner Expert",
+                    "id": "555e1bfc-6d07-4979-a914-b2bd1fb031f2",
+                    "weight": 50
+                },
+                {
+                    "name": "Sita Varma, Masked Racer",
+                    "id": "eb523c06-6f3e-4e19-b777-19aefc4a4e02",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Greenbelt Guardian",
+                    "id": "2f6b0000-5fd3-483b-bac5-f9b888d8755b",
+                    "weight": 50
+                },
+                {
+                    "name": "Sabotage Strategist",
+                    "id": "c8bb15e2-e1ad-4645-aab0-df4a1a68563d",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Hazard of the Dunes",
+                    "id": "c3fbee7a-7e73-43cf-bc39-ccb1c63bf837",
+                    "weight": 50
+                },
+                {
+                    "name": "Camera Launcher",
+                    "id": "968651db-92fb-46cd-acda-9e097668b7c9",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Avishkar Raceway",
+                    "id": "08a6b378-c7fa-4226-a310-4ee7e550b4d6",
+                    "weight": 60
+                },
+                {
+                    "name": "Amonkhet Raceway",
+                    "id": "4f312807-ea2a-4385-8774-4e23b4a5d4a6",
+                    "weight": 30
+                },
+                {
+                    "name": "Muraganda Raceway",
+                    "id": "5041ae16-29ff-4ad5-8a37-4736e9409294",
+                    "weight": 10
+                }
+            ]
+        ],
+        "image": "https://cards.scryfall.io/border_crop/front/5/5/555e1bfc-6d07-4979-a914-b2bd1fb031f2.jpg?1738356471",
+        "colors": [
+            "G",
+            "U"
+        ]
+    },
+    {
+        "name": "ROAD RAGE",
+        "cards": [
+            "5a4f96f6-dd91-4357-ae19-1c35db2c2bcb",
+            "cc0b15da-a45c-42f5-aafc-20ad9e38bf24",
+            "55a5a67b-d969-4ba4-9dcc-32d0c2e5c04a",
+            "eef16cda-9150-4e7d-8490-d9f287b81b62",
+            "3380d87a-c460-409c-8d47-9b2fc5ddd2ea",
+            "f0489108-75b7-441c-888d-12987c0c1080",
+            "881f01a4-a923-4d56-bacb-984a389296fa",
+            "6b60da34-b622-42de-a249-79545bcbf30d"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Daring Mechanic",
+                    "id": "3382552c-2740-409a-83a1-80b60627beb8",
+                    "weight": 50
+                },
+                {
+                    "name": "Interface Ace",
+                    "id": "fcfd487a-a9e6-44e3-80af-bc384316106f",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Air Response Unit",
+                    "id": "d77c8e29-de24-4664-baf8-959608dd99ca",
+                    "weight": 50
+                },
+                {
+                    "name": "Alacrian Armory",
+                    "id": "d39f7f98-ad5e-4e5e-9f7b-abe0984ffe17",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Valor's Flagship",
+                    "id": "8af1dddf-6c95-448b-acc8-df5a99202e9a",
+                    "weight": 20
+                },
+                {
+                    "name": "Skyseer's Chariot",
+                    "id": "96ed5b66-8e74-4a90-ad4e-c39d15993994",
+                    "weight": 40
+                },
+                {
+                    "name": "Kolodin, Triumph Caster",
+                    "id": "36bcd476-a236-4434-b191-5c8b6fa7be7b",
+                    "weight": 40
+                }
+            ],
+            [
+                {
+                    "name": "Lightning Strike",
+                    "id": "30077b49-b825-4dbb-a0c7-f3992f647df0",
+                    "weight": 50
+                },
+                {
+                    "name": "Ride's End",
+                    "id": "2f96b33b-c952-45ac-9626-40169b2bd4ef",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Avishkar Raceway",
+                    "id": "08a6b378-c7fa-4226-a310-4ee7e550b4d6",
+                    "weight": 60
+                },
+                {
+                    "name": "Amonkhet Raceway",
+                    "id": "4f312807-ea2a-4385-8774-4e23b4a5d4a6",
+                    "weight": 30
+                },
+                {
+                    "name": "Muraganda Raceway",
+                    "id": "5041ae16-29ff-4ad5-8a37-4736e9409294",
+                    "weight": 10
+                }
+            ]
+        ],
+        "image": "https://cards.scryfall.io/border_crop/front/9/6/96ed5b66-8e74-4a90-ad4e-c39d15993994.jpg?1738356171",
+        "colors": [
+            "R",
+            "W"
+        ]
+    },
+    {
+        "name": "Fueled-Up",
+        "cards": [
+            "e8654e38-4230-4094-b815-778bfb5d06f2",
+            "e04d4fa6-1fa3-4bfd-a462-47c23ccf9124",
+            "b9bb89b9-50dd-4b36-aa10-aba585e50246",
+            "0ed90a63-5aca-470a-8e1e-518d8aeb6d91",
+            "8bbd7758-59c7-4ae1-9af8-c3580f4aa958",
+            "d7033739-4cd8-4727-b9b5-099fb597006b",
+            "402666f8-c9cc-4e8f-abaa-6c38be90cdd2"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Scrounging Skyray",
+                    "id": "d60bece3-6f63-4d9e-bca0-cef2d38f1472",
+                    "weight": 50
+                },
+                {
+                    "name": "Slick Imitator",
+                    "id": "3e86ef50-4939-4e7c-853d-438f0f3e0411",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Guidelight Optimizer",
+                    "id": "e9fc07dd-05b1-49ed-a3ee-46c31b8e0a3d",
+                    "weight": 50
+                },
+                {
+                    "name": "Skystreak Engineer",
+                    "id": "5bc9c501-098d-4560-9826-329b05689e0f",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Nimble Thopterist",
+                    "id": "47717312-f6c6-4e86-ba6a-a30698962430",
+                    "weight": 50
+                },
+                {
+                    "name": "Glitch Ghost Surveyor",
+                    "id": "b9bb89b9-50dd-4b36-aa10-aba585e50246",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Thopter Fabricator",
+                    "id": "8924b785-b140-4212-a1eb-a10340e09fea",
+                    "weight": 50
+                },
+                {
+                    "name": "Vnwxt, Verbose Host",
+                    "id": "893254c7-64cc-4cb9-b79f-2c41a8935ea0",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Trip Up",
+                    "id": "273061f3-7aa7-4cb0-afd6-616252b88948",
+                    "weight": 50
+                },
+                {
+                    "name": "Flood the Engine",
+                    "id": "57402f7c-5d4c-4f1e-8bce-a2328a297111",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Muraganda Raceway",
+                    "id": "5041ae16-29ff-4ad5-8a37-4736e9409294",
+                    "weight": 10
+                },
+                {
+                    "name": "Amonkhet Raceway",
+                    "id": "4f312807-ea2a-4385-8774-4e23b4a5d4a6",
+                    "weight": 30
+                },
+                {
+                    "name": "Avishkar Raceway",
+                    "id": "08a6b378-c7fa-4226-a310-4ee7e550b4d6",
+                    "weight": 60
+                }
+            ]
+        ],
+        "image": "https://cards.scryfall.io/border_crop/front/8/9/8924b785-b140-4212-a1eb-a10340e09fea.jpg?1738356265",
+        "colors": [
+            "U"
+        ]
+    }
+]

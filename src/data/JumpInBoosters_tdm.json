@@ -1,0 +1,804 @@
+[
+    {
+        "name": "MILL",
+        "cards": [
+            "75ec7a31-1893-493c-926b-dc3a8a770e72",
+            "bcccfd7b-2846-4552-a89a-2b868bc9ab20",
+            "190fbc55-e8e9-4077-9532-1de7406baabf",
+            "2dcafdac-a293-4adc-a540-3b3f469cf6f3",
+            "50c6e815-bfe7-4599-9227-d36504a3640f",
+            "ff4fc7ec-05f5-479a-8fbb-31e12a67b57e",
+            "7f50aa6e-ce6a-4479-9725-202926245f2c",
+            "e91c4509-918e-44ba-aa13-1991199fee9f",
+            "62209251-4118-4843-895b-46afb7284c75"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Dirgur Island Dragon // Skimming Strike",
+                    "id": "b1d21a9a-6b0c-4fbc-a427-81be885d326b",
+                    "weight": 50
+                },
+                {
+                    "name": "Iceridge Serpent",
+                    "id": "d13f117b-b8e4-48db-8ce9-5da9c7ce23a5",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Stillness in Motion",
+                    "id": "a6289251-17e4-4987-96b9-2fb1a8f90e2a",
+                    "weight": 50
+                },
+                {
+                    "name": "Marang River Regent // Coil and Catch",
+                    "id": "f890bdc7-32e6-4492-bac7-7cabf54a8bfd",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Fresh Start",
+                    "id": "96f7af08-ac05-45d0-979f-282943130c61",
+                    "weight": 50
+                },
+                {
+                    "name": "Ureni's Rebuff",
+                    "id": "722716df-9cea-40a7-924b-c28497e227e6",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Unending Whisper",
+                    "id": "fc48180a-ccac-469f-938d-c050821d0160",
+                    "weight": 50
+                },
+                {
+                    "name": "Focus the Mind",
+                    "id": "abb0ba34-6904-4c17-a04d-ea4f12c7cf21",
+                    "weight": 50
+                }
+            ]
+        ],
+        "image": "https://cards.scryfall.io/border_crop/front/a/6/a6289251-17e4-4987-96b9-2fb1a8f90e2a.jpg?1743697642",
+        "colors": [
+            "U"
+        ]
+    },
+    {
+        "name": "TOKENS",
+        "cards": [
+            "b647a018-1d70-43a1-a265-928bcd863689",
+            "0200a8c5-3293-48d0-a523-ba148680f588",
+            "312f7072-3bf8-449f-bfb7-93727ef26c66",
+            "3b9d771f-24dc-4ed6-8051-62df576a2ba5",
+            "1ce50932-03a6-48bc-8aee-bc8defd896cf",
+            "c6569487-53c5-4b91-877d-e4e31bfa90c0",
+            "2300da2f-2297-4c2f-90c1-11ce2b42d91f",
+            "b56e0037-8143-4c13-83e1-0c3f44e685ea",
+            "62209251-4118-4843-895b-46afb7284c75"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Starry-Eyed Skyrider",
+                    "id": "4b3cc15e-1c82-454e-b541-4ab47c44814e",
+                    "weight": 50
+                },
+                {
+                    "name": "Dalkovan Packbeasts",
+                    "id": "4df7b253-6107-47d6-b650-cb4d3e0aec6b",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Sunpearl Kirin",
+                    "id": "18292b9c-0f42-4ce2-8b85-35d06cf45a63",
+                    "weight": 50
+                },
+                {
+                    "name": "Descendant of Storms",
+                    "id": "f632be90-9e7f-41f8-a52e-a2952354d730",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Salt Road Packbeast",
+                    "id": "98d548c9-42bc-4155-8211-0aea801c3724",
+                    "weight": 50
+                },
+                {
+                    "name": "Bearer of Glory",
+                    "id": "d6d91e42-43db-428d-a4dd-ef9d40306314",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Elspeth, Storm Slayer",
+                    "id": "73a065e3-b530-4e62-ab3c-4f6f908184ec",
+                    "weight": 20
+                },
+                {
+                    "name": "Sage of the Skies",
+                    "id": "6ade6918-6d1d-448d-ab56-93996051e9a9",
+                    "weight": 40
+                },
+                {
+                    "name": "Anafenza, Unyielding Lineage",
+                    "id": "29957f49-9a6b-42f6-b2fb-b48f653ab725",
+                    "weight": 40
+                }
+            ]
+        ],
+        "image": "https://cards.scryfall.io/border_crop/front/6/a/6ade6918-6d1d-448d-ab56-93996051e9a9.jpg?1743204040",
+        "colors": [
+            "W"
+        ]
+    },
+    {
+        "name": "GRAVEYARD",
+        "cards": [
+            "66555946-e747-46fa-b1ac-b103a8edcd93",
+            "3ab5e71e-dc8d-4ed8-bcef-6497177c4a9d",
+            "4d305609-64f8-4f3f-bf67-cd5257f0d01e",
+            "6394b125-21a8-4439-9958-94b76684138e",
+            "e53adf93-2db5-4087-a2dc-c8f53401d700",
+            "f05ad909-8860-473b-9a30-a322f7670b32",
+            "adc18edc-01d8-4a7e-a87b-a854e50aa75e",
+            "62209251-4118-4843-895b-46afb7284c75"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Sidisi, Regent of the Mire",
+                    "id": "47374d23-662b-4ba7-a94f-37c9bc759cc6",
+                    "weight": 50
+                },
+                {
+                    "name": "Avenger of the Fallen",
+                    "id": "d5397366-151f-46b0-b9b2-fa4d5bd892d8",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Feral Deathgorger // Dusk Sight",
+                    "id": "a147b94f-dfcf-44ce-8a73-b2fe6c4efc0e",
+                    "weight": 50
+                },
+                {
+                    "name": "Adorned Crocodile",
+                    "id": "bb13a34b-6ac8-47cb-9e91-47106a585fc1",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Wail of War",
+                    "id": "7e9430dd-f583-400d-808a-64e2b5fa54f1",
+                    "weight": 50
+                },
+                {
+                    "name": "Desperate Measures",
+                    "id": "ccbc6fd0-42bc-4e8b-96bc-69a631ba7106",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Strategic Betrayal",
+                    "id": "95617742-548d-464a-bb89-a858ffa9018f",
+                    "weight": 50
+                },
+                {
+                    "name": "Salt Road Skirmish",
+                    "id": "8f529a2e-5102-492e-84ab-68541d83b5a3",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Cruel Truths",
+                    "id": "6852b4d5-74e0-44ba-ba44-20aa91e3c4c8",
+                    "weight": 50
+                },
+                {
+                    "name": "Aggressive Negotiations",
+                    "id": "993ade84-031f-4a3e-bd68-55f61b559248",
+                    "weight": 50
+                }
+            ]
+        ],
+        "image": "https://cards.scryfall.io/border_crop/front/4/7/47374d23-662b-4ba7-a94f-37c9bc759cc6.jpg?1743204332",
+        "colors": [
+            "B"
+        ]
+    },
+    {
+        "name": "DISCARD",
+        "cards": [
+            "f8f1a2f2-526d-4b2c-985b-0acfdc21a2ee",
+            "056136a8-84be-477c-b654-63238fb8236e",
+            "204f5e5e-d87f-4aee-84e3-28afe8e21591",
+            "baf4c9dd-0546-41ac-a7ba-0bc312fef31e",
+            "0ec92c44-7cf0-48a5-a3ca-bc633496d887",
+            "dd7f0413-c009-4c08-b877-9c1b776cbf26",
+            "0ab95aab-a4bf-4131-83a0-2c138b6f20c3",
+            "62209251-4118-4843-895b-46afb7284c75"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Devoted Duelist",
+                    "id": "bbf9c673-37b4-48ed-a9ea-13f8e3e6c47b",
+                    "weight": 50
+                },
+                {
+                    "name": "Jeskai Devotee",
+                    "id": "27f31f9c-7149-4608-9b18-b3530a2efd4a",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Shock Brigade",
+                    "id": "66940466-8e9d-4a85-bfb0-e92189b7a121",
+                    "weight": 50
+                },
+                {
+                    "name": "Underfoot Underdogs",
+                    "id": "049acc79-1d68-410f-a081-88a7d40e823a",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Equilibrium Adept",
+                    "id": "a4ba6d74-c6be-4a5e-8859-b791bb6b8f51",
+                    "weight": 50
+                },
+                {
+                    "name": "Zurgo's Vanguard",
+                    "id": "a1aa3501-5738-4063-a7f4-51d2600b0041",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Breaching Dragonstorm",
+                    "id": "e2c2a069-7553-4879-abfb-b2aa3349e4b8",
+                    "weight": 50
+                },
+                {
+                    "name": "Iridescent Tiger",
+                    "id": "e3abbc8b-2bf8-478e-a541-f8019d150054",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Stormscale Scion",
+                    "id": "0ac43386-bd32-425c-8776-cec00b064cbc",
+                    "weight": 20
+                },
+                {
+                    "name": "Cori-Steel Cutter",
+                    "id": "490eb213-9ae2-4b45-abec-6f1dfc83792a",
+                    "weight": 40
+                },
+                {
+                    "name": "Stadium Headliner",
+                    "id": "37d4ab2a-a06a-4768-b5e1-e1def957d7f4",
+                    "weight": 40
+                }
+            ]
+        ],
+        "image": "https://cards.scryfall.io/border_crop/front/4/9/490eb213-9ae2-4b45-abec-6f1dfc83792a.jpg?1751282367",
+        "colors": [
+            "R"
+        ]
+    },
+    {
+        "name": "ENCOUNTER",
+        "cards": [
+            "67ab8e8f-3ef6-4339-8c66-68c5aca4867a",
+            "1ebf4a9d-d90c-4017-9f00-fca89899f301",
+            "c51dcdab-38ee-4804-8859-09adc353c182",
+            "f0c89d95-d697-4cfa-9dfa-52d7adb96176",
+            "d8b43b00-f4d1-436c-bf3f-6d414cd4ce38",
+            "a3d2c692-7566-468e-9c86-47a9f768fde2",
+            "1f721f8d-fd2f-480b-8645-4bf6ce38dde9",
+            "9d218831-2a41-46a3-8e9d-93462cae5cab",
+            "62209251-4118-4843-895b-46afb7284c75"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Undergrowth Leopard",
+                    "id": "67ab8f9a-b17c-452f-b4ef-a3f91909e3de",
+                    "weight": 50
+                },
+                {
+                    "name": "Ainok Wayfarer",
+                    "id": "57695a9b-8f72-4ccc-a946-5d5037b09b8f",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Warden of the Grove",
+                    "id": "2414db96-0e2b-4f7c-9b97-41f8e310b752",
+                    "weight": 50
+                },
+                {
+                    "name": "Lasyd Prowler",
+                    "id": "c7f5c8ef-8e9e-4264-a7d2-126a30a5d341",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Inspirited Vanguard",
+                    "id": "c642d6ac-f0f0-4b4c-a7ee-50631531f6d1",
+                    "weight": 50
+                },
+                {
+                    "name": "Rainveil Rejuvenator",
+                    "id": "9bc5c316-6a41-48ba-864b-da3030dd3e0e",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Sagu Pummeler",
+                    "id": "def9cb5b-4062-481e-b682-3a30443c2e56",
+                    "weight": 50
+                },
+                {
+                    "name": "Dusyut Earthcarver",
+                    "id": "b98ecc96-f557-479a-8685-2b5487d5b407",
+                    "weight": 50
+                }
+            ]
+        ],
+        "image": "https://cards.scryfall.io/border_crop/front/2/4/2414db96-0e2b-4f7c-9b97-41f8e310b752.jpg?1743697653",
+        "colors": [
+            "G"
+        ]
+    },
+    {
+        "name": "Temur",
+        "cards": [
+            "a3d2c692-7566-468e-9c86-47a9f768fde2",
+            "1f721f8d-fd2f-480b-8645-4bf6ce38dde9",
+            "fb8c2d5c-ba0c-4d50-8898-5c6574b1e974",
+            "bc7692ef-7091-4365-85a8-1edbd374f279",
+            "468b17b4-79ce-4dfa-8873-a9cfc347e38f",
+            "55e97b40-d898-4da5-8159-cca48eb298eb",
+            "55e97b40-d898-4da5-8159-cca48eb298eb",
+            "679fff07-4796-4d91-8dd6-4e294383ce88"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Rescue Leopard",
+                    "id": "056136a8-84be-477c-b654-63238fb8236e",
+                    "weight": 50
+                },
+                {
+                    "name": "Snowmelt Stag",
+                    "id": "a6b3b131-704a-4586-84f8-db465cd4a277",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Dirgur Island Dragon // Skimming Strike",
+                    "id": "b1d21a9a-6b0c-4fbc-a427-81be885d326b",
+                    "weight": 50
+                },
+                {
+                    "name": "Temur Tawnyback",
+                    "id": "3cdb383f-bc04-46d1-aa3a-7459d57f1fec",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Dragonback Assault",
+                    "id": "d54cc838-d79d-433a-99fb-d6e4d1c1431d",
+                    "weight": 20
+                },
+                {
+                    "name": "Songcrafter Mage",
+                    "id": "9523bc07-49e5-409c-ae6b-b28e305eef36",
+                    "weight": 40
+                },
+                {
+                    "name": "Temur Battlecrier",
+                    "id": "72184791-0767-4108-920c-763e92dae2d4",
+                    "weight": 40
+                }
+            ],
+            [
+                {
+                    "name": "Unending Whisper",
+                    "id": "fc48180a-ccac-469f-938d-c050821d0160",
+                    "weight": 50
+                },
+                {
+                    "name": "Wild Ride",
+                    "id": "abc8c6f5-6135-428e-8476-1751f82623f9",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Channeled Dragonfire",
+                    "id": "24204881-690c-4043-8771-20cb93385072",
+                    "weight": 50
+                },
+                {
+                    "name": "Ureni's Rebuff",
+                    "id": "722716df-9cea-40a7-924b-c28497e227e6",
+                    "weight": 50
+                }
+            ]
+        ],
+        "image": "https://cards.scryfall.io/border_crop/front/9/5/9523bc07-49e5-409c-ae6b-b28e305eef36.jpg?1743204888",
+        "colors": [
+            "R",
+            "U",
+            "G"
+        ]
+    },
+    {
+        "name": "Jeskai",
+        "cards": [
+            "1971fd6c-0a1c-41b2-93a6-886a176fbb73",
+            "bbf9c673-37b4-48ed-a9ea-13f8e3e6c47b",
+            "b6cbf54e-f30e-4e7b-b17c-217fa424971c",
+            "339a0e24-c332-4558-bb60-f5504ddde88c",
+            "686fe623-ee50-407d-87c9-664fb039f4d9",
+            "5098bd73-d51c-4db4-bf06-fd4854089d37",
+            "d0193ad6-39b7-4558-bd3e-36f809332ea2",
+            "c7b8a01c-c400-47c7-8270-78902efe850e"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Humbling Elder",
+                    "id": "3a84c3f8-0030-4653-880e-b2d19272f5fa",
+                    "weight": 50
+                },
+                {
+                    "name": "Lightfoot Technique",
+                    "id": "baac1a41-d44d-4184-9147-b4233e73de65",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Wayspeaker Bodyguard",
+                    "id": "5e5b2324-69fe-4105-b6f8-14dfbe359d59",
+                    "weight": 50
+                },
+                {
+                    "name": "Equilibrium Adept",
+                    "id": "a4ba6d74-c6be-4a5e-8859-b791bb6b8f51",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Shiko, Paragon of the Way",
+                    "id": "8138cf10-1e3e-483f-86ad-cc399192657d",
+                    "weight": 20
+                },
+                {
+                    "name": "Narset, Jeskai Waymaster",
+                    "id": "6b77cbc1-dbc8-44d9-aa29-15cbb19afecd",
+                    "weight": 40
+                },
+                {
+                    "name": "Flamehold Grappler",
+                    "id": "cc8443a6-282f-4218-9dc8-144b5570d891",
+                    "weight": 40
+                }
+            ],
+            [
+                {
+                    "name": "Ringing Strike Mastery",
+                    "id": "ff4fc7ec-05f5-479a-8fbb-31e12a67b57e",
+                    "weight": 50
+                },
+                {
+                    "name": "Stormplain Detainment",
+                    "id": "39f3aab5-7b54-4b55-8114-c6f9f79c255d",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Overwhelming Surge",
+                    "id": "bd7af85f-354e-468a-990b-bd774e68240f",
+                    "weight": 50
+                },
+                {
+                    "name": "Fresh Start",
+                    "id": "96f7af08-ac05-45d0-979f-282943130c61",
+                    "weight": 50
+                }
+            ]
+        ],
+        "image": "https://cards.scryfall.io/border_crop/front/6/b/6b77cbc1-dbc8-44d9-aa29-15cbb19afecd.jpg?1743204826",
+        "colors": [
+            "R",
+            "U",
+            "W"
+        ]
+    },
+    {
+        "name": "Sultai",
+        "cards": [
+            "812d0462-0158-467f-951d-a7a121188a10",
+            "57695a9b-8f72-4ccc-a946-5d5037b09b8f",
+            "b5f1acb0-d73e-4814-8158-3645daf5c4cc",
+            "def9cb5b-4062-481e-b682-3a30443c2e56",
+            "8d11183a-57f5-4ddb-8a6e-15fff704b114",
+            "96fff22c-282b-4849-82ce-890013b53262",
+            "45308e0e-b515-49ac-9960-a24e898dd321",
+            "21cb3b3b-0738-4c2e-a3fc-927fd6b9d3fb"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Alchemist's Assistant",
+                    "id": "4d305609-64f8-4f3f-bf67-cd5257f0d01e",
+                    "weight": 50
+                },
+                {
+                    "name": "Sage of the Fang",
+                    "id": "1ebf4a9d-d90c-4017-9f00-fca89899f301",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Sagu Wildling // Roost Seek",
+                    "id": "d8b43b00-f4d1-436c-bf3f-6d414cd4ce38",
+                    "weight": 50
+                },
+                {
+                    "name": "Feral Deathgorger // Dusk Sight",
+                    "id": "a147b94f-dfcf-44ce-8a73-b2fe6c4efc0e",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Teval, Arbiter of Virtue",
+                    "id": "27a93f5b-7b32-49f0-a179-b897828fe49a",
+                    "weight": 20
+                },
+                {
+                    "name": "Kotis, the Fangkeeper",
+                    "id": "d3736f17-f80b-4b2c-b919-2c963bc14682",
+                    "weight": 40
+                },
+                {
+                    "name": "Fangkeeper's Familiar",
+                    "id": "655fa2e1-3e1c-424c-b17a-daa7b8fface4",
+                    "weight": 40
+                }
+            ],
+            [
+                {
+                    "name": "Constrictor Sage",
+                    "id": "b2f160d7-c832-4b83-8f2e-aaeb190add3f",
+                    "weight": 50
+                },
+                {
+                    "name": "Knockout Maneuver",
+                    "id": "9d218831-2a41-46a3-8e9d-93462cae5cab",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Worthy Cost",
+                    "id": "adc18edc-01d8-4a7e-a87b-a854e50aa75e",
+                    "weight": 50
+                },
+                {
+                    "name": "Dragon's Prey",
+                    "id": "7a6004ff-4180-4332-8b51-960f8c7521d9",
+                    "weight": 50
+                }
+            ]
+        ],
+        "image": "https://cards.scryfall.io/border_crop/front/d/3/d3736f17-f80b-4b2c-b919-2c963bc14682.jpg?1743204793",
+        "colors": [
+            "U",
+            "B",
+            "G"
+        ]
+    },
+    {
+        "name": "Abzan",
+        "cards": [
+            "b647a018-1d70-43a1-a265-928bcd863689",
+            "3ab5e71e-dc8d-4ed8-bcef-6497177c4a9d",
+            "b98ecc96-f557-479a-8685-2b5487d5b407",
+            "17f61c01-0a41-4fa1-ac34-ffa83baad989",
+            "9d218831-2a41-46a3-8e9d-93462cae5cab",
+            "b577e246-3377-42aa-856e-b9fa89f3603a",
+            "d2da9024-3b58-4a57-8f7d-4094c193daee",
+            "47f47e7f-39ba-4807-8e32-7262a61dfbba"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Krumar Initiate",
+                    "id": "bc66680f-24ab-433a-8197-feac3a174075",
+                    "weight": 50
+                },
+                {
+                    "name": "Yathan Tombguard",
+                    "id": "9e65d487-705a-4c3b-9bb6-69351e5dae81",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Kin-Tree Nurturer",
+                    "id": "2177ef64-28bf-4acf-b1f1-c1408f03c411",
+                    "weight": 50
+                },
+                {
+                    "name": "Sandskitter Outrider",
+                    "id": "1c4bfebe-f10f-44bd-9368-33e273ba5a55",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Betor, Kin to All",
+                    "id": "b475b071-5545-483e-a397-89451f258602",
+                    "weight": 20
+                },
+                {
+                    "name": "Yathan Roadwatcher",
+                    "id": "8e77339b-dd82-481c-9ee2-4156ca69ad35",
+                    "weight": 40
+                },
+                {
+                    "name": "Felothar, Dawn of the Abzan",
+                    "id": "83e11f20-6524-4fba-9603-0b97e2d69aac",
+                    "weight": 40
+                }
+            ],
+            [
+                {
+                    "name": "Duty Beyond Death",
+                    "id": "2e92640d-768b-4357-905f-bea017d351cc",
+                    "weight": 50
+                },
+                {
+                    "name": "Wail of War",
+                    "id": "7e9430dd-f583-400d-808a-64e2b5fa54f1",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Dragon's Prey",
+                    "id": "7a6004ff-4180-4332-8b51-960f8c7521d9",
+                    "weight": 50
+                },
+                {
+                    "name": "Stormplain Detainment",
+                    "id": "39f3aab5-7b54-4b55-8114-c6f9f79c255d",
+                    "weight": 50
+                }
+            ]
+        ],
+        "image": "https://cards.scryfall.io/border_crop/front/8/e/8e77339b-dd82-481c-9ee2-4156ca69ad35.jpg?1743204933",
+        "colors": [
+            "W",
+            "B",
+            "G"
+        ]
+    },
+    {
+        "name": "Mardu",
+        "cards": [
+            "d6d91e42-43db-428d-a4dd-ef9d40306314",
+            "4b3cc15e-1c82-454e-b541-4ab47c44814e",
+            "312f7072-3bf8-449f-bfb7-93727ef26c66",
+            "78bf36bc-6702-4c5d-b52d-ab7217cc8787",
+            "bf3a18cf-03db-4eb0-8d53-0c1a71e184da",
+            "9bd0c794-77bc-4d4a-a769-3829e2ce4bdf",
+            "9bd0c794-77bc-4d4a-a769-3829e2ce4bdf",
+            "a68fbeaa-941f-4d53-becd-f93ed22b9a54"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Nightblade Brigade",
+                    "id": "648debd9-d4cf-4788-8882-f1601a3d87f5",
+                    "weight": 50
+                },
+                {
+                    "name": "Shock Brigade",
+                    "id": "66940466-8e9d-4a85-bfb0-e92189b7a121",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Neriv, Heart of the Storm",
+                    "id": "b58112b0-a05c-4b98-b650-fd27ad97789f",
+                    "weight": 20
+                },
+                {
+                    "name": "Zurgo, Thunder's Decree",
+                    "id": "bd93fb95-4268-45dc-8f0d-590c481a526d",
+                    "weight": 40
+                },
+                {
+                    "name": "Mardu Siegebreaker",
+                    "id": "3044b232-edf4-4000-9273-cc4653ad653a",
+                    "weight": 40
+                }
+            ],
+            [
+                {
+                    "name": "Reigning Victor",
+                    "id": "a394112a-032b-4047-887a-6522cf7b83d5",
+                    "weight": 50
+                },
+                {
+                    "name": "Underfoot Underdogs",
+                    "id": "049acc79-1d68-410f-a081-88a7d40e823a",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Zurgo's Vanguard",
+                    "id": "a1aa3501-5738-4063-a7f4-51d2600b0041",
+                    "weight": 50
+                },
+                {
+                    "name": "War Effort",
+                    "id": "dd7f0413-c009-4c08-b877-9c1b776cbf26",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Dragon's Prey",
+                    "id": "7a6004ff-4180-4332-8b51-960f8c7521d9",
+                    "weight": 50
+                },
+                {
+                    "name": "Coordinated Maneuver",
+                    "id": "c6569487-53c5-4b91-877d-e4e31bfa90c0",
+                    "weight": 50
+                }
+            ]
+        ],
+        "image": "https://cards.scryfall.io/border_crop/front/b/d/bd93fb95-4268-45dc-8f0d-590c481a526d.jpg?1743204939",
+        "colors": [
+            "W",
+            "B",
+            "R"
+        ]
+    }
+]
