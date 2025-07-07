@@ -310,6 +310,8 @@ export class BoosterFactory implements IBoosterFactory {
 		// Color balance the booster by adding one common of each color if possible
 		let pickedCommons = [];
 		const commonCount = targets["common"] - addedFoils;
+		if (this.cardPool["common"].count() < commonCount)
+			return new MessageError("Error generating boosters", `Not enough common cards in card pool.`);
 		if (this.options.colorBalance && this.colorBalancedSlot) {
 			pickedCommons = this.colorBalancedSlot.generate(commonCount, booster);
 		} else {

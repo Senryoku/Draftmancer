@@ -723,13 +723,12 @@ export class Session implements IIndexable {
 					boosterFactoryOptions
 				);
 				// Make sure we have enough cards
+				const defaultFactoryBoosterCount = boosterSpecificRules
+					? customBoosters.filter((s) => s === "").length
+					: boosterQuantity;
 				for (const slot of ["common", "uncommon", "rare"]) {
 					const cardCount = (defaultFactory as BoosterFactory).cardPool[slot].count();
-					const cardTarget =
-						targets[slot] *
-						(boosterSpecificRules
-							? boosterQuantity
-							: customBoosters.reduce((a, v) => (v === "" ? a + 1 : a), 0));
+					const cardTarget = targets[slot] * defaultFactoryBoosterCount;
 					if (cardCount < cardTarget)
 						return new MessageError(
 							"Error generating boosters",
