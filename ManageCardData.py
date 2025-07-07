@@ -310,9 +310,7 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
     with open(BulkDataPath, "r", encoding="utf8") as file:
         objects = ijson.items(file, "item")
         ScryfallCards = (
-            o
-            for o in objects
-            if not (o["oversized"] or o["layout"] in ["token", "double_faced_token", "emblem", "art_series"])
+            o for o in objects if not (o["oversized"] or o["layout"] in ["token", "double_faced_token", "art_series"])
         )
         # print("Loading Scryfall bulk data... ")
         # ScryfallCards = json.load(file)
