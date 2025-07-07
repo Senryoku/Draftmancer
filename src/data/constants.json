@@ -318,6 +318,7 @@
         }
     ],
     "PrimarySets": [
+        "spe",
         "fin",
         "tdm",
         "dft",
@@ -325,8 +326,8 @@
         "pio",
         "fdn",
         "dsk",
-        "mb2",
         "blb",
+        "mb2",
         "mh3",
         "otj",
         "mkm",
