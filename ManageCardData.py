@@ -1087,7 +1087,7 @@ constants["PrimarySets"] = [
     for s in PrimarySets
     if s in setinfos
     and s not in subsets
-    and s not in ["ren", "rin", "a22", "y22", "j22", "sis", "ltc", "who", "wot", "acr", "eoe"]
+    and s not in ["ren", "rin", "a22", "y22", "j22", "sis", "ltc", "who", "wot", "acr", "eoe", "tla"]
 ]  # Exclude some codes that are actually part of larger sets (tsb, fmb1, h1r... see subsets), or aren't out yet
 with open("src/data/constants.json", "w", encoding="utf8") as constantsFile:
     json.dump(constants, constantsFile, ensure_ascii=False, indent=4)

@@ -529,9 +529,12 @@ export class Session implements IIndexable {
 					if (card.in_booster) cardPool.set(cid, this.maxDuplicates?.[card.rarity] ?? DefaultMaxDuplicates);
 			} else {
 				// Use cache otherwise
-				for (const set of this.setRestriction)
-					for (const cid of BoosterCardsBySet[set])
-						cardPool.set(cid, this.maxDuplicates?.[getCard(cid).rarity] ?? DefaultMaxDuplicates);
+				for (const set of this.setRestriction) {
+					if (BoosterCardsBySet[set]) {
+						for (const cid of BoosterCardsBySet[set])
+							cardPool.set(cid, this.maxDuplicates?.[getCard(cid).rarity] ?? DefaultMaxDuplicates);
+					} else console.error(`Session.cardPool error: '${set}' not in BoosterCardsBySet.`);
+				}
 			}
 			return cardPool;
 		}

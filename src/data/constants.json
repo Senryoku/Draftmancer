@@ -318,7 +318,6 @@
         }
     ],
     "PrimarySets": [
-        "tla",
         "fin",
         "tdm",
         "dft",
