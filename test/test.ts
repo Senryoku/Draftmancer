@@ -387,8 +387,8 @@ describe("Sets content", function () {
 		expect(filterRarity(EOEBoosterFactory.BorderlessSurreal, "rare")).to.have.lengthOf(11);
 		expect(filterRarity(EOEBoosterFactory.BorderlessSurreal, "mythic")).to.have.lengthOf(3);
 
-		expect(EOEBoosterFactory.Basics).to.have.lengthOf(20);
-		expect(EOEBoosterFactory.BorderlessCelestialBasics).to.have.lengthOf(10);
+		expect(EOEBoosterFactory.Basics).to.have.lengthOf(10);
+		expect(EOEBoosterFactory.BorderlessCelestialBasics).to.have.lengthOf(5);
 	});
 
 	describe("Modern Horizons 3 (MH3)", function () {
