@@ -3477,7 +3477,7 @@ class FINBoosterFactory extends BoosterFactory {
 }
 
 // Edge of Eternities (EOE) - https://magic.wizards.com/en/news/feature/collecting-edge-of-eternities
-class EOEBoosterFactory extends BoosterFactory {
+export class EOEBoosterFactory extends BoosterFactory {
 	static filter(min: number, max: number) {
 		return CardsBySet["eoe"].filter(
 			(c) => parseInt(getCard(c).collector_number) >= min && parseInt(getCard(c).collector_number) <= max
@@ -3487,33 +3487,33 @@ class EOEBoosterFactory extends BoosterFactory {
 	static readonly StellarSights = CardsBySet["eos"]; // 30 rares, 10 mythics
 	static readonly BorderlessViewport = EOEBoosterFactory.filter(277, 286); // 5 rare shock lands and 5 mythic rare legendary Planet lands
 	static readonly BorderlessTriumphant = EOEBoosterFactory.filter(287, 302); // 12 rare creatures, 3 mythic rare creatures, and 1 mythic rare planeswalker
-	static readonly BorderlessSureal = EOEBoosterFactory.filter(303, 315); // 11 rares, 3 mythics
+	static readonly BorderlessSurreal = EOEBoosterFactory.filter(303, 315); // 11 rares, 3 mythics
 	static readonly Basics = EOEBoosterFactory.filter(267, 276);
 	static readonly BorderlessCelestialBasics = EOEBoosterFactory.filter(262, 266);
 
-	stellarSights: SlotedCardPool = {};
-	borderlessViewport: SlotedCardPool = {};
-	borderlessTriumphant: SlotedCardPool = {};
-	borderlessSureal: SlotedCardPool = {};
-	borderlessTS: SlotedCardPool = {};
-	borderlessVTS: SlotedCardPool = {};
-	spg: SlotedCardPool = {};
+	stellarSights: SlotedCardPool;
+	borderlessViewport: SlotedCardPool;
+	borderlessTriumphant: SlotedCardPool;
+	borderlessSurreal: SlotedCardPool;
+	borderlessTS: SlotedCardPool;
+	borderlessVTS: SlotedCardPool;
+	spg: SlotedCardPool;
 
 	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
 		super(cardPool, landSlot, options);
 		this.stellarSights = cidsToSlotedCardPool(EOEBoosterFactory.StellarSights, options.maxDuplicates);
 		this.borderlessViewport = cidsToSlotedCardPool(EOEBoosterFactory.BorderlessViewport, options.maxDuplicates);
 		this.borderlessTriumphant = cidsToSlotedCardPool(EOEBoosterFactory.BorderlessTriumphant, options.maxDuplicates);
-		this.borderlessSureal = cidsToSlotedCardPool(EOEBoosterFactory.BorderlessSureal, options.maxDuplicates);
+		this.borderlessSurreal = cidsToSlotedCardPool(EOEBoosterFactory.BorderlessSurreal, options.maxDuplicates);
 		this.borderlessTS = cidsToSlotedCardPool(
-			[...EOEBoosterFactory.BorderlessTriumphant, ...EOEBoosterFactory.BorderlessSureal],
+			[...EOEBoosterFactory.BorderlessTriumphant, ...EOEBoosterFactory.BorderlessSurreal],
 			options.maxDuplicates
 		);
 		this.borderlessVTS = cidsToSlotedCardPool(
 			[
 				...EOEBoosterFactory.BorderlessViewport,
 				...EOEBoosterFactory.BorderlessTriumphant,
-				...EOEBoosterFactory.BorderlessSureal,
+				...EOEBoosterFactory.BorderlessSurreal,
 			],
 			options.maxDuplicates
 		);
@@ -3590,8 +3590,8 @@ class EOEBoosterFactory extends BoosterFactory {
 					this.cardPool.mythic,
 					this.borderlessTriumphant.rare,
 					this.borderlessTriumphant.mythic,
-					this.borderlessSureal.rare,
-					this.borderlessSureal.mythic,
+					this.borderlessSurreal.rare,
+					this.borderlessSurreal.mythic,
 					this.borderlessViewport.mythic,
 				]
 			);

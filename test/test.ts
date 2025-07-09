@@ -22,7 +22,7 @@ import { Constants } from "../src/Constants.js";
 import type { DistributionMode } from "../src/Session/SessionTypes";
 import { ReadyState } from "../src/Session/SessionTypes.js";
 
-import { SpecialGuests, MH3BoosterFactory } from "../src/BoosterFactory.js";
+import { SpecialGuests, MH3BoosterFactory, SetSpecificFactories, EOEBoosterFactory } from "../src/BoosterFactory.js";
 
 const clientStates: {
 	[uid: UserID]: { pickedCards: UniqueCard[]; state: ReturnType<DraftState["syncData"]> };
@@ -365,6 +365,30 @@ describe("Sets content", function () {
 	});
 	it("The Big Score (BIG)", () => {
 		expect(BoosterCardsBySet["big"]).to.have.lengthOf(30);
+	});
+	it("Edge of Eternities (EOE) special slots", () => {
+		const filterRarity = (arr: string[], rarity: string) => {
+			return arr.filter((c) => getCard(c).rarity === rarity);
+		};
+		expect(SpecialGuests.eoe).to.have.lengthOf(10);
+		expect(EOEBoosterFactory.StellarSights).to.have.lengthOf(40);
+		expect(filterRarity(EOEBoosterFactory.StellarSights, "rare")).to.have.lengthOf(30);
+		expect(filterRarity(EOEBoosterFactory.StellarSights, "mythics")).to.have.lengthOf(10);
+
+		expect(EOEBoosterFactory.BorderlessViewport).to.have.lengthOf(10);
+		expect(filterRarity(EOEBoosterFactory.BorderlessViewport, "rare")).to.have.lengthOf(5);
+		expect(filterRarity(EOEBoosterFactory.BorderlessViewport, "mythic")).to.have.lengthOf(5);
+
+		expect(EOEBoosterFactory.BorderlessTriumphant).to.have.lengthOf(16);
+		expect(filterRarity(EOEBoosterFactory.BorderlessTriumphant, "rare")).to.have.lengthOf(12);
+		expect(filterRarity(EOEBoosterFactory.BorderlessTriumphant, "mythic")).to.have.lengthOf(4);
+
+		expect(EOEBoosterFactory.BorderlessSurreal).to.have.lengthOf(14);
+		expect(filterRarity(EOEBoosterFactory.BorderlessSurreal, "rare")).to.have.lengthOf(11);
+		expect(filterRarity(EOEBoosterFactory.BorderlessSurreal, "mythic")).to.have.lengthOf(3);
+
+		expect(EOEBoosterFactory.Basics).to.have.lengthOf(20);
+		expect(EOEBoosterFactory.BorderlessCelestialBasics).to.have.lengthOf(10);
 	});
 
 	describe("Modern Horizons 3 (MH3)", function () {
