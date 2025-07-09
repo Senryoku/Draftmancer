@@ -87,7 +87,8 @@
         "pio",
         "dft",
         "tdm",
-        "fin"
+        "fin",
+        "eoe"
     ],
     "AlchemySets": [
         "hbg",
@@ -95,11 +96,6 @@
         "ydmu"
     ],
     "StandardSets": [
-        "dmu",
-        "bro",
-        "one",
-        "mom",
-        "mat",
         "woe",
         "lci",
         "mkm",
@@ -109,7 +105,8 @@
         "fdn",
         "dft",
         "tdm",
-        "fin"
+        "fin",
+        "eoe"
     ],
     "BasicLandNames": {
         "en": {
