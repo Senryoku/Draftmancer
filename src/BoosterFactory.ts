@@ -3497,7 +3497,7 @@ export class EOEBoosterFactory extends BoosterFactory {
 	borderlessSurreal: SlotedCardPool;
 	borderlessTS: SlotedCardPool;
 	borderlessVTS: SlotedCardPool;
-	spg: SlotedCardPool;
+	spg: CardPool = new CardPool();
 
 	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
 		super(cardPool, landSlot, options);
@@ -3517,7 +3517,10 @@ export class EOEBoosterFactory extends BoosterFactory {
 			],
 			options.maxDuplicates
 		);
-		this.spg = cidsToSlotedCardPool(SpecialGuests.eoe, options.maxDuplicates);
+		for (const cid of SpecialGuests.eoe) {
+			const c = getCard(cid);
+			this.spg.set(cid, options.maxDuplicates?.[c.rarity] ?? DefaultMaxDuplicates);
+		}
 	}
 
 	generateBooster(targets: Targets) {
@@ -3533,7 +3536,7 @@ export class EOEBoosterFactory extends BoosterFactory {
 		const spgRoll = random.realZeroToOneInclusive();
 		if (spgRoll < 0.018) {
 			updatedTargets.common = Math.max(0, updatedTargets.common - 1);
-			booster.push(pickCard(this.spg.mythic, booster, { foil: false }));
+			booster.push(pickCard(this.spg, booster, { foil: false }));
 		}
 
 		// 1 Traditional foil card of any rarity
