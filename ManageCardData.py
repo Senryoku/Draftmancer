@@ -309,9 +309,7 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
     all_cards = []
     with open(BulkDataPath, "r", encoding="utf8") as file:
         objects = ijson.items(file, "item")
-        ScryfallCards = (
-            o for o in objects if not (o["oversized"] or o["layout"] in ["token", "double_faced_token", "art_series"])
-        )
+        ScryfallCards = (o for o in objects if not (o["layout"] in ["token", "double_faced_token", "art_series"]))
         # print("Loading Scryfall bulk data... ")
         # ScryfallCards = json.load(file)
 
@@ -323,7 +321,7 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
         for c in ScryfallCards:
             handled += 1
 
-            if c["oversized"] or c["layout"] in ["token", "double_faced_token", "emblem", "art_series"]:
+            if c["layout"] in ["token", "double_faced_token", "emblem", "art_series"]:
                 # Essence of Ajani is an playtest emblem that can played as a normal card.
                 if c["name"] not in ["Essence of Ajani"]:
                     continue
