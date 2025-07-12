@@ -22,7 +22,13 @@ import { Constants } from "../src/Constants.js";
 import type { DistributionMode } from "../src/Session/SessionTypes";
 import { ReadyState } from "../src/Session/SessionTypes.js";
 
-import { SpecialGuests, MH3BoosterFactory, SetSpecificFactories, EOEBoosterFactory } from "../src/BoosterFactory.js";
+import {
+	SpecialGuests,
+	MH3BoosterFactory,
+	SetSpecificFactories,
+	EOEBoosterFactory,
+	FINBoosterFactory,
+} from "../src/BoosterFactory.js";
 
 const clientStates: {
 	[uid: UserID]: { pickedCards: UniqueCard[]; state: ReturnType<DraftState["syncData"]> };
@@ -365,6 +371,9 @@ describe("Sets content", function () {
 	});
 	it("The Big Score (BIG)", () => {
 		expect(BoosterCardsBySet["big"]).to.have.lengthOf(30);
+	});
+	it("Final Fantasy (FIN) special slots", () => {
+		expect(FINBoosterFactory.ThroughTheAges).to.have.lengthOf(64);
 	});
 	it("Edge of Eternities (EOE) special slots", () => {
 		const filterRarity = (arr: string[], rarity: string) => {

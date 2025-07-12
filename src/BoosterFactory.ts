@@ -3301,7 +3301,7 @@ class TDMBoosterFactory extends BoosterFactory {
 }
 
 // Final Fantasy (FIN) - https://magic.wizards.com/en/news/feature/collecting-final-fantasy
-class FINBoosterFactory extends BoosterFactory {
+export class FINBoosterFactory extends BoosterFactory {
 	static filter(min: number, max: number) {
 		return CardsBySet["fin"].filter(
 			(c) =>
@@ -3311,7 +3311,7 @@ class FINBoosterFactory extends BoosterFactory {
 		);
 	}
 
-	static readonly ThroughTheAges = CardsBySet["fca"];
+	static readonly ThroughTheAges = CardsBySet["fca"].filter((c) => !getCard(c).collector_number.startsWith("A"));
 	static readonly Borderless = [...FINBoosterFactory.filter(310, 405), ...FINBoosterFactory.filter(577, 577)];
 	static readonly BorderlessAdventure = FINBoosterFactory.filter(310, 314);
 	static readonly BorderlessArtist = [...FINBoosterFactory.filter(315, 323), ...FINBoosterFactory.filter(577, 577)];
