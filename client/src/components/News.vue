@@ -1,6 +1,13 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
+			<em>July 19, 2025</em>
+			<p>
+				<img src="img/sets/eoe.svg" class="set-icon" style="--invertedness: 100%" alt="EOE" /> Edge of
+				Eternities (EOE) is now available!
+			</p>
+		</div>
+		<div class="news">
 			<em>June 21, 2025</em>
 			<p>Experimental custom cards import from Cube Cobra. Check 'Retrieve custom properties' on import.</p>
 			<p>Improved color balacing (Thanks tiera!)</p>
