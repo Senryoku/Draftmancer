@@ -3649,14 +3649,15 @@ export class EOEBoosterFactory extends BoosterFactory {
 		// 1 Land
 		//   A non-foil (64%) or traditional foil (16%) default frame basic land
 		//   A non-foil (16%) or traditional foil (4%) borderless celestial basic land
-		{
-			const pool = chooseWeighted(
-				[0.64 + 0.16, 0.16 + 0.04],
-				[EOEBoosterFactory.Basics, EOEBoosterFactory.BorderlessCelestialBasics]
-			);
-			const foil = random.realZeroToOneInclusive() <= 0.25;
-			rest.push(getUnique(getRandom(pool), { foil }));
-		}
+		// NOTE: Ignored as they're all basics anyway.
+		// {
+		// 	const pool = chooseWeighted(
+		// 		[0.64 + 0.16, 0.16 + 0.04],
+		// 		[EOEBoosterFactory.Basics, EOEBoosterFactory.BorderlessCelestialBasics]
+		// 	);
+		// 	const foil = random.realZeroToOneInclusive() <= 0.25;
+		// 	rest.push(getUnique(getRandom(pool), { foil }));
+		// }
 
 		return rest;
 	}
