@@ -3484,7 +3484,7 @@ export class EOEBoosterFactory extends BoosterFactory {
 		);
 	}
 
-	static readonly StellarSights = CardsBySet["eos"]; // 30 rares, 10 mythics
+	static readonly StellarSights = CardsBySet["eos"].filter((c) => parseInt(getCard(c).collector_number) <= 45); // 30 rares, 15 mythics
 	static readonly BorderlessViewport = EOEBoosterFactory.filter(277, 286); // 5 rare shock lands and 5 mythic rare legendary Planet lands
 	static readonly BorderlessTriumphant = EOEBoosterFactory.filter(287, 302); // 12 rare creatures, 3 mythic rare creatures, and 1 mythic rare planeswalker
 	static readonly BorderlessSurreal = EOEBoosterFactory.filter(303, 315); // 11 rares, 3 mythics
