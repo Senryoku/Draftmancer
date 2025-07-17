@@ -210,9 +210,22 @@ if not os.path.isfile(BulkDataPath) or ForceDownload:
     # Get Bulk Data URL
     response = requests.get("https://api.scryfall.com/bulk-data")
     bulkdata = json.loads(response.content)
-    allcardURL = next(x for x in bulkdata["data"] if x["type"] == "all_cards")["download_uri"]
-    print("Downloading {}...".format(allcardURL))
-    urllib.request.urlretrieve(allcardURL, BulkDataPath)
+    allcardObject = next(x for x in bulkdata["data"] if x["type"] == "all_cards")
+    if allcardObject is None:
+        raise Exception("Could not find all_cards bulk data")
+    skip = False
+
+    if os.path.isfile(BulkDataPath):
+        updateTime = datetime.datetime.fromisoformat(allcardObject["updated_at"])
+        localFileTimestamp = os.path.getmtime(BulkDataPath)
+        localFileTime = datetime.datetime.fromtimestamp(localFileTimestamp, tz=datetime.timezone.utc)
+        if updateTime < localFileTime:
+            print(f"Bulk data is already up-to-date (local: {localFileTime}, online: {allcardObject['updated_at']}, {updateTime}).")
+            skip = True
+    if not skip:
+        allcardURL = allcardObject["download_uri"]
+        print("Downloading {}...".format(allcardURL))
+        urllib.request.urlretrieve(allcardURL, BulkDataPath)
 
 
 if not os.path.isfile(ScryfallSets) or ForceDownload:
@@ -237,23 +250,58 @@ def append_set_cards(allcards, results):
             print(f"Added: {c['name']}")
 
 
+import decimal
+class DecimalEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, decimal.Decimal):
+            # choose float() or str() here; float is usual if you want numbers
+            return float(o)
+        return super().default(o)
+
 # Manually fetch up-to-date data for a specific set (really unoptimized)
 if FetchSet:
     print("Fetching cards from {}...".format(SetToFetch))
     # setcards = requests.get(json.loads(requests.get(f"https://api.scryfall.com/sets/{SetToFetch}").content)["search_uri"]).json()
-    setcards = requests.get(
+    req_result = requests.get(
         f"https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3A{SetToFetch}"
     ).json()
-    allcards = []
-    with open(BulkDataPath, "r", encoding="utf8") as file:
-        allcards = json.load(file)
-    print(f"All cards: {setcards['total_cards']}")
-    append_set_cards(allcards, setcards)
-    while setcards["has_more"]:
-        setcards = requests.get(setcards["next_page"]).json()
-        append_set_cards(allcards, setcards)
-    with open(BulkDataPath, "w", encoding="utf8") as file:
-        json.dump(allcards, file)
+    
+    print(f"  Expected cards: {req_result['total_cards']}")
+    setcards = req_result["data"]
+    while req_result["has_more"]:
+        req_result = requests.get(req_result["next_page"]).json()
+        setcards = setcards + req_result["data"] 
+    print(f"  Got {len(setcards)} cards from Scryfall.")
+        
+    with open(BulkDataPath, 'r', encoding='utf-8') as infile, open("tmp_cards.json", 'w', encoding='utf-8') as outfile:
+        outfile.write('[\n')
+        first = True
+
+        ids = [card["id"] for card in setcards]
+        setcards_by_ids = {card["id"]: card for card in setcards}
+
+        for obj in ijson.items(infile, 'item'):
+            if not first:
+                outfile.write(",\n")
+            first = False
+            if obj["id"] in setcards_by_ids:
+                print(f"  Updating {obj['name']}")
+                json.dump(setcards_by_ids.pop(obj["id"]), outfile, cls=DecimalEncoder)
+            else:
+                json.dump(obj, outfile, cls=DecimalEncoder)
+
+        for card in setcards_by_ids.values():
+            if not first:
+                outfile.write(",\n")
+            first = False
+            print(f"  Adding {card['name']}")
+            json.dump(card, outfile, cls=DecimalEncoder)
+
+        outfile.write(']')
+
+    os.rename(BulkDataPath, BulkDataPath + ".bak")
+    os.rename("tmp_cards.json", BulkDataPath)
+        
 
 
 def handleTypeLine(typeLine: str) -> [str, list[str]]:

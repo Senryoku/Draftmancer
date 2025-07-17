@@ -64,7 +64,7 @@ typings/
 .next
 
 data/LimitedRatings/*
-data/scryfall-all-cards.json
+data/scryfall-all-cards.json*
 data/BulkArena.json
 Makefile
 client/dist/*
