@@ -311,6 +311,8 @@ if FetchSet:
     os.rename(BulkDataPath, BulkDataPath + ".bak")
     os.rename(tmpFilePath, BulkDataPath)
 
+    ForceCache = True
+
 
 def handleTypeLine(typeLine: str) -> [str, list[str]]:
     arr = typeLine.split(" — ")
