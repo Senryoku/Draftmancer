@@ -46,7 +46,7 @@ ArenaRarity = {1: "basic", 2: "common", 3: "uncommon", 4: "rare", 5: "mythic"}  
 ForceDownload = ForceExtract = ForceCache = ForceRatings = ForceJumpstart = ForceJumpstartHH = ForceSymbology = (
     FetchSet
 ) = False
-SetToFetch = ""
+SetsToFetch = ""
 if len(sys.argv) > 1:
     Arg = sys.argv[1].lower()
     ForceDownload = Arg == "dl"
@@ -56,7 +56,7 @@ if len(sys.argv) > 1:
     ForceSymbology = Arg == "symb"
     FetchSet = Arg == "set" and len(sys.argv) > 2
     if FetchSet:
-        SetToFetch = sys.argv[2].lower()
+        SetsToFetch = sys.argv[2].lower()
         ForceCache = True
 
 MTGAFolder = "H:/SteamLibrary/steamapps/common/MTGA/"
@@ -220,7 +220,9 @@ if not os.path.isfile(BulkDataPath) or ForceDownload:
         localFileTimestamp = os.path.getmtime(BulkDataPath)
         localFileTime = datetime.datetime.fromtimestamp(localFileTimestamp, tz=datetime.timezone.utc)
         if updateTime < localFileTime:
-            print(f"Bulk data is already up-to-date (local: {localFileTime}, online: {allcardObject['updated_at']}, {updateTime}).")
+            print(
+                f"Bulk data is already up-to-date (local: {localFileTime}, online: {allcardObject['updated_at']}, {updateTime})."
+            )
             skip = True
     if not skip:
         allcardURL = allcardObject["download_uri"]
@@ -251,6 +253,8 @@ def append_set_cards(allcards, results):
 
 
 import decimal
+
+
 class DecimalEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, decimal.Decimal):
@@ -258,29 +262,34 @@ class DecimalEncoder(json.JSONEncoder):
             return float(o)
         return super().default(o)
 
+
 # Manually fetch up-to-date data for a specific set (really unoptimized)
 if FetchSet:
-    print("Fetching cards from {}...".format(SetToFetch))
-    # setcards = requests.get(json.loads(requests.get(f"https://api.scryfall.com/sets/{SetToFetch}").content)["search_uri"]).json()
-    req_result = requests.get(
-        f"https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3A{SetToFetch}"
-    ).json()
-    
-    print(f"  Expected cards: {req_result['total_cards']}")
-    setcards = req_result["data"]
-    while req_result["has_more"]:
-        req_result = requests.get(req_result["next_page"]).json()
-        setcards = setcards + req_result["data"] 
-    print(f"  Got {len(setcards)} cards from Scryfall.")
-        
-    with open(BulkDataPath, 'r', encoding='utf-8') as infile, open("tmp_cards.json", 'w', encoding='utf-8') as outfile:
-        outfile.write('[\n')
+    setcards = []
+    for setCode in SetsToFetch.split(","):
+        print("Fetching cards from {}...".format(setCode))
+        # setcards = requests.get(json.loads(requests.get(f"https://api.scryfall.com/sets/{SetsToFetch}").content)["search_uri"]).json()
+        req_result = requests.get(
+            f"https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3A{setCode}"
+        ).json()
+
+        print(f"  Expected cards: {req_result['total_cards']}")
+        setcards = req_result["data"]
+        while req_result["has_more"]:
+            req_result = requests.get(req_result["next_page"]).json()
+            setcards = setcards + req_result["data"]
+        print(f"  Got {len(setcards)} cards from Scryfall for {setCode}.")
+    print(f"Total cards: {len(setcards)}")
+
+    tmpFilePath = BulkDataPath + ".tmp"
+    with open(BulkDataPath, "r", encoding="utf-8") as infile, open(tmpFilePath, "w", encoding="utf-8") as outfile:
+        outfile.write("[\n")
         first = True
 
         ids = [card["id"] for card in setcards]
         setcards_by_ids = {card["id"]: card for card in setcards}
 
-        for obj in ijson.items(infile, 'item'):
+        for obj in ijson.items(infile, "item"):
             if not first:
                 outfile.write(",\n")
             first = False
@@ -297,11 +306,10 @@ if FetchSet:
             print(f"  Adding {card['name']}")
             json.dump(card, outfile, cls=DecimalEncoder)
 
-        outfile.write(']')
+        outfile.write("]")
 
     os.rename(BulkDataPath, BulkDataPath + ".bak")
-    os.rename("tmp_cards.json", BulkDataPath)
-        
+    os.rename(tmpFilePath, BulkDataPath)
 
 
 def handleTypeLine(typeLine: str) -> [str, list[str]]:
