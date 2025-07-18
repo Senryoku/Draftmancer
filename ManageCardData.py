@@ -268,13 +268,12 @@ if FetchSet:
     setcards = []
     for setCode in SetsToFetch.split(","):
         print("Fetching cards from {}...".format(setCode))
-        # setcards = requests.get(json.loads(requests.get(f"https://api.scryfall.com/sets/{SetsToFetch}").content)["search_uri"]).json()
         req_result = requests.get(
-            f"https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3A{setCode}"
+            f"https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&unique=prints&q=e%3A{setCode}"
         ).json()
 
         print(f"  Expected cards: {req_result['total_cards']}")
-        setcards = req_result["data"]
+        setcards = setcards + req_result["data"]
         while req_result["has_more"]:
             req_result = requests.get(req_result["next_page"]).json()
             setcards = setcards + req_result["data"]
@@ -286,7 +285,6 @@ if FetchSet:
         outfile.write("[\n")
         first = True
 
-        ids = [card["id"] for card in setcards]
         setcards_by_ids = {card["id"]: card for card in setcards}
 
         for obj in ijson.items(infile, "item"):
@@ -299,6 +297,8 @@ if FetchSet:
             else:
                 json.dump(obj, outfile, cls=DecimalEncoder)
 
+        print(f"Writing {len(setcards_by_ids)} new cards...")
+
         for card in setcards_by_ids.values():
             if not first:
                 outfile.write(",\n")
@@ -308,6 +308,8 @@ if FetchSet:
 
         outfile.write("]")
 
+    if os.path.isfile(BulkDataPath + ".bak"):
+        os.remove(BulkDataPath + ".bak")
     os.rename(BulkDataPath, BulkDataPath + ".bak")
     os.rename(tmpFilePath, BulkDataPath)
 
