@@ -265,7 +265,7 @@ class DecimalEncoder(json.JSONEncoder):
 
 # Manually fetch up-to-date data for a specific set (really unoptimized)
 if FetchSet:
-    setcards = []
+    updatedcards = []
     for setCode in SetsToFetch.split(","):
         print("Fetching cards from {}...".format(setCode))
         req_result = requests.get(
@@ -273,19 +273,22 @@ if FetchSet:
         ).json()
 
         print(f"  Expected cards: {req_result['total_cards']}")
-        setcards = setcards + req_result["data"]
+        setcards = req_result["data"]
         while req_result["has_more"]:
             req_result = requests.get(req_result["next_page"]).json()
             setcards = setcards + req_result["data"]
         print(f"  Got {len(setcards)} cards from Scryfall for {setCode}.")
-    print(f"Total cards: {len(setcards)}")
+        updatedcards = updatedcards + setcards
+    print(f"Total cards: {len(updatedcards)}")
 
     tmpFilePath = BulkDataPath + ".tmp"
     with open(BulkDataPath, "r", encoding="utf-8") as infile, open(tmpFilePath, "w", encoding="utf-8") as outfile:
         outfile.write("[\n")
         first = True
 
-        setcards_by_ids = {card["id"]: card for card in setcards}
+        setcards_by_ids = {card["id"]: card for card in updatedcards}
+
+        print(f"Checking {len(setcards_by_ids)} cards...")
 
         for obj in ijson.items(infile, "item"):
             if not first:
