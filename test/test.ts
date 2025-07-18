@@ -382,7 +382,7 @@ describe("Sets content", function () {
 		expect(SpecialGuests.eoe).to.have.lengthOf(10);
 		expect(EOEBoosterFactory.StellarSights).to.have.lengthOf(45);
 		expect(filterRarity(EOEBoosterFactory.StellarSights, "rare")).to.have.lengthOf(30);
-		expect(filterRarity(EOEBoosterFactory.StellarSights, "mythics")).to.have.lengthOf(15);
+		expect(filterRarity(EOEBoosterFactory.StellarSights, "mythic")).to.have.lengthOf(15);
 
 		expect(EOEBoosterFactory.BorderlessViewport).to.have.lengthOf(10);
 		expect(filterRarity(EOEBoosterFactory.BorderlessViewport, "rare")).to.have.lengthOf(5);
