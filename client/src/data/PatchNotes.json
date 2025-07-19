@@ -1,5 +1,11 @@
 [
 	{
+		"date": "19/07/2025",
+		"notes": [
+			"Edge of Eternities (EOE) support."
+		]
+	},
+	{
 		"date": "21/06/2025",
 		"notes": [
 			"Experimental custom card import from Cube Cobra",

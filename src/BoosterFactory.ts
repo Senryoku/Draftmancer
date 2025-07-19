@@ -1918,6 +1918,7 @@ export const SpecialGuests = {
 	fdn: filterSetByNumber("spg", 74, 83),
 	dft: filterSetByNumber("spg", 84, 93),
 	tdm: filterSetByNumber("spg", 104, 113), // Next 5 SPG are exclusive to Collector Boosters
+	eoe: filterSetByNumber("spg", 119, 128),
 };
 
 // NOTE: This mimics the ratios of wildcard set boosters described here: https://magic.wizards.com/en/news/making-magic/set-boosters-2020-07-25
@@ -3116,8 +3117,8 @@ class TDMBoosterFactory extends BoosterFactory {
 
 	static readonly Showcase = TDMBoosterFactory.filter(292, 326);
 	static readonly BorderlessClan = TDMBoosterFactory.filter(327, 376);
-	static readonly BorderlessReversible = TDMBoosterFactory.filter(377, 382); // TODO
-	static readonly Borderless = TDMBoosterFactory.filter(383, 398); // TODO
+	static readonly BorderlessReversible = TDMBoosterFactory.filter(377, 382);
+	static readonly Borderless = TDMBoosterFactory.filter(383, 398);
 	static readonly Basics = TDMBoosterFactory.filter(277, 291);
 	static readonly FullArtBasics = TDMBoosterFactory.filter(272, 276);
 	static readonly CommonDualLands = TDMBoosterFactory.filter(250, 271).filter((c) => getCard(c).rarity === "common");
@@ -3300,7 +3301,7 @@ class TDMBoosterFactory extends BoosterFactory {
 }
 
 // Final Fantasy (FIN) - https://magic.wizards.com/en/news/feature/collecting-final-fantasy
-class FINBoosterFactory extends BoosterFactory {
+export class FINBoosterFactory extends BoosterFactory {
 	static filter(min: number, max: number) {
 		return CardsBySet["fin"].filter(
 			(c) =>
@@ -3310,7 +3311,7 @@ class FINBoosterFactory extends BoosterFactory {
 		);
 	}
 
-	static readonly ThroughTheAges = CardsBySet["fca"];
+	static readonly ThroughTheAges = CardsBySet["fca"].filter((c) => !getCard(c).collector_number.startsWith("A"));
 	static readonly Borderless = [...FINBoosterFactory.filter(310, 405), ...FINBoosterFactory.filter(577, 577)];
 	static readonly BorderlessAdventure = FINBoosterFactory.filter(310, 314);
 	static readonly BorderlessArtist = [...FINBoosterFactory.filter(315, 323), ...FINBoosterFactory.filter(577, 577)];
@@ -3475,6 +3476,193 @@ class FINBoosterFactory extends BoosterFactory {
 	}
 }
 
+// Edge of Eternities (EOE) - https://magic.wizards.com/en/news/feature/collecting-edge-of-eternities
+export class EOEBoosterFactory extends BoosterFactory {
+	static filter(min: number, max: number) {
+		return CardsBySet["eoe"].filter(
+			(c) => parseInt(getCard(c).collector_number) >= min && parseInt(getCard(c).collector_number) <= max
+		);
+	}
+
+	static readonly StellarSights = CardsBySet["eos"].filter((c) => parseInt(getCard(c).collector_number) <= 45); // 30 rares, 15 mythics
+	static readonly BorderlessViewport = EOEBoosterFactory.filter(277, 286); // 5 rare shock lands and 5 mythic rare legendary Planet lands
+	static readonly BorderlessTriumphant = EOEBoosterFactory.filter(287, 302); // 12 rare creatures, 3 mythic rare creatures, and 1 mythic rare planeswalker
+	static readonly BorderlessSurreal = EOEBoosterFactory.filter(303, 315); // 11 rares, 3 mythics
+	static readonly Basics = EOEBoosterFactory.filter(267, 276);
+	static readonly BorderlessCelestialBasics = EOEBoosterFactory.filter(262, 266);
+
+	stellarSights: SlotedCardPool;
+	borderlessViewport: SlotedCardPool;
+	borderlessTriumphant: SlotedCardPool;
+	borderlessSurreal: SlotedCardPool;
+	borderlessTS: SlotedCardPool;
+	borderlessVTS: SlotedCardPool;
+	spg: CardPool = new CardPool();
+
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
+		super(cardPool, landSlot, options);
+		this.stellarSights = cidsToSlotedCardPool(EOEBoosterFactory.StellarSights, options.maxDuplicates);
+		this.borderlessViewport = cidsToSlotedCardPool(EOEBoosterFactory.BorderlessViewport, options.maxDuplicates);
+		this.borderlessTriumphant = cidsToSlotedCardPool(EOEBoosterFactory.BorderlessTriumphant, options.maxDuplicates);
+		this.borderlessSurreal = cidsToSlotedCardPool(EOEBoosterFactory.BorderlessSurreal, options.maxDuplicates);
+		this.borderlessTS = cidsToSlotedCardPool(
+			[...EOEBoosterFactory.BorderlessTriumphant, ...EOEBoosterFactory.BorderlessSurreal],
+			options.maxDuplicates
+		);
+		this.borderlessVTS = cidsToSlotedCardPool(
+			[
+				...EOEBoosterFactory.BorderlessViewport,
+				...EOEBoosterFactory.BorderlessTriumphant,
+				...EOEBoosterFactory.BorderlessSurreal,
+			],
+			options.maxDuplicates
+		);
+		for (const cid of SpecialGuests.eoe) {
+			const c = getCard(cid);
+			this.spg.set(cid, options.maxDuplicates?.[c.rarity] ?? DefaultMaxDuplicates);
+		}
+	}
+
+	generateBooster(targets: Targets) {
+		const updatedTargets = structuredClone(targets);
+		// 6–7 Commons
+		if (targets === DefaultBoosterTargets) updatedTargets.common = Math.max(0, updatedTargets.common - 3);
+		else updatedTargets.common = Math.max(1, updatedTargets.common - 2);
+		// 3 Uncommons
+
+		const booster: UniqueCard[] = [];
+
+		// "In 1.8% of Play Boosters, 1 of 10 non-foil Special Guests cards will replace a common. Of note, Special Guests cards aren't found in the wildcard nor traditional foil slot in Play Boosters."
+		const spgRoll = random.realZeroToOneInclusive();
+		if (spgRoll < 0.018) {
+			updatedTargets.common = Math.max(0, updatedTargets.common - 1);
+			booster.push(pickCard(this.spg, booster, { foil: false }));
+		}
+
+		// 1 Traditional foil card of any rarity
+		{
+			const VTSRares = 5 + 12 + 11;
+			const VTSMythics = 5 + 3 + 1 + 3;
+			const pool = chooseWeighted(
+				[
+					//   A common (58%), uncommon (32%), rare (6.4%), or mythic rare (1.1%) from Edge of Eternities's main set
+					0.58,
+					0.32,
+					0.064,
+					0.011,
+					//   A rare (1%) or mythic rare (less than 1%) Stellar Sights land
+					0.01, // NOTE: Adds up to 98.5% here, last 3 entries share the remaining 1.5%
+					0.01 / 4, // "less than 0.1%", using the ratio from non-foil wildcard
+					//   A rare (less than 1%) or mythic rare (less than 1%) borderless viewport, triumphant, or surreal space card
+					(1 - (0.58 + 0.32 + 0.064 + 0.011 + 0.01 + 0.01 / 4)) * (VTSRares / (VTSRares + VTSMythics)), //  FIXME: "less than 0.1%"
+					(1 - (0.58 + 0.32 + 0.064 + 0.011 + 0.01 + 0.01 / 4)) * (VTSMythics / (VTSRares + VTSMythics)), //  FIXME: "less than 0.1%"
+				],
+				[
+					this.cardPool.common,
+					this.cardPool.uncommon,
+					this.cardPool.rare,
+					this.cardPool.mythic,
+					this.stellarSights.rare,
+					this.stellarSights.mythic,
+					this.borderlessVTS.rare,
+					this.borderlessVTS.mythic,
+				]
+			);
+			booster.push(pickCard(pool, booster, { foil: true }));
+		}
+
+		// 1 Rare or mythic rare card
+		while (updatedTargets.rare > 0) {
+			updatedTargets.rare -= 1;
+			const pool = chooseWeighted(
+				[
+					//   A rare (80.4%) or mythic rare (14.2%) from Edge of Eternities's main set
+					0.804,
+					0.142,
+					//   A rare (2%) or mythic rare (less than 1%) borderless triumphant card
+					0.02,
+					0.02 * (4 / 16),
+					//   A rare (2%) or mythic rare (less than 1%) borderless surreal space card
+					0.02,
+					0.02 * (3 / 14),
+					//   A mythic rare (less than 1%) borderless viewport land
+					1 - (0.804 + 0.142 + 0.02 + 0.02 * (4 / 16) + 0.02 + 0.02 * (3 / 14)),
+				],
+				[
+					this.cardPool.rare,
+					this.cardPool.mythic,
+					this.borderlessTriumphant.rare,
+					this.borderlessTriumphant.mythic,
+					this.borderlessSurreal.rare,
+					this.borderlessSurreal.mythic,
+					this.borderlessViewport.mythic,
+				]
+			);
+			booster.push(pickCard(pool, booster));
+		}
+
+		// 1 Wildcard of any rarity
+		{
+			const TSRares = 12 + 11;
+			const TSMythics = 3 + 1 + 3;
+			const pool = chooseWeighted(
+				[
+					//   A common (12.5%), uncommon (62.5%), rare (10.6%), or mythic rare (less than 1%) from Edge of Eternities's main set (EOE default frame cards)
+					0.125,
+					0.625,
+					0.106,
+					0.007, // FIXME: "Less than 1%"
+					//   A rare (10%) or mythic rare (2.5%) Stellar Sights land
+					0.1,
+					0.025,
+					//   A rare (1%) or mythic rare (less than 1%) borderless viewport land
+					0.01,
+					0.01 / 7, // FIXME: "less than 0.1%"
+					//   A rare (less than 1%) or mythic rare (less than 1%) borderless triumphant or surreal space card
+					(1 - (0.125 + 0.625 + 0.106 + 0.007 + 0.1 + 0.025 + 0.01 + 0.01 / 7)) *
+						(TSRares / (TSRares + TSMythics)), // FIXME: "less than 0.1%"
+					(1 - (0.125 + 0.625 + 0.106 + 0.007 + 0.1 + 0.025 + 0.01 + 0.01 / 7)) *
+						(TSMythics / (TSRares + TSMythics)), // FIXME: "less than 0.1%"
+				],
+				[
+					this.cardPool.common,
+					this.cardPool.uncommon,
+					this.cardPool.rare,
+					this.cardPool.mythic,
+
+					this.stellarSights.rare,
+					this.stellarSights.mythic,
+
+					this.borderlessViewport.rare,
+					this.borderlessViewport.mythic,
+
+					this.borderlessTS.rare,
+					this.borderlessTS.mythic,
+				]
+			);
+			booster.push(pickCard(pool, booster));
+		}
+
+		const rest = super.generateBooster(updatedTargets, booster);
+		if (isMessageError(rest)) return rest;
+
+		// 1 Land
+		//   A non-foil (64%) or traditional foil (16%) default frame basic land
+		//   A non-foil (16%) or traditional foil (4%) borderless celestial basic land
+		// NOTE: Ignored as they're all basics anyway.
+		// {
+		// 	const pool = chooseWeighted(
+		// 		[0.64 + 0.16, 0.16 + 0.04],
+		// 		[EOEBoosterFactory.Basics, EOEBoosterFactory.BorderlessCelestialBasics]
+		// 	);
+		// 	const foil = random.realZeroToOneInclusive() <= 0.25;
+		// 	rest.push(getUnique(getRandom(pool), { foil }));
+		// }
+
+		return rest;
+	}
+}
+
 // Set specific rules.
 // Neither DOM, WAR or ZNR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
 export const SetSpecificFactories: {
@@ -3529,6 +3717,7 @@ export const SetSpecificFactories: {
 	dft: DFTBoosterFactory,
 	tdm: TDMBoosterFactory,
 	fin: FINBoosterFactory,
+	eoe: EOEBoosterFactory,
 };
 
 export const getBoosterFactory = function (

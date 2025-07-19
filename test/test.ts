@@ -22,7 +22,13 @@ import { Constants } from "../src/Constants.js";
 import type { DistributionMode } from "../src/Session/SessionTypes";
 import { ReadyState } from "../src/Session/SessionTypes.js";
 
-import { SpecialGuests, MH3BoosterFactory } from "../src/BoosterFactory.js";
+import {
+	SpecialGuests,
+	MH3BoosterFactory,
+	SetSpecificFactories,
+	EOEBoosterFactory,
+	FINBoosterFactory,
+} from "../src/BoosterFactory.js";
 
 const clientStates: {
 	[uid: UserID]: { pickedCards: UniqueCard[]; state: ReturnType<DraftState["syncData"]> };
@@ -287,6 +293,7 @@ describe("Sets content", function () {
 		dft: { common: 91, uncommon: 100, rare: 60, mythic: 20 }, // 81 commons plus 10 dual lands
 		tdm: { common: 91, uncommon: 100, rare: 60, mythic: 20 }, // 81 commons plus 10 dual lands
 		fin: { common: 90, uncommon: 109, rare: 74, mythic: 20 }, // 80 commons plus 10 dual lands
+		eoe: { common: 81, uncommon: 100, rare: 60, mythic: 20 },
 	};
 
 	beforeEach(function (done) {
@@ -364,6 +371,33 @@ describe("Sets content", function () {
 	});
 	it("The Big Score (BIG)", () => {
 		expect(BoosterCardsBySet["big"]).to.have.lengthOf(30);
+	});
+	it("Final Fantasy (FIN) special slots", () => {
+		expect(FINBoosterFactory.ThroughTheAges).to.have.lengthOf(64);
+	});
+	it("Edge of Eternities (EOE) special slots", () => {
+		const filterRarity = (arr: string[], rarity: string) => {
+			return arr.filter((c) => getCard(c).rarity === rarity);
+		};
+		expect(SpecialGuests.eoe).to.have.lengthOf(10);
+		expect(EOEBoosterFactory.StellarSights).to.have.lengthOf(45);
+		expect(filterRarity(EOEBoosterFactory.StellarSights, "rare")).to.have.lengthOf(30);
+		expect(filterRarity(EOEBoosterFactory.StellarSights, "mythic")).to.have.lengthOf(15);
+
+		expect(EOEBoosterFactory.BorderlessViewport).to.have.lengthOf(10);
+		expect(filterRarity(EOEBoosterFactory.BorderlessViewport, "rare")).to.have.lengthOf(5);
+		expect(filterRarity(EOEBoosterFactory.BorderlessViewport, "mythic")).to.have.lengthOf(5);
+
+		expect(EOEBoosterFactory.BorderlessTriumphant).to.have.lengthOf(16);
+		expect(filterRarity(EOEBoosterFactory.BorderlessTriumphant, "rare")).to.have.lengthOf(12);
+		expect(filterRarity(EOEBoosterFactory.BorderlessTriumphant, "mythic")).to.have.lengthOf(4);
+
+		expect(EOEBoosterFactory.BorderlessSurreal).to.have.lengthOf(14);
+		expect(filterRarity(EOEBoosterFactory.BorderlessSurreal, "rare")).to.have.lengthOf(11);
+		expect(filterRarity(EOEBoosterFactory.BorderlessSurreal, "mythic")).to.have.lengthOf(3);
+
+		expect(EOEBoosterFactory.Basics).to.have.lengthOf(10);
+		expect(EOEBoosterFactory.BorderlessCelestialBasics).to.have.lengthOf(5);
 	});
 
 	describe("Modern Horizons 3 (MH3)", function () {
@@ -778,7 +812,8 @@ describe("Single Draft (Two Players)", function () {
 							(set === "mh3" && (c.set === "spg" || c.set === "m3c")) ||
 							(["blb", "dsk", "fdn", "dft", "tdm"].includes(set) && c.set === "spg") ||
 							(set === "mb2" && c.set === "plst") ||
-							(set === "fin" && c.set === "fca")
+							(set === "fin" && c.set === "fca") ||
+							(set === "eoe" && c.set === "eos")
 					),
 					`All cards in booster should be of the desired set, got [${[...new Set(b.map((c) => c.set))]}].`
 				).to.be.true;

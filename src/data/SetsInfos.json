@@ -1643,6 +1643,11 @@
         "block": "Scars of Mirrodin",
         "icon": "img/sets/nph.svg"
     },
+    "o90p": {
+        "code": "o90p",
+        "fullName": "Oversized 90's Promos",
+        "icon": "img/sets/o90p.svg"
+    },
     "oafc": {
         "code": "oafc",
         "fullName": "Forgotten Realms Commander Display Commanders",
@@ -1653,10 +1658,74 @@
         "fullName": "Arena New Player Experience Cards",
         "icon": "img/sets/oana.svg"
     },
+    "oarc": {
+        "code": "oarc",
+        "fullName": "Archenemy Schemes",
+        "icon": "img/sets/oarc.svg"
+    },
+    "oc13": {
+        "code": "oc13",
+        "fullName": "Commander 2013 Oversized",
+        "block": "Commander",
+        "icon": "img/sets/oc13.svg"
+    },
+    "oc14": {
+        "code": "oc14",
+        "fullName": "Commander 2014 Oversized",
+        "block": "Commander",
+        "icon": "img/sets/oc14.svg"
+    },
+    "oc15": {
+        "code": "oc15",
+        "fullName": "Commander 2015 Oversized",
+        "block": "Commander",
+        "icon": "img/sets/oc15.svg"
+    },
+    "oc16": {
+        "code": "oc16",
+        "fullName": "Commander 2016 Oversized",
+        "block": "Commander",
+        "icon": "img/sets/oc16.svg"
+    },
+    "oc17": {
+        "code": "oc17",
+        "fullName": "Commander 2017 Oversized",
+        "block": "Commander",
+        "icon": "img/sets/oc17.svg"
+    },
+    "oc18": {
+        "code": "oc18",
+        "fullName": "Commander 2018 Oversized",
+        "block": "Commander",
+        "icon": "img/sets/oc18.svg"
+    },
+    "oc19": {
+        "code": "oc19",
+        "fullName": "Commander 2019 Oversized",
+        "block": "Commander",
+        "icon": "img/sets/oc19.svg"
+    },
+    "oc20": {
+        "code": "oc20",
+        "fullName": "Commander 2020 Oversized",
+        "icon": "img/sets/oc20.svg"
+    },
     "oc21": {
         "code": "oc21",
         "fullName": "Commander 2021 Display Commanders",
         "icon": "img/sets/oc21.svg"
+    },
+    "ocm1": {
+        "code": "ocm1",
+        "fullName": "Commander's Arsenal Oversized",
+        "block": "Commander",
+        "icon": "img/sets/ocm1.svg"
+    },
+    "ocmd": {
+        "code": "ocmd",
+        "fullName": "Commander 2011 Oversized",
+        "block": "Commander",
+        "icon": "img/sets/ocmd.svg"
     },
     "ody": {
         "code": "ody",
@@ -1664,11 +1733,31 @@
         "block": "Odyssey",
         "icon": "img/sets/ody.svg"
     },
+    "oe01": {
+        "code": "oe01",
+        "fullName": "Archenemy: Nicol Bolas Schemes",
+        "icon": "img/sets/oe01.svg"
+    },
     "ogw": {
         "code": "ogw",
         "fullName": "Oath of the Gatewatch",
         "block": "Battle for Zendikar",
         "icon": "img/sets/ogw.svg"
+    },
+    "ohop": {
+        "code": "ohop",
+        "fullName": "Planechase Planes",
+        "icon": "img/sets/ohop.svg"
+    },
+    "olep": {
+        "code": "olep",
+        "fullName": "Oversized League Prizes",
+        "icon": "img/sets/olep.svg"
+    },
+    "olgc": {
+        "code": "olgc",
+        "fullName": "Legacy Championship",
+        "icon": "img/sets/olgc.svg"
     },
     "omic": {
         "code": "omic",
@@ -1693,6 +1782,16 @@
         "block": "Onslaught",
         "icon": "img/sets/ons.svg"
     },
+    "opc2": {
+        "code": "opc2",
+        "fullName": "Planechase 2012 Planes",
+        "icon": "img/sets/opc2.svg"
+    },
+    "opca": {
+        "code": "opca",
+        "fullName": "Planechase Anthology Planes",
+        "icon": "img/sets/opca.svg"
+    },
     "ori": {
         "code": "ori",
         "fullName": "Magic Origins",
@@ -1716,6 +1815,11 @@
         "fullName": "Breaking News",
         "block": "Outlaws of Thunder Junction",
         "icon": "img/sets/otp.svg"
+    },
+    "ovnt": {
+        "code": "ovnt",
+        "fullName": "Vintage Championship",
+        "icon": "img/sets/ovnt.svg"
     },
     "ovoc": {
         "code": "ovoc",
@@ -2027,6 +2131,12 @@
         "fullName": "Battle for Baldur's Gate Promos",
         "icon": "img/sets/pclb.svg"
     },
+    "pcmd": {
+        "code": "pcmd",
+        "fullName": "Commander 2011 Launch Party",
+        "block": "Commander",
+        "icon": "img/sets/pcmd.svg"
+    },
     "pcmp": {
         "code": "pcmp",
         "fullName": "Champs and States",
@@ -2299,6 +2409,16 @@
         "fullName": "2022 Heroes of the Realm",
         "block": "Heroes of the Realm",
         "icon": "img/sets/ph22.svg"
+    },
+    "phel": {
+        "code": "phel",
+        "fullName": "Open the Helvault",
+        "icon": "img/sets/phel.svg"
+    },
+    "phop": {
+        "code": "phop",
+        "fullName": "Planechase Promos",
+        "icon": "img/sets/phop.svg"
     },
     "phou": {
         "code": "phou",
@@ -2589,6 +2709,11 @@
         "fullName": "Modern Horizons 3 Promos",
         "icon": "img/sets/pmh3.svg"
     },
+    "pmic": {
+        "code": "pmic",
+        "fullName": "MicroProse Promos",
+        "icon": "img/sets/pmic.svg"
+    },
     "pmid": {
         "code": "pmid",
         "fullName": "Innistrad: Midnight Hunt Promos",
@@ -2728,6 +2853,11 @@
         "code": "potj",
         "fullName": "Outlaws of Thunder Junction Promos",
         "icon": "img/sets/potj.svg"
+    },
+    "ppc1": {
+        "code": "ppc1",
+        "fullName": "M15 Prerelease Challenge",
+        "icon": "img/sets/ppc1.svg"
     },
     "ppcy": {
         "code": "ppcy",
@@ -2943,6 +3073,11 @@
         "fullName": "FIN Standard Showdown",
         "icon": "img/sets/pss5.svg"
     },
+    "pssc": {
+        "code": "pssc",
+        "fullName": "Secret Lair Showcase Planes",
+        "icon": "img/sets/pssc.svg"
+    },
     "psth": {
         "code": "psth",
         "fullName": "Stronghold Promos",
@@ -3062,6 +3197,11 @@
         "code": "pust",
         "fullName": "Unstable Promos",
         "icon": "img/sets/pust.svg"
+    },
+    "pvan": {
+        "code": "pvan",
+        "fullName": "Vanguard Series",
+        "icon": "img/sets/pvan.svg"
     },
     "pvow": {
         "code": "pvow",
@@ -3446,6 +3586,11 @@
         "fullName": "Commander 2015 Tokens",
         "block": "Commander",
         "icon": "img/sets/tc15.svg"
+    },
+    "tclb": {
+        "code": "tclb",
+        "fullName": "Battle for Baldur's Gate Tokens",
+        "icon": "img/sets/tclb.svg"
     },
     "tcm2": {
         "code": "tcm2",

@@ -46,7 +46,7 @@ ArenaRarity = {1: "basic", 2: "common", 3: "uncommon", 4: "rare", 5: "mythic"}  
 ForceDownload = ForceExtract = ForceCache = ForceRatings = ForceJumpstart = ForceJumpstartHH = ForceSymbology = (
     FetchSet
 ) = False
-SetToFetch = ""
+SetsToFetch = ""
 if len(sys.argv) > 1:
     Arg = sys.argv[1].lower()
     ForceDownload = Arg == "dl"
@@ -56,7 +56,7 @@ if len(sys.argv) > 1:
     ForceSymbology = Arg == "symb"
     FetchSet = Arg == "set" and len(sys.argv) > 2
     if FetchSet:
-        SetToFetch = sys.argv[2].lower()
+        SetsToFetch = sys.argv[2].lower()
         ForceCache = True
 
 MTGAFolder = "H:/SteamLibrary/steamapps/common/MTGA/"
@@ -210,9 +210,24 @@ if not os.path.isfile(BulkDataPath) or ForceDownload:
     # Get Bulk Data URL
     response = requests.get("https://api.scryfall.com/bulk-data")
     bulkdata = json.loads(response.content)
-    allcardURL = next(x for x in bulkdata["data"] if x["type"] == "all_cards")["download_uri"]
-    print("Downloading {}...".format(allcardURL))
-    urllib.request.urlretrieve(allcardURL, BulkDataPath)
+    allcardObject = next(x for x in bulkdata["data"] if x["type"] == "all_cards")
+    if allcardObject is None:
+        raise Exception("Could not find all_cards bulk data")
+    skip = False
+
+    if os.path.isfile(BulkDataPath):
+        updateTime = datetime.datetime.fromisoformat(allcardObject["updated_at"])
+        localFileTimestamp = os.path.getmtime(BulkDataPath)
+        localFileTime = datetime.datetime.fromtimestamp(localFileTimestamp, tz=datetime.timezone.utc)
+        if updateTime < localFileTime:
+            print(
+                f"Bulk data is already up-to-date (local: {localFileTime}, online: {allcardObject['updated_at']}, {updateTime})."
+            )
+            skip = True
+    if not skip:
+        allcardURL = allcardObject["download_uri"]
+        print("Downloading {}...".format(allcardURL))
+        urllib.request.urlretrieve(allcardURL, BulkDataPath)
 
 
 if not os.path.isfile(ScryfallSets) or ForceDownload:
@@ -237,23 +252,71 @@ def append_set_cards(allcards, results):
             print(f"Added: {c['name']}")
 
 
+import decimal
+
+
+class DecimalEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, decimal.Decimal):
+            # choose float() or str() here; float is usual if you want numbers
+            return float(o)
+        return super().default(o)
+
+
 # Manually fetch up-to-date data for a specific set (really unoptimized)
 if FetchSet:
-    print("Fetching cards from {}...".format(SetToFetch))
-    # setcards = requests.get(json.loads(requests.get(f"https://api.scryfall.com/sets/{SetToFetch}").content)["search_uri"]).json()
-    setcards = requests.get(
-        f"https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&q=e%3A{SetToFetch}"
-    ).json()
-    allcards = []
-    with open(BulkDataPath, "r", encoding="utf8") as file:
-        allcards = json.load(file)
-    print(f"All cards: {setcards['total_cards']}")
-    append_set_cards(allcards, setcards)
-    while setcards["has_more"]:
-        setcards = requests.get(setcards["next_page"]).json()
-        append_set_cards(allcards, setcards)
-    with open(BulkDataPath, "w", encoding="utf8") as file:
-        json.dump(allcards, file)
+    updatedcards = []
+    for setCode in SetsToFetch.split(","):
+        print("Fetching cards from {}...".format(setCode))
+        req_result = requests.get(
+            f"https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&unique=prints&q=e%3A{setCode}"
+        ).json()
+
+        print(f"  Expected cards: {req_result['total_cards']}")
+        setcards = req_result["data"]
+        while req_result["has_more"]:
+            req_result = requests.get(req_result["next_page"]).json()
+            setcards = setcards + req_result["data"]
+        print(f"  Got {len(setcards)} cards from Scryfall for {setCode}.")
+        updatedcards = updatedcards + setcards
+    print(f"Total cards: {len(updatedcards)}")
+
+    tmpFilePath = BulkDataPath + ".tmp"
+    with open(BulkDataPath, "r", encoding="utf-8") as infile, open(tmpFilePath, "w", encoding="utf-8") as outfile:
+        outfile.write("[\n")
+        first = True
+
+        setcards_by_ids = {card["id"]: card for card in updatedcards}
+
+        print(f"Checking {len(setcards_by_ids)} cards...")
+
+        for obj in ijson.items(infile, "item"):
+            if not first:
+                outfile.write(",\n")
+            first = False
+            if obj["id"] in setcards_by_ids:
+                print(f"  Updating {obj['name']}")
+                json.dump(setcards_by_ids.pop(obj["id"]), outfile, cls=DecimalEncoder)
+            else:
+                json.dump(obj, outfile, cls=DecimalEncoder)
+
+        print(f"Writing {len(setcards_by_ids)} new cards...")
+
+        for card in setcards_by_ids.values():
+            if not first:
+                outfile.write(",\n")
+            first = False
+            print(f"  Adding {card['name']}")
+            json.dump(card, outfile, cls=DecimalEncoder)
+
+        outfile.write("]")
+
+    if os.path.isfile(BulkDataPath + ".bak"):
+        os.remove(BulkDataPath + ".bak")
+    os.rename(BulkDataPath, BulkDataPath + ".bak")
+    os.rename(tmpFilePath, BulkDataPath)
+
+    ForceCache = True
 
 
 def handleTypeLine(typeLine: str) -> [str, list[str]]:
@@ -309,9 +372,7 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
     all_cards = []
     with open(BulkDataPath, "r", encoding="utf8") as file:
         objects = ijson.items(file, "item")
-        ScryfallCards = (
-            o for o in objects if not (o["oversized"] or o["layout"] in ["token", "double_faced_token", "art_series"])
-        )
+        ScryfallCards = (o for o in objects if not (o["layout"] in ["token", "double_faced_token", "art_series"]))
         # print("Loading Scryfall bulk data... ")
         # ScryfallCards = json.load(file)
 
@@ -323,7 +384,7 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
         for c in ScryfallCards:
             handled += 1
 
-            if c["oversized"] or c["layout"] in ["token", "double_faced_token", "emblem", "art_series"]:
+            if c["layout"] in ["token", "double_faced_token", "emblem", "art_series"]:
                 # Essence of Ajani is an playtest emblem that can played as a normal card.
                 if c["name"] not in ["Essence of Ajani"]:
                     continue
@@ -579,6 +640,8 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
                 selection["in_booster"] = safeInBoosterCheck(c, 293)
                 if selection["collector_number"].endswith("b"):
                     selection["in_booster"] = False
+            case "eoe":
+                selection["in_booster"] = safeInBoosterCheck(c, 261)
 
         if c["collector_number"].endswith("†"):
             selection["in_booster"] = False
@@ -1085,7 +1148,7 @@ constants["PrimarySets"] = [
     for s in PrimarySets
     if s in setinfos
     and s not in subsets
-    and s not in ["ren", "rin", "a22", "y22", "j22", "sis", "ltc", "who", "wot", "acr", "eoe", "tla", "spe"]
+    and s not in ["ren", "rin", "a22", "y22", "j22", "sis", "ltc", "who", "wot", "acr", "tla", "spe"]
 ]  # Exclude some codes that are actually part of larger sets (tsb, fmb1, h1r... see subsets), or aren't out yet
 with open("src/data/constants.json", "w", encoding="utf8") as constantsFile:
     json.dump(constants, constantsFile, ensure_ascii=False, indent=4)
