@@ -3631,11 +3631,6 @@
         "fullName": "Tarkir: Dragonstorm",
         "icon": "img/sets/tdm.svg"
     },
-    "teoe": {
-        "code": "teoe",
-        "fullName": "Edge of Eternities Tokens",
-        "icon": "img/sets/teoe.svg"
-    },
     "tfth": {
         "code": "tfth",
         "fullName": "Face the Hydra",
