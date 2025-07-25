@@ -183,40 +183,40 @@ const cardCachePlugin = {
 		}
 		return null;
 	},
-	requestBulk(cardIDs: CardID[]): Promise<unknown[]> | null {
-		cardIDs = cardIDs.filter((cid) => !this.cardCache.value[cid]); // Request only missing cards
-		if (cardIDs.length === 0) return null;
+	requestBulk(cardIDs: CardID[]): Promise<boolean> {
+		const missingCardsIDs = cardIDs.filter((cid) => !this.cardCache.value[cid]); // Request only missing cards
+		if (missingCardsIDs.length === 0) return Promise.resolve(true);
 		const promises = [];
-		// Scryfall API accepts requests for maximum 75 cards at once.
-		if (cardIDs.length > 75) {
-			const rest = cardIDs.slice(75);
-			promises.push(this.requestBulk(rest));
-			cardIDs = cardIDs.slice(0, 75);
-		}
-		const identifiers = [];
-		for (const cid of cardIDs) {
-			identifiers.push({ id: cid });
-			this.cardCache.value[cid] = { id: cid, status: "pending" };
-		}
-		promises.push(
-			axios
-				.post(`https://api.scryfall.com/cards/collection`, { identifiers }, { timeout: 10000 })
-				.then((response) => {
-					if (response.status === 200) {
-						for (const card of response.data.data) {
-							card.status = "ready";
-							this.cardCache.value[card.id] = card;
+		const maxCards = 75; // Scryfall API accepts requests for maximum 75 cards at once.
+		for (let idx = 0; idx < missingCardsIDs.length; idx += maxCards) {
+			const requestCardIDs = missingCardsIDs.slice(idx, idx + maxCards);
+			const identifiers = [];
+			for (const cid of requestCardIDs) {
+				identifiers.push({ id: cid });
+				this.cardCache.value[cid] = { id: cid, status: "pending" };
+			}
+			promises.push(
+				axios
+					.post(`https://api.scryfall.com/cards/collection`, { identifiers }, { timeout: 10000 })
+					.then((response) => {
+						if (response.status === 200) {
+							for (const card of response.data.data) {
+								card.status = "ready";
+								this.cardCache.value[card.id] = card;
+							}
 						}
-					}
-					for (const cid of cardIDs)
-						if (this.cardCache.value[cid].status !== "ready") delete this.cardCache.value[cid];
-				})
-				.catch((error) => {
-					console.error("Error fetching card data:", error);
-					for (const cid of cardIDs) delete this.cardCache.value[cid];
-				})
-		);
-		return Promise.all(promises);
+						for (const cid of requestCardIDs)
+							if (this.cardCache.value[cid].status !== "ready") delete this.cardCache.value[cid];
+						return true;
+					})
+					.catch((error) => {
+						console.error("Error fetching card data:", error);
+						for (const cid of requestCardIDs) delete this.cardCache.value[cid];
+						return false;
+					})
+			);
+		}
+		return Promise.all(promises).then((results) => results.every((r) => r));
 	},
 	get(cardID: CardID) {
 		this.request(cardID);

@@ -5,6 +5,16 @@ import { Alert, fireToast, loadingToast } from "./alerts";
 import { download, escapeHTML } from "./helper";
 import { Card, CardColor } from "@/CardTypes.js";
 
+async function requestMTGOIDs(cards: Card[]): Promise<boolean> {
+	const maxRetries = 3;
+	const cardIDs = [...new Set(cards.map((card) => card.id))];
+	for (let i = 0; i < maxRetries; i++) {
+		if (await vueCardCache.requestBulk(cardIDs)) return true;
+		else await new Promise((resolve) => setTimeout(resolve, 1000));
+	}
+	return false;
+}
+
 export async function exportToMTGO(
 	deck: Card[],
 	sideboard: Card[],
@@ -24,8 +34,13 @@ export async function exportToMTGO(
 		G: { mtgo_id: 104616, name: "Forest" },
 	};
 	try {
-		await vueCardCache.requestBulk([...new Set(deck.map((card) => card.id))]);
-		if (sideboard) await vueCardCache.requestBulk([...new Set(sideboard.map((card) => card.id))]);
+		if (!(await requestMTGOIDs(sideboard ? [...deck, ...sideboard] : deck))) {
+			fireToast(
+				"error",
+				`An error occured while requesting card information. Please try again in a few seconds.`
+			);
+			return;
+		}
 		if (options?.preferredBasics && options.preferredBasics !== "") {
 			const basicsIdentifiers = ["W", "U", "B", "R", "G"].map((c) => {
 				return { name: Constants.BasicLandNames["en"][c as CardColor], set: options.preferredBasics };
