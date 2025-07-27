@@ -1653,6 +1653,11 @@
         "fullName": "Forgotten Realms Commander Display Commanders",
         "icon": "img/sets/oafc.svg"
     },
+    "oafr": {
+        "code": "oafr",
+        "fullName": "Forgotten Realms Oversized Cards",
+        "icon": "img/sets/oafr.svg"
+    },
     "oana": {
         "code": "oana",
         "fullName": "Arena New Player Experience Cards",
@@ -2409,6 +2414,12 @@
         "fullName": "2022 Heroes of the Realm",
         "block": "Heroes of the Realm",
         "icon": "img/sets/ph22.svg"
+    },
+    "ph23": {
+        "code": "ph23",
+        "fullName": "2023 Heroes of the Realm",
+        "block": "Heroes of the Realm",
+        "icon": "img/sets/ph23.svg"
     },
     "phel": {
         "code": "phel",
@@ -3507,6 +3518,11 @@
         "code": "spg",
         "fullName": "Special Guests",
         "icon": "img/sets/spg.svg"
+    },
+    "spm": {
+        "code": "spm",
+        "fullName": "Marvel's Spider-Man",
+        "icon": "img/sets/spm.svg"
     },
     "ss1": {
         "code": "ss1",
