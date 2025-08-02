@@ -2941,6 +2941,10 @@ export class Session implements IIndexable {
 					const p = this.isDisconnected(uid) ? this.disconnectedUsers[uid] : Connections[uid]; // FIXME: This should not be necessary, I don't know why Connections[uid] can be undefined here (if the user isn't disconnected).
 					if (p) {
 						this.draftLog.users[uid].cards = getPickedCardIds(p.pickedCards);
+						// Ensure all the necessary card data is available (relevant for effects like AddCards).
+						for (const cid of this.draftLog.users[uid].cards)
+							if (!(cid in this.draftLog.carddata))
+								this.draftLog.carddata[cid] = this.getCustomGetCardFunction()(cid);
 						this.updateDecklistInLog(uid);
 					}
 				}
