@@ -7,7 +7,7 @@ import { Card, CardColor } from "@/CardTypes.js";
 
 async function requestMTGOIDs(cards: Card[]): Promise<boolean> {
 	const maxRetries = 3;
-	const cardIDs = [...new Set(cards.map((card) => card.id))];
+	const cardIDs = [...new Set(cards.filter((card) => !card.is_custom).map((card) => card.id))];
 	for (let i = 0; i < maxRetries; i++) {
 		if (await vueCardCache.requestBulk(cardIDs)) return true;
 		else await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -80,16 +80,20 @@ export async function exportToMTGO(
 
 	const missingCards: string[] = [];
 	const addMatchingCard = async (card: Card, toSideboard: boolean) => {
-		const cached_card = vueCardCache.get(card.id);
-		// All cards should be available at this point.
-		if (!isReady(cached_card)) {
-			missingCards.push(card.name);
-			return;
+		let scryfall_card: ScryfallCard | null = null;
+		if (!card.is_custom) {
+			const cached_card = vueCardCache.get(card.id);
+			// All cards should be available at this point.
+			if (!isReady(cached_card)) {
+				missingCards.push(card.name);
+				return;
+			}
+			scryfall_card = cached_card as ScryfallCard;
 		}
-		let scryfall_card = cached_card as ScryfallCard;
 
 		// Exact match doesn't have an associated MTGO id, check other printings.
-		if (!scryfall_card.mtgo_id) {
+		// Or it is a custom card. In this case, assume this is a variation of an existing card and we'll get an id by searching by name.
+		if (!scryfall_card?.mtgo_id || card.is_custom) {
 			try {
 				const allPrintings = await axios.get(
 					`https://api.scryfall.com/cards/search?q=!"${encodeURIComponent(card.name)}"&unique=prints`,
@@ -115,7 +119,7 @@ export async function exportToMTGO(
 			}
 		}
 
-		if (scryfall_card.mtgo_id) addCard(scryfall_card.mtgo_id, scryfall_card.name, 1, toSideboard);
+		if (scryfall_card?.mtgo_id) addCard(scryfall_card.mtgo_id, scryfall_card.name, 1, toSideboard);
 		else missingCards.push(card.name); // If we were still unable to find an MTGO id, skip it and report it as missing.
 	};
 
