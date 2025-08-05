@@ -352,6 +352,7 @@
     "clb": {
         "code": "clb",
         "fullName": "Commander Legends: Battle for Baldur's Gate",
+        "block": "Commander",
         "icon": "img/sets/clb.svg"
     },
     "clu": {
@@ -402,6 +403,7 @@
     "cmr": {
         "code": "cmr",
         "fullName": "Commander Legends",
+        "block": "Commander",
         "icon": "img/sets/cmr.svg"
     },
     "cn2": {
@@ -622,6 +624,7 @@
     "drb": {
         "code": "drb",
         "fullName": "From the Vault: Dragons",
+        "block": "From the Vault",
         "icon": "img/sets/drb.svg"
     },
     "drc": {
@@ -895,6 +898,7 @@
     "fic": {
         "code": "fic",
         "fullName": "Final Fantasy Commander",
+        "block": "Commander",
         "icon": "img/sets/fic.svg"
     },
     "fin": {
@@ -2287,6 +2291,11 @@
         "block": "Shadows over Innistrad",
         "icon": "img/sets/pemn.svg"
     },
+    "peoe": {
+        "code": "peoe",
+        "fullName": "Edge of Eternities Promos",
+        "icon": "img/sets/peoe.svg"
+    },
     "peve": {
         "code": "peve",
         "fullName": "Eventide Promos",
@@ -2477,6 +2486,7 @@
     "pip": {
         "code": "pip",
         "fullName": "Fallout",
+        "block": "Commander",
         "icon": "img/sets/pip.svg"
     },
     "pisd": {
@@ -3057,6 +3067,11 @@
         "fullName": "Spotlight Series",
         "icon": "img/sets/pspl.svg"
     },
+    "pspm": {
+        "code": "pspm",
+        "fullName": "Marvel's Spider-Man Promos",
+        "icon": "img/sets/pspm.svg"
+    },
     "pss1": {
         "code": "pss1",
         "fullName": "BFZ Standard Series",
@@ -3401,6 +3416,7 @@
     "scd": {
         "code": "scd",
         "fullName": "Starter Commander Decks",
+        "block": "Commander",
         "icon": "img/sets/scd.svg"
     },
     "scg": {
@@ -3836,46 +3852,55 @@
     "v09": {
         "code": "v09",
         "fullName": "From the Vault: Exiled",
+        "block": "From the Vault",
         "icon": "img/sets/v09.svg"
     },
     "v10": {
         "code": "v10",
         "fullName": "From the Vault: Relics",
+        "block": "From the Vault",
         "icon": "img/sets/v10.svg"
     },
     "v11": {
         "code": "v11",
         "fullName": "From the Vault: Legends",
+        "block": "From the Vault",
         "icon": "img/sets/v11.svg"
     },
     "v12": {
         "code": "v12",
         "fullName": "From the Vault: Realms",
+        "block": "From the Vault",
         "icon": "img/sets/v12.svg"
     },
     "v13": {
         "code": "v13",
         "fullName": "From the Vault: Twenty",
+        "block": "From the Vault",
         "icon": "img/sets/v13.svg"
     },
     "v14": {
         "code": "v14",
         "fullName": "From the Vault: Annihilation",
+        "block": "From the Vault",
         "icon": "img/sets/v14.svg"
     },
     "v15": {
         "code": "v15",
         "fullName": "From the Vault: Angels",
+        "block": "From the Vault",
         "icon": "img/sets/v15.svg"
     },
     "v16": {
         "code": "v16",
         "fullName": "From the Vault: Lore",
+        "block": "From the Vault",
         "icon": "img/sets/v16.svg"
     },
     "v17": {
         "code": "v17",
         "fullName": "From the Vault: Transform",
+        "block": "From the Vault",
         "icon": "img/sets/v17.svg"
     },
     "vis": {
@@ -3960,6 +3985,7 @@
     "who": {
         "code": "who",
         "fullName": "Doctor Who",
+        "block": "Commander",
         "icon": "img/sets/who.svg"
     },
     "wmc": {
