@@ -190,7 +190,7 @@
     "CubeLists": [
         {
             "name": "MTGO Vintage Cube",
-            "cubeCobraID": "modovintage",
+            "cubeCobraID": "3txn8",
             "description": "Updated version of the official MTGO Vintage Cube. See <a href=\"https://www.mtgo.com/vintage-cube-cardlist\" target=\"_blank\">the list on MTGO website</a>."
         },
         {
