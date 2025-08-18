@@ -943,6 +943,11 @@
         "block": "Khans of Tarkir",
         "icon": "img/sets/frf.svg"
     },
+    "ftla": {
+        "code": "ftla",
+        "fullName": "Avatar: The Last Airbender Front Cards",
+        "icon": "img/sets/ftla.svg"
+    },
     "fut": {
         "code": "fut",
         "fullName": "Future Sight",
@@ -2086,6 +2091,11 @@
         "fullName": "Battle for Zendikar Promos",
         "block": "Battle for Zendikar",
         "icon": "img/sets/pbfz.svg"
+    },
+    "pbig": {
+        "code": "pbig",
+        "fullName": "The Big Score Promos",
+        "icon": "img/sets/pbig.svg"
     },
     "pblb": {
         "code": "pblb",
@@ -3702,6 +3712,11 @@
         "code": "tla",
         "fullName": "Avatar: The Last Airbender",
         "icon": "img/sets/tla.svg"
+    },
+    "tle": {
+        "code": "tle",
+        "fullName": "Avatar: The Last Airbender Eternal",
+        "icon": "img/sets/tle.svg"
     },
     "tmbs": {
         "code": "tmbs",
