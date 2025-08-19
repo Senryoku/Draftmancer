@@ -90,6 +90,16 @@
         "fullName": "Masters 25",
         "icon": "img/sets/a25.svg"
     },
+    "aa1": {
+        "code": "aa1",
+        "fullName": "Arena Anthology 1",
+        "icon": "img/sets/aa1.svg"
+    },
+    "aa2": {
+        "code": "aa2",
+        "fullName": "Arena Anthology 2",
+        "icon": "img/sets/aa2.svg"
+    },
     "acr": {
         "code": "acr",
         "fullName": "Assassin's Creed",
@@ -4074,6 +4084,11 @@
         "code": "ydsk",
         "fullName": "Alchemy: Duskmourn",
         "icon": "img/sets/ydsk.svg"
+    },
+    "yeoe": {
+        "code": "yeoe",
+        "fullName": "Alchemy: Edge of Eternities",
+        "icon": "img/sets/yeoe.svg"
     },
     "ylci": {
         "code": "ylci",
