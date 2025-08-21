@@ -49,7 +49,7 @@
 							<label for="input-useCustomizedBoosters">Customize the set of each booster</label>
 						</h3>
 						<transition name="expand">
-							<div class="input-customBoosters" v-show="useCustomizedBoosters">
+							<div class="input-customBoosters" v-if="useCustomizedBoosters">
 								<select
 									class="standard-input custom-booster"
 									v-for="(val, idx) in customBoosters"
@@ -60,11 +60,11 @@
 									<option value="">(Default)</option>
 									<option value="random">Random set from Card Pool</option>
 									<option value="" class="option-separator" disabled>————————————————</option>
-									<option v-for="s in MTGASets" :key="s.code" :value="s.code">
+									<option v-for="s in MTGASets" :key="s.code" :value="s.code" v-once>
 										{{ s.fullName }}
 									</option>
 									<option value="" class="option-separator" disabled>————————————————</option>
-									<option v-for="s in PrimarySets" :key="s.code" :value="s.code">
+									<option v-for="s in PrimarySets" :key="s.code" :value="s.code" v-once>
 										{{ s.fullName }}
 									</option>
 								</select>
@@ -105,7 +105,7 @@ const props = withDefaults(
 );
 const { users, teamSealed } = toRefs(props);
 
-const MaxCustomBoosters = 24;
+const MaxCustomBoosters = 100;
 
 const teams = ref([[], [], [], []] as UserID[][]);
 const boostersPerPlayer = ref(teamSealed.value ? 12 : 6);
@@ -116,14 +116,18 @@ const customBoosters = ref([...customBoostersDefaultValue]);
 // Defaults to two teams, distribute players among them.
 for (let i = 0; i < users.value.length; i++) teams.value[i % 2].push(users.value[i].userID);
 
-const PrimarySets = Constant.PrimarySets.filter((s) => !Constant.MTGASets.includes(s)).map((s: string) => {
-	return { code: s, fullName: SetsInfos[s].fullName };
-});
-const MTGASets = Constant.MTGASets.slice()
-	.reverse()
-	.map((s: string) => {
+const PrimarySets = Object.freeze(
+	Constant.PrimarySets.filter((s) => !Constant.MTGASets.includes(s)).map((s: string) => {
 		return { code: s, fullName: SetsInfos[s].fullName };
-	});
+	})
+);
+const MTGASets = Object.freeze(
+	Constant.MTGASets.slice()
+		.reverse()
+		.map((s: string) => {
+			return { code: s, fullName: SetsInfos[s].fullName };
+		})
+);
 
 const emit = defineEmits<{
 	(e: "close"): void;
