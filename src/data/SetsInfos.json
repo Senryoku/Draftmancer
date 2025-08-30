@@ -1471,6 +1471,11 @@
         "block": "Commander",
         "icon": "img/sets/m3c.svg"
     },
+    "mar": {
+        "code": "mar",
+        "fullName": "Marvel Universe",
+        "icon": "img/sets/mar.svg"
+    },
     "mat": {
         "code": "mat",
         "fullName": "March of the Machine: The Aftermath",

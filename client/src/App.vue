@@ -1595,8 +1595,8 @@
 							<a href="/draftqueue">
 								<div class="draft-queue-banner">
 									<img
-										src="./assets/img/eoe_draft_queue_banner.webp"
-										alt="Practice Edge of Eternities draft with human players right now in the Draft Queue!"
+										src="./assets/img/spm_draft_queue_banner.webp"
+										alt="Practice Spider-Man draft with human players right now in the Draft Queue!"
 										width="500"
 										height="260"
 									/>
