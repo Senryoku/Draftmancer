@@ -42,7 +42,7 @@
 						/>
 						<ResetButton v-model="roundCount" :default-value="10" />
 					</div>
-					<label for="remove-basic-lands-input">Remove Basic Lands?</label>
+					<label for="remove-basic-lands-input">Remove Basic Lands</label>
 					<input type="checkbox" id="remove-basic-lands-input" v-model.number="removeBasicLands" />
 				</div>
 			</div>
