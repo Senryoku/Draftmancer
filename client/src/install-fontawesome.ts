@@ -96,6 +96,7 @@ import {
 	faGithub,
 	faPatreon,
 	faPaypal,
+	faTwitch,
 	faTwitter,
 	faWindows,
 	faYoutube,
@@ -190,7 +191,7 @@ library.add(
 	faArrowRightToBracket,
 	faArrowRightFromBracket
 );
-library.add(faGithub, faPaypal, faDiscord, faPatreon, faTwitter, faWindows, faApple, faYoutube);
+library.add(faGithub, faPaypal, faDiscord, faPatreon, faTwitch, faTwitter, faWindows, faApple, faYoutube);
 
 export const installFontAwesome = (app: ReturnType<typeof createApp>) => {
 	app.component("font-awesome-layers", FontAwesomeLayers);
