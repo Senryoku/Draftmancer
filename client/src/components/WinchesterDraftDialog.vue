@@ -22,6 +22,8 @@
 						/>
 						<ResetButton v-model="boostersPerPlayer" :default-value="3" />
 					</div>
+					<label for="remove-basic-lands-input">Remove Basic Lands</label>
+					<input type="checkbox" id="remove-basic-lands-input" v-model="removeBasicLands" />
 				</div>
 			</div>
 		</template>
@@ -40,15 +42,16 @@ import Modal from "./Modal.vue";
 import ResetButton from "./ResetButton.vue";
 
 const boostersPerPlayer = ref(3);
+const removeBasicLands = ref(true);
 
 const emit = defineEmits<{
 	(e: "close"): void;
-	(e: "start", boostersPerPlayer: number): void;
+	(e: "start", boostersPerPlayer: number, removeBasicLands: boolean): void;
 }>();
 
 const cancel = () => emit("close");
 const start = () => {
-	emit("start", boostersPerPlayer.value);
+	emit("start", boostersPerPlayer.value, removeBasicLands.value);
 	emit("close");
 };
 </script>

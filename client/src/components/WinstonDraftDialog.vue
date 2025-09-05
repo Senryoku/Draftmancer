@@ -44,6 +44,8 @@
 						/>
 						<ResetButton v-model="pileCount" :default-value="defaultPileCount" />
 					</div>
+					<label for="remove-basic-lands-input">Remove Basic Lands</label>
+					<input type="checkbox" id="remove-basic-lands-input" v-model="removeBasicLands" />
 				</div>
 			</div>
 		</template>
@@ -68,17 +70,18 @@ const props = defineProps<{
 
 const boosterCount = ref(props.defaultBoosterCount);
 const pileCount = ref(props.defaultPileCount);
+const removeBasicLands = ref(true);
 
 const emit = defineEmits<{
 	(e: "close"): void;
-	(e: "start", boostersPerPlayer: number, pileCount: number): void;
+	(e: "start", boostersPerPlayer: number, pileCount: number, removeBasicLands: boolean): void;
 }>();
 
 const cancel = () => {
 	emit("close");
 };
 const start = () => {
-	emit("start", boosterCount.value, pileCount.value);
+	emit("start", boosterCount.value, pileCount.value, removeBasicLands.value);
 	emit("close");
 };
 </script>

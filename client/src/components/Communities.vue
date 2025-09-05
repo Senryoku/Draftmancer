@@ -26,19 +26,24 @@
 						<div class="links">
 							<a v-if="c.links.discord" :href="c.links.discord" target="_blank">
 								<font-awesome-icon :icon="['brands', 'discord']" /><span class="link-label">
-									Discord server</span
-								>
+									Discord server
+								</span>
 								<span v-if="c.discord_member_count"> ({{ c.discord_member_count }} members)</span>
 							</a>
 							<a v-if="c.links.youtube" :href="c.links.twitter" target="_blank">
 								<font-awesome-icon :icon="['brands', 'twitter']" /><span class="link-label">
-									Twitter</span
-								>
+									Twitter
+								</span>
 							</a>
 							<a v-if="c.links.youtube" :href="c.links.youtube" target="_blank">
 								<font-awesome-icon :icon="['brands', 'youtube']" /><span class="link-label">
-									Youtube</span
-								>
+									Youtube
+								</span>
+							</a>
+							<a v-if="c.links.twitch" :href="c.links.twitch" target="_blank">
+								<font-awesome-icon :icon="['brands', 'twitch']" /><span class="link-label">
+									Twitch
+								</span>
 							</a>
 							<a v-if="c.links.website" :href="c.links.website" target="_blank">
 								<font-awesome-icon :icon="['fas', 'globe']" /><span class="link-label"> Website</span>
@@ -196,6 +201,17 @@ const communities = ref([
 			discord: "https://discord.gg/KUd2PvFn2V",
 			website: "https://lackeybot.com/msem/gps",
 			cube: "https://timespiraled.github.io/",
+		},
+	},
+	{
+		name: "NoPain Discord",
+		brief: "Italian (and International) Community driven by the passion for Limited MTG.<br />We organize free-to-play Cube Tournaments on a regular basis, mostly drafting NoPainNoGame_'s Unfair Cube (which is a cube designed to be Vintage-Cube-like, but on MTGA), and we also stream them on Twitch!",
+		icon: "no_pain.webp",
+		tags: ["Limited", "Cube", "MTGA", "Tournament", "ITA", "ENG"],
+		links: {
+			discord: "https://discord.gg/dRu4vwNea9",
+			twitch: "https://www.twitch.tv/NoPainNoGame_ ",
+			cube: "https://www.cubecobra.com/cube/list/UnfairCube",
 		},
 	},
 ]);

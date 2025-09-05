@@ -1,9 +1,10 @@
 import { QueueDescription } from "./QueueDescription";
 
 export const AvailableQueues: readonly QueueDescription[] = [
+	{ id: "spm", name: "Spider-Man", playerCount: 8, setCode: "spm" },
 	{ id: "eoe", name: "Edge of Eternities", playerCount: 8, setCode: "eoe" },
 	{ id: "fin", name: "Final Fantasy", playerCount: 8, setCode: "fin" },
-	{ id: "tdm", name: "Tarkir: Dragonstorm", playerCount: 8, setCode: "tdm" },
+	// { id: "tdm", name: "Tarkir: Dragonstorm", playerCount: 8, setCode: "tdm" },
 	// { id: "dft", name: "Aetherdrift", playerCount: 8, setCode: "dft" },
 	// { id: "inr", name: "Innistrad Remastered", playerCount: 8, setCode: "inr" },
 	// { id: "fdn", name: "Foundations", playerCount: 8, setCode: "fdn" },

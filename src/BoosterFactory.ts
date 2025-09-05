@@ -3663,6 +3663,163 @@ export class EOEBoosterFactory extends BoosterFactory {
 	}
 }
 
+// Marvel's Spider-Man (SPM) - https://magic.wizards.com/en/news/feature/collecting-marvels-spider-man
+export class SPMBoosterFactory extends BoosterFactory {
+	static filter(min: number, max: number) {
+		return CardsBySet["spm"].filter(
+			(c) => parseInt(getCard(c).collector_number) >= min && parseInt(getCard(c).collector_number) <= max
+		);
+	}
+
+	static readonly Scene = SPMBoosterFactory.filter(199, 207); // 3 uncommons, 4 rares, 2 mythics
+	static readonly WebSlinger = SPMBoosterFactory.filter(208, 217); // 7 rares, 3 mythics
+	static readonly Panel = SPMBoosterFactory.filter(218, 231); // 10 rares, 4 mythics
+
+	static readonly CommonDualLands = SPMBoosterFactory.filter(177, 188).filter((c) => getCard(c).rarity === "common"); // TODO
+	static readonly SpiderWebBasics = SPMBoosterFactory.filter(189, 193);
+	static readonly Basics = SPMBoosterFactory.filter(193, 198);
+
+	webSlinger: SlotedCardPool;
+	panel: SlotedCardPool;
+	scene: SlotedCardPool;
+	mar: CardPool = new CardPool();
+
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
+		const [, filteredCardPool] = filterCardPool(cardPool, (cid: CardID) =>
+			FINBoosterFactory.CommonDualLands.includes(cid)
+		);
+		super(filteredCardPool, landSlot, options);
+		this.webSlinger = cidsToSlotedCardPool(SPMBoosterFactory.WebSlinger, options.maxDuplicates);
+		this.panel = cidsToSlotedCardPool(SPMBoosterFactory.Panel, options.maxDuplicates);
+		this.scene = cidsToSlotedCardPool(SPMBoosterFactory.Scene, options.maxDuplicates);
+		for (const cid of CardsBySet["mar"]) {
+			const c = getCard(cid);
+			this.mar.set(cid, options.maxDuplicates?.[c.rarity] ?? DefaultMaxDuplicates);
+		}
+		for (const [cid, count] of this.scene["uncommon"]) this.cardPool.uncommon.set(cid, count);
+	}
+
+	generateBooster(targets: Targets) {
+		const updatedTargets = structuredClone(targets);
+		// 6–7 Commons
+		if (targets === DefaultBoosterTargets) updatedTargets.common = Math.max(0, updatedTargets.common - 3);
+		else updatedTargets.common = Math.max(1, updatedTargets.common - 2);
+
+		const booster: UniqueCard[] = [];
+
+		// "In every 1 of 24 Play Boosters, a borderless source material card replaces one of these commons."
+		const marRoll = random.realZeroToOneInclusive();
+		if (marRoll < 1 / 24) {
+			updatedTargets.common = Math.max(0, updatedTargets.common - 1);
+			booster.push(pickCard(this.mar, booster, { foil: false }));
+		}
+
+		// 3 Uncommons
+		//   There are 55 uncommons from the main set of Magic: The Gathering | Marvel's Spider-Man that can be found in these slots.
+		//   There are 3 uncommon scene cards that can be found in these slots.
+		// NOTE: Uncommon scene cards are added to the card pool directly.
+
+		// 1 Traditional foil card of any rarity
+		//   There are 60 commons (65.8%), 55 uncommons (24.1%), 53 rares (7.8%), and 15 mythic rares (1.1%) from the main set of Magic: The Gathering | Marvel's Spider-Man that can be found in this slot.
+		//   There are 7 rare (less than 1%) and 3 mythic rare (less than 1%) web-slinger cards that can be found in this slot.
+		//   There are 10 rare (less than 1%) and 4 mythic rare (less than 1%) panel cards that can be found in this slot.
+		//   There are 3 uncommon (less than 1%), 4 rare (less than 1%), and 2 mythic rare (less than 1%) scene cards that can be found in this slot.
+		{
+			const pool = chooseWeighted(
+				[
+					65.8, 24.1, 7.8, 1.1,
+					// Semi arbitrary (but sums to 100)
+					0.298, 0.018, 0.424, 0.024, 0.254, 0.17, 0.012,
+				].map((w) => w / 100.0),
+				[
+					this.cardPool.common,
+					this.cardPool.uncommon,
+					this.cardPool.rare,
+					this.cardPool.mythic,
+					this.webSlinger.rare,
+					this.webSlinger.mythic,
+					this.panel.rare,
+					this.panel.mythic,
+					this.scene.uncommon,
+					this.scene.rare,
+					this.scene.mythic,
+				]
+			);
+			booster.push(pickCard(pool, booster, { foil: true }));
+		}
+
+		// 1 Rare or mythic rare
+		//   There are 53 rares (83.7%) and 15 mythic rares (11.7%) from the main set of Magic: The Gathering | Marvel's Spider-Man that can be found in this slot.
+		//   There are 7 rare (1.2%) and 3 mythic rare (less than 1%) web-slinger cards that can be found in this slot.
+		//   There are 10 rare (2.1%) and 4 mythic rare (less than 1%) panel cards that can be found in this slot.
+		//   There are 4 rare (1%) and 2 mythic rare (less than 1%) scene cards that can be found in this slot.
+
+		while (updatedTargets.rare > 0) {
+			updatedTargets.rare -= 1;
+			const pool = chooseWeighted(
+				[83.7, 11.7, 1.2, 0.1, 2.1, 0.1, 1, 0.1].map((w) => w / 100.0),
+				[
+					this.cardPool.rare,
+					this.cardPool.mythic,
+					this.webSlinger.rare,
+					this.webSlinger.mythic,
+					this.panel.rare,
+					this.panel.mythic,
+					this.scene.rare,
+					this.scene.mythic,
+				]
+			);
+			booster.push(pickCard(pool, booster));
+		}
+
+		// 1 Wildcard of any rarity
+		//   There are 60 commons (70.8%), 55 uncommons (4.1%), 53 rares (20.9%), and 15 mythic rares (2.9%) from the main set of Magic: The Gathering | Marvel's Spider-Man that can be found in this slot.
+		//   There are 7 rare (less than 1%) and 3 mythic rare (less than 1%) web-slinger cards that can be found in this slot.
+		//   There are 10 rare (less than 1%) and 4 mythic rare (less than 1%) panel cards that can be found in this slot.
+		//   There are 3 uncommon (less than 1%), 4 rare (less than 1%), and 2 mythic rare (less than 1%) scene cards that can be found in this slot.
+		{
+			const pool = chooseWeighted(
+				[
+					70.8, 4.1, 20.9, 2.9,
+					// Semi arbitrary (but sums to 100)
+					0.322, 0.019, 0.46, 0.026, 0.276, 0.184, 0.013,
+				].map((w) => w / 100.0),
+				[
+					this.cardPool.common,
+					this.cardPool.uncommon,
+					this.cardPool.rare,
+					this.cardPool.mythic,
+					this.webSlinger.rare,
+					this.webSlinger.mythic,
+					this.panel.rare,
+					this.panel.mythic,
+					this.scene.uncommon,
+					this.scene.rare,
+					this.scene.mythic,
+				]
+			);
+			booster.push(pickCard(pool, booster));
+		}
+
+		const rest = super.generateBooster(updatedTargets, booster);
+		if (isMessageError(rest)) return rest;
+
+		// 1 Land
+		//   This can be a common two-color land (50%), spiderweb basic land (25%), or default frame basic land (25%).
+		//   This card is traditional foil 20% of the time.
+		{
+			const pool = chooseWeighted(
+				[0.5, 0.25, 0.25],
+				[SPMBoosterFactory.CommonDualLands, SPMBoosterFactory.SpiderWebBasics, SPMBoosterFactory.Basics]
+			);
+			const foil = random.realZeroToOneInclusive() <= 0.2;
+			rest.push(getUnique(getRandom(pool), { foil }));
+		}
+
+		return rest;
+	}
+}
+
 // Set specific rules.
 // Neither DOM, WAR or ZNR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
 export const SetSpecificFactories: {
@@ -3718,6 +3875,7 @@ export const SetSpecificFactories: {
 	tdm: TDMBoosterFactory,
 	fin: FINBoosterFactory,
 	eoe: EOEBoosterFactory,
+	spm: SPMBoosterFactory,
 };
 
 export const getBoosterFactory = function (

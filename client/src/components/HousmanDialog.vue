@@ -79,7 +79,7 @@
 						</select>
 						<ResetButton v-model="turnOrder" :default-value="'classic'" />
 					</div>
-					<label for="remove-basic-lands-input">Remove Basic Lands?</label>
+					<label for="remove-basic-lands-input">Remove Basic Lands</label>
 					<input type="checkbox" id="remove-basic-lands-input" v-model="removeBasicLands" />
 				</div>
 			</div>
