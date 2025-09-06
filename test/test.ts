@@ -294,7 +294,7 @@ describe("Sets content", function () {
 		tdm: { common: 91, uncommon: 100, rare: 60, mythic: 20 }, // 81 commons plus 10 dual lands
 		fin: { common: 90, uncommon: 109, rare: 74, mythic: 20 }, // 80 commons plus 10 dual lands
 		eoe: { common: 81, uncommon: 100, rare: 60, mythic: 20 },
-		spm: { common: 70, uncommon: 55, rare: 53, mythic: 15 }, // 70 commons plus 10 dual lands
+		spm: { common: 65, uncommon: 55, rare: 53, mythic: 15 }, // 65 commons plus 10 dual lands
 	};
 
 	beforeEach(function (done) {
