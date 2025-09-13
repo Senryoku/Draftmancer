@@ -1788,6 +1788,16 @@
         "fullName": "Legacy Championship",
         "icon": "img/sets/olgc.svg"
     },
+    "om1": {
+        "code": "om1",
+        "fullName": "Through the Omenpaths",
+        "icon": "img/sets/om1.svg"
+    },
+    "omb": {
+        "code": "omb",
+        "fullName": "Through the Omenpaths Bonus Sheet",
+        "icon": "img/sets/omb.svg"
+    },
     "omic": {
         "code": "omic",
         "fullName": "Midnight Hunt Commander Display Commanders",
