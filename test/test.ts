@@ -295,6 +295,7 @@ describe("Sets content", function () {
 		fin: { common: 90, uncommon: 109, rare: 74, mythic: 20 }, // 80 commons plus 10 dual lands
 		eoe: { common: 81, uncommon: 100, rare: 60, mythic: 20 },
 		spm: { common: 65, uncommon: 55, rare: 53, mythic: 15 }, // 65 commons plus 10 dual lands
+		om1: { common: 65, uncommon: 55, rare: 53, mythic: 15 }, // 65 commons plus 10 dual lands
 	};
 
 	beforeEach(function (done) {
@@ -815,7 +816,8 @@ describe("Single Draft (Two Players)", function () {
 							(set === "mb2" && c.set === "plst") ||
 							(set === "fin" && c.set === "fca") ||
 							(set === "eoe" && (c.set === "eos" || c.set === "spg")) ||
-							(set === "spm" && c.set === "mar")
+							(set === "spm" && c.set === "mar") ||
+							(set === "om1" && (c.set === "omb" || c.set === "spm"))
 					),
 					`All cards in booster should be of the desired set, got [${[...new Set(b.map((c) => c.set))]}].`
 				).to.be.true;
