@@ -1,7 +1,7 @@
 import { QueueDescription } from "./QueueDescription";
 
 export const AvailableQueues: readonly QueueDescription[] = [
-	{ id: "spm", name: "Spider-Man", playerCount: 8, setCode: "spm" },
+	{ id: "spm", name: "Spider-Man", playerCount: 4, setCode: "spm", settings: { pickedCardsPerRound: 2 } },
 	{ id: "eoe", name: "Edge of Eternities", playerCount: 8, setCode: "eoe" },
 	{ id: "fin", name: "Final Fantasy", playerCount: 8, setCode: "fin" },
 	// { id: "tdm", name: "Tarkir: Dragonstorm", playerCount: 8, setCode: "tdm" },

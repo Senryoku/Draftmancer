@@ -89,7 +89,7 @@
         "tdm",
         "fin",
         "eoe",
-        "spm"
+        "om1"
     ],
     "AlchemySets": [
         "hbg",
@@ -108,7 +108,7 @@
         "tdm",
         "fin",
         "eoe",
-        "spm"
+        "om1"
     ],
     "BasicLandNames": {
         "en": {
@@ -318,6 +318,7 @@
     ],
     "PrimarySets": [
         "spm",
+        "om1",
         "eoe",
         "fin",
         "tdm",
@@ -326,8 +327,8 @@
         "pio",
         "fdn",
         "dsk",
-        "blb",
         "mb2",
+        "blb",
         "mh3",
         "otj",
         "mkm",
@@ -496,6 +497,7 @@
         "planeshifted_snc",
         "ydmu",
         "mat",
+        "om1",
         "mb1",
         "mb1_convention_2019",
         "mb1_convention_2021",

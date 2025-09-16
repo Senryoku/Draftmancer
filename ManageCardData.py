@@ -238,6 +238,7 @@ PrimarySets = [s["code"] for s in SetsInfos if s["set_type"] in ["core", "expans
 PrimarySets.extend(["unf", "ugl", "unh", "ust", "und"])  # Add Un-Sets as primary.
 PrimarySets.extend(["hbg", "planeshifted_snc", "ydmu"])
 PrimarySets.append("mat")  # Support mat as a draftable set (mom + mat cards)
+PrimarySets.append("om1")
 
 
 def append_set_cards(allcards, results):
@@ -644,6 +645,8 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
                 selection["in_booster"] = safeInBoosterCheck(c, 261)
             case "spm":
                 selection["in_booster"] = safeInBoosterCheck(c, 188)
+            case "om1":
+                selection["in_booster"] = True
 
         if c["collector_number"].endswith("†"):
             selection["in_booster"] = False
@@ -1037,7 +1040,7 @@ for mtgset, group in groups:
         print("\nWarning: Set '{}' not found in SetsInfos.\n".format(mtgset))
         continue
     setdata = candidates[0]
-    if "parent_set_code" in setdata and mtgset != "ydmu":
+    if "parent_set_code" in setdata and mtgset != "ydmu" and mtgset != "om1":
         subsets.append(mtgset)
     setinfos[mtgset] = {
         "code": mtgset,
@@ -1150,7 +1153,8 @@ constants["PrimarySets"] = [
     for s in PrimarySets
     if s in setinfos
     and s not in subsets
-    and s not in ["ren", "rin", "a22", "y22", "j22", "sis", "ltc", "who", "wot", "acr", "tla", "spe", "aa2", "mar"]
+    and s
+    not in ["ren", "rin", "a22", "y22", "j22", "sis", "ltc", "who", "wot", "acr", "tla", "spe", "aa2", "mar", "omb"]
 ]  # Exclude some codes that are actually part of larger sets (tsb, fmb1, h1r... see subsets), or aren't out yet
 with open("src/data/constants.json", "w", encoding="utf8") as constantsFile:
     json.dump(constants, constantsFile, ensure_ascii=False, indent=4)

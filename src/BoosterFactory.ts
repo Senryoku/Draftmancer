@@ -3675,7 +3675,7 @@ export class SPMBoosterFactory extends BoosterFactory {
 	static readonly WebSlinger = SPMBoosterFactory.filter(208, 217); // 7 rares, 3 mythics
 	static readonly Panel = SPMBoosterFactory.filter(218, 231); // 10 rares, 4 mythics
 
-	static readonly CommonDualLands = SPMBoosterFactory.filter(177, 188).filter((c) => getCard(c).rarity === "common"); // TODO
+	static readonly CommonDualLands = SPMBoosterFactory.filter(179, 188).filter((c) => getCard(c).rarity === "common");
 	static readonly SpiderWebBasics = SPMBoosterFactory.filter(189, 193);
 	static readonly Basics = SPMBoosterFactory.filter(193, 198);
 
@@ -3686,7 +3686,7 @@ export class SPMBoosterFactory extends BoosterFactory {
 
 	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
 		const [, filteredCardPool] = filterCardPool(cardPool, (cid: CardID) =>
-			FINBoosterFactory.CommonDualLands.includes(cid)
+			SPMBoosterFactory.CommonDualLands.includes(cid)
 		);
 		super(filteredCardPool, landSlot, options);
 		this.webSlinger = cidsToSlotedCardPool(SPMBoosterFactory.WebSlinger, options.maxDuplicates);
@@ -3820,6 +3820,94 @@ export class SPMBoosterFactory extends BoosterFactory {
 	}
 }
 
+// Through the Omenpaths (OM1) - Speculation based on Spider-Man (SPM)
+export class OM1BoosterFactory extends BoosterFactory {
+	static filter(min: number, max: number) {
+		return CardsBySet["om1"].filter(
+			(c) => parseInt(getCard(c).collector_number) >= min && parseInt(getCard(c).collector_number) <= max
+		);
+	}
+
+	static readonly CommonDualLands = OM1BoosterFactory.filter(179, 188).filter((c) => getCard(c).rarity === "common");
+	static readonly Basics = SPMBoosterFactory.filter(193, 198); // FIXME: OM1 doesn't have basics?
+
+	omb: CardPool = new CardPool();
+
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
+		const [, filteredCardPool] = filterCardPool(cardPool, (cid: CardID) =>
+			OM1BoosterFactory.CommonDualLands.includes(cid)
+		);
+		super(filteredCardPool, landSlot, options);
+		for (const cid of CardsBySet["omb"]) {
+			const c = getCard(cid);
+			this.omb.set(cid, options.maxDuplicates?.[c.rarity] ?? DefaultMaxDuplicates);
+		}
+	}
+
+	generateBooster(targets: Targets) {
+		const updatedTargets = structuredClone(targets);
+		// 6–7 Commons
+		if (targets === DefaultBoosterTargets) updatedTargets.common = Math.max(0, updatedTargets.common - 3);
+		else updatedTargets.common = Math.max(1, updatedTargets.common - 2);
+
+		const booster: UniqueCard[] = [];
+
+		// "In every 1 of 24 Play Boosters, a borderless source material card replaces one of these commons."
+		const ombRoll = random.realZeroToOneInclusive();
+		if (ombRoll < 1 / 24) {
+			updatedTargets.common = Math.max(0, updatedTargets.common - 1);
+			booster.push(pickCard(this.omb, booster, { foil: false }));
+		}
+
+		// 1 Traditional foil card of any rarity
+		//   There are 60 commons (65.8%), 55 uncommons (24.1%), 53 rares (7.8%), and 15 mythic rares (1.1%) from the main set of Magic: The Gathering | Marvel's Spider-Man that can be found in this slot.
+		{
+			const pool = chooseWeighted(
+				[65.8, 24.1, 7.8, 1.1].map((w) => w / 100.0),
+				[this.cardPool.common, this.cardPool.uncommon, this.cardPool.rare, this.cardPool.mythic]
+			);
+			booster.push(pickCard(pool, booster));
+		}
+
+		// 1 Rare or mythic rare
+		//   There are 53 rares (83.7%) and 15 mythic rares (11.7%) from the main set of Magic: The Gathering | Marvel's Spider-Man that can be found in this slot.
+		while (updatedTargets.rare > 0) {
+			updatedTargets.rare -= 1;
+			const pool = chooseWeighted(
+				[83.7, 11.7].map((w) => w / 100.0),
+				[this.cardPool.rare, this.cardPool.mythic]
+			);
+			booster.push(pickCard(pool, booster));
+		}
+
+		// 1 Wildcard of any rarity
+		//   There are 60 commons (70.8%), 55 uncommons (4.1%), 53 rares (20.9%), and 15 mythic rares (2.9%) from the main set of Magic: The Gathering | Marvel's Spider-Man that can be found in this slot.
+		//   There are 7 rare (less than 1%) and 3 mythic rare (less than 1%) web-slinger cards that can be found in this slot.
+		//   There are 10 rare (less than 1%) and 4 mythic rare (less than 1%) panel cards that can be found in this slot.
+		//   There are 3 uncommon (less than 1%), 4 rare (less than 1%), and 2 mythic rare (less than 1%) scene cards that can be found in this slot.
+		{
+			const pool = chooseWeighted(
+				[70.8, 4.1, 20.9, 2.9].map((w) => w / 100.0),
+				[this.cardPool.common, this.cardPool.uncommon, this.cardPool.rare, this.cardPool.mythic]
+			);
+			booster.push(pickCard(pool, booster));
+		}
+
+		const rest = super.generateBooster(updatedTargets, booster);
+		if (isMessageError(rest)) return rest;
+
+		// 1 Land
+		//   This can be a common two-color land (50%), spiderweb basic land (25%), or default frame basic land (25%).
+		//   This card is traditional foil 20% of the time.
+		{
+			const pool = chooseWeighted([0.5, 0.5], [OM1BoosterFactory.CommonDualLands, OM1BoosterFactory.Basics]);
+			rest.push(getUnique(getRandom(pool)));
+		}
+
+		return rest;
+	}
+}
+
 // Set specific rules.
 // Neither DOM, WAR or ZNR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
 export const SetSpecificFactories: {
@@ -3876,6 +3964,7 @@ export const SetSpecificFactories: {
 	fin: FINBoosterFactory,
 	eoe: EOEBoosterFactory,
 	spm: SPMBoosterFactory,
+	om1: OM1BoosterFactory,
 };
 
 export const getBoosterFactory = function (
