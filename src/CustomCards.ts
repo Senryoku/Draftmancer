@@ -84,6 +84,8 @@ export function validateCustomCardFace(face: unknown): SocketError | CardFace {
 		return errorWithJSON(`Invalid Oracle Text`, `Face property 'loyalty' must be a number of string.`, face);
 	if (!hasOptionalProperty("layout", isString)(face))
 		return errorWithJSON(`Invalid Oracle Text`, `Face property 'layout' must be a string.`, face);
+	if (!hasOptionalProperty("mana_cost", isString)(face))
+		return errorWithJSON(`Invalid Mana Cost`, `Face property 'mana_cost' must be a string.`, face);
 
 	return {
 		name: face.name,
@@ -91,6 +93,7 @@ export function validateCustomCardFace(face: unknown): SocketError | CardFace {
 		image_uris: image_uris,
 		printed_names: printed_names,
 		subtypes: subtypes,
+		mana_cost: face.mana_cost,
 		oracle_text: face.oracle_text,
 		power: face.power,
 		toughness: face.toughness,

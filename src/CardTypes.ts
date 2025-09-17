@@ -67,6 +67,7 @@ export type CardFace = {
 	type: string;
 	subtypes: Array<string>;
 	// The following fields aren't directly available for official cards but might be specified in custom cards.
+	mana_cost?: string;
 	oracle_text?: string;
 	power?: number | string;
 	toughness?: number | string;
