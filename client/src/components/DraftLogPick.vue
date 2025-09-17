@@ -1,6 +1,6 @@
 <template>
 	<div class="card-container" v-if="type === 'Draft' || type === 'Rochester Draft'">
-		<booster-card
+		<BoosterCard
 			v-for="(cid, index) in draftPick.booster"
 			:key="index"
 			:card="getUnique(cid)"
@@ -11,25 +11,25 @@
 			}"
 			:lazyLoad="true"
 			:scale="scale"
-		></booster-card>
+		/>
 	</div>
 	<div class="card-container grid3x3" v-else-if="type === 'Grid Draft'">
 		<template v-for="(cid, index) in gridDraftPick.booster">
-			<card
+			<CardComponent
 				v-if="cid"
 				:key="index + '_' + cid"
 				:card="getUnique(cid)"
 				:language="language"
 				:class="{ 'selected-high': gridDraftPick.pick.includes(index) }"
 				:lazyLoad="true"
-			></card>
+			/>
 			<font-awesome-icon
 				v-else
 				:key="index"
 				icon="fa-solid fa-times-circle"
 				size="4x"
 				style="color: rgba(255, 255, 255, 0.1)"
-			></font-awesome-icon>
+			/>
 		</template>
 	</div>
 	<div
@@ -42,92 +42,78 @@
 			class="card-column"
 			:class="{ selected: 'pickedPile' in winstonDraftPick && winstonDraftPick.pickedPile === index }"
 		>
-			<card
+			<CardComponent
 				v-for="(cid, cidx) in cards"
 				:key="index + '_' + cidx"
 				:card="getUnique(cid)"
 				:language="language"
-			></card>
+			/>
 		</div>
 		<div v-if="'randomCard' in winstonDraftPick">
 			<h3>Drawn Card:</h3>
-			<card :card="getUnique(winstonDraftPick.randomCard)" :language="language"></card>
+			<CardComponent :card="getUnique(winstonDraftPick.randomCard)" :language="language" />
 		</div>
 	</div>
 	<div class="housman-pick" v-else-if="type === 'Housman Draft'">
 		<h2 style="margin: 0">Revealed Cards</h2>
 		<div class="card-container">
-			<card
+			<CardComponent
 				v-for="(cid, cidx) in housmanDraftPick.revealedCards"
 				:key="cidx + '_' + cid"
 				:card="getUnique(cid)"
 				:language="language"
 				:class="{ 'selected-high': housmanDraftPick.picked === cidx }"
 				:lazyLoad="true"
-			></card>
+			/>
 		</div>
 		<h2 style="margin: 0">Hand</h2>
 		<div class="card-container">
-			<card
+			<CardComponent
 				v-for="(cid, cidx) in housmanDraftPick.hand"
 				:key="cidx + '_' + cid"
 				:card="getUnique(cid)"
 				:language="language"
 				:class="{ replaced: housmanDraftPick.replaced === cidx }"
 				:lazyLoad="true"
-			></card>
+			/>
 		</div>
 	</div>
 	<div class="card-container" v-else>Not Implemented</div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+import { computed } from "vue";
 import { DraftPick, GridDraftPick, HousmanDraftPick, WinchesterDraftPick, WinstonDraftPick } from "@/DraftLog";
 import { Card, CardID, UniqueCard } from "@/CardTypes";
 import { Language } from "@/Types";
-
-import { PropType, defineComponent } from "vue";
 
 import CardComponent from "./Card.vue";
 import BoosterCard from "./BoosterCard.vue";
 import { toUnique } from "../../../src/CardTypes";
 
-export default defineComponent({
-	name: "DraftLogPick",
-	components: { Card: CardComponent, BoosterCard },
-	props: {
-		pick: {
-			type: Object as PropType<
-				DraftPick | GridDraftPick | WinstonDraftPick | WinchesterDraftPick | HousmanDraftPick
-			>,
-			required: true,
-		},
-		carddata: { type: Object as PropType<{ [cid: CardID]: Card }>, required: true },
-		language: { type: String as PropType<Language>, required: true },
-		type: { type: String, default: "Draft" },
-		scale: { type: Number, default: 1 },
-	},
-	methods: {
-		getUnique(cid: CardID): UniqueCard {
-			return toUnique(this.carddata[cid]);
-		},
-	},
-	computed: {
-		draftPick() {
-			return this.pick as DraftPick;
-		},
-		gridDraftPick() {
-			return this.pick as GridDraftPick;
-		},
-		winstonDraftPick() {
-			// And Winchester Draft, as WinchesterDraftPick is a subset of WinstonDraftPick
-			return this.pick as WinstonDraftPick;
-		},
-		housmanDraftPick() {
-			return this.pick as HousmanDraftPick;
-		},
-	},
-});
+const props = withDefaults(
+	defineProps<{
+		pick: DraftPick | GridDraftPick | WinstonDraftPick | WinchesterDraftPick | HousmanDraftPick;
+		carddata: { [cid: CardID]: Card };
+		language: Language;
+		type: string;
+		scale: number;
+	}>(),
+	{
+		type: "Draft",
+		scale: 1,
+	}
+);
+
+function getUnique(cid: CardID): UniqueCard {
+	return toUnique(props.carddata[cid]);
+}
+
+const draftPick = computed(() => props.pick as DraftPick);
+const gridDraftPick = computed(() => props.pick as GridDraftPick);
+// And Winchester Draft, as WinchesterDraftPick is a subset of WinstonDraftPick
+const winstonDraftPick = computed(() => props.pick as WinstonDraftPick);
+const housmanDraftPick = computed(() => props.pick as HousmanDraftPick);
 </script>
 
 <style scoped>

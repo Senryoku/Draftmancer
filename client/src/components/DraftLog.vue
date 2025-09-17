@@ -121,7 +121,7 @@
 					selectedUser.cards?.length > 0
 				"
 			>
-				<div class="section-title">
+				<div class="section-title" style="margin-top: 0.75em">
 					<h2>{{ selectedUser.userName }}</h2>
 					<div class="controls">
 						<select
@@ -175,14 +175,14 @@
 							displayOptions.pick < picksPerPack[displayOptions.pack].length
 						"
 					>
-						<div style="display: flex; align-items: center; gap: 1em; margin-left: 1em">
+						<div class="section-title controls" style="margin-top: 0.75em">
 							<div>
 								<font-awesome-icon
 									:class="{ disabled: displayOptions.pack <= 0 && displayOptions.pick <= 0 }"
 									icon="fa-solid fa-chevron-left"
 									class="clickable"
 									@click="prevPick"
-								></font-awesome-icon>
+								/>
 								<label>Pack #</label>
 								<select v-model="displayOptions.pack" style="width: 4em">
 									<option v-for="index in picksPerPack.length" :key="index" :value="index - 1">
@@ -209,7 +209,7 @@
 									icon="fa-solid fa-chevron-right"
 									class="clickable"
 									@click="nextPick"
-								></font-awesome-icon>
+								/>
 							</div>
 							<h2>
 								{{ pickTitle }}
