@@ -19,7 +19,6 @@ import {
 	isString,
 	isUnknown,
 } from "./TypeChecks.js";
-import { checkCCLSettingType } from "./CustomCardListUtils.js";
 import { DraftmancerAI } from "./bots/DraftmancerAI.js";
 
 const lineRegex =

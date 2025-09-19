@@ -3035,6 +3035,39 @@ describe("Card line parsing", function () {
 		checkParsedCard(r, { name: "Hazmat Suit (Used)", set: "ust", collector_number: "57" }, 2, true);
 	});
 
+	it("Printed Names", function () {
+		for (const [line, expectedCID] of [
+			["Silver Sable, Mercenary Leader", "cf0d4116-acee-4d9a-985c-396d10e03838"],
+			["Silver Sable, Mercenary Leader (SPM)", "cf0d4116-acee-4d9a-985c-396d10e03838"],
+			["Silver Sable, Mercenary Leader (SPM) 13", "cf0d4116-acee-4d9a-985c-396d10e03838"],
+			["Silver Sable, Mercenary Leader (OM1)", "a6927378-fee5-49c7-a607-c8084d7d077c"],
+			["Silver Sable, Mercenary Leader (OM1) 12", "a6927378-fee5-49c7-a607-c8084d7d077c"],
+			["Generous Betty Wray", "a6927378-fee5-49c7-a607-c8084d7d077c"],
+			["Generous Betty Wray (OM1)", "a6927378-fee5-49c7-a607-c8084d7d077c"],
+			["Generous Betty Wray (OM1) 12", "a6927378-fee5-49c7-a607-c8084d7d077c"],
+
+			["Brokkos, Apex of Forever", "c9f07625-fbd8-4581-8568-eb3cfb2a4c1e"],
+			["Brokkos, Apex of Forever (IKO)", "c9f07625-fbd8-4581-8568-eb3cfb2a4c1e"],
+			["Brokkos, Apex of Forever (IKO) 179", "c9f07625-fbd8-4581-8568-eb3cfb2a4c1e"],
+			["Brokkos, Apex of Forever (IKO) 378", "4cf6ca85-0ef5-4104-b0e6-1137c4975579"],
+			["Bio-Quartz Spacegodzilla", "4cf6ca85-0ef5-4104-b0e6-1137c4975579"],
+			// ["Bio-Quartz Spacegodzilla (IKO)", "4cf6ca85-0ef5-4104-b0e6-1137c4975579"],
+			// ["Bio-Quartz Spacegodzilla (IKO) 378", "4cf6ca85-0ef5-4104-b0e6-1137c4975579"],
+		]) {
+			378;
+			const r = parseLine(line);
+			expect(
+				isSocketError(r),
+				`parseLine returned an error:\n\t\t${(r as SocketError).error?.title}\n\t\t${
+					(r as SocketError).error?.text
+				}\n\t`
+			).to.be.false;
+			if (!isSocketError(r)) {
+				expect(r.cardID).to.equal(expectedCID, `Input: ${line}`);
+			}
+		}
+	});
+
 	/*
 	describe("Check every single available card.", function () {
 		for (const [, c] of Cards.entries()) {

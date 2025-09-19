@@ -481,11 +481,19 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
     Translations = {}
     print("Generating card data cache...")
 
-    def addCard(c: dict):
-        if c["name"] in cardsByName:
-            cardsByName[c["name"]].append(c)
+    def addCardByName(name: str, c: dict):
+        if name in cardsByName:
+            cardsByName[name].append(c)
         else:
-            cardsByName[c["name"]] = [c]
+            cardsByName[name] = [c]
+
+    def addCard(c: dict):
+        if "printed_name" in c and c["printed_name"] != c["name"]:
+            addCardByName(c["printed_name"], c)
+        elif "flavor_name" in c and c["flavor_name"] != c["name"]:
+            addCardByName(c["flavor_name"], c)
+        else:
+            addCardByName(c["name"], c)
 
         selection = {
             key: value
