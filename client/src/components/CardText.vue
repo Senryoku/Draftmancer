@@ -7,9 +7,9 @@
 		</template>
 		<template v-else>
 			<div class="card-text" :class="'color-' + backColor">
-				<div class="card-top-line" v-if="face.name">
+				<div class="card-top-line" v-if="printed_name">
 					<div class="card-top-line-inner">
-						<div class="card-name font-size-fit">{{ face.name }}</div>
+						<div class="card-name font-size-fit">{{ printed_name }}</div>
 						<div
 							class="card-mana-cost"
 							v-if="face.mana_cost"
@@ -17,6 +17,7 @@
 						></div>
 					</div>
 				</div>
+				<div class="card-canonical-name font-size-fit" v-if="canonical_name">{{ canonical_name }}</div>
 				<div class="card-type font-size-fit" v-if="face.type_line">
 					{{ face.type_line }}
 				</div>
@@ -115,6 +116,13 @@ const face = computed(() => {
 		return props.card;
 	}
 	const r: Partial<ScryfallCardFace> = {};
+	if (
+		"printed_names" in props.card &&
+		props.card.printed_names?.["en"] &&
+		props.card.printed_names["en"] !== props.card.name
+	) {
+		r.printed_name = props.card.printed_names["en"];
+	}
 	if ("name" in props.card) r.name = props.card.name;
 	if ("mana_cost" in props.card) r.mana_cost = props.card.mana_cost;
 	if ("type" in props.card) {
@@ -127,6 +135,18 @@ const face = computed(() => {
 	if ("toughness" in props.card) r.toughness = props.card.toughness?.toString();
 	if ("loyalty" in props.card) r.loyalty = props.card.loyalty?.toString();
 	return r;
+});
+
+const printed_name = computed(() => {
+	if (!face.value) return undefined;
+	if ("printed_name" in face.value) return face.value.printed_name;
+	return face.value.name;
+});
+
+const canonical_name = computed(() => {
+	if (!face.value) return undefined;
+	if ("printed_name" in face.value) return face.value.name;
+	return undefined;
 });
 
 watch(face, () => {
@@ -215,128 +235,143 @@ watch(face, () => {
 	user-select: none;
 
 	font-family: Beleren;
-}
 
-.card-text > div {
-	background-color: #222;
-	overflow: hidden;
-	border: solid 2px #666;
-	box-sizing: border-box;
-}
+	& > div {
+		background-color: #222;
+		overflow: hidden;
+		border: solid 2px #666;
+		box-sizing: border-box;
+	}
 
-.card-text .card-top-line {
-	position: absolute;
-	top: 2.5%;
-	left: 3%;
-	right: 3%;
+	.card-top-line {
+		position: absolute;
+		top: 2.5%;
+		left: 3%;
+		right: 3%;
 
-	height: 7%;
+		height: 7%;
 
-	border-radius: 2% / 50%;
-	padding: 0 2.6%;
-}
+		border-radius: 2% / 50%;
+		padding: 0 2.6%;
+	}
 
-.card-text .card-top-line-inner {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	align-content: center;
-	white-space: nowrap;
-	width: 100%;
-	height: 100%;
-}
+	.card-top-line-inner {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		align-content: center;
+		white-space: nowrap;
+		width: 100%;
+		height: 100%;
+	}
 
-.card-text .card-name {
-	flex: 0 1 auto;
-	max-height: 100%;
-}
+	.card-name {
+		flex: 0 1 auto;
+		max-height: 100%;
+	}
 
-.card-text .card-mana-cost {
-	flex: 1 0 auto;
+	.card-mana-cost {
+		flex: 1 0 auto;
 
-	display: inline-flex;
-	justify-content: flex-end;
-	align-items: stretch;
-	gap: 2%;
-	height: 60%;
-	width: auto;
-}
+		display: inline-flex;
+		justify-content: flex-end;
+		align-items: stretch;
+		gap: 2%;
+		height: 60%;
+		width: auto;
+	}
 
-.card-text .card-type {
-	position: absolute;
-	top: 56%;
-	left: 3%;
-	right: 3%;
-	height: 7%;
+	.card-canonical-name {
+		position: absolute;
+		top: calc(9.5% - 2px);
+		left: 8%;
+		right: 8%;
 
-	display: flex;
-	justify-content: flex-start;
-	white-space: nowrap;
-	align-items: center;
-	padding: 0.5% 4%;
+		height: 4%;
 
-	border-radius: 2% / 50%;
+		--clip: 3%;
+		clip-path: polygon(var(--clip) 100%, calc(100% - var(--clip)) 100%, 100% 0, 0 0);
+		padding: 0.25% calc(1% + var(--clip));
 
-	font-size: 0.8em;
-	z-index: 1;
-}
+		text-align: center;
+		max-height: 100%;
+	}
 
-.card-text .card-oracle {
-	position: absolute;
-	top: 62.5%;
-	left: 5.5%;
-	right: 5.5%;
-	bottom: 6%;
+	.card-type {
+		position: absolute;
+		top: 56%;
+		left: 3%;
+		right: 3%;
+		height: 7%;
 
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: flex-start;
-	gap: 0.2em;
+		display: flex;
+		justify-content: flex-start;
+		white-space: nowrap;
+		align-items: center;
+		padding: 0.5% 4%;
 
-	border-radius: 1%;
+		border-radius: 2% / 50%;
 
-	padding: 2% 3%;
-	text-align: left;
-	font-size: 0.8em;
-	font-family: MPlantin;
-}
+		font-size: 0.8em;
+		z-index: 1;
+	}
 
-.card-text .card-loyalty,
-.card-text .card-pt {
-	position: absolute;
-	width: 18%;
-	height: 6%;
-	right: 3%;
-	bottom: 2%;
-	z-index: 2;
+	.card-oracle {
+		position: absolute;
+		top: 62.5%;
+		left: 5.5%;
+		right: 5.5%;
+		bottom: 6%;
 
-	border-radius: 10% / 50%;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: flex-start;
+		gap: 0.2em;
 
-	display: flex;
-	justify-content: center;
-	align-items: center;
-}
+		border-radius: 1%;
 
-.card-text :deep(.mana-symbol) {
-	display: inline-block;
-	width: 1em;
-	border-radius: 50%;
-}
+		padding: 2% 3%;
+		text-align: left;
+		font-size: 0.8em;
+		font-family: MPlantin;
+	}
 
-.card-text .card-mana-cost :deep(.mana-symbol) {
-	box-shadow: -0.14vh 0.14vh 0 rgba(0, 0, 0, 0.85);
-	width: auto;
-}
+	.card-loyalty,
+	.card-pt {
+		position: absolute;
+		width: 18%;
+		height: 6%;
+		right: 3%;
+		bottom: 2%;
+		z-index: 2;
 
-.card-text .card-oracle :deep(.mana-symbol) {
-	width: 0.8em;
-	margin: 0 0.07em;
-	vertical-align: baseline;
-}
+		border-radius: 10% / 50%;
 
-.card-text .card-oracle :deep(.oracle-reminder) {
-	font-family: MPlantin-Italic;
-	font-style: italic;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	& :deep(.mana-symbol) {
+		display: inline-block;
+		width: 1em;
+		border-radius: 50%;
+	}
+
+	.card-mana-cost :deep(.mana-symbol) {
+		box-shadow: -0.14vh 0.14vh 0 rgba(0, 0, 0, 0.85);
+		width: auto;
+	}
+
+	.card-oracle :deep(.mana-symbol) {
+		width: 0.8em;
+		margin: 0 0.07em;
+		vertical-align: baseline;
+	}
+	.card-oracle :deep(.oracle-reminder) {
+		font-family: MPlantin-Italic;
+		font-style: italic;
+	}
 }
 </style>
