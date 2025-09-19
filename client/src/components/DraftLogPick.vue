@@ -84,7 +84,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { DraftPick, GridDraftPick, HousmanDraftPick, WinchesterDraftPick, WinstonDraftPick } from "@/DraftLog";
-import { Card, CardID, UniqueCard } from "@/CardTypes";
+import { Card, CardID } from "@/CardTypes";
 import { Language } from "@/Types";
 
 import CardComponent from "./Card.vue";
@@ -105,9 +105,7 @@ const props = withDefaults(
 	}
 );
 
-function getUnique(cid: CardID): UniqueCard {
-	return toUnique(props.carddata[cid]);
-}
+const getUnique = (cid: CardID) => toUnique(props.carddata[cid]);
 
 const draftPick = computed(() => props.pick as DraftPick);
 const gridDraftPick = computed(() => props.pick as GridDraftPick);

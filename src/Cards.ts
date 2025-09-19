@@ -42,7 +42,6 @@ console.timeEnd("Parsing Cards");
 
 import MB1Cards from "../data/mb1_cards.json" with { type: "json" };
 import { SetCode } from "./Types.js";
-import Constants from "./Constants.js";
 for (const cid in MB1Cards) {
 	if (!tmpCards.has(cid)) {
 		tmpCards.set(cid, MB1Cards[cid as keyof typeof MB1Cards] as Card);
@@ -50,6 +49,7 @@ for (const cid in MB1Cards) {
 }
 
 export const Cards: ReadonlyMap<CardID, Card> = tmpCards;
+Object.freeze(Cards);
 
 export function getCard(cid: CardID): Card {
 	const card = Cards.get(cid);
@@ -76,10 +76,18 @@ export function getUnique(cid: CardID, options: { foil?: boolean; getCard?: (cid
 
 console.time("Preparing Cards and caches");
 
+// Preferred version of each card
+export const CardsByName = JSON.parse(fs.readFileSync("./data/CardsByName.json", "utf-8")) as {
+	[name: string]: CardID;
+};
 export const MTGACards: { [arena_id: ArenaID]: Card } = {}; // Cards sorted by their arena id
 export const CardVersionsByName: { [name: string]: Array<CardID> } = {}; // Every card version sorted by their name (first face)
+// Cache for cards organized by set.
+export const CardsBySet: { [set: string]: Array<CardID> } = { alchemy_dmu: [], planeshifted_snc: [] };
+export const BoosterCardsBySet: { [set: string]: Array<CardID> } = { alchemy_dmu: [], planeshifted_snc: [] };
 
 for (const [cid, card] of Cards) {
+	Object.freeze(card);
 	const aid = card.arena_id;
 	if (aid !== undefined) MTGACards[aid] = card;
 
@@ -87,20 +95,12 @@ for (const [cid, card] of Cards) {
 	if (!CardVersionsByName[firstFaceName]) CardVersionsByName[firstFaceName] = [];
 	CardVersionsByName[firstFaceName].push(cid);
 
-	Object.freeze(card);
-}
+	if (card.printed_names?.["en"] && card.printed_names?.["en"] !== card.name) {
+		const altName = card.printed_names?.["en"];
+		if (!CardVersionsByName[altName]) CardVersionsByName[altName] = [cid];
+		else CardVersionsByName[altName].push(cid);
+	}
 
-Object.freeze(Cards);
-
-// preferred version of each card
-export const CardsByName = JSON.parse(fs.readFileSync("./data/CardsByName.json", "utf-8")) as {
-	[name: string]: CardID;
-};
-
-// Cache for cards organized by set.
-export const CardsBySet: { [set: string]: Array<CardID> } = { alchemy_dmu: [], planeshifted_snc: [] };
-export const BoosterCardsBySet: { [set: string]: Array<CardID> } = { alchemy_dmu: [], planeshifted_snc: [] };
-for (const [cid, card] of Cards.entries()) {
 	if (card.in_booster || ["und", "j21"].includes(card.set)) {
 		// Force cache for Unsanctioned (UND) and Jumpstart: Historic Horizons as they're not originally draft products
 		if (!(card.set in BoosterCardsBySet)) BoosterCardsBySet[card.set] = [];
