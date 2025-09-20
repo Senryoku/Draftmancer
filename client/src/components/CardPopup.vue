@@ -38,22 +38,22 @@
 				>
 					<img :src="relatedCardImage(idx)" class="related-card-image" />
 					<card-text
-						v-if="relatedCard.status === 'ready' && displayCardText"
+						v-if="(relatedCard.status === 'ready' || relatedCard.status === 'custom') && displayCardText"
 						:card="relatedCard"
 						class="alt-card-text"
 					/>
 				</div>
 				<div class="all-parts">
 					<div class="mouse-hint" v-if="relatedCards.length > 0">
-						<font-awesome-icon icon="fa-solid fa-arrows-alt-v"></font-awesome-icon>
-						<font-awesome-icon icon="fa-solid fa-mouse"></font-awesome-icon>
+						<font-awesome-icon icon="fa-solid fa-arrows-alt-v" />
+						<font-awesome-icon icon="fa-solid fa-mouse" />
 					</div>
-					<font-awesome-icon icon="fa-solid fa-angle-up" v-if="relatedCards.length > 0"></font-awesome-icon>
+					<font-awesome-icon icon="fa-solid fa-angle-up" v-if="relatedCards.length > 0" />
 					<font-awesome-icon
 						icon="fa-solid fa-square"
 						size="sm"
 						:class="{ 'carousel-selected': currentPart === 0 }"
-					></font-awesome-icon>
+					/>
 					<template v-for="(part, idx) in relatedCards">
 						<template v-if="part.status === 'pending'">
 							<font-awesome-icon
@@ -61,7 +61,7 @@
 								spin
 								:class="{ 'carousel-selected': currentPart === idx + 1 }"
 								:key="`${part.id}_${part.status}`"
-							></font-awesome-icon>
+							/>
 						</template>
 						<template v-else>
 							<font-awesome-icon
@@ -69,14 +69,14 @@
 								size="sm"
 								:key="`${part.id}_${part.status}`"
 								:class="{ 'carousel-selected': currentPart === idx + 1 }"
-							></font-awesome-icon>
+							/>
 						</template>
 					</template>
-					<font-awesome-icon icon="fa-solid fa-angle-down" v-if="relatedCards.length > 0"></font-awesome-icon>
+					<font-awesome-icon icon="fa-solid fa-angle-down" v-if="relatedCards.length > 0" />
 					<div class="alt-hint" :style="displayCardText ? 'color: white' : ''">⎇ Alt</div>
 				</div>
 				<div v-if="hasPendingData()" class="all-parts">
-					<font-awesome-icon icon="fas fa-spinner" spin></font-awesome-icon>
+					<font-awesome-icon icon="fas fa-spinner" spin />
 				</div>
 			</div>
 		</div>

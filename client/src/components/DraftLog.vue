@@ -577,8 +577,6 @@ export default defineComponent({
 							r.main.push(...cards);
 						}
 					} else r.main = cards;
-
-					console.log(r);
 					return r;
 				}
 			}
