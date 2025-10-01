@@ -317,7 +317,6 @@
         }
     ],
     "PrimarySets": [
-        "ecl",
         "spm",
         "om1",
         "eoe",
