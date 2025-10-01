@@ -100,6 +100,16 @@
         "fullName": "Arena Anthology 2",
         "icon": "img/sets/aa2.svg"
     },
+    "aa3": {
+        "code": "aa3",
+        "fullName": "Arena Anthology 3",
+        "icon": "img/sets/aa3.svg"
+    },
+    "aa4": {
+        "code": "aa4",
+        "fullName": "Arena Anthology 4",
+        "icon": "img/sets/aa4.svg"
+    },
     "acr": {
         "code": "acr",
         "fullName": "Assassin's Creed",
@@ -700,6 +710,11 @@
         "code": "ea3",
         "fullName": "Explorer Anthology 3",
         "icon": "img/sets/ea3.svg"
+    },
+    "ecl": {
+        "code": "ecl",
+        "fullName": "Lorwyn Eclipsed",
+        "icon": "img/sets/ecl.svg"
     },
     "eld": {
         "code": "eld",
@@ -1530,16 +1545,19 @@
     "mh1": {
         "code": "mh1",
         "fullName": "Modern Horizons",
+        "block": "Modern Horizons Block",
         "icon": "img/sets/mh1.svg"
     },
     "mh2": {
         "code": "mh2",
         "fullName": "Modern Horizons 2",
+        "block": "Modern Horizons Block",
         "icon": "img/sets/mh2.svg"
     },
     "mh3": {
         "code": "mh3",
         "fullName": "Modern Horizons 3",
+        "block": "Modern Horizons Block",
         "icon": "img/sets/mh3.svg"
     },
     "mic": {
@@ -3488,7 +3506,7 @@
     },
     "slc": {
         "code": "slc",
-        "fullName": "Secret Lair 30th Anniversary Countdown Kit",
+        "fullName": "Secret Lair Countdown",
         "icon": "img/sets/slc.svg"
     },
     "slci": {
