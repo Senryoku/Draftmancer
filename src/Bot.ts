@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import axios, { AxiosError } from "axios";
 
-import { arrayIntersect } from "./utils.js";
+import { arrayIntersect, random } from "./utils.js";
 import { Card, OracleID } from "./CardTypes.js";
 import { isArrayOf, isNumber } from "./TypeChecks.js";
 
@@ -124,21 +124,19 @@ export class SimpleBot implements IBot {
 	}
 
 	async getScores(booster: Card[], boosterNum: number, numBoosters: number, pickNum: number, numPicks: number) {
-		let maxScore = 0;
-		let bestPick = 0;
-		const scores: number[] = [];
-		for (let idx = 0; idx < booster.length; ++idx) {
-			const c = booster[idx];
+		const scores = booster.map((c) => {
 			let score = c.rating;
 			for (const color of c.colors) score += 0.35 * this.pickedColors[color];
-			scores.push(score);
-			if (score > maxScore) {
-				maxScore = score;
-				bestPick = idx;
-			}
-		}
+			return score;
+		});
+		const max = Math.max(...scores);
+		const candidates = scores
+			.map((s, i) => {
+				return { score: s, index: i };
+			})
+			.filter((entry) => entry.score === max);
 		this.lastScores = {
-			chosenOption: bestPick,
+			chosenOption: random.pick(candidates).index,
 			scores,
 		};
 		return this.lastScores;
