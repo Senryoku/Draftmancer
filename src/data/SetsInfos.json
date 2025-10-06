@@ -1409,6 +1409,11 @@
         "block": "Onslaught",
         "icon": "img/sets/lgn.svg"
     },
+    "lmar": {
+        "code": "lmar",
+        "fullName": "Marvel Legends Series Inserts",
+        "icon": "img/sets/lmar.svg"
+    },
     "lrw": {
         "code": "lrw",
         "fullName": "Lorwyn",
