@@ -58,7 +58,7 @@ export function sendDraftLogToCubeCobra(session: Session) {
 				sessionID: session.id,
 				timestamp: session.draftLog.time,
 				players: Object.values(session.draftLog.users).map((user) => ({
-					userName: user.userName,
+					userName: user.userName && user.userName !== "" ? user.userName : user.isBot ? "Bot" : "Anonymous",
 					isBot: user.isBot,
 					picks: user.picks.map((pick) => {
 						const p = pick as DraftPick;
