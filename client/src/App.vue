@@ -2280,10 +2280,89 @@
 							</div>
 						</div>
 						<div
+							v-bind:class="{
+								disabled: useCustomCardList && customCardList?.settings?.boosterSettings,
+							}"
+						>
+							<div
+								class="line"
+								v-tooltip.right="{
+									popperClass: 'option-tooltip',
+									content:
+										'<p>Number of cards to pick from each booster. Useful for Commander Legends for example (2 cards per booster).</p><p>Default is 1.</p>',
+									html: true,
+								}"
+							>
+								<label for="picked-cards-per-round">Picked cards per booster</label>
+								<div class="right">
+									<input
+										type="number"
+										id="picked-cards-per-round"
+										class="small-number-input"
+										min="1"
+										step="1"
+										v-model.number="defaultPickedCardsPerRound"
+										@change="if (defaultPickedCardsPerRound < 1) defaultPickedCardsPerRound = 1;"
+									/>
+								</div>
+							</div>
+							<div
+								class="line"
+								v-tooltip.right="{
+									popperClass: 'option-tooltip',
+									content:
+										'<p>In addition to picking a card, you will also remove this number of cards from the same booster.</p><p>This is typically used in conjunction with a higher count of boosters per player for drafting with 2 to 4 players. Burn or Glimpse Draft is generally 9 boosters per player with 2 cards being burned in addition to a pick.</p><p>Default is 0.</p>',
+									html: true,
+								}"
+							>
+								<label for="burned-cards-per-round">Burned cards per booster</label>
+								<div class="right">
+									<input
+										type="number"
+										id="burned-cards-per-round"
+										class="small-number-input"
+										min="0"
+										max="24"
+										step="1"
+										v-model.number="defaultBurnedCardsPerRound"
+										@change="if (defaultBurnedCardsPerRound < 0) defaultBurnedCardsPerRound = 0;"
+									/>
+								</div>
+							</div>
+						</div>
+						<div
+							class="line"
+							v-tooltip.right="{
+								popperClass: 'option-tooltip',
+								content: '<p>Discard (burn) the remaining N cards of each packs automatically.</p>',
+								html: true,
+							}"
+						>
+							<label for="discard-remaining-cards">Discard the remaining</label>
+							<div class="right">
+								<input
+									type="number"
+									id="discard-remaining-cards"
+									class="small-number-input"
+									min="0"
+									:max="
+										Math.max(
+											Object.values(boosterContent).reduce((v, a) => (a += v)),
+											cardsPerBooster
+										) - defaultPickedCardsPerRound
+									"
+									step="1"
+									v-model.number="discardRemainingCardsAt"
+									@change="if (discardRemainingCardsAt < 0) discardRemainingCardsAt = 0;"
+								/>
+								cards of each pack
+							</div>
+						</div>
+						<div
 							class="option-section"
 							v-bind:class="{ disabled: usePredeterminedBoosters || useCustomCardList }"
 						>
-							<div class="option-column-title">Individual Booster Set</div>
+							<div class="option-column-title">Individual Booster Settings</div>
 							<div
 								class="line"
 								v-tooltip.right="{
@@ -2315,107 +2394,66 @@
 								}"
 								style="max-height: 10em; overflow-y: auto; margin: 0.2em; padding-bottom: 0.4em"
 							>
-								<div v-for="(value, index) in customBoosters" class="line" :key="index">
-									<label for="customized-booster">Booster #{{ index + 1 }}</label>
-									<select class="right" v-model="customBoosters[index]">
-										<option value>(Default)</option>
-										<option value="random">Random Set from Card Pool</option>
-										<option value="randomShared">Random Set from Card Pool (Shared)</option>
-										<option style="color: #888" disabled>————————————————</option>
-										<option v-for="code in sets.slice().reverse()" :value="code" :key="code">
-											{{ setsInfos[code].fullName }}
-										</option>
-										<option style="color: #888" disabled>————————————————</option>
-										<option
-											v-for="code in primarySets.filter((s) => !sets.includes(s))"
-											:value="code"
-											:key="code"
-										>
-											{{ setsInfos[code].fullName }}
-										</option>
-									</select>
-								</div>
-							</div>
-						</div>
-						<div
-							v-bind:class="{
-								disabled: useCustomCardList && customCardList?.settings?.boosterSettings,
-							}"
-						>
-							<div
-								class="line"
-								v-tooltip.right="{
-									popperClass: 'option-tooltip',
-									content:
-										'<p>Number of cards to pick from each booster. Useful for Commander Legends for example (2 cards per booster).</p><p>Default is 1.</p><p>First Pick Only: The custom value will only be used for the first pick of each booster, then revert to 1. For example, you should check this with a value of 2 for Double Masters sets.</p>',
-									html: true,
-								}"
-							>
-								<label for="picked-cards-per-round">Picked cards per booster</label>
-								<div class="right">
-									<input
-										type="number"
-										id="picked-cards-per-round"
-										class="small-number-input"
-										min="1"
-										step="1"
-										v-model.number="pickedCardsPerRound"
-										@change="if (pickedCardsPerRound < 1) pickedCardsPerRound = 1;"
-									/>
-									<label for="doubleMastersMode">First Pick Only</label
-									><input type="checkbox" id="doubleMastersMode" v-model="doubleMastersMode" />
-								</div>
-							</div>
-							<div
-								class="line"
-								v-tooltip.right="{
-									popperClass: 'option-tooltip',
-									content:
-										'<p>In addition to picking a card, you will also remove this number of cards from the same booster.</p><p>This is typically used in conjunction with a higher count of boosters per player for drafting with 2 to 4 players. Burn or Glimpse Draft is generally 9 boosters per player with 2 cards being burned in addition to a pick.</p><p>Default is 0.</p>',
-									html: true,
-								}"
-							>
-								<label for="burned-cards-per-round">Burned cards per booster</label>
-								<div class="right">
-									<input
-										type="number"
-										id="burned-cards-per-round"
-										class="small-number-input"
-										min="0"
-										max="24"
-										step="1"
-										v-model.number="burnedCardsPerRound"
-										@change="if (burnedCardsPerRound < 0) burnedCardsPerRound = 0;"
-									/>
-								</div>
-							</div>
-						</div>
-						<div
-							class="line"
-							v-tooltip.right="{
-								popperClass: 'option-tooltip',
-								content: '<p>Discard (burn) the remaining N cards of each packs automatically.</p>',
-								html: true,
-							}"
-						>
-							<label for="discard-remaining-cards">Discard the remaining</label>
-							<div class="right">
-								<input
-									type="number"
-									id="discard-remaining-cards"
-									class="small-number-input"
-									min="0"
-									:max="
-										Math.max(
-											Object.values(boosterContent).reduce((v, a) => (a += v)),
-											cardsPerBooster
-										) - pickedCardsPerRound
-									"
-									step="1"
-									v-model.number="discardRemainingCardsAt"
-									@change="if (discardRemainingCardsAt < 0) discardRemainingCardsAt = 0;"
-								/>
-								cards of each pack
+								<table>
+									<thead>
+										<tr>
+											<th scope="col">Booster</th>
+											<th scope="col">Set</th>
+											<th scope="col">Picks</th>
+											<th scope="col">Burns</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr v-for="(value, index) in customBoosters" :key="index">
+											<th scope="row">
+												<label for="customized-booster">#{{ index + 1 }}</label>
+											</th>
+											<td>
+												<select v-model="customBoosters[index]">
+													<option value>(Default)</option>
+													<option value="random">Random Set from Card Pool</option>
+													<option value="randomShared">
+														Random Set from Card Pool (Shared)
+													</option>
+													<option style="color: #888" disabled>————————————————</option>
+													<option
+														v-for="code in sets.slice().reverse()"
+														:value="code"
+														:key="code"
+													>
+														{{ setsInfos[code].fullName }}
+													</option>
+													<option style="color: #888" disabled>————————————————</option>
+													<option
+														v-for="code in primarySets.filter((s) => !sets.includes(s))"
+														:value="code"
+														:key="code"
+													>
+														{{ setsInfos[code].fullName }}
+													</option>
+												</select>
+											</td>
+											<td>
+												<select v-model="pickedCardsPerRound[index]">
+													<option :value="defaultPickedCardsPerRound" selected="selected">
+														Default ({{ defaultPickedCardsPerRound }})
+													</option>
+													<option v-for="i in 10" :key="i" :value="i">{{ i }}</option>
+												</select>
+											</td>
+											<td>
+												<select v-model="burnedCardsPerRound[index]">
+													<option :value="defaultBurnedCardsPerRound" selected="selected">
+														Default ({{ defaultBurnedCardsPerRound }})
+													</option>
+													<option v-for="i in 10" :key="i - 1" :value="i - 1">
+														{{ i - 1 }}
+													</option>
+												</select>
+											</td>
+										</tr>
+									</tbody>
+								</table>
 							</div>
 						</div>
 						<div

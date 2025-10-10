@@ -361,8 +361,10 @@ export default defineComponent({
 			customCardListDuplicateProtection: true,
 			customCardList: null as CustomCardList | null,
 			doubleMastersMode: false,
-			pickedCardsPerRound: 1,
-			burnedCardsPerRound: 0,
+			defaultPickedCardsPerRound: 1,
+			pickedCardsPerRound: [1, 0, 0],
+			defaultBurnedCardsPerRound: 0,
+			burnedCardsPerRound: [0, 0, 0],
 			discardRemainingCardsAt: 0,
 			maxTimer: 75,
 			tournamentTimer: false,
@@ -1534,8 +1536,8 @@ export default defineComponent({
 			this.drafting = false;
 			this.useCustomCardList = false;
 			this.customCardList = null;
-			this.pickedCardsPerRound = 1;
-			this.burnedCardsPerRound = 0;
+			this.pickedCardsPerRound = [1, 0, 0];
+			this.burnedCardsPerRound = [0, 0, 0];
 			this.discardRemainingCardsAt = 0;
 			this.maxTimer = 75;
 			this.pickTimer = 75;
@@ -4197,6 +4199,15 @@ export default defineComponent({
 		},
 		boostersPerPlayer() {
 			if (this.userID !== this.sessionOwner || !this.socket) return;
+			while (this.customBoosters.length < this.boostersPerPlayer) this.customBoosters.push("");
+			while (this.customBoosters.length > this.boostersPerPlayer) this.customBoosters.pop();
+			while (this.pickedCardsPerRound.length < this.boostersPerPlayer)
+				this.pickedCardsPerRound.push(this.defaultPickedCardsPerRound);
+			while (this.pickedCardsPerRound.length > this.boostersPerPlayer) this.pickedCardsPerRound.pop();
+			while (this.burnedCardsPerRound.length < this.boostersPerPlayer)
+				this.burnedCardsPerRound.push(this.defaultBurnedCardsPerRound);
+			while (this.burnedCardsPerRound.length > this.boostersPerPlayer) this.burnedCardsPerRound.pop();
+
 			this.socket.emit("boostersPerPlayer", this.boostersPerPlayer);
 		},
 		cardsPerBooster() {
