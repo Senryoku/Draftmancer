@@ -3266,6 +3266,11 @@
         "fullName": "Unhinged Promos",
         "icon": "img/sets/punh.svg"
     },
+    "punk": {
+        "code": "punk",
+        "fullName": "Black Lotus Unknown Planechase",
+        "icon": "img/sets/punk.svg"
+    },
     "purl": {
         "code": "purl",
         "fullName": "URL/Convention Promos",
@@ -3379,6 +3384,11 @@
         "code": "pz2",
         "fullName": "Treasure Chest",
         "icon": "img/sets/pz2.svg"
+    },
+    "pza": {
+        "code": "pza",
+        "fullName": "Teenage Mutant Hero Turtles Source Material",
+        "icon": "img/sets/pza.svg"
     },
     "pzen": {
         "code": "pzen",
@@ -3772,11 +3782,21 @@
         "block": "Scars of Mirrodin",
         "icon": "img/sets/tmbs.svg"
     },
+    "tmc": {
+        "code": "tmc",
+        "fullName": "Teenage Mutant Ninja Turtles Eternal",
+        "icon": "img/sets/tmc.svg"
+    },
     "tmp": {
         "code": "tmp",
         "fullName": "Tempest",
         "block": "Tempest",
         "icon": "img/sets/tmp.svg"
+    },
+    "tmt": {
+        "code": "tmt",
+        "fullName": "Teenage Mutant Ninja Turtles",
+        "icon": "img/sets/tmt.svg"
     },
     "tnph": {
         "code": "tnph",
@@ -3827,6 +3847,11 @@
         "code": "ttdc",
         "fullName": "Tarkir: Dragonstorm Commander Tokens",
         "icon": "img/sets/ttdc.svg"
+    },
+    "ttmc": {
+        "code": "ttmc",
+        "fullName": "Teenage Mutant Ninja Turtles Eternal Tokens",
+        "icon": "img/sets/ttmc.svg"
     },
     "tund": {
         "code": "tund",
