@@ -191,6 +191,11 @@
     },
     "CubeLists": [
         {
+            "name": "MTGA Powered Cube",
+            "cubeCobraID": "mtgapc",
+            "description": "MTG:Arena Powered Cube."
+        },
+        {
             "name": "MTGO Vintage Cube",
             "cubeCobraID": "3txn8",
             "description": "Updated version of the official MTGO Vintage Cube. See <a href=\"https://www.mtgo.com/vintage-cube-cardlist\" target=\"_blank\">the list on MTGO website</a>."
