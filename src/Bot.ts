@@ -126,7 +126,7 @@ export class SimpleBot implements IBot {
 	async getScores(booster: Card[], boosterNum: number, numBoosters: number, pickNum: number, numPicks: number) {
 		const scores = booster.map((c) => {
 			let score = c.rating;
-			for (const color of c.colors) score += 0.35 * this.pickedColors[color];
+			for (const color of c.colors) score += 0.35 * (this.pickedColors[color] ?? 0);
 			return score;
 		});
 		const max = Math.max(...scores);
@@ -143,7 +143,12 @@ export class SimpleBot implements IBot {
 	}
 
 	addCard(card: Card) {
-		for (const color of card.colors) ++this.pickedColors[color];
+		for (const color of card.colors)
+			if (this.pickedColors[color]) {
+				++this.pickedColors[color];
+			} else {
+				this.pickedColors[color] = 1;
+			}
 		this.cards.push(card);
 	}
 
