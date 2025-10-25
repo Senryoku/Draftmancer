@@ -24,7 +24,7 @@
 			></font-awesome-icon>
 			<img class="wildcard-icon" :src="`img/wc_${card.rarity}.webp`" />
 		</div>
-		<div class="bot-score" v-if="botscore && displayBotScore">{{ displayBotScore }}</div>
+		<div class="bot-score" v-if="displayBotScore">{{ displayBotScore }}</div>
 		<template v-if="canbeburned && !selected">
 			<div v-if="burned" class="restore-card blue clickable" @click="restoreCard($event)">
 				<font-awesome-icon icon="fa-solid fa-undo-alt" size="2x"></font-awesome-icon>
@@ -87,7 +87,7 @@ function restoreCard(e: Event) {
 }
 
 const displayBotScore = computed(() => {
-	if (!props.botscore) return null;
+	if (props.botscore === null) return null;
 	if (props.botscore < 0) return null;
 	return props.botscore.toFixed(1);
 });
