@@ -6,7 +6,7 @@ import { Language, SetCode } from "@/Types";
 
 const MTGASetConversions: { [key: string]: string } = {
 	DOM: "DAR", // DOM is called DAR in MTGA
-	CON: "CONF", // CON is called CONF in MTGA
+	// CON: "CONF", // CON is called CONF in MTGA. NOTE: It seems like the Arena importer now understands 'CON', removing this conversion to improve compatibility with other software.
 	AJMP: "JMP", // AJMP is a Scryfall only set containing cards from Jumpstart modified for Arena
 	YMID: "Y22",
 	YVOW: "Y22",
