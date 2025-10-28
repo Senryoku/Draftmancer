@@ -102,8 +102,8 @@ app.use("/bracket", ExpressStatic("./client/dist/bracket.html"));
 app.use("/draftqueue", ExpressStatic("./client/dist/index.html"));
 
 app.use(cookieParser());
-app.use(ExpressJSON());
-app.use(ExpressText({ type: "text/*" }));
+app.use(ExpressJSON({ limit: "2mb" }));
+app.use(ExpressText({ type: "text/*", limit: "2mb" }));
 
 function shortguid() {
 	function s4() {
