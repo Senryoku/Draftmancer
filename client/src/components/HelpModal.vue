@@ -86,7 +86,7 @@
 				</ul>
 				Click on
 				<span @click="openSettings" class="clickable">
-					<font-awesome-icon icon="fa-solid fa-cog"></font-awesome-icon>
+					<font-awesome-icon icon="fa-solid fa-cog" />
 					Settings
 				</span>
 				for some additional settings:

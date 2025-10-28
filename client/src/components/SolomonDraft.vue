@@ -42,11 +42,7 @@
 			<div style="grid-area: settings">
 				<scale-slider v-model.number="cardScale" />
 				<VDropdown placement="left-start">
-					<font-awesome-icon
-						icon="fa-solid fa-clock-rotate-left"
-						size="xl"
-						class="clickable"
-					></font-awesome-icon>
+					<font-awesome-icon icon="fa-solid fa-clock-rotate-left" size="xl" class="clickable" />
 					<template #popper>
 						<div class="last-picks-container">
 							<div class="last-picks">

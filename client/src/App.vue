@@ -52,7 +52,7 @@
 								green: hasCollection && useCollection,
 								yellow: hasCollection && !useCollection,
 							}"
-						></font-awesome-icon>
+						/>
 					</font-awesome-layers>
 					MTGA Collection
 				</label>
@@ -70,7 +70,7 @@
 						class="clickable"
 						@click="displayedModal = 'collectionHelp'"
 						v-tooltip="'Collection Import Help'"
-					></font-awesome-icon>
+					/>
 					<input
 						type="file"
 						id="collection-file-input"
@@ -79,11 +79,7 @@
 						accept=".txt,.csv,.log"
 					/>
 					<span v-tooltip="'Import your collection by uploading your Player.log file.'">
-						<font-awesome-icon
-							@click="uploadMTGALogs"
-							icon="fa-solid fa-file-upload"
-							class="clickable"
-						></font-awesome-icon>
+						<font-awesome-icon @click="uploadMTGALogs" icon="fa-solid fa-file-upload" class="clickable" />
 					</span>
 					<font-awesome-icon
 						icon="fa-solid fa-chart-bar"
@@ -91,7 +87,7 @@
 						v-if="hasCollection"
 						v-tooltip="'Collection Statistics'"
 						@click="displayedModal = 'collection'"
-					></font-awesome-icon>
+					/>
 					<div
 						v-show="hasCollection"
 						class="inline"
@@ -118,7 +114,7 @@
 					class="flat"
 					v-tooltip="'Displays logs of your previous drafts and sealed'"
 				>
-					<font-awesome-icon icon="fa-solid fa-list"></font-awesome-icon> Game Logs
+					<font-awesome-icon icon="fa-solid fa-list" /> Game Logs
 				</button>
 			</div>
 			<span class="personal-settings">
@@ -132,10 +128,7 @@
 					}"
 					tabindex="0"
 				>
-					<font-awesome-icon
-						icon="fa-solid fa-thumbtack"
-						style="font-size: 1.2em; vertical-align: -20%"
-					></font-awesome-icon>
+					<font-awesome-icon icon="fa-solid fa-thumbtack" style="font-size: 1.2em; vertical-align: -20%" />
 				</div>
 				<div
 					class="clickable personal-settings-icon"
@@ -152,7 +145,7 @@
 					<font-awesome-icon
 						icon="fa-solid fa-mouse-pointer"
 						style="font-size: 1.2em; vertical-align: -20%"
-					></font-awesome-icon>
+					/>
 				</div>
 				<div
 					class="clickable personal-settings-icon"
@@ -180,9 +173,7 @@
 					}"
 					tabindex="0"
 				>
-					<font-awesome-icon
-						:icon="`fa-solid ${enableSound ? 'fa-volume-up' : 'fa-volume-mute'}`"
-					></font-awesome-icon>
+					<font-awesome-icon :icon="`fa-solid ${enableSound ? 'fa-volume-up' : 'fa-volume-mute'}`" />
 				</div>
 				<div
 					class="clickable personal-settings-icon"
@@ -202,9 +193,7 @@
 					@click="toggleNotifications"
 					tabindex="0"
 				>
-					<font-awesome-icon
-						:icon="`fa-solid ${enableNotifications ? 'fa-bell' : 'fa-bell-slash'}`"
-					></font-awesome-icon>
+					<font-awesome-icon :icon="`fa-solid ${enableNotifications ? 'fa-bell' : 'fa-bell-slash'}`" />
 				</div>
 			</span>
 		</div>
@@ -245,7 +234,7 @@
 							@click="hideSessionID = !hideSessionID"
 							v-tooltip="'Show/Hide your session ID.'"
 							fixed-width
-						></font-awesome-icon>
+						/>
 
 						<font-awesome-icon
 							class="clickable"
@@ -253,7 +242,7 @@
 							v-tooltip="'Copy session link for sharing.'"
 							@click="sessionURLToClipboard"
 							fixed-width
-						></font-awesome-icon>
+						/>
 
 						<font-awesome-icon
 							id="bracket-button"
@@ -262,7 +251,7 @@
 							v-if="sessionOwner === userID && !bracket"
 							@click="generateBracket(teamDraft ? BracketType.Team : BracketType.Single)"
 							v-tooltip="'Generate tournament bracket.'"
-						></font-awesome-icon>
+						/>
 						<font-awesome-icon
 							id="bracket-button"
 							class="clickable"
@@ -270,7 +259,7 @@
 							v-else-if="bracket"
 							@click="displayedModal = 'bracket'"
 							v-tooltip="'Display tournament bracket.'"
-						></font-awesome-icon>
+						/>
 
 						<font-awesome-icon
 							class="clickable"
@@ -278,7 +267,7 @@
 							v-if="sessionOwner === userID"
 							@click="readyCheck"
 							v-tooltip="'Ready Check: Ask everyone in your session if they\'re ready to play.'"
-						></font-awesome-icon>
+						/>
 					</div>
 				</span>
 				<div class="generic-container card-pool-controls">
@@ -303,7 +292,7 @@
 									class="clickable blue"
 									@click="displayedModal = 'cardList'"
 									v-tooltip="'Review the card list'"
-								></font-awesome-icon>
+								/>
 							</div>
 							<div v-else>No list loaded</div>
 							<div class="clickable" onclick="document.querySelector('#card-list-input-main').click()">
@@ -312,7 +301,7 @@
 									icon="fa-solid fa-file-upload"
 									v-tooltip="'Upload a Custom Card List'"
 									v-if="sessionOwner === userID"
-								></font-awesome-icon>
+								/>
 							</div>
 							<div @click="useCustomCardList = false" class="clickable brightred">
 								<font-awesome-icon
@@ -320,7 +309,7 @@
 									icon="fa-solid fa-times"
 									v-tooltip="'Return to official sets.'"
 									v-if="sessionOwner === userID"
-								></font-awesome-icon>
+								/>
 							</div>
 						</div>
 					</template>
@@ -362,7 +351,7 @@
 								@click="displayedModal = 'setRestriction'"
 								v-tooltip="'More sets'"
 							>
-								<font-awesome-icon icon="fa-solid fa-ellipsis-v"></font-awesome-icon>
+								<font-awesome-icon icon="fa-solid fa-ellipsis-v" />
 							</div>
 							<div
 								class="inline clickable"
@@ -376,7 +365,7 @@
 								@click="ignoreCollections = !ignoreCollections"
 								:class="{ faded: ignoreCollections, crossed: ignoreCollections }"
 							>
-								<font-awesome-icon icon="fa-solid fa-book"></font-awesome-icon>
+								<font-awesome-icon icon="fa-solid fa-book" />
 							</div>
 						</div>
 					</span>
@@ -388,7 +377,7 @@
 						:class="{ disabled: teamDraft }"
 						v-tooltip="'Bots. Use them to draft alone or fill your pod.'"
 					>
-						<label for="bots"><font-awesome-icon icon="fa-solid fa-robot"></font-awesome-icon></label>
+						<label for="bots"><font-awesome-icon icon="fa-solid fa-robot" /></label>
 						<input
 							type="number"
 							id="bots"
@@ -405,7 +394,7 @@
 						:class="{ disabled: tournamentTimer }"
 					>
 						<label for="timer">
-							<font-awesome-icon icon="fa-solid fa-stopwatch" size="lg"></font-awesome-icon>
+							<font-awesome-icon icon="fa-solid fa-stopwatch" size="lg" />
 						</label>
 						<input
 							type="number"
@@ -516,7 +505,7 @@
 					@click="displayedModal = 'sessionOptions'"
 					class="setting-button flat"
 				>
-					<font-awesome-icon icon="fa-solid fa-cog"></font-awesome-icon>
+					<font-awesome-icon icon="fa-solid fa-cog" />
 					Settings
 				</button>
 			</div>
@@ -535,7 +524,7 @@
 				<div id="draft-controls">
 					<template v-if="sessionOwner === userID">
 						<button class="stop" @click="stopDraft">
-							<font-awesome-icon icon="fa-solid fa-stop"></font-awesome-icon> Stop
+							<font-awesome-icon icon="fa-solid fa-stop" /> Stop
 						</button>
 						<button
 							v-if="maxTimer > 0 && !draftPaused"
@@ -543,7 +532,7 @@
 							:class="{ 'opaque-disabled': waitingForDisconnectedUsers }"
 							@click="pauseDraft"
 						>
-							<font-awesome-icon icon="fa-solid fa-pause"></font-awesome-icon> Pause
+							<font-awesome-icon icon="fa-solid fa-pause" /> Pause
 						</button>
 						<button
 							v-else-if="maxTimer > 0 && draftPaused"
@@ -551,7 +540,7 @@
 							:class="{ 'opaque-disabled': waitingForDisconnectedUsers }"
 							@click="resumeDraft"
 						>
-							<font-awesome-icon icon="fa-solid fa-play"></font-awesome-icon> Resume
+							<font-awesome-icon icon="fa-solid fa-play" /> Resume
 						</button>
 					</template>
 				</div>
@@ -571,7 +560,7 @@
 					"
 					style="flex: 0 3 auto; text-align: center"
 				>
-					<font-awesome-icon icon="fa-solid fa-crown" class="subtle-gold"></font-awesome-icon>
+					<font-awesome-icon icon="fa-solid fa-crown" class="subtle-gold" />
 					<div class="non-playing-session-owner-name">
 						{{ sessionOwnerUsername ? sessionOwnerUsername : "(Disconnected)" }}
 					</div>
@@ -601,7 +590,7 @@
 						html: true,
 					}"
 				>
-					<font-awesome-icon icon="fa-solid fa-random"></font-awesome-icon>
+					<font-awesome-icon icon="fa-solid fa-random" />
 				</div>
 			</div>
 			<div class="player-list-container">
@@ -688,7 +677,7 @@
 					icon="fa-regular fa-comments"
 					@click="displayChatHistory = !displayChatHistory"
 					v-tooltip="'Display chat history.'"
-				></font-awesome-icon>
+				/>
 				<ChatHistory
 					v-if="displayChatHistory"
 					@focusout="displayChatHistory = false"
@@ -757,10 +746,7 @@
 											:key="`${maxTimer}_${draftState.boosterNumber}_${draftState.pickNumber}`"
 											:style="`--timer-max: ${maxTimer}; --timer-current: ${pickTimer - 1}`"
 										>
-											<font-awesome-icon
-												icon="fa-solid fa-stopwatch"
-												size="lg"
-											></font-awesome-icon>
+											<font-awesome-icon icon="fa-solid fa-stopwatch" size="lg" />
 											<div class="timer-icon-moving"></div>
 										</div>
 										<span>{{ pickTimer }}</span>
@@ -827,7 +813,7 @@
 										</template>
 									</template>
 									<template v-else>
-										<font-awesome-icon icon="fa-solid fa-spinner" spin></font-awesome-icon>
+										<font-awesome-icon icon="fa-solid fa-spinner" spin />
 										Waiting for other players to pick...
 									</template>
 								</div>
@@ -866,8 +852,8 @@
 										"
 										size="sm"
 										v-show="draftState.booster.length > 0"
-									></font-awesome-icon>
-									<font-awesome-icon icon="fa-solid fa-spinner" size="lg" spin></font-awesome-icon>
+									/>
+									<font-awesome-icon icon="fa-solid fa-spinner" size="lg" spin />
 									<font-awesome-icon
 										class="passing-order"
 										:class="{
@@ -882,7 +868,7 @@
 										"
 										size="sm"
 										v-show="draftState.booster.length > 0"
-									></font-awesome-icon>
+									/>
 								</div>
 								<booster-card
 									v-for="(card, idx) in draftState.booster"
@@ -929,7 +915,7 @@
 								:key="`${reviewTimer}_${draftState.boosterNumber}_${draftState.pickNumber}`"
 								:style="`--timer-max: ${reviewTimer}; --timer-current: ${pickTimer - 1}`"
 							>
-								<font-awesome-icon icon="fa-solid fa-stopwatch" size="lg"></font-awesome-icon>
+								<font-awesome-icon icon="fa-solid fa-stopwatch" size="lg" />
 								<div class="timer-icon-moving"></div>
 							</div>
 							<span>{{ pickTimer }}</span>
@@ -1021,8 +1007,8 @@
 							</span>
 							<span>
 								<template v-if="userID === gridDraftState.currentPlayer">
-									<font-awesome-icon icon="fa-solid fa-exclamation-circle"></font-awesome-icon> It's
-									your turn! Pick a column or a row.
+									<font-awesome-icon icon="fa-solid fa-exclamation-circle" /> It's your turn! Pick a
+									column or a row.
 								</template>
 								<template v-else-if="gridDraftState.currentPlayer === null">
 									<template
@@ -1036,7 +1022,7 @@
 									<template v-else>Advancing to the next booster...</template>
 								</template>
 								<template v-else>
-									<font-awesome-icon icon="fa-solid fa-spinner" spin></font-awesome-icon>
+									<font-awesome-icon icon="fa-solid fa-spinner" spin />
 									Waiting for
 									{{
 										gridDraftState.currentPlayer in userByID
@@ -1073,7 +1059,7 @@
 								</span>
 								<template v-if="userID === rochesterDraftState.currentPlayer">
 									<span
-										><font-awesome-icon icon="fa-solid fa-exclamation-circle"></font-awesome-icon>
+										><font-awesome-icon icon="fa-solid fa-exclamation-circle" />
 										It's your turn! Pick a card.
 									</span>
 									<span>
@@ -1087,7 +1073,7 @@
 								</template>
 								<template v-else>
 									<span>
-										<font-awesome-icon icon="fa-solid fa-spinner" spin></font-awesome-icon>
+										<font-awesome-icon icon="fa-solid fa-spinner" spin />
 										Waiting for
 										{{
 											rochesterDraftState.currentPlayer in userByID
@@ -1150,7 +1136,7 @@
 							<template v-if="userID === sessionOwner">
 								<div style="margin-top: 1em">
 									<button class="confirm" @click="resumeDraft">
-										<font-awesome-icon icon="fa-solid fa-play"></font-awesome-icon> Resume
+										<font-awesome-icon icon="fa-solid fa-play" /> Resume
 									</button>
 								</div>
 							</template>
@@ -1236,13 +1222,13 @@
 			<div v-if="gameState === GameState.Brewing" style="padding: 0.5em 1em 0 1em">
 				<template v-if="managed">
 					<a href="/draftqueue">
-						<font-awesome-icon icon="fa-solid fa-arrow-left"></font-awesome-icon>
+						<font-awesome-icon icon="fa-solid fa-arrow-left" />
 						Back to Draft Queue
 					</a>
 				</template>
 				<template v-else>
 					<a @click="gameState = GameState.None">
-						<font-awesome-icon icon="fa-solid fa-arrow-left"></font-awesome-icon>
+						<font-awesome-icon icon="fa-solid fa-arrow-left" />
 						Back to Home
 					</a>
 				</template>
@@ -1268,7 +1254,7 @@
 						size="lg"
 						aria-hidden="true"
 						v-if="displayFixedDeck"
-					></font-awesome-icon>
+					/>
 					<div
 						class="container deck-container"
 						v-show="
@@ -1327,7 +1313,7 @@
 											icon="fa-solid fa-chart-pie"
 											size="lg"
 											v-tooltip.top="'Deck Statistics'"
-										></font-awesome-icon>
+										/>
 										<div class="deck-stat" v-tooltip="'Creatures in deck'">
 											{{ deckCreatureCount }}
 											<img src="./assets/img/Creature.svg" />
@@ -1436,7 +1422,7 @@
 										<input type="text" placeholder="Search..." v-model="deckFilter" /><span
 											@click="deckFilter = ''"
 										>
-											<font-awesome-icon icon="fa-solid fa-times-circle"></font-awesome-icon>
+											<font-awesome-icon icon="fa-solid fa-times-circle" />
 										</span>
 									</div>
 								</template>
@@ -1447,7 +1433,7 @@
 											class="clickable"
 											v-tooltip="'Swap deck and sideboard'"
 											@click="swapDeckAndSideboard"
-										></font-awesome-icon>
+										/>
 										<font-awesome-icon
 											icon="fa-solid fa-arrow-right-to-bracket"
 											class="clickable"
@@ -1455,14 +1441,14 @@
 											flip="horizontal"
 											v-tooltip="'Move all cards from sideboard to deck'"
 											@click="moveAllToDeck"
-										></font-awesome-icon>
+										/>
 										<font-awesome-icon
 											icon="fa-solid fa-arrow-right-from-bracket"
 											class="clickable"
 											:class="{ disabled: deck.length === 0 }"
 											v-tooltip="'Move all cards from deck to sideboard'"
 											@click="moveAllToSideboard"
-										></font-awesome-icon>
+										/>
 									</div>
 								</template>
 								<template v-slot:empty>
@@ -1491,7 +1477,7 @@
 										icon="fa-regular fa-window-maximize"
 										@click="collapseSideboard = false"
 										v-tooltip="'Maximize sideboard'"
-									></font-awesome-icon>
+									/>
 								</div>
 							</div>
 							<div
@@ -1561,7 +1547,7 @@
 									class="clickable"
 									@click="collapseSideboard = true"
 									v-tooltip="'Minimize sideboard'"
-								></font-awesome-icon>
+								/>
 							</template>
 							<template v-slot:empty>
 								<h3>Your sideboard is currently empty!</h3>
@@ -1644,15 +1630,14 @@
 								<div style="display: flex; justify-content: space-between">
 									<div>
 										<span class="link" @click="displayedModal = 'gettingStarted'">
-											<font-awesome-icon icon="fa-solid fa-rocket"></font-awesome-icon> Get
-											Started
+											<font-awesome-icon icon="fa-solid fa-rocket" /> Get Started
 										</span>
 										guide
 									</div>
 									<div>
 										<span class="link" @click="displayedModal = 'help'">
-											<font-awesome-icon icon="fa-solid fa-info-circle"></font-awesome-icon> FAQ /
-											Settings Description
+											<font-awesome-icon icon="fa-solid fa-info-circle" /> FAQ / Settings
+											Description
 										</span>
 									</div>
 								</div>
@@ -1661,18 +1646,14 @@
 								<a href="mailto:dev@draftmancer.com">dev@draftmancer.com</a>
 								or join the
 								<a href="https://discord.gg/XscXXNw">
-									<font-awesome-icon icon="fa-brands fa-discord"></font-awesome-icon> Draftmancer
-									Discord </a
+									<font-awesome-icon icon="fa-brands fa-discord" /> Draftmancer Discord </a
 								>.
 							</div>
 						</div>
 						<div class="container" style="grid-area: Support">
 							<div class="section-title">
 								<h2>
-									<font-awesome-icon
-										icon="fa-solid fa-mug-hot"
-										aria-hidden="true"
-									></font-awesome-icon>
+									<font-awesome-icon icon="fa-solid fa-mug-hot" aria-hidden="true" />
 									Buy me a Coffee
 								</h2>
 							</div>
@@ -1695,10 +1676,7 @@
 									>
 										<div style="position: relative">
 											<a href="https://github.com/sponsors/Senryoku" target="_blank">
-												<font-awesome-icon
-													icon="fa-brands fa-github"
-													size="2x"
-												></font-awesome-icon>
+												<font-awesome-icon icon="fa-brands fa-github" size="2x" />
 												<div>GitHub Sponsor</div>
 											</a>
 											<div
@@ -1720,10 +1698,7 @@
 												href="https://www.paypal.com/donate/?hosted_button_id=6L2CUS6DH82DL"
 												target="_blank"
 											>
-												<font-awesome-icon
-													icon="fa-brands fa-paypal"
-													size="2x"
-												></font-awesome-icon>
+												<font-awesome-icon icon="fa-brands fa-paypal" size="2x" />
 												<div>PayPal</div>
 											</a>
 										</div>
@@ -1741,7 +1716,7 @@
 							<div class="welcome-section welcome-alt">
 								<div style="display: flex; flex-wrap: wrap; justify-content: space-between">
 									<div @click="displayedModal = 'importdeck'" class="link">
-										<font-awesome-icon icon="fa-solid fa-file-export"></font-awesome-icon>
+										<font-awesome-icon icon="fa-solid fa-file-export" />
 										Card List Importer
 									</div>
 									<div
@@ -1754,7 +1729,7 @@
 											:href="`/getCollectionPlainText/${encodeURIComponent(sessionID)}`"
 											target="_blank"
 										>
-											<font-awesome-icon icon="fa-solid fa-file-download"></font-awesome-icon>
+											<font-awesome-icon icon="fa-solid fa-file-download" />
 											Download Session Collection
 										</a>
 									</div>
@@ -1957,7 +1932,7 @@
 						:class="{ disabled: userID !== sessionOwner }"
 						@click="resetSessionSettings"
 						v-tooltip="'Reset all session settings to their default value'"
-					></font-awesome-icon>
+					/>
 				</div>
 			</template>
 			<template v-slot:body>
@@ -2200,7 +2175,7 @@
 									id="use-predetermined-boosters"
 								/>
 								<button @click="displayedModal = 'uploadBoosters'">
-									<font-awesome-icon icon="fa-solid fa-upload"></font-awesome-icon> Upload
+									<font-awesome-icon icon="fa-solid fa-upload" /> Upload
 								</button>
 								<button
 									@click="shuffleUploadedBoosters"
@@ -2598,13 +2573,13 @@
 									class="green"
 									v-if="useCustomCardList"
 									v-tooltip="'Card list successfully loaded!'"
-								></font-awesome-icon>
+								/>
 								<font-awesome-icon
 									icon="fa-solid fa-exclamation-triangle"
 									class="yellow"
 									v-else
 									v-tooltip="'Card list successfully loaded, but not used.'"
-								></font-awesome-icon>
+								/>
 								<div v-if="customCardList.name">
 									Loaded '<span class="inline-cube-name" style="vertical-align: bottom">{{
 										customCardList.name
@@ -2613,7 +2588,7 @@
 								</div>
 								<div v-else>Unamed list loaded.</div>
 								<button @click="displayedModal = 'cardList'">
-									<font-awesome-icon icon="fa-solid fa-file-lines"></font-awesome-icon>
+									<font-awesome-icon icon="fa-solid fa-file-lines" />
 									Review.
 								</button>
 							</div>
@@ -2712,17 +2687,15 @@
 						<div class="option-info">
 							You can find more cubes or craft your own on
 							<a href="https://cubecobra.com/" target="_blank" rel="noopener nofollow"
-								><font-awesome-icon icon="fa-solid fa-external-link-alt"></font-awesome-icon> Cube
-								Cobra</a
+								><font-awesome-icon icon="fa-solid fa-external-link-alt" /> Cube Cobra</a
 							>
 							or
 							<a href="https://cubeartisan.net/" target="_blank" rel="noopener nofollow"
-								><font-awesome-icon icon="fa-solid fa-external-link-alt"></font-awesome-icon> Cube
-								Artisan</a
+								><font-awesome-icon icon="fa-solid fa-external-link-alt" /> Cube Artisan</a
 							>
 							<br />Customize your list even further by using all features of the
 							<a href="cubeformat.html" target="_blank" rel="noopener nofollow">
-								<font-awesome-icon icon="fa-solid fa-external-link-alt"></font-awesome-icon>
+								<font-awesome-icon icon="fa-solid fa-external-link-alt" />
 								format
 							</a>
 						</div>
@@ -2803,7 +2776,7 @@
 			<span>
 				<span class="link" @click="displayedModal = 'donation'">
 					Buy me a Coffee
-					<font-awesome-icon icon="fa-solid fa-mug-hot" aria-hidden="true"></font-awesome-icon>
+					<font-awesome-icon icon="fa-solid fa-mug-hot" aria-hidden="true" />
 				</span>
 			</span>
 			<span>
@@ -2812,14 +2785,14 @@
 						icon="fa-solid fa-envelope"
 						size="lg"
 						style="vertical-align: baseline; padding: 0 0.25em"
-					></font-awesome-icon>
+					/>
 				</a>
 				<a href="https://discord.gg/XscXXNw" title="Discord" target="_blank" rel="noopener nofollow">
 					<font-awesome-icon
 						icon="fa-brands fa-discord"
 						size="lg"
 						style="vertical-align: baseline; padding: 0 0.25em"
-					></font-awesome-icon>
+					/>
 				</a>
 				<a
 					href="https://github.com/Senryoku/Draftmancer"
@@ -2831,7 +2804,7 @@
 						icon="fa-brands fa-github"
 						size="lg"
 						style="vertical-align: baseline; padding: 0 0.25em"
-					></font-awesome-icon>
+					/>
 				</a>
 			</span>
 		</footer>
@@ -2842,7 +2815,7 @@
 				'You are disconnected from the server, some functionnalities won\'t be available until the connection is re-established.'
 			"
 		>
-			<font-awesome-icon icon="fa-solid fa-exclamation-triangle"></font-awesome-icon>
+			<font-awesome-icon icon="fa-solid fa-exclamation-triangle" />
 			Disconnected
 		</div>
 	</div>

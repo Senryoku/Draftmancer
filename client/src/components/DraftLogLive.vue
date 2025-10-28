@@ -10,7 +10,7 @@
 							icon="fa-solid fa-chevron-left"
 							class="clickable"
 							@click="prevPick"
-						></font-awesome-icon>
+						/>
 						<label>Pack #</label>
 						<select v-model="pack" style="width: 4em">
 							<option v-for="index in picksPerPack.length" :key="index" :value="index - 1">
@@ -31,7 +31,7 @@
 							icon="fa-solid fa-chevron-right"
 							class="clickable"
 							@click="nextPick"
-						></font-awesome-icon>
+						/>
 						<h2>{{ pickNames }}</h2>
 						<scale-slider v-model.number="cardScale" style="float: right" />
 					</span>

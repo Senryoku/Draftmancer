@@ -13,7 +13,7 @@
 							class="handle-icon clickable"
 							@click="sortByCMC"
 							v-if="options.sort === 'cmc'"
-						></font-awesome-icon>
+						/>
 						<img
 							src="../assets/img/sort-color.svg"
 							class="handle-icon clickable"
@@ -45,7 +45,7 @@
 									@click="remColumn(undefined)"
 									v-tooltip="'Remove the last column'"
 									:class="{ disabled: rows[0].length <= 1 }"
-								></font-awesome-icon>
+								/>
 								{{ rows[0].length }}
 								<font-awesome-icon
 									icon="fa-solid fa-plus"
@@ -53,7 +53,7 @@
 									class="clickable"
 									@click="addColumn"
 									v-tooltip="'Add a column'"
-								></font-awesome-icon>
+								/>
 							</div>
 						</div>
 						<div class="section section-left-align">
@@ -78,7 +78,7 @@
 									:class="{ 'selected-sort': options.sort === 'cmc' }"
 									v-tooltip.left="'Sort cards by CMC'"
 								>
-									<font-awesome-icon icon="fa-solid fa-sort-amount-up" size="2x"></font-awesome-icon>
+									<font-awesome-icon icon="fa-solid fa-sort-amount-up" size="2x" />
 								</div>
 								<div
 									@click="sortByColor"
@@ -124,11 +124,7 @@
 				<div class="column-header" v-for="index in rows[0].length" :key="index">
 					<span class="column-header-count">{{ cardsPerColumn[index - 1] }}</span>
 					<span class="column-header-name" v-html="columnNames[index - 1]"></span>
-					<font-awesome-icon
-						icon="fa-solid fa-times"
-						class="clickable"
-						@click="remColumn(index - 1)"
-					></font-awesome-icon>
+					<font-awesome-icon icon="fa-solid fa-times" class="clickable" @click="remColumn(index - 1)" />
 				</div>
 			</div>
 			<div class="card-columns" v-for="(row, index) in rows" :key="index">

@@ -93,7 +93,7 @@ const Comparators: { [name: string]: ComparatorType } = {
 	},
 
 	name: (lhs, rhs) => {
-		return String(lhs.name).localeCompare(rhs.name);
+		return lhs.name.localeCompare(rhs.name);
 	},
 
 	id: (lhs, rhs) => {

@@ -2,12 +2,12 @@
 	<div v-if="bracket">
 		<div v-if="displayControls" class="controls">
 			<button @click="copyLink" v-tooltip="'Copy link to a read-only version of this bracket to the clipboard.'">
-				<font-awesome-icon icon="fa-solid fa-clipboard"></font-awesome-icon> Copy Link to Clipboard
+				<font-awesome-icon icon="fa-solid fa-clipboard" /> Copy Link to Clipboard
 			</button>
 			<template v-if="fullcontrol">
 				<span v-tooltip="'If set, only the owner will be able to enter results.'">
 					<input type="checkbox" id="lock" :checked="locked" @change="lock($event)" />
-					<label for="lock"> <font-awesome-icon icon="fa-solid fa-lock"></font-awesome-icon> Lock </label>
+					<label for="lock"> <font-awesome-icon icon="fa-solid fa-lock" /> Lock </label>
 				</span>
 				<span
 					v-tooltip="
@@ -16,7 +16,7 @@
 				>
 					<input type="checkbox" id="mtgo-sync" :checked="bracket.MTGOSynced" @change="syncMTGO($event)" />
 					<label for="mtgo-sync">
-						<font-awesome-icon icon="fa-solid fa-sync"></font-awesome-icon> Sync. with MTGO matches
+						<font-awesome-icon icon="fa-solid fa-sync" /> Sync. with MTGO matches
 					</label>
 				</span>
 				<div style="flex-grow: 1"></div>
@@ -34,12 +34,10 @@
 			</template>
 			<template v-else>
 				<span v-if="locked">
-					<font-awesome-icon icon="fa-solid fa-lock"></font-awesome-icon> Bracket is locked. Only the Session
-					Owner can enter results.
+					<font-awesome-icon icon="fa-solid fa-lock" /> Bracket is locked. Only the Session Owner can enter
+					results.
 				</span>
-				<span v-if="bracket.MTGOSynced">
-					<font-awesome-icon icon="fa-solid fa-sync"></font-awesome-icon> Synced with MTGO
-				</span>
+				<span v-if="bracket.MTGOSynced"> <font-awesome-icon icon="fa-solid fa-sync" /> Synced with MTGO </span>
 				<div style="flex-grow: 1"></div>
 				<span style="font-size: 1.5em">
 					<template v-if="isTeamBracket">

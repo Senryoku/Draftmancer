@@ -18,13 +18,13 @@
 				class="clickable move-player move-player-left"
 				v-tooltip="`Move ${user.userName} to the left`"
 				@click="emit('movePlayer', index, -1)"
-			></font-awesome-icon>
+			/>
 			<font-awesome-icon
 				icon="fa-solid fa-chevron-right"
 				class="clickable move-player move-player-right"
 				v-tooltip="`Move ${user.userName} to the right`"
 				@click="emit('movePlayer', index, 1)"
-			></font-awesome-icon>
+			/>
 		</template>
 		<div class="status-icons">
 			<font-awesome-icon
@@ -32,14 +32,14 @@
 				icon="fa-solid fa-crown"
 				class="subtle-gold"
 				v-tooltip="`${user.userName} is the session owner.`"
-			></font-awesome-icon>
+			/>
 			<font-awesome-icon
 				v-if="user.userID === sessionOwner && user.userID !== self && canRequestTakeover"
 				icon="fa-solid fa-user-slash"
 				class="clickable red takeover"
 				v-tooltip="`Vote to remove ${user.userName} from the session and take ownership.`"
 				@click="emit('requestTakeover')"
-			></font-awesome-icon>
+			/>
 			<template v-if="self === sessionOwner && user.userID !== sessionOwner">
 				<img
 					src="../assets/img/pass_ownership.svg"
@@ -53,7 +53,7 @@
 					class="clickable red"
 					v-tooltip="`Remove ${user.userName} from the session`"
 					@click="emit('removePlayer', user.userID)"
-				></font-awesome-icon>
+				/>
 			</template>
 			<template v-if="!useCustomCardList && !ignoreCollections">
 				<template v-if="!user.collection">
@@ -61,21 +61,21 @@
 						icon="fa-solid fa-book"
 						class="red"
 						v-tooltip="user.userName + ' has not uploaded their collection yet.'"
-					></font-awesome-icon>
+					/>
 				</template>
 				<template v-else-if="user.collection && !user.useCollection">
 					<font-awesome-icon
 						icon="fa-solid fa-book"
 						class="yellow"
 						v-tooltip="user.userName + ' has uploaded their collection, but is not using it.'"
-					></font-awesome-icon>
+					/>
 				</template>
 				<template v-else>
 					<font-awesome-icon
 						icon="fa-solid fa-book"
 						class="green"
 						v-tooltip="user.userName + ' has uploaded their collection.'"
-					></font-awesome-icon>
+					/>
 				</template>
 			</template>
 			<template v-if="pendingReadyCheck">
@@ -84,21 +84,21 @@
 						icon="fa-solid fa-check"
 						class="green"
 						v-tooltip="`${user.userName} is ready!`"
-					></font-awesome-icon>
+					/>
 				</template>
 				<template v-else-if="user.readyState == ReadyState.NotReady">
 					<font-awesome-icon
 						icon="fa-solid fa-times"
 						class="red"
 						v-tooltip="`${user.userName} is NOT ready!`"
-					></font-awesome-icon>
+					/>
 				</template>
 				<template v-else-if="user.readyState == ReadyState.Unknown">
 					<font-awesome-icon
 						icon="fa-solid fa-spinner"
 						spin
 						v-tooltip="`Waiting for ${user.userName} to respond...`"
-					></font-awesome-icon>
+					/>
 				</template>
 			</template>
 		</div>

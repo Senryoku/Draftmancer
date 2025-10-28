@@ -23,8 +23,8 @@
 			</button>
 			<span>({{ draftLogs.length }} / 25 logs)</span>
 			<span v-if="draftLogs.length >= 25"
-				><font-awesome-icon icon="fa-solid fa-exclamation-triangle" class="yellow"></font-awesome-icon> Your
-				history is full, new logs will overwrite the oldest ones.</span
+				><font-awesome-icon icon="fa-solid fa-exclamation-triangle" class="yellow" /> Your history is full, new
+				logs will overwrite the oldest ones.</span
 			>
 		</div>
 		<div v-if="!draftLogs || draftLogs.length === 0" class="log empty-history">
@@ -37,8 +37,8 @@
 					<font-awesome-icon
 						v-if="!draftLog.delayed"
 						:icon="`fa-solid ${expandedLogs[idx] ? 'fa-chevron-down' : 'fa-chevron-up'}`"
-					></font-awesome-icon>
-					<font-awesome-icon icon="fa-solid fa-lock" v-else></font-awesome-icon>
+					/>
+					<font-awesome-icon icon="fa-solid fa-lock" v-else />
 					<span>
 						{{ printableType(draftLog) }}
 						- Session '{{ draftLog.sessionID }}'
@@ -52,8 +52,7 @@
 							(Partial: The complete log is locked until you share it)
 						</span>
 						<button @click="emit('sharelog', draftLog)">
-							<font-awesome-icon icon="fa-solid fa-share-square"></font-awesome-icon> Share with session
-							and unlock
+							<font-awesome-icon icon="fa-solid fa-share-square" /> Share with session and unlock
 						</button>
 					</template>
 					<template v-else
@@ -65,11 +64,9 @@
 				<span class="flex-row">
 					<button class="flat" @click="toggle(idx)">
 						<template v-if="expandedLogs[idx]">
-							<font-awesome-icon icon="fa-regular fa-eye-slash"></font-awesome-icon> Close
+							<font-awesome-icon icon="fa-regular fa-eye-slash" /> Close
 						</template>
-						<template v-else>
-							<font-awesome-icon icon="fa-regular fa-eye"></font-awesome-icon> Review
-						</template>
+						<template v-else> <font-awesome-icon icon="fa-regular fa-eye" /> Review </template>
 					</button>
 					<dropdown v-if="!draftLog.delayed" :class="{ disabled: !hasDecks(draftLog) }">
 						<template v-slot:handle>
@@ -104,13 +101,13 @@
 						</template>
 					</dropdown>
 					<button type="button" @click="downloadLog(draftLog)" v-if="!draftLog.delayed">
-						<font-awesome-icon icon="fa-solid fa-file-download"></font-awesome-icon> Download
+						<font-awesome-icon icon="fa-solid fa-file-download" /> Download
 					</button>
 					<button type="button" class="disabled" v-else>
-						<font-awesome-icon icon="fa-solid fa-file-download"></font-awesome-icon> Download
+						<font-awesome-icon icon="fa-solid fa-file-download" /> Download
 					</button>
 					<button type="button" class="stop" @click="deleteLog(draftLog)">
-						<font-awesome-icon icon="fa-solid fa-trash"></font-awesome-icon> Delete
+						<font-awesome-icon icon="fa-solid fa-trash" /> Delete
 					</button>
 				</span>
 			</div>

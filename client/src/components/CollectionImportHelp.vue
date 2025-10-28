@@ -14,7 +14,7 @@
 				rel="noopener nofollow"
 			>
 				this issue on Wizards' bug tracker
-				<font-awesome-icon icon="fa-solid fa-external-link-alt"></font-awesome-icon>
+				<font-awesome-icon icon="fa-solid fa-external-link-alt" />
 			</a>
 			if you want this to change.
 		</p>
@@ -61,7 +61,7 @@
 					target="_blank"
 					rel="noopener nofollow"
 				>
-					Windows <font-awesome-icon icon="fa-solid fa-external-link-alt"></font-awesome-icon>
+					Windows <font-awesome-icon icon="fa-solid fa-external-link-alt" />
 				</a>
 				and
 				<a
@@ -69,12 +69,12 @@
 					target="_blank"
 					rel="noopener nofollow"
 				>
-					macOS <font-awesome-icon icon="fa-solid fa-external-link-alt"></font-awesome-icon>
+					macOS <font-awesome-icon icon="fa-solid fa-external-link-alt" />
 				</a>
 				)
 				<ul>
 					<li>
-						<font-awesome-icon icon="fa-brands fa-windows"></font-awesome-icon>
+						<font-awesome-icon icon="fa-brands fa-windows" />
 						<tt
 							class="clickable"
 							@click="
@@ -90,7 +90,7 @@
 						>
 					</li>
 					<li>
-						<font-awesome-icon icon="fa-brands fa-apple"></font-awesome-icon>
+						<font-awesome-icon icon="fa-brands fa-apple" />
 						<tt
 							class="clickable"
 							@click="
@@ -108,8 +108,8 @@
 				</ul>
 				Copy the path and paste it in the file selection pop up with the help of a shortcut! (<font-awesome-icon
 					icon="fa-brands fa-windows"
-				></font-awesome-icon>
-				<kbd> CTRL+L</kbd> / <font-awesome-icon icon="fa-brands fa-apple"></font-awesome-icon> <kbd>⇧⌘G</kbd>)
+				/>
+				<kbd> CTRL+L</kbd> / <font-awesome-icon icon="fa-brands fa-apple" /> <kbd>⇧⌘G</kbd>)
 			</li>
 		</ol>
 	</div>

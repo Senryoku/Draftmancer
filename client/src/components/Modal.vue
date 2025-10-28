@@ -14,7 +14,7 @@
 							icon="fa-solid fa-times"
 							size="lg"
 							aria-hidden="true"
-						></font-awesome-icon>
+						/>
 					</div>
 
 					<div class="modal-body">

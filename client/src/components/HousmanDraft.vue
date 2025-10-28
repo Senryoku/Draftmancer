@@ -83,7 +83,7 @@
 						<div class="name">{{ sessionUsers[p.userID]?.userName ?? "(Disconnected)" }}</div>
 						<div class="cards">
 							<card v-for="c in p.cards" :card="c" :key="c.uniqueID"></card>
-							<font-awesome-icon icon="fa-solid fa-sync" size="lg" class="swap-icon"></font-awesome-icon>
+							<font-awesome-icon icon="fa-solid fa-sync" size="lg" class="swap-icon" />
 						</div>
 					</div>
 				</transition-group>

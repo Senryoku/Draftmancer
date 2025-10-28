@@ -1,7 +1,7 @@
 <template>
 	<div class="draft-queue">
 		<div class="upper-control">
-			<a href="/"><font-awesome-icon icon="fa-solid fa-arrow-left"></font-awesome-icon> Back</a>
+			<a href="/"><font-awesome-icon icon="fa-solid fa-arrow-left" /> Back</a>
 			<h1>Draftmancer / Draft Queue</h1>
 			<div v-if="queueStatus">Playing: {{ queueStatus.playing }}</div>
 			<div v-else><LoadingComponent /></div>
@@ -61,13 +61,13 @@
 								v-if="p.status === ReadyState.Ready"
 								icon="fa-solid fa-check"
 								class="green"
-							></font-awesome-icon>
+							/>
 							<font-awesome-icon
 								v-else-if="p.status === ReadyState.NotReady"
 								icon="fa-solid fa-times"
 								class="red"
-							></font-awesome-icon>
-							<font-awesome-icon v-else icon="fa-solid fa-spinner" spin></font-awesome-icon>
+							/>
+							<font-awesome-icon v-else icon="fa-solid fa-spinner" spin />
 							Player {{ idx + 1 }}
 						</div>
 					</div>

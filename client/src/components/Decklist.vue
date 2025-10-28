@@ -21,7 +21,7 @@
 					class="clickable"
 					@click="displayStats = true"
 					v-tooltip="'Deck Statistics'"
-				></font-awesome-icon>
+				/>
 				<ExportDropdown
 					:language="language"
 					:deck="mainboard"

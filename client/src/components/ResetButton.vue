@@ -4,7 +4,7 @@
 		class="clickable reset-button"
 		@click="reset"
 		v-tooltip.right="`Reset to default value (${defaultValue})`"
-	></font-awesome-icon>
+	/>
 </template>
 
 <script setup lang="ts" generic="T">

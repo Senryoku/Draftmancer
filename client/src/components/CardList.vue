@@ -2,20 +2,20 @@
 	<div v-if="isValid" class="card-list">
 		Loaded {{ cardlist.name ? cardlist.name : "list" }}.
 		<span v-if="missing && missing.total > 0">
-			<font-awesome-icon icon="fa-solid fa-exclamation-triangle" class="yellow"></font-awesome-icon>
+			<font-awesome-icon icon="fa-solid fa-exclamation-triangle" class="yellow" />
 			{{ missing.total }} are missing from your collection ({{ missingText }})
 		</span>
 		<button @click="downloadList">Download List</button>
 		<template v-if="defaultLayout">
 			<div v-for="(row, rowIndex) in rows" :key="'row' + rowIndex" class="category-wrapper">
-				<card-list-column
+				<CardListColumn
 					v-for="(column, colIndex) in row"
 					:key="'col' + colIndex"
 					:column="column"
 					:checkcollection="checkCollection"
 					:collection="collection"
 					:language="language"
-				></card-list-column>
+				/>
 			</div>
 		</template>
 		<template v-else>
@@ -44,14 +44,14 @@
 							:key="'row' + rowIndex"
 							class="category-wrapper"
 						>
-							<card-list-column
+							<CardListColumn
 								v-for="(column, colIndex) in row"
-								:key="'col' + colIndex"
+								:key="'row' + rowIndex + 'col' + colIndex"
 								:column="column"
 								:checkcollection="checkCollection"
 								:collection="collection"
 								:language="language"
-							></card-list-column>
+							/>
 						</div>
 					</template>
 					<template v-else>
@@ -60,17 +60,15 @@
 							:style="`--card-size: ${sheet.collation === 'striped' ? 'calc(100%/' + sheet.length + ')' : 'calc(100%/11)'}`"
 						>
 							<CardComponent
-								v-for="(card, idx) in cards[key]"
-								:key="idx"
-								:card="{ ...card, uniqueID: idx }"
+								v-for="card in cards[key]"
+								:key="card.uniqueID"
+								:card="card"
 								:language="language"
 							/>
 						</div>
 					</template>
 				</template>
-				<template v-else>
-					(<font-awesome-icon icon="fa-solid fa-spinner" spin></font-awesome-icon> Loading...)
-				</template>
+				<template v-else> (<font-awesome-icon icon="fa-solid fa-spinner" spin /> Loading...) </template>
 			</div>
 		</template>
 	</div>
@@ -83,11 +81,11 @@ import CardOrder from "../cardorder";
 import CardListColumn from "./CardListColumn.vue";
 import { Language } from "@/Types";
 import { CustomCardList, getSheetCardIDs } from "../../../src/CustomCardList";
-import { ref, computed, onMounted, toRaw } from "vue";
-import { Card, CardID, PlainCollection } from "@/CardTypes";
+import { ref, shallowRef, computed, onMounted, toRaw } from "vue";
+import { Card, UniqueCard, CardID, PlainCollection } from "@/CardTypes";
 import CardComponent from "./Card.vue";
 
-type CardWithCount = Card & { count: number };
+type UniqueCardWithCount = UniqueCard & { count: number };
 
 const props = withDefaults(
 	defineProps<{
@@ -98,7 +96,7 @@ const props = withDefaults(
 	{ collection: undefined }
 );
 
-const cards = ref<{ [slot: string]: CardWithCount[] }>({});
+const cards = shallowRef<{ [slot: string]: UniqueCardWithCount[] }>({});
 const sheetDisplay = ref(true);
 
 onMounted(() => {
@@ -121,7 +119,7 @@ const rows = computed(() => {
 
 const rowsBySheet = computed(() => {
 	if (defaultLayout.value || !cards.value) return {};
-	let rowsBySlot: { [slot: string]: { [s: string]: CardWithCount[] }[] } = {};
+	let rowsBySlot: { [slot: string]: { [s: string]: UniqueCardWithCount[] }[] } = {};
 	for (let sheetName in props.cardlist.sheets) rowsBySlot[sheetName] = rowsByColor(cards.value[sheetName]);
 	return rowsBySlot;
 });
@@ -199,11 +197,11 @@ function downloadList() {
 	download(props.cardlist.name ?? "Cube" + ".txt", str);
 }
 
-function rowsByColor(cards: CardWithCount[]) {
+function rowsByColor(cards: UniqueCardWithCount[]) {
 	if (!cards) return [];
-	let a = cards.reduce(
+	let rows = cards.reduce(
 		(acc, item) => {
-			const c: string = item.colors.sort().join();
+			const c: string = item.colors.join();
 			if (c.length <= 1) {
 				acc[0][c].push(item);
 			} else {
@@ -213,10 +211,10 @@ function rowsByColor(cards: CardWithCount[]) {
 			}
 			return acc;
 		},
-		[{ W: [], U: [], B: [], R: [], G: [], "": [] } as { [s: string]: CardWithCount[] }, {}]
+		[{ W: [], U: [], B: [], R: [], G: [], "": [] } as { [s: string]: UniqueCardWithCount[] }, {}]
 	);
-	for (let row of a) for (let col in row) CardOrder.orderByArenaInPlace(row[col]);
-	return a;
+	for (let row of rows) for (let col in row) CardOrder.orderByArenaInPlace(row[col]);
+	return rows;
 }
 
 async function getCards() {
@@ -261,11 +259,13 @@ async function getCards() {
 		if (response.status === 200) {
 			const json = await response.json();
 			for (let card of json) {
+				card.colors.sort();
 				cardData[card.id] = card;
 			}
 		}
 	}
 
+	let uniqueID = 0;
 	let tmpCards: typeof cards.value = {};
 	for (let [sheetName, sheet] of Object.entries(props.cardlist.sheets)) {
 		tmpCards[sheetName] = [];
@@ -273,6 +273,7 @@ async function getCards() {
 			tmpCards[sheetName].push({
 				...cardData[cid],
 				count: sheet.collation !== "random" ? 1 : sheet.cards[cid],
+				uniqueID: ++uniqueID,
 			});
 		}
 	}

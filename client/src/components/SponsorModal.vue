@@ -8,12 +8,12 @@
 				experience. If you think this is a valuable use of my time and want to support the site, please consider
 				making a donation to help cover hosting costs and keep me motivated and caffeinated through
 				<a href="https://github.com/sponsors/Senryoku" target="_blank">
-					<font-awesome-icon icon="fa-brands fa-github"></font-awesome-icon>
+					<font-awesome-icon icon="fa-brands fa-github" />
 					<em>GitHub Sponsor</em>
 				</a>
 				or
 				<a href="https://www.paypal.com/donate/?hosted_button_id=6L2CUS6DH82DL" target="_blank">
-					<em><font-awesome-icon icon="fa-brands fa-paypal"></font-awesome-icon> PayPal</em></a
+					<em><font-awesome-icon icon="fa-brands fa-paypal" /> PayPal</em></a
 				>:
 			</p>
 			<div style="display: flex; justify-content: center">
@@ -51,7 +51,7 @@
 			</p>
 			<p style="margin-left: 1em">
 				<a href="https://www.patreon.com/cubeartisan" target="_blank" rel="noopener nofollow">
-					<font-awesome-icon icon="fa-brands fa-patreon"></font-awesome-icon> ruler501's Patreon
+					<font-awesome-icon icon="fa-brands fa-patreon" /> ruler501's Patreon
 				</a>
 			</p>
 			<p>Thank you very much!</p>

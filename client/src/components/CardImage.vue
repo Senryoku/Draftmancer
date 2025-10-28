@@ -8,8 +8,8 @@
 					transform="grow-2"
 					size="lg"
 					style="color: black"
-				></font-awesome-icon>
-				<font-awesome-icon icon="fa-solid fa-sync" class="flip-icon" size="lg"></font-awesome-icon>
+				/>
+				<font-awesome-icon icon="fa-solid fa-sync" class="flip-icon" size="lg" />
 			</font-awesome-layers>
 		</div>
 		<div v-if="card.layout === 'flip'" class="vertical-flip-button">
@@ -20,8 +20,8 @@
 					transform="grow-2"
 					size="lg"
 					style="color: black"
-				></font-awesome-icon>
-				<font-awesome-icon icon="fa-solid fa-sync" class="vertical-flip-icon" size="lg"></font-awesome-icon>
+				/>
+				<font-awesome-icon icon="fa-solid fa-sync" class="vertical-flip-icon" size="lg" />
 			</font-awesome-layers>
 		</div>
 		<div v-if="card.layout === 'split' || card.type.includes('Battle')" class="split-button">
@@ -43,7 +43,7 @@
 					<template v-if="cardAdditionalData && displayCardText">
 						<template v-if="cardAdditionalData.status === 'pending'">
 							<div class="pending-alt-card-text">
-								<font-awesome-icon icon="fa-solid fa-spinner" spin></font-awesome-icon>
+								<font-awesome-icon icon="fa-solid fa-spinner" spin />
 							</div>
 						</template>
 						<template v-else>
@@ -67,7 +67,7 @@
 					<template v-if="cardAdditionalData && displayCardText">
 						<template v-if="cardAdditionalData.status === 'pending'">
 							<div class="pending-alt-card-text">
-								<font-awesome-icon icon="fa-solid fa-spinner" spin></font-awesome-icon>
+								<font-awesome-icon icon="fa-solid fa-spinner" spin />
 							</div>
 						</template>
 						<template v-else>

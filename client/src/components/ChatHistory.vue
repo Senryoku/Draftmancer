@@ -14,7 +14,7 @@
 								icon="fa-solid fa-comment-slash"
 								@click="mutedUsers.add(msg.author)"
 								v-tooltip="`Mute this user.`"
-							></font-awesome-icon>
+							/>
 						</template>
 						<template v-else>
 							<font-awesome-icon
@@ -22,7 +22,7 @@
 								icon="fa-solid fa-comment"
 								@click="mutedUsers.delete(msg.author)"
 								v-tooltip="`Unmute this user.`"
-							></font-awesome-icon>
+							/>
 						</template>
 					</template>
 					{{

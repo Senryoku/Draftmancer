@@ -18,10 +18,7 @@
 		<span style="font-size: 0.8em">
 			(detailed changes can be found on
 			<a href="https://github.com/Senryoku/Draftmancer" title="GitHub" target="_blank" rel="noopener nofollow">
-				<font-awesome-icon
-					icon="fa-brands fa-github"
-					style="vertical-align: baseline; padding: 0px 0.25em"
-				></font-awesome-icon>
+				<font-awesome-icon icon="fa-brands fa-github" style="vertical-align: baseline; padding: 0px 0.25em" />
 				GitHub
 			</a>
 			)

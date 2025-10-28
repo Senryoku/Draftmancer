@@ -2,7 +2,7 @@
 	<div class="card-text-container" ref="rootElement">
 		<template v-if="!face">
 			<div>
-				<font-awesome-icon icon="fa-solid fa-spinner" spin></font-awesome-icon>
+				<font-awesome-icon icon="fa-solid fa-spinner" spin />
 			</div>
 		</template>
 		<template v-else>
@@ -59,8 +59,7 @@ onMounted(() => {
 	// We can't use v-show or mounted will be called while the element is hidden and fitAll will do nothing.
 	// There's no way to know when the element is visible becasue of v-show (apart from tracking it ourselves).
 	// NOTE: Fitting a lot of cards simultaneously is very slow in Chrome (e.g. for a cube list). delayTextFit is a hack to stagger these calls and not block the main thread.
-	if (props.delayTextFit && window.requestIdleCallback)
-		idleRequest = window.requestIdleCallback(fitAll, { timeout: 3000 });
+	if (props.delayTextFit && window.requestIdleCallback) idleRequest = window.requestIdleCallback(fitAll);
 	else fitAll();
 });
 

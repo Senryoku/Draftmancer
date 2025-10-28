@@ -1,47 +1,41 @@
 <template>
 	<div class="card-column" v-show="column.length > 0">
-		<card-component
-			v-for="(card, index) in column"
-			:key="index"
-			:card="{ ...card, uniqueID: index }"
-			:language="language"
-			:lazyLoad="true"
-		>
+		<CardComponent v-for="card in column" :key="card.uniqueID" :card="card" :language="language" :lazyLoad="true">
 			<div v-if="checkcollection && missingCard[card.id] !== 'Present'" class="collection-warning">
 				<font-awesome-icon
 					icon="fa-solid fa-exclamation-triangle"
 					class="green"
 					v-if="missingCard[card.id] === 'Equivalent'"
 					v-tooltip="'Exact card is missing from your collection, but you own a copy from another set.'"
-				></font-awesome-icon>
+				/>
 				<font-awesome-icon
 					icon="fa-solid fa-exclamation-triangle"
 					class="yellow"
 					v-else-if="missingCard[card.id] === 'Missing'"
 					v-tooltip="'You do not own this card in MTGA.'"
-				></font-awesome-icon>
+				/>
 				<font-awesome-icon
 					icon="fa-solid fa-exclamation-triangle"
 					class="red"
 					v-else-if="missingCard[card.id] === 'NonExistent'"
 					v-tooltip="'This card is not available on MTGA.'"
-				></font-awesome-icon>
+				/>
 			</div>
 			<div v-if="card.count && card.count > 1" class="card-count">{{ card.count }} x</div>
-		</card-component>
+		</CardComponent>
 	</div>
 </template>
 
 <script setup lang="ts">
 import { Language } from "@/Types";
 import { computed } from "vue";
-import { Card, CardID, PlainCollection } from "@/CardTypes";
+import { UniqueCard, CardID, PlainCollection } from "@/CardTypes";
 import MTGAAlternates from "../MTGAAlternates";
 import CardComponent from "./Card.vue";
 
 const props = withDefaults(
 	defineProps<{
-		column: (Card & { count: number })[];
+		column: (UniqueCard & { count: number })[];
 		language: Language;
 		checkcollection?: boolean;
 		collection?: PlainCollection;

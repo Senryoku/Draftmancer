@@ -54,7 +54,7 @@
 							"
 							style="padding: 0.4em; vertical-align: middle"
 							v-tooltip.right="`Reset to default value (${defaults.gridWidth}x${defaults.gridHeight})`"
-						></font-awesome-icon>
+						/>
 					</div>
 					<label for="picks-input">Picks per Player, per Grid</label>
 					<div>

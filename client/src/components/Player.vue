@@ -12,19 +12,19 @@
 			class="passing-order-repeat"
 			v-if="passingOrder === PassingOrder.Repeat"
 			v-tooltip="'Passing order'"
-		></font-awesome-icon>
+		/>
 		<font-awesome-icon
 			icon="fa-solid fa-angle-double-left"
 			class="passing-order-left"
 			v-else-if="passingOrder === PassingOrder.Left"
 			v-tooltip="'Passing order'"
-		></font-awesome-icon>
+		/>
 		<font-awesome-icon
 			icon="fa-solid fa-angle-double-right"
 			class="passing-order-right"
 			v-else-if="passingOrder === PassingOrder.Right"
 			v-tooltip="'Passing order'"
-		></font-awesome-icon>
+		/>
 
 		<div class="player-name" v-tooltip="user.userName">{{ user.userName }}</div>
 
@@ -35,7 +35,7 @@
 					icon="fa-solid fa-crown"
 					class="subtle-gold"
 					v-tooltip="`${user.userName} is the session's owner.`"
-				></font-awesome-icon>
+				/>
 				<template v-if="userID === sessionOwner && user.userID !== sessionOwner">
 					<img
 						src="../assets/img/pass_ownership.svg"
@@ -51,16 +51,16 @@
 						:class="{ 'opaque-disabled': user.isDisconnected }"
 						v-tooltip="`Remove ${user.userName} from the session`"
 						@click="emit('removePlayer', user.userID)"
-					></font-awesome-icon>
+					/>
 				</template>
 				<font-awesome-icon
 					v-show="!user.isDisconnected && isCurrentPlayer"
 					icon="fa-solid fa-spinner"
 					spin
 					v-tooltip="user.userName + ' is thinking...'"
-				></font-awesome-icon>
+				/>
 			</template>
-			<font-awesome-icon v-if="user.isBot || user.isReplaced" icon="fa-solid fa-robot"></font-awesome-icon>
+			<font-awesome-icon v-if="user.isBot || user.isReplaced" icon="fa-solid fa-robot" />
 			<template v-if="user.boosterCount !== undefined">
 				<div
 					v-tooltip="`${user.userName} has ${user.boosterCount} boosters.`"
@@ -88,7 +88,7 @@
 					spin
 					v-tooltip="`${user.userName} is waiting...`"
 					v-else
-				></font-awesome-icon>
+				/>
 			</template>
 		</div>
 

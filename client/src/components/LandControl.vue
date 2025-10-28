@@ -32,7 +32,7 @@
 					class="clickable"
 					@click="rem(c)"
 					:class="{ disabled: lands[c] <= 0 }"
-				></font-awesome-icon>
+				/>
 				<img
 					:src="`img/mana/${c}.svg`"
 					class="mana-icon clickable"
@@ -50,12 +50,7 @@
 					max="999"
 					onclick="this.select();"
 				/>
-				<font-awesome-icon
-					icon="fa-solid fa-plus"
-					size="lg"
-					class="clickable"
-					@click="add(c)"
-				></font-awesome-icon>
+				<font-awesome-icon icon="fa-solid fa-plus" size="lg" class="clickable" @click="add(c)" />
 			</div>
 			<div class="v-separator" style="height: 0.5em"></div>
 			<button

@@ -1,6 +1,6 @@
 <template>
 	<div style="display: flex; justify-content: center; place-items: center">
-		<font-awesome-icon icon="fa-solid fa-spinner" :size="size" spin></font-awesome-icon>
+		<font-awesome-icon icon="fa-solid fa-spinner" :size="size" spin />
 	</div>
 </template>
 

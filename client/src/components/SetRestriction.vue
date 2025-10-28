@@ -2,11 +2,11 @@
 	<div>
 		<div class="state">
 			<button @click="addAll()" class="clickable">
-				<font-awesome-icon icon="fa-solid fa-plus-square" style="margin-right: 0.5em"></font-awesome-icon>
+				<font-awesome-icon icon="fa-solid fa-plus-square" style="margin-right: 0.5em" />
 				Select All
 			</button>
 			<button @click="clear()" class="clickable">
-				<font-awesome-icon icon="fa-solid fa-minus-square" style="margin-right: 0.5em"></font-awesome-icon>
+				<font-awesome-icon icon="fa-solid fa-minus-square" style="margin-right: 0.5em" />
 				Deselect All
 			</button>
 			Current Selection:
@@ -45,14 +45,14 @@
 							class="clickable"
 							v-tooltip="'Add all sets from this block'"
 						>
-							<font-awesome-icon icon="fa-solid fa-plus-square"></font-awesome-icon>
+							<font-awesome-icon icon="fa-solid fa-plus-square" />
 						</span>
 						<span
 							@click="remove(block.sets.map((s) => s.code))"
 							class="clickable"
 							v-tooltip="'Remove all sets from this block'"
 						>
-							<font-awesome-icon icon="fa-solid fa-minus-square"></font-awesome-icon>
+							<font-awesome-icon icon="fa-solid fa-minus-square" />
 						</span>
 					</div>
 				</div>

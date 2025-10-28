@@ -17,7 +17,7 @@
 						@click="$emit('pick', idx)"
 						@mouseenter="highlight($event, 'col', idx)"
 						@mouseleave="highlight($event, 'col', idx)"
-					></font-awesome-icon>
+					/>
 				</transition>
 			</div>
 			<div
@@ -34,7 +34,7 @@
 						@click="$emit('pick', 3 + idx)"
 						@mouseenter="highlight($event, 'row', idx)"
 						@mouseleave="highlight($event, 'row', idx)"
-					></font-awesome-icon>
+					/>
 				</transition>
 			</div>
 			<div v-for="(c, idx) in state.booster" :key="idx" class="card-slot" :style="'grid-area: card-slot-' + idx">
@@ -47,7 +47,7 @@
 							icon="fa-solid fa-times-circle"
 							size="4x"
 							style="color: rgba(255, 255, 255, 0.1)"
-						></font-awesome-icon>
+						/>
 					</div>
 				</transition>
 			</div>

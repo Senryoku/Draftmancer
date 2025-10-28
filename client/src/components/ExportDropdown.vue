@@ -7,7 +7,7 @@
 					<img class="set-icon button-icon" src="../assets/img/mtga-icon.png" />MTGA
 				</button>
 				<button @click="downloadMTGA(true)" v-tooltip.right="'Download deck and sideboard for Arena'">
-					<font-awesome-icon icon="fa-solid fa-file-download" class="button-icon"></font-awesome-icon>
+					<font-awesome-icon icon="fa-solid fa-file-download" class="button-icon" />
 				</button>
 			</div>
 			<div class="row">
@@ -15,13 +15,13 @@
 					@click="clipboardMTGA(false)"
 					v-tooltip.top="'Export deck and sideboard without set information to clipboard'"
 				>
-					<font-awesome-icon icon="fa-solid fa-clipboard" class="button-icon"></font-awesome-icon>Card Names
+					<font-awesome-icon icon="fa-solid fa-clipboard" class="button-icon" />Card Names
 				</button>
 				<button
 					@click="downloadMTGA(false)"
 					v-tooltip.right="'Download deck and sideboard without set information'"
 				>
-					<font-awesome-icon icon="fa-solid fa-file-download" class="button-icon"></font-awesome-icon>
+					<font-awesome-icon icon="fa-solid fa-file-download" class="button-icon" />
 				</button>
 			</div>
 			<button @click="exportDeckMTGO()" v-tooltip.right="'Download .deck file for MTGO'">
@@ -31,12 +31,11 @@
 				@click="exportDeckToFaBrary()"
 				v-tooltip.right="'Export directly to FaBrary, the Flesh and Blood library.'"
 			>
-				<font-awesome-icon icon="fa-solid fa-external-link-alt" class="button-icon"></font-awesome-icon>to
-				FaBrary
+				<font-awesome-icon icon="fa-solid fa-external-link-alt" class="button-icon" />to FaBrary
 			</button>
 			<div class="row">
 				<button @click="clipboardCollectorNumber()" v-tooltip.top="'Export collector number list'">
-					<font-awesome-icon icon="fa-solid fa-clipboard" class="button-icon"></font-awesome-icon>
+					<font-awesome-icon icon="fa-solid fa-clipboard" class="button-icon" />
 					Collector #
 				</button>
 				<button @click="downloadCollectorNumber()" v-tooltip.right="'Download collector number list'">

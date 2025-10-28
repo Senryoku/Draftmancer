@@ -3,12 +3,7 @@
 		<div class="section-title">
 			<h2>
 				Featured Communities
-				<font-awesome-icon
-					class="clickable"
-					@click="explain"
-					:icon="['fas', 'question-circle']"
-					size="sm"
-				></font-awesome-icon>
+				<font-awesome-icon class="clickable" @click="explain" :icon="['fas', 'question-circle']" size="sm" />
 			</h2>
 		</div>
 		<div style="position: relative">
@@ -60,7 +55,7 @@
 			</div>
 			<div class="carousel-controls">
 				<div @click="prev" class="clickable">
-					<font-awesome-icon icon="fa-solid fa-chevron-left"></font-awesome-icon>
+					<font-awesome-icon icon="fa-solid fa-chevron-left" />
 				</div>
 				<div class="bubbles">
 					<div
@@ -76,7 +71,7 @@
 					</div>
 				</div>
 				<div @click="next" class="clickable">
-					<font-awesome-icon icon="fa-solid fa-chevron-right"></font-awesome-icon>
+					<font-awesome-icon icon="fa-solid fa-chevron-right" />
 				</div>
 			</div>
 		</div>

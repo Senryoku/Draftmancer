@@ -10,8 +10,7 @@
 				</span>
 				<span>
 					<template v-if="picking">
-						<font-awesome-icon icon="fa-solid fa-exclamation-circle"></font-awesome-icon> It's your turn!
-						Pick a card.
+						<font-awesome-icon icon="fa-solid fa-exclamation-circle" /> It's your turn! Pick a card.
 					</template>
 					<template v-else-if="state.currentPlayer === null">
 						<template v-if="state.gridNumber >= state.gridCount">
@@ -20,7 +19,7 @@
 						<template v-else>Advancing to the next grid...</template>
 					</template>
 					<template v-else>
-						<font-awesome-icon icon="fa-solid fa-spinner" spin></font-awesome-icon>
+						<font-awesome-icon icon="fa-solid fa-spinner" spin />
 						Waiting for
 						{{ currentPlayerUsername !== "" ? currentPlayerUsername : "the next grid" }}...
 					</template>

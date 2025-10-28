@@ -20,7 +20,7 @@
 						<font-awesome-icon
 							icon="fa-solid fa-trophy"
 							:class="{ gold: isGold(index), silver: isSilver(index) }"
-						></font-awesome-icon>
+						/>
 					</div>
 					<div
 						class="bracket-player-name"
@@ -34,7 +34,7 @@
 							class="green"
 							v-if="hasDeckList(p.userID)"
 							v-tooltip.top="`${p.userName} submitted their deck. Click to review it.`"
-						></font-awesome-icon>
+						/>
 					</div>
 					<template v-if="isValid">
 						<input
