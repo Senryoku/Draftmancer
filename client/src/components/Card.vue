@@ -1,9 +1,8 @@
 <template>
 	<div
 		ref="rootElement"
-		:class="classes"
-		:data-arena-id="card.id"
-		:data-cmc="card.cmc"
+		class="card"
+		:class="[{ foil: card.foil }, classes]"
 		:data-uniqueid="card.uniqueID"
 		:key="`card-${card.uniqueID}`"
 		@contextmenu="toggleZoom"
@@ -63,10 +62,7 @@ const rootElement = useTemplateRef("rootElement");
 const imageElement = useTemplateRef<InstanceType<typeof CardImage>>("imageElement");
 
 const classes = computed(() => {
-	let classes = props.conditionalClasses ? props.conditionalClasses(props.card) : [];
-	classes.push("card");
-	if (props.card.foil) classes.push("foil");
-	return classes;
+	return props.conditionalClasses ? props.conditionalClasses(props.card) : [];
 });
 
 const notes = computed(() => {
@@ -195,6 +191,9 @@ function keyUp(event: KeyboardEvent) {
 	--foil-initial-left: 0%;
 
 	user-select: none;
+
+	contain: layout style; /* Sadly we can't use paint since we're drawing outside of the element boundaries (cropped cards in columns, buttons, etc.)*/
+	will-change: transform, opacity; /* Layering hint. Helps in Chrome for large lists. */
 }
 
 .fade-enter-active.card,
@@ -209,8 +208,6 @@ function keyUp(event: KeyboardEvent) {
 }
 
 .card .additional-notes {
-	display: none;
-
 	position: absolute;
 	max-width: 100%;
 	left: calc(100% + 0.2em);
@@ -219,10 +216,13 @@ function keyUp(event: KeyboardEvent) {
 	font-size: 0.8em;
 	padding: 0.2em 0.4em;
 	border-radius: 0.2em;
+
+	opacity: 0;
+	transition: opacity 0.2s ease;
 }
 
 .card:hover .additional-notes {
-	display: block;
+	opacity: 1;
 }
 
 .noted-colors {
@@ -248,6 +248,7 @@ function keyUp(event: KeyboardEvent) {
 		overflow: hidden;
 		border-radius: 3%;
 		filter: brightness(var(--brightness));
+		will-change: transform;
 		transform: perspective(1000px) rotate3d(0, 1, 0, var(--transform-rotation-x))
 			rotate3d(1, 0, 0, var(--transform-rotation-y));
 

@@ -1368,7 +1368,7 @@ ul.player-list {
 /* Bug in webkit applies with style to another element while drag & dropping https://bugs.webkit.org/show_bug.cgi?id=134555 */
 .card-column > .column-card-container:hover,
 .card-column > .card:hover {
-	z-index: 800;
+	z-index: 800; /* NOTE: This forces the browser to relayout and is very slow in large lists (especially on Chrome). A solution could be to render a copy instead of bringing it forward, but it's more complicated. */
 }
 
 .card-column > .column-card-container:last-child,
