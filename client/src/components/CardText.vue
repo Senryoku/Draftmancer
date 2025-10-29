@@ -10,11 +10,9 @@
 				<div class="card-top-line" v-if="printed_name">
 					<div class="card-top-line-inner">
 						<div class="card-name font-size-fit">{{ printed_name }}</div>
-						<div
-							class="card-mana-cost"
-							v-if="face.mana_cost"
-							v-html="transformManaCost(face.mana_cost)"
-						></div>
+						<div class="card-mana-cost">
+							<img v-for="(s, idx) in manaCost" :key="idx" :src="s.svg_uri" class="mana-symbol" />
+						</div>
 					</div>
 				</div>
 				<div class="card-canonical-name font-size-fit" v-if="canonical_name">{{ canonical_name }}</div>
@@ -36,7 +34,7 @@
 <script setup lang="ts">
 import { ScryfallCard, isScryfallCard, ScryfallCardFace, CardCacheEntry, isScryfallCardFace } from "../vueCardCache";
 import { ref, computed, watch, onMounted, nextTick, onUnmounted } from "vue";
-import { replaceManaSymbols } from "../ManaSymbols";
+import { replaceManaSymbols, parseManaSymbols } from "../ManaSymbols";
 import { Card, CardFace } from "@/CardTypes";
 import { fitFontSize } from "../helper";
 
@@ -85,9 +83,10 @@ function parseOracle(str: string) {
 		.join("");
 }
 
-function transformManaCost(str: string) {
-	return replaceManaSymbols(str);
-}
+const manaCost = computed(() => {
+	if (!face.value?.mana_cost) return [];
+	return parseManaSymbols(face.value.mana_cost);
+});
 
 const colors = computed(() => {
 	if (!props.card) return undefined;

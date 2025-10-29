@@ -33,3 +33,12 @@ function genManaSymbol(str: string) {
 export function replaceManaSymbols(str: string) {
 	return str.replace(ManaRegex, (match, group) => genManaSymbol(group)?.outerHTML.trim() ?? match);
 }
+
+export function parseManaSymbols(str: string) {
+	return [...str.matchAll(ManaRegex)]
+		.map((match) => {
+			if (match[0] in ManaSymbols) return ManaSymbols[match[0]];
+			return null;
+		})
+		.filter((s) => s !== null);
+}
