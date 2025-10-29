@@ -3848,11 +3848,6 @@
         "fullName": "Tarkir: Dragonstorm Commander Tokens",
         "icon": "img/sets/ttdc.svg"
     },
-    "ttmc": {
-        "code": "ttmc",
-        "fullName": "Teenage Mutant Ninja Turtles Eternal Tokens",
-        "icon": "img/sets/ttmc.svg"
-    },
     "tund": {
         "code": "tund",
         "fullName": "Unsanctioned Tokens",
