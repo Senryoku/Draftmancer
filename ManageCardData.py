@@ -655,6 +655,8 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
                 selection["in_booster"] = safeInBoosterCheck(c, 188)
             case "om1":
                 selection["in_booster"] = True
+            case "tla":
+                selection["in_booster"] = safeInBoosterCheck(c, 281)
 
         if c["collector_number"].endswith("†"):
             selection["in_booster"] = False
@@ -1173,7 +1175,6 @@ constants["PrimarySets"] = [
         "who",
         "wot",
         "acr",
-        "tla",
         "spe",
         "aa2",
         "mar",

@@ -3908,6 +3908,238 @@ export class OM1BoosterFactory extends BoosterFactory {
 	}
 }
 
+// Avatar: The Last Airbender (TLA) - https://magic.wizards.com/en/news/feature/collecting-avatar-the-last-airbender
+export class TLABoosterFactory extends BoosterFactory {
+	static filter(min: number, max: number) {
+		return CardsBySet["tla"].filter(
+			(c) => parseInt(getCard(c).collector_number) >= min && parseInt(getCard(c).collector_number) <= max
+		);
+	}
+
+	static readonly Scene = TLABoosterFactory.filter(297, 315); // "Book 1 is a 4-card scene, Book 2 is a 6-card scene, and Book 3 is a massive 9-card scene"
+	static readonly FieldNotes = TLABoosterFactory.filter(316, 330); // There are 8 rare and 7 mythic rare field notes cards.
+	static readonly BattlePose = TLABoosterFactory.filter(331, 335); // There are 5 additional borderless battle pose cards.
+	static readonly Elemental = TLABoosterFactory.filter(336, 354); // There are 15 rare and 5 mythic rare elemental frame cards. FIXME: One missing?
+	static readonly BorderlessSaga = TLABoosterFactory.filter(355, 359); // There are 5 mythic rare borderless double-faced Sagas in this set.
+
+	static readonly CommonDualLands = TLABoosterFactory.filter(263, 281).filter((c) => getCard(c).rarity === "common"); // FIXME!
+	static readonly Basics = TLABoosterFactory.filter(282, 286);
+	static readonly JourneyBasics = TLABoosterFactory.filter(292, 296);
+	static readonly AppaBasics = TLABoosterFactory.filter(287, 291);
+
+	scene: SlotedCardPool;
+	fieldNotes: SlotedCardPool;
+	battlePose: SlotedCardPool;
+	elemental: SlotedCardPool;
+	borderlessSaga: SlotedCardPool;
+
+	mainSetUncommons: CardPool = new CardPool();
+	source: CardPool = new CardPool();
+
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
+		const [, filteredCardPool] = filterCardPool(cardPool, (cid: CardID) =>
+			TLABoosterFactory.CommonDualLands.includes(cid)
+		);
+		super(filteredCardPool, landSlot, options);
+		this.scene = cidsToSlotedCardPool(TLABoosterFactory.Scene, options.maxDuplicates);
+		this.fieldNotes = cidsToSlotedCardPool(TLABoosterFactory.FieldNotes, options.maxDuplicates);
+		this.battlePose = cidsToSlotedCardPool(TLABoosterFactory.BattlePose, options.maxDuplicates);
+		this.elemental = cidsToSlotedCardPool(TLABoosterFactory.Elemental, options.maxDuplicates);
+		this.borderlessSaga = cidsToSlotedCardPool(TLABoosterFactory.BorderlessSaga, options.maxDuplicates);
+
+		for (const cid of CardsBySet["tle"]) {
+			const c = getCard(cid);
+			this.source.set(cid, options.maxDuplicates?.[c.rarity] ?? DefaultMaxDuplicates);
+		}
+		// Copy of the main set uncommons (without the 4 scene cards) for wildcard slots. This mean the max duplicate limit is not guaranteed.
+		for (const [cid, count] of this.cardPool.uncommon) this.mainSetUncommons.set(cid, count);
+		// Add the 4 scene uncommons to the main card pool
+		for (const [cid, count] of this.scene["uncommon"]) this.cardPool.uncommon.set(cid, count);
+	}
+
+	generateBooster(targets: Targets) {
+		const updatedTargets = structuredClone(targets);
+		// 6–7 Commons
+		if (targets === DefaultBoosterTargets) updatedTargets.common = Math.max(0, updatedTargets.common - 3);
+		else updatedTargets.common = Math.max(1, updatedTargets.common - 2);
+
+		const booster: UniqueCard[] = [];
+
+		// "In 1 of 26 Play Boosters, 1 of 61 non-foil source material cards will replace a common."
+		const sourceRoll = random.realZeroToOneInclusive();
+		if (sourceRoll < 1 / 26) {
+			updatedTargets.common = Math.max(0, updatedTargets.common - 1);
+			booster.push(pickCard(this.source, booster, { foil: false }));
+		}
+
+		// 3 Uncommons
+		//   There are 110 uncommons from the main set of Magic: The Gathering | Avatar: The Last Airbender that can be found in these slots.
+		//   There are 4 uncommon scene cards that can be found in these slots (3.6%).
+		// NOTE: Uncommon scene cards are added to the card pool directly.
+
+		// 1 Traditional foil card of any rarity
+		//   A common (53.9%), uncommon (36.7%), rare (6.7%), or mythic rare (1.2%) from the Magic: The Gathering | Avatar: The Last Airbender main set
+		//   An uncommon scene card (less than 1%)
+		//   A rare or mythic rare scene card (less than 1%)
+		//   A rare or mythic rare field notes card (less than 1%)
+		//   A rare or mythic rare battle pose card (less than 1%)
+		//   A rare or mythic rare elemental frame card (less than 1%)
+		//   A mythic rare borderless double-faced Saga card (less than 1%)
+		{
+			const pool = chooseWeighted(
+				[
+					53.9,
+					36.7,
+					6.7,
+					1.2,
+					// NOTE: Known percentages add up to 98.5
+					1.5 / 6,
+					(1.5 / 6) * (6 / 7),
+					(1.5 / 6) * (1 / 7),
+					(1.5 / 6) * (6 / 7),
+					(1.5 / 6) * (1 / 7),
+					(1.5 / 6) * (6 / 7),
+					(1.5 / 6) * (1 / 7),
+					(1.5 / 6) * (6 / 7),
+					(1.5 / 6) * (1 / 7),
+					1.5 / 6,
+				].map((w) => w / 100.0),
+				[
+					this.cardPool.common,
+					this.mainSetUncommons,
+					this.cardPool.rare,
+					this.cardPool.mythic,
+					this.scene.uncommon,
+					this.scene.rare,
+					this.scene.mythic,
+					this.fieldNotes.rare,
+					this.fieldNotes.mythic,
+					this.elemental.rare,
+					this.elemental.mythic,
+					this.borderlessSaga.mythic,
+				]
+			);
+			booster.push(pickCard(pool, booster, { foil: true }));
+		}
+
+		// 1 Rare or mythic rare
+		//   A rare (80%) or mythic rare (12.6%) from the Magic: The Gathering | Avatar: The Last Airbender main set
+		//   A rare (1.6%) or mythic rare (less than 1%) scene card
+		//   A rare (1.4%) or mythic rare (less than 1%) field notes card
+		//   A rare or mythic rare battle pose card (less than 1%)
+		//   A rare (2.4%) or mythic rare (less than 1%) elemental frame card
+		//   A mythic rare borderless double-faced Saga card (less than 1%)
+		while (updatedTargets.rare > 0) {
+			updatedTargets.rare -= 1;
+			const pool = chooseWeighted(
+				[
+					80,
+					12.6,
+					1.6,
+					1.6 * (12.6 / (80 + 12.6)),
+					1.4,
+					1.4 * (12.6 / (80 + 12.6)),
+					0.087300216 * (80.0 / (80 + 12.6)), // NOTE: Known percentages and the ones deduced from the mythic rate add up to 99.825399568
+					0.087300216 * (12.6 / (80 + 12.6)),
+					2.4,
+					2.4 * (12.6 / (80 + 12.6)),
+					0.087300216,
+				].map((w) => w / 100.0),
+				[
+					this.cardPool.rare,
+					this.cardPool.mythic,
+					this.scene.rare,
+					this.scene.mythic,
+					this.fieldNotes.rare,
+					this.fieldNotes.mythic,
+					this.battlePose.rare,
+					this.battlePose.mythic,
+					this.elemental.rare,
+					this.elemental.mythic,
+					this.borderlessSaga.mythic,
+				]
+			);
+			booster.push(pickCard(pool, booster));
+		}
+
+		// 1 Wildcard of any rarity
+		//   A common (4.2%), uncommon (74.1%), rare (16.7%), or mythic rare (2.6%) from the Magic: The Gathering | Avatar: The Last Airbender main set
+		//   An uncommon scene card (less than 1%)
+		//   A rare or mythic rare scene card (less than 1%)
+		//   A rare or mythic rare field notes card (less than 1%)
+		//   A rare or mythic rare battle pose card (less than 1%)
+		//   A rare or mythic rare elemental frame card (less than 1%)
+		//   A mythic rare borderless double-faced Saga card (less than 1%)
+		// NOTE: Known percentages (from the main set) add up to 97.6%
+		{
+			const pool = chooseWeighted(
+				[
+					4.2,
+					74.1,
+					16.7,
+					2.6,
+					// TODO
+					2.4 / 6,
+					(2.4 / 6) * (6 / 7),
+					(2.4 / 6) * (1 / 7),
+					(2.4 / 6) * (6 / 7),
+					(2.4 / 6) * (1 / 7),
+					(2.4 / 6) * (6 / 7),
+					(2.4 / 6) * (1 / 7),
+					(2.4 / 6) * (6 / 7),
+					(2.4 / 6) * (1 / 7),
+					2.4 / 6,
+				].map((w) => w / 100.0),
+				[
+					this.cardPool.common,
+					this.mainSetUncommons,
+					this.cardPool.rare,
+					this.cardPool.mythic,
+					this.scene.uncommon,
+					this.scene.rare,
+					this.scene.mythic,
+					this.fieldNotes.rare,
+					this.fieldNotes.mythic,
+					this.battlePose.rare,
+					this.battlePose.mythic,
+					this.elemental.rare,
+					this.elemental.mythic,
+					this.borderlessSaga.mythic,
+				]
+			);
+			booster.push(pickCard(pool, booster));
+		}
+
+		const rest = super.generateBooster(updatedTargets, booster);
+		if (isMessageError(rest)) return rest;
+
+		// 1 Land card
+		//   A non-foil common dual land (40%)
+		//   A non-foil default frame basic land (20%)
+		//   A non-foil Avatar's journey basic land (10%)
+		//   A non-foil Appa basic land (10%)
+		//   A traditional foil common dual land (10%)
+		//   A traditional foil default frame basic land (5%)
+		//   A traditional foil Avatar's journey basic land (2.5%)
+		//   A traditional foil Appa basic land (2.5%)
+		{
+			const pool = chooseWeighted(
+				[0.5, 0.25, 0.125, 0.125],
+				[
+					TLABoosterFactory.CommonDualLands,
+					TLABoosterFactory.Basics,
+					TLABoosterFactory.JourneyBasics,
+					TLABoosterFactory.AppaBasics,
+				]
+			);
+			const foil = random.realZeroToOneInclusive() <= 1 / 5;
+			rest.push(getUnique(getRandom(pool), { foil }));
+		}
+
+		return rest;
+	}
+}
+
 // Set specific rules.
 // Neither DOM, WAR or ZNR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
 export const SetSpecificFactories: {
@@ -3965,6 +4197,7 @@ export const SetSpecificFactories: {
 	eoe: EOEBoosterFactory,
 	spm: SPMBoosterFactory,
 	om1: OM1BoosterFactory,
+	tla: TLABoosterFactory,
 };
 
 export const getBoosterFactory = function (
