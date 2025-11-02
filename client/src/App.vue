@@ -1581,7 +1581,7 @@
 							<a href="/draftqueue">
 								<div class="draft-queue-banner">
 									<img
-										src="./assets/img/tla_draft_queue_banner.webp"
+										src="./assets/img/draft_queue_banner_tla.webp"
 										alt="Practice Avatar: The Last Airbender draft with human players right now in the Draft Queue!"
 										width="500"
 										height="260"

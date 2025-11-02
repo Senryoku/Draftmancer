@@ -4014,6 +4014,8 @@ export class TLABoosterFactory extends BoosterFactory {
 					this.scene.mythic,
 					this.fieldNotes.rare,
 					this.fieldNotes.mythic,
+					this.battlePose.rare,
+					this.battlePose.mythic,
 					this.elemental.rare,
 					this.elemental.mythic,
 					this.borderlessSaga.mythic,
