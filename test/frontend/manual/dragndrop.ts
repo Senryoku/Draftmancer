@@ -1,12 +1,5 @@
 import { expect } from "chai";
-import {
-	waitAndClickSelector,
-	waitAndClickXpath,
-	setupBrowsers,
-	pages,
-	replaceInput,
-	launchMode,
-} from "../src/common.js";
+import { waitAndClickSelector, setupBrowsers, pages, replaceInput, launchMode } from "../src/common.js";
 import { getRandom, random } from "../../../src/utils.js";
 
 // Not part of the test suite.
@@ -29,7 +22,7 @@ describe("Drag and Drop", () => {
 						`${message.type().substr(0, 3).toUpperCase()} ${message.text()}, ${message.stackTrace()}`
 					)
 				)
-				.on("pageerror", ({ message }) => console.log(message));
+				.on("pageerror", (data) => console.log((data as { message: string }).message));
 
 			await launchMode("Sealed");
 			await replaceInput("1")(await pages[0].$("#input-boostersPerPlayer"));
