@@ -3919,8 +3919,8 @@ export class TLABoosterFactory extends BoosterFactory {
 	static readonly Scene = TLABoosterFactory.filter(297, 315); // "Book 1 is a 4-card scene, Book 2 is a 6-card scene, and Book 3 is a massive 9-card scene"
 	static readonly FieldNotes = TLABoosterFactory.filter(316, 330); // There are 8 rare and 7 mythic rare field notes cards.
 	static readonly BattlePose = TLABoosterFactory.filter(331, 335); // There are 5 additional borderless battle pose cards.
-	static readonly Elemental = TLABoosterFactory.filter(336, 354); // There are 15 rare and 5 mythic rare elemental frame cards. FIXME: One missing?
-	static readonly BorderlessSaga = TLABoosterFactory.filter(355, 359); // There are 5 mythic rare borderless double-faced Sagas in this set.
+	static readonly Elemental = TLABoosterFactory.filter(336, 353); // There are 15 rare and 5 mythic rare elemental frame cards. FIXME: Two missing?
+	static readonly BorderlessSaga = TLABoosterFactory.filter(354, 358); // There are 5 mythic rare borderless double-faced Sagas in this set.
 
 	static readonly CommonDualLands = TLABoosterFactory.filter(265, 281).filter((c) => getCard(c).rarity === "common");
 	static readonly Basics = TLABoosterFactory.filter(282, 286);
