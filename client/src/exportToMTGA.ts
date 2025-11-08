@@ -41,9 +41,8 @@ function MTGACardLine(c: Card, language: Language, full: boolean) {
 	const idx = name.indexOf("//");
 	// Split cards need both names to be imported, but DFCs and Adventures only use the first one.
 	if (idx != -1) {
-		const setsWithSplitCards = ["grn", "rna", "mh2", "akr", "mkm", "dsk"];
 		if (c.set === "akr") name = name.replace("//", "///");
-		else if (!setsWithSplitCards.includes(c.set)) name = name.substring(0, idx - 1);
+		else if (c.layout !== "split") name = name.substring(0, idx - 1);
 	}
 
 	// FIXME: Translate J21 Collector Numbers to MTGA, this should be avoidable

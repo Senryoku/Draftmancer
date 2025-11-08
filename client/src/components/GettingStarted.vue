@@ -16,7 +16,7 @@
 					Join the desired session by entering its Session ID in the top left, or by following the link shared
 					by the session owner.
 				</p>
-				<p>You can also enter an arbitrary Session ID at any to start your own session.</p>
+				<p>You can also enter an arbitrary Session ID at any point to create your own session.</p>
 			</div>
 		</div>
 		<div>

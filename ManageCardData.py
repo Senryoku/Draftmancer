@@ -451,7 +451,34 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
             except ValueError:
                 pass
 
-            all_cards.append(c)
+            all_cards.append({k: c[k] for k in c if k in [
+                "id",
+                "oracle_id",
+                "name",
+                "printed_name",
+                "flavor_name",
+                "mana_cost",
+                "set",
+                "collector_number",
+                "lang",
+                "layout",
+                "type_line",
+                "rarity",
+                "arena_id",
+                "booster",
+                "card_faces",
+                "image_uris",
+                "oracle_text",
+                "keywords",
+                "finishes",
+                "frame_effects",
+                "image_status",
+                "promo",
+                "promo_types",
+                "released_at",
+                "related_cards",
+                "all_parts"
+            ]})
             copied += 1
             if handled % 1000 == 0:
                 print(f"\rPreProcessing...    {copied}/{handled} cards added...", end="", flush=True)
@@ -655,6 +682,8 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
                 selection["in_booster"] = safeInBoosterCheck(c, 188)
             case "om1":
                 selection["in_booster"] = True
+            case "tla":
+                selection["in_booster"] = safeInBoosterCheck(c, 281)
 
         if c["collector_number"].endswith("†"):
             selection["in_booster"] = False
@@ -1173,7 +1202,6 @@ constants["PrimarySets"] = [
         "who",
         "wot",
         "acr",
-        "tla",
         "spe",
         "aa2",
         "mar",

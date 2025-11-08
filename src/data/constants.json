@@ -89,7 +89,8 @@
         "tdm",
         "fin",
         "eoe",
-        "om1"
+        "om1",
+        "tla"
     ],
     "AlchemySets": [
         "hbg",
@@ -108,7 +109,8 @@
         "tdm",
         "fin",
         "eoe",
-        "om1"
+        "om1",
+        "tla"
     ],
     "BasicLandNames": {
         "en": {
@@ -322,6 +324,7 @@
         }
     ],
     "PrimarySets": [
+        "tla",
         "spm",
         "om1",
         "eoe",
@@ -332,8 +335,8 @@
         "pio",
         "fdn",
         "dsk",
-        "mb2",
         "blb",
+        "mb2",
         "mh3",
         "otj",
         "mkm",

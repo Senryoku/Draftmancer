@@ -1,10 +1,17 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
+			<em>November, 2025</em>
+			<p>
+				<img src="img/sets/tla.svg" class="set-icon" style="--invertedness: 100%" alt="TLA" /> Avatar: The Last
+				Airbender (TLA) is now available.
+			</p>
+		</div>
+		<div class="news">
 			<em>September, 2025</em>
 			<p>
 				<img src="img/sets/spm.svg" class="set-icon" style="--invertedness: 100%" alt="SPM" /> Marvel's
-				Spider-Man (SPM) is now available!
+				Spider-Man (SPM) is now available.
 			</p>
 		</div>
 		<div class="news">
@@ -32,13 +39,6 @@
 			<p>
 				New experimental game mode: Silent Auction Draft.<br />
 				Accessible from the "Other Game Modes" dropdown.
-			</p>
-		</div>
-		<div class="news">
-			<em>March 28, 2025</em>
-			<p>
-				<img src="img/sets/tdm.svg" class="set-icon" style="--invertedness: 100%" alt="TDM" /> Tarkir:
-				Dragonstorm is now available!<br />
 			</p>
 		</div>
 	</div>
