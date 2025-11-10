@@ -3921,6 +3921,7 @@ export class TLABoosterFactory extends BoosterFactory {
 	static readonly BattlePose = TLABoosterFactory.filter(331, 335); // There are 5 additional borderless battle pose cards.
 	static readonly Elemental = TLABoosterFactory.filter(336, 353); // There are 15 rare and 5 mythic rare elemental frame cards. FIXME: Two missing?
 	static readonly BorderlessSaga = TLABoosterFactory.filter(354, 358); // There are 5 mythic rare borderless double-faced Sagas in this set.
+	static readonly SourceMaterial = CardsBySet["tle"].filter((c) => parseInt(getCard(c).collector_number) <= 61);
 
 	static readonly CommonDualLands = TLABoosterFactory.filter(265, 281).filter((c) => getCard(c).rarity === "common");
 	static readonly Basics = TLABoosterFactory.filter(282, 286);
@@ -3947,7 +3948,7 @@ export class TLABoosterFactory extends BoosterFactory {
 		this.elemental = cidsToSlotedCardPool(TLABoosterFactory.Elemental, options.maxDuplicates);
 		this.borderlessSaga = cidsToSlotedCardPool(TLABoosterFactory.BorderlessSaga, options.maxDuplicates);
 
-		for (const cid of CardsBySet["tle"]) {
+		for (const cid of TLABoosterFactory.SourceMaterial) {
 			const c = getCard(cid);
 			this.source.set(cid, options.maxDuplicates?.[c.rarity] ?? DefaultMaxDuplicates);
 		}
