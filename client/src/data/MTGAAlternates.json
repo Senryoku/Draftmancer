@@ -2615,6 +2615,9 @@
     "Long Rest": [
         77298
     ],
+    "Realm of Koh": [
+        97557
+    ],
     "Three Dreams": [
         98623
     ],
@@ -10992,7 +10995,8 @@
         96275
     ],
     "Humble Defector": [
-        94375
+        94375,
+        98645
     ],
     "Compleat Devotion": [
         83707
@@ -14863,6 +14867,9 @@
     "Showdown of the Skalds": [
         75276
     ],
+    "Wandering Musicians": [
+        97531
+    ],
     "Shell Shield": [
         73271
     ],
@@ -17431,6 +17438,10 @@
         85569,
         71293
     ],
+    "Fevered Visions": [
+        98664,
+        86289
+    ],
     "Starry-Eyed Skyrider": [
         95541
     ],
@@ -17568,6 +17579,7 @@
     "Lightning Bolt": [
         81656,
         77521,
+        98647,
         80872,
         77584,
         96269
@@ -18593,6 +18605,9 @@
     "Molten Ravager": [
         75519,
         72413
+    ],
+    "Waterbending Scroll": [
+        97356
     ],
     "Arlinn, the Pack's Hope // Arlinn, the Moon's Fury": [
         78573,
@@ -19740,7 +19755,8 @@
         71880
     ],
     "Join the Dance": [
-        78594
+        78594,
+        98665
     ],
     "Ulrich of the Krallenhorde // Ulrich, Uncontested Alpha": [
         86303
@@ -20869,6 +20885,9 @@
         73673,
         71257,
         73525
+    ],
+    "Pirate Peddlers": [
+        97390
     ],
     "Conduit Goblin": [
         91029
@@ -22315,6 +22334,9 @@
     ],
     "Bombadil's Song": [
         84846
+    ],
+    "Fervor": [
+        98644
     ],
     "Unrooted Ancestor": [
         95616
@@ -29401,9 +29423,6 @@
     "Antagonize": [
         80251
     ],
-    "Fevered Visions": [
-        86289
-    ],
     "Skittering Surveyor": [
         84571,
         67564,
@@ -31999,6 +32018,9 @@
     "Rosecot Knight": [
         90891
     ],
+    "Hakoda, Selfless Commander": [
+        97296
+    ],
     "Venomous Hierophant": [
         93057,
         70633
@@ -32150,6 +32172,9 @@
     ],
     "Grim Bauble": [
         94890
+    ],
+    "Sandbender Scavengers": [
+        97520
     ],
     "Barge In": [
         70259
@@ -35169,6 +35194,9 @@
     "Serpent's Pass": [
         97560
     ],
+    "Zuko's Conviction": [
+        97399
+    ],
     "Knight of the Reliquary": [
         47087,
         47087
@@ -37277,6 +37305,9 @@
     ],
     "Careless Celebrant": [
         70640
+    ],
+    "Wartime Protestors": [
+        97437
     ],
     "Brambleguard Veteran": [
         91701
@@ -46253,6 +46284,9 @@
     "Liliana's Reaver": [
         72313
     ],
+    "Firebending Lesson": [
+        97414
+    ],
     "Storm-Kiln Artist": [
         76508
     ],
@@ -46964,32 +46998,5 @@
     ],
     "Exultant Skymarcher": [
         66631
-    ],
-    "Hakoda, Selfless Commander": [
-        97296
-    ],
-    "Waterbending Scroll": [
-        97356
-    ],
-    "Pirate Peddlers": [
-        97390
-    ],
-    "Zuko's Conviction": [
-        97399
-    ],
-    "Firebending Lesson": [
-        97414
-    ],
-    "Wartime Protestors": [
-        97437
-    ],
-    "Sandbender Scavengers": [
-        97520
-    ],
-    "Wandering Musicians": [
-        97531
-    ],
-    "Realm of Koh": [
-        97557
     ]
 }

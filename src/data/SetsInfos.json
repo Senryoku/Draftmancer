@@ -970,7 +970,7 @@
     },
     "ftla": {
         "code": "ftla",
-        "fullName": "Avatar: The Last Airbender Front Cards",
+        "fullName": "Avatar: The Last Airbender Beginner Box Front Cards",
         "icon": "img/sets/ftla.svg"
     },
     "fut": {
@@ -1335,6 +1335,11 @@
         "code": "jp1",
         "fullName": "Hobby Japan Promos",
         "icon": "img/sets/jp1.svg"
+    },
+    "jtla": {
+        "code": "jtla",
+        "fullName": "Avatar: The Last Airbender Jumpstart Front Cards",
+        "icon": "img/sets/jtla.svg"
     },
     "jud": {
         "code": "jud",
