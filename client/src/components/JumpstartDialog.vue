@@ -5,8 +5,12 @@
 		</template>
 		<template v-slot:body>
 			<div class="dialog">
-				<div>Choose a set:</div>
+				<div>Choose a set</div>
 				<div class="set-list">
+					<button @click="start('tla')">
+						<img src="../../public/img/sets/tle.svg" class="set-icon" alt="TLE" />
+						<div>Avatar Jumpstart</div>
+					</button>
 					<button @click="start('j25')">
 						<img src="../../public/img/sets/j25.svg" class="set-icon" alt="J25" />
 						<div>Foundations Jumpstart</div>

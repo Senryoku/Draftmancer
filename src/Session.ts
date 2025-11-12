@@ -60,6 +60,7 @@ import {
 	JumpInSets,
 	Jumpstart2022Boosters,
 	Jumpstart2025Boosters,
+	JumpstartAvatarBoosters,
 	JumpstartBoosters,
 } from "./Jumpstart.js";
 import { IDraftState } from "./IDraftState.js";
@@ -3368,10 +3369,16 @@ export class Session implements IIndexable {
 					}
 				});
 			}
-		} else if (set === "jmp" || set === "j22") {
-			// Original Jumpstart and Jumpstart 2022
-			const JMPBoosters = { jmp: JumpstartBoosters, j22: Jumpstart2022Boosters }[set];
-			const BoosterImage = { jmp: "/img/2JumpstartBoosters.webp", j22: "/img/2Jumpstart2022Boosters.webp" }[set];
+		} else if (set === "jmp" || set === "j22" || set === "tla") {
+			// Original Jumpstart, Jumpstart 2022 and Avatar Jumpstart
+			const JMPBoosters = { jmp: JumpstartBoosters, j22: Jumpstart2022Boosters, tla: JumpstartAvatarBoosters }[
+				set
+			];
+			const BoosterImage = {
+				jmp: "/img/2JumpstartBoosters.webp",
+				j22: "/img/2Jumpstart2022Boosters.webp",
+				tla: "/img/2JumpstartAvatarBoosters.webp",
+			}[set];
 			for (const user of this.users) {
 				const boosters = [getRandom(JMPBoosters), getRandom(JMPBoosters)];
 				const cards = boosters.map((b) => b.cards.map((cid: CardID) => getUnique(cid))).flat();
