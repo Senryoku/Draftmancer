@@ -51,7 +51,7 @@
 		"express": "^5.1.0",
 		"express-static-gzip": "^3.0.0",
 		"floating-vue": "^5.2.2",
-		"glob": "^11.0.2",
+		"glob": "^11.1.0",
 		"graphql-ws": "^6.0.6",
 		"JSONStream": "^1.3.5",
 		"mixpanel": "^0.18.0",
