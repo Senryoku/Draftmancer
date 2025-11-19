@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div ref="root">
 		<div class="section-title">
 			<h2>
 				<slot name="title">Card Pool ({{ cards.length }})</slot>
@@ -142,7 +142,7 @@
 						group: group,
 						animation: 200,
 						ghostClass: 'ghost',
-						multiDrag: !isTouchDevice(),
+						multiDrag: !isTouchDevice,
 						selectedClass: 'multi-drag-selected',
 						multiDragKey: 'ctrl',
 						delay: 100,
@@ -153,14 +153,15 @@
 					@update="sortableUpdate($event, column)"
 				>
 					<template #item="{ element }">
-						<card
+						<Card
 							:card="element"
 							:language="language"
 							@click.exact="$emit('cardClick', $event, element)"
 							@dblclick="$emit('cardDoubleClick', $event, element)"
 							@dragstart.exact="$emit('cardDragStart', $event, element)"
 							:conditionalClasses="cardConditionalClasses"
-						></card>
+							:key="element.uniqueID"
+						/>
 					</template>
 				</Sortable>
 			</div>
@@ -168,8 +169,8 @@
 	</div>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType } from "vue";
+<script setup lang="ts">
+import { ref, computed, watch, onMounted, useTemplateRef, useAttrs, nextTick } from "vue";
 import { SortableEvent } from "sortablejs";
 import { Sortable } from "sortablejs-vue3";
 import CardOrder, { ComparatorType } from "../cardorder";
@@ -177,545 +178,535 @@ import Card from "./Card.vue";
 import Dropdown from "./Dropdown.vue";
 import Checkbox from "./Checkbox.vue";
 import { Language } from "@/Types";
-import { UniqueCard } from "@/CardTypes";
+import { UniqueCard, UniqueCardID } from "@/CardTypes";
 import { sortableUpdate } from "../helper";
 import { EnglishBasicLandNames } from "../../../src/Constants";
 
-export default defineComponent({
-	name: "CardPool",
-	components: { Sortable, Card, Dropdown, Checkbox },
-	props: {
-		cards: { type: Array as PropType<UniqueCard[]>, required: true },
-		language: { type: String as PropType<Language>, required: true },
-		group: { type: String },
-		cardConditionalClasses: { type: Function as PropType<(card: UniqueCard) => string[]> },
+const props = withDefaults(
+	defineProps<{
+		cards: UniqueCard[];
+		language: Language;
+		group: string;
+		cardConditionalClasses?: (card: UniqueCard) => string[];
 		/* This only serves as a mean to declare intentions and make sure the drag events are correctly bound when necessary.
 		   By design this will not prevent the user to move cards within the pool. */
-		readOnly: {
-			type: Boolean,
-			default: false,
-		},
-		backupKey: { type: String, required: false },
-	},
-	data() {
-		return {
-			sortableUpdate,
-			options: {
-				layout: "default",
-				columnCount: 7,
-				sort: "cmc",
-				displayHeaders: true,
-			},
-			rows: [[[], [], [], [], [], [], []]] as UniqueCard[][][],
-			tempColumn: [] as UniqueCard[] /* Temp. destination for card when creating a new column by drag & drop */,
+		readOnly: boolean;
+		backupKey?: string;
+	}>(),
+	{
+		readOnly: false,
+	}
+);
+const emit = defineEmits<{
+	(e: "cardClick", event: MouseEvent, card: UniqueCard): void;
+	(e: "cardDoubleClick", event: MouseEvent, card: UniqueCard): void;
+	(e: "cardDragStart", event: DragEvent, card: UniqueCard): void;
+	(e: "cardDragAdd", card: UniqueCardID): void;
+	(e: "cardDragRemove", card: UniqueCardID): void;
+}>();
 
-			forceRerender: 0, // Workaround. See forceUpdate().
-		};
-	},
-	mounted() {
-		let options = localStorage.getItem("card-pool-options");
-		if (options) this.options = JSON.parse(options);
-		this.sync();
-	},
-	methods: {
-		isTouchDevice() {
-			return "ontouchstart" in window || navigator.maxTouchPoints > 0;
-		},
-		forceUpdate() {
-			// Forces a re-render of the whole component.
-			// Used to workaround some de-sync issues (see #623). Might be a bug in sortablejs-vue3.
-			this.forceRerender++;
-		},
-		checkDOMColumn(DOMColumn: HTMLElement, column: UniqueCard[]) {
-			// Checks if the DOM column is still valid and forces a re-render if not.
-			// FIXME: This is a workaround. I'm still looking for a proper fix to #623.
-			if (DOMColumn.children.length !== column.length) {
-				console.error("[CardPool] Missing card in column! Forcing a re-render...");
-				this.forceUpdate();
-			} else {
-				const DOMUIDs = [...DOMColumn.children].map((c) => parseInt((c as HTMLElement).dataset.uniqueid!));
-				const columnUIDs = column.map((c) => c.uniqueID);
-				for (let i = 0; i < DOMUIDs.length; ++i) {
-					if (DOMUIDs[i] !== columnUIDs[i]) {
-						console.error("[CardPool] Unexcepted unique card ID! Forcing a re-render...");
-						this.forceUpdate();
-						break;
-					}
-				}
-			}
-		},
-		reset() {
-			const colCount = Math.max(1, this.options.columnCount);
-			this.rows = [[]];
-			for (let i = 0; i < colCount; ++i) this.rows[0].push([]);
-			if (this.options.layout === "TwoRows") {
-				this.rows.push([]);
-				for (let i = 0; i < colCount; ++i) this.rows[1].push([]);
-			}
-		},
-		sync() {
-			this.reset();
-			if (!this.tryRecover()) for (let card of this.cards) this.addCard(card, undefined);
-		},
-		tryRecover(): boolean {
-			// Attempts to recover the row/column arrangement from localStorage.
-			// Returns true if successful. No changes are made if unsuccessful.
-			if (!this.backupKey) return false;
-			try {
-				const savedPoolStr = localStorage.getItem("card-pool-backup-" + this.backupKey);
-				if (savedPoolStr) {
-					const toStr = (col: { id: string; uniqueID: number }[]) =>
-						col
-							.map((c) => c.id + "," + c.uniqueID)
-							.sort()
-							.join(";");
-					const savedPool: { id: string; uniqueID: number }[][][] = JSON.parse(savedPoolStr);
-
-					if (savedPool.length !== this.rows.length) return false;
-					if (savedPool[0].length !== this.rows[0].length) return false;
-
-					if (toStr(savedPool.flat().flat()) === toStr(this.cards)) {
-						const rows = [];
-
-						for (let r of savedPool) {
-							const row = [];
-							for (let c of r) {
-								const col = [];
-								for (let { id, uniqueID } of c) {
-									const uniqueCard = this.cards.find(
-										(card) => card.id === id && card.uniqueID === uniqueID
-									);
-									if (!uniqueCard) return false;
-									col.push(uniqueCard);
-								}
-								row.push(col);
-							}
-							rows.push(row);
-						}
-
-						this.rows = rows;
-						return true;
-					}
-				}
-			} catch (e) {
-				console.error("[CardPool] Failed to recover card pool from localStorage: ", e);
-			}
-			return false;
-		},
-		filterBasics() {
-			// Removes basics without affecting other cards ordering.
-			for (let r of this.rows)
-				for (let i = 0; i < r.length; ++i)
-					r.splice(
-						i,
-						1,
-						r[i].filter((c) => !EnglishBasicLandNames.includes(c.name))
-					);
-		},
-		selectRow(card: UniqueCard) {
-			return this.options.layout === "TwoRows" && !card.type.includes("Creature") && this.options.sort !== "type"
-				? this.rows[1]
-				: this.rows[0];
-		},
-		defaultColumnIdx(card: UniqueCard) {
-			let columnIndex = card.cmc;
-			switch (this.options.sort) {
-				case "color":
-					columnIndex = CardOrder.colorOrder(card.colors);
-					break;
-				case "rarity":
-					columnIndex = CardOrder.rarityOrder(card.rarity);
-					break;
-				case "type":
-					columnIndex = CardOrder.typeOrder(card.type);
-					break;
-			}
-			return Math.min(columnIndex, this.rows[0].length - 1);
-		},
-		addCard(card: UniqueCard, event?: MouseEvent) {
-			if (event) {
-				this.insertCard(this.getColumnFromCoordinates(event), card);
-			} else {
-				let columnIndex = this.defaultColumnIdx(card);
-				const row = this.selectRow(card);
-				let columnWithDuplicate = row.findIndex((column) => column.findIndex((c) => c.name === card.name) > -1);
-				if (columnWithDuplicate > -1) {
-					columnIndex = columnWithDuplicate;
-				}
-				this.insertCard(row[columnIndex], card);
-			}
-		},
-		insertCard(column: UniqueCard[], card: UniqueCard) {
-			let duplicateIndex = column.findIndex((c) => c.name === card.name);
-			if (duplicateIndex != -1) {
-				column.splice(duplicateIndex, 0, card);
-			} else if (CardOrder.isOrdered(column, CardOrder.Comparators.arena)) {
-				column.push(card);
-				CardOrder.orderByArenaInPlace(column);
-			} else {
-				column.push(card);
-			}
-		},
-		sort(comparator: ComparatorType, columnSorter = CardOrder.orderByArenaInPlace) {
-			this.reset();
-			if (this.cards.length === 0) return;
-			for (let card of this.cards) {
-				const row = this.selectRow(card);
-				const col = row[this.defaultColumnIdx(card)];
-				col.push(card);
-			}
-			for (let row of this.rows) for (let col of row) columnSorter(col);
-		},
-		sortByCMC() {
-			this.options.sort = "cmc";
-			this.sort(CardOrder.Comparators.cmc);
-			this.saveOptions();
-		},
-		sortByColor() {
-			this.options.sort = "color";
-			this.sort(CardOrder.Comparators.color);
-			this.saveOptions();
-		},
-		sortByRarity() {
-			this.options.sort = "rarity";
-			this.sort(CardOrder.Comparators.rarity, CardOrder.orderByColorInPlace);
-			this.saveOptions();
-		},
-		sortByType() {
-			this.options.sort = "type";
-			this.sort(CardOrder.Comparators.type);
-			this.saveOptions();
-		},
-		remCard(card: UniqueCard) {
-			for (let row of this.rows)
-				for (let col of row) {
-					let idx = col.indexOf(card);
-					if (idx >= 0) {
-						col.splice(idx, 1);
-						return;
-					}
-				}
-		},
-		addToColumn(e: SortableEvent, column: UniqueCard[]) {
-			const entries =
-				e.newIndicies.length > 0 ? e.newIndicies : [{ multiDragElement: e.item, index: e.newIndex! }];
-			entries.sort((l, r) => l.index - r.index); // Insert lower indices first as they are given in relation to the new array.
-
-			// Event is just a movement within the card pool.
-			const inner =
-				(this.$refs.cardcolumns as HTMLElement).contains(e.from) &&
-				(this.$refs.cardcolumns as HTMLElement).contains(e.to);
-
-			if (!inner && !this.readOnly && !("onCardDragAdd" in this.$attrs)) {
-				console.warn(
-					"CardPool: Not declared as readOnly, but has no 'cardDragAdd' event handler.",
-					"Make sure to bind the cardDragAdd event to handle these modifications or this will cause a desync between the prop and the displayed content, or mark the card pool as readOnly if it does not share its group with any other draggables."
-				);
-				console.warn(e);
-			}
-
-			for (const entry of entries) {
-				const item = entry.multiDragElement;
-				const targetIndex = Math.min(entry.index, column.length); // Make sure we won't introduce undefined values by inserting past the end.
-				// Remove the previous DOM element: rendering will be handled by vue once the state is correctly updated.
-				item.remove();
-
-				if (!item.dataset.uniqueid) return console.error("Error in CardPool::addToColumn: Invalid item.", e);
-				const cardUniqueID = parseInt(item.dataset.uniqueid!);
-
-				if (inner) {
-					// FIXME: Failsafe. Make sure we won't introduce a duplicate when inserting the card into this column.
-					// Note: This seem to happen when drag & dropping multiple cards, multiple times in a row (without letting go of ctrl).
-					//       I feel like this is an issue with sortablejs-vue3 wich doesn't properly clear the dragged items, but I have to investigate the root cause.
-					const alreadyAdded = column.findIndex((c) => c.uniqueID === cardUniqueID);
-					if (alreadyAdded >= 0) continue;
-
-					const idx = this.cards.findIndex((c) => c.uniqueID === cardUniqueID);
-					if (idx >= 0) column.splice(targetIndex, 0, this.cards[idx]);
-				} else {
-					// Parent is responsible for updating this.cards prop by reacting to this event.
-					this.$emit("cardDragAdd", cardUniqueID);
-
-					this.$nextTick(() => {
-						// See above.
-						const alreadyAdded = column.findIndex((c) => c.uniqueID === cardUniqueID);
-						if (alreadyAdded >= 0) return;
-
-						const idx = this.cards.findIndex((c) => c.uniqueID === cardUniqueID);
-						if (idx >= 0) column.splice(targetIndex, 0, this.cards[idx]);
-					});
-				}
-			}
-		},
-		removeFromColumn(e: SortableEvent, column: UniqueCard[]) {
-			const entries =
-				e.oldIndicies.length > 0 ? e.oldIndicies : [{ multiDragElement: e.item, index: e.oldIndex! }];
-			entries.sort((l, r) => r.index - l.index); // Remove higher indices first to preverse order.
-
-			// Event is just a movement within the card pool, don't broadcast it.
-			const inner =
-				(this.$refs.cardcolumns as HTMLElement).contains(e.from) &&
-				(this.$refs.cardcolumns as HTMLElement).contains(e.to);
-
-			if (!inner && !this.readOnly && !("onCardDragRemove" in this.$attrs)) {
-				console.warn(
-					"CardPool: Not declared as readOnly, but has no 'cardDragRemove' event handler.",
-					"Make sure to bind the cardDragRemove event to handle these modifications or this will cause a desync between the prop and the displayed content, or mark the card pool as readOnly if it does not share its group with any other draggables."
-				);
-				console.warn(e);
-			}
-
-			this.$nextTick(() => {
-				this.checkDOMColumn(e.from, column);
-			});
-
-			for (const entry of entries) {
-				const item = entry.multiDragElement;
-				const index = entry.index;
-				const boundedIndex = Math.max(0, Math.min(entry.index, column.length - 1));
-
-				// Make sure we're removing the intended card (source may have changed: see App.forcePick and #606)
-				if (item.dataset.uniqueid) {
-					const cardUniqueID = parseInt(item.dataset.uniqueid);
-					if (index < 0 || index >= column.length || column[index].uniqueID !== cardUniqueID) {
-						const fixedIndex = column.findIndex((c) => c.uniqueID === cardUniqueID);
-						if (fixedIndex >= 0) {
-							column.splice(fixedIndex, 1);
-						} else
-							console.error(
-								`Error in CardPool::removeFromColumn: Invalid card UniqueID (${cardUniqueID}).`,
-								e
-							);
-					} else {
-						column.splice(boundedIndex, 1);
-					}
-				} else {
-					column.splice(boundedIndex, 1);
-				}
-
-				if (!inner) {
-					if (!item.dataset.uniqueid)
-						return console.error("Error in CardPool::removeFromColumn: Invalid item.", e);
-					const cardUniqueID = parseInt(item.dataset.uniqueid);
-					this.$emit("cardDragRemove", cardUniqueID);
-				}
-			}
-		},
-		addColumn() {
-			for (let row of this.rows) {
-				row.push([]);
-				row[row.length - 1] = row[row.length - 2].filter((c) => c.cmc > row.length - 2);
-				row[row.length - 2] = row[row.length - 2].filter((c) => c.cmc <= row.length - 2);
-			}
-			this.saveOptions();
-		},
-		remColumn(index: number | undefined) {
-			if (this.rows[0].length < 2) return;
-			if (index === undefined || index < 0 || index >= this.rows[0].length) index = this.rows[0].length - 1;
-			const other = index < this.rows[0].length - 1 ? index + 1 : index - 1;
-			for (let row of this.rows) {
-				row[other] = ([] as UniqueCard[]).concat(row[other], row[index]);
-				CardOrder.orderByArenaInPlace(row[other]);
-				row.splice(index, 1);
-			}
-			this.saveOptions();
-		},
-		getColumnFromCoordinates(event: { clientX: number; clientY: number }) {
-			// Search for the column at the supplied coordinates, creating a new one if necessary.
-			const x = event.clientX;
-			const y = event.clientY;
-			// Find surrounding row
-			const rows = this.$el.querySelectorAll(".card-columns");
-			let rowIdx = 0;
-			while (rowIdx < rows.length - 1 && rows[rowIdx + 1].getBoundingClientRect().top < y) ++rowIdx;
-			// Select column directly to the left or bellow the event
-			const columns = rows[rowIdx].querySelectorAll(".card-column");
-			let colIdx = 0;
-			while (colIdx < columns.length && columns[colIdx].getBoundingClientRect().left < x) ++colIdx;
-			// Returns the column bellow the mouse, or directly to the left (or the first if we're completely to the left).
-			const finalColumnIndex = Math.max(0, Math.min(this.rows[rowIdx].length - 1, colIdx - 1));
-			return this.rows[rowIdx][finalColumnIndex];
-			/*
-			// This was creating new column if cards were dropped outside of existing columns,
-			// but I'm not sure this is good idea. Disabled for now.
-
-			// Returns it if we're within its horizontal boundaries
-			if (colIdx > 0 && x < columns[colIdx - 1].getBoundingClientRect().right) {
-				return this.rows[rowIdx][colIdx - 1];
-			} else {
-				// Creates a new one if card is dropped outside of existing columns
-				for (let row of this.rows) row.splice(colIdx, 0, []);
-				this.saveOptions(); // Update cached columnCount
-				return this.rows[rowIdx][colIdx];
-			}
-			*/
-		},
-		toggleTwoRowsLayout() {
-			if (this.options.layout === "TwoRows") {
-				for (let i = 0; i < this.rows[0].length; ++i) {
-					this.rows[0][i] = this.rows[0][i].concat(this.rows[1][i]);
-				}
-				this.rows.pop();
-				this.options.layout = "default";
-			} else {
-				const prev = this.rows[0];
-				this.rows = [[], []];
-				this.options.layout = "TwoRows";
-				for (let i = 0; i < prev.length; ++i) {
-					this.rows[0].push([]);
-					this.rows[1].push([]);
-					for (let c of prev[i]) this.selectRow(c)[i].push(c);
-				}
-			}
-			this.saveOptions();
-		},
-		toggleDisplayHeaders() {
-			this.options.displayHeaders = !this.options.displayHeaders;
-			this.saveOptions();
-		},
-		saveOptions() {
-			// Trying to circumvent a rare issue.
-			const columnCount =
-				this.rows && this.rows[0] && this.rows[0].length
-					? this.rows[0].length
-					: this.options.columnCount
-						? this.options.columnCount
-						: 7;
-			this.options.columnCount = Math.max(2, Math.min(columnCount, 32));
-			localStorage.setItem("card-pool-options", JSON.stringify(this.options));
-		},
-	},
-	computed: {
-		poolKey() {
-			// Yet another workaround for #623. Previous re-render key apparently wasn't enough in every case.
-			return (
-				this.forceRerender +
-				"_" +
-				this.rows.map((row) => row.map((col) => col.map((c) => c.uniqueID).join(",")).join("|")).join(";")
-			);
-		},
-		columnNames() {
-			let r = [];
-			switch (this.options.sort) {
-				default:
-				case "cmc":
-					for (let i = 0; i < this.rows[0].length; ++i) {
-						let cards = this.rows.map((row) => row[i]).flat();
-						if (cards.length === 0 && i <= 20) {
-							r.push(`<img class="mana-icon" src="img/mana/${i}.svg">`);
-						} else {
-							let v = [...new Set(cards.map((c) => c.cmc))];
-							if (v.length === 1) r.push(`<img class="mana-icon" src="img/mana/${v[0]}.svg">`);
-							else r.push("");
-						}
-					}
-					break;
-				case "color": {
-					const defaultValues = "WUBRGCM";
-					for (let i = 0; i < this.rows[0].length; ++i) {
-						const cards = this.rows.map((row) => row[i]).flat();
-						if (cards.length === 0 && i < defaultValues.length) {
-							r.push(`<img class="mana-icon" src="img/mana/${defaultValues[i]}.svg">`);
-						} else {
-							let v = [...new Set(cards.map((c) => c.colors).flat())];
-							let c = "M";
-							if (v.length === 1) c = v[0];
-							else if (v.length === 0) c = "C";
-							r.push(`<img class="mana-icon" src="img/mana/${c}.svg">`);
-						}
-					}
-					break;
-				}
-				case "rarity": {
-					const defaultValues = ["Mythic", "Rare", "Uncommon", "Common"];
-					for (let i = 0; i < this.rows[0].length; ++i) {
-						let cards = this.rows.map((row) => row[i]).flat();
-						if (cards.length === 0 && i < defaultValues.length) {
-							r.push(defaultValues[i]);
-						} else {
-							let v = [...new Set(cards.map((c) => c.rarity))];
-							if (v.length === 1) r.push(v[0]);
-							else r.push("");
-						}
-					}
-					break;
-				}
-				case "type": {
-					const defaultValues = [
-						"Creature",
-						"Planeswalker",
-						"Enchantment",
-						"Artifact",
-						"Instant",
-						"Sorcery",
-						"Land",
-						"Basic Land",
-					];
-					for (let i = 0; i < this.rows[0].length; ++i) {
-						const cards = this.rows.map((row) => row[i]).flat();
-						if (cards.length === 0 && i < defaultValues.length) {
-							r.push(defaultValues[i]);
-						} else {
-							let v = [...new Set(cards.map((c) => c.type))];
-							if (v.length === 1) r.push(v[0].split(" ").pop());
-							else {
-								// Try with simpler types
-								v = [...new Set(v.map((t) => t.split(" ").pop()!))];
-								if (v.length === 1) r.push(v[0]);
-								else r.push("");
-							}
-						}
-					}
-					break;
-				}
-			}
-			while (r.length < this.rows[0].length) r.push("");
-			return r;
-		},
-		cardsPerColumn(): number[] {
-			let r = [];
-			for (let i = 0; i < this.rows[0].length; ++i) {
-				r.push(0);
-				for (let row of this.rows) r[i] += row[i].length;
-			}
-			return r;
-		},
-		rowHeaders() {
-			if (this.options.layout !== "TwoRows") return null;
-			return [
-				{
-					count: this.rows[0].reduce((acc, val) => {
-						return val.length + acc;
-					}, 0),
-					name: this.rows[0].flat().every((card) => card.type.includes("Creature")) ? "Creatures" : "-",
-				},
-				{
-					count: this.rows[1].reduce((acc, val) => {
-						return val.length + acc;
-					}, 0),
-					name: this.rows[1].flat().every((card) => !card.type.includes("Creature")) ? "Non-Creatures" : "-",
-				},
-			];
-		},
-	},
-	watch: {
-		rows: {
-			handler: function () {
-				if (!this.backupKey || this.cards.length === 0 || this.rows.flat().flat().length !== this.cards.length)
-					return;
-				const serialized = this.rows.map((r) =>
-					r.map((c) =>
-						c.map((card) => {
-							return { id: card.id, uniqueID: card.uniqueID };
-						})
-					)
-				);
-				localStorage.setItem("card-pool-backup-" + this.backupKey, JSON.stringify(serialized));
-			},
-			deep: true,
-		},
-	},
+const attrs = useAttrs();
+const options = ref({
+	layout: "default",
+	columnCount: 7,
+	sort: "cmc",
+	displayHeaders: true,
 });
+const rows = ref<UniqueCard[][][]>([[[], [], [], [], [], [], []]]);
+
+const forceRerender = ref(0); // Workaround. See forceUpdate().
+const element = useTemplateRef("root");
+const cardColumns = useTemplateRef("cardcolumns");
+
+const isTouchDevice = "ontouchstart" in window || navigator.maxTouchPoints > 0;
+
+onMounted(() => {
+	let storedOptions = localStorage.getItem("card-pool-options");
+	if (storedOptions) options.value = JSON.parse(storedOptions);
+	sync();
+});
+
+// Forces a re-render of the whole component.
+// Used to workaround some de-sync issues (see #623). Might be a bug in sortablejs-vue3.
+const forceUpdate = () => forceRerender.value++;
+
+function checkDOMColumn(DOMColumn: HTMLElement, column: UniqueCard[]) {
+	// Checks if the DOM column is still valid and forces a re-render if not.
+	// FIXME: This is a workaround. I'm still looking for a proper fix to #623.
+	if (DOMColumn.children.length !== column.length) {
+		console.error("[CardPool] Missing card in column! Forcing a re-render...");
+		forceUpdate();
+	} else {
+		const DOMUIDs = [...DOMColumn.children].map((c) => parseInt((c as HTMLElement).dataset.uniqueid!));
+		const columnUIDs = column.map((c) => c.uniqueID);
+		for (let i = 0; i < DOMUIDs.length; ++i) {
+			if (DOMUIDs[i] !== columnUIDs[i]) {
+				console.error("[CardPool] Unexcepted unique card ID! Forcing a re-render...");
+				forceUpdate();
+				break;
+			}
+		}
+	}
+}
+function reset() {
+	const colCount = Math.max(1, options.value.columnCount);
+	rows.value = [[]];
+	for (let i = 0; i < colCount; ++i) rows.value[0].push([]);
+	if (options.value.layout === "TwoRows") {
+		rows.value.push([]);
+		for (let i = 0; i < colCount; ++i) rows.value[1].push([]);
+	}
+}
+function sync() {
+	reset();
+	if (!tryRecover()) for (let card of props.cards) addCard(card, undefined);
+}
+function tryRecover(): boolean {
+	// Attempts to recover the row/column arrangement from localStorage.
+	// Returns true if successful. No changes are made if unsuccessful.
+	if (!props.backupKey) return false;
+	try {
+		const savedPoolStr = localStorage.getItem("card-pool-backup-" + props.backupKey);
+		if (savedPoolStr) {
+			const toStr = (col: { id: string; uniqueID: number }[]) =>
+				col
+					.map((c) => c.id + "," + c.uniqueID)
+					.sort()
+					.join(";");
+			const savedPool: { id: string; uniqueID: number }[][][] = JSON.parse(savedPoolStr);
+
+			if (savedPool.length !== rows.value.length) return false;
+			if (savedPool[0].length !== rows.value[0].length) return false;
+
+			if (toStr(savedPool.flat().flat()) === toStr(props.cards)) {
+				const tmpRows = [];
+
+				for (let r of savedPool) {
+					const row = [];
+					for (let c of r) {
+						const col = [];
+						for (let { id, uniqueID } of c) {
+							const uniqueCard = props.cards.find((card) => card.id === id && card.uniqueID === uniqueID);
+							if (!uniqueCard) return false;
+							col.push(uniqueCard);
+						}
+						row.push(col);
+					}
+					tmpRows.push(row);
+				}
+
+				rows.value = tmpRows;
+				return true;
+			}
+		}
+	} catch (e) {
+		console.error("[CardPool] Failed to recover card pool from localStorage: ", e);
+	}
+	return false;
+}
+
+function filterBasics() {
+	// Removes basics without affecting other cards ordering.
+	for (let r of rows.value)
+		for (let i = 0; i < r.length; ++i)
+			r.splice(
+				i,
+				1,
+				r[i].filter((c) => !EnglishBasicLandNames.includes(c.name))
+			);
+}
+
+function selectRow(card: UniqueCard) {
+	return options.value.layout === "TwoRows" && !card.type.includes("Creature") && options.value.sort !== "type"
+		? rows.value[1]
+		: rows.value[0];
+}
+function defaultColumnIdx(card: UniqueCard) {
+	let columnIndex = card.cmc;
+	switch (options.value.sort) {
+		case "color":
+			columnIndex = CardOrder.colorOrder(card.colors);
+			break;
+		case "rarity":
+			columnIndex = CardOrder.rarityOrder(card.rarity);
+			break;
+		case "type":
+			columnIndex = CardOrder.typeOrder(card.type);
+			break;
+	}
+	return Math.min(columnIndex, rows.value[0].length - 1);
+}
+function addCard(card: UniqueCard, event?: MouseEvent) {
+	if (event) {
+		insertCard(getColumnFromCoordinates(event), card);
+	} else {
+		let columnIndex = defaultColumnIdx(card);
+		const row = selectRow(card);
+		let columnWithDuplicate = row.findIndex((column) => column.findIndex((c) => c.name === card.name) > -1);
+		if (columnWithDuplicate > -1) {
+			columnIndex = columnWithDuplicate;
+		}
+		insertCard(row[columnIndex], card);
+	}
+}
+function insertCard(column: UniqueCard[], card: UniqueCard) {
+	let duplicateIndex = column.findIndex((c) => c.name === card.name);
+	if (duplicateIndex != -1) {
+		column.splice(duplicateIndex, 0, card);
+	} else if (CardOrder.isOrdered(column, CardOrder.Comparators.arena)) {
+		column.push(card);
+		CardOrder.orderByArenaInPlace(column);
+	} else {
+		column.push(card);
+	}
+}
+function sort(comparator: ComparatorType, columnSorter = CardOrder.orderByArenaInPlace) {
+	reset();
+	if (props.cards.length === 0) return;
+	for (let card of props.cards) {
+		const row = selectRow(card);
+		const col = row[defaultColumnIdx(card)];
+		col.push(card);
+	}
+	for (let row of rows.value) for (let col of row) columnSorter(col);
+}
+function sortByCMC() {
+	options.value.sort = "cmc";
+	sort(CardOrder.Comparators.cmc);
+	saveOptions();
+}
+function sortByColor() {
+	options.value.sort = "color";
+	sort(CardOrder.Comparators.color);
+	saveOptions();
+}
+function sortByRarity() {
+	options.value.sort = "rarity";
+	sort(CardOrder.Comparators.rarity, CardOrder.orderByColorInPlace);
+	saveOptions();
+}
+function sortByType() {
+	options.value.sort = "type";
+	sort(CardOrder.Comparators.type);
+	saveOptions();
+}
+function remCard(card: UniqueCard) {
+	for (let row of rows.value)
+		for (let col of row) {
+			let idx = col.indexOf(card);
+			if (idx >= 0) {
+				col.splice(idx, 1);
+				return;
+			}
+		}
+}
+function addToColumn(e: SortableEvent, column: UniqueCard[]) {
+	const entries = e.newIndicies.length > 0 ? e.newIndicies : [{ multiDragElement: e.item, index: e.newIndex! }];
+	entries.sort((l, r) => l.index - r.index); // Insert lower indices first as they are given in relation to the new array.
+
+	// Event is just a movement within the card pool.
+	const inner = cardColumns.value?.contains(e.from) && cardColumns.value?.contains(e.to);
+
+	if (!inner && !props.readOnly && !("onCardDragAdd" in attrs)) {
+		console.warn(
+			"CardPool: Not declared as readOnly, but has no 'cardDragAdd' event handler.",
+			"Make sure to bind the cardDragAdd event to handle these modifications or this will cause a desync between the prop and the displayed content, or mark the card pool as readOnly if it does not share its group with any other draggables."
+		);
+		console.warn(e);
+	}
+
+	for (const entry of entries) {
+		const item = entry.multiDragElement;
+		const targetIndex = Math.min(entry.index, column.length); // Make sure we won't introduce undefined values by inserting past the end.
+		// Remove the previous DOM element: rendering will be handled by vue once the state is correctly updated.
+		item.remove();
+
+		if (!item.dataset.uniqueid) return console.error("Error in CardPool::addToColumn: Invalid item.", e);
+		const cardUniqueID = parseInt(item.dataset.uniqueid!);
+
+		if (inner) {
+			// FIXME: Failsafe. Make sure we won't introduce a duplicate when inserting the card into this column.
+			// Note: This seem to happen when drag & dropping multiple cards, multiple times in a row (without letting go of ctrl).
+			//       I feel like this is an issue with sortablejs-vue3 wich doesn't properly clear the dragged items, but I have to investigate the root cause.
+			const alreadyAdded = column.findIndex((c) => c.uniqueID === cardUniqueID);
+			if (alreadyAdded >= 0) continue;
+
+			const idx = props.cards.findIndex((c) => c.uniqueID === cardUniqueID);
+			if (idx >= 0) column.splice(targetIndex, 0, props.cards[idx]);
+		} else {
+			// Parent is responsible for updating props.cards prop by reacting to this event.
+			emit("cardDragAdd", cardUniqueID);
+
+			nextTick(() => {
+				// See above.
+				const alreadyAdded = column.findIndex((c) => c.uniqueID === cardUniqueID);
+				if (alreadyAdded >= 0) return;
+
+				const idx = props.cards.findIndex((c) => c.uniqueID === cardUniqueID);
+				if (idx >= 0) column.splice(targetIndex, 0, props.cards[idx]);
+			});
+		}
+	}
+}
+function removeFromColumn(e: SortableEvent, column: UniqueCard[]) {
+	const entries = e.oldIndicies.length > 0 ? e.oldIndicies : [{ multiDragElement: e.item, index: e.oldIndex! }];
+	entries.sort((l, r) => r.index - l.index); // Remove higher indices first to preverse order.
+
+	// Event is just a movement within the card pool, don't broadcast it.
+	const inner = cardColumns.value?.contains(e.from) && cardColumns.value?.contains(e.to);
+
+	if (!inner && !props.readOnly && !("onCardDragRemove" in attrs)) {
+		console.warn(
+			"CardPool: Not declared as readOnly, but has no 'cardDragRemove' event handler.",
+			"Make sure to bind the cardDragRemove event to handle these modifications or this will cause a desync between the prop and the displayed content, or mark the card pool as readOnly if it does not share its group with any other draggables."
+		);
+		console.warn(e);
+	}
+
+	nextTick(() => checkDOMColumn(e.from, column));
+
+	for (const entry of entries) {
+		const item = entry.multiDragElement;
+		const index = entry.index;
+		const boundedIndex = Math.max(0, Math.min(entry.index, column.length - 1));
+
+		// Make sure we're removing the intended card (source may have changed: see App.forcePick and #606)
+		if (item.dataset.uniqueid) {
+			const cardUniqueID = parseInt(item.dataset.uniqueid);
+			if (index < 0 || index >= column.length || column[index].uniqueID !== cardUniqueID) {
+				const fixedIndex = column.findIndex((c) => c.uniqueID === cardUniqueID);
+				if (fixedIndex >= 0) {
+					column.splice(fixedIndex, 1);
+				} else
+					console.error(`Error in CardPool::removeFromColumn: Invalid card UniqueID (${cardUniqueID}).`, e);
+			} else {
+				column.splice(boundedIndex, 1);
+			}
+		} else {
+			column.splice(boundedIndex, 1);
+		}
+
+		if (!inner) {
+			if (!item.dataset.uniqueid) return console.error("Error in CardPool::removeFromColumn: Invalid item.", e);
+			const cardUniqueID = parseInt(item.dataset.uniqueid);
+			emit("cardDragRemove", cardUniqueID);
+		}
+	}
+}
+function addColumn() {
+	for (let row of rows.value) {
+		row.push([]);
+		row[row.length - 1] = row[row.length - 2].filter((c) => c.cmc > row.length - 2);
+		row[row.length - 2] = row[row.length - 2].filter((c) => c.cmc <= row.length - 2);
+	}
+	saveOptions();
+}
+function remColumn(index: number | undefined) {
+	if (rows.value[0].length < 2) return;
+	if (index === undefined || index < 0 || index >= rows.value[0].length) index = rows.value[0].length - 1;
+	const other = index < rows.value[0].length - 1 ? index + 1 : index - 1;
+	for (let row of rows.value) {
+		row[other] = ([] as UniqueCard[]).concat(row[other], row[index]);
+		CardOrder.orderByArenaInPlace(row[other]);
+		row.splice(index, 1);
+	}
+	saveOptions();
+}
+function getColumnFromCoordinates(event: { clientX: number; clientY: number }) {
+	// Search for the column at the supplied coordinates, creating a new one if necessary.
+	const x = event.clientX;
+	const y = event.clientY;
+	// Find surrounding row
+	const elRows = element.value!.querySelectorAll(".card-columns");
+	let rowIdx = 0;
+	while (rowIdx < elRows.length - 1 && elRows[rowIdx + 1].getBoundingClientRect().top < y) ++rowIdx;
+	// Select column directly to the left or bellow the event
+	const columns = elRows[rowIdx].querySelectorAll(".card-column");
+	let colIdx = 0;
+	while (colIdx < columns.length && columns[colIdx].getBoundingClientRect().left < x) ++colIdx;
+	// Returns the column bellow the mouse, or directly to the left (or the first if we're completely to the left).
+	const finalColumnIndex = Math.max(0, Math.min(rows.value[rowIdx].length - 1, colIdx - 1));
+	return rows.value[rowIdx][finalColumnIndex];
+	/*
+	// This was creating new column if cards were dropped outside of existing columns,
+	// but I'm not sure this is good idea. Disabled for now.
+
+	// Returns it if we're within its horizontal boundaries
+	if (colIdx > 0 && x < columns[colIdx - 1].getBoundingClientRect().right) {
+		return rows.value[rowIdx][colIdx - 1];
+	} else {
+		// Creates a new one if card is dropped outside of existing columns
+		for (let row of rows.value) row.splice(colIdx, 0, []);
+		this.saveOptions(); // Update cached columnCount
+		return rows.value[rowIdx][colIdx];
+	}
+	*/
+}
+function toggleTwoRowsLayout() {
+	if (options.value.layout === "TwoRows") {
+		for (let i = 0; i < rows.value[0].length; ++i) {
+			rows.value[0][i] = rows.value[0][i].concat(rows.value[1][i]);
+		}
+		rows.value.pop();
+		options.value.layout = "default";
+	} else {
+		const prev = rows.value[0];
+		rows.value = [[], []];
+		options.value.layout = "TwoRows";
+		for (let i = 0; i < prev.length; ++i) {
+			rows.value[0].push([]);
+			rows.value[1].push([]);
+			for (let c of prev[i]) selectRow(c)[i].push(c);
+		}
+	}
+	saveOptions();
+}
+function toggleDisplayHeaders() {
+	options.value.displayHeaders = !options.value.displayHeaders;
+	saveOptions();
+}
+function saveOptions() {
+	// Trying to circumvent a rare issue.
+	const columnCount =
+		rows.value && rows.value[0] && rows.value[0].length
+			? rows.value[0].length
+			: options.value.columnCount
+				? options.value.columnCount
+				: 7;
+	options.value.columnCount = Math.max(2, Math.min(columnCount, 32));
+	localStorage.setItem("card-pool-options", JSON.stringify(options.value));
+}
+
+const poolKey = computed(() => {
+	// Yet another workaround for #623. Previous re-render key apparently wasn't enough in every case.
+	return (
+		forceRerender.value +
+		"_" +
+		rows.value.map((row) => row.map((col) => col.map((c) => c.uniqueID).join(",")).join("|")).join(";")
+	);
+});
+const columnNames = computed(() => {
+	let r = [];
+	switch (options.value.sort) {
+		default:
+		case "cmc":
+			for (let i = 0; i < rows.value[0].length; ++i) {
+				let cards = rows.value.map((row) => row[i]).flat();
+				if (cards.length === 0 && i <= 20) {
+					r.push(`<img class="mana-icon" src="img/mana/${i}.svg">`);
+				} else {
+					let v = [...new Set(cards.map((c) => c.cmc))];
+					if (v.length === 1) r.push(`<img class="mana-icon" src="img/mana/${v[0]}.svg">`);
+					else r.push("");
+				}
+			}
+			break;
+		case "color": {
+			const defaultValues = "WUBRGCM";
+			for (let i = 0; i < rows.value[0].length; ++i) {
+				const cards = rows.value.map((row) => row[i]).flat();
+				if (cards.length === 0 && i < defaultValues.length) {
+					r.push(`<img class="mana-icon" src="img/mana/${defaultValues[i]}.svg">`);
+				} else {
+					let v = [...new Set(cards.map((c) => c.colors).flat())];
+					let c = "M";
+					if (v.length === 1) c = v[0];
+					else if (v.length === 0) c = "C";
+					r.push(`<img class="mana-icon" src="img/mana/${c}.svg">`);
+				}
+			}
+			break;
+		}
+		case "rarity": {
+			const defaultValues = ["Mythic", "Rare", "Uncommon", "Common"];
+			for (let i = 0; i < rows.value[0].length; ++i) {
+				let cards = rows.value.map((row) => row[i]).flat();
+				if (cards.length === 0 && i < defaultValues.length) {
+					r.push(defaultValues[i]);
+				} else {
+					let v = [...new Set(cards.map((c) => c.rarity))];
+					if (v.length === 1) r.push(v[0]);
+					else r.push("");
+				}
+			}
+			break;
+		}
+		case "type": {
+			const defaultValues = [
+				"Creature",
+				"Planeswalker",
+				"Enchantment",
+				"Artifact",
+				"Instant",
+				"Sorcery",
+				"Land",
+				"Basic Land",
+			];
+			for (let i = 0; i < rows.value[0].length; ++i) {
+				const cards = rows.value.map((row) => row[i]).flat();
+				if (cards.length === 0 && i < defaultValues.length) {
+					r.push(defaultValues[i]);
+				} else {
+					let v = [...new Set(cards.map((c) => c.type))];
+					if (v.length === 1) r.push(v[0].split(" ").pop());
+					else {
+						// Try with simpler types
+						v = [...new Set(v.map((t) => t.split(" ").pop()!))];
+						if (v.length === 1) r.push(v[0]);
+						else r.push("");
+					}
+				}
+			}
+			break;
+		}
+	}
+	while (r.length < rows.value[0].length) r.push("");
+	return r;
+});
+const cardsPerColumn = computed((): number[] => {
+	let r = [];
+	for (let i = 0; i < rows.value[0].length; ++i) {
+		r.push(0);
+		for (let row of rows.value) r[i] += row[i].length;
+	}
+	return r;
+});
+const rowHeaders = computed(() => {
+	if (options.value.layout !== "TwoRows") return null;
+	return [
+		{
+			count: rows.value[0].reduce((acc, val) => {
+				return val.length + acc;
+			}, 0),
+			name: rows.value[0].flat().every((card) => card.type.includes("Creature")) ? "Creatures" : "-",
+		},
+		{
+			count: rows.value[1].reduce((acc, val) => {
+				return val.length + acc;
+			}, 0),
+			name: rows.value[1].flat().every((card) => !card.type.includes("Creature")) ? "Non-Creatures" : "-",
+		},
+	];
+});
+
+watch(
+	rows,
+	(newValue) => {
+		if (!props.backupKey || props.cards.length === 0 || newValue.flat().flat().length !== props.cards.length)
+			return;
+		const serialized = newValue.map((r) =>
+			r.map((c) =>
+				c.map((card) => {
+					return { id: card.id, uniqueID: card.uniqueID };
+				})
+			)
+		);
+		localStorage.setItem("card-pool-backup-" + props.backupKey, JSON.stringify(serialized));
+	},
+	{ deep: true }
+);
+
+defineExpose({ addCard, remCard, sync, filterBasics });
 </script>
 
 <style scoped>
