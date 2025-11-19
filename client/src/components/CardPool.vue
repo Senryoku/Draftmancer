@@ -62,7 +62,6 @@
 								@toggle="toggleTwoRowsLayout"
 								label="Two Rows"
 							/>
-
 							<checkbox
 								:value="options.displayHeaders"
 								@toggle="toggleDisplayHeaders"
@@ -134,7 +133,7 @@
 				</div>
 				<Sortable
 					v-for="(column, colIdx) in row"
-					:key="`col_${colIdx}`"
+					:key="columnKeys[index][colIdx]"
 					class="card-column drag-column"
 					:list="column"
 					item-key="uniqueID"
@@ -170,10 +169,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, useTemplateRef, useAttrs, nextTick } from "vue";
+import { ref, computed, watch, onMounted, useTemplateRef, nextTick, getCurrentInstance, toHandlerKey } from "vue";
 import { SortableEvent } from "sortablejs";
 import { Sortable } from "sortablejs-vue3";
-import CardOrder, { ComparatorType } from "../cardorder";
+import CardOrder from "../cardorder";
 import Card from "./Card.vue";
 import Dropdown from "./Dropdown.vue";
 import Checkbox from "./Checkbox.vue";
@@ -193,9 +192,7 @@ const props = withDefaults(
 		readOnly: boolean;
 		backupKey?: string;
 	}>(),
-	{
-		readOnly: false,
-	}
+	{ readOnly: false }
 );
 const emit = defineEmits<{
 	(e: "cardClick", event: MouseEvent, card: UniqueCard): void;
@@ -205,31 +202,25 @@ const emit = defineEmits<{
 	(e: "cardDragRemove", card: UniqueCardID): void;
 }>();
 
-const attrs = useAttrs();
+type SortType = "cmc" | "color" | "rarity" | "type";
 const options = ref({
-	layout: "default",
+	layout: "default" as "default" | "TwoRows",
 	columnCount: 7,
-	sort: "cmc",
+	sort: "cmc" as SortType,
 	displayHeaders: true,
 });
 const rows = ref<UniqueCard[][][]>([[[], [], [], [], [], [], []]]);
 
-const forceRerender = ref(0); // Workaround. See forceUpdate().
 const element = useTemplateRef("root");
 const cardColumns = useTemplateRef("cardcolumns");
 
+const instance = getCurrentInstance();
 const isTouchDevice = "ontouchstart" in window || navigator.maxTouchPoints > 0;
-
-onMounted(() => {
-	let storedOptions = localStorage.getItem("card-pool-options");
-	if (storedOptions) options.value = JSON.parse(storedOptions);
-	sync();
-});
 
 // Forces a re-render of the whole component.
 // Used to workaround some de-sync issues (see #623). Might be a bug in sortablejs-vue3.
+const forceRerender = ref(0);
 const forceUpdate = () => forceRerender.value++;
-
 function checkDOMColumn(DOMColumn: HTMLElement, column: UniqueCard[]) {
 	// Checks if the DOM column is still valid and forces a re-render if not.
 	// FIXME: This is a workaround. I'm still looking for a proper fix to #623.
@@ -248,6 +239,13 @@ function checkDOMColumn(DOMColumn: HTMLElement, column: UniqueCard[]) {
 		}
 	}
 }
+
+onMounted(() => {
+	let storedOptions = localStorage.getItem("card-pool-options");
+	if (storedOptions) options.value = JSON.parse(storedOptions);
+	sync();
+});
+
 function reset() {
 	const colCount = Math.max(1, options.value.columnCount);
 	rows.value = [[]];
@@ -261,10 +259,13 @@ function sync() {
 	reset();
 	if (!tryRecover()) for (let card of props.cards) addCard(card, undefined);
 }
+
+let checkedBackup = false;
 function tryRecover(): boolean {
 	// Attempts to recover the row/column arrangement from localStorage.
 	// Returns true if successful. No changes are made if unsuccessful.
-	if (!props.backupKey) return false;
+	if (!props.backupKey || checkedBackup) return false;
+	checkedBackup = true;
 	try {
 		const savedPoolStr = localStorage.getItem("card-pool-backup-" + props.backupKey);
 		if (savedPoolStr) {
@@ -349,6 +350,16 @@ function addCard(card: UniqueCard, event?: MouseEvent) {
 		insertCard(row[columnIndex], card);
 	}
 }
+function remCard(card: UniqueCard) {
+	for (let row of rows.value)
+		for (let col of row) {
+			let idx = col.indexOf(card);
+			if (idx >= 0) {
+				col.splice(idx, 1);
+				return;
+			}
+		}
+}
 function insertCard(column: UniqueCard[], card: UniqueCard) {
 	let duplicateIndex = column.findIndex((c) => c.name === card.name);
 	if (duplicateIndex != -1) {
@@ -360,7 +371,8 @@ function insertCard(column: UniqueCard[], card: UniqueCard) {
 		column.push(card);
 	}
 }
-function sort(comparator: ComparatorType, columnSorter = CardOrder.orderByArenaInPlace) {
+
+function sort(columnSorter = CardOrder.orderByArenaInPlace) {
 	reset();
 	if (props.cards.length === 0) return;
 	for (let card of props.cards) {
@@ -370,44 +382,30 @@ function sort(comparator: ComparatorType, columnSorter = CardOrder.orderByArenaI
 	}
 	for (let row of rows.value) for (let col of row) columnSorter(col);
 }
-function sortByCMC() {
-	options.value.sort = "cmc";
-	sort(CardOrder.Comparators.cmc);
+function sortBy(sortType: SortType, columnSorter = CardOrder.orderByArenaInPlace) {
+	options.value.sort = sortType;
+	sort(columnSorter);
 	saveOptions();
 }
-function sortByColor() {
-	options.value.sort = "color";
-	sort(CardOrder.Comparators.color);
-	saveOptions();
+const sortByCMC = () => sortBy("cmc");
+const sortByColor = () => sortBy("color");
+const sortByRarity = () => sortBy("rarity", CardOrder.orderByColorInPlace);
+const sortByType = () => sortBy("type");
+
+function hasListener(name: string) {
+	if (!instance) return false;
+	const props = instance.vnode.props || {};
+	const key = toHandlerKey(name);
+	return !!(props[key] || props[key + "Once"]);
 }
-function sortByRarity() {
-	options.value.sort = "rarity";
-	sort(CardOrder.Comparators.rarity, CardOrder.orderByColorInPlace);
-	saveOptions();
-}
-function sortByType() {
-	options.value.sort = "type";
-	sort(CardOrder.Comparators.type);
-	saveOptions();
-}
-function remCard(card: UniqueCard) {
-	for (let row of rows.value)
-		for (let col of row) {
-			let idx = col.indexOf(card);
-			if (idx >= 0) {
-				col.splice(idx, 1);
-				return;
-			}
-		}
-}
+
 function addToColumn(e: SortableEvent, column: UniqueCard[]) {
 	const entries = e.newIndicies.length > 0 ? e.newIndicies : [{ multiDragElement: e.item, index: e.newIndex! }];
 	entries.sort((l, r) => l.index - r.index); // Insert lower indices first as they are given in relation to the new array.
 
 	// Event is just a movement within the card pool.
 	const inner = cardColumns.value?.contains(e.from) && cardColumns.value?.contains(e.to);
-
-	if (!inner && !props.readOnly && !("onCardDragAdd" in attrs)) {
+	if (!inner && !props.readOnly && !hasListener("cardDragAdd")) {
 		console.warn(
 			"CardPool: Not declared as readOnly, but has no 'cardDragAdd' event handler.",
 			"Make sure to bind the cardDragAdd event to handle these modifications or this will cause a desync between the prop and the displayed content, or mark the card pool as readOnly if it does not share its group with any other draggables."
@@ -422,30 +420,19 @@ function addToColumn(e: SortableEvent, column: UniqueCard[]) {
 		item.remove();
 
 		if (!item.dataset.uniqueid) return console.error("Error in CardPool::addToColumn: Invalid item.", e);
-		const cardUniqueID = parseInt(item.dataset.uniqueid!);
+		const cardUniqueID = parseInt(item.dataset.uniqueid);
 
-		if (inner) {
-			// FIXME: Failsafe. Make sure we won't introduce a duplicate when inserting the card into this column.
-			// Note: This seem to happen when drag & dropping multiple cards, multiple times in a row (without letting go of ctrl).
-			//       I feel like this is an issue with sortablejs-vue3 wich doesn't properly clear the dragged items, but I have to investigate the root cause.
-			const alreadyAdded = column.findIndex((c) => c.uniqueID === cardUniqueID);
-			if (alreadyAdded >= 0) continue;
+		// Parent is responsible for updating props.cards prop by reacting to this event.
+		if (!inner) emit("cardDragAdd", cardUniqueID);
 
+		// FIXME: Failsafe. Make sure we won't introduce a duplicate when inserting the card into this column.
+		// NOTE: This seem to happen when drag & dropping multiple cards, multiple times in a row (without letting go of ctrl).
+		//       I feel like this is an issue with sortablejs-vue3 wich doesn't properly clear the dragged items, but I have to investigate the root cause.
+		const alreadyAdded = column.findIndex((c) => c.uniqueID === cardUniqueID) >= 0;
+		if (!alreadyAdded) {
 			const idx = props.cards.findIndex((c) => c.uniqueID === cardUniqueID);
 			if (idx >= 0) column.splice(targetIndex, 0, props.cards[idx]);
-		} else {
-			// Parent is responsible for updating props.cards prop by reacting to this event.
-			emit("cardDragAdd", cardUniqueID);
-
-			nextTick(() => {
-				// See above.
-				const alreadyAdded = column.findIndex((c) => c.uniqueID === cardUniqueID);
-				if (alreadyAdded >= 0) return;
-
-				const idx = props.cards.findIndex((c) => c.uniqueID === cardUniqueID);
-				if (idx >= 0) column.splice(targetIndex, 0, props.cards[idx]);
-			});
-		}
+		} else console.warn(`CardPool: Card ${cardUniqueID} already added to column.`);
 	}
 }
 function removeFromColumn(e: SortableEvent, column: UniqueCard[]) {
@@ -455,7 +442,7 @@ function removeFromColumn(e: SortableEvent, column: UniqueCard[]) {
 	// Event is just a movement within the card pool, don't broadcast it.
 	const inner = cardColumns.value?.contains(e.from) && cardColumns.value?.contains(e.to);
 
-	if (!inner && !props.readOnly && !("onCardDragRemove" in attrs)) {
+	if (!inner && !props.readOnly && !hasListener("cardDragRemove")) {
 		console.warn(
 			"CardPool: Not declared as readOnly, but has no 'cardDragRemove' event handler.",
 			"Make sure to bind the cardDragRemove event to handle these modifications or this will cause a desync between the prop and the displayed content, or mark the card pool as readOnly if it does not share its group with any other draggables."
@@ -577,14 +564,16 @@ function saveOptions() {
 	localStorage.setItem("card-pool-options", JSON.stringify(options.value));
 }
 
-const poolKey = computed(() => {
-	// Yet another workaround for #623. Previous re-render key apparently wasn't enough in every case.
-	return (
-		forceRerender.value +
-		"_" +
-		rows.value.map((row) => row.map((col) => col.map((c) => c.uniqueID).join(",")).join("|")).join(";")
-	);
-});
+// Yet another workaround for #623.
+const poolKey = computed(() => `card-pool-${props.group}-${props.backupKey}-${forceRerender.value}`);
+const columnKeys = computed(() =>
+	rows.value.map((row, rowIdx) =>
+		row.map(
+			(col, colIdx) => `col-${rowIdx}-${colIdx}-${forceRerender.value}-${col.map((c) => c.uniqueID).join(",")}`
+		)
+	)
+);
+
 const columnNames = computed(() => {
 	let r = [];
 	switch (options.value.sort) {
@@ -675,15 +664,11 @@ const rowHeaders = computed(() => {
 	if (options.value.layout !== "TwoRows") return null;
 	return [
 		{
-			count: rows.value[0].reduce((acc, val) => {
-				return val.length + acc;
-			}, 0),
+			count: rows.value[0].reduce((acc, val) => val.length + acc, 0),
 			name: rows.value[0].flat().every((card) => card.type.includes("Creature")) ? "Creatures" : "-",
 		},
 		{
-			count: rows.value[1].reduce((acc, val) => {
-				return val.length + acc;
-			}, 0),
+			count: rows.value[1].reduce((acc, val) => val.length + acc, 0),
 			name: rows.value[1].flat().every((card) => !card.type.includes("Creature")) ? "Non-Creatures" : "-",
 		},
 	];
