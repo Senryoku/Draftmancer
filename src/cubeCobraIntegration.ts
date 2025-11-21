@@ -315,7 +315,9 @@ export async function importFormat(cardList: CustomCardList, format: DraftFormat
 	};
 	const customCards = cardList.customCards ? Object.values(cardList.customCards) : [];
 	const layouts: Record<string, PackLayout> = {};
-	const sheets: Record<string, Sheet> = {};
+	const sheets: Record<string, Sheet> = {
+		"*": defaultSheet, // Copy the default sheet as the wildcard filter.
+	};
 	let idx = 0;
 	for (const pack of format.packs) {
 		const layout: PackLayout = { weight: 1, slots: [] };
