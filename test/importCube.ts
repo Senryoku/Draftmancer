@@ -4,6 +4,8 @@ import { makeClients, enableLogs, disableLogs, waitForClientDisconnects, ackNoEr
 import { CardsByName } from "../src/Cards.js";
 
 describe("Import Cubes", function () {
+	this.timeout(10000);
+
 	let clients: ReturnType<typeof makeClients> = [];
 	beforeEach(function (done) {
 		disableLogs();
@@ -49,7 +51,7 @@ describe("Import Cubes", function () {
 		);
 	});
 
-	for (const service of ["Cube Cobra" /*, "CubeArtisan"*/]) {
+	for (const service of ["Cube Cobra"]) {
 		describe(service, function () {
 			it(`should error when importing a non-existing cube from ${service}`, function (done) {
 				clients[0].emit(

@@ -1,7 +1,11 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
-			<em>November, 2025</em>
+			<em>November 21, 2025</em>
+			<p>Improved Cube Cobra integration to better support Custom Cards.</p>
+		</div>
+		<div class="news">
+			<em>November 8, 2025</em>
 			<p>
 				<img src="img/sets/tla.svg" class="set-icon" style="--invertedness: 100%" alt="TLA" /> Avatar: The Last
 				Airbender (TLA) is now available.

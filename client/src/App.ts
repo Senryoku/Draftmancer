@@ -2829,20 +2829,16 @@ export default defineComponent({
 				}
 			});
 		},
-		importCube(service: "Cube Cobra" | "CubeArtisan") {
+		importCube(service: "Cube Cobra") {
 			const defaultMatchCardVersions = (localStorage.getItem("import-match-versions") ?? "true") === "true";
 			const defaultSendResultsToCubeCobra =
 				(localStorage.getItem("send-results-to-cubecobra") ?? "true") === "true";
-			const defaultRetrieveCustomProperties =
-				(localStorage.getItem("cubecobra-retrieve-custom-properties") ?? "false") === "true";
 			const defaultCubeID = localStorage.getItem("import-cubeID") ?? "";
 			const cubeCobraAdditionalInputs =
 				service === "Cube Cobra"
 					? `<div><input type="checkbox" id="send-results-to-cubecobra" ${
 							defaultSendResultsToCubeCobra ? "checked" : ""
-						}><label for="send-results-to-cubecobra">Send results to Cube Cobra</label></div><div><input type="checkbox" id="cubecobra-retrieve-custom-properties" ${
-							defaultRetrieveCustomProperties ? "checked" : ""
-						}><label for="cubecobra-retrieve-custom-properties">(Experimental) Retrieve custom properties</label></div>`
+						}><label for="send-results-to-cubecobra">Send results to Cube Cobra</label></div>`
 					: "";
 			Alert.fire({
 				title: `Import from ${service}`,
@@ -2862,7 +2858,6 @@ export default defineComponent({
 					cubeID: string;
 					matchVersions: boolean;
 					sendResultsToCubeCobra: boolean;
-					retrieveCustomProperties: boolean;
 				}> {
 					let matchVersions = (
 						document.getElementById("input-match-card-versions") as HTMLInputElement | null
@@ -2885,22 +2880,11 @@ export default defineComponent({
 						localStorage.setItem("send-results-to-cubecobra", sendResultsToCubeCobra.toString());
 					else sendResultsToCubeCobra = true;
 
-					let retrieveCustomProperties = (
-						document.getElementById("cubecobra-retrieve-custom-properties") as HTMLInputElement | null
-					)?.checked;
-					if (retrieveCustomProperties !== undefined)
-						localStorage.setItem(
-							"cubecobra-retrieve-custom-properties",
-							retrieveCustomProperties.toString()
-						);
-					else retrieveCustomProperties = false;
-
 					return new Promise(function (resolve) {
 						resolve({
 							cubeID,
 							matchVersions,
 							sendResultsToCubeCobra,
-							retrieveCustomProperties,
 						});
 					});
 				},
@@ -2919,23 +2903,12 @@ export default defineComponent({
 							description: `Imported from ${service}: '${result.value.cubeID}'`,
 						};
 						if (service === "Cube Cobra") cube.cubeCobraID = result.value.cubeID;
-						if (service === "CubeArtisan") cube.cubeArtisanID = result.value.cubeID;
-						this.selectCube(
-							cube,
-							result.value.matchVersions,
-							result.value.sendResultsToCubeCobra,
-							result.value.retrieveCustomProperties
-						);
+						this.selectCube(cube, result.value.matchVersions, result.value.sendResultsToCubeCobra);
 					}
 				}
 			);
 		},
-		selectCube(
-			cube: CubeDescription,
-			matchVersions = false,
-			sendResultsToCubeCobra: boolean = false,
-			retrieveCustomProperties: boolean = false
-		) {
+		selectCube(cube: CubeDescription, matchVersions = false, sendResultsToCubeCobra: boolean = false) {
 			const ack = (r: SocketAck) => {
 				if (r?.error) {
 					Alert.fire(r.error);
@@ -2944,9 +2917,9 @@ export default defineComponent({
 				}
 			};
 
-			if (cube.cubeCobraID || cube.cubeArtisanID) {
-				const cubeID = (cube.cubeCobraID ?? cube.cubeArtisanID)!;
-				const service = cube.cubeCobraID ? "Cube Cobra" : "CubeArtisan";
+			if (cube.cubeCobraID) {
+				const cubeID = cube.cubeCobraID;
+				const service = "Cube Cobra";
 				if (cube.matchVersions !== undefined) matchVersions = cube.matchVersions;
 				Alert.fire({
 					position: "center",
@@ -2965,7 +2938,6 @@ export default defineComponent({
 						service,
 						matchVersions,
 						sendResultsToCubeCobra,
-						retrieveCustomProperties,
 					},
 					ack
 				);

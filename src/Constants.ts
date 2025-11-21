@@ -7,7 +7,6 @@ export type CubeDescription = {
 	filename?: string;
 	description: string;
 	cubeCobraID?: string;
-	cubeArtisanID?: string;
 	matchVersions?: boolean;
 };
 

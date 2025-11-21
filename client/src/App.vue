@@ -2637,13 +2637,6 @@
 									/>
 									Import From Cube Cobra
 								</button>
-								<button @click="importCube('CubeArtisan')" style="position: relative; width: 100%">
-									<img
-										style="position: absolute; left: 0.2em; top: 10%; height: 80%"
-										src="./assets/img/cubeartisan-logo.png"
-									/>
-									Import From CubeArtisan
-								</button>
 							</div>
 						</div>
 						<div
@@ -2688,10 +2681,6 @@
 							You can find more cubes or craft your own on
 							<a href="https://cubecobra.com/" target="_blank" rel="noopener nofollow"
 								><font-awesome-icon icon="fa-solid fa-external-link-alt" /> Cube Cobra</a
-							>
-							or
-							<a href="https://cubeartisan.net/" target="_blank" rel="noopener nofollow"
-								><font-awesome-icon icon="fa-solid fa-external-link-alt" /> Cube Artisan</a
 							>
 							<br />Customize your list even further by using all features of the
 							<a href="cubeformat.html" target="_blank" rel="noopener nofollow">
