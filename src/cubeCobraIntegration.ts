@@ -325,7 +325,7 @@ export async function importFormat(cardList: CustomCardList, format: DraftFormat
 			if (!sheets[filter]) {
 				// Request the filtered list from Cube Cobra
 				const filteredList = await axios.get(
-					`https://cubecobra.com/cube/download/plaintext/${cardList.cubeCobraID}?&filter=${filter}`,
+					`https://cubecobra.com/cube/download/plaintext/${cardList.cubeCobraID}?showother=true&filter=${filter}`,
 					{ timeout: 5000 }
 				);
 				const lines = filteredList.data.split(/\r?\n/).map((line: string) => line.trim());
@@ -333,8 +333,7 @@ export async function importFormat(cardList: CustomCardList, format: DraftFormat
 				for (const line of lines) {
 					if (line === "") continue;
 					if (line.startsWith("#")) {
-						// NOTE: Cards from the Maybeboard are included.
-						// if (line == "# maybeboard") break;
+						if (line == "# maybeboard") break;
 						continue;
 					}
 					// Search the cardID corresponding to the card name, first within custom cards,
