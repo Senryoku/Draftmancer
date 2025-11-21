@@ -311,6 +311,7 @@ export async function importFormat(cardList: CustomCardList, format: DraftFormat
 		refillWhenEmpty: format.multiples,
 		boosterSettings: [],
 		predeterminedLayouts: [],
+		boostersPerPlayer: format.packs.length,
 	};
 	const customCards = cardList.customCards ? Object.values(cardList.customCards) : [];
 	const layouts: Record<string, PackLayout> = {};
