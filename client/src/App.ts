@@ -2833,12 +2833,16 @@ export default defineComponent({
 			const defaultMatchCardVersions = (localStorage.getItem("import-match-versions") ?? "true") === "true";
 			const defaultSendResultsToCubeCobra =
 				(localStorage.getItem("send-results-to-cubecobra") ?? "true") === "true";
+			const defaultImportCustomFormat = (localStorage.getItem("import-custom-format") ?? "false") === "true";
 			const defaultCubeID = localStorage.getItem("import-cubeID") ?? "";
 			const cubeCobraAdditionalInputs =
 				service === "Cube Cobra"
 					? `<div><input type="checkbox" id="send-results-to-cubecobra" ${
 							defaultSendResultsToCubeCobra ? "checked" : ""
-						}><label for="send-results-to-cubecobra">Send results to Cube Cobra</label></div>`
+						}><label for="send-results-to-cubecobra">Send results to Cube Cobra</label></div>
+						<div><input type="checkbox" id="import-custom-format" ${
+							defaultImportCustomFormat ? "checked" : ""
+						}><label for="import-custom-format">(Experimental) Import custom draft format</label></div>`
 					: "";
 			Alert.fire({
 				title: `Import from ${service}`,
@@ -2858,6 +2862,7 @@ export default defineComponent({
 					cubeID: string;
 					matchVersions: boolean;
 					sendResultsToCubeCobra: boolean;
+					importCustomFormat: boolean;
 				}> {
 					let matchVersions = (
 						document.getElementById("input-match-card-versions") as HTMLInputElement | null
@@ -2865,6 +2870,14 @@ export default defineComponent({
 					if (matchVersions !== undefined)
 						localStorage.setItem("import-match-versions", matchVersions.toString());
 					else matchVersions = true;
+
+					let importCustomFormat = (
+						document.getElementById("import-custom-format") as HTMLInputElement | null
+					)?.checked;
+					if (importCustomFormat !== undefined)
+						localStorage.setItem("import-custom-format", importCustomFormat.toString());
+					else importCustomFormat = false;
+
 					if (cubeID) {
 						// Convert from URL to cubeID if necessary.
 						const urlTest = cubeID.match(
@@ -2885,6 +2898,7 @@ export default defineComponent({
 							cubeID,
 							matchVersions,
 							sendResultsToCubeCobra,
+							importCustomFormat,
 						});
 					});
 				},
@@ -2895,6 +2909,7 @@ export default defineComponent({
 						matchVersions: boolean;
 						sendResultsToCubeCobra: boolean;
 						retrieveCustomProperties: boolean;
+						importCustomFormat: boolean;
 					}>
 				) => {
 					if (result.value && result.value.cubeID) {
@@ -2903,12 +2918,22 @@ export default defineComponent({
 							description: `Imported from ${service}: '${result.value.cubeID}'`,
 						};
 						if (service === "Cube Cobra") cube.cubeCobraID = result.value.cubeID;
-						this.selectCube(cube, result.value.matchVersions, result.value.sendResultsToCubeCobra);
+						this.selectCube(
+							cube,
+							result.value.matchVersions,
+							result.value.sendResultsToCubeCobra,
+							result.value.importCustomFormat
+						);
 					}
 				}
 			);
 		},
-		selectCube(cube: CubeDescription, matchVersions = false, sendResultsToCubeCobra: boolean = false) {
+		selectCube(
+			cube: CubeDescription,
+			matchVersions = false,
+			sendResultsToCubeCobra: boolean = false,
+			importCustomFormat = false
+		) {
 			const ack = (r: SocketAck) => {
 				if (r?.error) {
 					Alert.fire(r.error);
@@ -2938,6 +2963,7 @@ export default defineComponent({
 						service,
 						matchVersions,
 						sendResultsToCubeCobra,
+						importCustomFormat,
 					},
 					ack
 				);

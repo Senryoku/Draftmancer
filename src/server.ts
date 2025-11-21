@@ -40,15 +40,16 @@ import {
 	CardColor,
 	OracleID,
 } from "./CardTypes.js";
-import { MTGACards, getUnique, getCard, Cards } from "./Cards.js";
+import { MTGACards, getUnique, getCard, Cards, CardVersionsByName } from "./Cards.js";
 import { parseLine, parseCardList, matchCardVersion } from "./parseCardList.js";
 import { SessionID, UserID } from "./IDTypes.js";
-import { CustomCardList, Sheet } from "./CustomCardList.js";
+import { CCLSettings, CustomCardList, PackLayout, Sheet } from "./CustomCardList.js";
 import { checkCCLSettingType, isKeyOfCCLSettings } from "./CustomCardListUtils.js";
 import { DraftLog } from "./DraftLog.js";
 import {
 	hasOptionalProperty,
 	hasProperty,
+	isArray,
 	isArrayOf,
 	isBoolean,
 	isInteger,
@@ -73,6 +74,7 @@ import { parseMTGOLog } from "./parseMTGOLog.js";
 import { init as MTGOAPIInit } from "./MTGOAPI.js";
 import { isTiebreaker } from "./SilentAuctionDraft.js";
 import { CardPool } from "./CardPool.js";
+import { convertCubeCobraList, DraftFormat, importFormat as convertDraftFormat } from "./cubeCobraIntegration.js";
 
 if (process.env.NODE_ENV === "production") MTGOAPIInit();
 
@@ -1024,45 +1026,6 @@ function parseCustomCardListEvent(
 	parseCustomCardList(Sessions[sessionID], customCardList, {}, ack);
 }
 
-type CubeCobraCard = {
-	cardID: string;
-	finish?: "Non-foil" | "Foil" | "Etched" | "Alt-foil";
-	tags?: string[];
-	custom_name?: string;
-	imgUrl?: string;
-	imgBackUrl?: string;
-	rarity?: string;
-	colors?: string[];
-	cmc?: string;
-	type_line?: string;
-	details: CubeCobraCardDetails;
-	index: number;
-	board: "mainboard" | "maybeboard";
-	// More omitted properties
-};
-
-type CubeCobraCardDetails = {
-	oracle_id: OracleID;
-	scryfall_id: string;
-	name: string;
-	type: string;
-	rarity: string;
-	cmc: number;
-	parsed_cost: string[];
-	colors: string[];
-	set: string;
-	collector_number: string;
-	oracle_text: string;
-	power: string;
-	toughness: string;
-	// More omitted properties
-};
-
-function splitTypeLine(type_line: string) {
-	const types = type_line.split(/ [—-] /);
-	return { type: types[0], subtypes: types.length > 1 ? types[1].toUpperCase().split(" ") : [] };
-}
-
 function importCube(userID: UserID, sessionID: SessionID, data: unknown, ack: (result: SocketAck) => void) {
 	if (!isObject(data)) return ack?.(new SocketError("Invalid data"));
 	if (!hasProperty("service", isString)(data)) return ack?.(new SocketError("Invalid data: Missing service."));
@@ -1072,6 +1035,8 @@ function importCube(userID: UserID, sessionID: SessionID, data: unknown, ack: (r
 		return ack?.(new SocketError("Invalid data: matchVersions should be a boolean."));
 	if (!hasOptionalProperty("sendResultsToCubeCobra", isBoolean)(data))
 		return ack?.(new SocketError("Invalid data: sendResultsToCubeCobra should be a boolean."));
+	if (!hasOptionalProperty("importCustomFormat", isBoolean)(data))
+		return ack?.(new SocketError("Invalid data: importCustomFormat should be a boolean."));
 	if (!hasProperty("cubeID", isString)(data)) return ack?.(new SocketError("Invalid data: Missing cubeID."));
 
 	const validateResponse = (
@@ -1117,152 +1082,25 @@ function importCube(userID: UserID, sessionID: SessionID, data: unknown, ack: (r
 
 						const cube = response.data;
 						if (!isRecord(isString, isUnknown)(cube))
-							return ack?.(new SocketError("Invalid response from Cube Cobra."));
-						if (!isRecord(isString, isUnknown)(cube.cards))
-							return ack?.(new SocketError("Invalid cards object."));
-						if (!isArrayOf(isRecord(isString, isUnknown))(cube.cards.mainboard))
-							return ack?.(new SocketError("Invalid mainboard."));
-						if (cube.cards.mainboard.length <= 0)
-							return ack?.(
-								new SocketError("Empty cube.", `Cube '${data.cubeID}' on ${data.service} seems empty.`)
-							);
+							return new SocketError("Invalid response from Cube Cobra.");
+						const cardList = convertCubeCobraList(data, cube);
+						if (isSocketError(cardList)) return ack?.(cardList);
 
-						const defaultSheet: Sheet = { collation: "random", cards: {} };
-						const customCards: Record<string, Card> = {};
-						let customCardID = 0;
-						const cardList: CustomCardList = {
-							name: cube.name && isString(cube.name) ? cube.name : (data.name ?? "Imported Cube"),
-							cubeCobraID: data.cubeID,
-							customCards: customCards,
-							layouts: false,
-							sheets: { default: defaultSheet },
-						};
-
-						for (const card of cube.cards.mainboard) {
-							if (!hasProperty("cardID", isString)(card))
-								return ack?.(new SocketError("Missing cardID."));
-							const c = card as unknown as CubeCobraCard; // Trusting the Cube Cobra API here with the type :)
-							if (card.cardID === "custom-card") {
-								// This is a completely custom card, all valid properties should be at the root.
-								// NOTE: As far as I can tell, Cube Cobra doesn't have a way to have multiple copies of the same custom card,
-								//       they're all unique. I could group them by custom_name, but it would prevent art variant.
-								//       I'll follow Cube Cobra and treat them as unique card for now, we'll see a better system is needed later on.
-								const customID = `Custom_${customCardID}`;
-								const cmc = c.cmc ? parseInt(c.cmc) : 0;
-								const types = splitTypeLine(c.type_line ?? "");
-								const cardData: Card = {
-									id: customID,
-									oracle_id: customID, // TODO: Use Cube Cobra buddy system?
-									name: c.custom_name ?? customID,
-									mana_cost: cmc > 0 ? `{${cmc}}` : "", // NOTE: Cube Cobra doesn't support custom mana cost, only cmc.
-									cmc: cmc,
-									colors: (c.colors ?? []) as CardColor[],
-									set: "custom",
-									collector_number: customID,
-									rarity: c.rarity ?? "common",
-									type: types.type,
-									subtypes: types.subtypes,
-									back: c.imgBackUrl
-										? {
-												name: customID,
-												printed_names: {},
-												type: "",
-												subtypes: [],
-												image_uris: { en: c.imgBackUrl },
-											}
-										: undefined,
-									rating: 0,
-									in_booster: false,
-									printed_names: {},
-									image_uris: { en: c.imgUrl ?? "https://cubecobra.com/content/custom_card.png" },
-									is_custom: true,
-								};
-								customCards[cardData.id] = cardData;
-								defaultSheet.cards[cardData.id] = 1;
-								customCardID += 1;
-							} else {
-								// Check card ID.
-								// For now we'll throw an error if the card isn't recognized, but we could try to reconstruct
-								// a custom card using the information provided by Cube Cobra in the `details` property.
-								// CubeCobra custom cards were originally based on an official one.
-								let originalCard: Card;
-								if (data.matchVersions) {
-									const maybeOriginalCard = Cards.get(card.cardID);
-									if (maybeOriginalCard) {
-										originalCard = maybeOriginalCard;
-									} else {
-										// Search for an alternate version of the card.
-										const cid = matchCardVersion(
-											c.details.name,
-											c.details.set,
-											c.details.collector_number,
-											true
-										);
-										if (!cid)
-											return ack?.(
-												new SocketError(
-													"Unknown card",
-													`Could not find card '${c.details.name}' (${c.details.set} #${c.details.collector_number}, ${card.cardID}).`
-												)
-											);
-										originalCard = Cards.get(cid)!;
-									}
-								} else {
-									const cid = matchCardVersion(c.details.name, undefined, undefined, true);
-									if (!cid)
-										return ack?.(
-											new SocketError("Unknown card", `Could not find card '${c.details.name}'.`)
-										);
-									originalCard = Cards.get(cid)!;
-								}
-
-								// We'll use the presence of an imgUrl as a sign this is custom card.
-								if (c.imgUrl) {
-									const cardData: Card = {
-										...originalCard,
-										related_cards: [card.cardID],
-										is_custom: true,
-									};
-									// Modified properties are found at the root of the card object, original values in the `details` property.
-									cardData.id = `Custom_${customCardID}`;
-									// Update with custom properties.
-									cardData.image_uris = { en: c.imgUrl };
-									if (c.finish) cardData.foil = c.finish === "Foil";
-									if (c.cmc) cardData.cmc = parseInt(c.cmc);
-									if (c.type_line) {
-										const types = splitTypeLine(c.type_line);
-										cardData.type = types.type;
-										cardData.subtypes = types.subtypes;
-									}
-									if (c.rarity) cardData.rarity = c.rarity;
-									if (c.colors) cardData.colors = c.colors as CardColor[];
-									if (c.imgBackUrl) {
-										// Use the back of the original card if available.
-										if (cardData.back) {
-											cardData.back.image_uris = { en: c.imgBackUrl };
-										} else {
-											cardData.back = {
-												name: `${cardData.name}_back`,
-												printed_names: {},
-												type: "",
-												subtypes: [],
-												image_uris: { en: c.imgBackUrl },
-											};
-										}
-									}
-									customCards[cardData.id] = cardData;
-									defaultSheet.cards[cardData.id] = 1;
-									customCardID += 1;
-								} else {
-									// Official card
-									if (Object.prototype.hasOwnProperty.call(defaultSheet.cards, originalCard.id))
-										defaultSheet.cards[originalCard.id] += 1;
-									else defaultSheet.cards[originalCard.id] = 1;
-								}
-							}
+						if (
+							data.importCustomFormat &&
+							hasProperty("formats", isArray)(cube) &&
+							cube.formats.length > 0
+						) {
+							convertDraftFormat(cardList, cube.formats[0] as unknown as DraftFormat)
+								.then(() => {
+									useCustomCardList(Sessions[sessionID], cardList);
+									ack?.(new SocketAck());
+								})
+								.catch(errorHandler);
+						} else {
+							useCustomCardList(Sessions[sessionID], cardList);
+							ack?.(new SocketAck());
 						}
-						useCustomCardList(Sessions[sessionID], cardList);
-						ack?.(new SocketAck());
 					}
 				})
 				.catch(errorHandler);
