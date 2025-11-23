@@ -44,7 +44,7 @@ export const hasProperty =
 
 export const hasOptionalProperty =
 	<Prop extends PropertyKey, E extends Guard>(key: Prop, isE: E) =>
-	(x: object): x is Record<Prop, GuardReturnType<E>> =>
+	(x: object): x is Partial<Record<Prop, GuardReturnType<E>>> =>
 		!Object.hasOwn(x, key) || x[key as keyof typeof x] === undefined || isE(x[key as keyof typeof x]);
 
 type EnumValueType = string | number | symbol;

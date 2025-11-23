@@ -37,13 +37,11 @@ import {
 	ArenaID,
 	UsableDraftEffect,
 	OptionalOnPickDraftEffect,
-	CardColor,
-	OracleID,
 } from "./CardTypes.js";
-import { MTGACards, getUnique, getCard, Cards, CardVersionsByName } from "./Cards.js";
-import { parseLine, parseCardList, matchCardVersion } from "./parseCardList.js";
+import { MTGACards, getUnique, getCard } from "./Cards.js";
+import { parseLine, parseCardList } from "./parseCardList.js";
 import { SessionID, UserID } from "./IDTypes.js";
-import { CCLSettings, CustomCardList, PackLayout, Sheet } from "./CustomCardList.js";
+import { CustomCardList } from "./CustomCardList.js";
 import { checkCCLSettingType, isKeyOfCCLSettings } from "./CustomCardListUtils.js";
 import { DraftLog } from "./DraftLog.js";
 import {
