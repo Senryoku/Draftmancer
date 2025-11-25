@@ -9,14 +9,13 @@ import { MTGDraftBotParameters, RequestParameters } from "./bots/ExternalBotInte
 import { DraftmancerAI, getScores as draftmancerAIGetScores } from "./bots/DraftmancerAI.js";
 import { MTGDraftBotsAPI, getScores as MTGDraftBotsAPIGetScores } from "./bots/MTGDraftBots.js";
 import { CubeCobraBots, getScores as cubeCobraGetScores } from "./bots/CubeCobraBots.js";
-import Constants from "./Constants.js";
 
 export function fallbackToSimpleBots(customCards: boolean, oracleIds: Array<OracleID>, wantedModel: string): boolean {
 	// No bot servers available
 	if (!MTGDraftBotsAPI.available && !DraftmancerAI.available && !CubeCobraBots.available) return true;
 
-	// No external bot handles custom cards.
-	if (customCards) return true;
+	// No external bot handles custom cards, unless they all have associated oracle IDs
+	if (customCards && Object.values(customCards).some((card) => !card.oracle_id)) return true;
 
 	// Querying the mtgdraftbots API is too slow for the test suite, always fallback to simple bots while testing. FIXME: This feels hackish.
 	// FORCE_BOTS_EXTERNAL_API will force them on for specific tests.
@@ -39,8 +38,8 @@ export function fallbackToSimpleBots(customCards: boolean, oracleIds: Array<Orac
 	}
 
 	if (
-		CubeCobraBots.available &&
-		!Constants.PrimarySets.slice(0, Constants.PrimarySets.indexOf("dft") + 1).includes(wantedModel)
+		CubeCobraBots.available
+		// && !Constants.PrimarySets.slice(0, Constants.PrimarySets.indexOf("dft") + 1).includes(wantedModel)
 	)
 		return false;
 
