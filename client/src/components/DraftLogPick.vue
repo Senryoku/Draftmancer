@@ -97,7 +97,7 @@ const props = withDefaults(
 		carddata: { [cid: CardID]: Card };
 		language: Language;
 		type: string;
-		scale: number;
+		scale?: number;
 	}>(),
 	{
 		type: "Draft",

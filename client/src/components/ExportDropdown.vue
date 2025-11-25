@@ -1,5 +1,5 @@
 <template>
-	<dropdown>
+	<Dropdown>
 		<template v-slot:handle>Export</template>
 		<template v-slot:dropdown>
 			<div class="row">
@@ -39,24 +39,23 @@
 					Collector #
 				</button>
 				<button @click="downloadCollectorNumber()" v-tooltip.right="'Download collector number list'">
-					<FontAwesomeIcon icon="fa-solid fa-file-download" class="button-icon"></FontAwesomeIcon>
+					<font-awesome-icon icon="fa-solid fa-file-download" class="button-icon" />
 				</button>
 			</div>
 		</template>
-	</dropdown>
+	</Dropdown>
 </template>
 
-<script lang="ts">
-import { PropType, defineComponent } from "vue";
-import { Card, UniqueCard } from "@/CardTypes";
+<script setup lang="ts">
+import Dropdown from "./Dropdown.vue";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
+import { Language } from "@/Types";
+import { Card, UniqueCard } from "@/CardTypes";
 import { exportToMTGA } from "../exportToMTGA";
 import { exportToMTGO } from "../exportToMTGO";
 import { fireToast } from "../alerts";
 import { copyToClipboard, download } from "../helper";
-import Dropdown from "./Dropdown.vue";
-import { Language } from "@/Types";
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 // Some always available cards, such as a default hero, available equipement, set unique mechanics, ...etc
 const FaBAlwaysAvailableCards = {
@@ -68,85 +67,95 @@ const FaBAlwaysAvailableCards = {
 	SEA: ["SEA002", "SEA006", "SEA007", "SEA044", "SEA045", "SEA083", "SEA084", "SEA094", "SEA124"],
 };
 
-export default defineComponent({
-	components: { Dropdown, FontAwesomeIcon },
-	props: {
-		language: { type: String as PropType<Language>, required: true },
-		deck: { type: Array as PropType<UniqueCard[]>, required: true },
-		sideboard: { type: Array as PropType<UniqueCard[]>, default: null },
-		options: {
-			type: Object,
-			default: () => {
-				return { lands: null, preferredBasics: "", sideboardBasics: 0 };
-			},
+const props = withDefaults(
+	defineProps<{
+		language: Language;
+		deck: UniqueCard[];
+		sideboard?: UniqueCard[];
+		options?: {
+			lands?: { W: number; U: number; B: number; R: number; G: number };
+			preferredBasics: string;
+			sideboardBasics: number;
+		};
+	}>(),
+	{
+		sideboard: () => [],
+		options: () => {
+			return { lands: undefined, preferredBasics: "", sideboardBasics: 0 };
 		},
-	},
-	methods: {
-		exportDeckMTGA(full = true) {
-			return exportToMTGA(this.deck, this.sideboard, this.language, this.options.lands, {
-				preferredBasics: this.options.preferredBasics,
-				sideboardBasics: this.options.sideboardBasics,
-				full: full,
-			});
-		},
-		clipboardMTGA(full = true) {
-			copyToClipboard(this.exportDeckMTGA(full));
-			fireToast("success", "Deck exported to clipboard!");
-		},
-		downloadMTGA(full = true) {
-			download("Deck.txt", this.exportDeckMTGA(full));
-		},
-		exportDeckMTGO() {
-			exportToMTGO(this.deck, this.sideboard, this.options);
-		},
-		faBraryCardExport(card: Card) {
-			if (card.collector_number !== "" && card.collector_number.match(/[A-Z]{3}\d{3}/))
-				return card.collector_number;
-			if (
-				card.set !== "" &&
-				card.set.match(/[A-Z]{3}/) &&
-				card.collector_number !== "" &&
-				card.collector_number.match(/\d{3}/)
-			)
-				return card.set + card.collector_number;
-			return encodeURIComponent(card.name.replace(/ /g, "-").replace(/[()]/g, "").toLowerCase());
-		},
-		exportDeckToFaBrary() {
-			let url = "https://fabrary.net/decks?tab=import&format=draft";
+	}
+);
 
-			const cardIDs = this.deck.map(this.faBraryCardExport);
-			cardIDs.push(...this.sideboard.map(this.faBraryCardExport));
+function exportDeckMTGA(full = true) {
+	return exportToMTGA(props.deck, props.sideboard, props.language, props.options.lands, {
+		preferredBasics: props.options.preferredBasics,
+		sideboardBasics: props.options.sideboardBasics,
+		full: full,
+	});
+}
 
-			// Check if all cards are from the same set (assuming we're exporting using set/numbers, not card names).
-			const set = [...new Set(cardIDs.map((str) => str.substring(0, 3)))];
-			// Add always available cards for convenience.
-			if (set.length === 1 && set[0] in FaBAlwaysAvailableCards)
-				cardIDs.push(...FaBAlwaysAvailableCards[set[0] as keyof typeof FaBAlwaysAvailableCards]);
+function clipboardMTGA(full = true) {
+	copyToClipboard(exportDeckMTGA(full));
+	fireToast("success", "Deck exported to clipboard!");
+}
 
-			for (const cardID of cardIDs) url += `&cards=${cardID}`;
+function downloadMTGA(full = true) {
+	download("Deck.txt", exportDeckMTGA(full));
+}
 
-			window.open(url);
-		},
-		collectorNumberList(): string {
-			let deck: Record<string, number> = {};
-			for (const card of this.deck) {
-				if (!deck[card.collector_number]) deck[card.collector_number] = 1;
-				else deck[card.collector_number]++;
-			}
+function exportDeckMTGO() {
+	exportToMTGO(props.deck, props.sideboard, props.options);
+}
 
-			let list = "";
-			for (const [key, value] of Object.entries(deck)) list += `${value} ${key}\n`;
-			return list;
-		},
-		clipboardCollectorNumber() {
-			copyToClipboard(this.collectorNumberList());
-			fireToast("success", "Deck exported to clipboard!");
-		},
-		downloadCollectorNumber() {
-			download("Deck.txt", this.collectorNumberList());
-		},
-	},
-});
+function faBraryCardExport(card: Card) {
+	if (card.collector_number !== "" && card.collector_number.match(/[A-Z]{3}\d{3}/)) return card.collector_number;
+	if (
+		card.set !== "" &&
+		card.set.match(/[A-Z]{3}/) &&
+		card.collector_number !== "" &&
+		card.collector_number.match(/\d{3}/)
+	)
+		return card.set + card.collector_number;
+	return encodeURIComponent(card.name.replace(/ /g, "-").replace(/[()]/g, "").toLowerCase());
+}
+
+function exportDeckToFaBrary() {
+	let url = "https://fabrary.net/decks?tab=import&format=draft";
+
+	const cardIDs = props.deck.map(faBraryCardExport);
+	cardIDs.push(...props.sideboard.map(faBraryCardExport));
+
+	// Check if all cards are from the same set (assuming we're exporting using set/numbers, not card names).
+	const set = [...new Set(cardIDs.map((str) => str.substring(0, 3)))];
+	// Add always available cards for convenience.
+	if (set.length === 1 && set[0] in FaBAlwaysAvailableCards)
+		cardIDs.push(...FaBAlwaysAvailableCards[set[0] as keyof typeof FaBAlwaysAvailableCards]);
+
+	for (const cardID of cardIDs) url += `&cards=${cardID}`;
+
+	window.open(url);
+}
+
+function collectorNumberList(): string {
+	let deck: Record<string, number> = {};
+	for (const card of props.deck) {
+		if (!deck[card.collector_number]) deck[card.collector_number] = 1;
+		else deck[card.collector_number]++;
+	}
+
+	let list = "";
+	for (const [key, value] of Object.entries(deck)) list += `${value} ${key}\n`;
+	return list;
+}
+
+function clipboardCollectorNumber() {
+	copyToClipboard(collectorNumberList());
+	fireToast("success", "Deck exported to clipboard!");
+}
+
+function downloadCollectorNumber() {
+	download("Deck.txt", collectorNumberList());
+}
 </script>
 
 <style scoped>

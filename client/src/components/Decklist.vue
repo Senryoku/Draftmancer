@@ -28,6 +28,8 @@
 					:sideboard="sideboard"
 					:options="{
 						lands: list.lands,
+						preferredBasics: '',
+						sideboardBasics: 0,
 					}"
 				/>
 				<template v-if="list.hashes">
