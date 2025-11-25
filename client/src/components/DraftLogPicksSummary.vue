@@ -21,7 +21,7 @@
 						@contextmenu="toggleZoom($event, card)"
 						@mouseleave="mouseLeave"
 					>
-						<span class="card-mana-cost" v-html="transformManaCost(card.mana_cost)"></span>
+						<span class="card-mana-cost" v-html="replaceManaSymbols(card.mana_cost)"></span>
 						{{ card.printed_names[language] ?? card.name }}
 					</div>
 				</li>
@@ -31,40 +31,35 @@
 	<div v-else>No picks.</div>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType } from "vue";
+<script setup lang="ts">
 import { Card, CardID } from "@/CardTypes";
 import { replaceManaSymbols } from "../ManaSymbols";
+import { useEmitter } from "../appCommon";
+const { emitter } = useEmitter();
 
-export default defineComponent({
-	name: "DraftLogPicksSummary",
-	props: {
-		picks: { type: Array as PropType<{ pick: number[]; booster: CardID[] }[][]>, required: true },
-		carddata: { type: Object as PropType<{ [cid: CardID]: Card }>, required: true },
-		language: { type: String, required: true },
-	},
-	methods: {
-		transformManaCost(str: string) {
-			return replaceManaSymbols(str);
-		},
-		selectPick(packIdx: number, pickIdx: number) {
-			this.emitter.emit("closecardpopup");
-			this.$emit("selectPick", packIdx, pickIdx);
-		},
-		getPicks(packIdx: number, pickIdx: number) {
-			const pick = this.picks[packIdx][pickIdx];
-			return pick.pick.map((card_idx) => this.carddata[pick.booster[card_idx]]);
-		},
-		toggleZoom(e: Event, card: Card) {
-			e.preventDefault();
-			this.emitter.emit("togglecardpopup", e, card);
-		},
-		mouseLeave(e: Event) {
-			e.preventDefault();
-			this.emitter.emit("closecardpopup");
-		},
-	},
-});
+const props = defineProps<{
+	picks: { pick: number[]; booster: CardID[] }[][];
+	carddata: { [cid: CardID]: Card };
+	language: string;
+}>();
+const emit = defineEmits<{ (e: "selectPick", packIdx: number, pickIdx: number): void }>();
+
+function selectPick(packIdx: number, pickIdx: number) {
+	emitter.emit("closecardpopup");
+	emit("selectPick", packIdx, pickIdx);
+}
+function getPicks(packIdx: number, pickIdx: number) {
+	const pick = props.picks[packIdx][pickIdx];
+	return pick.pick.map((card_idx) => props.carddata[pick.booster[card_idx]]);
+}
+function toggleZoom(e: Event, card: Card) {
+	e.preventDefault();
+	emitter.emit("togglecardpopup", e, card);
+}
+function mouseLeave(e: Event) {
+	e.preventDefault();
+	emitter.emit("closecardpopup");
+}
 </script>
 
 <style scoped>
