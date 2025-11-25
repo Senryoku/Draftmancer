@@ -7,6 +7,7 @@ import assert from "assert";
 import { chunks } from "../utils.js";
 
 const BatchSizeLimit = 20;
+const BotRequestTimeout = 10000; // ms
 
 export const CubeCobraBots = {
 	available:
@@ -82,7 +83,7 @@ async function processQueue() {
 			// If this chunk fails, the next one might still succeed.
 			try {
 				const body: BatchPredictBody = { inputs: chunk.map((r) => r.body) };
-				const response = await axios.post(CubeCobraBots.batchEndpoint!, body, { timeout: 5000 });
+				const response = await axios.post(CubeCobraBots.batchEndpoint!, body, { timeout: BotRequestTimeout });
 				if (!isBatchPredictResponse(response.data))
 					throw new Error(
 						`Unexpected response from Cube Cobra bots: ${util.inspect(response.data, false, 20)}`
@@ -99,7 +100,7 @@ async function processQueue() {
 
 async function singleRequest(body: PredictBody): Promise<Prediction[]> {
 	assert(CubeCobraBots.endpoint);
-	const response = await axios.post(CubeCobraBots.endpoint, body, { timeout: 5000 });
+	const response = await axios.post(CubeCobraBots.endpoint, body, { timeout: BotRequestTimeout });
 	if (!isPredictResponse(response.data))
 		throw new Error(`Unexpected response from Cube Cobra bots: ${util.inspect(response.data, false, 20)}`);
 	return response.data.prediction;
