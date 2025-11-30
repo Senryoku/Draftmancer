@@ -90,6 +90,7 @@ import { sendDraftLogToCubeCobra } from "./cubeCobraIntegration.js";
 import { isSilentAuctionDraftState, SilentAuctionDraftState } from "./SilentAuctionDraft.js";
 import { Tiebreaker } from "./SilentAuctionDraftTiebreakers.js";
 import { CardPool, SlotedCardPool } from "./CardPool.js";
+import axios from "axios";
 
 // Tournament timer depending on the number of remaining cards in a pack.
 const TournamentTimer = [
@@ -116,6 +117,8 @@ function removeBasics(cards: UniqueCard[]): UniqueCard[] {
 }
 
 const StableLogTimeout = 5 * 60 * 1000; // ms
+
+export type Hooks = { draftLog?: string };
 
 export class Session implements IIndexable {
 	id: SessionID;
@@ -170,6 +173,7 @@ export class Session implements IIndexable {
 	draftLogUnlockTimer: number = 0; // In minutes; Zero to disable.
 	bracketLocked: boolean = false; // If set, only the owner can edit the results.
 	bracket?: IBracket = undefined;
+	hooks: Hooks = {};
 
 	// Draft state
 	drafting: boolean = false;
@@ -3020,8 +3024,8 @@ export class Session implements IIndexable {
 		this.draftLog.delayed = false;
 		this.draftLog.lastUpdated = Date.now();
 		// If there's no scheduled log upload (for example if the session was closed before the logs were unlocked),
-		// send them to Cube Cobra now.
-		if (!this.stableLogTimeout) sendDraftLogToCubeCobra(this);
+		// execute the callback(s) immediately.
+		if (!this.stableLogTimeout) this.onStableLog();
 		this.emitToConnectedUsers("draftLog", this.draftLog);
 	}
 
@@ -3166,10 +3170,16 @@ export class Session implements IIndexable {
 	// Called when logs are stable (i.e. players haven't changed their decks in a while) or when disposing of the session.
 	//   Sends decks to CubeArtisan for bot training.
 	//   Sends logs to Cube Cobra for storing.
+	//   Sends logs to registered hook for this session.
 	onStableLog() {
 		if (this.draftLog) {
 			sendDecksToCubeArtisan(this.draftLog);
 			sendDraftLogToCubeCobra(this);
+			if (this.hooks.draftLog) {
+				axios
+					.post(this.hooks.draftLog, this.draftLog)
+					.catch((err) => console.error(`Error sending draft log to hook '${this.hooks.draftLog}':`, err));
+			}
 		}
 	}
 

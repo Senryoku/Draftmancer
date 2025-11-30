@@ -22,7 +22,7 @@ import { RochesterDraftSyncData } from "./RochesterDraft";
 import { MinesweeperSyncData, MinesweeperSyncDataDiff } from "./MinesweeperDraftTypes";
 import { DraftState, DraftSyncData } from "./DraftState";
 import { BotScores } from "./Bot";
-import { getPublicSessionData } from "./Session";
+import { getPublicSessionData, Hooks } from "./Session";
 import { JumpInBooster } from "./JumpInTypes";
 import { RotisserieDraftStartOptions, RotisserieDraftSyncData } from "./RotisserieDraft";
 import { WinchesterDraftSyncData } from "./WinchesterDraft";
@@ -463,6 +463,8 @@ export interface ClientToServerEvents {
 	requestTakeover: (ack: (result: SocketAck) => void) => void;
 
 	convertMTGOLog: (str: string, callback: (response: SocketError | DraftLog) => void) => void;
+
+	setHooks: (hooks: Hooks, ack: (result: SocketAck) => void) => void;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
