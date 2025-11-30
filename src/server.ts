@@ -27,7 +27,7 @@ import { Constants } from "./Constants.js";
 import { InactiveConnections, InactiveSessions, restoreSession, getPoDSession, copyPODProps } from "./Persistence.js";
 import { Connection, Connections } from "./Connection.js";
 import { DistributionMode, DraftLogRecipients, ReadyState } from "./Session/SessionTypes";
-import { Session, Sessions, getPublicSessionData } from "./Session.js";
+import { Hooks, Session, Sessions, getPublicSessionData } from "./Session.js";
 import {
 	CardID,
 	Card,
@@ -1405,7 +1405,6 @@ function shareDraftLog(userID: UserID, sessionID: SessionID, draftLog: DraftLog)
 
 	sess.unlockLogs(draftLog.time);
 }
-
 // Used on reconnection to ask for an updated version of the draft log
 function retrieveUpdatedDraftLogs(
 	userID: UserID,
@@ -1428,20 +1427,6 @@ function retrieveUpdatedDraftLogs(
 		sess.sendLogsTo(userID);
 }
 
-function distributeSealed(
-	userID: UserID,
-	sessionID: SessionID,
-	boostersPerPlayer: number,
-	customBoosters: Array<string>,
-	ack: (result: SocketAck) => void
-) {
-	if (!Number.isInteger(boostersPerPlayer) || boostersPerPlayer <= 0)
-		return ack?.(new SocketError("Error", "Invalid 'boostersPerPlayer' parameter."));
-
-	const r = Sessions[sessionID].distributeSealed(boostersPerPlayer, customBoosters);
-	ack?.(r);
-}
-
 async function requestTakeover(userID: UserID, sessionID: SessionID, ack: (result: SocketAck) => void) {
 	const previousOwner = Sessions[sessionID].owner;
 	if (!previousOwner) return ack?.(new SocketError("Invalid request."));
@@ -1460,6 +1445,31 @@ async function convertMTGOLog(
 	ack: (result: SocketError | DraftLog) => void
 ) {
 	ack(parseMTGOLog(userID, str));
+}
+
+function distributeSealed(
+	userID: UserID,
+	sessionID: SessionID,
+	boostersPerPlayer: number,
+	customBoosters: Array<string>,
+	ack: (result: SocketAck) => void
+) {
+	if (!Number.isInteger(boostersPerPlayer) || boostersPerPlayer <= 0)
+		return ack?.(new SocketError("Error", "Invalid 'boostersPerPlayer' parameter."));
+
+	const r = Sessions[sessionID].distributeSealed(boostersPerPlayer, customBoosters);
+	ack?.(r);
+}
+
+async function setHooks(userID: UserID, sessionID: SessionID, hooks: unknown, ack: (result: SocketAck) => void) {
+	let updated = false;
+	if (isRecord(isString, isString)(hooks)) {
+		if (hooks.draftLog) {
+			Sessions[sessionID].hooks.draftLog = hooks.draftLog;
+			updated = true;
+		}
+	}
+	ack?.(updated ? new SocketAck() : new SocketError("Invalid parameter 'hooks'."));
 }
 
 const prepareSocketCallback = <T extends Array<unknown>>(
@@ -1743,6 +1753,7 @@ io.on("connection", async function (socket) {
 		socket.on("lockBracket", prepareSocketCallback(lockBracket, true));
 		socket.on("syncBracketMTGO", prepareSocketCallback(syncBracketMTGO, true));
 		socket.on("shareDraftLog", prepareSocketCallback(shareDraftLog, true));
+		socket.on("setHooks", prepareSocketCallback(setHooks, true));
 
 		// Apply preferred session settings in case we're creating a new one, filtering out invalid ones.
 		const filteredSettings: Options = {};
