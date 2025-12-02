@@ -2401,6 +2401,11 @@
         "fullName": "MagicFest 2025",
         "icon": "img/sets/pf25.svg"
     },
+    "pf26": {
+        "code": "pf26",
+        "fullName": "MagicFest 2026",
+        "icon": "img/sets/pf26.svg"
+    },
     "pfdn": {
         "code": "pfdn",
         "fullName": "Foundations Promos",
@@ -3392,7 +3397,7 @@
     },
     "pza": {
         "code": "pza",
-        "fullName": "Teenage Mutant Hero Turtles Source Material",
+        "fullName": "Teenage Mutant Ninja Turtles Source Material",
         "icon": "img/sets/pza.svg"
     },
     "pzen": {
@@ -3541,7 +3546,7 @@
     },
     "slp": {
         "code": "slp",
-        "fullName": "Secret Lair Showdown",
+        "fullName": "Secret Lair Promo",
         "icon": "img/sets/slp.svg"
     },
     "slu": {
