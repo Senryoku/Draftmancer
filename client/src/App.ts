@@ -3491,12 +3491,97 @@ export default defineComponent({
 			this.sideboardDisplay?.filterBasics();
 		},
 		colorsInCardPool(pool: Card[]) {
-			const r = { W: 0, U: 0, B: 0, R: 0, G: 0 };
+			// Counts of colors in the provided pool.
+			// - For non-hybrid cards (mana_cost does NOT contain '/'): count all colors in `card.colors` as concrete.
+			// - For cards containing hybrid symbols (mana_cost contains '/'), only count a hybrid color
+			//   if there exists another card in the pool that uses the concrete mana symbol for that color
+			//   (e.g. a token "{W}"). This avoids counting both halves of a hybrid when there are no
+			//   concrete symbols for those colors in the pool.
+			// - If a hybrid card cannot be counted for any of its colors (no concrete symbols exist for
+			//   any of its colors), it is assigned to a single preferred color. The preference is the
+			//   color that appears the most across card `colors` in the pool (ties broken by order).
+			// This heuristic favors assignments that make casting multiple hybrid cards easier.
+
+			type Counts = { W: number; U: number; B: number; R: number; G: number };
+			const r: Counts = { W: 0, U: 0, B: 0, R: 0, G: 0 };
+
+			// Helper: extract mana tokens like '2', 'G', 'G/W' from a mana_cost string
+			const manaTokens = (mc?: string) => {
+				if (!mc) return [] as string[];
+				const tokens: string[] = [];
+				const re = /\{([^}]+)\}/g;
+				let m: RegExpExecArray | null;
+				while ((m = re.exec(mc)) !== null) tokens.push(m[1]);
+				return tokens;
+			};
+
+			// First pass: determine if concrete mana symbols exist in the pool for each color
+			const concreteCounts: Counts = { W: 0, U: 0, B: 0, R: 0, G: 0 };
+			// Also count how many cards list a color (used as a tie-breaker / preference)
+			const colorOccurrences: Counts = { W: 0, U: 0, B: 0, R: 0, G: 0 };
+
 			for (const card of pool) {
-				for (const color of card.colors) {
-					r[color] += 1;
+				for (const c of card.colors) colorOccurrences[c] += 1;
+				const mc = card.mana_cost ?? "";
+				// If the card doesn't contain any '/' it is not hybrid: consider all its colors concrete.
+				if (!mc.includes("/")) {
+					for (const c of card.colors) concreteCounts[c] += 1;
+				} else {
+					const tokens = manaTokens(mc);
+					// Card contains at least one hybrid symbol; still check if it also includes plain
+					// concrete symbols like '{W}' which we should count.
+					for (const t of tokens) {
+						if (!t.includes("/")) {
+							// token like 'W' or 'G' is a concrete symbol
+							if (t === "W" || t === "U" || t === "B" || t === "R" || t === "G") {
+								concreteCounts[t as keyof Counts] += 1;
+							}
+						}
+					}
 				}
 			}
+
+			// Second pass: count non-hybrid colors immediately; for hybrid cards only count
+			// colors that have concrete presence in the pool. Keep hybrids without any concrete
+			// candidate for later assignment.
+			const hybrids: Card[] = [];
+
+			for (const card of pool) {
+				const mc = card.mana_cost ?? "";
+				if (!mc.includes("/")) {
+					// Not hybrid: count all its colors.
+					for (const color of card.colors) r[color] += 1;
+				} else {
+					// Hybrid (or contains a hybrid symbol). Only count a color if there exists a
+					// concrete symbol for that color somewhere in the pool.
+					let countedAny = false;
+					for (const color of card.colors) {
+						if (concreteCounts[color] > 0) {
+							r[color] += 1;
+							countedAny = true;
+						}
+					}
+					if (!countedAny) hybrids.push(card);
+				}
+			}
+
+			// Assign hybrid-only cards to a single preferred color. Preference is given to the color
+			// that appears most often across card `colors` in the pool (this favors grouping hybrid
+			// cards on the same color so they become easier to cast together). Break ties by the
+			// order of colors in the card.
+			for (const card of hybrids) {
+				let best = card.colors[0];
+				let bestScore = -1;
+				for (const color of card.colors) {
+					const score = colorOccurrences[color as keyof Counts] || 0;
+					if (score > bestScore) {
+						bestScore = score;
+						best = color;
+					}
+				}
+				r[best] += 1;
+			}
+
 			return r;
 		},
 		cardConditionalClasses(card: Card) {
