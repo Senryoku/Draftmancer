@@ -3526,10 +3526,9 @@ export default defineComponent({
 						r[c] += 1;
 					}
 				} else {
-					// Card contains at least one hybrid symbol; still check if it also includes plain
-					// concrete symbols like '{W}' which we should count.
-					const tokens = manaTokens(mc);
-					const hybridSymbols: CardColor[][] = [];
+					// Card contains at least one hybrid symbol; still check if it also includes plain concrete symbols like '{W}' which we should count.
+					// De-duplicate tokens within a card mana cost: We don't count duplicated colored mana pips for normal mana cost, treat hybrids in the same way.
+					const tokens = [...new Set(manaTokens(mc))];
 					for (const t of tokens) {
 						if (!t.includes("/")) {
 							// Token like 'W' or 'G' is a concrete symbol
@@ -3538,18 +3537,9 @@ export default defineComponent({
 								r[t] += 1;
 							}
 						} else {
-							// De-duplicate hybrid tokens within a card mana cost.
-							// We don't count duplicated colored mana pips for normal mana cost, treat hybrids in the same way.
-							const colors = t.split("/").filter(isColor);
-							if (
-								!hybridSymbols.find(
-									(h) => h.length === colors.length && h.every((c) => colors.includes(c))
-								)
-							)
-								hybridSymbols.push(colors);
+							hybrids.push(t.split("/").filter(isColor));
 						}
 					}
-					hybrids.push(...hybridSymbols);
 				}
 			}
 
