@@ -3502,78 +3502,70 @@ export default defineComponent({
 			//   color that appears the most across card `colors` in the pool (ties broken by order).
 			// This heuristic favors assignments that make casting multiple hybrid cards easier.
 
-			type Counts = { W: number; U: number; B: number; R: number; G: number };
+			type Counts = Record<CardColor, number>;
 			const r: Counts = { W: 0, U: 0, B: 0, R: 0, G: 0 };
 
 			// Helper: extract mana tokens like '2', 'G', 'G/W' from a mana_cost string
-			const manaTokens = (mc?: string) => {
-				if (!mc) return [] as string[];
-				const tokens: string[] = [];
-				const re = /\{([^}]+)\}/g;
-				let m: RegExpExecArray | null;
-				while ((m = re.exec(mc)) !== null) tokens.push(m[1]);
-				return tokens;
-			};
+			const manaTokens = (mc: string) => [...mc.matchAll(/\{([^}]+)\}/g)].map((m) => m[1]);
 
 			// First pass: determine if concrete mana symbols exist in the pool for each color
 			const concreteCounts: Counts = { W: 0, U: 0, B: 0, R: 0, G: 0 };
 			// Also count how many cards list a color (used as a tie-breaker / preference)
 			const colorOccurrences: Counts = { W: 0, U: 0, B: 0, R: 0, G: 0 };
 
+			const hybrids: Card[] = [];
+
 			for (const card of pool) {
 				for (const c of card.colors) colorOccurrences[c] += 1;
 				const mc = card.mana_cost ?? "";
 				// If the card doesn't contain any '/' it is not hybrid: consider all its colors concrete.
 				if (!mc.includes("/")) {
-					for (const c of card.colors) concreteCounts[c] += 1;
+					for (const c of card.colors) {
+						concreteCounts[c] += 1;
+						r[c] += 1;
+					}
 				} else {
-					const tokens = manaTokens(mc);
 					// Card contains at least one hybrid symbol; still check if it also includes plain
 					// concrete symbols like '{W}' which we should count.
+					const tokens = manaTokens(mc);
 					for (const t of tokens) {
 						if (!t.includes("/")) {
-							// token like 'W' or 'G' is a concrete symbol
+							// Token like 'W' or 'G' is a concrete symbol
 							if (t === "W" || t === "U" || t === "B" || t === "R" || t === "G") {
-								concreteCounts[t as keyof Counts] += 1;
+								concreteCounts[t] += 1;
 							}
 						}
 					}
+					hybrids.push(card);
 				}
 			}
 
-			// Second pass: count non-hybrid colors immediately; for hybrid cards only count
-			// colors that have concrete presence in the pool. Keep hybrids without any concrete
-			// candidate for later assignment.
-			const hybrids: Card[] = [];
+			// Second pass: For hybrid cards only count colors that have concrete presence in the pool.
+			// Keep hybrids without any concrete candidate for later assignment.
+			const unaccountedHybrids: Card[] = [];
 
-			for (const card of pool) {
-				const mc = card.mana_cost ?? "";
-				if (!mc.includes("/")) {
-					// Not hybrid: count all its colors.
-					for (const color of card.colors) r[color] += 1;
-				} else {
-					// Hybrid (or contains a hybrid symbol). Only count a color if there exists a
-					// concrete symbol for that color somewhere in the pool.
-					let countedAny = false;
-					for (const color of card.colors) {
-						if (concreteCounts[color] > 0) {
-							r[color] += 1;
-							countedAny = true;
-						}
+			for (const card of hybrids) {
+				// Hybrid (or contains a hybrid symbol). Only count a color if there exists a
+				// concrete symbol for that color somewhere in the pool.
+				let countedAny = false;
+				for (const color of card.colors) {
+					if (concreteCounts[color] > 0) {
+						r[color] += 1;
+						countedAny = true;
 					}
-					if (!countedAny) hybrids.push(card);
 				}
+				if (!countedAny) unaccountedHybrids.push(card);
 			}
 
 			// Assign hybrid-only cards to a single preferred color. Preference is given to the color
 			// that appears most often across card `colors` in the pool (this favors grouping hybrid
 			// cards on the same color so they become easier to cast together). Break ties by the
 			// order of colors in the card.
-			for (const card of hybrids) {
+			for (const card of unaccountedHybrids) {
 				let best = card.colors[0];
 				let bestScore = -1;
 				for (const color of card.colors) {
-					const score = colorOccurrences[color as keyof Counts] || 0;
+					const score = colorOccurrences[color] ?? 0;
 					if (score > bestScore) {
 						bestScore = score;
 						best = color;
