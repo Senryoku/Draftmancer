@@ -22,13 +22,7 @@ import { Constants } from "../src/Constants.js";
 import type { DistributionMode } from "../src/Session/SessionTypes";
 import { ReadyState } from "../src/Session/SessionTypes.js";
 
-import {
-	SpecialGuests,
-	MH3BoosterFactory,
-	SetSpecificFactories,
-	EOEBoosterFactory,
-	FINBoosterFactory,
-} from "../src/BoosterFactory.js";
+import { SpecialGuests, MH3BoosterFactory, EOEBoosterFactory, FINBoosterFactory } from "../src/BoosterFactory.js";
 
 const clientStates: {
 	[uid: UserID]: { pickedCards: UniqueCard[]; state: ReturnType<DraftState["syncData"]> };
@@ -38,7 +32,8 @@ const checkColorBalance = function (booster: Card[]) {
 	const commons = booster.filter((card) => card.rarity === "common" && !card.foil);
 	// Exception for MH3: It cannot always be color balanced as it only has 5 commons in its common slot when an SPG card is present, but still more than 5 overall because of the wildcard slot.
 	// Exception for INR: Only has 5 commons after the double faced common card.
-	if (commons.length <= 5 || commons.map((c) => c.set).every((s) => ["mh3", "inr"].includes(s))) return;
+	// Exception for TLA: 6 commons might not be enough to be color balanced when accounting for multicolored cards.
+	if (commons.length <= 5 || commons.map((c) => c.set).every((s) => ["mh3", "inr", "tla"].includes(s))) return;
 
 	for (const color of "WUBRG")
 		expect(commons.filter((card) => card.colors.includes(color as CardColor)).length).to.be.at.least(1);
