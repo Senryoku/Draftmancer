@@ -3491,12 +3491,76 @@ export default defineComponent({
 			this.sideboardDisplay?.filterBasics();
 		},
 		colorsInCardPool(pool: Card[]) {
-			const r = { W: 0, U: 0, B: 0, R: 0, G: 0 };
+			// Counts of colors in the provided pool.
+			// - For non-hybrid cards (mana_cost does NOT contain '/'): count all colors in `card.colors` as concrete.
+			// - For cards containing hybrid symbols (mana_cost contains '/'), only count a hybrid color
+			//   if there exists another card in the pool that uses the concrete mana symbol for that color
+			//   (e.g. a token "{W}"). This avoids counting both halves of a hybrid when there are no
+			//   concrete symbols for those colors in the pool.
+			// - If a hybrid symbol cannot be counted for any of its colors (no concrete symbols exist for
+			//   any of its colors), it is assigned to a single preferred color. The preference is the
+			//   color that appears the most across card `colors` in the pool (ties broken by order).
+			// This heuristic favors assignments that make casting multiple hybrid cards easier.
+
+			type Counts = Record<CardColor, number>;
+			const r: Counts = { W: 0, U: 0, B: 0, R: 0, G: 0 };
+
+			// Helper: extract mana tokens like '2', 'G', 'G/W' from a mana_cost string
+			const manaTokens = (mc: string) => [...mc.matchAll(/\{([^}]+)\}/g)].map((m) => m[1]);
+			const isColor = (c: string): c is CardColor => ["W", "U", "B", "R", "G"].includes(c);
+
+			// First pass: determine if concrete mana symbols exist in the pool for each color
+			const concreteCounts: Counts = { W: 0, U: 0, B: 0, R: 0, G: 0 };
+			// Also count how many cards list a color (used as a tie-breaker / preference)
+			const colorOccurrences: Counts = { W: 0, U: 0, B: 0, R: 0, G: 0 };
+
+			const hybrids: CardColor[][] = [];
+
 			for (const card of pool) {
-				for (const color of card.colors) {
-					r[color] += 1;
+				for (const c of card.colors) colorOccurrences[c] += 1;
+				const mc = card.mana_cost ?? "";
+				// If the card doesn't contain any '/' it is not hybrid: consider all its colors concrete.
+				if (!mc.includes("/")) {
+					for (const c of card.colors) {
+						concreteCounts[c] += 1;
+						r[c] += 1;
+					}
+				} else {
+					// Card contains at least one hybrid symbol; still check if it also includes plain concrete symbols like '{W}' which we should count.
+					// De-duplicate tokens within a card mana cost: We don't count duplicated colored mana pips for normal mana cost, treat hybrids in the same way.
+					const tokens = [...new Set(manaTokens(mc))];
+					for (const t of tokens) {
+						if (!t.includes("/")) {
+							// Token like 'W' or 'G' is a concrete symbol
+							if (isColor(t)) {
+								concreteCounts[t] += 1;
+								r[t] += 1;
+							}
+						} else {
+							hybrids.push(t.split("/").filter(isColor));
+						}
+					}
 				}
 			}
+
+			const getMax = <T extends string | number | symbol>(colors: T[], counts: Record<T, number>): T => {
+				let best = colors[0];
+				for (const color of colors) if (counts[color] > counts[best]) best = color;
+				return best;
+			};
+
+			for (const colors of hybrids) {
+				// For each hybrid symbol, check if there exists a concrete symbol for that color somewhere in the pool,
+				// favoring the color that appears the most in the cards mana cost.
+				let color = getMax(colors, concreteCounts);
+				// Otherwise, assign the symbol to a single preferred color.
+				// Preference is given to the color that appears most often across card `colors` in the pool
+				// (this favors grouping hybrid cards on the same color so they become easier to cast together).
+				// Break ties by the order of colors in the card.
+				if (concreteCounts[color] <= 0) color = getMax(colors, colorOccurrences);
+				r[color] += 1;
+			}
+
 			return r;
 		},
 		cardConditionalClasses(card: Card) {

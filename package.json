@@ -97,6 +97,7 @@
 		"husky": "^9.1.6",
 		"lint-staged": "^16.1.2",
 		"mocha": "^11.6.0",
+		"nodemon": "^3.1.11",
 		"prettier": "^3.3.3",
 		"puppeteer": "^24.27.0",
 		"source-map-support": "^0.5.21",
