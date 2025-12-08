@@ -3543,32 +3543,22 @@ export default defineComponent({
 				}
 			}
 
+			const getMax = <T extends string | number | symbol>(colors: T[], counts: Record<T, number>): T => {
+				let best = colors[0];
+				for (const color of colors) if (counts[color] > counts[best]) best = color;
+				return best;
+			};
+
 			for (const colors of hybrids) {
-				// For each hybrid symbol, check if there exists a concrete symbol for that color somewhere in the pool.
-				let countedAny = false;
-				for (const color of colors) {
-					if (concreteCounts[color] > 0) {
-						r[color] += 1;
-						countedAny = true;
-						break;
-					}
-				}
-				if (!countedAny) {
-					// Otherwise, assign the symbol to a single preferred color.
-					// Preference is given to the color that appears most often across card `colors` in the pool
-					// (this favors grouping hybrid cards on the same color so they become easier to cast together).
-					// Break ties by the order of colors in the card.
-					let best = colors[0];
-					let bestScore = -1;
-					for (const color of colors) {
-						const score = colorOccurrences[color];
-						if (score > bestScore) {
-							bestScore = score;
-							best = color;
-						}
-					}
-					r[best] += 1;
-				}
+				// For each hybrid symbol, check if there exists a concrete symbol for that color somewhere in the pool,
+				// favoring the color that appears the most in the cards mana cost.
+				let color = getMax(colors, concreteCounts);
+				// Otherwise, assign the symbol to a single preferred color.
+				// Preference is given to the color that appears most often across card `colors` in the pool
+				// (this favors grouping hybrid cards on the same color so they become easier to cast together).
+				// Break ties by the order of colors in the card.
+				if (concreteCounts[color] <= 0) color = getMax(colors, colorOccurrences);
+				r[color] += 1;
 			}
 
 			return r;
