@@ -3311,7 +3311,7 @@ export class FINBoosterFactory extends BoosterFactory {
 		);
 	}
 
-	static readonly ThroughTheAges = CardsBySet["fca"].filter((c) => !getCard(c).collector_number.startsWith("A"));
+	static readonly ThroughTheAges = CardsBySet["fca"].filter((c) => getCard(c).collector_number.match(/^\d+$/));
 	static readonly Borderless = [...FINBoosterFactory.filter(310, 405), ...FINBoosterFactory.filter(577, 577)];
 	static readonly BorderlessAdventure = FINBoosterFactory.filter(310, 314);
 	static readonly BorderlessArtist = [...FINBoosterFactory.filter(315, 323), ...FINBoosterFactory.filter(577, 577)];
