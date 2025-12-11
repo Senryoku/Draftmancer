@@ -328,7 +328,7 @@ export async function importFormat(cardList: CustomCardList, format: DraftFormat
 					`https://cubecobra.com/cube/download/plaintext/${cardList.cubeCobraID}?showother=true&filter=${filter}`,
 					{ timeout: 5000 }
 				);
-				const lines = filteredList.data.split(/\r?\n/).map((line: string) => line.trim());
+				const lines = filteredList.data.split(/\r?\n/);
 				const sheet: Sheet = { collation: "random", cards: {} };
 				for (const line of lines) {
 					if (line === "") continue;
@@ -341,7 +341,7 @@ export async function importFormat(cardList: CustomCardList, format: DraftFormat
 					let cid = null;
 					const customCard = customCards.find((c) => c.name === line);
 					if (customCard) cid = customCard.id;
-					else {
+					else if (CardVersionsByName[line]) {
 						const candidates = CardVersionsByName[line];
 						for (const candidate of candidates) {
 							if (candidate in defaultSheet.cards) {
@@ -353,7 +353,7 @@ export async function importFormat(cardList: CustomCardList, format: DraftFormat
 					if (cid) {
 						if (sheet.cards[cid]) sheet.cards[cid] += 1;
 						else sheet.cards[cid] = 1;
-					} else throw new Error(`Unknown card in sheet '${filter}': ${line}`);
+					} else throw new Error(`Unknown card in sheet '${filter}': '${line}'`);
 				}
 				sheets[filter] = sheet;
 			}
