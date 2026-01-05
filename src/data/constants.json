@@ -90,7 +90,8 @@
         "fin",
         "eoe",
         "om1",
-        "tla"
+        "tla",
+        "ecl"
     ],
     "AlchemySets": [
         "hbg",
@@ -110,7 +111,8 @@
         "fin",
         "eoe",
         "om1",
-        "tla"
+        "tla",
+        "ecl"
     ],
     "BasicLandNames": {
         "en": {
@@ -324,7 +326,7 @@
         }
     ],
     "PrimarySets": [
-        "msh",
+        "ecl",
         "tla",
         "spm",
         "om1",
