@@ -7,7 +7,7 @@ import { Cards, CardVersionsByName } from "./Cards.js";
 import { SocketError } from "./Message.js";
 import { Card, CardColor, OracleID } from "./CardTypes.js";
 import { matchCardVersion } from "./parseCardList.js";
-import { hasOptionalProperty, hasProperty, isArrayOf, isObject, isRecord, isString, isUnknown } from "./TypeChecks.js";
+import { hasOptionalProperty, hasProperty, isArrayOf, isRecord, isString, isUnknown } from "./TypeChecks.js";
 
 const CUBECOBRA_LOG_ENDPOINT = process.env.CUBECOBRA_LOG_ENDPOINT;
 const CUBECOBRA_API_KEY = process.env.CUBECOBRA_API_KEY;

@@ -8,6 +8,7 @@
         67642,
         87586,
         51829,
+        101118,
         95179,
         92381,
         36802,
@@ -319,6 +320,7 @@
         70778,
         67019,
         70057,
+        101116,
         73127,
         74155,
         74159,
@@ -558,6 +560,7 @@
         70776,
         62125,
         92374,
+        101115,
         73142,
         85585,
         84595,
@@ -964,6 +967,7 @@
         58441,
         74142,
         67606,
+        101114,
         70761,
         80424,
         80414,
@@ -1333,6 +1337,7 @@
         76389,
         73144,
         72589,
+        101117,
         36788,
         74138,
         70509,
@@ -5512,6 +5517,9 @@
     ],
     "Invasion of Gobakhan // Lightshield Array": [
         84273
+    ],
+    "Yuffie, Materia Hunter": [
+        98113
     ],
     "Medomai the Ageless": [
         94472
@@ -11546,6 +11554,9 @@
     "Memory Vessel": [
         90674
     ],
+    "Barret, Avalanche Leader": [
+        98127
+    ],
     "Merciless Javelineer": [
         74049
     ],
@@ -15803,6 +15814,9 @@
     ],
     "Cradle of Safety": [
         78840
+    ],
+    "Locke, Treasure Hunter": [
+        98136
     ],
     "Authority of the Consuls": [
         93850,
@@ -26065,6 +26079,9 @@
         80263,
         80453
     ],
+    "Estinien Varlineau": [
+        98130
+    ],
     "Flaming Fist Duskguard": [
         81233
     ],
@@ -30649,6 +30666,9 @@
     "Ratadrabik of Urborg": [
         82265
     ],
+    "Tataru Taru": [
+        98078
+    ],
     "Steel Hellkite": [
         94109
     ],
@@ -32197,6 +32217,9 @@
     "Levitating Statue": [
         82721
     ],
+    "Lulu, Stern Guardian": [
+        98086
+    ],
     "Needlethorn Drake": [
         76616
     ],
@@ -32745,6 +32768,9 @@
     ],
     "Sorin, Imperious Bloodlord": [
         69900
+    ],
+    "Wakka, Devoted Guardian": [
+        98146
     ],
     "Lightfoot Rogue": [
         77216
@@ -40330,6 +40356,9 @@
     "Daze": [
         14009
     ],
+    "Aerith, Last Ancient": [
+        98124
+    ],
     "Indoctrination Attendant": [
         83716
     ],
@@ -40764,6 +40793,9 @@
     ],
     "Kotis, the Fangkeeper": [
         95726
+    ],
+    "Rikku, Resourceful Guardian": [
+        98089
     ],
     "Hopeful Vigil": [
         86701
@@ -42147,6 +42179,9 @@
     ],
     "Carpet of Flowers": [
         96273
+    ],
+    "Emet-Selch of the Third Seat": [
+        98129
     ],
     "Purphoros's Emissary": [
         94386
@@ -43872,6 +43907,9 @@
     ],
     "Mirror of Life Trapping": [
         81859
+    ],
+    "Mog, Moogle Warrior": [
+        98138
     ],
     "Growing Ranks": [
         94547

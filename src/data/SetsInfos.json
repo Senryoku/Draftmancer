@@ -1661,6 +1661,16 @@
         "block": "Mirrodin",
         "icon": "img/sets/mrd.svg"
     },
+    "msc": {
+        "code": "msc",
+        "fullName": "Marvel Super Heroes Commander",
+        "icon": "img/sets/msc.svg"
+    },
+    "msh": {
+        "code": "msh",
+        "fullName": "Marvel Super Heroes",
+        "icon": "img/sets/msh.svg"
+    },
     "mul": {
         "code": "mul",
         "fullName": "Multiverse Legends",
@@ -3230,6 +3240,11 @@
         "fullName": "Tarkir Dragonfury",
         "block": "Khans of Tarkir",
         "icon": "img/sets/ptkdf.svg"
+    },
+    "ptla": {
+        "code": "ptla",
+        "fullName": "Avatar: The Last Airbender Promos",
+        "icon": "img/sets/ptla.svg"
     },
     "ptmp": {
         "code": "ptmp",
