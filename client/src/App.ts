@@ -3800,7 +3800,7 @@ export default defineComponent({
 			if (this.burnedCardsPerRound > 0) return "Glimpse Draft";
 			return "Draft";
 		},
-		previousDeck() {
+		previousDeck(): { log: DraftLog; uid: string } | null {
 			if (this.draftLogs.length > 0 && this.draftLogs[this.draftLogs.length - 1].users[this.userID]) {
 				return {
 					log: this.draftLogs[this.draftLogs.length - 1],
