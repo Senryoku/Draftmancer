@@ -451,34 +451,41 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
             except ValueError:
                 pass
 
-            all_cards.append({k: c[k] for k in c if k in [
-                "id",
-                "oracle_id",
-                "name",
-                "printed_name",
-                "flavor_name",
-                "mana_cost",
-                "set",
-                "collector_number",
-                "lang",
-                "layout",
-                "type_line",
-                "rarity",
-                "arena_id",
-                "booster",
-                "card_faces",
-                "image_uris",
-                "oracle_text",
-                "keywords",
-                "finishes",
-                "frame_effects",
-                "image_status",
-                "promo",
-                "promo_types",
-                "released_at",
-                "related_cards",
-                "all_parts"
-            ]})
+            all_cards.append(
+                {
+                    k: c[k]
+                    for k in c
+                    if k
+                    in [
+                        "id",
+                        "oracle_id",
+                        "name",
+                        "printed_name",
+                        "flavor_name",
+                        "mana_cost",
+                        "set",
+                        "collector_number",
+                        "lang",
+                        "layout",
+                        "type_line",
+                        "rarity",
+                        "arena_id",
+                        "booster",
+                        "card_faces",
+                        "image_uris",
+                        "oracle_text",
+                        "keywords",
+                        "finishes",
+                        "frame_effects",
+                        "image_status",
+                        "promo",
+                        "promo_types",
+                        "released_at",
+                        "related_cards",
+                        "all_parts",
+                    ]
+                }
+            )
             copied += 1
             if handled % 1000 == 0:
                 print(f"\rPreProcessing...    {copied}/{handled} cards added...", end="", flush=True)
@@ -1208,6 +1215,7 @@ constants["PrimarySets"] = [
         "omb",
         "ecl",
         "tmt",
+        "msh",
     ]
 ]  # Exclude some codes that are actually part of larger sets (tsb, fmb1, h1r... see subsets), or aren't out yet
 with open("src/data/constants.json", "w", encoding="utf8") as constantsFile:
