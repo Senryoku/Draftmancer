@@ -4156,8 +4156,8 @@ export class ECLBoosterFactory extends BoosterFactory {
 	static readonly FableFrame = ECLBoosterFactory.filter(297, 346); // There are 10 uncommon, 26 rare, and 14 mythic rare fable frame cards.
 	static readonly BorderlessLand = ECLBoosterFactory.filter(347, 351); // Reversible shock lands
 
-	static readonly Basics = ECLBoosterFactory.filter(282, 286);
-	static readonly FullArtBasics = ECLBoosterFactory.filter(282, 286);
+	static readonly Basics = ECLBoosterFactory.filter(269, 273);
+	static readonly FullArtBasics = ECLBoosterFactory.filter(274, 283);
 
 	fableFrame: SlotedCardPool;
 	borderlessNonLand: SlotedCardPool;

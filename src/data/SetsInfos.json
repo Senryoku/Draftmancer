@@ -711,6 +711,11 @@
         "fullName": "Explorer Anthology 3",
         "icon": "img/sets/ea3.svg"
     },
+    "ecc": {
+        "code": "ecc",
+        "fullName": "Lorwyn Eclipsed Commander",
+        "icon": "img/sets/ecc.svg"
+    },
     "ecl": {
         "code": "ecl",
         "fullName": "Lorwyn Eclipsed",
