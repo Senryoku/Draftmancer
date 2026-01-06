@@ -1919,6 +1919,7 @@ export const SpecialGuests = {
 	dft: filterSetByNumber("spg", 84, 93),
 	tdm: filterSetByNumber("spg", 104, 113), // Next 5 SPG are exclusive to Collector Boosters
 	eoe: filterSetByNumber("spg", 119, 128),
+	ecl: filterSetByNumber("spg", 129, 148), // 20
 };
 
 // NOTE: This mimics the ratios of wildcard set boosters described here: https://magic.wizards.com/en/news/making-magic/set-boosters-2020-07-25
@@ -4138,6 +4139,184 @@ export class TLABoosterFactory extends BoosterFactory {
 			const foil = random.realZeroToOneInclusive() <= 1 / 5;
 			rest.push(getUnique(getRandom(pool), { foil }));
 		}
+
+		return rest;
+	}
+}
+
+// Lorwyn Eclipsed - https://magic.wizards.com/en/news/feature/collecting-lorwyn-eclipsed
+export class ECLBoosterFactory extends BoosterFactory {
+	static filter(min: number, max: number) {
+		return CardsBySet["ecl"].filter(
+			(c) => parseInt(getCard(c).collector_number) >= min && parseInt(getCard(c).collector_number) <= max
+		);
+	}
+
+	static readonly BorderlessNonLand = ECLBoosterFactory.filter(284, 296); // There are 5 rare and 8 mythic rare borderless cards
+	static readonly FableFrame = ECLBoosterFactory.filter(297, 346); // There are 10 uncommon, 26 rare, and 14 mythic rare fable frame cards.
+	static readonly BorderlessLand = ECLBoosterFactory.filter(347, 351); // Reversible shock lands
+
+	static readonly Basics = ECLBoosterFactory.filter(282, 286);
+	static readonly FullArtBasics = ECLBoosterFactory.filter(282, 286);
+
+	fableFrame: SlotedCardPool;
+	borderlessNonLand: SlotedCardPool;
+	borderlessLand: SlotedCardPool;
+
+	mainSetUncommons: CardPool = new CardPool();
+	spg: CardPool = new CardPool();
+
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
+		super(cardPool, landSlot, options);
+		this.fableFrame = cidsToSlotedCardPool(ECLBoosterFactory.FableFrame, options.maxDuplicates);
+		this.borderlessNonLand = cidsToSlotedCardPool(ECLBoosterFactory.BorderlessNonLand, options.maxDuplicates);
+		this.borderlessLand = cidsToSlotedCardPool(ECLBoosterFactory.BorderlessLand, options.maxDuplicates);
+
+		for (const cid of SpecialGuests["ecl"]) {
+			const c = getCard(cid);
+			this.spg.set(cid, options.maxDuplicates?.[c.rarity] ?? DefaultMaxDuplicates);
+		}
+		// Copy of the main set uncommons (without the 4 frame cards) for wildcard slots. This mean the max duplicate limit is not guaranteed.
+		for (const [cid, count] of this.cardPool.uncommon) this.mainSetUncommons.set(cid, count);
+		// Add the 10 frame uncommons to the main card pool
+		for (const [cid, count] of this.fableFrame["uncommon"]) this.cardPool.uncommon.set(cid, count);
+	}
+
+	generateBooster(targets: Targets) {
+		const updatedTargets = structuredClone(targets);
+		// 6–7 Commons
+		//     There are 81 commons from Lorwyn Eclipsed that can appear in these slots.
+		if (targets === DefaultBoosterTargets) updatedTargets.common = Math.max(0, updatedTargets.common - 3);
+		else updatedTargets.common = Math.max(1, updatedTargets.common - 2);
+
+		const booster: UniqueCard[] = [];
+
+		// In 1 of 55 Play Boosters, 1 of 20 Special Guests cards will replace a common.
+		const spgRoll = random.realZeroToOneInclusive();
+		if (spgRoll < 1 / 55) {
+			updatedTargets.common = Math.max(0, updatedTargets.common - 1);
+			booster.push(pickCard(this.spg, booster, { foil: false }));
+		}
+
+		// 3 Uncommons
+		//     There are 100 uncommons from the Lorwyn Eclipsed main set that can appear in these slots.
+		//     There are 10 uncommon fable frame cards that can appear in these slots (10%).
+		// NOTE: Uncommon fable cards are added to the card pool directly.
+
+		// 1 Traditional foil card of any rarity
+		//     A common (60.4%), uncommon (29.8%), rare (6.5%), or mythic rare (1.1%) card from the Lorwyn Eclipsed main set
+		//     An uncommon (1%), rare (1%), or mythic rare (less than 1%) fable frame card
+		//     A rare (less than 1%) or mythic rare (less than 1%) borderless nonland card
+		//     A borderless reversible shock land (less than 1%)
+		{
+			const pool = chooseWeighted(
+				[
+					60.4,
+					29.8,
+					6.5,
+					1.1,
+					1.0,
+					1.0,
+					// NOTE: Known percentages add up to 99.8
+					0.2 / 3, // FIXME
+					0.2 / 3, // FIXME
+					0.2 / 3, // FIXME
+				].map((w) => w / 100.0),
+				[
+					this.cardPool.common,
+					this.mainSetUncommons,
+					this.cardPool.rare,
+					this.cardPool.mythic,
+					this.fableFrame.uncommon,
+					this.fableFrame.rare,
+					this.fableFrame.mythic,
+					this.borderlessNonLand.rare,
+					this.borderlessNonLand.mythic,
+					this.borderlessLand.rare,
+				]
+			);
+			booster.push(pickCard(pool, booster, { foil: true }));
+		}
+
+		// 1 Rare or mythic rare
+		//     A rare (78.2%) or mythic rare (13.6%) card from the Lorwyn Eclipsed main set
+		//     A rare (4.6%) or mythic rare (1.2%) fable frame card
+		//     A rare (less than 1%) or mythic rare (less than 1%) borderless nonland card
+		//     A borderless reversible shock land (less than 1%)
+		while (updatedTargets.rare > 0) {
+			updatedTargets.rare -= 1;
+			const pool = chooseWeighted(
+				[
+					78.2,
+					13.6,
+					4.6,
+					1.2,
+					// NOTE: Known percentages add up to 97.6
+					2.4 / 3, // FIXME
+					2.4 / 3, // FIXME
+					2.4 / 3, // FIXME
+				].map((w) => w / 100.0),
+				[
+					this.cardPool.rare,
+					this.cardPool.mythic,
+					this.fableFrame.rare,
+					this.fableFrame.mythic,
+					this.borderlessNonLand.rare,
+					this.borderlessNonLand.mythic,
+					this.borderlessLand.rare,
+				]
+			);
+			booster.push(pickCard(pool, booster));
+		}
+
+		// 1 Wildcard of any rarity
+		//     A common (18%), uncommon (58%), rare (19%), or mythic rare (2%) card from the Lorwyn Eclipsed main set
+		//     An uncommon (2%), rare (less than 1%), or mythic rare (less than 1%) fable frame card
+		//     A rare (1%) or mythic rare (less than 1%) borderless nonland card
+		//     A borderless reversible shock land (less than 1%)
+		{
+			const pool = chooseWeighted(
+				[
+					18.0,
+					58.0,
+					19.0,
+					2.0,
+					2.0,
+					// NOTE: Known percentages add up to 99.0
+					1.0 / 5.0, // FIXME
+					1.0 / 5.0, // FIXME
+					1.0 / 5.0, // FIXME
+					1.0 / 5.0, // FIXME
+					1.0 / 5.0, // FIXME
+				].map((w) => w / 100.0),
+				[
+					this.cardPool.common,
+					this.mainSetUncommons,
+					this.cardPool.rare,
+					this.cardPool.mythic,
+					this.fableFrame.uncommon,
+					this.fableFrame.rare,
+					this.fableFrame.mythic,
+					this.borderlessNonLand.rare,
+					this.borderlessNonLand.mythic,
+					this.borderlessLand.rare,
+				]
+			);
+			booster.push(pickCard(pool, booster));
+		}
+
+		const rest = super.generateBooster(updatedTargets, booster);
+		if (isMessageError(rest)) return rest;
+
+		// 1 Basic land
+		//     A non-foil (40%) or traditional foil (10%) default frame basic land
+		//     A non-foil (40%) or traditional foil (10%) full-art basic land
+		// NOTE: Omitted
+		// {
+		// 	const pool = chooseWeighted([0.5, 0.5], [ECLBoosterFactory.Basics, ECLBoosterFactory.FullArtBasics]);
+		// 	const foil = random.realZeroToOneInclusive() <= 1 / 5;
+		// 	rest.push(getUnique(getRandom(pool), { foil }));
+		// }
 
 		return rest;
 	}
