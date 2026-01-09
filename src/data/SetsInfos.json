@@ -3362,6 +3362,11 @@
         "fullName": "Wizards Play Network 2025",
         "icon": "img/sets/pw25.svg"
     },
+    "pw26": {
+        "code": "pw26",
+        "fullName": "Wizards Play Network 2026",
+        "icon": "img/sets/pw26.svg"
+    },
     "pwar": {
         "code": "pwar",
         "fullName": "War of the Spark Promos",

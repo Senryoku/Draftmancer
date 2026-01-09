@@ -1,6 +1,13 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
+			<em>January 12, 2026</em>
+			<p>
+				<img src="img/sets/ecl.svg" class="set-icon" style="--invertedness: 100%" alt="ECL" /> Lorwyn Eclipsed
+				(ECL) is now available!
+			</p>
+		</div>
+		<div class="news">
 			<em>November 21, 2025</em>
 			<p>Improved Cube Cobra integration to better support Custom Cards.</p>
 			<p>Experimental support for Cube Cobra custom draft formats.</p>
@@ -13,7 +20,7 @@
 			</p>
 		</div>
 		<div class="news">
-			<em>September, 2025</em>
+			<em>September 05, 2025</em>
 			<p>
 				<img src="img/sets/spm.svg" class="set-icon" style="--invertedness: 100%" alt="SPM" /> Marvel's
 				Spider-Man (SPM) is now available.
@@ -38,13 +45,6 @@
 				now available!<br />
 			</p>
 			<p>New options for Silent Auction Draft.</p>
-		</div>
-		<div class="news">
-			<em>May 14, 2025</em>
-			<p>
-				New experimental game mode: Silent Auction Draft.<br />
-				Accessible from the "Other Game Modes" dropdown.
-			</p>
 		</div>
 	</div>
 </template>
