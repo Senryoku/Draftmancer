@@ -298,7 +298,7 @@ describe("Sets content", function () {
 		spm: { common: 65, uncommon: 55, rare: 53, mythic: 15 }, // 65 commons plus 10 dual lands
 		om1: { common: 65, uncommon: 55, rare: 53, mythic: 15 }, // 65 commons plus 10 dual lands
 		tla: { common: 81 + 10, uncommon: 110, rare: 60, mythic: 20 },
-		ecl: { common: 81 + 10, uncommon: 100, rare: 60, mythic: 20 },
+		ecl: { common: 81, uncommon: 100, rare: 65, mythic: 22 },
 	};
 
 	beforeEach(function (done) {
@@ -409,15 +409,15 @@ describe("Sets content", function () {
 		const filterRarity = (arr: string[], rarity: string) => {
 			return arr.filter((c) => getCard(c).rarity === rarity);
 		};
-		expect(SpecialGuests.ecl).to.have.lengthOf(20);
 		expect(ECLBoosterFactory.BorderlessNonLand).to.have.lengthOf(13);
 		expect(filterRarity(ECLBoosterFactory.BorderlessNonLand, "rare")).to.have.lengthOf(5);
 		expect(filterRarity(ECLBoosterFactory.BorderlessNonLand, "mythic")).to.have.lengthOf(8);
+		expect(SpecialGuests.ecl).to.have.lengthOf(20);
 
-		expect(ECLBoosterFactory.FableFrame).to.have.lengthOf(10 + 36 + 14);
 		expect(filterRarity(ECLBoosterFactory.FableFrame, "uncommon")).to.have.lengthOf(10);
 		expect(filterRarity(ECLBoosterFactory.FableFrame, "rare")).to.have.lengthOf(26);
 		expect(filterRarity(ECLBoosterFactory.FableFrame, "mythic")).to.have.lengthOf(14);
+		expect(ECLBoosterFactory.FableFrame).to.have.lengthOf(10 + 26 + 14);
 
 		expect(ECLBoosterFactory.BorderlessLand).to.have.lengthOf(5);
 		expect(filterRarity(ECLBoosterFactory.BorderlessLand, "rare")).to.have.lengthOf(5);

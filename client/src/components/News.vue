@@ -1,7 +1,7 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
-			<em>January 12, 2026</em>
+			<em>January 10, 2026</em>
 			<p>
 				<img src="img/sets/ecl.svg" class="set-icon" style="--invertedness: 100%" alt="ECL" /> Lorwyn Eclipsed
 				(ECL) is now available!
