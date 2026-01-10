@@ -1,5 +1,30 @@
 [
 	{
+		"date": "10/01/2026",
+		"notes": [
+			"Lorwyn Eclipsed (ECL) support."
+		]
+	},
+	{
+		"date": "21/11/2025",
+		"notes": [
+			"Improved Cube Cobra integration to better support Custom Cards.",
+			"Experimental support for Cube Cobra custom draft formats."
+		]
+	},
+	{
+		"date": "08/11/2025",
+		"notes": [
+			"Avatar: The Last Airbender (TLA) support."
+		]
+	},
+	{
+		"date": "05/09/2025",
+		"notes": [
+			"Marvel's Spider-Man (SPM) support."
+		]
+	},
+	{
 		"date": "19/07/2025",
 		"notes": [
 			"Edge of Eternities (EOE) support."

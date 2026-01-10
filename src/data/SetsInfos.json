@@ -711,6 +711,11 @@
         "fullName": "Explorer Anthology 3",
         "icon": "img/sets/ea3.svg"
     },
+    "ecc": {
+        "code": "ecc",
+        "fullName": "Lorwyn Eclipsed Commander",
+        "icon": "img/sets/ecc.svg"
+    },
     "ecl": {
         "code": "ecl",
         "fullName": "Lorwyn Eclipsed",
@@ -3356,6 +3361,11 @@
         "code": "pw25",
         "fullName": "Wizards Play Network 2025",
         "icon": "img/sets/pw25.svg"
+    },
+    "pw26": {
+        "code": "pw26",
+        "fullName": "Wizards Play Network 2026",
+        "icon": "img/sets/pw26.svg"
     },
     "pwar": {
         "code": "pwar",
