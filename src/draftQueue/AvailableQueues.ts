@@ -1,10 +1,11 @@
 import { QueueDescription } from "./QueueDescription";
 
 export const AvailableQueues: readonly QueueDescription[] = [
+	{ id: "ecl", name: "Lorwyn Eclipsed", playerCount: 8, setCode: "ecl" },
 	{ id: "tla", name: "Avatar: The Last Airbender", playerCount: 8, setCode: "tla" },
 	// { id: "spm", name: "Spider-Man", playerCount: 4, setCode: "spm", settings: { pickedCardsPerRound: 2 } },
 	{ id: "eoe", name: "Edge of Eternities", playerCount: 8, setCode: "eoe" },
-	{ id: "fin", name: "Final Fantasy", playerCount: 8, setCode: "fin" },
+	// { id: "fin", name: "Final Fantasy", playerCount: 8, setCode: "fin" },
 	// { id: "tdm", name: "Tarkir: Dragonstorm", playerCount: 8, setCode: "tdm" },
 	// { id: "dft", name: "Aetherdrift", playerCount: 8, setCode: "dft" },
 	// { id: "inr", name: "Innistrad Remastered", playerCount: 8, setCode: "inr" },
