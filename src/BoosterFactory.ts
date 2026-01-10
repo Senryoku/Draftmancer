@@ -4218,9 +4218,10 @@ export class ECLBoosterFactory extends BoosterFactory {
 					1.0,
 					1.0,
 					// NOTE: Known percentages add up to 99.8
-					0.2 / 3, // FIXME
-					0.2 / 3, // FIXME
-					0.2 / 3, // FIXME
+					0.2 / 4, // FIXME
+					0.2 / 4, // FIXME
+					0.2 / 4, // FIXME
+					0.2 / 4, // FIXME
 				].map((w) => w / 100.0),
 				[
 					this.cardPool.common,
@@ -4380,6 +4381,7 @@ export const SetSpecificFactories: {
 	spm: SPMBoosterFactory,
 	om1: OM1BoosterFactory,
 	tla: TLABoosterFactory,
+	ecl: ECLBoosterFactory,
 };
 
 export const getBoosterFactory = function (
