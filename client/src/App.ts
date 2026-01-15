@@ -142,6 +142,7 @@ const defaultSettings = {
 	displayCollectionStatus: true,
 	displayBotScores: false,
 	fixedDeck: false,
+	foilEffect: true,
 	pickOnDblclick: true,
 	enableSound: true,
 	enableNotifications: false,
@@ -420,6 +421,7 @@ export default defineComponent({
 			gameState: GameState.None,
 			displayBotScores: initialSettings.displayBotScores,
 			fixedDeck: initialSettings.fixedDeck,
+			foilEffect: initialSettings.foilEffect,
 
 			fixedDeckState: {
 				ht: 400,
@@ -4169,6 +4171,9 @@ export default defineComponent({
 			this.storeSettings();
 		},
 		displayBotScores() {
+			this.storeSettings();
+		},
+		foilEffect() {
 			this.storeSettings();
 		},
 		fixedDeck() {

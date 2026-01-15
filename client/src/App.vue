@@ -6,7 +6,7 @@
 			--card-back-image: url(${cardBackImage});
 			--card-title-height-factor: ${cardTitleHeightFactor};
 		`"
-		:class="{ 'using-fixed-deck': displayFixedDeck }"
+		:class="{ 'using-fixed-deck': displayFixedDeck, 'no-foil-effect': !foilEffect }"
 	>
 		<!-- Personal Options -->
 		<div id="view-controls" class="main-controls">
@@ -118,6 +118,20 @@
 				</button>
 			</div>
 			<span class="personal-settings">
+				<div
+					class="clickable personal-settings-icon"
+					:class="{ faded: !foilEffect, crossed: !foilEffect }"
+					@click="foilEffect = !foilEffect"
+					v-tooltip="{
+						content: `Foil effect: <strong>${foilEffect ? 'Enabled' : 'Disabled'}</strong>`,
+						html: true,
+					}"
+					tabindex="0"
+				>
+					<div style="margin-top: 1px" alt="Foil Effect Toggle">
+						<img src="./assets/img/foil.svg" width="auto" height="18px" alt="Foil Effect Toggle" />
+					</div>
+				</div>
 				<div
 					class="clickable personal-settings-icon"
 					:class="{ faded: !fixedDeck, crossed: !fixedDeck }"

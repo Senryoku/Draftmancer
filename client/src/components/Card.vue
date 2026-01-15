@@ -234,7 +234,7 @@ function keyUp(event: KeyboardEvent) {
 </style>
 
 <style>
-.foil:not(.booster-open-enter-active) {
+#main-container:not(.no-foil-effect) .foil:not(.booster-open-enter-active) {
 	&:not(:hover) {
 		.inner-card-image,
 		.inner-card-image:after,
