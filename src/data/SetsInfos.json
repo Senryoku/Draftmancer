@@ -3766,6 +3766,11 @@
         "fullName": "Tarkir: Dragonstorm",
         "icon": "img/sets/tdm.svg"
     },
+    "tecc": {
+        "code": "tecc",
+        "fullName": "Lorwyn Eclipsed Commander Tokens",
+        "icon": "img/sets/tecc.svg"
+    },
     "tfth": {
         "code": "tfth",
         "fullName": "Face the Hydra",
