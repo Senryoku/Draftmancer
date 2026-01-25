@@ -2353,6 +2353,11 @@
         "fullName": "Duels of the Planeswalkers 2009 Promos",
         "icon": "img/sets/pdtp.svg"
     },
+    "pecl": {
+        "code": "pecl",
+        "fullName": "Lorwyn Eclipsed Promos",
+        "icon": "img/sets/pecl.svg"
+    },
     "peld": {
         "code": "peld",
         "fullName": "Throne of Eldraine Promos",
@@ -2657,6 +2662,11 @@
         "code": "pl25",
         "fullName": "Year of the Snake 2025",
         "icon": "img/sets/pl25.svg"
+    },
+    "pl26": {
+        "code": "pl26",
+        "fullName": "Year of the Horse 2026",
+        "icon": "img/sets/pl26.svg"
     },
     "plc": {
         "code": "plc",

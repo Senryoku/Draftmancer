@@ -7653,6 +7653,7 @@
         93729
     ],
     "Roast": [
+        60835,
         60835
     ],
     "Ugin, the Spirit Dragon": [
@@ -9826,6 +9827,10 @@
     "Crystalline Armor": [
         98282
     ],
+    "Rakdos Charm": [
+        89540,
+        89540
+    ],
     "Grafted Identity": [
         78390
     ],
@@ -11395,6 +11400,10 @@
     ],
     "Wedgelight Rammer": [
         96617
+    ],
+    "Triton Shorestalker": [
+        55263,
+        55263
     ],
     "Unwinding Clock": [
         82860,
@@ -16140,6 +16149,10 @@
     "Anthem of Champions": [
         93829
     ],
+    "Magmatic Insight": [
+        61379,
+        61379
+    ],
     "Lorehold Excavation": [
         76608
     ],
@@ -17339,6 +17352,9 @@
     ],
     "Intrusive Packbeast": [
         68478
+    ],
+    "A-Sorin, Imperious Bloodlord": [
+        69900
     ],
     "Bag of Holding": [
         70007,
@@ -23604,6 +23620,7 @@
         90828
     ],
     "Kazuul's Toll Collector": [
+        62387,
         62387
     ],
     "Hobbling Zombie": [
@@ -24716,6 +24733,10 @@
     ],
     "Treasure Chest": [
         77357
+    ],
+    "Battle at the Bridge": [
+        64319,
+        64319
     ],
     "Grievous Wound": [
         92180
@@ -25864,9 +25885,6 @@
     ],
     "Graf Mole": [
         86249
-    ],
-    "Battle at the Bridge": [
-        64319
     ],
     "Mai, Scornful Striker": [
         97384
@@ -28271,6 +28289,10 @@
     "Mask of Griselbrand": [
         78456
     ],
+    "Warping Wail": [
+        62187,
+        62187
+    ],
     "Appa, Steadfast Guardian": [
         97283
     ],
@@ -28857,6 +28879,10 @@
     "Brokers' Safeguard": [
         81957
     ],
+    "Nissa's Defeat": [
+        65723,
+        65723
+    ],
     "Spectral Interference": [
         94865
     ],
@@ -28879,13 +28905,11 @@
     "Howling Galefang": [
         86883
     ],
-    "Nissa's Defeat": [
-        65723
-    ],
     "Gate to Seatower": [
         81290
     ],
     "Borborygmos Enraged": [
+        53309,
         53309
     ],
     "Gifted Aetherborn": [
@@ -28933,6 +28957,7 @@
         79477
     ],
     "Sanctum of Ugin": [
+        62099,
         62099
     ],
     "Gluttonous Troll": [
@@ -29236,9 +29261,6 @@
     "Arcbound Tracker": [
         76066,
         76066
-    ],
-    "Triton Shorestalker": [
-        55263
     ],
     "Defiler of Dreams": [
         82098
@@ -35527,6 +35549,9 @@
     ],
     "Waltz of Rage": [
         92253
+    ],
+    "Encroaching Wastes": [
+        75890
     ],
     "Delver of Secrets // Insectile Aberration": [
         78378
@@ -45528,9 +45553,6 @@
     "Ripchain Razorkin": [
         92240
     ],
-    "Magmatic Insight": [
-        61379
-    ],
     "Rubble Slinger": [
         69345
     ],
@@ -45990,9 +46012,6 @@
     "Abyssal Harvester": [
         93767
     ],
-    "Warping Wail": [
-        62187
-    ],
     "Stormbeacon Blade": [
         95543
     ],
@@ -46410,6 +46429,9 @@
     ],
     "Mouth // Feed": [
         73982
+    ],
+    "A-Vivi Ornitier": [
+        102111
     ],
     "Rufus Shinra": [
         96113
@@ -47694,9 +47716,6 @@
     ],
     "Dream Devourer": [
         75129
-    ],
-    "Rakdos Charm": [
-        89540
     ],
     "Hurloon Battle Hymn": [
         82183
