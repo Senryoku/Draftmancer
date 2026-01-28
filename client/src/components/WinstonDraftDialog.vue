@@ -8,7 +8,7 @@
 				<p>
 					Winston Draft is a draft variant designed for two players, but extentable to more participants.<br />
 					Players take turns choosing between 3 growing piles of cards, or drawing a random one.<br />
-					<a href="https://mtg.gamepedia.com/Winston_Draft" target="_blank" rel="noopener nofollow">
+					<a href="https://mtg.wiki/page/Winston_Draft" target="_blank" rel="noopener nofollow">
 						<font-awesome-icon icon="fa-solid fa-external-link-alt" /> More information
 					</a>
 				</p>
