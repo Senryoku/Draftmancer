@@ -26,6 +26,7 @@ const MTGASetConversions: { [key: string]: string } = {
 	YDFT: "Y25",
 	YTDM: "Y25",
 	YEOE: "Y25",
+	YECL: "Y26",
 };
 
 export function fixSetCode(set: SetCode) {
