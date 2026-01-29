@@ -2317,6 +2317,7 @@
 									<option value="regular">Regular</option>
 									<option value="shufflePlayerBoosters">Shuffle Player Boosters</option>
 									<option value="shuffleBoosterPool">Shuffle Booster Pool</option>
+									<option value="staggered">Staggered</option>
 								</select>
 							</div>
 							<hr style="margin: 0.4em 1em; color: #555" />

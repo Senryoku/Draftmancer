@@ -17,7 +17,7 @@ export type UserData = {
 	boosterCount?: number;
 };
 
-export type DistributionMode = "regular" | "shufflePlayerBoosters" | "shuffleBoosterPool";
+export type DistributionMode = "regular" | "shufflePlayerBoosters" | "shuffleBoosterPool" | "staggered";
 export type DraftLogRecipients = "none" | "owner" | "delayed" | "everyone";
 
 export type DisconnectedUser = {

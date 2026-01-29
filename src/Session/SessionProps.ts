@@ -76,7 +76,7 @@ export const SessionsSettingsProps: { [propName: string]: (val: unknown) => bool
 	sendResultsToCubeCobra: isBoolean,
 	distributionMode(val: unknown): val is DistributionMode {
 		if (!isString(val)) return false;
-		return ["regular", "shufflePlayerBoosters", "shuffleBoosterPool"].includes(val);
+		return ["regular", "shufflePlayerBoosters", "shuffleBoosterPool", "staggered"].includes(val);
 	},
 	customBoosters: isArrayOf(isString),
 	doubleMastersMode: isBoolean,

@@ -1382,6 +1382,7 @@ describe("Single Draft (Two Players)", function () {
 			"regular",
 			"shufflePlayerBoosters",
 			"shuffleBoosterPool",
+			"staggered",
 		] as DistributionMode[]) {
 			it(`Setting distributionMode to ${distributionMode}.`, function (done) {
 				clients[nonOwnerIdx].once("sessionOptions", function (data) {
@@ -1410,11 +1411,10 @@ describe("Single Draft (Two Players)", function () {
 			endDraft(boosterValidation);
 			if (distributionMode === "regular") expectCardCount(2 * 15 + 14);
 
-			if (distributionMode === "shufflePlayerBoosters") {
+			if (distributionMode === "shufflePlayerBoosters" || distributionMode === "staggered") {
 				it("each player should have one booster of each set", function () {
 					for (const cid in boostersPerClient) {
 						const boosters = boostersPerClient[cid];
-						//console.error(boosters);
 						expect(boosters.length).to.equal(CustomBoosters.length);
 						const sets = [...new Set(boosters.flat().map((c) => c.set))];
 						expect(sets.length).to.equal(CustomBoosters.length);
@@ -1453,6 +1453,7 @@ describe("Single Draft (Two Players)", function () {
 			"regular",
 			"shufflePlayerBoosters",
 			"shuffleBoosterPool",
+			"staggered",
 		] as DistributionMode[]) {
 			const counts: Record<string, number> = {};
 			it(`Setting distributionMode to ${distributionMode}.`, function (done) {
@@ -1496,6 +1497,7 @@ describe("Single Draft (Two Players)", function () {
 			"regular",
 			"shufflePlayerBoosters",
 			"shuffleBoosterPool",
+			"staggered",
 		] as DistributionMode[]) {
 			const counts: Record<string, number> = {};
 			it(`Setting distributionMode to ${distributionMode}.`, function (done) {

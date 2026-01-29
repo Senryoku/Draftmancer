@@ -816,13 +816,24 @@ export class Session implements IIndexable {
 			boosterFactories.push(usedSets[boosterSet]);
 		}
 
-		// Implements distribution mode 'shufflePlayerBoosters'
-		if (this.distributionMode === "shufflePlayerBoosters") {
+		// Implements distribution modes 'shufflePlayerBoosters' and 'staggered'
+		if (this.distributionMode === "shufflePlayerBoosters" || this.distributionMode === "staggered") {
 			const boosterPerPlayer = Math.floor(boosterFactories.length / playerCount);
 			for (let offset = 0; offset < playerCount; ++offset) {
-				const tmp = [];
+				let tmp = [];
 				for (let i = 0; i < boosterPerPlayer; ++i) tmp.push(boosterFactories[offset + i * playerCount]);
-				shuffleArray(tmp);
+				switch (this.distributionMode) {
+					case "shufflePlayerBoosters": {
+						shuffleArray(tmp);
+						break;
+					}
+					case "staggered": {
+						const shifted = [];
+						for (let i = 0; i < boosterPerPlayer; ++i) shifted.push(tmp[(i + offset) % boosterPerPlayer]);
+						tmp = shifted;
+						break;
+					}
+				}
 				for (let i = 0; i < boosterPerPlayer; ++i) boosterFactories[offset + i * playerCount] = tmp[i];
 			}
 		}

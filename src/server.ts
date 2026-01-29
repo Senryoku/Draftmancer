@@ -27,7 +27,7 @@ import { Constants } from "./Constants.js";
 import { InactiveConnections, InactiveSessions, restoreSession, getPoDSession, copyPODProps } from "./Persistence.js";
 import { Connection, Connections } from "./Connection.js";
 import { DistributionMode, DraftLogRecipients, ReadyState } from "./Session/SessionTypes";
-import { Hooks, Session, Sessions, getPublicSessionData } from "./Session.js";
+import { Session, Sessions, getPublicSessionData } from "./Session.js";
 import {
 	CardID,
 	Card,
