@@ -836,6 +836,7 @@ ul.player-table {
 		font-size: 2rem;
 		transition: all 0.2s ease-in-out;
 		transform-origin: center;
+		will-change: transform;
 	}
 
 	li:nth-child(6):after,
@@ -890,17 +891,17 @@ ul.player-table {
 		li:nth-child(4):after,
 		&.six li:nth-child(2):after,
 		&.six li:nth-child(3):after {
-			transform: rotate(180deg);
+			transform: rotateY(180deg);
 		}
 
 		li:nth-child(5):before,
 		&.six li:nth-child(4):before {
-			transform: translateX(-50%) rotate(90deg);
+			transform: translateX(-50%) rotate(-90deg) rotateY(180deg);
 		}
 
 		li:nth-child(1):before,
 		&.six li:nth-child(1):before {
-			transform: translateX(-50%) rotate(-90deg);
+			transform: translateX(-50%) rotate(90deg) rotateY(180deg);
 		}
 	}
 }
