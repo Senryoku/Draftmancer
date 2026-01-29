@@ -77,6 +77,7 @@
 					'player-table': type === 'Draft' && tableSummary.length <= 8,
 					'player-list-log': type !== 'Draft' || tableSummary.length > 8,
 					six: type === 'Draft' && tableSummary.length === 6,
+					'reversed-passing-order': displayOptions.category === 'Picks' && displayOptions.pack % 2 === 1,
 				}"
 			>
 				<li
@@ -371,7 +372,7 @@ export default defineComponent({
 	data() {
 		const displayOptions: {
 			detailsUserID?: UserID;
-			category: string;
+			category: "Deck" | "Cards" | "Picks" | "Picks Summary";
 			textList: boolean;
 			pack: number;
 			pick: number;
@@ -789,96 +790,119 @@ ul.player-list-log > li {
 	margin-right: 0.25em;
 }
 
-ul.player-table li:nth-child(1) {
-	order: 1;
-}
-ul.player-table li:nth-child(2) {
-	order: 2;
-}
-ul.player-table li:nth-child(3) {
-	order: 3;
-}
-ul.player-table li:nth-child(4) {
-	order: 4;
-}
-ul.player-table li:nth-child(5) {
-	order: 8;
-}
-ul.player-table li:nth-child(6) {
-	order: 7;
-}
-ul.player-table li:nth-child(7) {
-	order: 6;
-}
-ul.player-table li:nth-child(8) {
-	order: 5;
-}
+ul.player-table {
+	li:nth-child(1) {
+		order: 1;
+	}
+	li:nth-child(2) {
+		order: 2;
+	}
+	li:nth-child(3) {
+		order: 3;
+	}
+	li:nth-child(4) {
+		order: 4;
+	}
+	li:nth-child(5) {
+		order: 8;
+	}
+	li:nth-child(6) {
+		order: 7;
+	}
+	li:nth-child(7) {
+		order: 6;
+	}
+	li:nth-child(8) {
+		order: 5;
+	}
 
-ul.player-table.six li:nth-child(4) {
-	order: 6;
-}
-ul.player-table.six li:nth-child(5) {
-	order: 5;
-}
-ul.player-table.six li:nth-child(6) {
-	order: 4;
-}
+	&.six {
+		li:nth-child(4) {
+			order: 6;
+		}
+		li:nth-child(5) {
+			order: 5;
+		}
+		li:nth-child(6) {
+			order: 4;
+		}
+	}
 
-ul.player-table li:nth-child(6):after,
-ul.player-table li:nth-child(7):after,
-ul.player-table li:nth-child(8):after,
-ul.player-table.six li:nth-child(5):after,
-ul.player-table.six li:nth-child(6):after {
-	position: absolute;
-	top: 0;
-	right: calc(-2rem + 1px);
-	font-family: "Mini Font Awesome 5 Free";
-	font-weight: 900;
-	font-size: 2rem;
-	content: "\f100"; /* << */
-}
+	li:after,
+	li:before {
+		position: absolute;
+		font-family: "Mini Font Awesome 5 Free";
+		font-weight: 900;
+		font-size: 2rem;
+		transition: all 0.2s ease-in-out;
+		transform-origin: center;
+	}
 
-ul.player-table li:nth-child(2):after,
-ul.player-table li:nth-child(3):after,
-ul.player-table li:nth-child(4):after,
-ul.player-table.six li:nth-child(2):after,
-ul.player-table.six li:nth-child(3):after {
-	position: absolute;
-	top: 0;
-	left: calc(-2rem + 1px);
-	font-family: "Mini Font Awesome 5 Free";
-	font-weight: 900;
-	font-size: 2rem;
-	content: "\f101"; /* >> */
-}
+	li:nth-child(6):after,
+	li:nth-child(7):after,
+	li:nth-child(8):after,
+	&.six li:nth-child(5):after,
+	&.six li:nth-child(6):after {
+		top: 0;
+		right: calc(-2rem + 1px);
+		content: "\f100"; /* << */
+	}
 
-ul.player-table li:nth-child(5):before,
-ul.player-table.six li:nth-child(4):before {
-	position: absolute;
-	top: calc(-2rem - 2px);
-	left: calc(50%);
-	font-family: "Mini Font Awesome 5 Free";
-	font-weight: 900;
-	font-size: 2rem;
-	content: "\f100";
-	transform: translateX(-50%) rotate(-90deg);
-}
+	li:nth-child(2):after,
+	li:nth-child(3):after,
+	li:nth-child(4):after,
+	&.six li:nth-child(2):after,
+	&.six li:nth-child(3):after {
+		top: 0;
+		left: calc(-2rem + 1px);
+		content: "\f101"; /* >> */
+	}
 
-ul.player-table li:nth-child(1):before,
-ul.player-table.six li:nth-child(1):before {
-	position: absolute;
-	bottom: calc(-2rem - 2px);
-	left: calc(50%);
-	font-family: "Mini Font Awesome 5 Free";
-	font-weight: 900;
-	font-size: 2rem;
-	content: "\f100";
-	transform: translateX(-50%) rotate(90deg);
-}
+	li:nth-child(5):before,
+	&.six li:nth-child(4):before {
+		top: calc(-2rem - 2px);
+		left: calc(50%);
+		content: "\f100";
+		transform: translateX(-50%) rotate(-90deg);
+	}
 
-ul.player-table.six li:nth-child(4):after,
-ul.player-table.six li:nth-child(5):before {
-	content: "";
+	li:nth-child(1):before,
+	&.six li:nth-child(1):before {
+		bottom: calc(-2rem - 2px);
+		left: calc(50%);
+		content: "\f100";
+		transform: translateX(-50%) rotate(90deg);
+	}
+
+	&.six li:nth-child(4):after,
+	&.six li:nth-child(5):before {
+		content: "";
+	}
+
+	&.reversed-passing-order {
+		li:nth-child(6):after,
+		li:nth-child(7):after,
+		li:nth-child(8):after,
+		&.six li:nth-child(5):after,
+		&.six li:nth-child(6):after,
+		li:nth-child(2):after,
+		li:nth-child(3):after,
+		li:nth-child(4):after,
+		&.six li:nth-child(2):after,
+		&.six li:nth-child(3):after {
+			transform: rotate(180deg);
+		}
+
+		li:nth-child(5):before,
+		&.six li:nth-child(4):before {
+			transform: translateX(-50%) rotate(90deg);
+		}
+
+		li:nth-child(1):before,
+		&.six li:nth-child(1):before {
+			transform: translateX(-50%) rotate(-90deg);
+		}
+	}
 }
 
 .player-button.selected-player {
@@ -898,17 +922,17 @@ ul.player-table.six li:nth-child(5):before {
 	box-shadow:
 		inset 2px 2px 2px 0px rgba(255, 255, 255, 0.2),
 		inset -2px -2px 2px 0px rgba(0, 0, 0, 0.2);
-}
 
-.player-button.clickable:not(.selected-player):hover {
-	background-color: #585858;
-	color: white;
-}
+	&:hover {
+		background-color: #585858;
+		color: white;
+	}
 
-.player-button.clickable:not(.selected-player):active {
-	box-shadow:
-		inset 2px 2px 2px 0px rgba(0, 0, 0, 0.2),
-		inset -2px -2px 2px 0px rgba(255, 255, 255, 0.2);
+	&:active {
+		box-shadow:
+			inset 2px 2px 2px 0px rgba(0, 0, 0, 0.2),
+			inset -2px -2px 2px 0px rgba(255, 255, 255, 0.2);
+	}
 }
 </style>
 
