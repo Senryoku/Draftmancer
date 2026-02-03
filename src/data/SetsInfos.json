@@ -3004,7 +3004,7 @@
     },
     "pptk": {
         "code": "pptk",
-        "fullName": "Portal: Three Kingdoms Promos",
+        "fullName": "Portal Three Kingdoms Promos",
         "block": "Portal",
         "icon": "img/sets/pptk.svg"
     },
@@ -3620,6 +3620,16 @@
         "fullName": "Kamigawa: Neon Dynasty Substitute Cards",
         "icon": "img/sets/sneo.svg"
     },
+    "soa": {
+        "code": "soa",
+        "fullName": "Secrets of Strixhaven Mystical Archive",
+        "icon": "img/sets/soa.svg"
+    },
+    "soc": {
+        "code": "soc",
+        "fullName": "Secrets of Strixhaven Commander",
+        "icon": "img/sets/soc.svg"
+    },
     "soi": {
         "code": "soi",
         "fullName": "Shadows over Innistrad",
@@ -3637,6 +3647,11 @@
         "fullName": "Scars of Mirrodin",
         "block": "Scars of Mirrodin",
         "icon": "img/sets/som.svg"
+    },
+    "sos": {
+        "code": "sos",
+        "fullName": "Secrets of Strixhaven",
+        "icon": "img/sets/sos.svg"
     },
     "spe": {
         "code": "spe",
@@ -4192,6 +4207,11 @@
         "code": "ydsk",
         "fullName": "Alchemy: Duskmourn",
         "icon": "img/sets/ydsk.svg"
+    },
+    "yecl": {
+        "code": "yecl",
+        "fullName": "Alchemy: Lorwyn Eclipsed",
+        "icon": "img/sets/yecl.svg"
     },
     "yeoe": {
         "code": "yeoe",
