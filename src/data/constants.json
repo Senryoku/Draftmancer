@@ -326,7 +326,6 @@
         }
     ],
     "PrimarySets": [
-        "sos",
         "ecl",
         "tla",
         "spm",
