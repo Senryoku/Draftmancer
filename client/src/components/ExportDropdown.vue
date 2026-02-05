@@ -37,11 +37,12 @@
 				</button>
 			</div>
 			<template v-if="hasCustomCards">
+				<div class="header">External services</div>
 				<button
 					@click="exportDeckToFaBrary()"
 					v-tooltip.right="'Export directly to FaBrary, the Flesh and Blood library.'"
 				>
-					<font-awesome-icon icon="fa-solid fa-external-link-alt" class="button-icon" />to FaBrary
+					<font-awesome-icon icon="fa-solid fa-external-link-alt" class="button-icon" />FaBrary
 				</button>
 				<div class="header">Cubecana</div>
 				<button
@@ -163,7 +164,13 @@ function exportDeckToFaBrary() {
 function exportToCubecana(site: "inktable" | "lorcanito" | "tts") {
 	const cardNames = exportDeckMTGA(false);
 	// FIXME: btoa doesn't support codepoints above 0xFF.
-	window.open(`https://www.cubecana.com/play?export=${site}&deck=${btoa(cardNames)}`);
+	window.open(`https://www.cubecana.com/play?export=${site}&deck=${encodeURIComponent(btoa(cardNames))}`);
+	// Alternatives:
+	//   via UTF-8:
+	// const binString = Array.from(new TextEncoder().encode(cardNames), (byte) => String.fromCodePoint(byte)).join("");
+	// window.open(`https://www.cubecana.com/play?export=${site}&deck=${encodeURIComponent(btoa(binString))}`);
+	//   Just URL-encoded:
+	// window.open(`https://www.cubecana.com/play?export=${site}&deck=${encodeURIComponent(cardNames)}`);
 }
 
 function collectorNumberList(): string {
