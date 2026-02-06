@@ -163,14 +163,7 @@ function exportDeckToFaBrary() {
 
 function exportToCubecana(site: "inktable" | "lorcanito" | "tts") {
 	const cardNames = exportDeckMTGA(false);
-	// FIXME: btoa doesn't support codepoints above 0xFF.
-	window.open(`https://www.cubecana.com/play?export=${site}&deck=${encodeURIComponent(btoa(cardNames))}`);
-	// Alternatives:
-	//   via UTF-8:
-	// const binString = Array.from(new TextEncoder().encode(cardNames), (byte) => String.fromCodePoint(byte)).join("");
-	// window.open(`https://www.cubecana.com/play?export=${site}&deck=${encodeURIComponent(btoa(binString))}`);
-	//   Just URL-encoded:
-	// window.open(`https://www.cubecana.com/play?export=${site}&deck=${encodeURIComponent(cardNames)}`);
+	window.open(`https://www.cubecana.com/play?export=${site}&deck=${encodeURIComponent(cardNames)}`);
 }
 
 function collectorNumberList(): string {
