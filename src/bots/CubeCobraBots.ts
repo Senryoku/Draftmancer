@@ -5,6 +5,7 @@ import { OracleID } from "../CardTypes";
 import util from "util";
 import assert from "assert";
 import { chunks } from "../utils.js";
+import { nextTick } from "process";
 
 const BatchSizeLimit = 20;
 const BotRequestTimeout = 10000; // ms
@@ -78,7 +79,7 @@ async function processQueue() {
 	if (requestQueue.length === 0) return;
 	const queue = requestQueue.splice(0, requestQueue.length); // Take ownership of pending requests.
 
-	console.log(`Processing Cube Cobra bots scores queue: ${queue.length} requests...`);
+	console.log(`Processing Cube Cobra bots scores queue: ${queue.length} requests.`);
 
 	try {
 		// Revert to single request mode if we have only one request.
@@ -118,17 +119,22 @@ async function singleRequest(body: PredictBody): Promise<Prediction[]> {
 async function requestScores(body: PredictBody): Promise<Prediction[]> {
 	if (EnableBatchRequests && CubeCobraBots.batchEndpoint) {
 		// First request this tick: schedule their processing "soonish".
-		//   Using setImmediate to allow some more requests to come in. nextTick works fine too, but
-		//   would limit batching to a single session basically (all calls from a draft start for example).
-		//   setImmediate is more lenient, at the cost of some latency.
 		if (requestQueue.length === 0) {
-			if (BatchWindow <= 0) {
-				setImmediate(processQueue);
-			} else {
+			if (BatchWindow > 0) {
 				setTimeout(processQueue, BatchWindow);
+			} else {
+				//   Using setImmediate to allow some more requests to come in. nextTick works fine too, but
+				//   would limit batching to a single session basically (all calls from a draft start for example).
+				//   setImmediate is more lenient, at the cost of some latency.
+				setImmediate(processQueue);
 			}
 		}
-		return new Promise<Prediction[]>((resolve, reject) => requestQueue.push({ body, resolve, reject }));
+		const promise = new Promise<Prediction[]>((resolve, reject) => requestQueue.push({ body, resolve, reject }));
+		if (requestQueue.length == BatchSizeLimit && BatchWindow > 0) {
+			// This request will lets us fill a full batch: Send it now.
+			processQueue();
+		}
+		return promise;
 	} else if (CubeCobraBots.endpoint) {
 		return singleRequest(body);
 	}
