@@ -134,3 +134,10 @@ function stopPropagation(e: Event) {
 	flex-direction: column;
 }
 </style>
+<style>
+.header {
+	font-variant: small-caps;
+	font-size: 0.75em;
+	margin: 0 0 0 0.25rem;
+}
+</style>

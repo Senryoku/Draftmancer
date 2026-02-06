@@ -27,12 +27,6 @@
 			<button @click="exportDeckMTGO()" v-tooltip.right="'Download .deck file for MTGO'">
 				<img class="set-icon button-icon" src="../assets/img/mtgo-icon.webp" /> MTGO .dek
 			</button>
-			<button
-				@click="exportDeckToFaBrary()"
-				v-tooltip.right="'Export directly to FaBrary, the Flesh and Blood library.'"
-			>
-				<font-awesome-icon icon="fa-solid fa-external-link-alt" class="button-icon" />to FaBrary
-			</button>
 			<div class="row">
 				<button @click="clipboardCollectorNumber()" v-tooltip.top="'Export collector number list'">
 					<font-awesome-icon icon="fa-solid fa-clipboard" class="button-icon" />
@@ -42,11 +36,40 @@
 					<font-awesome-icon icon="fa-solid fa-file-download" class="button-icon" />
 				</button>
 			</div>
+			<template v-if="hasCustomCards">
+				<div class="header">External services</div>
+				<button
+					@click="exportDeckToFaBrary()"
+					v-tooltip.right="'Export directly to FaBrary, the Flesh and Blood library.'"
+				>
+					<font-awesome-icon icon="fa-solid fa-external-link-alt" class="button-icon" />FaBrary
+				</button>
+				<div class="header">Cubecana</div>
+				<button
+					@click="exportToCubecana('lorcanito')"
+					v-tooltip.right="'Export directly to Lorcanito via Cubecana.'"
+				>
+					<font-awesome-icon icon="fa-solid fa-external-link-alt" class="button-icon" />Lorcanito
+				</button>
+				<button
+					@click="exportToCubecana('inktable')"
+					v-tooltip.right="'Export directly to Inktable  via Cubecana.'"
+				>
+					<font-awesome-icon icon="fa-solid fa-external-link-alt" class="button-icon" />Inktable
+				</button>
+				<button
+					@click="exportToCubecana('tts')"
+					v-tooltip.right="'Export directly to Tabletop Simulator via Cubecana.'"
+				>
+					<font-awesome-icon icon="fa-solid fa-external-link-alt" class="button-icon" />TTS
+				</button>
+			</template>
 		</template>
 	</Dropdown>
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
 import Dropdown from "./Dropdown.vue";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
@@ -85,6 +108,8 @@ const props = withDefaults(
 		},
 	}
 );
+
+const hasCustomCards = computed(() => props.deck.some((c) => c.is_custom) || props.sideboard.some((c) => c.is_custom));
 
 function exportDeckMTGA(full = true) {
 	return exportToMTGA(props.deck, props.sideboard, props.language, props.options.lands, {
@@ -134,6 +159,11 @@ function exportDeckToFaBrary() {
 	for (const cardID of cardIDs) url += `&cards=${cardID}`;
 
 	window.open(url);
+}
+
+function exportToCubecana(site: "inktable" | "lorcanito" | "tts") {
+	const cardNames = exportDeckMTGA(false);
+	window.open(`https://www.cubecana.com/play?export=${site}&deck=${encodeURIComponent(cardNames)}`);
 }
 
 function collectorNumberList(): string {
