@@ -17,6 +17,12 @@ export const CubeCobraBots = {
 };
 
 const EnableBatchRequests = CubeCobraBots.batchEndpoint !== undefined && (process.env.CUBECOBRA_BOTS_BATCH ?? true);
+let BatchWindow = 1000; //  ms.
+
+export function setBatchWindow(ms: number) {
+	BatchWindow = Math.min(2000, Math.max(0, ms));
+	console.log(`Bot batch window set to ${BatchWindow} ms.`);
+}
 
 type Prediction = {
 	oracle: OracleID;
@@ -71,6 +77,9 @@ function reportBatchError(e: unknown, chunk: typeof requestQueue) {
 async function processQueue() {
 	if (requestQueue.length === 0) return;
 	const queue = requestQueue.splice(0, requestQueue.length); // Take ownership of pending requests.
+
+	console.log(`Processing Cube Cobra bots scores queue: ${queue.length} requests...`);
+
 	try {
 		// Revert to single request mode if we have only one request.
 		if (queue.length === 1 && CubeCobraBots.endpoint)
@@ -112,7 +121,13 @@ async function requestScores(body: PredictBody): Promise<Prediction[]> {
 		//   Using setImmediate to allow some more requests to come in. nextTick works fine too, but
 		//   would limit batching to a single session basically (all calls from a draft start for example).
 		//   setImmediate is more lenient, at the cost of some latency.
-		if (requestQueue.length === 0) setImmediate(processQueue);
+		if (requestQueue.length === 0) {
+			if (BatchWindow <= 0) {
+				setImmediate(processQueue);
+			} else {
+				setTimeout(processQueue, BatchWindow);
+			}
+		}
 		return new Promise<Prediction[]>((resolve, reject) => requestQueue.push({ body, resolve, reject }));
 	} else if (CubeCobraBots.endpoint) {
 		return singleRequest(body);

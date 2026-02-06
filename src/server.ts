@@ -73,6 +73,7 @@ import { init as MTGOAPIInit } from "./MTGOAPI.js";
 import { isTiebreaker } from "./SilentAuctionDraft.js";
 import { CardPool } from "./CardPool.js";
 import { convertCubeCobraList, DraftFormat, importFormat as convertDraftFormat } from "./cubeCobraIntegration.js";
+import { setBatchWindow } from "./bots/CubeCobraBots.js";
 
 if (process.env.NODE_ENV === "production") MTGOAPIInit();
 
@@ -2142,6 +2143,11 @@ function requireAPIKey(req: express.Request, res: express.Response, next: expres
 	else res.sendStatus(401).end();
 }
 
+function requirePOSTAPIKey(req: express.Request, res: express.Response, next: express.NextFunction) {
+	if (req.body.key === secretKey) next();
+	else res.sendStatus(401).end();
+}
+
 const getCircularReplacer = () => {
 	const seen = new WeakSet();
 	return (key: string, value: unknown) => {
@@ -2234,6 +2240,19 @@ app.post("/setDraftQueueSettings/:key", requireAPIKey, (req, res) => {
 
 app.get("/api/getDraftQueueStatus", (req, res) => {
 	res.json(getQueueStatus());
+});
+
+app.post("/setBotBatchWindow", requirePOSTAPIKey, (req, res) => {
+	try {
+		const batchWindow = isString(req.body.batchWindow) ? parseInt(req.body.batchWindow) : req.body.batchWindow;
+		if (req.body && isNumber(batchWindow) && batchWindow >= 0) {
+			setBatchWindow(batchWindow);
+			res.sendStatus(200);
+		} else res.sendStatus(400);
+	} catch (e) {
+		console.error("Error in setBotBatchWindow: ", e);
+		res.sendStatus(500);
+	}
 });
 
 Promise.all([InactiveConnections, InactiveSessions]).then(() => {
