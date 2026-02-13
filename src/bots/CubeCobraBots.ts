@@ -5,7 +5,6 @@ import { OracleID } from "../CardTypes";
 import util from "util";
 import assert from "assert";
 import { chunks } from "../utils.js";
-import { nextTick } from "process";
 
 const BatchSizeLimit = 20;
 const BotRequestTimeout = 10000; // ms
