@@ -4323,6 +4323,212 @@ export class ECLBoosterFactory extends BoosterFactory {
 	}
 }
 
+// Teenage Mutant Ninja Turtles - https://magic.wizards.com/en/news/feature/collecting-teenage-mutant-ninja-turtles
+export class TMTBoosterFactory extends BoosterFactory {
+	static filter(min: number, max: number) {
+		return CardsBySet["tmt"].filter(
+			(c) => parseInt(getCard(c).collector_number) >= min && parseInt(getCard(c).collector_number) <= max
+		);
+	}
+
+	static readonly Scene = TMTBoosterFactory.filter(196, 214);
+	static readonly Silhouette = TMTBoosterFactory.filter(215, 222);
+	static readonly Sewer = TMTBoosterFactory.filter(223, 252);
+
+	static legendaryTurtleFilter = (c: CardID) =>
+		getCard(c).type === "Legendary Creature" && getCard(c).subtypes.includes("Turtle");
+	static readonly LegendaryTurtlesRegular = TMTBoosterFactory.filter(1, 190).filter(
+		TMTBoosterFactory.legendaryTurtleFilter
+	);
+	static readonly LegendaryTurtlesScene = TMTBoosterFactory.Scene.filter(TMTBoosterFactory.legendaryTurtleFilter);
+	static readonly LegendaryTurtlesSilhouette = TMTBoosterFactory.Silhouette.filter(
+		TMTBoosterFactory.legendaryTurtleFilter
+	);
+
+	static readonly CommonDualLands = TMTBoosterFactory.filter(0, 0);
+	static readonly RooftopBasics = TMTBoosterFactory.filter(191, 195);
+
+	scene: SlotedCardPool;
+	silhouette: SlotedCardPool;
+	sewer: SlotedCardPool;
+
+	legendaryTurtles: {
+		regular: SlotedCardPool;
+		scene: SlotedCardPool;
+		silhouette: SlotedCardPool;
+	};
+
+	pza: CardPool = new CardPool();
+
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
+		super(cardPool, landSlot, options);
+
+		this.scene = cidsToSlotedCardPool(TMTBoosterFactory.Scene, options.maxDuplicates);
+		this.silhouette = cidsToSlotedCardPool(TMTBoosterFactory.Silhouette, options.maxDuplicates);
+		this.sewer = cidsToSlotedCardPool(TMTBoosterFactory.Sewer, options.maxDuplicates);
+
+		this.legendaryTurtles = {
+			regular: cidsToSlotedCardPool(TMTBoosterFactory.LegendaryTurtlesRegular, options.maxDuplicates),
+			scene: cidsToSlotedCardPool(TMTBoosterFactory.LegendaryTurtlesScene, options.maxDuplicates),
+			silhouette: cidsToSlotedCardPool(TMTBoosterFactory.LegendaryTurtlesSilhouette, options.maxDuplicates),
+		};
+
+		for (const cid of CardsBySet["pza"]) {
+			const c = getCard(cid);
+			this.pza.set(cid, options.maxDuplicates?.[c.rarity] ?? DefaultMaxDuplicates);
+		}
+	}
+
+	generateBooster(targets: Targets) {
+		const booster: UniqueCard[] = [];
+		const updatedTargets = structuredClone(targets);
+
+		// 1 Rare or mythic rare card
+		//     A rare (84.9%) or mythic rare (9.2%) card from the main set
+		//     A rare scene card (less than 1%)
+		//     A rare (4.1%) or mythic rare (less than 1%) sewer card
+		//     A mythic rare silhouette card (less than 1%)
+		while (updatedTargets.rare > 0) {
+			updatedTargets.rare -= 1;
+			const pool = chooseWeighted(
+				[84.9, 9.2, 0.6, 4.1, 0.6, 0.6].map((w) => w / 100.0),
+				[
+					this.cardPool.rare,
+					this.cardPool.mythic,
+					this.scene.rare,
+					this.sewer.rare,
+					this.sewer.mythic,
+					this.silhouette.mythic,
+				]
+			);
+			booster.push(pickCard(pool, booster));
+		}
+
+		// 1 Legendary Turtle card of any rarity
+		//     There are 5 common (64.1%), 4 uncommon (13.1%), 4 rare (6.9%), and 4 mythic rare (3.4%) cards from the main set that can be found in this slot.
+		//     There are 1 common (4.6%), 4 uncommon (6.5%), and 4 rare (1%) scene cards that can be found in this slot.
+		//     There are 4 mythic rare silhouette cards that can be found in this slot (less than 1%).
+		{
+			const pool = chooseWeighted(
+				[64.1, 13.1, 6.9, 3.4, 4.6, 6.5, 1, 0.4].map((w) => w / 100.0),
+				[
+					this.legendaryTurtles.regular.common,
+					this.legendaryTurtles.regular.uncommon,
+					this.legendaryTurtles.regular.rare,
+					this.legendaryTurtles.regular.mythic,
+					this.legendaryTurtles.scene.common,
+					this.legendaryTurtles.scene.uncommon,
+					this.legendaryTurtles.scene.rare,
+					this.legendaryTurtles.silhouette.mythic,
+				]
+			);
+			booster.push(pickCard(pool, booster));
+		}
+
+		// 1 Wildcard of any rarity
+		//   A common (24.9%), uncommon (62.1%), rare (7.6%), or mythic rare (less than 1%) card from the main set
+		//   A common (less than 1%), uncommon (1.3%), rare (less than 1%), or mythic rare (less than 1%) scene card
+		//   An uncommon (2.6%), rare (less than 1%), or mythic rare (less than 1%) sewer card
+		//   A mythic rare silhouette card (less than 1%)
+		{
+			const pool = chooseWeighted(
+				[24.9, 62.1, 7.6, 1.5 / 7, 1.5 / 7, 1.3, 1.5 / 7, 1.5 / 7, 2.6, 1.5 / 7, 1.5 / 7, 1.5 / 7].map(
+					(w) => w / 100.0
+				),
+				[
+					this.cardPool.common,
+					this.cardPool.uncommon,
+					this.cardPool.rare,
+					this.cardPool.mythic,
+					this.scene.common,
+					this.scene.uncommon,
+					this.scene.rare,
+					this.scene.mythic,
+					this.sewer.uncommon,
+					this.sewer.rare,
+					this.sewer.mythic,
+					this.silhouette.mythic,
+				]
+			);
+			booster.push(pickCard(pool, booster));
+		}
+
+		// Traditional foil card of any rarity
+		//    A common (61.5%), uncommon (27.7%), rare (6.7%), or mythic rare (less than 1%) card from the main set
+		//    A common (less than 1%), uncommon (less than 1%), or rare (less than 1%) scene card
+		//    An uncommon (less than 1%), rare (less than 1%), or mythic rare (less than 1%) sewer card
+		//    A mythic rare silhouette card (less than 1%)
+		{
+			const pool = chooseWeighted(
+				[
+					61.5,
+					27.7,
+					6.7,
+					//
+					4.1 / 8,
+					4.1 / 8,
+					4.1 / 8,
+					4.1 / 8,
+					4.1 / 8,
+					4.1 / 8,
+					4.1 / 8,
+					4.1 / 8,
+				].map((w) => w / 100.0),
+				[
+					this.cardPool.common,
+					this.cardPool.uncommon,
+					this.cardPool.rare,
+					this.cardPool.mythic,
+					this.scene.common,
+					this.scene.uncommon,
+					this.scene.rare,
+					this.sewer.uncommon,
+					this.sewer.rare,
+					this.sewer.mythic,
+					this.silhouette.mythic,
+				]
+			);
+			booster.push(pickCard(pool, booster, { foil: true }));
+		}
+
+		// 6–7 Commons
+		//		There are 56 commons from the main set that can be found in these slots.
+		//		There is 1 scene card that can be found in these slots (4.2%).
+		if (targets === DefaultBoosterTargets) updatedTargets.common = 7;
+		else updatedTargets.common = Math.max(1, updatedTargets.common - 2);
+
+		//		In 1 out of 28 Play Boosters, 1 of 20 non-foil source material cards will replace a common.
+		const sourceRoll = random.realZeroToOneInclusive();
+		if (sourceRoll < 1 / 28) {
+			updatedTargets.common = Math.max(0, updatedTargets.common - 1);
+			booster.push(pickCard(this.pza, booster, { foil: false }));
+		}
+
+		// 2 Uncommons
+		//     There are 51 commons from the main set that can be found in these slots.
+		//     There are 3 scene cards that can be found in these slots (3.9%).
+		//     There are 6 sewer cards that can be found in these slots (7.8%).
+		if (targets === DefaultBoosterTargets) updatedTargets.uncommon = 2;
+
+		const rest = super.generateBooster(updatedTargets, booster);
+		if (isMessageError(rest)) return rest;
+
+		// 1 Land card
+		//     A non-foil (48%) or traditional foil (12%) common dual land
+		//     A non-foil (32%) or traditional foil (8%) rooftop basic land
+		{
+			const pool = chooseWeighted(
+				[0.6, 0.4],
+				[TMTBoosterFactory.CommonDualLands, TMTBoosterFactory.RooftopBasics]
+			);
+			const foil = random.realZeroToOneInclusive() <= 1 / 4;
+			rest.push(getUnique(getRandom(pool), { foil }));
+		}
+
+		return rest;
+	}
+}
+
 // Set specific rules.
 // Neither DOM, WAR or ZNR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
 export const SetSpecificFactories: {
@@ -4382,6 +4588,7 @@ export const SetSpecificFactories: {
 	om1: OM1BoosterFactory,
 	tla: TLABoosterFactory,
 	ecl: ECLBoosterFactory,
+	tmt: TMTBoosterFactory,
 };
 
 export const getBoosterFactory = function (
