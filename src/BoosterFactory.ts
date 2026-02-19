@@ -4331,21 +4331,26 @@ export class TMTBoosterFactory extends BoosterFactory {
 		);
 	}
 
-	static readonly Scene = TMTBoosterFactory.filter(196, 214);
-	static readonly Silhouette = TMTBoosterFactory.filter(215, 222);
-	static readonly Sewer = TMTBoosterFactory.filter(223, 252);
-
 	static legendaryTurtleFilter = (c: CardID) =>
 		getCard(c).type === "Legendary Creature" && getCard(c).subtypes.includes("Turtle");
+	static noLegendaryTurtleFilter = (c: CardID) => !TMTBoosterFactory.legendaryTurtleFilter(c);
+
+	// FIXME: Double check if those should include the legendary turtles or not.
+	static readonly Scene = TMTBoosterFactory.filter(196, 214).filter(TMTBoosterFactory.noLegendaryTurtleFilter);
+	static readonly Silhouette = TMTBoosterFactory.filter(215, 222).filter(TMTBoosterFactory.noLegendaryTurtleFilter);
+	static readonly Sewer = TMTBoosterFactory.filter(223, 252).filter(TMTBoosterFactory.noLegendaryTurtleFilter);
+
 	static readonly LegendaryTurtlesRegular = TMTBoosterFactory.filter(1, 190).filter(
 		TMTBoosterFactory.legendaryTurtleFilter
 	);
-	static readonly LegendaryTurtlesScene = TMTBoosterFactory.Scene.filter(TMTBoosterFactory.legendaryTurtleFilter);
-	static readonly LegendaryTurtlesSilhouette = TMTBoosterFactory.Silhouette.filter(
+	static readonly LegendaryTurtlesScene = TMTBoosterFactory.filter(196, 214).filter(
+		TMTBoosterFactory.legendaryTurtleFilter
+	);
+	static readonly LegendaryTurtlesSilhouette = TMTBoosterFactory.filter(215, 222).filter(
 		TMTBoosterFactory.legendaryTurtleFilter
 	);
 
-	static readonly CommonDualLands = TMTBoosterFactory.filter(0, 0);
+	static readonly CommonDualLands = TMTBoosterFactory.filter(183, 190).filter((c) => getCard(c).rarity === "common"); // No clue if 184 "Escape Tunnel" is included
 	static readonly RooftopBasics = TMTBoosterFactory.filter(191, 195);
 
 	scene: SlotedCardPool;
@@ -4361,7 +4366,10 @@ export class TMTBoosterFactory extends BoosterFactory {
 	pza: CardPool = new CardPool();
 
 	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
-		super(cardPool, landSlot, options);
+		const [, filteredCardPool] = filterCardPool(cardPool, (cid: CardID) =>
+			TMTBoosterFactory.CommonDualLands.includes(cid)
+		);
+		super(filteredCardPool, landSlot, options);
 
 		this.scene = cidsToSlotedCardPool(TMTBoosterFactory.Scene, options.maxDuplicates);
 		this.silhouette = cidsToSlotedCardPool(TMTBoosterFactory.Silhouette, options.maxDuplicates);
@@ -4493,7 +4501,7 @@ export class TMTBoosterFactory extends BoosterFactory {
 
 		// 6–7 Commons
 		//		There are 56 commons from the main set that can be found in these slots.
-		//		There is 1 scene card that can be found in these slots (4.2%).
+		//   FIXME: There is 1 scene card that can be found in these slots (4.2%).
 		if (targets === DefaultBoosterTargets) updatedTargets.common = 7;
 		else updatedTargets.common = Math.max(1, updatedTargets.common - 2);
 
@@ -4505,9 +4513,9 @@ export class TMTBoosterFactory extends BoosterFactory {
 		}
 
 		// 2 Uncommons
-		//     There are 51 commons from the main set that can be found in these slots.
-		//     There are 3 scene cards that can be found in these slots (3.9%).
-		//     There are 6 sewer cards that can be found in these slots (7.8%).
+		//     There are 51 commons (sic?) from the main set that can be found in these slots.
+		//   FIXME: There are 3 scene cards that can be found in these slots (3.9%).
+		//   FIXME: There are 6 sewer cards that can be found in these slots (7.8%).
 		if (targets === DefaultBoosterTargets) updatedTargets.uncommon = 2;
 
 		const rest = super.generateBooster(updatedTargets, booster);
