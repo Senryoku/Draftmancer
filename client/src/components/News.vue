@@ -1,6 +1,13 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
+			<em>February 21, 2026</em>
+			<p>
+				<img src="img/sets/tmt.svg" class="set-icon" style="--invertedness: 100%" alt="TMT" /> Teenage Mutant
+				Ninja Turtles (TMT) is now available...
+			</p>
+		</div>
+		<div class="news">
 			<em>January 10, 2026</em>
 			<p>
 				<img src="img/sets/ecl.svg" class="set-icon" style="--invertedness: 100%" alt="ECL" /> Lorwyn Eclipsed

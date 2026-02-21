@@ -299,6 +299,7 @@ describe("Sets content", function () {
 		om1: { common: 65, uncommon: 55, rare: 53, mythic: 15 }, // 65 commons plus 10 dual lands
 		tla: { common: 81 + 10, uncommon: 110, rare: 60, mythic: 20 },
 		ecl: { common: 81, uncommon: 100, rare: 65, mythic: 22 },
+		tmt: { common: 67, uncommon: 55, rare: 53, mythic: 15 }, // 56 + 5 legendary turtles + 6 lands as commons; 51 + 4 legendary turtles as uncommons
 	};
 
 	beforeEach(function (done) {
@@ -840,7 +841,8 @@ describe("Single Draft (Two Players)", function () {
 							(set === "spm" && c.set === "mar") ||
 							(set === "om1" && (c.set === "omb" || c.set === "spm")) ||
 							(set === "tla" && c.set === "tle") ||
-							(set === "ecl" && c.set === "spg")
+							(set === "ecl" && c.set === "spg") ||
+							(set === "tmt" && c.set === "pza")
 					),
 					`All cards in booster should be of the desired set, got [${[...new Set(b.map((c) => c.set))]}].`
 				).to.be.true;
