@@ -4362,7 +4362,8 @@ export class TMTBoosterFactory extends BoosterFactory {
 		TMTBoosterFactory.legendaryTurtlesOracleIDs.includes(getCard(c).oracle_id);
 	static noLegendaryTurtleFilter = (c: CardID) => !TMTBoosterFactory.legendaryTurtleFilter(c);
 
-	// FIXME: Double check if those should include the legendary turtles or not.
+	// NOTE: I think the Legendary Turtles can appear in the wildcard slots, but I'm not sure. I don't care enough to add yet another pool.
+	//       (What's certain is that they can't appear in the common/uncommon slots as special treatments)
 	static readonly Scene = TMTBoosterFactory.filter(196, 214).filter(TMTBoosterFactory.noLegendaryTurtleFilter);
 	static readonly Silhouette = TMTBoosterFactory.filter(215, 222).filter(TMTBoosterFactory.noLegendaryTurtleFilter);
 	static readonly Sewer = TMTBoosterFactory.filter(223, 252).filter(TMTBoosterFactory.noLegendaryTurtleFilter);
@@ -4532,22 +4533,34 @@ export class TMTBoosterFactory extends BoosterFactory {
 
 		// 6–7 Commons
 		//		There are 56 commons from the main set that can be found in these slots.
-		//   FIXME: There is 1 scene card that can be found in these slots (4.2%).
 		if (targets === DefaultBoosterTargets) updatedTargets.common = 7;
-		else updatedTargets.common = Math.max(1, updatedTargets.common - 2);
-
+		//      There is 1 scene card that can be found in these slots (4.2%).
+		const commonSceneRoll = random.realZeroToOneInclusive();
+		if (commonSceneRoll < 4.2 / 100.0 && updatedTargets.common > 0) {
+			updatedTargets.common = Math.max(0, updatedTargets.common - 1);
+			booster.push(pickCard(this.scene.common, booster));
+		}
 		//		In 1 out of 28 Play Boosters, 1 of 20 non-foil source material cards will replace a common.
 		const sourceRoll = random.realZeroToOneInclusive();
-		if (sourceRoll < 1 / 28) {
+		if (sourceRoll < 1 / 28 && updatedTargets.common > 0) {
 			updatedTargets.common = Math.max(0, updatedTargets.common - 1);
 			booster.push(pickCard(this.pza, booster, { foil: false }));
 		}
 
 		// 2 Uncommons
-		//     There are 51 commons (sic?) from the main set that can be found in these slots.
-		//   FIXME: There are 3 scene cards that can be found in these slots (3.9%).
-		//   FIXME: There are 6 sewer cards that can be found in these slots (7.8%).
 		if (targets === DefaultBoosterTargets) updatedTargets.uncommon = 2;
+		//     There are 51 uncommons from the main set that can be found in these slots.
+		//     There are 3 scene cards that can be found in these slots (3.9%).
+		const uncommonSpecialTreatmentRoll = random.realZeroToOneInclusive();
+		if (uncommonSpecialTreatmentRoll < 3.9 / 100.0) {
+			updatedTargets.uncommon = Math.max(0, updatedTargets.uncommon - 1);
+			booster.push(pickCard(this.scene.uncommon, booster));
+		}
+		//     There are 6 sewer cards that can be found in these slots (7.8%). (NOTE: Guessing scene and sewer won't appear together)
+		if (uncommonSpecialTreatmentRoll < (3.9 + 7.8) / 100.0) {
+			updatedTargets.uncommon = Math.max(0, updatedTargets.uncommon - 1);
+			booster.push(pickCard(this.sewer.uncommon, booster));
+		}
 
 		const rest = super.generateBooster(updatedTargets, booster);
 		if (isMessageError(rest)) return rest;
