@@ -4362,23 +4362,22 @@ export class TMTBoosterFactory extends BoosterFactory {
 		TMTBoosterFactory.legendaryTurtlesOracleIDs.includes(getCard(c).oracle_id);
 	static noLegendaryTurtleFilter = (c: CardID) => !TMTBoosterFactory.legendaryTurtleFilter(c);
 
-	// NOTE: I think the Legendary Turtles can appear in the wildcard slots, but I'm not sure. I don't care enough to add yet another pool.
-	//       (What's certain is that they can't appear in the common/uncommon slots as special treatments)
-	static readonly Scene = TMTBoosterFactory.filter(196, 214).filter(TMTBoosterFactory.noLegendaryTurtleFilter);
-	static readonly Silhouette = TMTBoosterFactory.filter(215, 222).filter(TMTBoosterFactory.noLegendaryTurtleFilter);
-	static readonly Sewer = TMTBoosterFactory.filter(223, 252).filter(TMTBoosterFactory.noLegendaryTurtleFilter);
+	static readonly Scene = TMTBoosterFactory.filter(196, 214);
+	static readonly Silhouette = TMTBoosterFactory.filter(215, 222);
+	static readonly Sewer = TMTBoosterFactory.filter(223, 252);
+
+	static readonly NoLegendaryTurtleScene = TMTBoosterFactory.Scene.filter(TMTBoosterFactory.noLegendaryTurtleFilter);
+	static readonly NoLegendaryTurtleSewer = TMTBoosterFactory.Sewer.filter(TMTBoosterFactory.noLegendaryTurtleFilter);
 
 	static readonly LegendaryTurtlesRegular = TMTBoosterFactory.filter(1, 190).filter(
 		TMTBoosterFactory.legendaryTurtleFilter
 	);
-	static readonly LegendaryTurtlesScene = TMTBoosterFactory.filter(196, 214).filter(
-		TMTBoosterFactory.legendaryTurtleFilter
-	);
-	static readonly LegendaryTurtlesSilhouette = TMTBoosterFactory.filter(215, 222).filter(
+	static readonly LegendaryTurtlesScene = TMTBoosterFactory.Scene.filter(TMTBoosterFactory.legendaryTurtleFilter);
+	static readonly LegendaryTurtlesSilhouette = TMTBoosterFactory.Silhouette.filter(
 		TMTBoosterFactory.legendaryTurtleFilter
 	);
 
-	static readonly CommonDualLands = TMTBoosterFactory.filter(183, 190).filter((c) => getCard(c).rarity === "common"); // No clue if 184 "Escape Tunnel" is included
+	static readonly CommonDualLands = TMTBoosterFactory.filter(183, 190).filter((c) => getCard(c).rarity === "common");
 	static readonly RooftopBasics = TMTBoosterFactory.filter(191, 195);
 
 	scene: SlotedCardPool;
@@ -4389,6 +4388,10 @@ export class TMTBoosterFactory extends BoosterFactory {
 		regular: SlotedCardPool;
 		scene: SlotedCardPool;
 		silhouette: SlotedCardPool;
+	};
+	noLegendaryTurtles: {
+		scene: SlotedCardPool;
+		sewer: SlotedCardPool;
 	};
 
 	pza: CardPool = new CardPool();
@@ -4411,6 +4414,11 @@ export class TMTBoosterFactory extends BoosterFactory {
 			regular: regularLegendaryTurtles,
 			scene: cidsToSlotedCardPool(TMTBoosterFactory.LegendaryTurtlesScene, options.maxDuplicates),
 			silhouette: cidsToSlotedCardPool(TMTBoosterFactory.LegendaryTurtlesSilhouette, options.maxDuplicates),
+		};
+
+		this.noLegendaryTurtles = {
+			scene: cidsToSlotedCardPool(TMTBoosterFactory.NoLegendaryTurtleScene, options.maxDuplicates),
+			sewer: cidsToSlotedCardPool(TMTBoosterFactory.NoLegendaryTurtleSewer, options.maxDuplicates),
 		};
 
 		for (const cid of CardsBySet["pza"]) {
@@ -4468,13 +4476,12 @@ export class TMTBoosterFactory extends BoosterFactory {
 		// 1 Wildcard of any rarity
 		//   A common (24.9%), uncommon (62.1%), rare (7.6%), or mythic rare (less than 1%) card from the main set
 		//   A common (less than 1%), uncommon (1.3%), rare (less than 1%), or mythic rare (less than 1%) scene card
+		//     NOTE: There are no mythics scene cards...
 		//   An uncommon (2.6%), rare (less than 1%), or mythic rare (less than 1%) sewer card
 		//   A mythic rare silhouette card (less than 1%)
 		{
 			const pool = chooseWeighted(
-				[24.9, 62.1, 7.6, 1.5 / 7, 1.5 / 7, 1.3, 1.5 / 7, 1.5 / 7, 2.6, 1.5 / 7, 1.5 / 7, 1.5 / 7].map(
-					(w) => w / 100.0
-				),
+				[24.9, 62.1, 7.6, 1.5 / 6, 1.5 / 6, 1.3, 1.5 / 6, 2.6, 1.5 / 6, 1.5 / 6, 1.5 / 6].map((w) => w / 100.0),
 				[
 					this.cardPool.common,
 					this.cardPool.uncommon,
@@ -4483,7 +4490,6 @@ export class TMTBoosterFactory extends BoosterFactory {
 					this.scene.common,
 					this.scene.uncommon,
 					this.scene.rare,
-					this.scene.mythic,
 					this.sewer.uncommon,
 					this.sewer.rare,
 					this.sewer.mythic,
@@ -4538,7 +4544,7 @@ export class TMTBoosterFactory extends BoosterFactory {
 		const commonSceneRoll = random.realZeroToOneInclusive();
 		if (commonSceneRoll < 4.2 / 100.0 && updatedTargets.common > 0) {
 			updatedTargets.common = Math.max(0, updatedTargets.common - 1);
-			booster.push(pickCard(this.scene.common, booster));
+			booster.push(pickCard(this.noLegendaryTurtles.scene.common, booster));
 		}
 		//		In 1 out of 28 Play Boosters, 1 of 20 non-foil source material cards will replace a common.
 		const sourceRoll = random.realZeroToOneInclusive();
@@ -4549,17 +4555,19 @@ export class TMTBoosterFactory extends BoosterFactory {
 
 		// 2 Uncommons
 		if (targets === DefaultBoosterTargets) updatedTargets.uncommon = 2;
-		//     There are 51 uncommons from the main set that can be found in these slots.
-		//     There are 3 scene cards that can be found in these slots (3.9%).
-		const uncommonSpecialTreatmentRoll = random.realZeroToOneInclusive();
-		if (uncommonSpecialTreatmentRoll < 3.9 / 100.0) {
-			updatedTargets.uncommon = Math.max(0, updatedTargets.uncommon - 1);
-			booster.push(pickCard(this.scene.uncommon, booster));
-		}
-		//     There are 6 sewer cards that can be found in these slots (7.8%). (NOTE: Guessing scene and sewer won't appear together)
-		if (uncommonSpecialTreatmentRoll < (3.9 + 7.8) / 100.0) {
-			updatedTargets.uncommon = Math.max(0, updatedTargets.uncommon - 1);
-			booster.push(pickCard(this.sewer.uncommon, booster));
+		if (updatedTargets.uncommon > 0) {
+			//     There are 51 uncommons from the main set that can be found in these slots.
+			//     There are 3 scene cards that can be found in these slots (3.9%).
+			const uncommonSpecialTreatmentRoll = random.realZeroToOneInclusive();
+			if (uncommonSpecialTreatmentRoll < 3.9 / 100.0) {
+				updatedTargets.uncommon = Math.max(0, updatedTargets.uncommon - 1);
+				booster.push(pickCard(this.noLegendaryTurtles.scene.uncommon, booster));
+			}
+			//     There are 6 sewer cards that can be found in these slots (7.8%). (NOTE: Guessing scene and sewer won't appear together)
+			if (uncommonSpecialTreatmentRoll < (3.9 + 7.8) / 100.0) {
+				updatedTargets.uncommon = Math.max(0, updatedTargets.uncommon - 1);
+				booster.push(pickCard(this.noLegendaryTurtles.sewer.uncommon, booster));
+			}
 		}
 
 		const rest = super.generateBooster(updatedTargets, booster);
