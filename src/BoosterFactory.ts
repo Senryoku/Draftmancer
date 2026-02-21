@@ -4331,8 +4331,35 @@ export class TMTBoosterFactory extends BoosterFactory {
 		);
 	}
 
+	static legendaryTurtlesOracleIDs = BoosterCardsBySet["tmt"]
+		.filter((c) =>
+			[
+				// 5 Commons
+				"10",
+				"14",
+				"37",
+				"104",
+				"118",
+				// 4 Uncommons
+				"16",
+				"38",
+				"101",
+				"120",
+				// 4 Rares
+				"15",
+				"35",
+				"103",
+				"121",
+				// 4 Mythics
+				"17",
+				"36",
+				"102",
+				"119",
+			].includes(getCard(c).collector_number)
+		)
+		.map((c) => getCard(c).oracle_id);
 	static legendaryTurtleFilter = (c: CardID) =>
-		getCard(c).type === "Legendary Creature" && getCard(c).subtypes.includes("Turtle");
+		TMTBoosterFactory.legendaryTurtlesOracleIDs.includes(getCard(c).oracle_id);
 	static noLegendaryTurtleFilter = (c: CardID) => !TMTBoosterFactory.legendaryTurtleFilter(c);
 
 	// FIXME: Double check if those should include the legendary turtles or not.
@@ -4366,8 +4393,12 @@ export class TMTBoosterFactory extends BoosterFactory {
 	pza: CardPool = new CardPool();
 
 	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
-		const [, filteredCardPool] = filterCardPool(cardPool, (cid: CardID) =>
+		const [, partiallyfilteredCardPool] = filterCardPool(cardPool, (cid: CardID) =>
 			TMTBoosterFactory.CommonDualLands.includes(cid)
+		);
+		const [regularLegendaryTurtles, filteredCardPool] = filterCardPool(
+			partiallyfilteredCardPool,
+			TMTBoosterFactory.legendaryTurtleFilter
 		);
 		super(filteredCardPool, landSlot, options);
 
@@ -4376,7 +4407,7 @@ export class TMTBoosterFactory extends BoosterFactory {
 		this.sewer = cidsToSlotedCardPool(TMTBoosterFactory.Sewer, options.maxDuplicates);
 
 		this.legendaryTurtles = {
-			regular: cidsToSlotedCardPool(TMTBoosterFactory.LegendaryTurtlesRegular, options.maxDuplicates),
+			regular: regularLegendaryTurtles,
 			scene: cidsToSlotedCardPool(TMTBoosterFactory.LegendaryTurtlesScene, options.maxDuplicates),
 			silhouette: cidsToSlotedCardPool(TMTBoosterFactory.LegendaryTurtlesSilhouette, options.maxDuplicates),
 		};

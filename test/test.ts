@@ -299,7 +299,7 @@ describe("Sets content", function () {
 		om1: { common: 65, uncommon: 55, rare: 53, mythic: 15 }, // 65 commons plus 10 dual lands
 		tla: { common: 81 + 10, uncommon: 110, rare: 60, mythic: 20 },
 		ecl: { common: 81, uncommon: 100, rare: 65, mythic: 22 },
-		tmt: { common: 56, uncommon: 51, rare: 53, mythic: 15 }, // FIXME: This should add up to 190
+		tmt: { common: 67, uncommon: 55, rare: 53, mythic: 15 }, // FIXME: This should add up to 190
 	};
 
 	beforeEach(function (done) {

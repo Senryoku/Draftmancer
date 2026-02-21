@@ -978,6 +978,11 @@
         "fullName": "Avatar: The Last Airbender Beginner Box Front Cards",
         "icon": "img/sets/ftla.svg"
     },
+    "ftmc": {
+        "code": "ftmc",
+        "fullName": "Teenage Mutant Ninja Turtles Eternal Front Cards",
+        "icon": "img/sets/ftmc.svg"
+    },
     "fut": {
         "code": "fut",
         "fullName": "Future Sight",
