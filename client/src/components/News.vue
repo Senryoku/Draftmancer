@@ -4,7 +4,7 @@
 			<em>February 21, 2026</em>
 			<p>
 				<img src="img/sets/tmt.svg" class="set-icon" style="--invertedness: 100%" alt="TMT" /> Teenage Mutant
-				Ninja Turtles (TMT) is now available...
+				Ninja Turtles (TMT) is now available.
 			</p>
 		</div>
 		<div class="news">
