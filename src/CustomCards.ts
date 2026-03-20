@@ -180,7 +180,7 @@ export function validateCustomCard(inputCard: any): SocketError | Card {
 	// Assign default value to missing optional fields
 	const card = new Card();
 	card.is_custom = true;
-	card.name = card.oracle_id = inputCard.name;
+	card.name = inputCard.name;
 	card.set = inputCard.set ?? "custom";
 	card.collector_number = inputCard.collector_number ?? "";
 	card.id = genCustomCardID(card.name, card.set, card.collector_number);
