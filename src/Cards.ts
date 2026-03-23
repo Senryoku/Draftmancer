@@ -1,5 +1,3 @@
-"use strict";
-
 import fs from "fs";
 import { glob } from "glob";
 import JSONStream from "JSONStream";
@@ -8,6 +6,15 @@ import { memoryReport } from "./utils.js";
 import { ArenaID, Card, CardID, getNextCardID, UniqueCard } from "./CardTypes.js";
 
 export const DefaultMaxDuplicates = 999; // Supposed to be basically unlimited (i.e. with replacement, without explicitly enabling it)
+
+const deepFreeze = <T extends object>(obj: T) => {
+	Object.keys(obj).forEach((prop) => {
+		if (typeof obj[prop as keyof T] === "object" && !Object.isFrozen(obj[prop as keyof T])) {
+			deepFreeze(obj[prop as keyof T] as object);
+		}
+	});
+	return Object.freeze(obj);
+};
 
 console.group("Cards.ts::Loading Cards...");
 console.time("Total");
@@ -49,7 +56,6 @@ for (const cid in MB1Cards) {
 }
 
 export const Cards: ReadonlyMap<CardID, Card> = tmpCards;
-Object.freeze(Cards);
 
 export function getCard(cid: CardID): Card {
 	const card = Cards.get(cid);
@@ -87,7 +93,6 @@ export const CardsBySet: { [set: string]: Array<CardID> } = { alchemy_dmu: [], p
 export const BoosterCardsBySet: { [set: string]: Array<CardID> } = { alchemy_dmu: [], planeshifted_snc: [] };
 
 for (const [cid, card] of Cards) {
-	Object.freeze(card);
 	const aid = card.arena_id;
 	if (aid !== undefined) MTGACards[aid] = card;
 
@@ -125,7 +130,9 @@ for (const [cid, card] of Cards) {
 			BoosterCardsBySet["planeshifted_snc"].push(cid);
 		}
 	}
+	deepFreeze(card);
 }
+
 BoosterCardsBySet["mat"] = BoosterCardsBySet["mom"].concat(BoosterCardsBySet["mat"]); // Shortcut to get a draftable MAT set, like in Arena
 BoosterCardsBySet["dbl"] = BoosterCardsBySet["mid"].concat(BoosterCardsBySet["vow"]); // Innistrad: Double Feature (All cards from Midnight Hunt and Crimson Vow)
 BoosterCardsBySet["ydmu"] = BoosterCardsBySet["dmu"]; // Dominaria United Alchemy
@@ -149,6 +156,7 @@ export function hasMythics(set: string) {
 	return set in SetHasMythics ? SetHasMythics[set] : false;
 }
 
+Object.freeze(Cards);
 Object.freeze(MTGACards);
 Object.freeze(CardsByName);
 Object.freeze(CardVersionsByName);
