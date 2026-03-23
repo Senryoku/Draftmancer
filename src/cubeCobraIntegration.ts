@@ -239,7 +239,7 @@ export function convertCubeCobraList(
 			// We'll use the presence of an imgUrl as a sign this is custom card.
 			if (c.imgUrl) {
 				const cardData: Card = {
-					...originalCard,
+					...structuredClone(originalCard),
 					related_cards: [card.cardID],
 					is_custom: true,
 				};
