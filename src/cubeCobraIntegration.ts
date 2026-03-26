@@ -291,7 +291,7 @@ type DraftStep = {
 	amount: number | null;
 };
 interface Pack {
-	slots: string[];
+	slots: { filter: string }[];
 	steps: DraftStep[] | null;
 }
 export interface DraftFormat {
@@ -321,11 +321,11 @@ export async function importFormat(cardList: CustomCardList, format: DraftFormat
 	let idx = 0;
 	for (const pack of format.packs) {
 		const layout: PackLayout = { weight: 1, slots: [] };
-		for (const filter of pack.slots) {
-			if (!sheets[filter]) {
+		for (const slot of pack.slots) {
+			if (!sheets[slot.filter]) {
 				// Request the filtered list from Cube Cobra
 				const filteredList = await axios.get(
-					`https://cubecobra.com/cube/download/plaintext/${cardList.cubeCobraID}?showother=true&filter=${filter}`,
+					`https://cubecobra.com/cube/download/plaintext/${cardList.cubeCobraID}?showother=true&filter=${slot.filter}`,
 					{ timeout: 5000 }
 				);
 				const lines = filteredList.data.split(/\r?\n/);
@@ -353,11 +353,11 @@ export async function importFormat(cardList: CustomCardList, format: DraftFormat
 					if (cid) {
 						if (sheet.cards[cid]) sheet.cards[cid] += 1;
 						else sheet.cards[cid] = 1;
-					} else throw new Error(`Unknown card in sheet '${filter}': '${line}'`);
+					} else throw new Error(`Unknown card in sheet '${slot.filter}': '${line}'`);
 				}
-				sheets[filter] = sheet;
+				sheets[slot.filter] = sheet;
 			}
-			layout.slots.push({ name: filter, count: 1, foil: false, sheets: [{ name: filter, weight: 1 }] });
+			layout.slots.push({ name: slot.filter, count: 1, foil: false, sheets: [{ name: slot.filter, weight: 1 }] });
 		}
 		const layoutName = `Pack ${idx++}`;
 		layouts[layoutName] = layout;
