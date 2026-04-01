@@ -695,6 +695,8 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
                 selection["in_booster"] = safeInBoosterCheck(c, 268)
             case "tmt":
                 selection["in_booster"] = safeInBoosterCheck(c, 190)
+            case "sos":
+                selection["in_booster"] = safeInBoosterCheck(c, 266)
 
         if c["collector_number"].endswith("†"):
             selection["in_booster"] = False
@@ -1218,7 +1220,6 @@ constants["PrimarySets"] = [
         "mar",
         "omb",
         "msh",
-        "sos",
     ]
 ]  # Exclude some codes that are actually part of larger sets (tsb, fmb1, h1r... see subsets), or aren't out yet
 with open("src/data/constants.json", "w", encoding="utf8") as constantsFile:

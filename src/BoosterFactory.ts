@@ -1920,6 +1920,7 @@ export const SpecialGuests = {
 	tdm: filterSetByNumber("spg", 104, 113), // Next 5 SPG are exclusive to Collector Boosters
 	eoe: filterSetByNumber("spg", 119, 128),
 	ecl: filterSetByNumber("spg", 129, 148), // 20
+	sos: filterSetByNumber("spg", 149, 158),
 };
 
 // NOTE: This mimics the ratios of wildcard set boosters described here: https://magic.wizards.com/en/news/making-magic/set-boosters-2020-07-25
@@ -4589,6 +4590,171 @@ export class TMTBoosterFactory extends BoosterFactory {
 	}
 }
 
+// Secrets of Strixhaven - https://magic.wizards.com/en/news/feature/collecting-secrets-of-strixhaven
+export class SOSBoosterFactory extends BoosterFactory {
+	static filter(min: number, max: number) {
+		return CardsBySet["sos"].filter(
+			(c) => parseInt(getCard(c).collector_number) >= min && parseInt(getCard(c).collector_number) <= max
+		);
+	}
+
+	static readonly Basics = SOSBoosterFactory.filter(267, 271);
+
+	spg: CardPool = new CardPool();
+
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
+		super(cardPool, landSlot, options);
+
+		for (const cid of SpecialGuests["sos"]) {
+			const c = getCard(cid);
+			this.spg.set(cid, options.maxDuplicates?.[c.rarity] ?? DefaultMaxDuplicates);
+		}
+	}
+
+	generateBooster(targets: Targets) {
+		const updatedTargets = structuredClone(targets);
+		// 6–7 Commons
+		//     There are 81 common cards from Secrets of Strixhaven that can appear in these slots.
+		if (targets === DefaultBoosterTargets) updatedTargets.common = Math.max(0, updatedTargets.common - 3);
+		else updatedTargets.common = Math.max(1, updatedTargets.common - 2);
+
+		const booster: UniqueCard[] = [];
+
+		// In 1 of 55 Play Boosters, 1 of 10 Special Guests cards will replace a common.
+		const spgRoll = random.realZeroToOneInclusive();
+		if (spgRoll < 1 / 55) {
+			updatedTargets.common = Math.max(0, updatedTargets.common - 1);
+			booster.push(pickCard(this.spg, booster, { foil: false }));
+		}
+
+		// 3 Uncommon cards
+		//   There are 100 uncommons from Secrets of Strixhaven that can appear in these slots.
+
+		// 1 Traditional foil card of any rarity
+		//     A common (54.4%), uncommon (33.6%), rare (6.7%), or mythic rare (1.1%) card from the Secrets of Strixhaven main set
+		//     A rare or mythic rare borderless Elder Dragon, planeswalker, or dual land (less than 1%)
+		//     A rare or mythic rare field notes card (less than 1%)
+		//     An uncommon (2.8%), rare (less than 1%), or mythic rare (less than 1%) Mystical Archive card
+		{
+			const pool = chooseWeighted(
+				[
+					60.4,
+					29.8,
+					6.5,
+					1.1,
+					1.0,
+					1.0,
+					// NOTE: Known percentages add up to 99.8
+					0.2 / 4, // FIXME
+					0.2 / 4, // FIXME
+					0.2 / 4, // FIXME
+					0.2 / 4, // FIXME
+				].map((w) => w / 100.0),
+				[
+					this.cardPool.common,
+					this.mainSetUncommons,
+					this.cardPool.rare,
+					this.cardPool.mythic,
+					this.fableFrame.uncommon,
+					this.fableFrame.rare,
+					this.fableFrame.mythic,
+					this.borderlessNonLand.rare,
+					this.borderlessNonLand.mythic,
+					this.borderlessLand.rare,
+				]
+			);
+			booster.push(pickCard(pool, booster, { foil: true }));
+		}
+
+		// 1 Mystical Archive card
+		//     In non-Japanese Play Boosters:
+		//         An uncommon (87.5%), rare (9.6%), or mythic rare (2.9%) Mystical Archive card
+
+		// TODO
+
+		// 1 Rare or mythic rare card
+		//     A rare (82.5%) or mythic rare (14.1%) from the Secrets of Strixhaven main set
+		//     A rare or mythic rare borderless Elder Dragon, planeswalker, or dual land (1.6%)
+		//     A rare (1.2%) or mythic rare (less than 1%) field notes card
+		while (updatedTargets.rare > 0) {
+			updatedTargets.rare -= 1;
+			const pool = chooseWeighted(
+				[
+					78.2,
+					13.6,
+					4.6,
+					1.2,
+					// NOTE: Known percentages add up to 97.6
+					2.4 / 3, // FIXME
+					2.4 / 3, // FIXME
+					2.4 / 3, // FIXME
+				].map((w) => w / 100.0),
+				[
+					this.cardPool.rare,
+					this.cardPool.mythic,
+					this.fableFrame.rare,
+					this.fableFrame.mythic,
+					this.borderlessNonLand.rare,
+					this.borderlessNonLand.mythic,
+					this.borderlessLand.rare,
+				]
+			);
+			booster.push(pickCard(pool, booster));
+		}
+
+		// 1 Wildcard of any rarity
+		//     A common (39.1%), uncommon (39.1%), rare (19.5%), or mythic rare (1.9%) card from the Secrets of Strixhaven main set
+		//     A rare or mythic rare borderless Elder Dragon, planeswalker, or dual land (less than 1%)
+		//     A rare or mythic rare field notes card (less than 1%)
+		{
+			const pool = chooseWeighted(
+				[
+					18.0,
+					58.0,
+					19.0,
+					2.0,
+					2.0,
+					// NOTE: Known percentages add up to 99.0
+					1.0 / 5.0, // FIXME
+					1.0 / 5.0, // FIXME
+					1.0 / 5.0, // FIXME
+					1.0 / 5.0, // FIXME
+					1.0 / 5.0, // FIXME
+				].map((w) => w / 100.0),
+				[
+					this.cardPool.common,
+					this.mainSetUncommons,
+					this.cardPool.rare,
+					this.cardPool.mythic,
+					this.fableFrame.uncommon,
+					this.fableFrame.rare,
+					this.fableFrame.mythic,
+					this.borderlessNonLand.rare,
+					this.borderlessNonLand.mythic,
+					this.borderlessLand.rare,
+				]
+			);
+			booster.push(pickCard(pool, booster));
+		}
+
+		const rest = super.generateBooster(updatedTargets, booster);
+		if (isMessageError(rest)) return rest;
+
+		// 1 Land card
+		//     A non-foil (26.7%) or traditional foil (6.7%) default frame basic land
+		//     A non-foil (13.3%) or traditional foil (3.3%) spellcraft land
+		//     A non-foil (40%) or traditional foil (10%) common dual land
+
+		{
+			const pool = chooseWeighted([0.5, 0.5], [SOSBoosterFactory.Basics, SOSBoosterFactory.FullArtBasics]);
+			const foil = random.realZeroToOneInclusive() <= 1 / 5;
+			rest.push(getUnique(getRandom(pool), { foil }));
+		}
+
+		return rest;
+	}
+}
+
 // Set specific rules.
 // Neither DOM, WAR or ZNR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
 export const SetSpecificFactories: {
@@ -4649,6 +4815,7 @@ export const SetSpecificFactories: {
 	tla: TLABoosterFactory,
 	ecl: ECLBoosterFactory,
 	tmt: TMTBoosterFactory,
+	sos: SOSBoosterFactory,
 };
 
 export const getBoosterFactory = function (
