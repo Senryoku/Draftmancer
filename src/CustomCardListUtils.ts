@@ -253,14 +253,14 @@ export function generateBoosterFromCustomCardList(
 		const slotsCount = Object.keys(customCardList.sheets).length;
 		if (slotsCount === 0) {
 			return new MessageError("Error generating boosters", `No slot defined.`);
-		} else if (slotsCount !== 1) {
+		} else if (slotsCount !== 1 && !customCardList.sheets.default) {
 			return new MessageError(
 				"Error generating boosters",
 				`Multiple 'default' slots defined. Merge them into a single one, or use layouts (you can define a default layout by explicitly setting slot sizes).`
 			);
 		}
 
-		const defaultSlot = Object.values(customCardList.sheets)[0];
+		const defaultSlot = customCardList.sheets.default ?? Object.values(customCardList.sheets)[0];
 
 		if (defaultSlot.collation !== "random")
 			return new MessageError(
