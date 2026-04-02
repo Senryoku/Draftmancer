@@ -4598,12 +4598,26 @@ export class SOSBoosterFactory extends BoosterFactory {
 		);
 	}
 
-	static readonly Basics = SOSBoosterFactory.filter(267, 271);
+	static readonly CommonDualLands = SOSBoosterFactory.filter(253, 266).filter((c) => getCard(c).rarity === "common");
+	static readonly SpellcraftLands = SOSBoosterFactory.filter(267, 271);
+	static readonly Basics = SOSBoosterFactory.filter(272, 281);
+	static readonly Borderless = SOSBoosterFactory.filter(282, 288).concat(SOSBoosterFactory.filter(301, 305));
+	static readonly FieldNotes = SOSBoosterFactory.filter(289, 300);
 
+	borderless: SlotedCardPool;
+	fieldNotes: SlotedCardPool;
+	mysticalArchive: SlotedCardPool;
 	spg: CardPool = new CardPool();
 
 	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
-		super(cardPool, landSlot, options);
+		const [, filteredCardPool] = filterCardPool(cardPool, (cid: CardID) =>
+			SOSBoosterFactory.CommonDualLands.includes(cid)
+		);
+		super(filteredCardPool, landSlot, options);
+
+		this.borderless = cidsToSlotedCardPool(SOSBoosterFactory.Borderless, options.maxDuplicates);
+		this.fieldNotes = cidsToSlotedCardPool(SOSBoosterFactory.FieldNotes, options.maxDuplicates);
+		this.mysticalArchive = cidsToSlotedCardPool(CardsBySet["soa"], options.maxDuplicates);
 
 		for (const cid of SpecialGuests["sos"]) {
 			const c = getCard(cid);
@@ -4620,16 +4634,6 @@ export class SOSBoosterFactory extends BoosterFactory {
 
 		const booster: UniqueCard[] = [];
 
-		// In 1 of 55 Play Boosters, 1 of 10 Special Guests cards will replace a common.
-		const spgRoll = random.realZeroToOneInclusive();
-		if (spgRoll < 1 / 55) {
-			updatedTargets.common = Math.max(0, updatedTargets.common - 1);
-			booster.push(pickCard(this.spg, booster, { foil: false }));
-		}
-
-		// 3 Uncommon cards
-		//   There are 100 uncommons from Secrets of Strixhaven that can appear in these slots.
-
 		// 1 Traditional foil card of any rarity
 		//     A common (54.4%), uncommon (33.6%), rare (6.7%), or mythic rare (1.1%) card from the Secrets of Strixhaven main set
 		//     A rare or mythic rare borderless Elder Dragon, planeswalker, or dual land (less than 1%)
@@ -4638,29 +4642,31 @@ export class SOSBoosterFactory extends BoosterFactory {
 		{
 			const pool = chooseWeighted(
 				[
-					60.4,
-					29.8,
-					6.5,
+					54.4,
+					33.6,
+					6.7,
 					1.1,
-					1.0,
-					1.0,
-					// NOTE: Known percentages add up to 99.8
-					0.2 / 4, // FIXME
-					0.2 / 4, // FIXME
-					0.2 / 4, // FIXME
-					0.2 / 4, // FIXME
+					// NOTE: Known percentages add up to 98.8
+					(1.2 / 6) * (2 / 3), // FIXME
+					(1.2 / 6) * (1 / 3), // FIXME
+					(1.2 / 6) * (2 / 3), // FIXME
+					(1.2 / 6) * (1 / 3), // FIXME
+					2.8,
+					(1.2 / 6) * (2 / 3), // FIXME
+					(1.2 / 6) * (1 / 3), // FIXME
 				].map((w) => w / 100.0),
 				[
 					this.cardPool.common,
-					this.mainSetUncommons,
+					this.cardPool.uncommon,
 					this.cardPool.rare,
 					this.cardPool.mythic,
-					this.fableFrame.uncommon,
-					this.fableFrame.rare,
-					this.fableFrame.mythic,
-					this.borderlessNonLand.rare,
-					this.borderlessNonLand.mythic,
-					this.borderlessLand.rare,
+					this.borderless.rare,
+					this.borderless.mythic,
+					this.fieldNotes.rare,
+					this.fieldNotes.mythic,
+					this.mysticalArchive.uncommon,
+					this.mysticalArchive.rare,
+					this.mysticalArchive.mythic,
 				]
 			);
 			booster.push(pickCard(pool, booster, { foil: true }));
@@ -4669,8 +4675,13 @@ export class SOSBoosterFactory extends BoosterFactory {
 		// 1 Mystical Archive card
 		//     In non-Japanese Play Boosters:
 		//         An uncommon (87.5%), rare (9.6%), or mythic rare (2.9%) Mystical Archive card
-
-		// TODO
+		{
+			const pool = chooseWeighted(
+				[87.5, 9.6, 2.9].map((w) => w / 100.0),
+				[this.mysticalArchive.uncommon, this.mysticalArchive.rare, this.mysticalArchive.mythic]
+			);
+			booster.push(pickCard(pool, booster));
+		}
 
 		// 1 Rare or mythic rare card
 		//     A rare (82.5%) or mythic rare (14.1%) from the Secrets of Strixhaven main set
@@ -4680,23 +4691,21 @@ export class SOSBoosterFactory extends BoosterFactory {
 			updatedTargets.rare -= 1;
 			const pool = chooseWeighted(
 				[
-					78.2,
-					13.6,
-					4.6,
+					82.5,
+					14.1,
+					1.6 * (2 / 3),
+					1.6 * (1 / 3),
 					1.2,
-					// NOTE: Known percentages add up to 97.6
-					2.4 / 3, // FIXME
-					2.4 / 3, // FIXME
-					2.4 / 3, // FIXME
+					// NOTE: Known percentages add up to 99.4
+					0.6,
 				].map((w) => w / 100.0),
 				[
 					this.cardPool.rare,
 					this.cardPool.mythic,
-					this.fableFrame.rare,
-					this.fableFrame.mythic,
-					this.borderlessNonLand.rare,
-					this.borderlessNonLand.mythic,
-					this.borderlessLand.rare,
+					this.borderless.rare,
+					this.borderless.mythic,
+					this.fieldNotes.rare,
+					this.fieldNotes.mythic,
 				]
 			);
 			booster.push(pickCard(pool, booster));
@@ -4709,33 +4718,39 @@ export class SOSBoosterFactory extends BoosterFactory {
 		{
 			const pool = chooseWeighted(
 				[
-					18.0,
-					58.0,
-					19.0,
-					2.0,
-					2.0,
-					// NOTE: Known percentages add up to 99.0
-					1.0 / 5.0, // FIXME
-					1.0 / 5.0, // FIXME
-					1.0 / 5.0, // FIXME
-					1.0 / 5.0, // FIXME
-					1.0 / 5.0, // FIXME
+					39.1,
+					39.1,
+					19.5,
+					1.9,
+					// NOTE: Known percentages add up to 99.6
+					(0.4 / 4) * (2 / 3),
+					(0.4 / 4) * (1 / 3),
+					(0.4 / 4) * (2 / 3),
+					(0.4 / 4) * (1 / 3),
 				].map((w) => w / 100.0),
 				[
 					this.cardPool.common,
-					this.mainSetUncommons,
+					this.cardPool.uncommon,
 					this.cardPool.rare,
 					this.cardPool.mythic,
-					this.fableFrame.uncommon,
-					this.fableFrame.rare,
-					this.fableFrame.mythic,
-					this.borderlessNonLand.rare,
-					this.borderlessNonLand.mythic,
-					this.borderlessLand.rare,
+					this.borderless.rare,
+					this.borderless.mythic,
+					this.fieldNotes.rare,
+					this.fieldNotes.mythic,
 				]
 			);
 			booster.push(pickCard(pool, booster));
 		}
+
+		// In 1 of 55 Play Boosters, 1 of 10 Special Guests cards will replace a common.
+		const spgRoll = random.realZeroToOneInclusive();
+		if (spgRoll < 1 / 55) {
+			updatedTargets.common = Math.max(0, updatedTargets.common - 1);
+			booster.push(pickCard(this.spg, booster, { foil: false }));
+		}
+
+		// 3 Uncommon cards
+		//   There are 100 uncommons from Secrets of Strixhaven that can appear in these slots.
 
 		const rest = super.generateBooster(updatedTargets, booster);
 		if (isMessageError(rest)) return rest;
@@ -4744,9 +4759,11 @@ export class SOSBoosterFactory extends BoosterFactory {
 		//     A non-foil (26.7%) or traditional foil (6.7%) default frame basic land
 		//     A non-foil (13.3%) or traditional foil (3.3%) spellcraft land
 		//     A non-foil (40%) or traditional foil (10%) common dual land
-
 		{
-			const pool = chooseWeighted([0.5, 0.5], [SOSBoosterFactory.Basics, SOSBoosterFactory.FullArtBasics]);
+			const pool = chooseWeighted(
+				[0.334, 0.166, 0.5],
+				[SOSBoosterFactory.Basics, SOSBoosterFactory.SpellcraftLands, SOSBoosterFactory.CommonDualLands]
+			);
 			const foil = random.realZeroToOneInclusive() <= 1 / 5;
 			rest.push(getUnique(getRandom(pool), { foil }));
 		}
