@@ -4603,6 +4603,7 @@ export class SOSBoosterFactory extends BoosterFactory {
 	static readonly Basics = SOSBoosterFactory.filter(272, 281);
 	static readonly Borderless = SOSBoosterFactory.filter(282, 288).concat(SOSBoosterFactory.filter(301, 305));
 	static readonly FieldNotes = SOSBoosterFactory.filter(289, 300);
+	static readonly MysticalArchive = CardsBySet["soa"].filter((c) => parseInt(getCard(c).collector_number) <= 65);
 
 	borderless: SlotedCardPool;
 	fieldNotes: SlotedCardPool;
@@ -4617,7 +4618,7 @@ export class SOSBoosterFactory extends BoosterFactory {
 
 		this.borderless = cidsToSlotedCardPool(SOSBoosterFactory.Borderless, options.maxDuplicates);
 		this.fieldNotes = cidsToSlotedCardPool(SOSBoosterFactory.FieldNotes, options.maxDuplicates);
-		this.mysticalArchive = cidsToSlotedCardPool(CardsBySet["soa"], options.maxDuplicates);
+		this.mysticalArchive = cidsToSlotedCardPool(SOSBoosterFactory.MysticalArchive, options.maxDuplicates);
 
 		for (const cid of SpecialGuests["sos"]) {
 			const c = getCard(cid);
