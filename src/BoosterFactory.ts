@@ -4598,7 +4598,13 @@ export class SOSBoosterFactory extends BoosterFactory {
 		);
 	}
 
-	static readonly CommonDualLands = SOSBoosterFactory.filter(253, 266).filter((c) => getCard(c).rarity === "common");
+	static readonly CommonDualLands = [
+		"a9ab41c8-3ee2-4676-9b8b-20c34d9f5f21",
+		"a0a66f7b-eab4-45da-8895-c2c2c7eb05f8",
+		"dbc3447e-1329-4ea1-b4ca-b321b0ffec8f",
+		"1de6c6cc-0c55-4997-8623-d7f796bd9ab8",
+		"3dc7a4c3-c356-4fba-bea0-e8788da3eb57",
+	];
 	static readonly SpellcraftLands = SOSBoosterFactory.filter(267, 271);
 	static readonly Basics = SOSBoosterFactory.filter(272, 281);
 	static readonly Borderless = SOSBoosterFactory.filter(282, 288).concat(SOSBoosterFactory.filter(301, 305));
@@ -4628,9 +4634,9 @@ export class SOSBoosterFactory extends BoosterFactory {
 
 	generateBooster(targets: Targets) {
 		const updatedTargets = structuredClone(targets);
-		// 6–7 Commons
+		// 6-7 Commons
 		//     There are 81 common cards from Secrets of Strixhaven that can appear in these slots.
-		if (targets === DefaultBoosterTargets) updatedTargets.common = Math.max(0, updatedTargets.common - 3);
+		if (targets === DefaultBoosterTargets) updatedTargets.common = 7;
 		else updatedTargets.common = Math.max(1, updatedTargets.common - 2);
 
 		const booster: UniqueCard[] = [];
