@@ -63,6 +63,12 @@
 				>
 					<font-awesome-icon icon="fa-solid fa-external-link-alt" class="button-icon" />TTS
 				</button>
+				<button
+					@click="exportToCubecana('duelsink')"
+					v-tooltip.right="'Export directly to Duels.ink via Cubecana.'"
+				>
+					<font-awesome-icon icon="fa-solid fa-external-link-alt" class="button-icon" />Duels.ink
+				</button>
 			</template>
 		</template>
 	</Dropdown>
@@ -161,7 +167,7 @@ function exportDeckToFaBrary() {
 	window.open(url);
 }
 
-function exportToCubecana(site: "inktable" | "lorcanito" | "tts") {
+function exportToCubecana(site: "inktable" | "lorcanito" | "tts" | "duelsink") {
 	const cardNames = exportDeckMTGA(false);
 	window.open(`https://www.cubecana.com/play?export=${site}&deck=${encodeURIComponent(cardNames)}`);
 }

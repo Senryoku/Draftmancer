@@ -1,6 +1,7 @@
 import { QueueDescription } from "./QueueDescription";
 
 export const AvailableQueues: readonly QueueDescription[] = [
+	{ id: "sos", name: "Secrets of Strixhaven", playerCount: 8, setCode: "sos" },
 	{
 		id: "tmt",
 		name: "Teenage Mutant Ninja Turtles",
@@ -9,7 +10,7 @@ export const AvailableQueues: readonly QueueDescription[] = [
 		settings: { pickedCardsPerRound: 2 },
 	},
 	{ id: "ecl", name: "Lorwyn Eclipsed", playerCount: 8, setCode: "ecl" },
-	{ id: "tla", name: "Avatar: The Last Airbender", playerCount: 8, setCode: "tla" },
+	// { id: "tla", name: "Avatar: The Last Airbender", playerCount: 8, setCode: "tla" },
 	// { id: "spm", name: "Spider-Man", playerCount: 4, setCode: "spm", settings: { pickedCardsPerRound: 2 } },
 	// { id: "eoe", name: "Edge of Eternities", playerCount: 8, setCode: "eoe" },
 	// { id: "fin", name: "Final Fantasy", playerCount: 8, setCode: "fin" },

@@ -1,6 +1,13 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
+			<em>April 10, 2026</em>
+			<p>
+				<img src="img/sets/sos.svg" class="set-icon" style="--invertedness: 100%" alt="SOS" /> Secrets of
+				Strixhaven (SOS) is now available.
+			</p>
+		</div>
+		<div class="news">
 			<em>February 21, 2026</em>
 			<p>
 				<img src="img/sets/tmt.svg" class="set-icon" style="--invertedness: 100%" alt="TMT" /> Teenage Mutant
@@ -44,14 +51,6 @@
 			<em>June 21, 2025</em>
 			<p>Experimental custom cards import from Cube Cobra. Check 'Retrieve custom properties' on import.</p>
 			<p>Improved color balancing (Thanks tiera!)</p>
-		</div>
-		<div class="news">
-			<em>May 30, 2025</em>
-			<p>
-				<img src="img/sets/fin.svg" class="set-icon" style="--invertedness: 100%" alt="FIN" /> Final Fantasy is
-				now available!<br />
-			</p>
-			<p>New options for Silent Auction Draft.</p>
 		</div>
 	</div>
 </template>
