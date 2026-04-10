@@ -843,7 +843,8 @@ describe("Single Draft (Two Players)", function () {
 							(set === "om1" && (c.set === "omb" || c.set === "spm")) ||
 							(set === "tla" && c.set === "tle") ||
 							(set === "ecl" && c.set === "spg") ||
-							(set === "tmt" && c.set === "pza")
+							(set === "tmt" && c.set === "pza") ||
+							(set === "sos" && (c.set === "spg" || c.set === "soa"))
 					),
 					`All cards in booster should be of the desired set, got [${[...new Set(b.map((c) => c.set))]}].`
 				).to.be.true;

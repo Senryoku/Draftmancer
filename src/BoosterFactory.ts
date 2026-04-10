@@ -4634,10 +4634,10 @@ export class SOSBoosterFactory extends BoosterFactory {
 
 	generateBooster(targets: Targets) {
 		const updatedTargets = structuredClone(targets);
-		// 6-7 Commons
+		// 6-7 Commons (!) FIXME: Mistake, should be 5-6?
 		//     There are 81 common cards from Secrets of Strixhaven that can appear in these slots.
-		if (targets === DefaultBoosterTargets) updatedTargets.common = 7;
-		else updatedTargets.common = Math.max(1, updatedTargets.common - 2);
+		if (targets === DefaultBoosterTargets) updatedTargets.common = 6;
+		else updatedTargets.common = Math.max(1, updatedTargets.common - 3);
 
 		const booster: UniqueCard[] = [];
 
