@@ -300,7 +300,7 @@ describe("Sets content", function () {
 		tla: { common: 81 + 10, uncommon: 110, rare: 60, mythic: 20 },
 		ecl: { common: 81, uncommon: 100, rare: 65, mythic: 22 },
 		tmt: { common: 67, uncommon: 55, rare: 53, mythic: 15 }, // 56 + 5 legendary turtles + 6 lands as commons; 51 + 4 legendary turtles as uncommons
-		sos: { common: 81, uncommon: 100, rare: 65, mythic: 20 },
+		sos: { common: 81 + 5, uncommon: 100, rare: 60, mythic: 20 },
 	};
 
 	beforeEach(function (done) {
