@@ -209,6 +209,16 @@ const communities = ref([
 			cube: "https://www.cubecobra.com/cube/list/UnfairCube",
 		},
 	},
+	{
+		name: "Arena Power Max",
+		brief: "Cube community dedicated to drafting the most busted cards on MTG Arena (including Alchemy), with scheduled and daily ad-hoc drafts in EU and NA time zones!",
+		icon: "arena_max.webp",
+		tags: ["Cube", "MTGA", "EU", "NA"],
+		links: {
+			discord: "https://discord.gg/yn2g64GMqC",
+			cube: "https://cubecobra.com/cube/about/arenamax?view=primer",
+		},
+	},
 ]);
 shuffleArray(communities.value);
 
