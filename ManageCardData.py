@@ -451,6 +451,11 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
             except ValueError:
                 pass
 
+            if "color_indicator" in c:
+                c["colors"].sort(key=lambda val: {"W": 0, "U": 1, "B": 2, "R": 3, "G": 4}[val])
+            else:
+                c["colors"] = None
+
             all_cards.append(
                 {
                     k: c[k]
@@ -463,6 +468,7 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
                         "printed_name",
                         "flavor_name",
                         "mana_cost",
+                        "colors",
                         "set",
                         "collector_number",
                         "lang",
@@ -572,6 +578,10 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
         cmc, colors = parseCost(selection["mana_cost"])
         selection["cmc"] = cmc
         selection["colors"] = colors
+
+        if("colors" in c and c["colors"] != None and selection["colors"] != c["colors"]):
+            #print(f"Fixing card colors: '{selection['name']}': {selection["colors"]} != {c['colors']}")
+            selection["colors"] = c["colors"]
 
         # Conspiracy Draft Effects
         if c["oracle_id"] in DraftEffects:
