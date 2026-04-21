@@ -45,6 +45,8 @@ interface PublishDraftBody {
 	apiKey: string;
 }
 
+import util from "util";
+
 export function sendDraftLogToCubeCobra(session: Session) {
 	if (!InProduction || InTesting || !CUBECOBRA_API_KEY || !CUBECOBRA_LOG_ENDPOINT) return;
 
@@ -56,28 +58,31 @@ export function sendDraftLogToCubeCobra(session: Session) {
 			session.draftLog &&
 			!session.draftLog.delayed
 		) {
-			console.log(`Sending draft log to CubeCobra (CubeID: ${session.customCardList.cubeCobraID})...`);
+			const sessionID = session.id;
+			const cubeCobraID = session.customCardList.cubeCobraID;
+			const draftLog = session.draftLog;
+			console.log(`[${sessionID}] Sending draft log to CubeCobra (CubeID: ${cubeCobraID})...`);
 
-			const payload: PublishDraftBody = {
+			const payload: PublishDraftBody = structuredClone({
 				apiKey: CUBECOBRA_API_KEY,
-				cubeID: session.customCardList.cubeCobraID,
-				sessionID: session.id,
-				timestamp: session.draftLog.time,
-				players: Object.values(session.draftLog.users).map((user) => ({
+				cubeID: cubeCobraID,
+				sessionID: sessionID,
+				timestamp: draftLog.time,
+				players: Object.values(draftLog.users).map((user) => ({
 					userName: user.userName && user.userName !== "" ? user.userName : user.isBot ? "Bot" : "Anonymous",
 					isBot: user.isBot,
 					picks: user.picks.map((pick) => {
 						const p = pick as DraftPick;
 						return {
-							booster: p.booster.map((c) => session.draftLog!.carddata[c].oracle_id!) ?? [],
+							booster: p.booster.map((c) => draftLog.carddata[c].oracle_id) ?? [],
 							picks: p.pick,
 							burn: p.burn ?? [],
 						};
 					}),
 					decklist: user.decklist
 						? {
-								main: user.decklist.main.map((c) => session.draftLog!.carddata[c].oracle_id!),
-								side: user.decklist.side.map((c) => session.draftLog!.carddata[c].oracle_id!),
+								main: user.decklist.main.map((c) => draftLog.carddata[c].oracle_id),
+								side: user.decklist.side.map((c) => draftLog.carddata[c].oracle_id),
 								lands: user.decklist.lands ?? { W: 0, U: 0, B: 0, R: 0, G: 0 },
 							}
 						: {
@@ -85,20 +90,27 @@ export function sendDraftLogToCubeCobra(session: Session) {
 								main: user.picks
 									.map((pick) => {
 										const p = pick as DraftPick;
-										return p.pick.map((i) => session.draftLog!.carddata[p.booster[i]].oracle_id);
+										return p.pick.map((i) => draftLog.carddata[p.booster[i]].oracle_id);
 									})
 									.flat(),
 								side: [],
 								lands: { W: 0, U: 0, B: 0, R: 0, G: 0 },
 							},
 				})),
-			};
+			});
+			console.log(util.inspect(payload, false, null, true));
 
 			axios.post(CUBECOBRA_LOG_ENDPOINT, payload).catch((err) => {
-				console.error("Error sending draft log to CubeCobra, will retry once in 5 seconds. ", err.cause ?? err);
+				console.error(
+					`[${sessionID}] Error sending draft log to CubeCobra (CubeID: ${cubeCobraID}), will retry once in 5 seconds. `,
+					err.cause ?? err
+				);
 				setTimeout(() => {
 					axios.post(CUBECOBRA_LOG_ENDPOINT, payload).catch((final_err) => {
-						console.error("Error sending draft log to CubeCobra (second attempt): ", final_err);
+						console.error(
+							`[${sessionID}] Error sending draft log to CubeCobra (CubeID: ${cubeCobraID}) (second attempt): `,
+							final_err
+						);
 					});
 				}, 5000);
 			});
