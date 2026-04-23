@@ -219,6 +219,16 @@ const communities = ref([
 			cube: "https://cubecobra.com/cube/about/arenamax?view=primer",
 		},
 	},
+	{
+		name: "Commander Cube'N",
+		brief: "A community hub for all things limited! We run weekly free-to-play Cube and booster drafts online using Untap.in, TTS, Cockatrice, and Draftmancer. Whether you're a competitive or casual player, all Brushwaggs are welcome!",
+		icon: "cuben.webp",
+		tags: ["Cube", "Commander", "Untap.in", "Cockatrice", "TTS"],
+		links: {
+			discord: "https://discord.gg/zSYuJvraJb",
+			cube: "https://cubecobra.com/cube/list/r14?view=Mainboard&display=spoiler",
+		},
+	},
 ]);
 shuffleArray(communities.value);
 
