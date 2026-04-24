@@ -1857,13 +1857,27 @@
 					<form @submit.prevent="importDeck">
 						<div>
 							<textarea
-								placeholder="Paste cards here... any list MTGA accepts should work"
+								placeholder="Paste or drop a card list here... Any list MTGA accepts should work."
 								rows="15"
 								cols="40"
 								id="decklist-text"
+								@dragover="dragFileOver"
+								@drop="dropFile($event, setImportDeckText)"
 							></textarea>
 						</div>
-						<div><button type="submit">Import</button></div>
+						<div>
+							<input
+								type="file"
+								id="decklist-file-input"
+								@change="uploadFile($event, setImportDeckText)"
+								style="display: none"
+								accept=".txt"
+							/>
+							<button type="button" onclick="document.querySelector('#decklist-file-input').click()">
+								Browse
+							</button>
+							<button type="submit">Import</button>
+						</div>
 					</form>
 				</div>
 			</template>
@@ -2625,12 +2639,9 @@
 										'<p>Upload any card list from your computer.</p><p>You can use services like Cube Cobra to find cubes or craft your own list and export it to .txt.</p>',
 									html: true,
 								}"
-								@drop="dropCustomList"
+								@drop="dropFile($event, parseCustomCardList)"
 								onclick="document.querySelector('#card-list-input').click()"
-								@dragover="
-									$event.preventDefault();
-									($event.target as HTMLElement)?.classList.add('dropzone-highlight');
-								"
+								@dragover="dragFileOver"
 								style="flex-grow: 1; height: 100%"
 							>
 								Upload a Custom Card List file by dropping it here or by clicking to browse your

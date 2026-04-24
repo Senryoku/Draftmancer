@@ -223,7 +223,7 @@ const communities = ref([
 		name: "Commander Cube'N",
 		brief: "A community hub for all things limited! We run weekly free-to-play Cube and booster drafts online using Untap.in, TTS, Cockatrice, and Draftmancer. Whether you're a competitive or casual player, all Brushwaggs are welcome!",
 		icon: "cuben.webp",
-		tags: ["Cube", "Commander", "Untap.in", "Cockatrice", "TTS"],
+		tags: ["Cube", "Commander", "Limited", "Draft", "Untap.in", "TTS"],
 		links: {
 			discord: "https://discord.gg/zSYuJvraJb",
 			cube: "https://cubecobra.com/cube/list/r14?view=Mainboard&display=spoiler",

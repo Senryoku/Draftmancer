@@ -2799,7 +2799,11 @@ export default defineComponent({
 			const blob = await response.blob();
 			callback(blob, options);
 		},
-		dropCustomList(event: DragEvent) {
+		dragFileOver(event: DragEvent) {
+			event.preventDefault();
+			(event.target as HTMLElement)?.classList.add("dropzone-highlight");
+		},
+		dropFile(event: DragEvent, callback: (file: File) => void) {
 			event.preventDefault();
 			(event.target as HTMLElement)?.classList.remove("dropzone-highlight");
 
@@ -2808,10 +2812,10 @@ export default defineComponent({
 					for (const item of event.dataTransfer.items)
 						if (item.kind === "file") {
 							const file = item.getAsFile();
-							if (file) this.parseCustomCardList(file);
+							if (file) callback(file);
 						}
 				} else {
-					for (const file of event.dataTransfer.files) this.parseCustomCardList(file);
+					for (const file of event.dataTransfer.files) callback(file);
 				}
 		},
 		async parseCustomCardList(file: File) {
@@ -2976,6 +2980,11 @@ export default defineComponent({
 		updateCCLRefillWhenEmpty(event: Event) {
 			const value = (event.target as HTMLInputElement).checked;
 			this.socket.emit("setCustomCardListSetting", "refillWhenEmpty", value);
+		},
+		async setImportDeckText(file: File) {
+			const textarea = document.querySelector("#decklist-text") as HTMLInputElement;
+			const contents = await file.text();
+			textarea.value = contents;
 		},
 		async importDeck() {
 			const response = await fetch("/getDeck", {
