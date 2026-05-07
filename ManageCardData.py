@@ -66,6 +66,31 @@ if "--mtga" in sys.argv:
 MTGADataFolder = f"{MTGAFolder}MTGA_Data/Downloads/Raw/"
 MTGACardDBFiles = glob.glob(f"{MTGADataFolder}Raw_CardDatabase_*.mtga")
 
+MTGASetConversions = {
+    "dom": "dar",
+    "ajmp": "jmp",
+    "ymid": "y22",
+    "yvow": "y22",
+    "yneo": "y22",
+    "ysnc": "y22",
+    "ydmu": "y23",
+    "ybro": "y23",
+    "yone": "y23",
+    "ymom": "y23",
+    "ymat": "y23",
+    "ywoe": "y24",
+    "ylci": "y24",
+    "yotj": "y24",
+    "yblb": "y24",
+    "ydsk": "y24",
+    "yfdn": "y24",
+    "ydft": "y25",
+    "ytdm": "y25",
+    "yeoe": "y25",
+    "yecl": "y26",
+    "yfra": "y26",
+}
+
 if len(MTGACardDBFiles) == 0:
     print(colored(f"No MTGA Card DB files found in {MTGADataFolder}", "red"))
     sys.exit(1)
@@ -434,10 +459,17 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
                 # And some reversible cards also have an adventure... e.g. Bloomvine Regent, becomes "Bloomvine Regent // Claim Territory // Bloomvine Regent"
                 if len(faceNames) == 3 and faceNames[0] == faceNames[2].strip():
                     c["name"] = f"{faceNames[0]} //{faceNames[1]}"
-            if (c["name"], c["collector_number"], c["set"].lower()) in CardsCollectorNumberAndSet:
-                c["arena_id"] = CardsCollectorNumberAndSet[(c["name"], c["collector_number"], c["set"].lower())]
-            elif (frontName, c["collector_number"], c["set"].lower()) in CardsCollectorNumberAndSet:
-                c["arena_id"] = CardsCollectorNumberAndSet[(frontName, c["collector_number"], c["set"].lower())]
+            mtga_set = c["set"].lower()
+            if (c["name"], c["collector_number"], mtga_set) in CardsCollectorNumberAndSet:
+                c["arena_id"] = CardsCollectorNumberAndSet[(c["name"], c["collector_number"], mtga_set)]
+            elif (frontName, c["collector_number"], mtga_set) in CardsCollectorNumberAndSet:
+                c["arena_id"] = CardsCollectorNumberAndSet[(frontName, c["collector_number"], mtga_set)]
+            elif mtga_set in MTGASetConversions:
+                mtga_set = MTGASetConversions[mtga_set]
+                if (c["name"], c["collector_number"], mtga_set) in CardsCollectorNumberAndSet:
+                    c["arena_id"] = CardsCollectorNumberAndSet[(c["name"], c["collector_number"], mtga_set)]
+                elif (frontName, c["collector_number"], mtga_set) in CardsCollectorNumberAndSet:
+                    c["arena_id"] = CardsCollectorNumberAndSet[(frontName, c["collector_number"], mtga_set)]
 
             # Workaround for Teferi, Master of Time (M21) variations (exclude all except the first one from boosters)
             if c["set"] == "m21" and c["collector_number"] in ["275", "276", "277"]:
@@ -579,8 +611,8 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
         selection["cmc"] = cmc
         selection["colors"] = colors
 
-        if("colors" in c and c["colors"] != None and selection["colors"] != c["colors"]):
-            #print(f"Fixing card colors: '{selection['name']}': {selection["colors"]} != {c['colors']}")
+        if "colors" in c and c["colors"] != None and selection["colors"] != c["colors"]:
+            # print(f"Fixing card colors: '{selection['name']}': {selection["colors"]} != {c['colors']}")
             selection["colors"] = c["colors"]
 
         # Conspiracy Draft Effects
