@@ -967,6 +967,11 @@
         "fullName": "Phyrexia: All Will Be One Jumpstart Front Cards",
         "icon": "img/sets/fone.svg"
     },
+    "fra": {
+        "code": "fra",
+        "fullName": "Reality Fracture",
+        "icon": "img/sets/fra.svg"
+    },
     "frf": {
         "code": "frf",
         "fullName": "Fate Reforged",
@@ -1205,6 +1210,16 @@
         "code": "hml",
         "fullName": "Homelands",
         "icon": "img/sets/hml.svg"
+    },
+    "hob": {
+        "code": "hob",
+        "fullName": "The Hobbit",
+        "icon": "img/sets/hob.svg"
+    },
+    "hoc": {
+        "code": "hoc",
+        "fullName": "The Hobbit Commander",
+        "icon": "img/sets/hoc.svg"
     },
     "hop": {
         "code": "hop",
@@ -3159,6 +3174,11 @@
         "fullName": "Scars of Mirrodin Promos",
         "block": "Scars of Mirrodin",
         "icon": "img/sets/psom.svg"
+    },
+    "psos": {
+        "code": "psos",
+        "fullName": "Secrets of Strixhaven Promos",
+        "icon": "img/sets/psos.svg"
     },
     "pspl": {
         "code": "pspl",
