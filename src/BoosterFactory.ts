@@ -3318,7 +3318,7 @@ export class FINBoosterFactory extends BoosterFactory {
 	static readonly BorderlessAdventure = FINBoosterFactory.filter(310, 314);
 	static readonly BorderlessArtist = [...FINBoosterFactory.filter(315, 323), ...FINBoosterFactory.filter(577, 577)];
 	static readonly BorderlessWoodblock = FINBoosterFactory.filter(324, 373); // 50
-	static readonly BorderlessCharacter = FINBoosterFactory.filter(374, 405); // 32
+	static readonly BorderlessCharacter = FINBoosterFactory.filter(374, 405).filter((c) => getCard(c).collector_number.match(/^\d+$/)); // 32
 	static readonly CidVariants = [...FINBoosterFactory.filter(216, 216), ...FINBoosterFactory.filter(407, 420)];
 	static readonly Basics = FINBoosterFactory.filter(294, 309);
 	static readonly CommonDualLands = [
