@@ -3,7 +3,7 @@ import { InTesting, InProduction } from "./Context.js";
 import { Session } from "./Session.js";
 import { DraftPick } from "./DraftLog.js";
 import { CCLSettings, CustomCardList, PackLayout, Sheet } from "./CustomCardList.js";
-import { Cards, CardVersionsByName } from "./Cards.js";
+import { Cards, getCardVersionsByName } from "./Cards.js";
 import { SocketError } from "./Message.js";
 import { Card, CardColor, OracleID } from "./CardTypes.js";
 import { matchCardVersion } from "./parseCardList.js";
@@ -379,8 +379,8 @@ export async function importFormat(cardList: CustomCardList, format: DraftFormat
 					let cid = null;
 					const customCard = customCards.find((c) => c.name === line);
 					if (customCard) cid = customCard.id;
-					else if (CardVersionsByName[line]) {
-						const candidates = CardVersionsByName[line];
+					else {
+						const candidates = getCardVersionsByName(line);
 						for (const candidate of candidates) {
 							if (candidate in defaultSheet.cards) {
 								cid = candidate;

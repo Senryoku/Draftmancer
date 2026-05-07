@@ -956,12 +956,13 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
             else b
         )
 
+    cardsByNameLower = {}
     for name in cardsByName:
-        cardsByName[name] = functools.reduce(selectCard, cardsByName[name])["id"]
+        cardsByNameLower[name.lower()] = functools.reduce(selectCard, cardsByName[name])["id"]
     # Handle both references to the full names for just the front face
-    for name in list(cardsByName):
-        if " // " in name and name.split(" //")[0] not in cardsByName:
-            cardsByName[name.split(" //")[0]] = cardsByName[name]
+    for name in list(cardsByNameLower):
+        if " // " in name and name.split(" //")[0] not in cardsByNameLower:
+            cardsByNameLower[name.split(" //")[0]] = cardsByNameLower[name]
 
     cards_items = list(cards.items())
     print(f"Split DB, starting with {len(cards)} cards")
@@ -976,7 +977,7 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
         print("Error: Some cards were not written to the split DB")
 
     with open("data/CardsByName.json", "w", encoding="utf8") as outfile:
-        json.dump(cardsByName, outfile, ensure_ascii=False, indent=4)
+        json.dump(cardsByNameLower, outfile, ensure_ascii=False, indent=4)
 
 cards = {}
 DBFiles = glob.glob("data/MTGCards.*.json")
@@ -1262,6 +1263,8 @@ constants["PrimarySets"] = [
         "mar",
         "omb",
         "msh",
+        "fra",
+        "hob",
     ]
 ]  # Exclude some codes that are actually part of larger sets (tsb, fmb1, h1r... see subsets), or aren't out yet
 with open("src/data/constants.json", "w", encoding="utf8") as constantsFile:

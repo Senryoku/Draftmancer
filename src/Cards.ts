@@ -83,11 +83,11 @@ export function getUnique(cid: CardID, options: { foil?: boolean; getCard?: (cid
 console.time("Preparing Cards and caches");
 
 // Preferred version of each card
-export const CardsByName = JSON.parse(fs.readFileSync("./data/CardsByName.json", "utf-8")) as {
+const CardsByName = JSON.parse(fs.readFileSync("./data/CardsByName.json", "utf-8")) as {
 	[name: string]: CardID;
 };
 export const MTGACards: { [arena_id: ArenaID]: Card } = {}; // Cards sorted by their arena id
-export const CardVersionsByName: { [name: string]: Array<CardID> } = {}; // Every card version sorted by their name (first face)
+const CardVersionsByName: { [name: string]: Array<CardID> } = {}; // Every card version sorted by their name (first face)
 // Cache for cards organized by set.
 export const CardsBySet: { [set: string]: Array<CardID> } = { alchemy_dmu: [], planeshifted_snc: [] };
 export const BoosterCardsBySet: { [set: string]: Array<CardID> } = { alchemy_dmu: [], planeshifted_snc: [] };
@@ -96,12 +96,12 @@ for (const [cid, card] of Cards) {
 	const aid = card.arena_id;
 	if (aid !== undefined) MTGACards[aid] = card;
 
-	const firstFaceName = card.name.split(" //")[0];
+	const firstFaceName = card.name.split(" //")[0].toLowerCase();
 	if (!CardVersionsByName[firstFaceName]) CardVersionsByName[firstFaceName] = [];
 	CardVersionsByName[firstFaceName].push(cid);
 
 	if (card.printed_names?.["en"] && card.printed_names?.["en"] !== card.name) {
-		const altName = card.printed_names?.["en"];
+		const altName = card.printed_names?.["en"].toLowerCase();
 		if (!CardVersionsByName[altName]) CardVersionsByName[altName] = [cid];
 		else CardVersionsByName[altName].push(cid);
 	}
@@ -122,9 +122,9 @@ for (const [cid, card] of Cards) {
 	if (card.set === "snc" && card.in_booster) {
 		// Search for a rebalanced version of the card
 		const rebalancedName = "A-" + card.name;
-		if (rebalancedName in CardsByName && getCard(CardsByName[rebalancedName]).set === "snc") {
+		if (getCardByName(rebalancedName) && getCard(getCardByName(rebalancedName)!).set === "snc") {
 			CardsBySet["planeshifted_snc"].push(cid);
-			BoosterCardsBySet["planeshifted_snc"].push(CardsByName[rebalancedName]);
+			BoosterCardsBySet["planeshifted_snc"].push(getCardByName(rebalancedName)!);
 		} else {
 			CardsBySet["planeshifted_snc"].push(cid);
 			BoosterCardsBySet["planeshifted_snc"].push(cid);
@@ -154,6 +154,19 @@ for (const set of Object.keys(CardsBySet)) {
 }
 export function hasMythics(set: string) {
 	return set in SetHasMythics ? SetHasMythics[set] : false;
+}
+
+export function getCardByName(name: string): CardID | null {
+	return CardsByName[name.toLowerCase()];
+}
+
+export function getCardVersionsByName(name: string): CardID[] {
+	const lowered = name.toLowerCase();
+	if (lowered in CardVersionsByName) return CardVersionsByName[lowered];
+	// If not found, try double faced cards before giving up!
+	const front = lowered.split(" //")[0];
+	if (front in CardVersionsByName) return CardVersionsByName[front];
+	return [];
 }
 
 Object.freeze(Cards);

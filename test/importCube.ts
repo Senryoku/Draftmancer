@@ -1,7 +1,7 @@
 import { before, after, beforeEach, afterEach, describe, it } from "mocha";
 import { expect } from "chai";
 import { makeClients, enableLogs, disableLogs, waitForClientDisconnects, ackNoError } from "./src/common.js";
-import { CardsByName } from "../src/Cards.js";
+import { getCardByName } from "../src/Cards.js";
 
 describe("Import Cubes", function () {
 	this.timeout(10000);
@@ -99,7 +99,7 @@ describe("Import Cubes", function () {
 								).to.equal(1);
 							} else {
 								expect(
-									options.customCardList!.sheets["default"].cards[CardsByName["Watery Grave"]],
+									options.customCardList!.sheets["default"].cards[getCardByName("Watery Grave")!],
 									"The cube should contain the default version of Watery Grave"
 								).to.equal(1);
 							}

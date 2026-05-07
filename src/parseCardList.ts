@@ -1,7 +1,7 @@
 import { genCustomCardID } from "./CustomCardID.js";
 import { validateCustomCard } from "./CustomCards.js";
 import { Card, CardID, ParameterizedDraftEffectType } from "./CardTypes.js";
-import { CardsByName, CardVersionsByName, getCard, isValidCardID } from "./Cards.js";
+import { getCard, getCardByName, getCardVersionsByName, isValidCardID } from "./Cards.js";
 import { CCLSettings, CustomCardList, getSheetCardIDs, PackLayout, Sheet, SheetName, Slot } from "./CustomCardList.js";
 import { escapeHTML } from "./utils.js";
 import { ackError, isSocketError, SocketError } from "./Message.js";
@@ -43,15 +43,9 @@ export function matchCardVersion(
 	fallbackToCardName = false
 ): CardID | null {
 	// Only the name is supplied, get the preferred version of the card
-	if (!set && !collector_number && name in CardsByName) return CardsByName[name];
+	if (!set && !collector_number && getCardByName(name)) return getCardByName(name);
 
-	let candidates: Card[] = (
-		name in CardVersionsByName
-			? CardVersionsByName[name]
-			: name.split(" //")[0] in CardVersionsByName // If not found, try double faced cards before giving up!
-				? CardVersionsByName[name.split(" //")[0]]
-				: []
-	).map((cid) => getCard(cid));
+	let candidates: Card[] = getCardVersionsByName(name).map((cid) => getCard(cid));
 
 	candidates = candidates.filter(
 		(c) => (!set || c.set === set) && (!collector_number || c.collector_number === collector_number)
@@ -68,7 +62,7 @@ export function matchCardVersion(
 		}, candidates[0]).id;
 	}
 
-	if (fallbackToCardName && name in CardsByName) return CardsByName[name];
+	if (fallbackToCardName && getCardByName(name)) return getCardByName(name);
 
 	return null;
 }
@@ -139,12 +133,12 @@ export function parseLine(
 			const [, , altName, altFoil] = simpleMatch;
 			if (options?.customCards && options.customCards.nameCache.has(altName))
 				return { count, cardID: options.customCards.nameCache.get(altName)!.id, foil: !!altFoil };
-			if (altName in CardsByName) return { count, cardID: CardsByName[altName], foil: !!altFoil };
+			if (getCardByName(altName)) return { count, cardID: getCardByName(altName)!, foil: !!altFoil };
 		}
 	}
 
 	const message =
-		(name in CardsByName
+		(getCardByName(name)
 			? `Could not find this exact version of '${name}' (${set}) in our database, but other printings are available.`
 			: `Could not find '${name}' in our database.`) +
 		` If you think it should be there, please contact us via email or our Discord server.`;
