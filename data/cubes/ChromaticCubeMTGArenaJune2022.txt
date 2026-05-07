@@ -109,7 +109,7 @@ Inscription of Insight
 Tezzeret's Gambit
 Baral's Expertise
 Karn's Temporal Sundering
-A-Alrund's Epiphany
+Alrund's Epiphany
 Midnight Clock
 Search for Azcanta
 The Mirari Conjecture
@@ -427,7 +427,7 @@ Narset of the Ancient Way
 Inspired Ultimatum
 Yarok, the Desecrated
 Muldrotha, the Gravetide
-A-Omnath, Locus of Creation
+Omnath, Locus of Creation
 Courier's Briefcase
 Esika, God of the Tree
 Kyodai, Soul of Kamigawa

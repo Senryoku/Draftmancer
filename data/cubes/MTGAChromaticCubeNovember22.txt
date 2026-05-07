@@ -118,7 +118,7 @@ Inscription of Insight
 Irenicus's Vile Duplication
 Baral's Expertise
 Karn's Temporal Sundering
-A-Alrund's Epiphany
+Alrund's Epiphany
 Midnight Clock
 Search for Azcanta
 The Mirari Conjecture
@@ -446,7 +446,7 @@ Nethroi, Apex of Death
 Narset of the Ancient Way
 Inspired Ultimatum
 Yarok, the Desecrated
-A-Omnath, Locus of Creation
+Omnath, Locus of Creation
 Esika, God of the Tree
 Golos, Tireless Pilgrim
 Jegantha, the Wellspring
