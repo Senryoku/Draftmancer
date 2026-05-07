@@ -414,6 +414,9 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
                 # Essence of Ajani is an playtest emblem that can played as a normal card.
                 if c["name"] not in ["Essence of Ajani"]:
                     continue
+            # Ignore "variations" of cards: https://scryfall.com/search?q=is%3Avariation
+            if "variation" in c and c["variation"]:
+                continue
 
             # Tag this card as a candidate for AKR card images (to avoid using MTGA images)
             if c["name"] in AKRCards:
