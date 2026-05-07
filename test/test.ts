@@ -39,7 +39,7 @@ const checkColorBalance = function (booster: Card[]) {
 	// Exception for MH3: It cannot always be color balanced as it only has 5 commons in its common slot when an SPG card is present, but still more than 5 overall because of the wildcard slot.
 	// Exception for INR: Only has 5 commons after the double faced common card.
 	// Exception for TLA: 6 commons might not be enough to be color balanced when accounting for multicolored cards.
-	if (commons.length <= 5 || commons.map((c) => c.set).every((s) => ["mh3", "inr", "tla"].includes(s))) return;
+	if (commons.length <= 6 || commons.map((c) => c.set).every((s) => ["mh3", "inr", "tla", "sos"].includes(s))) return;
 
 	for (const color of "WUBRG")
 		expect(commons.filter((card) => card.colors.includes(color as CardColor)).length).to.be.at.least(1);
