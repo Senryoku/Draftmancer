@@ -280,6 +280,37 @@ export function validateCustomCard(inputCard: any): SocketError | Card {
 						cards: entry.cards,
 						duplicateProtection: entry.duplicateProtection ?? true,
 					});
+				} else if (entry.type === ParameterizedDraftEffectType.BoosterContents) {
+					if (!hasProperty("cards", isArrayOf(isString))(entry)) {
+						return valErr(
+							`Invalid Parameter`,
+							`Invalid 'AddCards' entry in 'draft_effects' of custom card. Missing or invalid 'cards' parameter.`
+						);
+					}
+					if (!hasOptionalProperty("count", isInteger)(entry)) {
+						return valErr(
+							`Invalid Parameter`,
+							`Invalid 'AddCards' entry in 'draft_effects' of custom card. Invalid 'count' parameter.`
+						);
+					}
+					if (!hasOptionalProperty("duplicateProtection", isBoolean)(entry)) {
+						return valErr(
+							`Invalid Parameter`,
+							`Invalid 'AddCards' entry in 'draft_effects' of custom card. Invalid 'duplicateProtection' parameter.`
+						);
+					}
+					if (entry.count && entry.count <= 0)
+						return valErr(
+							`Invalid Parameter`,
+							`Invalid 'AddCards' entry in 'draft_effects' of custom card. 'count' must be strictly positive.`
+						);
+						// NOTE: Full verification of the cards will be done later, once the rest of the file is parsed.
+						card.draft_effects.push({
+							type: entry.type,
+							count: entry.count ?? 0, // NOTE: If 0, will be filled after validation (we want to set it to all cards, but their count is unknown until parsed)
+							cards: entry.cards,
+							duplicateProtection: entry.duplicateProtection ?? true,
+						});
 				} else {
 					return valErr(
 						`Invalid Property`,

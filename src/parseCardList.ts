@@ -602,8 +602,35 @@ function parseCustomCards(lines: string[], startIdx: number) {
 							text: `Invalid 'AddCards' entry in 'draft_effects' of '${card.name}'. 'count' (${effect.count}) must be strictly positive and less than or equal to the number of cards in 'cards' (${effect.cards.length}).`,
 						});
 					}
+				} else if (effect.type === ParameterizedDraftEffectType.BoosterContents) {
+					for (let i = 0; i < effect.cards.length; ++i) {
+						const cid = effect.cards[i];
+						// This is a valid card ID, nothing more to do.
+						if (isValidCardID(cid)) continue;
+						// Otherwise, treat it as a card line and replace it with the corresponding Card ID.
+						const result = parseLine(cid, {
+							customCards: { cards: customCardsIDs, nameCache: customCardsNameCache },
+						});
+						if (isSocketError(result))
+							return ackError({
+								title: `[CustomCards]`,
+								text: `'${cid}', referenced in '${card.name}' ${effect.type} draft effect, is not a valid card.`,
+							});
+							effect.cards[i] = result.cardID;
+							// Insert additional copies of the card if needed.
+							for (let count = 1; count < result.count; ++count) {
+								effect.cards.splice(++i, 0, result.cardID);
+							}
+					}
+					// Actual card count is now known, update the 'count' field if unspecified and validate it.
+					if (effect.count <= 0) effect.count = effect.cards.length;
+					if (effect.count <= 0 || effect.count > effect.cards.length) {
+						return ackError({
+							title: `Invalid Parameter`,
+							text: `Invalid 'BoosterContents' entry in 'draft_effects' of '${card.name}'. 'count' (${effect.count}) must be strictly positive and less than or equal to the number of cards in 'cards' (${effect.cards.length}).`,
+						});
+					}
 				}
-			}
 		}
 	}
 

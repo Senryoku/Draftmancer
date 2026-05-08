@@ -50,6 +50,7 @@ export type SimpleDraftEffectType =
 
 export enum ParameterizedDraftEffectType {
 	AddCards = "AddCards",
+	BoosterContents = "BoosterContents",
 }
 
 export type DraftEffectType = SimpleDraftEffectType | ParameterizedDraftEffectType;
@@ -58,7 +59,8 @@ export type DraftEffect =
 	| {
 			type: SimpleDraftEffectType;
 	  }
-	| { type: ParameterizedDraftEffectType.AddCards; count: number; cards: CardID[]; duplicateProtection: boolean };
+	| { type: ParameterizedDraftEffectType.AddCards; count: number; cards: CardID[]; duplicateProtection: boolean }
+	| { type: ParameterizedDraftEffectType.BoosterContents; count: number; cards: CardID[]; duplicateProtection: boolean };
 
 export type CardFace = {
 	name: string;
