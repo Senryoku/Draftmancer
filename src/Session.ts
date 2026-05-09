@@ -643,7 +643,7 @@ export class Session implements IIndexable {
 			cardsPerBooster?: number;
 			customBoosters?: SetCode[];
 			cardsPerPlayer?: number;
-			removeFromCardPool?: CardID[]; // Use by LoreSeeker draft effect
+			removeFromCardPool?: CardID[]; // Used by AddBooster draft effect
 		} = {}
 	): UniqueCard[][] | MessageError {
 		if (!options.cardsPerBooster) options.cardsPerBooster = this.cardsPerBooster;
@@ -2225,38 +2225,6 @@ export class Session implements IIndexable {
 			};
 
 			switch (optionalOnPickDraftEffect.effect) {
-				case OptionalOnPickDraftEffect.LoreSeeker: {
-					const index = booster.findIndex((c) => c.uniqueID === optionalOnPickDraftEffect.cardID);
-					if (index < 0 || !hasEffect(booster[index], OptionalOnPickDraftEffect.LoreSeeker))
-						return reportError("Invalid draft effect card.");
-					if (!pickedCards.includes(index))
-						return reportError("You must pick Lore Seeker to use its effect.");
-					const additionalBooster = this.generateBoosters(1, {
-						useCustomBoosters: true,
-						removeFromCardPool: this.draftLog?.boosters.flat(),
-					});
-					if (isMessageError(additionalBooster))
-						Connections[userID].socket?.emit(
-							"message",
-							new MessageError(
-								"Could not generate additional booster, Lore Seeker effect ignored.",
-								`Original Error: ${additionalBooster.title} - ${additionalBooster.text}`
-							)
-						);
-					else {
-						applyDraftEffects.push(() => {
-							if (this.draftLog) {
-								this.draftLog.boosters.push(additionalBooster[0].map((c) => c.id));
-								const getCard = this.getCustomGetCardFunction();
-								for (const card of additionalBooster[0])
-									this.draftLog.carddata[card.id] = getCard(card.id);
-							}
-							s.players[userID].boosters.unshift(additionalBooster[0]);
-							notify(`${Connections[userID].userName} used the effect of 'Lore Seeker'.`);
-						});
-					}
-					break;
-				}
 				case OptionalOnPickDraftEffect.AddBooster: {
 					const index = booster.findIndex((c) => c.uniqueID === optionalOnPickDraftEffect.cardID);
 					if (index < 0 || !hasEffect(booster[index], ParameterizedDraftEffectType.AddBooster))
@@ -2269,7 +2237,7 @@ export class Session implements IIndexable {
 					);
 					if (!effect) return reportError("Invalid draft effect card.");
 					let additionalBooster: UniqueCard[][] | MessageError;
-					if (effect.layouts.length > 0) {
+					if (effect.layouts && effect.layouts.length > 0) {
 						if (!this.useCustomCardList || !this.customCardList.layouts)
 							return reportError("No custom card list.");
 						additionalBooster = generateBoosterFromCustomCardList(this.customCardList, 1, {

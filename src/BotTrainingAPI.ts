@@ -33,7 +33,7 @@ export function sendLog(type: string, session: Session) {
 		// Ignore drafts that contains effects messing with the packs. These won't be useful for training.
 		const excludedEffects: string[] = [
 			OnPickDraftEffect.CanalDredger,
-			OptionalOnPickDraftEffect.LoreSeeker,
+			OptionalOnPickDraftEffect.AddBooster,
 			UsableDraftEffect.CogworkLibrarian,
 			UsableDraftEffect.AgentOfAcquisitions,
 			UsableDraftEffect.LeovoldsOperative,

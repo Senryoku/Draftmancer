@@ -235,12 +235,20 @@ export function validateCustomCard(inputCard: any): SocketError | Card {
 		card.draft_effects = [];
 		for (const entry of inputCard.draft_effects) {
 			if (isString(entry)) {
-				if (!isSimpleDraftEffectType(entry))
-					return valErr(
-						`Invalid Property`,
-						`Invalid entry '${entry}' in 'draft_effects' of custom card, must be a valid DraftEffect.`
-					);
-				card.draft_effects.push({ type: entry });
+				if (entry === ParameterizedDraftEffectType.AddBooster) {
+					// Parameterized effect with default parameters.
+					card.draft_effects.push({ type: entry, layouts: [] });
+				} else if (entry === "LoreSeeker") {
+					// Backward compatibility: Superceded by "AddBooster".
+					card.draft_effects.push({ type: ParameterizedDraftEffectType.AddBooster, layouts: [] });
+				} else {
+					if (!isSimpleDraftEffectType(entry))
+						return valErr(
+							`Invalid Property`,
+							`Invalid entry '${entry}' in 'draft_effects' of custom card, must be a valid DraftEffect.`
+						);
+					card.draft_effects.push({ type: entry });
+				}
 			} else {
 				if (!hasProperty("type", isUnknown)(entry))
 					return valErr(`Invalid Property`, `Missing 'type' entry in 'draft_effects' of custom card.`);

@@ -25,7 +25,6 @@ export enum OnPickDraftEffect {
 
 // Same thing, but a may ability.
 export enum OptionalOnPickDraftEffect {
-	LoreSeeker = "LoreSeeker",
 	AddBooster = "AddBooster",
 }
 
@@ -43,7 +42,6 @@ export enum UsableDraftEffect {
 // Draft effects without parameters
 export type SimpleDraftEffectType =
 	| OnPickDraftEffect
-	| "LoreSeeker"
 	| UsableDraftEffect
 	| "TrackRemovedCardsNames"
 	| "TrackRemovedCardsSubtypes"
@@ -61,7 +59,7 @@ export type DraftEffect =
 			type: SimpleDraftEffectType;
 	  }
 	| { type: ParameterizedDraftEffectType.AddCards; count: number; cards: CardID[]; duplicateProtection: boolean }
-	| { type: ParameterizedDraftEffectType.AddBooster; layouts: { name: string; weight: number }[] };
+	| { type: ParameterizedDraftEffectType.AddBooster; layouts?: { name: string; weight: number }[] };
 
 export type CardFace = {
 	name: string;

@@ -26,7 +26,7 @@ export function generateBoosterFromCustomCardList(
 		withReplacement?: boolean;
 		duplicateProtection?: boolean;
 		playerCount?: number; // Allow correct ordering of boosters when using predetermined layouts
-		removeFromCardPool?: CardID[]; // Used by LoreSeeker draft effect
+		removeFromCardPool?: CardID[]; // Used by AddBooster draft effect
 		layouts?: { name: string; weight: number }[]; // Override layouts list and weights (Used by AddBooster draft effect)
 	} = {}
 ): MessageError | Array<UniqueCard>[] {
@@ -72,7 +72,7 @@ export function generateBoosterFromCustomCardList(
 			}
 		}
 
-		// Workaround to handle the LoreSeeker draft effect with a limited number of cards
+		// Workaround to handle the AddBooster draft effect with a limited number of cards
 		if (!options.withReplacement && options.removeFromCardPool) {
 			// We don't know from which slot the cards were picked, so we might remove them multiple times if they're shared between multiple slots,
 			// however I don't have a better solution for now.
@@ -286,7 +286,7 @@ export function generateBoosterFromCustomCardList(
 		const cardCount = fillPool();
 		const cardsPerBooster = options.cardsPerBooster ?? 15;
 
-		// Workaround to handle the LoreSeeker draft effect with a limited number of cards
+		// Workaround to handle the AddBooster draft effect with a limited number of cards
 		if (!options.withReplacement && options.removeFromCardPool) {
 			for (const cardId of options.removeFromCardPool)
 				if (localCollection.has(cardId)) localCollection.removeCard(cardId);

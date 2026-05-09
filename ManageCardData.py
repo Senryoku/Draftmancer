@@ -129,7 +129,7 @@ DraftEffects = {
     "c60ba5e9-dbfa-441b-a96f-9cc7fdfd2d76": ["Reveal", "NotePassingPlayer"],
     "abd78909-72dc-4d36-8990-39995fd071da": ["Reveal", "NoteDraftedCards"],
     "8ddbb63c-7f52-431b-bb82-e020b1c3749a": ["Reveal", "NoteDraftedCards"],
-    "19a3c505-b180-47cc-bef3-9e807a8a4a3d": ["Reveal", "LoreSeeker"],
+    "19a3c505-b180-47cc-bef3-9e807a8a4a3d": ["Reveal", "AddBooster"],
     "412fbf73-a471-42ad-83fe-14f19e4e9595": ["Reveal", "NoteDraftedCards"],
     "cf682012-de36-4ab4-ad94-c3c0fd7bce3f": ["Reveal", "ChooseColors"],
     "6ea507d3-2b8d-4f08-824c-0de0ae214da5": ["Reveal", "NoteDraftedCards"],
