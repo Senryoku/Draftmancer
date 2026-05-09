@@ -280,6 +280,35 @@ export function validateCustomCard(inputCard: any): SocketError | Card {
 						cards: entry.cards,
 						duplicateProtection: entry.duplicateProtection ?? true,
 					});
+				} else if (entry.type === ParameterizedDraftEffectType.AddBooster) {
+					if (!hasOptionalProperty("layouts", isArrayOf(isUnion(isString, isObject)))(entry)) {
+						return valErr(
+							`Invalid Parameter`,
+							`Invalid 'AddBooster' entry in 'draft_effects' of custom card. Invalid 'layouts' parameter.`
+						);
+					}
+					const layouts: { name: string; weight: number }[] = [];
+					if (hasProperty("layouts", isArrayOf(isString))(entry)) {
+						for (const layoutName of entry.layouts) {
+							layouts.push({
+								name: layoutName,
+								weight: 1,
+							});
+						}
+					} else if (hasProperty("layouts", isArrayOf(isObject))(entry)) {
+						for (const layout of entry.layouts) {
+							if (!hasProperty("name", isString)(layout) || !hasProperty("weight", isInteger)(layout))
+								return valErr(
+									`Invalid Parameter`,
+									`Invalid 'AddBooster' entry in 'draft_effects' of custom card. Invalid 'layouts' parameter.`
+								);
+							layouts.push(layout);
+						}
+					}
+					card.draft_effects.push({
+						type: entry.type,
+						layouts: layouts,
+					});
 				} else {
 					return valErr(
 						`Invalid Property`,
