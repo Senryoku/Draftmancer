@@ -2231,10 +2231,32 @@ export class Session implements IIndexable {
 						return reportError("Invalid draft effect card.");
 					if (!pickedCards.includes(index))
 						return reportError("You must pick Lore Seeker to use its effect.");
-					const additionalBooster = this.generateBoosters(1, {
-						useCustomBoosters: true,
-						removeFromCardPool: this.draftLog?.boosters.flat(),
-					});
+					//      if(hasEffect(booster[index], ParameterizedDraftEffectType.BoosterContents))
+
+					const effect =
+						random.shuffle(
+							booster[index].draft_effects?.filter(
+								(ef) => ef.type == ParameterizedDraftEffectType.BoosterContents
+							) ?? []
+						)[0] ?? null;
+					const shuffled = random.shuffle(effect?.cards ?? []);
+					const uniques = effect?.duplicateProtection
+						? shuffled.filter((name, index) => shuffled.indexOf(name) === index)
+						: shuffled;
+
+					const additionalBooster = effect
+						? effect.count == effect.cards.length
+							? [effect.cards.map((cid) => getUnique(cid, { getCard: this.getCustomGetCardFunction() }))]
+							: [
+									uniques
+										.splice(0, effect.count)
+										.map((cid) => getUnique(cid, { getCard: this.getCustomGetCardFunction() })),
+								]
+						: this.generateBoosters(1, {
+								useCustomBoosters: true,
+								removeFromCardPool: this.draftLog?.boosters.flat(),
+							});
+
 					if (isMessageError(additionalBooster))
 						Connections[userID].socket?.emit(
 							"message",

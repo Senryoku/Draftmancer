@@ -616,11 +616,11 @@ function parseCustomCards(lines: string[], startIdx: number) {
 								title: `[CustomCards]`,
 								text: `'${cid}', referenced in '${card.name}' ${effect.type} draft effect, is not a valid card.`,
 							});
-							effect.cards[i] = result.cardID;
-							// Insert additional copies of the card if needed.
-							for (let count = 1; count < result.count; ++count) {
-								effect.cards.splice(++i, 0, result.cardID);
-							}
+						effect.cards[i] = result.cardID;
+						// Insert additional copies of the card if needed.
+						for (let count = 1; count < result.count; ++count) {
+							effect.cards.splice(++i, 0, result.cardID);
+						}
 					}
 					// Actual card count is now known, update the 'count' field if unspecified and validate it.
 					if (effect.count <= 0) effect.count = effect.cards.length;
@@ -631,6 +631,7 @@ function parseCustomCards(lines: string[], startIdx: number) {
 						});
 					}
 				}
+			}
 		}
 	}
 
