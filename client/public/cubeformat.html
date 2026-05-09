@@ -698,6 +698,7 @@ CogworkGrinder             <comment># Will display the number of cards removed b
 
 <comment># The following effects are custom and do not match official Conspiracy effects.</comment>
 AddCards            <comment># Adds additional cards to your draft pool.</comment>
+BoosterContents     <comment># Seeds the packs of a LoreSeeker effect. </comment>
 
 <comment># Example value for AddCards</comment>
 "draft_effects": [
@@ -706,6 +707,25 @@ AddCards            <comment># Adds additional cards to your draft pool.</commen
 		"count": 1, <comment># Optional, if omitted, all cards from the following array will be added. Otherwise, 'count' random cards will be added to your pool.</comment>
 		"cards": ["Card Name 1", "Card Name 2"...],
 		"duplicateProtection": true, <comment># Optional, defaults to true. Duplicates of the same card can be used to increase its probability of being picked.</comment>
+	}
+]
+<comment># Example value for BoosterContents</comment>
+"draft_effects": [
+	"Reveal",
+	"LoreSeaker",
+	<comment>Pack style 1. Does nothing without LoreSeeker</comment>
+	{
+		"type": "BoosterContents",
+		"count": 1, <comment># Optional, if omitted, all cards from the following array will be in the pack. Otherwise, 'count' random cards will be in the pack.</comment>
+		"cards": ["Card Name 1", "Card Name 2"...],
+		"duplicateProtection": true, <comment># Optional, defaults to true. Duplicates of the same card can be used to increase its probability of being picked.</comment>
+	},
+	<comment>#Optional, Pack style 2. Can repeat as many times as you'd like.</comment>
+	{
+		"type": "BoosterContents",
+		"count": 1,
+		"cards": ["Card Name 1", "Card Name 2"...],
+		"duplicateProtection": true,
 	}
 ]
 </pre>
