@@ -284,25 +284,25 @@ export function validateCustomCard(inputCard: any): SocketError | Card {
 					if (!hasProperty("cards", isArrayOf(isString))(entry)) {
 						return valErr(
 							`Invalid Parameter`,
-							`Invalid 'AddCards' entry in 'draft_effects' of custom card. Missing or invalid 'cards' parameter.`
+							`Invalid 'BoosterContents' entry in 'draft_effects' of custom card. Missing or invalid 'cards' parameter.`
 						);
 					}
 					if (!hasOptionalProperty("count", isInteger)(entry)) {
 						return valErr(
 							`Invalid Parameter`,
-							`Invalid 'AddCards' entry in 'draft_effects' of custom card. Invalid 'count' parameter.`
+							`Invalid 'BoosterContents' entry in 'draft_effects' of custom card. Invalid 'count' parameter.`
 						);
 					}
 					if (!hasOptionalProperty("duplicateProtection", isBoolean)(entry)) {
 						return valErr(
 							`Invalid Parameter`,
-							`Invalid 'AddCards' entry in 'draft_effects' of custom card. Invalid 'duplicateProtection' parameter.`
+							`Invalid 'BoosterContents' entry in 'draft_effects' of custom card. Invalid 'duplicateProtection' parameter.`
 						);
 					}
 					if (entry.count && entry.count <= 0)
 						return valErr(
 							`Invalid Parameter`,
-							`Invalid 'AddCards' entry in 'draft_effects' of custom card. 'count' must be strictly positive.`
+							`Invalid 'BoosterContents' entry in 'draft_effects' of custom card. 'count' must be strictly positive.`
 						);
 						// NOTE: Full verification of the cards will be done later, once the rest of the file is parsed.
 						card.draft_effects.push({
