@@ -255,7 +255,7 @@ describe("Conspiracy Draft Matters Cards", () => {
 						pickedCards: [idx],
 						burnedCards: [],
 						optionalOnPickDraftEffect: {
-							effect: OptionalOnPickDraftEffect.LoreSeeker,
+							effect: OptionalOnPickDraftEffect.AddBooster,
 							cardID: loreSeekers[i],
 						},
 					},
@@ -366,7 +366,7 @@ describe("Conspiracy Draft Matters Cards", () => {
 						pickedCards: [idx],
 						burnedCards: [],
 						optionalOnPickDraftEffect: {
-							effect: OptionalOnPickDraftEffect.LoreSeeker,
+							effect: OptionalOnPickDraftEffect.AddBooster,
 							cardID: loreSeekers[i],
 						},
 					},

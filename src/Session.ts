@@ -643,7 +643,7 @@ export class Session implements IIndexable {
 			cardsPerBooster?: number;
 			customBoosters?: SetCode[];
 			cardsPerPlayer?: number;
-			removeFromCardPool?: CardID[]; // Use by LoreSeeker draft effect
+			removeFromCardPool?: CardID[]; // Used by AddBooster draft effect
 		} = {}
 	): UniqueCard[][] | MessageError {
 		if (!options.cardsPerBooster) options.cardsPerBooster = this.cardsPerBooster;
@@ -2225,21 +2225,39 @@ export class Session implements IIndexable {
 			};
 
 			switch (optionalOnPickDraftEffect.effect) {
-				case OptionalOnPickDraftEffect.LoreSeeker: {
+				case OptionalOnPickDraftEffect.AddBooster: {
 					const index = booster.findIndex((c) => c.uniqueID === optionalOnPickDraftEffect.cardID);
-					if (index < 0 || !hasEffect(booster[index], OptionalOnPickDraftEffect.LoreSeeker))
+					if (index < 0 || !hasEffect(booster[index], ParameterizedDraftEffectType.AddBooster))
 						return reportError("Invalid draft effect card.");
 					if (!pickedCards.includes(index))
-						return reportError("You must pick Lore Seeker to use its effect.");
-					const additionalBooster = this.generateBoosters(1, {
-						useCustomBoosters: true,
-						removeFromCardPool: this.draftLog?.boosters.flat(),
-					});
+						return reportError("You must pick a car with 'AddBooster' to use its effect.");
+
+					const effect = booster[index].draft_effects?.find(
+						(e) => e.type === ParameterizedDraftEffectType.AddBooster
+					);
+					if (!effect) return reportError("Invalid draft effect card.");
+					let additionalBooster: UniqueCard[][] | MessageError;
+					if (effect.layouts && effect.layouts.length > 0) {
+						if (!this.useCustomCardList || !this.customCardList.layouts)
+							return reportError("No custom card list.");
+						additionalBooster = generateBoosterFromCustomCardList(this.customCardList, 1, {
+							colorBalance: this.colorBalance,
+							withReplacement: this.customCardListWithReplacement,
+							duplicateProtection: this.customCardListDuplicateProtection,
+							removeFromCardPool: this.draftLog?.boosters.flat(),
+							layouts: effect.layouts,
+						});
+					} else {
+						additionalBooster = this.generateBoosters(1, {
+							useCustomBoosters: true,
+							removeFromCardPool: this.draftLog?.boosters.flat(),
+						});
+					}
 					if (isMessageError(additionalBooster))
 						Connections[userID].socket?.emit(
 							"message",
 							new MessageError(
-								"Could not generate additional booster, Lore Seeker effect ignored.",
+								"Could not generate additional booster, draft effect ignored.",
 								`Original Error: ${additionalBooster.title} - ${additionalBooster.text}`
 							)
 						);
@@ -2252,7 +2270,7 @@ export class Session implements IIndexable {
 									this.draftLog.carddata[card.id] = getCard(card.id);
 							}
 							s.players[userID].boosters.unshift(additionalBooster[0]);
-							notify(`${Connections[userID].userName} used the effect of 'Lore Seeker'.`);
+							notify(`${Connections[userID].userName} added a booster to the draft.`);
 						});
 					}
 					break;

@@ -235,12 +235,20 @@ export function validateCustomCard(inputCard: any): SocketError | Card {
 		card.draft_effects = [];
 		for (const entry of inputCard.draft_effects) {
 			if (isString(entry)) {
-				if (!isSimpleDraftEffectType(entry))
-					return valErr(
-						`Invalid Property`,
-						`Invalid entry '${entry}' in 'draft_effects' of custom card, must be a valid DraftEffect.`
-					);
-				card.draft_effects.push({ type: entry });
+				if (entry === ParameterizedDraftEffectType.AddBooster) {
+					// Parameterized effect with default parameters.
+					card.draft_effects.push({ type: entry, layouts: [] });
+				} else if (entry === "LoreSeeker") {
+					// Backward compatibility: Superceded by "AddBooster".
+					card.draft_effects.push({ type: ParameterizedDraftEffectType.AddBooster, layouts: [] });
+				} else {
+					if (!isSimpleDraftEffectType(entry))
+						return valErr(
+							`Invalid Property`,
+							`Invalid entry '${entry}' in 'draft_effects' of custom card, must be a valid DraftEffect.`
+						);
+					card.draft_effects.push({ type: entry });
+				}
 			} else {
 				if (!hasProperty("type", isUnknown)(entry))
 					return valErr(`Invalid Property`, `Missing 'type' entry in 'draft_effects' of custom card.`);
@@ -279,6 +287,35 @@ export function validateCustomCard(inputCard: any): SocketError | Card {
 						count: entry.count ?? 0, // NOTE: If 0, will be filled after validation (we want to set it to all cards, but their count is unknown until parsed)
 						cards: entry.cards,
 						duplicateProtection: entry.duplicateProtection ?? true,
+					});
+				} else if (entry.type === ParameterizedDraftEffectType.AddBooster) {
+					if (!hasOptionalProperty("layouts", isArrayOf(isUnion(isString, isObject)))(entry)) {
+						return valErr(
+							`Invalid Parameter`,
+							`Invalid 'AddBooster' entry in 'draft_effects' of custom card. Invalid 'layouts' parameter.`
+						);
+					}
+					const layouts: { name: string; weight: number }[] = [];
+					if (hasProperty("layouts", isArrayOf(isString))(entry)) {
+						for (const layoutName of entry.layouts) {
+							layouts.push({
+								name: layoutName,
+								weight: 1,
+							});
+						}
+					} else if (hasProperty("layouts", isArrayOf(isObject))(entry)) {
+						for (const layout of entry.layouts) {
+							if (!hasProperty("name", isString)(layout) || !hasProperty("weight", isInteger)(layout))
+								return valErr(
+									`Invalid Parameter`,
+									`Invalid 'AddBooster' entry in 'draft_effects' of custom card. Invalid 'layouts' parameter.`
+								);
+							layouts.push(layout);
+						}
+					}
+					card.draft_effects.push({
+						type: entry.type,
+						layouts: layouts,
 					});
 				} else {
 					return valErr(

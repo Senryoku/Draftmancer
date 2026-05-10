@@ -676,7 +676,7 @@ AetherSearcher      <comment># Reveal and note the next drafted card.</comment>
 CanalDredger        <comment># The last card of each booster is passed to you.</comment>
 ArchdemonOfPaliano  <comment># Pick the next 3 cards randomly.</comment>
 <comment># Optional on pick effects:</comment>
-LoreSeeker          <comment># "You may add a booster pack to the draft".</comment>
+AddBooster          <comment># Lore Seeker effect: "You may add a booster pack to the draft".</comment>
 <comment># Usable effects (when the card is already in the player's pool):</comment>
 RemoveDraftCard     <comment># Remove the picked card(s) from the draft and associate them with the card.</comment>
 CogworkLibrarian    <comment># Replace this card in a pack for an additional pick.</comment>
@@ -696,8 +696,9 @@ CogworkGrinder             <comment># Will display the number of cards removed b
 	"CogworkLibrarian"
 ]
 
-<comment># The following effects are custom and do not match official Conspiracy effects.</comment>
+<comment># The following effects are custom and do not match official Conspiracy effects. They also accept additional parameters.</comment>
 AddCards            <comment># Adds additional cards to your draft pool.</comment>
+AddBooster          <comment># Also accepts an optional 'layouts' parameter to restrict the added booster to these layouts.</comment>
 
 <comment># Example value for AddCards</comment>
 "draft_effects": [
@@ -706,6 +707,19 @@ AddCards            <comment># Adds additional cards to your draft pool.</commen
 		"count": 1, <comment># Optional, if omitted, all cards from the following array will be added. Otherwise, 'count' random cards will be added to your pool.</comment>
 		"cards": ["Card Name 1", "Card Name 2"...],
 		"duplicateProtection": true, <comment># Optional, defaults to true. Duplicates of the same card can be used to increase its probability of being picked.</comment>
+	}
+]
+<comment># Example values for AddBooster</comment>
+"draft_effects": [
+	{
+		"type": "AddBooster",
+		"layouts": ["Layout1", "Layout2"], <comment># Equal weights.</comment>
+	}
+]
+"draft_effects": [
+	{
+		"type": "AddBooster",
+		"layouts": [{name: "Layout1", weight: 1}, {name: "Layout2", weight: 7}],
 	}
 ]
 </pre>

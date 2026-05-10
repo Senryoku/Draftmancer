@@ -3,7 +3,7 @@ import { before, after, beforeEach, afterEach, describe, it } from "mocha";
 import { expect } from "chai";
 import { Sessions } from "../src/Session.js";
 import { makeClients, waitForClientDisconnects, enableLogs, disableLogs, ackNoError, getUID } from "./src/common.js";
-import { UniqueCard } from "../src/CardTypes.js";
+import { OptionalOnPickDraftEffect, UniqueCard } from "../src/CardTypes.js";
 
 describe("Custom Draft Effect", () => {
 	const sessionID = "DraftEffectsTests";
@@ -180,6 +180,50 @@ describe("Custom Draft Effect", () => {
 			});
 
 			clients[1].connect();
+		});
+	});
+
+	describe("AddBooster", () => {
+		before(loadCubeAndStart("CustomCards_DraftEffect_AddBooster"));
+		after(stopDraft);
+
+		it("Picking a card adds a booster", (done) => {
+			let eventReceived = 0;
+			const checkDone = () => {
+				if (eventReceived === clients.length) {
+					for (const c of clients) c.off("draftState");
+					done();
+				}
+			};
+			for (let i = 0; i < clients.length; ++i) {
+				clients[i].on("draftState", (state) => {
+					const s = state as {
+						booster: UniqueCard[];
+						boosterCount: number;
+						boosterNumber: number;
+						pickNumber: number;
+					};
+					if (s.pickNumber > 0 && s.boosterCount > 0) {
+						++eventReceived;
+						states[i] = s;
+						// This should be a new pack
+						expect(s.booster).to.have.length(15);
+						checkDone();
+					}
+				});
+				clients[i].emit(
+					"pickCard",
+					{
+						pickedCards: [0],
+						burnedCards: [],
+						optionalOnPickDraftEffect: {
+							effect: OptionalOnPickDraftEffect.AddBooster,
+							cardID: states[i].booster![0].uniqueID,
+						},
+					},
+					ackNoError
+				);
+			}
 		});
 	});
 });

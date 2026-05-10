@@ -1,0 +1,55 @@
+
+[Settings]
+{
+	"withReplacement": true,
+	"layouts": {
+		"NormalLayout": {
+			"weight": 1,
+			"slots": {
+				"NormalSheet": 15,
+			}
+		},
+		"SpecialLayout": {
+			"weight": 0,
+			"slots": {
+				"SpecialSheet": 15,
+			}
+		},
+		"BadLayout": {
+			"weight": 0,
+			"slots": {
+				"BadSheet": 15,
+			}
+		},
+	}
+}
+[CustomCards]
+[
+	{
+		"name": "Lotus Distributor",
+		"rarity": "mythic",
+		"mana_cost": "{1}{B}",
+		"type": "Creature",
+		"image_uris": {
+			"en": "http://fake.dmn/img.jpg"
+		},
+		"draft_effects": ["FaceUp", {"type": "AddBooster", "layouts": ["SpecialLayout"]}]
+	},
+	{
+		"name": "Broken Lotus Distributor",
+		"rarity": "mythic",
+		"mana_cost": "{1}{W}",
+		"type": "Creature",
+		"image_uris": {
+			"en": "http://fake.dmn/img.jpg"
+		},
+		"draft_effects": ["FaceUp", {"type": "AddBooster", "layouts": [{"name": "SpecialLayout", "weight": 1}, {"name": "BadLayout", "weight": 10}]}]
+	},
+]
+[NormalSheet]
+Lotus Distributor
+Broken Lotus Distributor
+[SpecialSheet]
+Black Lotus
+[BadSheet]
+Healing Salve

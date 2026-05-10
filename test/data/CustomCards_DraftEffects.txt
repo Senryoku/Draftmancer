@@ -81,7 +81,7 @@
 		"draft_effects": ["FaceUp", "ArchdemonOfPaliano"]
 	},
 	{	
-		"name": "LoreSeeker",
+		"name": "Backward Compatible LoreSeeker",
 		"rarity": "mythic",
 		"mana_cost": "{1}{B}",
 		"type": "Creature",
@@ -89,6 +89,16 @@
 			"en": "http://fake.dmn/img.jpg"
 		},
 		"draft_effects": ["FaceUp", "LoreSeeker"]
+	},
+	{	
+		"name": "LoreSeeker",
+		"rarity": "mythic",
+		"mana_cost": "{1}{B}",
+		"type": "Creature",
+		"image_uris": {
+			"en": "http://fake.dmn/img.jpg"
+		},
+		"draft_effects": ["FaceUp", "AddBooster"]
 	},
 	{	
 		"name": "RemoveDraftCard",
