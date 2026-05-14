@@ -2111,7 +2111,7 @@ app.get("/getBracket/:sessionID", (req, res) => {
 
 app.get(["/getDraftLog/:sessionID", "/api/getDraftLog/:sessionID"], (req, res) => {
 	const sessionID = req.params.sessionID;
-	if (!sessionID) {
+	if (!isString(sessionID)) {
 		res.sendStatus(400);
 	} else {
 		const sess = Sessions[sessionID];

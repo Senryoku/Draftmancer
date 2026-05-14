@@ -2230,7 +2230,7 @@ export class Session implements IIndexable {
 					if (index < 0 || !hasEffect(booster[index], ParameterizedDraftEffectType.AddBooster))
 						return reportError("Invalid draft effect card.");
 					if (!pickedCards.includes(index))
-						return reportError("You must pick a car with 'AddBooster' to use its effect.");
+						return reportError("You must pick a card with 'AddBooster' to use its effect.");
 
 					const effect = booster[index].draft_effects?.find(
 						(e) => e.type === ParameterizedDraftEffectType.AddBooster

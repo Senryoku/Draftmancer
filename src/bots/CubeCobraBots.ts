@@ -17,10 +17,10 @@ export const CubeCobraBots = {
 };
 
 const EnableBatchRequests = CubeCobraBots.batchEndpoint !== undefined && (process.env.CUBECOBRA_BOTS_BATCH ?? true);
-let BatchWindow = 1000; //  ms.
+let BatchWindow = 2000; //  ms.
 
 export function setBatchWindow(ms: number) {
-	BatchWindow = Math.min(2000, Math.max(0, ms));
+	BatchWindow = Math.min(5000, Math.max(0, ms));
 	console.log(`Bot batch window set to ${BatchWindow} ms.`);
 }
 
