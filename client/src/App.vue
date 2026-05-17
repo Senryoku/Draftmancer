@@ -799,7 +799,8 @@
 												<label for="optional-pick-effect">Pick Effect:</label>
 												<select
 													id="optional-pick-effect"
-													v-model="selectedOptionalDraftPickEffect"
+													v-model="selectedOptionalDraftPickEffects"
+													multiple
 												>
 													<option
 														v-for="v in availableOptionalDraftEffects"
@@ -808,12 +809,11 @@
 													>
 														{{ v.name }} ({{ v.effect }})
 													</option>
-													<option :value="undefined">Do not use</option>
 												</select>
 											</span>
 											<span v-if="availableDraftEffects.length > 0">
 												<label for="pick-effect">Pick Effect:</label>
-												<select id="pick-effect" v-model="selectedUsableDraftEffect">
+												<select id="pick-effect" v-model="selectedUsableDraftEffects" multiple>
 													<option
 														v-for="v in availableDraftEffects"
 														:value="v"
@@ -821,7 +821,6 @@
 													>
 														{{ v.name }} ({{ v.effect }})
 													</option>
-													<option :value="undefined">None</option>
 												</select>
 											</span>
 										</template>
