@@ -2329,7 +2329,9 @@ export class Session implements IIndexable {
 		for (const effect of applyDraftEffects) effect();
 
 		for (const idx of pickedCards) {
-			Connections[userID].pickedCards.main.push(booster[idx]);
+			// Do not add the card if it has the `BurnAfterPicking` draft effect.
+			if (booster[idx].draft_effects?.find((e) => e.type === OnPickDraftEffect.BurnAfterPicking) === undefined)
+				Connections[userID].pickedCards.main.push(booster[idx]);
 			s.players[userID].botInstance.forcePick(
 				idx,
 				booster,
@@ -2440,6 +2442,10 @@ export class Session implements IIndexable {
 								picks.push(...(await this.randomPick(userID)));
 							if (picks.length > 0)
 								Connections[userID]?.socket.emit("addCards", "You randomly picked:", picks);
+							break;
+						}
+						case OnPickDraftEffect.BurnAfterPicking: {
+							// Already Handled
 							break;
 						}
 						case ParameterizedDraftEffectType.AddCards: {

@@ -21,7 +21,7 @@ import { MinesweeperSyncData } from "@/MinesweeperDraftTypes";
 import { HousmanDraftSyncData } from "@/HousmanDraft";
 import { minesweeperApplyDiff } from "../../src/MinesweeperDraftTypes";
 import Constants, { CubeDescription, EnglishBasicLandNames } from "../../src/Constants";
-import { CardColor, OptionalOnPickDraftEffect, UsableDraftEffect } from "../../src/CardTypes";
+import { CardColor, OptionalOnPickDraftEffect, UsableDraftEffect, OnPickDraftEffect } from "../../src/CardTypes";
 import { SolomonDraftSyncData } from "@/SolomonDraft";
 import { SilentAuctionDraftSyncData } from "@/SilentAuctionDraft";
 import { isSomeEnum } from "../../src/TypeChecks";
@@ -1865,16 +1865,16 @@ export default defineComponent({
 				} else {
 					if (this.selectedUsableDraftEffects.length > 0) {
 						for (const draftEffect of this.selectedUsableDraftEffects) {
-							switch (draftEffect!.effect) {
+							switch (draftEffect.effect) {
 								case UsableDraftEffect.CogworkLibrarian: {
 									onSuccess.push(() => {
 										// Remove used Cogwork Librarian from player's card pool
-										let index = this.deck.findIndex((c) => c.uniqueID === draftEffect!.cardID);
+										let index = this.deck.findIndex((c) => c.uniqueID === draftEffect.cardID);
 										if (index >= 0) {
 											this.deckDisplay?.remCard(this.deck[index]);
 											this.deck.splice(index, 1);
 										} else {
-											index = this.sideboard.findIndex((c) => c.uniqueID === draftEffect!.cardID);
+											index = this.sideboard.findIndex((c) => c.uniqueID === draftEffect.cardID);
 											if (index >= 0) {
 												this.sideboardDisplay?.remCard(this.sideboard[index]);
 												this.sideboard.splice(index, 1);
@@ -1917,7 +1917,12 @@ export default defineComponent({
 					this.gameState = GameState.Waiting;
 				}
 				if (!dontAddSelectedCardstoCardPool) {
-					const pickedCards = state.booster.filter((c) => selectedCards.includes(c.uniqueID));
+					const pickedCards = state.booster.filter(
+						(c) =>
+							selectedCards.includes(c.uniqueID) &&
+							// Don't add cards with the `BurnAfterPicking` draft effect
+							c.draft_effects?.find((e) => e.type === OnPickDraftEffect.BurnAfterPicking) === undefined
+					);
 					if (toSideboard) this.addToSideboard(pickedCards, options);
 					else this.addToDeck(pickedCards, options);
 				}

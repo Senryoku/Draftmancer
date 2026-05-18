@@ -1,0 +1,19 @@
+[CustomCards]
+[
+	{	
+		"name": "Bouquet de Lotus",
+		"rarity": "mythic",
+		"mana_cost": "{0}",
+		"type": "Artifact",
+		"draft_effects": [
+			{
+				"type": "AddCards", 
+				"count": 2,
+				"cards": ["Black Lotus", "Black Lotus"]
+			},
+			"BurnAfterPicking",
+		]
+	}
+]
+[Common]
+999 Bouquet de Lotus
