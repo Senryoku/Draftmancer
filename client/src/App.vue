@@ -779,7 +779,7 @@
 													burningCards.length === cardsToBurnThisRound
 												"
 											/>
-											<span v-else>
+											<span v-else style="min-width: 125px">
 												<span v-if="cardsToPick === 1">Pick a card</span>
 												<span v-else>
 													Pick {{ cardsToPick }} cards ({{ selectedCards.length }}/{{
@@ -787,42 +787,81 @@
 													}})
 												</span>
 												<span v-if="cardsToBurnThisRound === 1">
-													and remove a card from the pool.</span
-												>
+													and remove a card from the pool.
+												</span>
 												<span v-else-if="cardsToBurnThisRound > 1">
 													and remove {{ cardsToBurnThisRound }} cards from the pool ({{
 														burningCards.length
 													}}/{{ cardsToBurnThisRound }}).
 												</span>
 											</span>
-											<span v-if="availableOptionalDraftEffects.length > 0">
-												<label for="optional-pick-effect">Pick Effect:</label>
-												<select
-													id="optional-pick-effect"
+
+											<span v-if="availableOptionalDraftEffects.length === 1">
+												Pick Effect:
+												<input
+													type="checkbox"
 													v-model="selectedOptionalDraftPickEffects"
-													multiple
-												>
-													<option
+													:value="availableOptionalDraftEffects[0]"
+												/>
+												{{ availableOptionalDraftEffects[0].name }} ({{
+													availableOptionalDraftEffects[0].effect
+												}})
+											</span>
+											<dropdown
+												v-else-if="availableOptionalDraftEffects.length > 1"
+												class="large-dropdown"
+											>
+												<template v-slot:handle>Pick effects</template>
+												<template v-slot:dropdown>
+													<div
 														v-for="v in availableOptionalDraftEffects"
-														:value="v"
-														:key="v.effect"
+														:key="v.cardID + v.name + v.effect"
+														style="white-space: nowrap"
 													>
-														{{ v.name }} ({{ v.effect }})
-													</option>
-												</select>
+														<input
+															type="checkbox"
+															v-model="selectedOptionalDraftPickEffects"
+															:value="v"
+															:id="v.cardID + v.name + v.effect"
+														/>
+														<label :for="v.cardID + v.name + v.effect">
+															{{ v.name }} ({{ v.effect }})
+														</label>
+													</div>
+												</template>
+											</dropdown>
+
+											<span v-if="availableDraftEffects.length === 1">
+												Draft effect:
+												<input
+													type="checkbox"
+													v-model="selectedUsableDraftEffects"
+													:value="availableDraftEffects[0]"
+												/>
+												{{ availableDraftEffects[0].name }} ({{
+													availableDraftEffects[0].effect
+												}})
 											</span>
-											<span v-if="availableDraftEffects.length > 0">
-												<label for="pick-effect">Pick Effect:</label>
-												<select id="pick-effect" v-model="selectedUsableDraftEffects" multiple>
-													<option
+											<dropdown v-if="availableDraftEffects.length > 1" class="large-dropdown">
+												<template v-slot:handle>Draft effects</template>
+												<template v-slot:dropdown>
+													<div
 														v-for="v in availableDraftEffects"
-														:value="v"
-														:key="v.effect"
+														:key="v.cardID + v.name + v.effect"
+														style="white-space: nowrap"
 													>
-														{{ v.name }} ({{ v.effect }})
-													</option>
-												</select>
-											</span>
+														<input
+															type="checkbox"
+															v-model="selectedUsableDraftEffects"
+															:value="v"
+															:id="v.cardID + v.name + v.effect"
+														/>
+														<label :for="v.cardID + v.name + v.effect">
+															{{ v.name }} ({{ v.effect }})
+														</label>
+													</div>
+												</template>
+											</dropdown>
 										</template>
 									</template>
 									<template v-else>

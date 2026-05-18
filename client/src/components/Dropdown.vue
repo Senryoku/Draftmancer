@@ -29,10 +29,8 @@ onMounted(() => {
 });
 
 function updateHeight() {
-	element.value?.setAttribute(
-		"style",
-		`--unrolled-height: calc(1em + ${content.value?.clientHeight}px); --min-width: ${props.minwidth}`
-	);
+	element.value?.style.setProperty("--unrolled-height", `calc(1em + ${content.value?.clientHeight}px)`);
+	element.value?.style.setProperty("--min-width", props.minwidth);
 }
 
 function toggleKeepOpen() {
@@ -125,6 +123,13 @@ function stopPropagation(e: Event) {
 		max-height: var(--unrolled-height);
 		box-shadow: 0 8px 8px 1px rgba(0, 0, 0, 0.5);
 		z-index: 1;
+	}
+}
+
+.large-dropdown {
+	.dropdown {
+		width: auto;
+		text-align: left;
 	}
 }
 

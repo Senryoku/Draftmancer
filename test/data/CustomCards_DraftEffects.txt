@@ -178,7 +178,7 @@
 		"image_uris": {
 			"en": "http://fake.dmn/img.jpg"
 		},
-		"draft_effects": ["FaceUp", "TrackRemovedCardsNames"]
+		"draft_effects": ["FaceUp", "TrackRemovedCardsNames", "RemoveDraftCard"]
 	},
 	{	
 		"name": "TrackRemovedCardsSubtypes",
@@ -188,7 +188,7 @@
 		"image_uris": {
 			"en": "http://fake.dmn/img.jpg"
 		},
-		"draft_effects": ["FaceUp", "TrackRemovedCardsSubtypes"]
+		"draft_effects": ["FaceUp", "TrackRemovedCardsSubtypes", "RemoveDraftCard"]
 	},
 	{	
 		"name": "CogworkGrinder",
