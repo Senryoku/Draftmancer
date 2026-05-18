@@ -537,7 +537,8 @@ function parseCustomCards(lines: string[], startIdx: number) {
 		let c = input;
 		const officialCard = matchCardVersion(c.name, c.set, c.collector_number, false);
 		if (officialCard) {
-			const prev = structuredClone(getCard(officialCard));
+			const prev: object = structuredClone(getCard(officialCard));
+			if ("image" in c && "image_uris" in prev) delete prev.image_uris;
 			c = Object.assign(prev, c);
 		} else if (inputsByName.has(c.name)) {
 			// When a second printing of a card (with the same name) is detected, copies all information from the first one.
