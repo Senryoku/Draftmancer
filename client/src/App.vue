@@ -779,7 +779,7 @@
 													burningCards.length === cardsToBurnThisRound
 												"
 											/>
-											<span v-else style="min-width: 125px">
+											<span v-else>
 												<span v-if="cardsToPick === 1">Pick a card</span>
 												<span v-else>
 													Pick {{ cardsToPick }} cards ({{ selectedCards.length }}/{{
@@ -796,72 +796,18 @@
 												</span>
 											</span>
 
-											<span v-if="availableOptionalDraftEffects.length === 1">
-												Pick Effect:
-												<input
-													type="checkbox"
-													v-model="selectedOptionalDraftPickEffects"
-													:value="availableOptionalDraftEffects[0]"
-												/>
-												{{ availableOptionalDraftEffects[0].name }} ({{
-													availableOptionalDraftEffects[0].effect
-												}})
-											</span>
-											<dropdown
-												v-else-if="availableOptionalDraftEffects.length > 1"
-												class="large-dropdown"
-											>
-												<template v-slot:handle>Pick effects</template>
-												<template v-slot:dropdown>
-													<div
-														v-for="v in availableOptionalDraftEffects"
-														:key="v.cardID + v.name + v.effect"
-														style="white-space: nowrap"
-													>
-														<input
-															type="checkbox"
-															v-model="selectedOptionalDraftPickEffects"
-															:value="v"
-															:id="v.cardID + v.name + v.effect"
-														/>
-														<label :for="v.cardID + v.name + v.effect">
-															{{ v.name }} ({{ v.effect }})
-														</label>
-													</div>
-												</template>
-											</dropdown>
-
-											<span v-if="availableDraftEffects.length === 1">
-												Draft effect:
-												<input
-													type="checkbox"
-													v-model="selectedUsableDraftEffects"
-													:value="availableDraftEffects[0]"
-												/>
-												{{ availableDraftEffects[0].name }} ({{
-													availableDraftEffects[0].effect
-												}})
-											</span>
-											<dropdown v-if="availableDraftEffects.length > 1" class="large-dropdown">
-												<template v-slot:handle>Draft effects</template>
-												<template v-slot:dropdown>
-													<div
-														v-for="v in availableDraftEffects"
-														:key="v.cardID + v.name + v.effect"
-														style="white-space: nowrap"
-													>
-														<input
-															type="checkbox"
-															v-model="selectedUsableDraftEffects"
-															:value="v"
-															:id="v.cardID + v.name + v.effect"
-														/>
-														<label :for="v.cardID + v.name + v.effect">
-															{{ v.name }} ({{ v.effect }})
-														</label>
-													</div>
-												</template>
-											</dropdown>
+											<DraftEffectDropdown
+												:available-effects="availableOptionalDraftEffects"
+												v-model="selectedOptionalDraftPickEffects"
+												:singular-label="'Pick Effect'"
+												:plural-label="'Pick Effects'"
+											/>
+											<DraftEffectDropdown
+												:available-effects="availableDraftEffects"
+												v-model="selectedUsableDraftEffects"
+												:singular-label="'Draft Effect'"
+												:plural-label="'Draft Effects'"
+											/>
 										</template>
 									</template>
 									<template v-else>

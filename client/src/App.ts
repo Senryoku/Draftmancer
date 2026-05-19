@@ -91,6 +91,7 @@ const SealedPresentation = defineAsyncComponent(() => import("./components/Seale
 // Preload Carback
 import CardBack from /* webpackPrefetch: true */ "./assets/img/cardback.webp";
 import { Tiebreaker } from "../../src/SilentAuctionDraftTiebreakers";
+import { DraftEffect } from "./components/DraftEffectDropdown.vue";
 const img = new Image();
 img.src = CardBack;
 
@@ -185,6 +186,7 @@ export default defineComponent({
 		}),
 		CollectionImportHelp: defineAsyncComponent(() => import("./components/CollectionImportHelp.vue")),
 		DelayedInput,
+		DraftEffectDropdown: defineAsyncComponent(() => import("./components/DraftEffectDropdown.vue")),
 		DraftLog: defineAsyncComponent(() => import("./components/DraftLog.vue")),
 		DraftLogHistory: defineAsyncComponent(() => import("./components/DraftLogHistory.vue")),
 		DraftLogLiveComponent,
@@ -443,12 +445,8 @@ export default defineComponent({
 			pickInFlight: false,
 			selectedCards: [] as UniqueCardID[],
 			burningCards: [] as UniqueCardID[],
-			selectedUsableDraftEffects: [] as { name: string; effect: UsableDraftEffect; cardID: UniqueCardID }[],
-			selectedOptionalDraftPickEffects: [] as {
-				name: string;
-				effect: OptionalOnPickDraftEffect;
-				cardID: UniqueCardID;
-			}[],
+			selectedUsableDraftEffects: [] as DraftEffect[],
+			selectedOptionalDraftPickEffects: [] as DraftEffect[],
 			// Brewing (deck and sideboard should not be modified directly, have to
 			// stay in sync with their CardPool display)
 			deck: [] as UniqueCard[],
@@ -1503,6 +1501,8 @@ export default defineComponent({
 			this.currentDraftLog = null;
 			this.draftState = null;
 			this.botScores = null;
+			this.selectedUsableDraftEffects = [];
+			this.selectedOptionalDraftPickEffects = [];
 		},
 		resetSessionSettings() {
 			if (this.userID !== this.sessionOwner) return;
@@ -1909,8 +1909,14 @@ export default defineComponent({
 						{
 							pickedCards: pickedCardIndices,
 							burnedCards: burnedCardIndices,
-							draftEffects: this.selectedUsableDraftEffects,
-							optionalOnPickDraftEffects: this.selectedOptionalDraftPickEffects,
+							draftEffects: this.selectedUsableDraftEffects.map((e) => ({
+								effect: e.effect as UsableDraftEffect,
+								cardID: e.cardID,
+							})),
+							optionalOnPickDraftEffects: this.selectedOptionalDraftPickEffects.map((e) => ({
+								effect: e.effect as OptionalOnPickDraftEffect,
+								cardID: e.cardID,
+							})),
 						},
 						ack
 					);
