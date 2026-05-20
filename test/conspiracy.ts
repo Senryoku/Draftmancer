@@ -89,7 +89,7 @@ describe("Conspiracy Draft Matters Cards", () => {
 					{
 						pickedCards: [0, 1],
 						burnedCards: [],
-						draftEffect: { effect: UsableDraftEffect.CogworkLibrarian, cardID: 5457 },
+						draftEffects: [{ effect: UsableDraftEffect.CogworkLibrarian, cardID: 5457 }],
 					},
 					(err) => {
 						expect(err.code).not.to.equal(0);
@@ -152,7 +152,7 @@ describe("Conspiracy Draft Matters Cards", () => {
 					{
 						pickedCards: [0],
 						burnedCards: [],
-						draftEffect: { effect: UsableDraftEffect.CogworkLibrarian, cardID: cogworkLibrarians[i] },
+						draftEffects: [{ effect: UsableDraftEffect.CogworkLibrarian, cardID: cogworkLibrarians[i] }],
 					},
 					(err) => {
 						expect(err.code).not.to.equal(0);
@@ -185,7 +185,7 @@ describe("Conspiracy Draft Matters Cards", () => {
 					{
 						pickedCards: [0, 1],
 						burnedCards: [],
-						draftEffect: { effect: UsableDraftEffect.CogworkLibrarian, cardID: cogworkLibrarians[i] },
+						draftEffects: [{ effect: UsableDraftEffect.CogworkLibrarian, cardID: cogworkLibrarians[i] }],
 					},
 					ackNoError
 				);
@@ -254,10 +254,12 @@ describe("Conspiracy Draft Matters Cards", () => {
 					{
 						pickedCards: [idx],
 						burnedCards: [],
-						optionalOnPickDraftEffect: {
-							effect: OptionalOnPickDraftEffect.AddBooster,
-							cardID: loreSeekers[i],
-						},
+						optionalOnPickDraftEffects: [
+							{
+								effect: OptionalOnPickDraftEffect.AddBooster,
+								cardID: loreSeekers[i],
+							},
+						],
 					},
 					ackNoError
 				);
@@ -365,10 +367,12 @@ describe("Conspiracy Draft Matters Cards", () => {
 					{
 						pickedCards: [idx],
 						burnedCards: [],
-						optionalOnPickDraftEffect: {
-							effect: OptionalOnPickDraftEffect.AddBooster,
-							cardID: loreSeekers[i],
-						},
+						optionalOnPickDraftEffects: [
+							{
+								effect: OptionalOnPickDraftEffect.AddBooster,
+								cardID: loreSeekers[i],
+							},
+						],
 					},
 					ackNoError
 				);

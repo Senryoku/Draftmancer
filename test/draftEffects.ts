@@ -216,10 +216,12 @@ describe("Custom Draft Effect", () => {
 					{
 						pickedCards: [0],
 						burnedCards: [],
-						optionalOnPickDraftEffect: {
-							effect: OptionalOnPickDraftEffect.AddBooster,
-							cardID: states[i].booster![0].uniqueID,
-						},
+						optionalOnPickDraftEffects: [
+							{
+								effect: OptionalOnPickDraftEffect.AddBooster,
+								cardID: states[i].booster![0].uniqueID,
+							},
+						],
 					},
 					ackNoError
 				);

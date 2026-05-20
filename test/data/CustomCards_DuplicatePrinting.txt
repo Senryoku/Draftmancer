@@ -6,8 +6,6 @@
 		"name": "Nazgûl",
 		"rarity": "uncommon",
 		"mana_cost": "2B",
-		"set": "ltr",
-		"collector_number": "100", 
 		"type": "Creature",
 		"image_uris": {
 			"en": "https://cards.scryfall.io/large/front/8/3/833936c6-9381-4c0b-a81c-4a938be95040.jpg?1686968640"

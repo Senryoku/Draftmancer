@@ -345,31 +345,42 @@ async function pickCard(
 	data: {
 		pickedCards: Array<number>;
 		burnedCards: Array<number>;
-		draftEffect?: unknown;
-		optionalOnPickDraftEffect?: unknown;
+		draftEffects?: unknown;
+		optionalOnPickDraftEffects?: unknown;
 	},
 	ack: (result: SocketAck) => void
 ) {
-	let draftEffect: { effect: UsableDraftEffect; cardID: UniqueCardID } | undefined;
-	if (data.draftEffect) {
-		if (!isObject(data.draftEffect)) return ack?.(new SocketError("draftEffect must be an object."));
-		if (!hasProperty("effect", isSomeEnum(UsableDraftEffect))(data.draftEffect))
-			return ack?.(new SocketError("draftEffect.effect must be a valid UsableDraftEffect."));
-		if (!hasProperty("cardID", isNumber)(data.draftEffect))
-			return ack?.(new SocketError("draftEffect.cardID must be a valid UniqueCardID."));
-		draftEffect = data.draftEffect;
+	let draftEffects: { effect: UsableDraftEffect; cardID: UniqueCardID }[] | undefined;
+	if (data.draftEffects) {
+		if (!isArrayOf(isObject)(data.draftEffects))
+			return ack?.(new SocketError("draftEffect must be an array of objects."));
+		for (const draftEffect of data.draftEffects) {
+			if (!hasProperty("effect", isSomeEnum(UsableDraftEffect))(draftEffect))
+				return ack?.(new SocketError("draftEffect.effect must be a valid UsableDraftEffect."));
+			if (!hasProperty("cardID", isNumber)(draftEffect))
+				return ack?.(new SocketError("draftEffect.cardID must be a valid UniqueCardID."));
+		}
+		draftEffects = data.draftEffects as {
+			effect: UsableDraftEffect;
+			cardID: UniqueCardID;
+		}[];
 	}
-	let optionalOnPickDraftEffect: { effect: OptionalOnPickDraftEffect; cardID: UniqueCardID } | undefined;
-	if (data.optionalOnPickDraftEffect) {
-		if (!isObject(data.optionalOnPickDraftEffect))
+	let optionalOnPickDraftEffects: { effect: OptionalOnPickDraftEffect; cardID: UniqueCardID }[] | undefined;
+	if (data.optionalOnPickDraftEffects) {
+		if (!isArrayOf(isObject)(data.optionalOnPickDraftEffects))
 			return ack?.(new SocketError("optionalOnPickDraftEffect must be an object."));
-		if (!hasProperty("effect", isSomeEnum(OptionalOnPickDraftEffect))(data.optionalOnPickDraftEffect))
-			return ack?.(
-				new SocketError("optionalOnPickDraftEffect.effect must be a valid OptionalOnPickDraftEffect.")
-			);
-		if (!hasProperty("cardID", isNumber)(data.optionalOnPickDraftEffect))
-			return ack?.(new SocketError("optionalOnPickDraftEffect.cardID must be a valid UniqueCardID."));
-		optionalOnPickDraftEffect = data.optionalOnPickDraftEffect;
+		for (const optionalOnPickDraftEffect of data.optionalOnPickDraftEffects) {
+			if (!hasProperty("effect", isSomeEnum(OptionalOnPickDraftEffect))(optionalOnPickDraftEffect))
+				return ack?.(
+					new SocketError("optionalOnPickDraftEffect.effect must be a valid OptionalOnPickDraftEffect.")
+				);
+			if (!hasProperty("cardID", isNumber)(optionalOnPickDraftEffect))
+				return ack?.(new SocketError("optionalOnPickDraftEffect.cardID must be a valid UniqueCardID."));
+		}
+		optionalOnPickDraftEffects = data.optionalOnPickDraftEffects as {
+			effect: OptionalOnPickDraftEffect;
+			cardID: UniqueCardID;
+		}[];
 	}
 	// Removes picked card from corresponding booster and notify other players.
 	// Moves to next round when each player have picked a card.
@@ -377,8 +388,8 @@ async function pickCard(
 		userID,
 		data.pickedCards,
 		data.burnedCards,
-		draftEffect,
-		optionalOnPickDraftEffect
+		draftEffects,
+		optionalOnPickDraftEffects
 	);
 	ack?.(r);
 }

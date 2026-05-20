@@ -21,7 +21,7 @@ import { MinesweeperSyncData } from "@/MinesweeperDraftTypes";
 import { HousmanDraftSyncData } from "@/HousmanDraft";
 import { minesweeperApplyDiff } from "../../src/MinesweeperDraftTypes";
 import Constants, { CubeDescription, EnglishBasicLandNames } from "../../src/Constants";
-import { CardColor, OptionalOnPickDraftEffect, UsableDraftEffect } from "../../src/CardTypes";
+import { CardColor, OptionalOnPickDraftEffect, UsableDraftEffect, OnPickDraftEffect } from "../../src/CardTypes";
 import { SolomonDraftSyncData } from "@/SolomonDraft";
 import { SilentAuctionDraftSyncData } from "@/SilentAuctionDraft";
 import { isSomeEnum } from "../../src/TypeChecks";
@@ -91,6 +91,7 @@ const SealedPresentation = defineAsyncComponent(() => import("./components/Seale
 // Preload Carback
 import CardBack from /* webpackPrefetch: true */ "./assets/img/cardback.webp";
 import { Tiebreaker } from "../../src/SilentAuctionDraftTiebreakers";
+import { DraftEffect } from "./components/DraftEffectDropdown.vue";
 const img = new Image();
 img.src = CardBack;
 
@@ -185,6 +186,7 @@ export default defineComponent({
 		}),
 		CollectionImportHelp: defineAsyncComponent(() => import("./components/CollectionImportHelp.vue")),
 		DelayedInput,
+		DraftEffectDropdown: defineAsyncComponent(() => import("./components/DraftEffectDropdown.vue")),
 		DraftLog: defineAsyncComponent(() => import("./components/DraftLog.vue")),
 		DraftLogHistory: defineAsyncComponent(() => import("./components/DraftLogHistory.vue")),
 		DraftLogLiveComponent,
@@ -443,12 +445,8 @@ export default defineComponent({
 			pickInFlight: false,
 			selectedCards: [] as UniqueCardID[],
 			burningCards: [] as UniqueCardID[],
-			selectedUsableDraftEffect: undefined as
-				| undefined
-				| { name: string; effect: UsableDraftEffect; cardID: UniqueCardID },
-			selectedOptionalDraftPickEffect: undefined as
-				| undefined
-				| { name: string; effect: OptionalOnPickDraftEffect; cardID: UniqueCardID },
+			selectedUsableDraftEffects: [] as DraftEffect[],
+			selectedOptionalDraftPickEffects: [] as DraftEffect[],
 			// Brewing (deck and sideboard should not be modified directly, have to
 			// stay in sync with their CardPool display)
 			deck: [] as UniqueCard[],
@@ -1503,6 +1501,8 @@ export default defineComponent({
 			this.currentDraftLog = null;
 			this.draftState = null;
 			this.botScores = null;
+			this.selectedUsableDraftEffects = [];
+			this.selectedOptionalDraftPickEffects = [];
 		},
 		resetSessionSettings() {
 			if (this.userID !== this.sessionOwner) return;
@@ -1848,7 +1848,7 @@ export default defineComponent({
 						this.deck = this.deck.filter((c) => !selectedCards.includes(c.uniqueID));
 						this.sideboard = this.sideboard.filter((c) => !selectedCards.includes(c.uniqueID));
 						state!.booster = boosterBackup;
-						this.selectedUsableDraftEffect = undefined; // Reset effects since it's probably an effect that triggered the error in the first place.
+						this.selectedUsableDraftEffects = []; // Reset effects since it's probably an effect that triggered the error in the first place.
 						this.gameState = GameState.Picking;
 						Alert.fire(answer.error as SweetAlertOptions);
 					} else {
@@ -1863,62 +1863,44 @@ export default defineComponent({
 					this.socket.emit("rochesterDraftPick", pickedCardIndices, ack);
 					this.gameState = GameState.RochesterWaiting;
 				} else {
-					let draftEffect:
-						| {
-								effect: UsableDraftEffect;
-								cardID: UniqueCardID;
-						  }
-						| undefined;
-					if (this.selectedUsableDraftEffect) {
-						draftEffect = {
-							effect: this.selectedUsableDraftEffect.effect,
-							cardID: this.selectedUsableDraftEffect.cardID,
-						};
-						switch (draftEffect!.effect) {
-							case UsableDraftEffect.CogworkLibrarian: {
-								onSuccess.push(() => {
-									// Remove used Cogwork Libarian from player's card pool
-									let index = this.deck.findIndex((c) => c.uniqueID === draftEffect!.cardID);
-									if (index >= 0) {
-										this.deckDisplay?.remCard(this.deck[index]);
-										this.deck.splice(index, 1);
-									} else {
-										index = this.sideboard.findIndex((c) => c.uniqueID === draftEffect!.cardID);
+					if (this.selectedUsableDraftEffects.length > 0) {
+						for (const draftEffect of this.selectedUsableDraftEffects) {
+							switch (draftEffect.effect) {
+								case UsableDraftEffect.CogworkLibrarian: {
+									onSuccess.push(() => {
+										// Remove used Cogwork Librarian from player's card pool
+										let index = this.deck.findIndex((c) => c.uniqueID === draftEffect.cardID);
 										if (index >= 0) {
-											this.sideboardDisplay?.remCard(this.sideboard[index]);
-											this.sideboard.splice(index, 1);
-										} else fireToast("error", "Could not find your Cogwork Librarian...");
-									}
-								});
-								break;
+											this.deckDisplay?.remCard(this.deck[index]);
+											this.deck.splice(index, 1);
+										} else {
+											index = this.sideboard.findIndex((c) => c.uniqueID === draftEffect.cardID);
+											if (index >= 0) {
+												this.sideboardDisplay?.remCard(this.sideboard[index]);
+												this.sideboard.splice(index, 1);
+											} else fireToast("error", "Could not find your Cogwork Librarian...");
+										}
+									});
+									break;
+								}
+								case UsableDraftEffect.AgentOfAcquisitions: {
+									if (toSideboard) this.addToSideboard(state.booster, options);
+									else this.addToDeck(state.booster, options);
+									dontAddSelectedCardstoCardPool = true;
+									break;
+								}
+								case UsableDraftEffect.RemoveDraftCard:
+									dontAddSelectedCardstoCardPool = true;
+									break;
 							}
-							case UsableDraftEffect.AgentOfAcquisitions: {
-								if (toSideboard) this.addToSideboard(state.booster, options);
-								else this.addToDeck(state.booster, options);
-								dontAddSelectedCardstoCardPool = true;
-								break;
-							}
-							case UsableDraftEffect.RemoveDraftCard:
-								dontAddSelectedCardstoCardPool = true;
-								break;
 						}
 						onSuccess.push(() => {
-							this.selectedUsableDraftEffect = undefined;
+							this.selectedUsableDraftEffects = [];
 						});
 					}
-					let optionalOnPickDraftEffect:
-						| {
-								effect: OptionalOnPickDraftEffect;
-								cardID: UniqueCardID;
-						  }
-						| undefined;
-					if (this.selectedOptionalDraftPickEffect) {
-						optionalOnPickDraftEffect = {
-							effect: this.selectedOptionalDraftPickEffect.effect,
-							cardID: this.selectedOptionalDraftPickEffect.cardID,
-						};
+					if (this.selectedOptionalDraftPickEffects.length > 0) {
 						onSuccess.push(() => {
-							this.selectedOptionalDraftPickEffect = undefined;
+							this.selectedOptionalDraftPickEffects = [];
 						});
 					}
 
@@ -1927,15 +1909,26 @@ export default defineComponent({
 						{
 							pickedCards: pickedCardIndices,
 							burnedCards: burnedCardIndices,
-							draftEffect,
-							optionalOnPickDraftEffect,
+							draftEffects: this.selectedUsableDraftEffects.map((e) => ({
+								effect: e.effect as UsableDraftEffect,
+								cardID: e.cardID,
+							})),
+							optionalOnPickDraftEffects: this.selectedOptionalDraftPickEffects.map((e) => ({
+								effect: e.effect as OptionalOnPickDraftEffect,
+								cardID: e.cardID,
+							})),
 						},
 						ack
 					);
 					this.gameState = GameState.Waiting;
 				}
 				if (!dontAddSelectedCardstoCardPool) {
-					const pickedCards = state.booster.filter((c) => selectedCards.includes(c.uniqueID));
+					const pickedCards = state.booster.filter(
+						(c) =>
+							selectedCards.includes(c.uniqueID) &&
+							// Don't add cards with the `BurnAfterPicking` draft effect
+							c.draft_effects?.find((e) => e.type === OnPickDraftEffect.BurnAfterPicking) === undefined
+					);
 					if (toSideboard) this.addToSideboard(pickedCards, options);
 					else this.addToDeck(pickedCards, options);
 				}
@@ -3824,12 +3817,13 @@ export default defineComponent({
 			if (!this.draftState || !this.draftState.booster) return 1;
 			let picksThisRound: number = this.draftState.picksThisRound;
 
-			if (
-				this.selectedUsableDraftEffect &&
-				(this.selectedUsableDraftEffect.effect === UsableDraftEffect.CogworkLibrarian ||
-					this.selectedUsableDraftEffect.effect === UsableDraftEffect.LeovoldsOperative)
-			)
-				picksThisRound += 1;
+			for (const draftEffect of this.selectedUsableDraftEffects) {
+				if (
+					draftEffect.effect === UsableDraftEffect.CogworkLibrarian ||
+					draftEffect.effect === UsableDraftEffect.LeovoldsOperative
+				)
+					picksThisRound += 1;
+			}
 
 			return Math.min(picksThisRound, this.draftState.booster.length);
 		},
@@ -4219,12 +4213,12 @@ export default defineComponent({
 			},
 		},
 		availableUsableDraftEffects() {
-			this.selectedUsableDraftEffect = undefined;
+			this.selectedUsableDraftEffects = [];
 		},
 		availableOptionalDraftEffects() {
 			if (this.availableOptionalDraftEffects.length > 0)
-				this.selectedOptionalDraftPickEffect = this.availableOptionalDraftEffects[0];
-			else this.selectedOptionalDraftPickEffect = undefined;
+				this.selectedOptionalDraftPickEffects = this.availableOptionalDraftEffects;
+			else this.selectedOptionalDraftPickEffects = [];
 		},
 		autoLand() {
 			this.updateAutoLands();

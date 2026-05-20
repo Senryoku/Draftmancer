@@ -292,8 +292,8 @@ export interface ClientToServerEvents {
 		data: {
 			pickedCards: Array<number>;
 			burnedCards: Array<number>;
-			draftEffect?: { effect: UsableDraftEffect; cardID: UniqueCardID };
-			optionalOnPickDraftEffect?: { effect: OptionalOnPickDraftEffect; cardID: UniqueCardID };
+			draftEffects?: { effect: UsableDraftEffect; cardID: UniqueCardID }[];
+			optionalOnPickDraftEffects?: { effect: OptionalOnPickDraftEffect; cardID: UniqueCardID }[];
 		},
 		ack: (result: SocketAck) => void
 	) => void;

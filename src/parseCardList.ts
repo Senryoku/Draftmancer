@@ -97,8 +97,16 @@ export function parseLine(
 		if (set && number) {
 			const cid = genCustomCardID(name, set, number);
 			if (cid in options.customCards.cards) return { count, cardID: cid, foil };
-		} else if (options.customCards.nameCache.has(name))
+		} else if (options.customCards.nameCache.has(name)) {
+			if (set) {
+				// Trying matching the set if present.
+				const partial_cid = genCustomCardID(name, set, "");
+				for (const candidate_cid in options.customCards.cards) {
+					if (candidate_cid.startsWith(partial_cid)) return { count, cardID: candidate_cid, foil };
+				}
+			}
 			return { count, cardID: options.customCards.nameCache.get(name)!.id, foil };
+		}
 	}
 
 	if (set) {
@@ -527,14 +535,19 @@ function parseCustomCards(lines: string[], startIdx: number) {
 	const customCardsNameCache = new Map<string, Card>();
 	for (const input of parsedCustomCards) {
 		let c = input;
-		if (inputsByName.has(input.name)) {
+		const officialCard = matchCardVersion(c.name, c.set, c.collector_number, false);
+		if (officialCard) {
+			const prev: object = structuredClone(getCard(officialCard));
+			if ("image" in c && "image_uris" in prev) delete prev.image_uris;
+			c = Object.assign(prev, c);
+		} else if (inputsByName.has(c.name)) {
 			// When a second printing of a card (with the same name) is detected, copies all information from the first one.
 			// This allows users to only specify a full card once and only update the related fields in other printings.
-			const prev = { ...inputsByName.get(input.name) };
+			const prev = { ...inputsByName.get(c.name) };
 			// "image" and "image_uris" map to the same property. If both are present, use the updated one (i.e. ignore the previous one).
-			if ("image" in input && "image_uris" in prev) delete prev.image_uris;
-			if ("image_uris" in input && "image" in prev) delete prev.image;
-			c = Object.assign(prev, input);
+			if ("image" in c && "image_uris" in prev) delete prev.image_uris;
+			if ("image_uris" in c && "image" in prev) delete prev.image;
+			c = Object.assign(prev, c);
 		}
 		const cardOrError = validateCustomCard(c);
 		if (isSocketError(cardOrError)) return cardOrError;

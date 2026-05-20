@@ -787,43 +787,27 @@
 													}})
 												</span>
 												<span v-if="cardsToBurnThisRound === 1">
-													and remove a card from the pool.</span
-												>
+													and remove a card from the pool.
+												</span>
 												<span v-else-if="cardsToBurnThisRound > 1">
 													and remove {{ cardsToBurnThisRound }} cards from the pool ({{
 														burningCards.length
 													}}/{{ cardsToBurnThisRound }}).
 												</span>
 											</span>
-											<span v-if="availableOptionalDraftEffects.length > 0">
-												<label for="optional-pick-effect">Pick Effect:</label>
-												<select
-													id="optional-pick-effect"
-													v-model="selectedOptionalDraftPickEffect"
-												>
-													<option
-														v-for="v in availableOptionalDraftEffects"
-														:value="v"
-														:key="v.effect"
-													>
-														{{ v.name }} ({{ v.effect }})
-													</option>
-													<option :value="undefined">Do not use</option>
-												</select>
-											</span>
-											<span v-if="availableDraftEffects.length > 0">
-												<label for="pick-effect">Pick Effect:</label>
-												<select id="pick-effect" v-model="selectedUsableDraftEffect">
-													<option
-														v-for="v in availableDraftEffects"
-														:value="v"
-														:key="v.effect"
-													>
-														{{ v.name }} ({{ v.effect }})
-													</option>
-													<option :value="undefined">None</option>
-												</select>
-											</span>
+
+											<DraftEffectDropdown
+												:available-effects="availableOptionalDraftEffects"
+												v-model="selectedOptionalDraftPickEffects"
+												:singular-label="'Pick Effect'"
+												:plural-label="'Pick Effects'"
+											/>
+											<DraftEffectDropdown
+												:available-effects="availableDraftEffects"
+												v-model="selectedUsableDraftEffects"
+												:singular-label="'Draft Effect'"
+												:plural-label="'Draft Effects'"
+											/>
 										</template>
 									</template>
 									<template v-else>
