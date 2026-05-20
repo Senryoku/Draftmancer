@@ -4285,6 +4285,11 @@
         "block": "Alchemy 2022",
         "icon": "img/sets/ysnc.svg"
     },
+    "ysos": {
+        "code": "ysos",
+        "fullName": "Alchemy: Secrets of Strixhaven",
+        "icon": "img/sets/ysos.svg"
+    },
     "ytdm": {
         "code": "ytdm",
         "fullName": "Alchemy: Tarkir",
