@@ -3910,6 +3910,11 @@
         "fullName": "Tempest Remastered",
         "icon": "img/sets/tpr.svg"
     },
+    "trc": {
+        "code": "trc",
+        "fullName": "Star Trek Commander",
+        "icon": "img/sets/trc.svg"
+    },
     "tsb": {
         "code": "tsb",
         "fullName": "Time Spiral Timeshifted",
