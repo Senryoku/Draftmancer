@@ -67,6 +67,26 @@
 				<button type="button" @click="exportBoosters" v-tooltip="'Export boosters to clipboard.'">
 					<font-awesome-icon icon="fa-solid fa-clipboard-check" /> Export Boosters
 				</button>
+				<button
+					v-if="isFleshAndBloodDraft"
+					type="button"
+					@click="submitToFablazing"
+					v-tooltip="'Open draft log on Fablazing for detailed analysis'"
+				>
+					<img
+						src="../assets/img/fablazing-logo.svg"
+						style="
+							height: 1em;
+							vertical-align: middle;
+							transform: scale(1.6);
+							margin: 0 0.3em;
+							position: relative;
+							top: -1px;
+							left: -3px;
+						"
+					/>
+					Export to Fablazing
+				</button>
 			</div>
 		</div>
 
@@ -340,6 +360,7 @@ import { UserID } from "@/IDTypes";
 
 import * as helper from "../helper";
 import { fireToast } from "../alerts";
+import { buildFablazingPayload, FABLAZING_ENDPOINT, isFleshAndBloodDraftLog } from "../exportToFablazing";
 
 import Card from "./Card.vue";
 import CardPool from "./CardPool.vue";
@@ -432,6 +453,30 @@ export default defineComponent({
 		downloadMPT(id: UserID) {
 			helper.download(`DraftLog_${id}.txt`, helper.exportToMagicProTools(this.draftlog, id));
 		},
+		async submitToFablazing() {
+			try {
+				const response = await fetch(FABLAZING_ENDPOINT, {
+					method: "POST",
+					credentials: "omit",
+					headers: { "Content-Type": "application/json", Accept: "application/json" },
+					body: JSON.stringify(buildFablazingPayload(this.draftlog)),
+				});
+				if (!response.ok) {
+					fireToast("error", "An error occurred submitting log to Fablazing.");
+					return;
+				}
+				const json = await response.json();
+				if (json.url) {
+					helper.copyToClipboard(json.url);
+					fireToast("success", "Fablazing URL copied to clipboard.");
+					window.open(json.url, "_blank");
+				} else {
+					fireToast("error", json.error ?? "An error occurred submitting log to Fablazing.");
+				}
+			} catch {
+				fireToast("error", "An error occurred submitting log to Fablazing.");
+			}
+		},
 		submitToMPT(id: UserID) {
 			fetch("https://magicprotools.com/api/draft/add", {
 				credentials: "omit",
@@ -518,6 +563,9 @@ export default defineComponent({
 	computed: {
 		type() {
 			return this.draftlog.type ? this.draftlog.type : "Draft";
+		},
+		isFleshAndBloodDraft(): boolean {
+			return !this.draftlog.delayed && isFleshAndBloodDraftLog(this.draftlog);
 		},
 		validSelectedUser(): boolean {
 			return (
