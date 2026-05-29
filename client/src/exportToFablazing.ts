@@ -1,5 +1,6 @@
 import { DraftLog, DraftPick, DeprecatedDraftPick } from "@/DraftLog";
 import { Card, CardID, DeckList } from "@/CardTypes";
+import { normalizePicks } from "./helper";
 
 export const FABLAZING_ENDPOINT = "https://api.fablazingdata.com/api/draft/import";
 
@@ -34,35 +35,6 @@ export type FablazingPayload = {
 	carddata: { [cid: string]: FablazingCard };
 	users: { [userID: string]: FablazingUser };
 };
-
-function normalizePicks(picks: (DraftPick | DeprecatedDraftPick)[]): DraftPick[] {
-	if (picks.length === 0) return [];
-	// v2.1 picks already carry packNum/pickNum.
-	if ("packNum" in picks[0]) return picks as DraftPick[];
-
-	// v2.0: derive packNum/pickNum from booster-length transitions, same logic as
-	// the v2.0 branch of exportToMagicProTools in client/src/helper.ts.
-	const out: DraftPick[] = [];
-	let packNum = -1;
-	let pickNum = 0;
-	let lastLength = 0;
-	for (const p of picks as DeprecatedDraftPick[]) {
-		if (p.booster.length > lastLength) {
-			packNum += 1;
-			pickNum = 0;
-		}
-		lastLength = p.booster.length;
-		out.push({
-			packNum,
-			pickNum,
-			pick: p.pick,
-			burn: p.burn,
-			booster: p.booster,
-		});
-		pickNum += 1;
-	}
-	return out;
-}
 
 function trimCard(card: Card): FablazingCard {
 	const out: FablazingCard = {
@@ -115,7 +87,7 @@ export function buildFablazingPayload(draftlog: DraftLog): FablazingPayload {
 	};
 }
 
-//Same regex check done on Fabrary export
+// Same regex check done on Fabrary export
 export function isFleshAndBloodDraftLog(draftlog: DraftLog): boolean {
 	if (draftlog.type !== "Draft") return false;
 	for (const cid in draftlog.carddata) {

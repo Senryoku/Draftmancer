@@ -58,17 +58,38 @@ export const copyToClipboard = (str: string) => {
 	}
 };
 
-export function groupPicksPerPack(picks: DraftPick[]) {
-	const r: DraftPick[][] = [];
-	let lastPackNum = -1;
-	for (const p of picks) {
-		if (p.packNum !== lastPackNum) {
-			lastPackNum = p.packNum;
-			r.push([]);
+// Converts pre-v2.1 draft log DeprecatedDraftPick to v2.1+ DraftPicks
+export function normalizePicks(picks: (DraftPick | DeprecatedDraftPick)[]): DraftPick[] {
+	if (picks.length === 0) return [];
+	// v2.1+ picks already carry packNum/pickNum.
+	if ("packNum" in picks[0]) return picks as DraftPick[];
+
+	// v2.0: derive packNum/pickNum from booster-length transitions.
+	const out: DraftPick[] = [];
+	let packNum = -1;
+	let pickNum = 0;
+	let lastLength = 0;
+	for (const p of picks as DeprecatedDraftPick[]) {
+		if (p.booster.length > lastLength) {
+			packNum += 1;
+			pickNum = 0;
 		}
-		r[r.length - 1].push(p);
+		lastLength = p.booster.length;
+		out.push({
+			packNum,
+			pickNum,
+			pick: p.pick,
+			burn: p.burn,
+			booster: p.booster,
+		});
+		pickNum += 1;
 	}
-	return r;
+	return out;
+}
+
+export function groupPicksPerPack(picks: DraftPick[]): DraftPick[][] {
+	const grouped = Object.groupBy(picks, (pick) => pick.packNum);
+	return Object.values(grouped) as DraftPick[][];
 }
 
 export function exportToMagicProTools(draftLog: DraftLog, userID: UserID, setAndCollectorNumber: boolean = false) {
@@ -92,43 +113,19 @@ export function exportToMagicProTools(draftLog: DraftLog, userID: UserID, setAnd
 			? `------ ${draftLog.setRestriction[0].toUpperCase()} ------\n\n`
 			: `------ Cube ------\n\n`;
 
-	if (draftLog.version === "2.0") {
-		let boosterNumber = 0;
-		let pickNumber = 1;
-		let lastLength = 0;
-		for (const p of draftLog.users[userID].picks) {
-			const dp = p as DeprecatedDraftPick;
-			if (dp.booster.length > lastLength) {
-				boosterNumber += 1;
-				pickNumber = 1;
-				str += boosterHeader;
-			}
-			lastLength = dp.booster.length;
-			str += `Pack ${boosterNumber} pick ${pickNumber}:\n`;
-			for (const [idx, cid] of dp.booster.entries()) {
-				str += dp.pick.includes(idx) ? `--> ` : `    `;
+	const normalizedPicks = normalizePicks(draftLog.users[userID].picks as (DraftPick | DeprecatedDraftPick)[]);
+	const r = groupPicksPerPack(normalizedPicks);
+	for (const pack of r) {
+		str += boosterHeader;
+		for (const pick of pack) {
+			str += `Pack ${pick.packNum + 1} pick ${pick.pickNum + 1}:\n`;
+			for (const [idx, cid] of pick.booster.entries()) {
+				str += pick.pick.includes(idx) ? `--> ` : `    `;
 				if (setAndCollectorNumber)
 					str += `${draftLog.carddata[cid].name} (${draftLog.carddata[cid].set.toUpperCase()}) ${draftLog.carddata[cid].collector_number}\n`;
 				else str += `${draftLog.carddata[cid].name}\n`;
 			}
 			str += "\n";
-			pickNumber += 1;
-		}
-	} else {
-		// >= v2.1
-		const r = groupPicksPerPack(draftLog.users[userID].picks as DraftPick[]);
-		for (const pack of r) {
-			str += boosterHeader;
-			for (const pick of pack) {
-				str += `Pack ${pick.packNum + 1} pick ${pick.pickNum + 1}:\n`;
-				for (const [idx, cid] of pick.booster.entries()) {
-					str += pick.pick.includes(idx) ? `--> ` : `    `;
-					if (setAndCollectorNumber)
-						str += `${draftLog.carddata[cid].name} (${draftLog.carddata[cid].set.toUpperCase()}) ${draftLog.carddata[cid].collector_number}\n`;
-					else str += `${draftLog.carddata[cid].name}\n`;
-				}
-				str += "\n";
-			}
 		}
 	}
 
