@@ -354,34 +354,10 @@ def handleTypeLine(typeLine: str) -> [str, list[str]]:
     return types, subtypes
 
 
-CardRatings = {}
-with open("data/ratings_base.json", "r", encoding="utf8") as file:
-    CardRatings = dict(CardRatings, **json.loads(file.read()))
-if not os.path.isfile(RatingsDest) or ForceRatings:
-    for path in glob.glob("{}/*.htm*".format(RatingSourceFolder)):
-        with open(path, "r", encoding="utf8") as file:
-            text = file.read()
-            matches = re.findall(
-                r"([^\s][^\n]+)\n\n.*\n?\*Pro Rating: ([0-9]*\.?[0-9]*( // ([0-9]*\.?[0-9]*))?)\*", text
-            )
-            print("Extracting ratings from ", path, ": Found ", len(matches), " matches.")
-            for m in matches:
-                if m[1] == "":
-                    continue
-                else:
-                    try:
-                        rating = float(m[1])
-                    except ValueError:
-                        vals = m[1].split("//")
-                        rating = (float(vals[0]) + float(vals[1])) / 2
-                print(unescape(m[0]), " ", rating)
-                CardRatings[unescape(m[0])] = rating
-
-    with open(RatingsDest, "w") as outfile:
-        json.dump(CardRatings, outfile, indent=2)
-else:
-    with open(RatingsDest, "r", encoding="utf8") as file:
-        CardRatings = dict(CardRatings, **json.loads(file.read()))
+# Ratings derived from CubeCobra card ELO
+CCRatings = {}
+with open("data/cubecobra-ratings.json", "r", encoding="utf8") as file:
+    CCRatings = json.loads(file.read())
 
 
 def safeInBoosterCheck(card: dict, max: int) -> bool:
@@ -582,10 +558,8 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
             selection["mana_cost"] = "{0}"
         selection["type"], selection["subtypes"] = handleTypeLine(c["type_line"].split(" //")[0])
 
-        if selection["name"] in CardRatings:
-            selection["rating"] = CardRatings[selection["name"]]
-        elif selection["name"].split(" //")[0] in CardRatings:
-            selection["rating"] = CardRatings[selection["name"].split(" //")[0]]
+        if c["oracle_id"] in CCRatings:
+            selection["rating"] = CCRatings[c["oracle_id"]]
         else:
             match selection["rarity"]:
                 case "mythic":
