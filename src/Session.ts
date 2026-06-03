@@ -2370,26 +2370,6 @@ export class Session implements IIndexable {
 			userName: Connections[userID].userName,
 			cards: pickedCards.map((idx) => booster[idx]),
 		});
-		if (this.owner && this.shouldSendLiveUpdates()) {
-			Connections[this.owner].socket.emit("draftLogLive", {
-				userID: userID,
-				pick: pickData,
-			});
-			Connections[this.owner].socket.emit("pickAlert", {
-				userID: userID,
-				userName: Connections[userID].userName,
-				cards: pickedCards.map((idx) => booster[idx]),
-			});
-		}
-		this.spectatorRoom().emit("draftLogLive", {
-			userID: userID,
-			pick: pickData,
-		});
-		this.spectatorRoom().emit("pickAlert", {
-			userID: userID,
-			userName: Connections[userID].userName,
-			cards: pickedCards.map((idx) => booster[idx]),
-		});
 
 		if (s.players[userID].effect?.aetherSearcher) {
 			const target = s.players[userID].effect!.aetherSearcher!.card;
