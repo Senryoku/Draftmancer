@@ -9,7 +9,11 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export default {
-	entry: { index: "./client/src/index.ts", readOnlyBracket: "./client/src/readOnlyBracket.ts" },
+	entry: {
+		index: "./client/src/index.ts",
+		readOnlyBracket: "./client/src/readOnlyBracket.ts",
+		spectator: "./client/src/spectator.ts",
+	},
 	output: {
 		filename: "[name].[contenthash].js",
 		path: path.resolve(__dirname, "dist/"),
@@ -76,6 +80,14 @@ export default {
 			inject: "body",
 			chunks: ["readOnlyBracket"],
 			title: "Draftmancer - Bracket",
+			hash: true,
+		}),
+		new HtmlWebpackPlugin({
+			filename: "spectator.html",
+			template: "./client/template/index.html",
+			inject: "body",
+			chunks: ["spectator"],
+			title: "Draftmancer - Spectator",
 			hash: true,
 		}),
 		new VueLoaderPlugin(),

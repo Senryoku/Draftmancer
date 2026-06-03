@@ -91,6 +91,8 @@ import { isSilentAuctionDraftState, SilentAuctionDraftState } from "./SilentAuct
 import { Tiebreaker } from "./SilentAuctionDraftTiebreakers.js";
 import { CardPool, SlotedCardPool } from "./CardPool.js";
 import axios from "axios";
+import { Socket } from "socket.io";
+import { io } from "./server.js";
 
 // Tournament timer depending on the number of remaining cards in a pack.
 const TournamentTimer = [
@@ -173,6 +175,7 @@ export class Session implements IIndexable {
 	draftLogUnlockTimer: number = 0; // In minutes; Zero to disable.
 	bracketLocked: boolean = false; // If set, only the owner can edit the results.
 	bracket?: IBracket = undefined;
+	spectatorPassword: string | null = null;
 	hooks: Hooks = {};
 
 	// Draft state
@@ -203,6 +206,8 @@ export class Session implements IIndexable {
 
 	// Expected to be called before disposing of a Session.
 	beforeDelete() {
+		// Close spectator room
+		io.in(this.spectatorRoomID()).socketsLeave(this.spectatorRoomID());
 		// If we had a pending onStableLog, cancel the timeout and execute it immediately.
 		if (this.stableLogTimeout) {
 			clearTimeout(this.stableLogTimeout);
@@ -1911,6 +1916,8 @@ export class Session implements IIndexable {
 			Connections[uid].socket.emit("startDraft", virtualPlayerData);
 		}
 
+		this.spectatorRoom().emit("draftLogLive", { log: this.draftLog });
+
 		if (!this.ownerIsPlayer && this.owner && this.owner in Connections) {
 			Connections[this.owner].socket.emit("startDraft", virtualPlayerData);
 			// Update draft log for live display if owner is not playing
@@ -2356,18 +2363,33 @@ export class Session implements IIndexable {
 		cardsToRemove.sort((a, b) => b - a); // Remove last index first to avoid shifting indices
 
 		// Update draft log for live display if owner in not playing (Do this before removing the cards, damnit!)
+		this.updateDecklist(userID);
+		this.toSpectators("draftLogLive", { userID: userID, pick: pickData });
+		this.toSpectators("pickAlert", {
+			userID: userID,
+			userName: Connections[userID].userName,
+			cards: pickedCards.map((idx) => booster[idx]),
+		});
 		if (this.owner && this.shouldSendLiveUpdates()) {
 			Connections[this.owner].socket.emit("draftLogLive", {
 				userID: userID,
 				pick: pickData,
 			});
-			this.updateDecklist(userID);
 			Connections[this.owner].socket.emit("pickAlert", {
 				userID: userID,
 				userName: Connections[userID].userName,
 				cards: pickedCards.map((idx) => booster[idx]),
 			});
 		}
+		this.spectatorRoom().emit("draftLogLive", {
+			userID: userID,
+			pick: pickData,
+		});
+		this.spectatorRoom().emit("pickAlert", {
+			userID: userID,
+			userName: Connections[userID].userName,
+			cards: pickedCards.map((idx) => booster[idx]),
+		});
 
 		if (s.players[userID].effect?.aetherSearcher) {
 			const target = s.players[userID].effect!.aetherSearcher!.card;
@@ -2756,17 +2778,17 @@ export class Session implements IIndexable {
 				++boosterIndex;
 			}
 
-			if (this.owner && !this.ownerIsPlayer)
-				Connections[this.owner]?.socket.emit("draftState", {
-					booster: [],
-					boosterCount: 0,
-					pickNumber: 0,
-					picksThisRound: 0,
-					burnsThisRound: 0,
-					skipPick: true,
-
-					boosterNumber: s.boosterNumber,
-				});
+			const state = {
+				booster: [],
+				boosterCount: 0,
+				pickNumber: 0,
+				picksThisRound: 0,
+				burnsThisRound: 0,
+				skipPick: true,
+				boosterNumber: s.boosterNumber,
+			};
+			if (this.owner && !this.ownerIsPlayer) Connections[this.owner]?.socket.emit("draftState", state);
+			this.spectatorRoom().emit("draftState", state);
 		};
 
 		if (this.reviewTimer > 0 && s.boosterNumber > 0) {
@@ -2851,6 +2873,10 @@ export class Session implements IIndexable {
 			}
 			logSession("Draft", this);
 			this.cleanDraftState();
+
+			// Notify spectators and close the spectating room
+			this.toSpectators("endDraft");
+			io.in(this.spectatorRoomID()).socketsLeave(this.spectatorRoomID());
 
 			this.emitToConnectedUsers("endDraft");
 			console.log(`Session ${this.id} draft ended.`);
@@ -3122,7 +3148,7 @@ export class Session implements IIndexable {
 			decklist: { hashes: this.draftLog.users[userID].decklist?.hashes },
 		};
 
-		if (this.owner && this.shouldSendLiveUpdates()) Connections[this.owner]?.socket.emit("draftLogLive", shareData);
+		this.toSpectators("draftLogLive", shareData);
 
 		if (!this.drafting) {
 			// Note: The session setting draftLogRecipients may have changed since the game ended.
@@ -3877,6 +3903,38 @@ export class Session implements IIndexable {
 			});
 		}
 		this.emitToConnectedUsers("sessionOptions", { bracket: this.bracket });
+	}
+
+	spectatorRoomID() {
+		return `spectator-${this.id}`;
+	}
+
+	spectatorRoom() {
+		return io.to(this.spectatorRoomID());
+	}
+
+	addSpectator(socket: Socket, password: string) {
+		if (
+			// Session isn't open to spectators if no password is set.
+			!this.spectatorPassword ||
+			this.spectatorPassword === "" ||
+			password !== this.spectatorPassword
+		) {
+			socket.disconnect(true);
+			return;
+		}
+		socket.join(this.spectatorRoomID());
+		if (this.draftLog) socket.emit("draftLogLive", this.draftLog);
+	}
+
+	setSpectatorPassword(password: string) {
+		this.spectatorPassword = password;
+	}
+
+	// Emit message to all spectators, including the owner if applicable (not playing)
+	toSpectators<T extends keyof ServerToClientEvents>(eventKey: T, ...args: Parameters<ServerToClientEvents[T]>) {
+		if (this.shouldSendLiveUpdates()) Connections[this.owner!].socket.emit(eventKey, ...args);
+		this.spectatorRoom().emit(eventKey, ...(args as any));
 	}
 
 	// Execute fn for each user. Owner included even if they're not playing.

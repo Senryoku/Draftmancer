@@ -79,7 +79,7 @@ if (process.env.NODE_ENV === "production") MTGOAPIInit();
 
 const app = express();
 const httpServer = new http.Server(app);
-const io = new Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>(httpServer, {
+export const io = new Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>(httpServer, {
 	maxHttpBufferSize: 1e7, // Increase max. message size to 10MB to accomodate larger custom card lists.
 	httpCompression: true,
 	perMessageDeflate: true,
@@ -1524,6 +1524,8 @@ const prepareSocketCallback = <T extends Array<unknown>>(
 
 io.on("connection", async function (socket) {
 	const query = socket.handshake.query;
+	if (query.spectator) return connectSpectator(socket);
+
 	if (!isString(query.userID) || !isString(query.userName)) {
 		socket.disconnect(true);
 		return;
@@ -1834,6 +1836,22 @@ io.on("connection", async function (socket) {
 
 	socket.emit("publicSessions", getPublicSessions());
 });
+
+function connectSpectator(socket: Socket) {
+	const query = socket.handshake.query;
+	if (!isString(query.sessionID) || !isString(query.password)) {
+		socket.disconnect(true);
+		return;
+	}
+	const sessionID = query.sessionID;
+	const password = query.password;
+	const session = Sessions[sessionID];
+	if (!session) {
+		socket.disconnect(true);
+		return;
+	}
+	session.addSpectator(socket, password);
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 
