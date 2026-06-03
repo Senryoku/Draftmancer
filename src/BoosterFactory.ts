@@ -3681,6 +3681,8 @@ export class SPMBoosterFactory extends BoosterFactory {
 	static readonly SpiderWebBasics = SPMBoosterFactory.filter(189, 193);
 	static readonly Basics = SPMBoosterFactory.filter(193, 198);
 
+	static readonly SourceMaterial = filterSetByNumber("mar", 1, 41);
+
 	webSlinger: SlotedCardPool;
 	panel: SlotedCardPool;
 	scene: SlotedCardPool;
@@ -3694,7 +3696,7 @@ export class SPMBoosterFactory extends BoosterFactory {
 		this.webSlinger = cidsToSlotedCardPool(SPMBoosterFactory.WebSlinger, options.maxDuplicates);
 		this.panel = cidsToSlotedCardPool(SPMBoosterFactory.Panel, options.maxDuplicates);
 		this.scene = cidsToSlotedCardPool(SPMBoosterFactory.Scene, options.maxDuplicates);
-		for (const cid of CardsBySet["mar"]) {
+		for (const cid of SPMBoosterFactory.SourceMaterial) {
 			const c = getCard(cid);
 			this.mar.set(cid, options.maxDuplicates?.[c.rarity] ?? DefaultMaxDuplicates);
 		}
@@ -4779,6 +4781,207 @@ export class SOSBoosterFactory extends BoosterFactory {
 	}
 }
 
+// Marvel Super Heroes - https://magic.wizards.com/en/news/feature/collecting-marvel-super-heroes
+export class MSHBoosterFactory extends BoosterFactory {
+	static filter(min: number, max: number) {
+		return CardsBySet["msh"].filter(
+			(c) => parseInt(getCard(c).collector_number) >= min && parseInt(getCard(c).collector_number) <= max
+		);
+	}
+
+	static readonly CityLands = MSHBoosterFactory.filter(277, 286); // CHECK
+	static readonly Basics = MSHBoosterFactory.filter(287, 296);
+	static readonly CommonDualLands = MSHBoosterFactory.filter(287, 296); // TODO
+	static readonly Panel = MSHBoosterFactory.filter(297, 313);
+	static readonly Scene = MSHBoosterFactory.filter(316, 351); // CHECK
+	static readonly Logo = MSHBoosterFactory.filter(352, 379);
+	static readonly BorderlessLands = MSHBoosterFactory.filter(380, 384);
+	static readonly SourceMaterial = filterSetByNumber("mar", 41, 100);
+
+	panel: SlotedCardPool;
+	scene: SlotedCardPool;
+	logo: SlotedCardPool;
+	borderlessLands: SlotedCardPool;
+
+	sourceMaterial: CardPool = new CardPool();
+
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
+		const [, filteredCardPool] = filterCardPool(cardPool, (cid: CardID) =>
+			MSHBoosterFactory.CommonDualLands.includes(cid)
+		);
+		// Add common and uncommon scene cards to the main card pool
+		for (const cid of MSHBoosterFactory.Scene) {
+			const c = getCard(cid);
+			if (c.rarity === "common") filteredCardPool.common.set(cid, options.maxDuplicates?.common ?? 99);
+			if (c.rarity === "uncommon") filteredCardPool.uncommon.set(cid, options.maxDuplicates?.uncommon ?? 99);
+		}
+		super(filteredCardPool, landSlot, options);
+
+		this.panel = cidsToSlotedCardPool(MSHBoosterFactory.Panel, options.maxDuplicates);
+		this.scene = cidsToSlotedCardPool(MSHBoosterFactory.Scene, options.maxDuplicates);
+		this.logo = cidsToSlotedCardPool(MSHBoosterFactory.Logo, options.maxDuplicates);
+		this.borderlessLands = cidsToSlotedCardPool(MSHBoosterFactory.BorderlessLands, options.maxDuplicates);
+
+		for (const cid of MSHBoosterFactory.SourceMaterial) {
+			const c = getCard(cid);
+			this.sourceMaterial.set(cid, options.maxDuplicates?.[c.rarity] ?? DefaultMaxDuplicates);
+		}
+	}
+
+	generateBooster(targets: Targets) {
+		const updatedTargets = structuredClone(targets);
+		// 7 Commons
+		//   There are 81 common cards from the main set that can be found in these slots.
+		//   There are 3 scene cards that can be found in these slots (8.6%).
+		// NOTE: Common scene cards are included in the card pool directly.
+		if (targets === DefaultBoosterTargets) updatedTargets.common = 7;
+		else updatedTargets.common = Math.max(1, updatedTargets.common - 3);
+
+		const booster: UniqueCard[] = [];
+
+		// 1 Traditional foil card of any rarity
+		//     A common (59.9%), uncommon (29.6%), rare (5.9%), or mythic rare (1.2%) card from the main set
+		//     A common (less than 1%), uncommon (1.2%), rare (less than 1%), or mythic rare (less than 1%) scene card
+		//     A rare (less than 1%) or mythic rare (less than 1%) logo card
+		//     A rare (less than 1%) or mythic rare (less than 1%) panel card
+		//     A rare borderless land (less than 1%)
+		{
+			// NOTE: Known percentages add up to 97.8
+			const unknown_rates = (100 - 97.8) / 8;
+			const pool = chooseWeighted(
+				[
+					59.9,
+					29.6,
+					5.9,
+					1.2,
+					unknown_rates,
+					1.2,
+					unknown_rates,
+					unknown_rates,
+					unknown_rates,
+					unknown_rates,
+					unknown_rates,
+					unknown_rates,
+					unknown_rates,
+				].map((w) => w / 100.0),
+				[
+					this.cardPool.common,
+					this.cardPool.uncommon,
+					this.cardPool.rare,
+					this.cardPool.mythic,
+					this.scene.common,
+					this.scene.uncommon,
+					this.scene.rare,
+					this.scene.mythic,
+					this.logo.rare,
+					this.logo.mythic,
+					this.panel.rare,
+					this.panel.mythic,
+					this.borderlessLands.rare,
+				]
+			);
+			booster.push(pickCard(pool, booster, { foil: true }));
+		}
+
+		// 1 Rare or mythic rare card
+		//     A rare (76.1%) or mythic rare (16.6%) card from the main set
+		//     A rare (1%) or mythic rare (0.8%) scene card
+		//     A rare (2.4%) or mythic rare (0.7%) logo card
+		//     A rare (1.9%) or mythic rare (less than 1%) panel card
+		while (updatedTargets.rare > 0) {
+			updatedTargets.rare -= 1;
+			const pool = chooseWeighted(
+				[76.1, 16.6, 1.0, 0.8, 2.4, 0.7, 1.9, 0.5].map((w) => w / 100.0),
+				[
+					this.cardPool.rare,
+					this.cardPool.mythic,
+					this.scene.rare,
+					this.scene.mythic,
+					this.logo.rare,
+					this.logo.mythic,
+					this.panel.rare,
+					this.panel.mythic,
+				]
+			);
+			booster.push(pickCard(pool, booster));
+		}
+
+		// 1 Wildcard of any rarity
+		//     A common (12.4%), uncommon (64%), rare (16.8%), or mythic rare (2.1%) card from the main set
+		//     A common (less than 1%), uncommon (2.7%), rare (less than 1%), or mythic rare (less than 1%) scene card
+		//     A rare (less than 1%) or mythic rare (less than 1%) logo card
+		//     A rare (less than 1%) or mythic rare (less than 1%) panel card
+		//     A rare borderless land (1%)
+		{
+			const unknown_rates = (100 - 98) / 8;
+			const pool = chooseWeighted(
+				[
+					12.4,
+					64.0,
+					16.8,
+					2.1,
+					unknown_rates,
+					2.7,
+					unknown_rates,
+					unknown_rates,
+					unknown_rates,
+					unknown_rates,
+					unknown_rates,
+					unknown_rates,
+					unknown_rates,
+				].map((w) => w / 100.0),
+				[
+					this.cardPool.common,
+					this.cardPool.uncommon,
+					this.cardPool.rare,
+					this.cardPool.mythic,
+					this.scene.common,
+					this.scene.uncommon,
+					this.scene.rare,
+					this.scene.mythic,
+					this.logo.rare,
+					this.logo.mythic,
+					this.panel.rare,
+					this.panel.mythic,
+					this.borderlessLands.rare,
+				]
+			);
+			booster.push(pickCard(pool, booster));
+		}
+
+		// In 1 out of 24 Play Boosters, 1 of 60 non-foil source material cards will replace a common.
+		const sourceRoll = random.realZeroToOneInclusive();
+		if (sourceRoll < 1 / 24) {
+			updatedTargets.common = Math.max(0, updatedTargets.common - 1);
+			booster.push(pickCard(this.sourceMaterial, booster, { foil: false }));
+		}
+
+		// 3 Uncommons
+		//   There are 100 uncommon cards from the main set that can be found in these slots.
+		//   There are 12 scene cards that can be found in these slots (12%).
+		// NOTE: Scene cards are added to the card pool directly.
+
+		const rest = super.generateBooster(updatedTargets, booster);
+		if (isMessageError(rest)) return rest;
+
+		// 1 Non-foil or traditional foil land card
+		//     A non-foil (40%) or traditional foil (10%) common dual land
+		//     A non-foil (20%) or traditional foil (5%) default frame basic land
+		//     A non-foil (10%) or traditional foil (2.5%) city calm basic land
+		//     A non-foil (10%) or traditional foil (2.5%) city chaos basic land
+		{
+			const pool = chooseWeighted(
+				[0.5, 0.25, 0.125 + 0.125],
+				[MSHBoosterFactory.CommonDualLands, MSHBoosterFactory.Basics, MSHBoosterFactory.CityLands]
+			);
+			const foil = random.realZeroToOneInclusive() <= 1 / 5;
+			rest.push(getUnique(getRandom(pool), { foil }));
+		}
+
+		return rest;
+	}
+}
+
 // Set specific rules.
 // Neither DOM, WAR or ZNR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
 export const SetSpecificFactories: {
@@ -4840,6 +5043,7 @@ export const SetSpecificFactories: {
 	ecl: ECLBoosterFactory,
 	tmt: TMTBoosterFactory,
 	sos: SOSBoosterFactory,
+	msh: MSHBoosterFactory,
 };
 
 export const getBoosterFactory = function (
