@@ -1627,8 +1627,8 @@
 							<a href="/draftqueue">
 								<div class="draft-queue-banner">
 									<img
-										src="./assets/img/draft_queue_banner_sos.webp"
-										alt="Practice Secrets of Strixhaven with human players right now in the Draft Queue!"
+										src="./assets/img/draft_queue_banner_msh.webp"
+										alt="Practice Marvel Super Heroes with human players right now in the Draft Queue!"
 										width="500"
 										height="260"
 									/>

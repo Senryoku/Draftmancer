@@ -1,6 +1,13 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
+			<em>June 12, 2026</em>
+			<p>
+				<img src="img/sets/msh.svg" class="set-icon" style="--invertedness: 100%" alt="MSH" /> Marvel Super
+				Heroes (MSH) is now available.
+			</p>
+		</div>
+		<div class="news">
 			<em>April 10, 2026</em>
 			<p>
 				<img src="img/sets/sos.svg" class="set-icon" style="--invertedness: 100%" alt="SOS" /> Secrets of
