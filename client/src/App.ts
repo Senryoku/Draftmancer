@@ -543,10 +543,13 @@ export default defineComponent({
 
 			this.socket.on("chatMessage", (message) => {
 				this.messagesHistory.push(message);
-				const bubbleEl = document.querySelector("#chat-bubble-" + message.author);
+				const spectator = this.sessionSpectators.find((s) => s.userID === message.author);
+				const bubbleEl = spectator
+					? document.querySelector("#chat-bubble-spectators")
+					: document.querySelector("#chat-bubble-" + message.author);
 				if (bubbleEl && !this.mutedUsers.has(message.author)) {
 					const bubble = bubbleEl as HTMLElement & { timeoutHandler: number };
-					bubble.innerText = message.text;
+					bubble.innerText = spectator ? `${spectator.userName}: ${message.text}` : message.text;
 					bubble.style.opacity = "1";
 					if (bubble.timeoutHandler) clearTimeout(bubble.timeoutHandler);
 					bubble.timeoutHandler = window.setTimeout(() => (bubble.style.opacity = "0"), 5000);
@@ -4096,6 +4099,10 @@ export default defineComponent({
 
 		isSpectator(): boolean {
 			return this.sessionSpectators.some((s) => s.userID === this.userID);
+		},
+
+		chatPlaceholder(): string {
+			return this.isSpectator && this.drafting ? "Chat with spectators." : "Chat with players in your session.";
 		},
 
 		// Locally displayed spectator list, with the current user first

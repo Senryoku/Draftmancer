@@ -629,9 +629,9 @@
 								v-tooltip="`Remove ${spectator.userName} from the session`"
 								@click="removePlayer(spectator.userID)"
 							/>
-							<div class="chat-bubble" :id="'chat-bubble-' + spectator.userID"></div>
 						</div>
 					</div>
+					<div class="chat-bubble" id="chat-bubble-spectators"></div>
 				</div>
 			</div>
 			<div class="player-list-container">
@@ -706,12 +706,7 @@
 			</div>
 			<div class="chat">
 				<form @submit.prevent="sendChatMessage">
-					<input
-						type="text"
-						v-model="currentChatMessage"
-						placeholder="Chat with players in your session."
-						maxlength="255"
-					/>
+					<input type="text" v-model="currentChatMessage" :placeholder="chatPlaceholder" maxlength="255" />
 				</form>
 				<font-awesome-icon
 					class="clickable"
@@ -727,6 +722,7 @@
 					:sessionOwner="sessionOwner"
 					:sessionOwnerUsername="sessionOwnerUsername"
 					:userByID="userByID"
+					:sessionSpectators="sessionSpectators"
 					:mutedUsers="mutedUsers"
 				/>
 			</div>

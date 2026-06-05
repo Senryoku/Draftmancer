@@ -1432,6 +1432,13 @@ ul.player-list {
 	margin-right: 0.5em;
 }
 
+.session-spectators .chat-bubble {
+	top: calc(100% + 1.5em);
+	left: 0;
+	width: max-content;
+	font-size: 1.25em;
+}
+
 .spectators-dropdown {
 	position: absolute;
 	top: 100%;
