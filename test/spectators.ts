@@ -148,7 +148,7 @@ describe("Spectators", function () {
 			spectate: "000000000000",
 		});
 		badSpectator.once("message", (msg) => {
-			expect(msg.title).to.equal("Cannot join session");
+			expect(msg.title).to.equal("Cannot spectate session");
 			expect(Sessions[sessionID].spectators.has("BadSpectatorID")).to.be.false;
 			badSpectator.disconnect();
 			done();
@@ -163,7 +163,7 @@ describe("Spectators", function () {
 			spectate: spectateKey,
 		});
 		lostSpectator.once("message", (msg) => {
-			expect(msg.title).to.equal("Cannot join session");
+			expect(msg.title).to.equal("Cannot spectate session");
 			expect(Sessions["NoSuchSession"]).to.not.exist;
 			lostSpectator.disconnect();
 			done();
@@ -289,13 +289,22 @@ describe("Spectators", function () {
 			clients[nonOwnerIdx].emit("chatMessage", { author: "id1", text: "Player talk", timestamp: 0 });
 		});
 
-		it("A spectator disconnect does not pause the draft and allows reconnection.", function (done) {
+		it("A spectator disconnect removes them immediately and does not pause the draft.", function (done) {
 			secondSpectator.disconnect();
 			setTimeout(() => {
 				expect(Sessions[sessionID].draftPaused).to.be.false;
-				expect(Sessions[sessionID].spectators.has(secondSpectatorUserID)).to.be.true;
+				expect(Sessions[sessionID].spectators.has(secondSpectatorUserID)).to.be.false;
 				done();
 			}, 100);
+		});
+
+		it("A disconnected spectator can rejoin mid-draft through the same link.", function (done) {
+			secondSpectator.once("draftLogLive", (data) => {
+				expect(data.log).to.exist;
+				expect(Sessions[sessionID].spectators.has(secondSpectatorUserID)).to.be.true;
+				done();
+			});
+			secondSpectator.connect();
 		});
 
 		it("Pick until the draft ends, spectators receive endDraft.", function (done) {
@@ -325,9 +334,8 @@ describe("Spectators", function () {
 			for (const c of clients) c.emit("pickCard", { pickedCards: [0], burnedCards: [] }, () => {});
 		});
 
-		it("Spectators that never reconnected are dropped when the draft ends.", function (done) {
-			expect(Sessions[sessionID].spectators.has(secondSpectatorUserID)).to.be.false;
-			expect(Sessions[sessionID].spectators.has(spectatorUserID)).to.be.true;
+		after(function (done) {
+			secondSpectator?.disconnect();
 			done();
 		});
 	});
@@ -367,6 +375,12 @@ describe("Spectators", function () {
 				});
 				clients[ownerIdx].emit("setAllowSpectators", false, ackNoError);
 			});
+		});
+
+		it("Session.addSpectator is a no-op while spectating is disabled.", function (done) {
+			Sessions[sessionID].addSpectator(spectatorUserID);
+			expect(Sessions[sessionID].spectators.size).to.equal(0);
+			done();
 		});
 	});
 });
@@ -421,7 +435,7 @@ describe("Spectators in unsupported game modes", function () {
 			spectate: spectateKey,
 		});
 		spectator.once("message", (msg) => {
-			expect(msg.title).to.equal("Cannot join session");
+			expect(msg.title).to.equal("Cannot spectate session");
 			expect(Sessions[sessionID].spectators.has("WinstonSpectatorID")).to.be.false;
 			spectator.disconnect();
 			done();
@@ -499,7 +513,25 @@ describe("Spectators across a server restart", function () {
 			});
 	});
 
-	it("The spectator reconnects through the same link without inheriting ownership.", function (done) {
+	it("The spectator cannot rejoin while the session is inactive.", function (done) {
+		spectator.once("message", (msg) => {
+			expect(msg.title).to.equal("Cannot spectate session");
+			done();
+		});
+		spectator.connect();
+	});
+
+	it("Players reconnect, the owner first so they keep ownership.", function (done) {
+		const nonOwner = clients[(ownerIdx + 1) % clients.length];
+		clients[ownerIdx].once("rejoinDraft", () => {
+			expect(Sessions[sessionID].owner).to.equal(ownerUserID);
+			nonOwner.once("rejoinDraft", () => done());
+			nonOwner.connect();
+		});
+		clients[ownerIdx].connect();
+	});
+
+	it("The spectator rejoins through the same link once the session is live again.", function (done) {
 		spectator.once("draftLogLive", (data) => {
 			expect(data.log).to.exist;
 			expect(Sessions[sessionID].spectators.has(spectatorUserID)).to.be.true;
@@ -511,17 +543,8 @@ describe("Spectators across a server restart", function () {
 		spectator.connect();
 	});
 
-	it("Players reconnect and the draft can be stopped.", function (done) {
-		let reconnected = 0;
-		for (const c of clients) {
-			c.once("rejoinDraft", () => {
-				++reconnected;
-				if (reconnected === clients.length) {
-					clients[ownerIdx].emit("stopDraft");
-					done();
-				}
-			});
-			c.connect();
-		}
+	it("The draft can be stopped.", function (done) {
+		clients[ownerIdx].emit("stopDraft");
+		done();
 	});
 });

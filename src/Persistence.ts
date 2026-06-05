@@ -126,7 +126,6 @@ export function restoreSession(s: any, owner: UserID) {
 	)) {
 		(r as IIndexable)[prop] = s[prop];
 	}
-	r.spectators = new Set(s.spectators ?? []);
 
 	if (s.draftState) {
 		switch (s.draftState.type) {
@@ -240,7 +239,6 @@ export function getPoDSession(s: Session) {
 	)) {
 		if (!((s as IIndexable)[prop] instanceof Function)) PoDSession[prop] = (s as IIndexable)[prop];
 	}
-	PoDSession.spectators = [...s.spectators];
 
 	if (s.drafting) {
 		PoDSession.disconnectedUsers = structuredClone(s.disconnectedUsers); // Avoid modifying the original

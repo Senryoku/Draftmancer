@@ -1683,6 +1683,26 @@ io.on("connection", async function (socket) {
 		});
 	}
 
+	// Spectate links are validated once here and never reach joinSession. The owner keeps their seat
+	const spectateKey = spectateKeyFromQuery(query);
+	const spectatedSession = isString(query.sessionID) ? Sessions[query.sessionID] : undefined;
+	if (spectateKey !== undefined && userID !== spectatedSession?.owner) {
+		const refuseSpectate = (msg: string) => {
+			socket.emit("message", new Message("Cannot spectate session", "", "", msg));
+			socket.disconnect(true);
+		};
+		if (!spectatedSession) return refuseSpectate(`Session (${query.sessionID}) does not exist anymore.`);
+		if (!spectatedSession.allowSpectators || spectateKey !== spectatedSession.spectateKey)
+			return refuseSpectate(`Invalid spectate link for session (${spectatedSession.id}).`);
+		if (spectatedSession.drafting && !isDraftState(spectatedSession.draftState))
+			return refuseSpectate(`Spectating is not supported for this game mode.`);
+
+		socket.on("setUserName", prepareSocketCallback(setUserName));
+		socket.on("chatMessage", prepareSocketCallback(chatMessage));
+		addSpectatorToSession(userID, spectatedSession.id);
+		return;
+	}
+
 	// Personal events
 	socket.on("setUserName", prepareSocketCallback(setUserName));
 	socket.on("setCollection", prepareSocketCallback(setCollection));
@@ -1832,7 +1852,7 @@ io.on("connection", async function (socket) {
 			if (sessionIDInUse(sessionID)) sessionID = newSessionID("CC_");
 		}
 
-		joinSession(sessionID, userID, filteredSettings, spectateKeyFromQuery(query));
+		joinSession(sessionID, userID, filteredSettings);
 
 		if (sessionSettings.cubeCobraID) {
 			if (sessionID !== query.sessionID) Connections[userID].socket.emit("setSession", sessionID);
@@ -1896,7 +1916,7 @@ function spectateKeyFromQuery(query: { spectate?: unknown }): string | undefined
 	return undefined;
 }
 
-function joinSession(sessionID: SessionID, userID: UserID, defaultSessionSettings: Options = {}, spectateKey?: string) {
+function joinSession(sessionID: SessionID, userID: UserID, defaultSessionSettings: Options = {}) {
 	if (!Connections[userID]) return console.error(`joinSession: No connection found for userID ${userID}`);
 
 	// Fallback to previous session if possible, or generate a new one
@@ -1907,10 +1927,7 @@ function joinSession(sessionID: SessionID, userID: UserID, defaultSessionSetting
 	};
 
 	if (sessionID in InactiveSessions) {
-		const canRejoin =
-			userID in InactiveSessions[sessionID].disconnectedUsers ||
-			(spectateKey !== undefined && spectateKey === InactiveSessions[sessionID].spectateKey);
-		if (InactiveSessions[sessionID].drafting && !canRejoin)
+		if (InactiveSessions[sessionID].drafting && !(userID in InactiveSessions[sessionID].disconnectedUsers))
 			return refuse(`Session '${sessionID}' is currently drafting.`);
 
 		console.log(`Restoring inactive session '${sessionID}'...`);
@@ -1919,12 +1936,9 @@ function joinSession(sessionID: SessionID, userID: UserID, defaultSessionSetting
 			delete InactiveSessions[sessionID].deleteTimeout;
 		}
 		// Always having a valid owner is more important than preserving the old one - probably.
-		// Spectators are excluded: a returning spectator should never inherit ownership.
-		const reconnectingPlayer =
-			InactiveSessions[sessionID].ownerIsPlayer && !InactiveSessions[sessionID].spectators?.includes(userID);
 		Sessions[sessionID] = restoreSession(
 			InactiveSessions[sessionID],
-			reconnectingPlayer ? userID : InactiveSessions[sessionID].owner
+			InactiveSessions[sessionID].ownerIsPlayer ? userID : InactiveSessions[sessionID].owner
 		);
 		delete InactiveSessions[sessionID];
 	}
@@ -1938,15 +1952,6 @@ function joinSession(sessionID: SessionID, userID: UserID, defaultSessionSetting
 			return;
 		}
 
-		// A valid spectate link grants spectator access in any session state. The owner keeps their seat
-		if (spectateKey !== undefined && !sess.spectators.has(userID) && userID !== sess.owner) {
-			if (!sess.allowSpectators || spectateKey !== sess.spectateKey)
-				return refuse(`Invalid spectate link for session (${sessionID}).`);
-			if (sess.drafting && !isDraftState(sess.draftState))
-				return refuse(`Spectating is not supported for this game mode.`);
-			return addSpectatorToSession(userID, sessionID);
-		}
-
 		const bracketLink = sess.bracket
 			? `<br />Bracket is available <a href="/bracket?session=${encodeURIComponent(
 					sessionID
@@ -1956,12 +1961,11 @@ function joinSession(sessionID: SessionID, userID: UserID, defaultSessionSetting
 		if (sess.drafting) {
 			console.log(
 				`Session ${sessionID}: ${userID} wants to rejoin draft: ${
-					userID in sess.disconnectedUsers || sess.spectators.has(userID) ? "Ok!" : "Not allowed."
+					userID in sess.disconnectedUsers ? "Ok!" : "Not allowed."
 				}`
 			);
 
 			if (userID in sess.disconnectedUsers) sess.reconnectUser(userID);
-			else if (sess.spectators.has(userID)) addSpectatorToSession(userID, sessionID);
 			else
 				return refuse(
 					`This session (${sessionID}) is currently drafting. Please wait for them to finish.${bracketLink}`
@@ -1971,17 +1975,12 @@ function joinSession(sessionID: SessionID, userID: UserID, defaultSessionSetting
 			return refuse(`This session (${sessionID}) is closed.`);
 		} else if (sess.getHumanPlayerCount() >= sess.maxPlayers) {
 			// Session exists and is full
-			if (sess.spectators.has(userID)) addSpectatorToSession(userID, sessionID);
-			else
-				return refuse(
-					`This session (${sessionID}) is full (${sess.users.size}/${sess.maxPlayers} players).${bracketLink}`
-				);
+			return refuse(
+				`This session (${sessionID}) is full (${sess.users.size}/${sess.maxPlayers} players).${bracketLink}`
+			);
 		} else {
 			addUserToSession(userID, sessionID);
 		}
-	} else if (spectateKey !== undefined) {
-		// Spectate links never create sessions
-		return refuse(`Session (${sessionID}) does not exist anymore.`);
 	} else {
 		addUserToSession(userID, sessionID, defaultSessionSettings);
 	}
@@ -2072,8 +2071,7 @@ function removeUserFromSession(sessionID: SessionID, userID: UserID) {
 				deleteSession(sessionID);
 			} else sess.notifyUserChange();
 		} else if (sess.spectators.has(userID)) {
-			// Keep drafting spectators around so they can reconnect, like disconnected players
-			if (!sess.drafting) sess.removeSpectator(userID);
+			sess.removeSpectator(userID);
 		} else if (userID === sess.owner && !sess.ownerIsPlayer && sess.users.size === 0) {
 			// User was a non-playing owner and alone in this session
 			deleteSession(sessionID);

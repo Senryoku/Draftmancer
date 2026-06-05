@@ -237,6 +237,7 @@ export class Session implements IIndexable {
 	}
 
 	addSpectator(userID: UserID) {
+		if (!this.allowSpectators) return;
 		Connections[userID].sessionID = this.id;
 		this.spectators.add(userID);
 		this.syncSessionOptions(userID);
@@ -978,18 +979,6 @@ export class Session implements IIndexable {
 		this.drafting = false;
 		this.draftPaused = false;
 		this.disconnectedUsers = {};
-		this.cleanDisconnectedSpectators();
-	}
-
-	// Spectators are kept around while drafting so they can reconnect. Drop the ones that never did
-	cleanDisconnectedSpectators() {
-		let spectatorsChanged = false;
-		for (const uid of [...this.spectators])
-			if (!Connections[uid]) {
-				this.spectators.delete(uid);
-				spectatorsChanged = true;
-			}
-		if (spectatorsChanged) this.broadcastSpectators();
 	}
 
 	///////////////////// Winston Draft //////////////////////

@@ -298,7 +298,6 @@ export default defineComponent({
 		if (sessionID) query.sessionID = sessionID; // Note: Setting sessionID to undefined will send it as the "undefined" string, and that's not what we want...
 		const urlParamSpectate = urlParams.get("spectate");
 		if (urlParamSpectate) query.spectate = urlParamSpectate;
-		const spectateUrlKey = urlParamSpectate && sessionID ? { key: urlParamSpectate, sessionID: sessionID } : null;
 
 		// Socket Setup
 		const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io({
@@ -336,7 +335,6 @@ export default defineComponent({
 			// Session status
 			managed: false, // Is the session managed by the server? (i.e. the session doesn't have an owner)
 			sessionID: sessionID,
-			spectateUrlKey: spectateUrlKey,
 			sessionOwner: (sessionID ? userID : undefined) as UserID | undefined,
 			sessionOwnerUsername: userName as string,
 			sessionUsers: [] as SessionUser[],
@@ -3810,11 +3808,11 @@ export default defineComponent({
 			}
 		},
 		updateURLQuery(): void {
+			// Spectate connections keep the invite link as-is so a refresh re-validates it
+			if (this.socket?.io.opts.query?.spectate) return;
 			if (this.sessionID) {
 				const params = new URLSearchParams();
 				params.append("session", this.sessionID);
-				if (this.spectateUrlKey?.sessionID === this.sessionID)
-					params.append("spectate", this.spectateUrlKey.key);
 				history.replaceState({ sessionID: this.sessionID }, "", `/?${params.toString()}`);
 			}
 		},
@@ -4205,6 +4203,11 @@ export default defineComponent({
 	},
 	watch: {
 		sessionID() {
+			// A spectate connection is bound to a single session, moving to another one means rejoining as a player
+			if (this.socket?.io.opts.query?.spectate) {
+				window.location.assign(`/?session=${encodeURIComponent(this.sessionID ?? "")}`);
+				return;
+			}
 			if (this.socket) {
 				let sessionSettings = {};
 				const storedSessionSettings = localStorage.getItem(localStorageSessionSettingsKey);
