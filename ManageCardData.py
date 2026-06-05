@@ -233,8 +233,11 @@ with open("data/J21MTGACollectorNumbers.json", "w") as outfile:
 
 if not os.path.isfile(BulkDataPath) or ForceDownload:
     # Get Bulk Data URL
-    response = requests.get("https://api.scryfall.com/bulk-data")
+    response = requests.get("https://api.scryfall.com/bulk-data", headers={"User-Agent": "Draftmancer DB Updater"})
     bulkdata = json.loads(response.content)
+    if(response.status_code) != 200:
+        print(bulkdata)
+        exit()
     allcardObject = next(x for x in bulkdata["data"] if x["type"] == "all_cards")
     if allcardObject is None:
         raise Exception("Could not find all_cards bulk data")
