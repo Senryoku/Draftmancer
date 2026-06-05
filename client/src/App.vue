@@ -606,6 +606,33 @@
 				>
 					<font-awesome-icon icon="fa-solid fa-random" />
 				</div>
+				<div
+					v-if="sessionSpectators.length > 0"
+					class="session-spectators clickable"
+					@click="displaySpectatorsList = !displaySpectatorsList"
+					v-tooltip="`${sessionSpectators.length} spectator(s)`"
+				>
+					<font-awesome-icon icon="fa-regular fa-eye" />
+					<span>{{ sessionSpectators.length }}</span>
+					<div class="spectators-dropdown" v-if="displaySpectatorsList" @click.stop>
+						<div
+							class="spectator-name"
+							:class="{ self: spectator.userID === userID }"
+							v-for="spectator in sortedSessionSpectators"
+							:key="spectator.userID"
+						>
+							{{ spectator.userName }}
+							<font-awesome-icon
+								v-if="userID === sessionOwner"
+								icon="fa-solid fa-user-slash"
+								class="clickable red"
+								v-tooltip="`Remove ${spectator.userName} from the session`"
+								@click="removePlayer(spectator.userID)"
+							/>
+							<div class="chat-bubble" :id="'chat-bubble-' + spectator.userID"></div>
+						</div>
+					</div>
+				</div>
 			</div>
 			<div class="player-list-container">
 				<template v-if="!drafting">
@@ -1121,9 +1148,7 @@
 				</div>
 				<transition name="fade">
 					<div
-						v-if="
-							draftPaused && !waitingForDisconnectedUsers && !(userID === sessionOwner && !ownerIsPlayer)
-						"
+						v-if="draftPaused && !waitingForDisconnectedUsers && gameState !== GameState.Watching"
 						class="disconnected-user-popup-container"
 					>
 						<div class="disconnected-user-popup">
@@ -2004,6 +2029,36 @@
 									:false-value="true"
 									id="is-owner-player"
 								/>
+							</div>
+						</div>
+						<div
+							class="line"
+							v-tooltip.left="{
+								popperClass: 'option-tooltip',
+								content: `<p>Let users watch the game without participating.</p>
+								<p>Enabling this generates a spectator link and copies it to your clipboard. Anyone opening the link joins the session as a spectator, even while a game is in progress.</p>
+								<p>Spectators see the picks of each player as they happen.</p>`,
+								html: true,
+							}"
+						>
+							<label for="allow-spectators">Allow Spectators</label>
+							<div class="right">
+								<input
+									type="checkbox"
+									v-model="allowSpectators"
+									id="allow-spectators"
+									@change="onAllowSpectatorsChange"
+								/>
+								<span
+									v-if="allowSpectators && spectateKey"
+									class="clickable"
+									style="margin-left: 0.5em"
+									@click="spectatorLinkToClipboard"
+									v-tooltip="'Copy spectator link to clipboard'"
+								>
+									<font-awesome-icon icon="fa-solid fa-clipboard" />
+									<code style="margin-left: 0.3em">{{ spectateKey }}</code>
+								</span>
 							</div>
 						</div>
 						<div class="line">

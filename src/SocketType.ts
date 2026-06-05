@@ -2,7 +2,7 @@ import { GridDraftSyncData } from "./GridDraft";
 import { WinstonDraftSyncData } from "./WinstonDraft";
 import { SessionID, UserID } from "./IDTypes";
 import { Message, SocketAck, SocketError } from "./Message";
-import { DistributionMode, DraftLogRecipients, ReadyState, UserData } from "./Session/SessionTypes";
+import { DistributionMode, DraftLogRecipients, ReadyState, SpectatorData, UserData } from "./Session/SessionTypes";
 import { Options } from "./utils";
 import { SetCode } from "./Types";
 import { DraftLog, DraftPick } from "./DraftLog";
@@ -67,6 +67,8 @@ export interface ServerToClientEvents {
 	userDisconnected: (data: { owner?: UserID; disconnectedUsers: { [uid: string]: { userName: string } } }) => void;
 	sessionOptions: (
 		sessionOptions: Partial<{
+			allowSpectators: boolean;
+			spectateKey: string | undefined;
 			boosterContent: { [slot: string]: number };
 			boostersPerPlayer: number;
 			bots: number;
@@ -275,6 +277,8 @@ export interface ServerToClientEvents {
 	choosePlayer: (reason: string, users: UserID[], callback: (user: UserID) => void) => void;
 
 	takeoverVote: (userName: string, callback: (response: boolean | null) => void) => void;
+
+	sessionSpectators: (spectators: SpectatorData[]) => void;
 }
 
 export interface ClientToServerEvents {
@@ -465,6 +469,8 @@ export interface ClientToServerEvents {
 	convertMTGOLog: (str: string, callback: (response: SocketError | DraftLog) => void) => void;
 
 	setHooks: (hooks: Hooks, ack: (result: SocketAck) => void) => void;
+
+	setAllowSpectators: (val: boolean, ack: (result: SocketAck & { spectateKey?: string }) => void) => void;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type

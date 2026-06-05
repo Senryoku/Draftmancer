@@ -74,7 +74,13 @@ import { WinstonDraftState, isWinstonDraftState } from "./WinstonDraft.js";
 import { ServerToClientEvents } from "./SocketType";
 import { Constants, EnglishBasicLandNames } from "./Constants.js";
 import { SessionsSettingsProps } from "./Session/SessionProps.js";
-import { DistributionMode, DraftLogRecipients, DisconnectedUser, UserData } from "./Session/SessionTypes.js";
+import {
+	DistributionMode,
+	DraftLogRecipients,
+	DisconnectedUser,
+	SpectatorData,
+	UserData,
+} from "./Session/SessionTypes.js";
 import { IIndexable, SetCode } from "./Types.js";
 import { isRotisserieDraftState, RotisserieDraftStartOptions, RotisserieDraftState } from "./RotisserieDraft.js";
 import { parseLine } from "./parseCardList.js";
@@ -126,9 +132,12 @@ export class Session implements IIndexable {
 	readonly managed: boolean = false;
 	userOrder: Array<string> = [];
 	users: Set<UserID> = new Set();
+	spectators: Set<UserID> = new Set();
 
 	// Options
 	ownerIsPlayer: boolean = true;
+	allowSpectators: boolean = false;
+	spectateKey?: string = undefined;
 	setRestriction: Array<string> = [Constants.MTGASets[Constants.MTGASets.length - 1]];
 	isPublic: boolean = false;
 	description: string = "";
@@ -225,6 +234,44 @@ export class Session implements IIndexable {
 			this.userOrder.splice(Math.floor(Math.random() * (this.userOrder.length + 1)), 0, userID);
 		this.notifyUserChange();
 		this.syncSessionOptions(userID);
+	}
+
+	addSpectator(userID: UserID) {
+		Connections[userID].sessionID = this.id;
+		this.spectators.add(userID);
+		this.syncSessionOptions(userID);
+		this.notifyUserChange();
+		if (this.drafting && isDraftState(this.draftState)) {
+			Connections[userID].socket.emit("startDraft", this.getSortedVirtualPlayerData());
+			Connections[userID].socket.emit("draftState", {
+				booster: [],
+				boosterCount: 0,
+				pickNumber: 0,
+				picksThisRound: 0,
+				burnsThisRound: 0,
+				skipPick: true,
+
+				boosterNumber: this.draftState.boosterNumber,
+			});
+			Connections[userID].socket.emit("draftLogLive", { log: this.draftLog });
+		}
+	}
+
+	removeSpectator(userID: UserID) {
+		if (!this.spectators.delete(userID)) return;
+		if (Connections[userID]?.sessionID === this.id) Connections[userID].sessionID = undefined;
+		this.broadcastSpectators();
+	}
+
+	getSpectatorData() {
+		const spectatorData: SpectatorData[] = [];
+		for (const uid of this.spectators)
+			if (Connections[uid]) spectatorData.push({ userID: uid, userName: Connections[uid].userName });
+		return spectatorData;
+	}
+
+	broadcastSpectators() {
+		this.emitToConnectedUsers("sessionSpectators", this.getSpectatorData());
 	}
 
 	setSessionOwner(newOwnerID: UserID) {
@@ -508,6 +555,7 @@ export class Session implements IIndexable {
 			bracket: this.bracket,
 		};
 		for (const p of Object.keys(SessionsSettingsProps)) options[p] = (this as IIndexable)[p];
+		if (userID === this.owner) options.spectateKey = this.spectateKey;
 		Connections[userID]?.socket.emit("sessionOptions", options);
 	}
 
@@ -912,12 +960,14 @@ export class Session implements IIndexable {
 		}
 
 		// Send to all session users
+		const spectatorData = this.getSpectatorData();
 		this.forUsers((uid) => {
 			Connections[uid]?.socket.emit(
 				"sessionOwner",
 				this.owner,
 				this.owner && this.owner in Connections ? Connections[this.owner].userName : null
 			);
+			Connections[uid]?.socket.emit("sessionSpectators", spectatorData);
 			Connections[uid]?.socket.emit("sessionUsers", userInfo);
 		});
 	}
@@ -928,6 +978,18 @@ export class Session implements IIndexable {
 		this.drafting = false;
 		this.draftPaused = false;
 		this.disconnectedUsers = {};
+		this.cleanDisconnectedSpectators();
+	}
+
+	// Spectators are kept around while drafting so they can reconnect. Drop the ones that never did
+	cleanDisconnectedSpectators() {
+		let spectatorsChanged = false;
+		for (const uid of [...this.spectators])
+			if (!Connections[uid]) {
+				this.spectators.delete(uid);
+				spectatorsChanged = true;
+			}
+		if (spectatorsChanged) this.broadcastSpectators();
 	}
 
 	///////////////////// Winston Draft //////////////////////
@@ -1919,6 +1981,8 @@ export class Session implements IIndexable {
 					log: this.draftLog,
 				});
 		}
+		this.toSpectators("startDraft", virtualPlayerData);
+		this.toSpectators("draftLogLive", { log: this.draftLog });
 
 		this.distributeBoosters();
 		return new SocketAck();
@@ -2355,18 +2419,21 @@ export class Session implements IIndexable {
 		if (burnedCards) cardsToRemove = cardsToRemove.concat(burnedCards);
 		cardsToRemove.sort((a, b) => b - a); // Remove last index first to avoid shifting indices
 
-		// Update draft log for live display if owner in not playing (Do this before removing the cards, damnit!)
-		if (this.owner && this.shouldSendLiveUpdates()) {
-			Connections[this.owner].socket.emit("draftLogLive", {
-				userID: userID,
-				pick: pickData,
-			});
-			this.updateDecklist(userID);
-			Connections[this.owner].socket.emit("pickAlert", {
+		// Update draft log for live display if anyone is watching (Do this before removing the cards, damnit!)
+		if ((this.owner && this.shouldSendLiveUpdates()) || this.spectators.size > 0) {
+			const pickUpdate = { userID: userID, pick: pickData };
+			const pickAlert = {
 				userID: userID,
 				userName: Connections[userID].userName,
 				cards: pickedCards.map((idx) => booster[idx]),
-			});
+			};
+			this.updateDecklist(userID);
+			if (this.owner && this.shouldSendLiveUpdates()) {
+				Connections[this.owner].socket.emit("draftLogLive", pickUpdate);
+				Connections[this.owner].socket.emit("pickAlert", pickAlert);
+			}
+			this.toSpectators("draftLogLive", pickUpdate);
+			this.toSpectators("pickAlert", pickAlert);
 		}
 
 		if (s.players[userID].effect?.aetherSearcher) {
@@ -2756,17 +2823,19 @@ export class Session implements IIndexable {
 				++boosterIndex;
 			}
 
-			if (this.owner && !this.ownerIsPlayer)
-				Connections[this.owner]?.socket.emit("draftState", {
-					booster: [],
-					boosterCount: 0,
-					pickNumber: 0,
-					picksThisRound: 0,
-					burnsThisRound: 0,
-					skipPick: true,
+			const watchingDraftState = {
+				booster: [],
+				boosterCount: 0,
+				pickNumber: 0,
+				picksThisRound: 0,
+				burnsThisRound: 0,
+				skipPick: true,
 
-					boosterNumber: s.boosterNumber,
-				});
+				boosterNumber: s.boosterNumber,
+			};
+			if (this.owner && !this.ownerIsPlayer)
+				Connections[this.owner]?.socket.emit("draftState", watchingDraftState);
+			this.toSpectators("draftState", watchingDraftState);
 		};
 
 		if (this.reviewTimer > 0 && s.boosterNumber > 0) {
@@ -3123,6 +3192,7 @@ export class Session implements IIndexable {
 		};
 
 		if (this.owner && this.shouldSendLiveUpdates()) Connections[this.owner]?.socket.emit("draftLogLive", shareData);
+		this.toSpectators("draftLogLive", shareData);
 
 		if (!this.drafting) {
 			// Note: The session setting draftLogRecipients may have changed since the game ended.
@@ -3349,7 +3419,7 @@ export class Session implements IIndexable {
 
 		this.forUsers((uid) => {
 			this.updateDecklist(uid);
-			Connections[uid].socket.emit("endTeamSealed");
+			Connections[uid]?.socket.emit("endTeamSealed");
 		});
 		console.log(`Session ${this.id} Team Sealed stopped.`);
 	}
@@ -3879,13 +3949,19 @@ export class Session implements IIndexable {
 		this.emitToConnectedUsers("sessionOptions", { bracket: this.bracket });
 	}
 
-	// Execute fn for each user. Owner included even if they're not playing.
+	// Execute fn for each user, including spectators and the owner even when they're not playing.
 	forUsers(fn: (uid: UserID) => void) {
 		if (!this.ownerIsPlayer && this.owner && this.owner in Connections) fn(this.owner);
 		for (const user of this.users) fn(user);
+		for (const uid of this.spectators) fn(uid);
 	}
 	forNonOwners(fn: (uid: UserID) => void) {
 		for (const uid of this.users) if (uid !== this.owner) fn(uid);
+	}
+
+	// Emit to all connected spectators. The non-playing owner is notified separately at each call site.
+	toSpectators<T extends keyof ServerToClientEvents>(eventKey: T, ...args: Parameters<ServerToClientEvents[T]>) {
+		for (const uid of this.spectators) Connections[uid]?.socket.emit(eventKey, ...args);
 	}
 
 	emitToConnectedUsers<T extends keyof ServerToClientEvents>(
@@ -3900,6 +3976,7 @@ export class Session implements IIndexable {
 		...args: Parameters<ServerToClientEvents[T]>
 	) {
 		for (const uid of this.users) if (uid !== this.owner) Connections[uid]?.socket.emit(eventKey, ...args);
+		this.toSpectators(eventKey, ...args);
 	}
 }
 

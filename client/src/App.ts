@@ -2,7 +2,13 @@ import type { ClientToServerEvents, LoaderOptions, ServerToClientEvents } from "
 import type { UserID } from "@/IDTypes";
 import type { SetCode, IIndexable, Language } from "@/Types";
 import { PassingOrder } from "./common";
-import { DistributionMode, DraftLogRecipients, ReadyState, UserData } from "../../src/Session/SessionTypes";
+import {
+	DistributionMode,
+	DraftLogRecipients,
+	ReadyState,
+	SpectatorData,
+	UserData,
+} from "../../src/Session/SessionTypes";
 import { ArenaID, Card, CardID, DeckList, PlainCollection, UniqueCard, UniqueCardID } from "@/CardTypes";
 import type { DraftLog } from "@/DraftLog";
 import type { BotScores } from "@/Bot";
@@ -290,6 +296,9 @@ export default defineComponent({
 			sessionSettings: JSON.stringify(storedSessionSettings),
 		};
 		if (sessionID) query.sessionID = sessionID; // Note: Setting sessionID to undefined will send it as the "undefined" string, and that's not what we want...
+		const urlParamSpectate = urlParams.get("spectate");
+		if (urlParamSpectate) query.spectate = urlParamSpectate;
+		const spectateUrlKey = urlParamSpectate && sessionID ? { key: urlParamSpectate, sessionID: sessionID } : null;
 
 		// Socket Setup
 		const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io({
@@ -327,12 +336,17 @@ export default defineComponent({
 			// Session status
 			managed: false, // Is the session managed by the server? (i.e. the session doesn't have an owner)
 			sessionID: sessionID,
+			spectateUrlKey: spectateUrlKey,
 			sessionOwner: (sessionID ? userID : undefined) as UserID | undefined,
 			sessionOwnerUsername: userName as string,
 			sessionUsers: [] as SessionUser[],
+			sessionSpectators: [] as SpectatorData[],
+			displaySpectatorsList: false,
 			disconnectedUsers: {} as { [uid: UserID]: { userName: string } },
 			// Session settings
 			ownerIsPlayer: true,
+			allowSpectators: false,
+			spectateKey: undefined as string | undefined,
 			isPublic: false,
 			description: "",
 			ignoreCollections: true,
@@ -570,6 +584,10 @@ export default defineComponent({
 				this.userOrder = users.map((u) => u.userID);
 			});
 
+			this.socket.on("sessionSpectators", (spectators) => {
+				this.sessionSpectators = spectators;
+			});
+
 			this.socket.on("userDisconnected", (data) => {
 				if (!this.drafting) return;
 				this.sessionOwner = data.owner;
@@ -586,6 +604,9 @@ export default defineComponent({
 				if (!user) {
 					if (data.userID === this.sessionOwner && data.updatedProperties.userName)
 						this.sessionOwnerUsername = data.updatedProperties.userName;
+					const spectator = this.sessionSpectators.find((s) => s.userID === data.userID);
+					if (spectator && data.updatedProperties.userName)
+						spectator.userName = data.updatedProperties.userName;
 					return;
 				}
 
@@ -3085,7 +3106,9 @@ export default defineComponent({
 		},
 		removePlayer(userID: UserID) {
 			if (this.userID !== this.sessionOwner) return;
-			const user = this.sessionUsers.find((u) => u.userID === userID);
+			const user =
+				this.sessionUsers.find((u) => u.userID === userID) ??
+				this.sessionSpectators.find((s) => s.userID === userID);
 			if (!user) return;
 			Alert.fire({
 				title: "Are you sure?",
@@ -3634,6 +3657,26 @@ export default defineComponent({
 			);
 			fireToast("success", "Session link copied to clipboard!");
 		},
+		onAllowSpectatorsChange() {
+			if (this.userID !== this.sessionOwner || !this.socket) return;
+			this.socket.emit("setAllowSpectators", this.allowSpectators, (r) => {
+				if (r.error) {
+					Alert.fire(r.error);
+				} else {
+					this.spectateKey = r.spectateKey;
+					if (this.allowSpectators && this.spectateKey) this.spectatorLinkToClipboard();
+				}
+			});
+		},
+		spectatorLinkToClipboard() {
+			if (!this.spectateKey) return;
+			copyToClipboard(
+				`${window.location.protocol}//${window.location.hostname}${
+					window.location.port ? ":" + window.location.port : ""
+				}/?session=${encodeURIComponent(this.sessionID ?? "")}&spectate=${encodeURIComponent(this.spectateKey)}`
+			);
+			fireToast("success", "Spectator link copied to clipboard!");
+		},
 		disconnectedReminder() {
 			fireToast("error", "Disconnected from server!");
 		},
@@ -3767,6 +3810,8 @@ export default defineComponent({
 			if (this.sessionID) {
 				const params = new URLSearchParams();
 				params.append("session", this.sessionID);
+				if (this.spectateUrlKey?.sessionID === this.sessionID)
+					params.append("spectate", this.spectateUrlKey.key);
 				history.replaceState({ sessionID: this.sessionID }, "", `/?${params.toString()}`);
 			}
 		},
@@ -4047,6 +4092,17 @@ export default defineComponent({
 			const r: { [uid: UserID]: SessionUser } = {};
 			for (const u of this.sessionUsers) r[u.userID] = u;
 			return r;
+		},
+
+		isSpectator(): boolean {
+			return this.sessionSpectators.some((s) => s.userID === this.userID);
+		},
+
+		// Locally displayed spectator list, with the current user first
+		sortedSessionSpectators(): SpectatorData[] {
+			return [...this.sessionSpectators].sort(
+				(a, b) => (b.userID === this.userID ? 1 : 0) - (a.userID === this.userID ? 1 : 0)
+			);
 		},
 
 		pageTitle(): string {
