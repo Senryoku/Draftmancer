@@ -2071,7 +2071,6 @@
 									v-tooltip="'Copy spectator link to clipboard'"
 								>
 									<font-awesome-icon icon="fa-solid fa-clipboard" />
-									<code style="margin-left: 0.3em">{{ spectateKey }}</code>
 								</span>
 							</div>
 						</div>

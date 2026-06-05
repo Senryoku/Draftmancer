@@ -344,7 +344,7 @@ export default defineComponent({
 			// Session settings
 			ownerIsPlayer: true,
 			allowSpectators: false,
-			spectateKey: undefined as string | undefined,
+			spectateKey: null as string | null,
 			isPublic: false,
 			description: "",
 			ignoreCollections: true,
@@ -3665,7 +3665,7 @@ export default defineComponent({
 				if (r.error) {
 					Alert.fire(r.error);
 				} else {
-					this.spectateKey = r.spectateKey;
+					this.spectateKey = r.spectateKey ?? null;
 					if (this.allowSpectators && this.spectateKey) this.spectatorLinkToClipboard();
 				}
 			});
