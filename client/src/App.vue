@@ -607,13 +607,19 @@
 					<font-awesome-icon icon="fa-solid fa-random" />
 				</div>
 				<div
-					v-if="sessionSpectators.length > 0"
+					v-if="sessionSpectators.length > 0 || (userID === sessionOwner && allowSpectators)"
 					class="session-spectators clickable"
 					@click="displaySpectatorsList = !displaySpectatorsList"
-					v-tooltip="`${sessionSpectators.length} spectator(s)`"
 				>
-					<font-awesome-icon icon="fa-regular fa-eye" />
-					<span>{{ sessionSpectators.length }}</span>
+					<span
+						class="spectator-count"
+						:class="{ open: displaySpectatorsList }"
+						v-tooltip="`${sessionSpectators.length} spectator(s)`"
+					>
+						<font-awesome-icon icon="fa-regular fa-eye" />
+						<span>{{ sessionSpectators.length }}</span>
+						<font-awesome-icon icon="fa-solid fa-chevron-down" class="spectator-caret" />
+					</span>
 					<div class="spectators-dropdown" v-if="displaySpectatorsList" @click.stop>
 						<div
 							class="spectator-name"
@@ -621,7 +627,6 @@
 							v-for="spectator in sortedSessionSpectators"
 							:key="spectator.userID"
 						>
-							{{ spectator.userName }}
 							<font-awesome-icon
 								v-if="userID === sessionOwner"
 								icon="fa-solid fa-user-slash"
@@ -629,6 +634,19 @@
 								v-tooltip="`Remove ${spectator.userName} from the session`"
 								@click="removePlayer(spectator.userID)"
 							/>
+							<span class="spectator-username">{{ spectator.userName }}</span>
+						</div>
+						<div class="spectator-controls" v-if="userID === sessionOwner">
+							<button @click="spectatorLinkToClipboard">
+								<font-awesome-icon icon="fa-solid fa-clipboard" /> Copy Link
+							</button>
+							<button
+								class="stop"
+								v-tooltip="'Removes every spectator and invalidates the link'"
+								@click="disableSpectating"
+							>
+								<font-awesome-icon icon="fa-regular fa-eye-slash" /> Disable
+							</button>
 						</div>
 					</div>
 					<div class="chat-bubble" id="chat-bubble-spectators"></div>

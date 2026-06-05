@@ -3107,18 +3107,19 @@ export default defineComponent({
 		},
 		removePlayer(userID: UserID) {
 			if (this.userID !== this.sessionOwner) return;
-			const user =
-				this.sessionUsers.find((u) => u.userID === userID) ??
-				this.sessionSpectators.find((s) => s.userID === userID);
+			const player = this.sessionUsers.find((u) => u.userID === userID);
+			const spectator = this.sessionSpectators.find((s) => s.userID === userID);
+			const user = player ?? spectator;
 			if (!user) return;
+			const role = player ? "player" : "spectator";
 			Alert.fire({
 				title: "Are you sure?",
-				text: `Do you want to remove player '${user.userName}' from the session? They'll still be able to rejoin if they want.`,
+				text: `Do you want to remove ${role} '${user.userName}' from the session? They'll still be able to rejoin if they want.`,
 				icon: "warning",
 				showCancelButton: true,
 				confirmButtonColor: ButtonColor.Critical,
 				cancelButtonColor: ButtonColor.Safe,
-				confirmButtonText: "Remove player",
+				confirmButtonText: `Remove ${role}`,
 			}).then((result) => {
 				if (result.value) {
 					this.socket.emit("removePlayer", userID);
@@ -3666,6 +3667,23 @@ export default defineComponent({
 				} else {
 					this.spectateKey = r.spectateKey;
 					if (this.allowSpectators && this.spectateKey) this.spectatorLinkToClipboard();
+				}
+			});
+		},
+		disableSpectating() {
+			if (this.userID !== this.sessionOwner) return;
+			Alert.fire({
+				title: "Disable spectating?",
+				text: "All current spectators will be removed from the session and the spectator link will stop working.",
+				icon: "warning",
+				showCancelButton: true,
+				confirmButtonColor: ButtonColor.Critical,
+				cancelButtonColor: ButtonColor.Safe,
+				confirmButtonText: "Disable spectating",
+			}).then((result) => {
+				if (result.value) {
+					this.allowSpectators = false;
+					this.onAllowSpectatorsChange();
 				}
 			});
 		},

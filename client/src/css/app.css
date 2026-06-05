@@ -1427,9 +1427,30 @@ ul.player-list {
 	position: relative;
 	display: flex;
 	align-items: center;
-	gap: 0.2em;
 	font-size: 0.8em;
 	margin-right: 0.5em;
+}
+
+.session-spectators .spectator-count {
+	display: flex;
+	align-items: center;
+	gap: 0.2em;
+	padding: 0.2em 0.2em 0.2em 0.35em;
+	border-radius: 0.4em;
+}
+
+.session-spectators .spectator-count:hover,
+.session-spectators .spectator-count.open {
+	background: #282828;
+}
+
+.spectator-count .spectator-caret {
+	font-size: 0.8em;
+	transition: transform 0.2s;
+}
+
+.spectator-count.open .spectator-caret {
+	transform: rotate(180deg);
 }
 
 .session-spectators .chat-bubble {
@@ -1441,13 +1462,14 @@ ul.player-list {
 
 .spectators-dropdown {
 	position: absolute;
-	top: 100%;
+	top: calc(100% + 0.75em);
 	left: 0;
 	z-index: 10;
 	display: flex;
 	flex-direction: column;
 	gap: 0.4em;
-	min-width: 12em;
+	min-width: 11em;
+	max-width: 13em;
 	padding: 0.5em;
 	background: #282828;
 	border-radius: 0.5em;
@@ -1460,17 +1482,27 @@ ul.player-list {
 	position: relative;
 	display: flex;
 	align-items: center;
-	gap: 0.3em;
-	max-width: 12em;
-	overflow: hidden;
+	gap: 0.6em;
 	white-space: nowrap;
-	font-size: 0.8em;
+	font-size: 0.9em;
 	color: #aaa;
 }
 
+.spectators-dropdown .spectator-username {
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
 .spectators-dropdown .spectator-name.self {
-	font-size: 1em;
 	color: inherit;
+	font-weight: 600;
+}
+
+.spectators-dropdown .spectator-controls {
+	display: flex;
+	flex-direction: column;
+	padding-top: 0.3em;
+	border-top: 1px solid #555;
 }
 
 .loading {
