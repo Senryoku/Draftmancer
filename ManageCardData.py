@@ -681,12 +681,7 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
             case "mb2":
                 selection["in_booster"] = True
             case "fdn":
-                selection["in_booster"] = (
-                    (int(c["collector_number"]) > 0 and int(c["collector_number"]) < 259)
-                    or int(c["collector_number"]) == 262
-                    or int(c["collector_number"]) == 264
-                    or int(c["collector_number"]) == 267
-                )
+                selection["in_booster"] = safeInBoosterCheck(c, 271)
             case "pio":
                 selection["in_booster"] = int(c["collector_number"]) < 279
             case "inr":

@@ -2688,7 +2688,10 @@ class FDNBoosterFactory extends BoosterFactory {
 	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
 		const opt = { ...options };
 		opt.foil = false; // We'll handle the garanteed foil slot ourselves.
-		super(cardPool, landSlot, opt);
+		const [dualLands, filteredCardPool] = filterCardPool(cardPool, (cid) =>
+			FDNBoosterFactory.DualLands.includes(cid)
+		);
+		super(filteredCardPool, landSlot, opt);
 		for (const c of SpecialGuests.fdn)
 			this.spg.set(c, options.maxDuplicates?.[getCard(c).rarity] ?? DefaultMaxDuplicates);
 		for (const rarity of ["common", "uncommon", "rare", "mythic"])
@@ -2703,11 +2706,9 @@ class FDNBoosterFactory extends BoosterFactory {
 		if (targets === DefaultBoosterTargets) {
 			// 10 -> 6 or 7
 			updatedTargets.common = Math.max(0, updatedTargets.common - 3);
-			updatedTargets.rare = 0; // We'll handle the rare ourselves.
 		} else {
 			// Two commons will be replaced by wildcards.
 			updatedTargets.common = Math.max(0, updatedTargets.common - 2);
-			updatedTargets.rare = Math.max(0, updatedTargets.rare - 1); // We'll handle the rare ourselves.
 		}
 
 		// 6th Common or Special Guest
@@ -2716,8 +2717,7 @@ class FDNBoosterFactory extends BoosterFactory {
 			booster.push(pickCard(this.spg));
 		}
 
-		// Don't force a rare if the initial targets don't allow it.
-		if (targets.rare > 0) {
+		while (updatedTargets.rare > 0) {
 			const rareRoll = random.realZeroToOneInclusive();
 			booster.push(
 				pickCard(
@@ -2730,6 +2730,7 @@ class FDNBoosterFactory extends BoosterFactory {
 								: this.cardPool["rare"]
 				)
 			);
+			updatedTargets.rare--;
 		}
 
 		// 1 Wildcard of any rarity
