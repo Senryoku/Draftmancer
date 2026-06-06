@@ -3827,7 +3827,7 @@ export default defineComponent({
 		},
 		updateURLQuery(): void {
 			// Spectate connections keep the invite link as-is so a refresh re-validates it
-			if (this.socket?.io.opts.query?.spectate) return;
+			if (this.isSpectator) return;
 			if (this.sessionID) {
 				const params = new URLSearchParams();
 				params.append("session", this.sessionID);
@@ -4114,7 +4114,7 @@ export default defineComponent({
 		},
 
 		isSpectator(): boolean {
-			return this.sessionSpectators.some((s) => s.userID === this.userID);
+			return !!this.socket?.io.opts.query?.spectate;
 		},
 
 		chatPlaceholder(): string {
@@ -4222,7 +4222,7 @@ export default defineComponent({
 	watch: {
 		sessionID() {
 			// A spectate connection is bound to a single session, moving to another one means rejoining as a player
-			if (this.socket?.io.opts.query?.spectate) {
+			if (this.isSpectator) {
 				window.location.assign(`/?session=${encodeURIComponent(this.sessionID ?? "")}`);
 				return;
 			}
