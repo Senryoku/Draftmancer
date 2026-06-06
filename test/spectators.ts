@@ -289,6 +289,31 @@ describe("Spectators", function () {
 			clients[nonOwnerIdx].emit("chatMessage", { author: "id1", text: "Player talk", timestamp: 0 });
 		});
 
+		it("Spectator game messages are not handled at all.", function (done) {
+			let acked = false;
+			spectator.emit("pickCard", { pickedCards: [0], burnedCards: [] }, () => {
+				acked = true;
+			});
+			setTimeout(() => {
+				expect(acked, "pickCard must not be handled for spectators").to.be.false;
+				done();
+			}, 100);
+		});
+
+		it("A disconnected player reconnecting through the spectate link keeps their seat.", function (done) {
+			const playerClient = clients[nonOwnerIdx];
+			const playerUserID = getUID(playerClient);
+			(playerClient.io.opts.query as Record<string, unknown>).spectate = spectateKey;
+			playerClient.once("rejoinDraft", () => {
+				expect(Sessions[sessionID].spectators.has(playerUserID)).to.be.false;
+				expect(Sessions[sessionID].users.has(playerUserID)).to.be.true;
+				delete (playerClient.io.opts.query as Record<string, unknown>).spectate;
+				done();
+			});
+			playerClient.disconnect();
+			setTimeout(() => playerClient.connect(), 50);
+		});
+
 		it("A spectator disconnect removes them immediately and does not pause the draft.", function (done) {
 			secondSpectator.disconnect();
 			setTimeout(() => {

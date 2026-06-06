@@ -1683,10 +1683,13 @@ io.on("connection", async function (socket) {
 		});
 	}
 
-	// Spectate links are validated once here and never reach joinSession. The owner keeps their seat
+	// Spectate links are validated once here and never reach joinSession. Anyone with a seat to return to keeps it
 	const spectateKey = spectateKeyFromQuery(query);
 	const spectatedSession = isString(query.sessionID) ? Sessions[query.sessionID] : undefined;
-	if (spectateKey !== undefined && userID !== spectatedSession?.owner) {
+	const hasSeat =
+		spectatedSession !== undefined &&
+		(userID === spectatedSession.owner || userID in spectatedSession.disconnectedUsers);
+	if (spectateKey !== undefined && !hasSeat) {
 		const refuseSpectate = (msg: string) => {
 			socket.emit("message", new Message("Cannot spectate session", "", "", msg));
 			socket.disconnect(true);
