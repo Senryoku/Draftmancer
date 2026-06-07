@@ -620,35 +620,44 @@
 						<span>{{ sessionSpectators.length }}</span>
 						<font-awesome-icon icon="fa-solid fa-chevron-down" class="spectator-caret" />
 					</span>
-					<div class="spectators-dropdown" v-if="displaySpectatorsList" @click.stop>
-						<div
-							class="spectator-name"
-							:class="{ self: spectator.userID === userID }"
-							v-for="spectator in sortedSessionSpectators"
-							:key="spectator.userID"
-						>
-							<font-awesome-icon
-								v-if="userID === sessionOwner"
-								icon="fa-solid fa-user-slash"
-								class="clickable red"
-								v-tooltip="`Remove ${spectator.userName} from the session`"
-								@click="removePlayer(spectator.userID)"
-							/>
-							<span class="spectator-username">{{ spectator.userName }}</span>
+					<Transition>
+						<div class="spectators-dropdown" v-if="displaySpectatorsList" @click.stop>
+							<div class="game-modes-cat-title">Spectators</div>
+							<div class="spectator-list">
+								<div
+									class="spectator-name"
+									:class="{ self: spectator.userID === userID }"
+									v-for="spectator in sortedSessionSpectators"
+									:key="spectator.userID"
+								>
+									<font-awesome-icon
+										v-if="userID === sessionOwner"
+										icon="fa-solid fa-user-slash"
+										class="clickable red"
+										v-tooltip="`Remove ${spectator.userName} from the session`"
+										@click="removePlayer(spectator.userID)"
+									/>
+									<span class="spectator-username">{{ spectator.userName }}</span>
+								</div>
+								<div v-if="sessionSpectators.length === 0">No spectators</div>
+							</div>
+							<div class="spectator-controls" v-if="userID === sessionOwner">
+								<hr />
+								<!-- NOTE: If the owner changes after spectating was enabled, the new owner won't know the spectator key.
+										We could send it, but for now let's avoid leaking the key on owner disconnection. -->
+								<button @click="spectatorLinkToClipboard" :disabled="!spectateKey">
+									<font-awesome-icon icon="fa-solid fa-clipboard" /> Copy Link
+								</button>
+								<button
+									class="stop"
+									v-tooltip="'Removes every spectator and invalidates the link'"
+									@click="disableSpectating"
+								>
+									<font-awesome-icon icon="fa-regular fa-eye-slash" /> Disable
+								</button>
+							</div>
 						</div>
-						<div class="spectator-controls" v-if="userID === sessionOwner">
-							<button @click="spectatorLinkToClipboard">
-								<font-awesome-icon icon="fa-solid fa-clipboard" /> Copy Link
-							</button>
-							<button
-								class="stop"
-								v-tooltip="'Removes every spectator and invalidates the link'"
-								@click="disableSpectating"
-							>
-								<font-awesome-icon icon="fa-regular fa-eye-slash" /> Disable
-							</button>
-						</div>
-					</div>
+					</Transition>
 					<div class="chat-bubble" id="chat-bubble-spectators"></div>
 				</div>
 			</div>
