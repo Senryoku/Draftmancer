@@ -2,10 +2,17 @@
 	<div class="welcome-section">
 		<div class="news">
 			<em>June 12, 2026</em>
-			<p>
-				<img src="img/sets/msh.svg" class="set-icon" style="--invertedness: 100%" alt="MSH" /> Marvel Super
-				Heroes (MSH) is now available.
-			</p>
+			<ul>
+				<li>
+					<img src="img/sets/msh.svg" class="set-icon" style="--invertedness: 100%" alt="MSH" /> Marvel Super
+					Heroes (MSH) is now available.
+				</li>
+				<li>
+					New opt-in Spectator Mode:<br />After enabling it from the session settings, invite spectators by
+					sharing the generated link.<br />Thanks to
+					<a href="https://github.com/MNoya" target="_blank">Noya</a> for implementing this feature!
+				</li>
+			</ul>
 		</div>
 		<div class="news">
 			<em>April 10, 2026</em>
@@ -39,25 +46,6 @@
 				<img src="img/sets/tla.svg" class="set-icon" style="--invertedness: 100%" alt="TLA" /> Avatar: The Last
 				Airbender (TLA) is now available.
 			</p>
-		</div>
-		<div class="news">
-			<em>September 05, 2025</em>
-			<p>
-				<img src="img/sets/spm.svg" class="set-icon" style="--invertedness: 100%" alt="SPM" /> Marvel's
-				Spider-Man (SPM) is now available.
-			</p>
-		</div>
-		<div class="news">
-			<em>July 19, 2025</em>
-			<p>
-				<img src="img/sets/eoe.svg" class="set-icon" style="--invertedness: 100%" alt="EOE" /> Edge of
-				Eternities (EOE) is now available!
-			</p>
-		</div>
-		<div class="news">
-			<em>June 21, 2025</em>
-			<p>Experimental custom cards import from Cube Cobra. Check 'Retrieve custom properties' on import.</p>
-			<p>Improved color balancing (Thanks tiera!)</p>
 		</div>
 	</div>
 </template>

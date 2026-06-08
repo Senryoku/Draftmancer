@@ -1,5 +1,24 @@
 [
 	{
+		"date": "12/06/2026",
+		"notes": [
+			"Marvel Super Heroes (MSH) support.",
+			"New opt-in Spectator Mode, by Noya."
+		]
+	},
+	{
+		"date": "10/04/2026",
+		"notes": [
+			"Secrets of Strixhaven (SOS) support."
+		]
+	},
+	{
+		"date": "21/02/2026",
+		"notes": [
+			"Teenage Mutant Ninja Turtles (TMT) support."
+		]
+	},
+	{
 		"date": "10/01/2026",
 		"notes": [
 			"Lorwyn Eclipsed (ECL) support."
