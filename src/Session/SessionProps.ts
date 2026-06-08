@@ -6,6 +6,7 @@ import { DistributionMode, DraftLogRecipients } from "./SessionTypes";
 // Validate session settings types and values.
 export const SessionsSettingsProps: { [propName: string]: (val: unknown) => boolean } = {
 	ownerIsPlayer: isBoolean,
+	allowSpectators: isBoolean,
 	setRestriction(val: unknown): val is SetCode[] {
 		if (!isArrayOf(isString)(val)) return false;
 		for (const s of val)

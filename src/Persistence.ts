@@ -121,7 +121,9 @@ async function loadSavedSessions() {
 
 export function restoreSession(s: any, owner: UserID) {
 	const r = new Session(s.id, owner);
-	for (const prop of Object.getOwnPropertyNames(s).filter((p) => !["draftState", "owner"].includes(p))) {
+	for (const prop of Object.getOwnPropertyNames(s).filter(
+		(p) => !["draftState", "owner", "spectators"].includes(p)
+	)) {
 		(r as IIndexable)[prop] = s[prop];
 	}
 
@@ -233,7 +235,7 @@ export function getPoDSession(s: Session) {
 	const PoDSession: Record<string, any> = {};
 
 	for (const prop of Object.getOwnPropertyNames(s).filter(
-		(p) => !["users", "draftState", "sendDecklogTimeout"].includes(p)
+		(p) => !["users", "spectators", "draftState", "sendDecklogTimeout"].includes(p)
 	)) {
 		if (!((s as IIndexable)[prop] instanceof Function)) PoDSession[prop] = (s as IIndexable)[prop];
 	}

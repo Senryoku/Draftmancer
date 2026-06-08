@@ -2,7 +2,13 @@ import type { ClientToServerEvents, LoaderOptions, ServerToClientEvents } from "
 import type { UserID } from "@/IDTypes";
 import type { SetCode, IIndexable, Language } from "@/Types";
 import { PassingOrder } from "./common";
-import { DistributionMode, DraftLogRecipients, ReadyState, UserData } from "../../src/Session/SessionTypes";
+import {
+	DistributionMode,
+	DraftLogRecipients,
+	ReadyState,
+	SpectatorData,
+	UserData,
+} from "../../src/Session/SessionTypes";
 import { ArenaID, Card, CardID, DeckList, PlainCollection, UniqueCard, UniqueCardID } from "@/CardTypes";
 import type { DraftLog } from "@/DraftLog";
 import type { BotScores } from "@/Bot";
@@ -290,6 +296,8 @@ export default defineComponent({
 			sessionSettings: JSON.stringify(storedSessionSettings),
 		};
 		if (sessionID) query.sessionID = sessionID; // Note: Setting sessionID to undefined will send it as the "undefined" string, and that's not what we want...
+		const urlParamSpectate = urlParams.get("spectate");
+		if (urlParamSpectate) query.spectate = urlParamSpectate;
 
 		// Socket Setup
 		const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io({
@@ -330,9 +338,13 @@ export default defineComponent({
 			sessionOwner: (sessionID ? userID : undefined) as UserID | undefined,
 			sessionOwnerUsername: userName as string,
 			sessionUsers: [] as SessionUser[],
+			sessionSpectators: [] as SpectatorData[],
+			displaySpectatorsList: false,
 			disconnectedUsers: {} as { [uid: UserID]: { userName: string } },
 			// Session settings
 			ownerIsPlayer: true,
+			allowSpectators: false,
+			spectateKey: null as string | null,
 			isPublic: false,
 			description: "",
 			ignoreCollections: true,
@@ -529,10 +541,13 @@ export default defineComponent({
 
 			this.socket.on("chatMessage", (message) => {
 				this.messagesHistory.push(message);
-				const bubbleEl = document.querySelector("#chat-bubble-" + message.author);
+				const spectator = this.sessionSpectators.find((s) => s.userID === message.author);
+				const bubbleEl = spectator
+					? document.querySelector("#chat-bubble-spectators")
+					: document.querySelector("#chat-bubble-" + message.author);
 				if (bubbleEl && !this.mutedUsers.has(message.author)) {
 					const bubble = bubbleEl as HTMLElement & { timeoutHandler: number };
-					bubble.innerText = message.text;
+					bubble.innerText = spectator ? `${spectator.userName}: ${message.text}` : message.text;
 					bubble.style.opacity = "1";
 					if (bubble.timeoutHandler) clearTimeout(bubble.timeoutHandler);
 					bubble.timeoutHandler = window.setTimeout(() => (bubble.style.opacity = "0"), 5000);
@@ -570,6 +585,10 @@ export default defineComponent({
 				this.userOrder = users.map((u) => u.userID);
 			});
 
+			this.socket.on("sessionSpectators", (spectators) => {
+				this.sessionSpectators = spectators;
+			});
+
 			this.socket.on("userDisconnected", (data) => {
 				if (!this.drafting) return;
 				this.sessionOwner = data.owner;
@@ -586,6 +605,9 @@ export default defineComponent({
 				if (!user) {
 					if (data.userID === this.sessionOwner && data.updatedProperties.userName)
 						this.sessionOwnerUsername = data.updatedProperties.userName;
+					const spectator = this.sessionSpectators.find((s) => s.userID === data.userID);
+					if (spectator && data.updatedProperties.userName)
+						spectator.userName = data.updatedProperties.userName;
 					return;
 				}
 
@@ -3085,16 +3107,19 @@ export default defineComponent({
 		},
 		removePlayer(userID: UserID) {
 			if (this.userID !== this.sessionOwner) return;
-			const user = this.sessionUsers.find((u) => u.userID === userID);
+			const player = this.sessionUsers.find((u) => u.userID === userID);
+			const spectator = this.sessionSpectators.find((s) => s.userID === userID);
+			const user = player ?? spectator;
 			if (!user) return;
+			const role = player ? "player" : "spectator";
 			Alert.fire({
 				title: "Are you sure?",
-				text: `Do you want to remove player '${user.userName}' from the session? They'll still be able to rejoin if they want.`,
+				text: `Do you want to remove ${role} '${user.userName}' from the session? They'll still be able to rejoin if they want.`,
 				icon: "warning",
 				showCancelButton: true,
 				confirmButtonColor: ButtonColor.Critical,
 				cancelButtonColor: ButtonColor.Safe,
-				confirmButtonText: "Remove player",
+				confirmButtonText: `Remove ${role}`,
 			}).then((result) => {
 				if (result.value) {
 					this.socket.emit("removePlayer", userID);
@@ -3634,6 +3659,43 @@ export default defineComponent({
 			);
 			fireToast("success", "Session link copied to clipboard!");
 		},
+		onAllowSpectatorsChange() {
+			if (this.userID !== this.sessionOwner || !this.socket) return;
+			this.socket.emit("setAllowSpectators", this.allowSpectators, (r) => {
+				if (r.error) {
+					Alert.fire(r.error);
+				} else {
+					this.spectateKey = r.spectateKey ?? null;
+					if (this.allowSpectators && this.spectateKey) this.spectatorLinkToClipboard();
+				}
+			});
+		},
+		disableSpectating() {
+			if (this.userID !== this.sessionOwner) return;
+			Alert.fire({
+				title: "Disable spectating?",
+				text: "All current spectators will be removed from the session and the spectator link will stop working.",
+				icon: "warning",
+				showCancelButton: true,
+				confirmButtonColor: ButtonColor.Critical,
+				cancelButtonColor: ButtonColor.Safe,
+				confirmButtonText: "Disable spectating",
+			}).then((result) => {
+				if (result.value) {
+					this.allowSpectators = false;
+					this.onAllowSpectatorsChange();
+				}
+			});
+		},
+		spectatorLinkToClipboard() {
+			if (!this.spectateKey) return;
+			copyToClipboard(
+				`${window.location.protocol}//${window.location.hostname}${
+					window.location.port ? ":" + window.location.port : ""
+				}/?session=${encodeURIComponent(this.sessionID ?? "")}&spectate=${encodeURIComponent(this.spectateKey)}`
+			);
+			fireToast("success", "Spectator link copied to clipboard!");
+		},
 		disconnectedReminder() {
 			fireToast("error", "Disconnected from server!");
 		},
@@ -3764,6 +3826,8 @@ export default defineComponent({
 			}
 		},
 		updateURLQuery(): void {
+			// Spectate connections keep the invite link as-is so a refresh re-validates it
+			if (this.isSpectator) return;
 			if (this.sessionID) {
 				const params = new URLSearchParams();
 				params.append("session", this.sessionID);
@@ -4049,6 +4113,21 @@ export default defineComponent({
 			return r;
 		},
 
+		isSpectator(): boolean {
+			return !!this.socket?.io.opts.query?.spectate;
+		},
+
+		chatPlaceholder(): string {
+			return this.isSpectator && this.drafting ? "Chat with spectators." : "Chat with players in your session.";
+		},
+
+		// Locally displayed spectator list, with the current user first
+		sortedSessionSpectators(): SpectatorData[] {
+			return [...this.sessionSpectators].sort(
+				(a, b) => (b.userID === this.userID ? 1 : 0) - (a.userID === this.userID ? 1 : 0)
+			);
+		},
+
 		pageTitle(): string {
 			if (this.sessionUsers.length < 2)
 				return `Draftmancer ${
@@ -4142,6 +4221,11 @@ export default defineComponent({
 	},
 	watch: {
 		sessionID() {
+			// A spectate connection is bound to a single session, moving to another one means rejoining as a player
+			if (this.isSpectator) {
+				window.location.assign(`/?session=${encodeURIComponent(this.sessionID ?? "")}`);
+				return;
+			}
 			if (this.socket) {
 				let sessionSettings = {};
 				const storedSessionSettings = localStorage.getItem(localStorageSessionSettingsKey);

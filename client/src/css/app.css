@@ -1423,6 +1423,120 @@ ul.player-list {
 	}
 }
 
+.session-spectators {
+	position: relative;
+	display: flex;
+	align-items: center;
+	font-size: 0.8em;
+	margin-right: 0.5em;
+	user-select: none;
+
+	.spectator-count {
+		display: flex;
+		align-items: center;
+		gap: 0.2em;
+		padding: 0.2em 0.2em 0.2em 0.35em;
+		border-radius: 0.4em;
+
+		&:hover,
+		&.open {
+			background-color: #282828;
+		}
+
+		.spectator-caret {
+			position: absolute;
+			bottom: -4px;
+			left: calc(50% - 0.5em);
+
+			font-size: 0.8em;
+			transition: transform 0.2s;
+			transform-origin: center center;
+		}
+
+		&.open .spectator-caret {
+			transform: rotate(180deg) translateY(-2px);
+		}
+	}
+
+	.chat-bubble {
+		top: calc(100% + 1.5em);
+		left: 0;
+		width: max-content;
+		font-size: 1.25em;
+	}
+}
+
+.spectators-dropdown {
+	position: absolute;
+	top: calc(100% + 0.75em);
+	left: 0;
+	z-index: 2;
+	display: flex;
+	flex-direction: column;
+	min-width: 11em;
+	max-width: 13em;
+	padding: 0.5em;
+	background: #282828;
+	border-radius: 0.5em;
+	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.5);
+	cursor: default;
+	font-size: 1.25em;
+
+	hr {
+		width: 90%;
+	}
+
+	.spectator-list {
+		font-size: 0.9em;
+		color: #aaa;
+
+		.spectator-name {
+			position: relative;
+			display: flex;
+			align-items: center;
+			gap: 0.6em;
+			white-space: nowrap;
+
+			.spectator-username {
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+
+			&.self {
+				color: inherit;
+				font-weight: 600;
+			}
+		}
+	}
+
+	.spectator-controls {
+		display: flex;
+		flex-direction: column;
+	}
+
+	&:after {
+		content: "";
+		position: absolute;
+		top: -7px;
+		left: 7px;
+		width: 17px;
+		height: 17px;
+		background: #282828;
+		transform: rotate(45deg);
+		z-index: -1;
+	}
+
+	&.v-enter-active,
+	&.v-leave-active {
+		transition: opacity 0.2s ease;
+	}
+
+	&.v-enter-from,
+	&.v-leave-to {
+		opacity: 0;
+	}
+}
+
 .loading {
 	position: fixed;
 	z-index: 999;

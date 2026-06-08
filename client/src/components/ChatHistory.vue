@@ -25,13 +25,7 @@
 							/>
 						</template>
 					</template>
-					{{
-						msg.author in userByID
-							? userByID[msg.author].userName
-							: msg.author === sessionOwner && sessionOwnerUsername
-								? sessionOwnerUsername
-								: "(Left)"
-					}}
+					{{ authorName(msg.author) }}
 				</span>
 				<span class="chat-system" v-else>{{ new Date(msg.timestamp).toLocaleTimeString() }}</span>
 				<span class="chat-message">
@@ -46,7 +40,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { UserData } from "../../../src/Session/SessionTypes";
+import { SpectatorData, UserData } from "../../../src/Session/SessionTypes";
 
 const props = defineProps<{
 	messagesHistory: {
@@ -58,10 +52,19 @@ const props = defineProps<{
 	sessionOwner: string;
 	sessionOwnerUsername: string;
 	userByID: Record<string, UserData>;
+	sessionSpectators: SpectatorData[];
 	mutedUsers: Set<string>;
 }>();
 
 const reversedMessages = computed(() => props.messagesHistory.slice().reverse());
+
+const authorName = (author: string) => {
+	if (author in props.userByID) return props.userByID[author].userName;
+	const spectator = props.sessionSpectators.find((s) => s.userID === author);
+	if (spectator) return spectator.userName;
+	if (author === props.sessionOwner && props.sessionOwnerUsername) return props.sessionOwnerUsername;
+	return "(Left)";
+};
 </script>
 
 <style scoped>
