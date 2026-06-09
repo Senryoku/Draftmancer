@@ -2920,11 +2920,7 @@ function cidsToSlotedCardPool(cids: CardID[], maxDuplicates?: Record<string, num
 //           Excludes retro frame cards
 //   1 Basic land (20% chance for a traditional foil basic land)
 class INRBoosterFactory extends BoosterFactory {
-	static filter(min: number, max: number) {
-		return CardsBySet["inr"].filter(
-			(c) => parseInt(getCard(c).collector_number) >= min && parseInt(getCard(c).collector_number) <= max
-		);
-	}
+	static filter = (min: number, max: number) => filterSetByNumber("inr", min, max);
 
 	static readonly Borderless = INRBoosterFactory.filter(298, 322);
 	static readonly ShowcaseEquinox = INRBoosterFactory.filter(323, 325);
@@ -3005,11 +3001,7 @@ class INRBoosterFactory extends BoosterFactory {
 //     A default frame basic land appears 37.5% of the time.
 //     A full-art driver's seat basic land appears 12.5% of the time.
 class DFTBoosterFactory extends BoosterFactory {
-	static filter(min: number, max: number) {
-		return CardsBySet["dft"].filter(
-			(c) => parseInt(getCard(c).collector_number) >= min && parseInt(getCard(c).collector_number) <= max
-		);
-	}
+	static filter = (min: number, max: number) => filterSetByNumber("dft", min, max);
 
 	static readonly Borderless = DFTBoosterFactory.filter(292, 375);
 	static readonly Basics = DFTBoosterFactory.filter(277, 291);
@@ -3112,11 +3104,7 @@ class DFTBoosterFactory extends BoosterFactory {
 
 // Tarkir: Dragonstorm  (TDM) - https://magic.wizards.com/en/news/feature/collecting-tarkir-dragonstorm
 class TDMBoosterFactory extends BoosterFactory {
-	static filter(min: number, max: number) {
-		return CardsBySet["tdm"].filter(
-			(c) => parseInt(getCard(c).collector_number) >= min && parseInt(getCard(c).collector_number) <= max
-		);
-	}
+	static filter = (min: number, max: number) => filterSetByNumber("tdm", min, max);
 
 	static readonly Showcase = TDMBoosterFactory.filter(292, 326);
 	static readonly BorderlessClan = TDMBoosterFactory.filter(327, 376);
@@ -3481,11 +3469,7 @@ export class FINBoosterFactory extends BoosterFactory {
 
 // Edge of Eternities (EOE) - https://magic.wizards.com/en/news/feature/collecting-edge-of-eternities
 export class EOEBoosterFactory extends BoosterFactory {
-	static filter(min: number, max: number) {
-		return CardsBySet["eoe"].filter(
-			(c) => parseInt(getCard(c).collector_number) >= min && parseInt(getCard(c).collector_number) <= max
-		);
-	}
+	static filter = (min: number, max: number) => filterSetByNumber("eoe", min, max);
 
 	static readonly StellarSights = CardsBySet["eos"].filter((c) => parseInt(getCard(c).collector_number) <= 45); // 30 rares, 15 mythics
 	static readonly BorderlessViewport = EOEBoosterFactory.filter(277, 286); // 5 rare shock lands and 5 mythic rare legendary Planet lands
@@ -3668,11 +3652,7 @@ export class EOEBoosterFactory extends BoosterFactory {
 
 // Marvel's Spider-Man (SPM) - https://magic.wizards.com/en/news/feature/collecting-marvels-spider-man
 export class SPMBoosterFactory extends BoosterFactory {
-	static filter(min: number, max: number) {
-		return CardsBySet["spm"].filter(
-			(c) => parseInt(getCard(c).collector_number) >= min && parseInt(getCard(c).collector_number) <= max
-		);
-	}
+	static filter = (min: number, max: number) => filterSetByNumber("spm", min, max);
 
 	static readonly Scene = SPMBoosterFactory.filter(199, 207); // 3 uncommons, 4 rares, 2 mythics
 	static readonly WebSlinger = SPMBoosterFactory.filter(208, 217); // 7 rares, 3 mythics
@@ -3827,11 +3807,7 @@ export class SPMBoosterFactory extends BoosterFactory {
 
 // Through the Omenpaths (OM1) - Speculation based on Spider-Man (SPM)
 export class OM1BoosterFactory extends BoosterFactory {
-	static filter(min: number, max: number) {
-		return CardsBySet["om1"].filter(
-			(c) => parseInt(getCard(c).collector_number) >= min && parseInt(getCard(c).collector_number) <= max
-		);
-	}
+	static filter = (min: number, max: number) => filterSetByNumber("om1", min, max);
 
 	static readonly CommonDualLands = OM1BoosterFactory.filter(179, 188).filter((c) => getCard(c).rarity === "common");
 	static readonly Basics = SPMBoosterFactory.filter(193, 198); // FIXME: OM1 doesn't have basics?
@@ -3915,11 +3891,7 @@ export class OM1BoosterFactory extends BoosterFactory {
 
 // Avatar: The Last Airbender (TLA) - https://magic.wizards.com/en/news/feature/collecting-avatar-the-last-airbender
 export class TLABoosterFactory extends BoosterFactory {
-	static filter(min: number, max: number) {
-		return CardsBySet["tla"].filter(
-			(c) => parseInt(getCard(c).collector_number) >= min && parseInt(getCard(c).collector_number) <= max
-		);
-	}
+	static filter = (min: number, max: number) => filterSetByNumber("tla", min, max);
 
 	static readonly Scene = TLABoosterFactory.filter(297, 315); // "Book 1 is a 4-card scene, Book 2 is a 6-card scene, and Book 3 is a massive 9-card scene"
 	static readonly FieldNotes = TLABoosterFactory.filter(316, 330); // There are 8 rare and 7 mythic rare field notes cards.
@@ -4150,11 +4122,7 @@ export class TLABoosterFactory extends BoosterFactory {
 
 // Lorwyn Eclipsed - https://magic.wizards.com/en/news/feature/collecting-lorwyn-eclipsed
 export class ECLBoosterFactory extends BoosterFactory {
-	static filter(min: number, max: number) {
-		return CardsBySet["ecl"].filter(
-			(c) => parseInt(getCard(c).collector_number) >= min && parseInt(getCard(c).collector_number) <= max
-		);
-	}
+	static filter = (min: number, max: number) => filterSetByNumber("ecl", min, max);
 
 	static readonly BorderlessNonLand = ECLBoosterFactory.filter(284, 296); // There are 5 rare and 8 mythic rare borderless cards
 	static readonly FableFrame = ECLBoosterFactory.filter(297, 346); // There are 10 uncommon, 26 rare, and 14 mythic rare fable frame cards.
@@ -4329,11 +4297,7 @@ export class ECLBoosterFactory extends BoosterFactory {
 
 // Teenage Mutant Ninja Turtles - https://magic.wizards.com/en/news/feature/collecting-teenage-mutant-ninja-turtles
 export class TMTBoosterFactory extends BoosterFactory {
-	static filter(min: number, max: number) {
-		return CardsBySet["tmt"].filter(
-			(c) => parseInt(getCard(c).collector_number) >= min && parseInt(getCard(c).collector_number) <= max
-		);
-	}
+	static filter = (min: number, max: number) => filterSetByNumber("tmt", min, max);
 
 	static legendaryTurtlesOracleIDs = BoosterCardsBySet["tmt"]
 		.filter((c) =>
@@ -4595,11 +4559,7 @@ export class TMTBoosterFactory extends BoosterFactory {
 
 // Secrets of Strixhaven - https://magic.wizards.com/en/news/feature/collecting-secrets-of-strixhaven
 export class SOSBoosterFactory extends BoosterFactory {
-	static filter(min: number, max: number) {
-		return CardsBySet["sos"].filter(
-			(c) => parseInt(getCard(c).collector_number) >= min && parseInt(getCard(c).collector_number) <= max
-		);
-	}
+	static filter = (min: number, max: number) => filterSetByNumber("sos", min, max);
 
 	static readonly CommonDualLands = [
 		"a9ab41c8-3ee2-4676-9b8b-20c34d9f5f21",
@@ -4784,17 +4744,13 @@ export class SOSBoosterFactory extends BoosterFactory {
 
 // Marvel Super Heroes - https://magic.wizards.com/en/news/feature/collecting-marvel-super-heroes
 export class MSHBoosterFactory extends BoosterFactory {
-	static filter(min: number, max: number) {
-		return CardsBySet["msh"].filter(
-			(c) => parseInt(getCard(c).collector_number) >= min && parseInt(getCard(c).collector_number) <= max
-		);
-	}
+	static filter = (min: number, max: number) => filterSetByNumber("msh", min, max);
 
-	static readonly CityLands = MSHBoosterFactory.filter(277, 286); // CHECK
+	static readonly CityLands = MSHBoosterFactory.filter(277, 286);
 	static readonly Basics = MSHBoosterFactory.filter(287, 296);
-	static readonly CommonDualLands = MSHBoosterFactory.filter(287, 296); // TODO
+	static readonly CommonDualLands = MSHBoosterFactory.filter(257, 276).filter((c) => getCard(c).rarity === "common");
 	static readonly Panel = MSHBoosterFactory.filter(297, 313);
-	static readonly Scene = MSHBoosterFactory.filter(316, 351); // CHECK
+	static readonly Scene = MSHBoosterFactory.filter(314, 351);
 	static readonly Logo = MSHBoosterFactory.filter(352, 379);
 	static readonly BorderlessLands = MSHBoosterFactory.filter(380, 384);
 	static readonly SourceMaterial = filterSetByNumber("mar", 41, 100);

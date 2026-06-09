@@ -65,6 +65,6 @@
 }
 
 .news li {
-	margin: 0.25em 0 0 1em;
+	margin: 0.25em 0 0 0.25em;
 }
 </style>

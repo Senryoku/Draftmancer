@@ -231,9 +231,11 @@ with open("data/MTGADataDebug.json", "w") as outfile:
 with open("data/J21MTGACollectorNumbers.json", "w") as outfile:
     json.dump(J21MTGACollectorNumbers, outfile, sort_keys=True, indent=4)
 
+requests_headers = {"User-Agent": "Draftmancer DB Updater"}
+
 if not os.path.isfile(BulkDataPath) or ForceDownload:
     # Get Bulk Data URL
-    response = requests.get("https://api.scryfall.com/bulk-data", headers={"User-Agent": "Draftmancer DB Updater"})
+    response = requests.get("https://api.scryfall.com/bulk-data", headers=requests_headers)
     bulkdata = json.loads(response.content)
     if(response.status_code) != 200:
         print(bulkdata)
@@ -298,7 +300,7 @@ if FetchSet:
     for setCode in SetsToFetch.split(","):
         print("Fetching cards from {}...".format(setCode))
         req_result = requests.get(
-            f"https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&unique=prints&q=e%3A{setCode}"
+            f"https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&unique=prints&q=e%3A{setCode}", headers=requests_headers
         ).json()
 
         print(f"  Expected cards: {req_result['total_cards']}")

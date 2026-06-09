@@ -288,7 +288,7 @@ describe("Sets content", function () {
 		mh3: { common: 80, uncommon: 101, rare: 60, mythic: 20 },
 		blb: { common: 81, uncommon: 100, rare: 60, mythic: 20 },
 		dsk: { common: 91, uncommon: 100, rare: 60, mythic: 20 }, // 81 commons plus 10 dual lands
-		fdn: { common: 80, uncommon: 101, rare: 60, mythic: 20 },
+		fdn: { common: 80 + 10, uncommon: 101, rare: 60, mythic: 20 },
 		pio: { common: 91, uncommon: 100, rare: 60, mythic: 27 },
 		inr: { common: 88, uncommon: 104, rare: 72, mythic: 23 },
 		dft: { common: 91, uncommon: 100, rare: 60, mythic: 20 }, // 81 commons plus 10 dual lands
@@ -301,7 +301,7 @@ describe("Sets content", function () {
 		ecl: { common: 81, uncommon: 100, rare: 65, mythic: 22 },
 		tmt: { common: 67, uncommon: 55, rare: 53, mythic: 15 }, // 56 + 5 legendary turtles + 6 lands as commons; 51 + 4 legendary turtles as uncommons
 		sos: { common: 81 + 5, uncommon: 100, rare: 60, mythic: 20 },
-		msh: { common: 81, uncommon: 100, rare: 60, mythic: 20 },
+		msh: { common: 81 + 10, uncommon: 100, rare: 60, mythic: 25 },
 	};
 
 	beforeEach(function (done) {
