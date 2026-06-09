@@ -956,6 +956,10 @@
         "fullName": "March of the Machine Jumpstart Front Cards",
         "icon": "img/sets/fmom.svg"
     },
+    "fmsc": {
+        "code": "fmsc",
+        "fullName": "Marvel Super Heroes Jumpstart Front Cards"
+    },
     "fnm": {
         "code": "fnm",
         "fullName": "Friday Night Magic 2000",

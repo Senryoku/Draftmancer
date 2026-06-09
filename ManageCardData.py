@@ -231,10 +231,15 @@ with open("data/MTGADataDebug.json", "w") as outfile:
 with open("data/J21MTGACollectorNumbers.json", "w") as outfile:
     json.dump(J21MTGACollectorNumbers, outfile, sort_keys=True, indent=4)
 
+requests_headers = {"User-Agent": "Draftmancer DB Updater"}
+
 if not os.path.isfile(BulkDataPath) or ForceDownload:
     # Get Bulk Data URL
-    response = requests.get("https://api.scryfall.com/bulk-data")
+    response = requests.get("https://api.scryfall.com/bulk-data", headers=requests_headers)
     bulkdata = json.loads(response.content)
+    if(response.status_code) != 200:
+        print(bulkdata)
+        exit()
     allcardObject = next(x for x in bulkdata["data"] if x["type"] == "all_cards")
     if allcardObject is None:
         raise Exception("Could not find all_cards bulk data")
@@ -295,7 +300,7 @@ if FetchSet:
     for setCode in SetsToFetch.split(","):
         print("Fetching cards from {}...".format(setCode))
         req_result = requests.get(
-            f"https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&unique=prints&q=e%3A{setCode}"
+            f"https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&unique=prints&q=e%3A{setCode}", headers=requests_headers
         ).json()
 
         print(f"  Expected cards: {req_result['total_cards']}")
@@ -678,12 +683,7 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
             case "mb2":
                 selection["in_booster"] = True
             case "fdn":
-                selection["in_booster"] = (
-                    (int(c["collector_number"]) > 0 and int(c["collector_number"]) < 259)
-                    or int(c["collector_number"]) == 262
-                    or int(c["collector_number"]) == 264
-                    or int(c["collector_number"]) == 267
-                )
+                selection["in_booster"] = safeInBoosterCheck(c, 271)
             case "pio":
                 selection["in_booster"] = int(c["collector_number"]) < 279
             case "inr":
@@ -716,6 +716,8 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
                 selection["in_booster"] = safeInBoosterCheck(c, 190)
             case "sos":
                 selection["in_booster"] = safeInBoosterCheck(c, 266)
+            case "msh":
+                selection["in_booster"] = safeInBoosterCheck(c, 276)
 
         if c["collector_number"].endswith("†"):
             selection["in_booster"] = False
@@ -1239,7 +1241,6 @@ constants["PrimarySets"] = [
         "aa2",
         "mar",
         "omb",
-        "msh",
         "fra",
         "hob",
     ]
