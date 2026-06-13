@@ -884,30 +884,15 @@
         "block": "Core Set",
         "icon": "img/sets/fbb.svg"
     },
-    "fbro": {
-        "code": "fbro",
-        "fullName": "The Brothers' War Jumpstart Front Cards",
-        "icon": "img/sets/fbro.svg"
-    },
     "fca": {
         "code": "fca",
         "fullName": "Final Fantasy: Through the Ages",
         "icon": "img/sets/fca.svg"
     },
-    "fclu": {
-        "code": "fclu",
-        "fullName": "Ravnica: Clue Edition Front Cards",
-        "icon": "img/sets/fclu.svg"
-    },
     "fdc": {
         "code": "fdc",
         "fullName": "Foundations Commander",
         "icon": "img/sets/fdc.svg"
-    },
-    "fdmu": {
-        "code": "fdmu",
-        "fullName": "Dominaria United Jumpstart Front Cards",
-        "icon": "img/sets/fdmu.svg"
     },
     "fdn": {
         "code": "fdn",
@@ -920,11 +905,6 @@
         "fullName": "Fallen Empires",
         "icon": "img/sets/fem.svg"
     },
-    "ffdn": {
-        "code": "ffdn",
-        "fullName": "Foundations Front Cards",
-        "icon": "img/sets/ffdn.svg"
-    },
     "fic": {
         "code": "fic",
         "fullName": "Final Fantasy Commander",
@@ -936,40 +916,11 @@
         "fullName": "Final Fantasy",
         "icon": "img/sets/fin.svg"
     },
-    "fj22": {
-        "code": "fj22",
-        "fullName": "Jumpstart 2022 Front Cards",
-        "icon": "img/sets/fj22.svg"
-    },
-    "fjmp": {
-        "code": "fjmp",
-        "fullName": "Jumpstart Front Cards",
-        "icon": "img/sets/fjmp.svg"
-    },
-    "fltr": {
-        "code": "fltr",
-        "fullName": "Tales of Middle-earth Front Cards",
-        "icon": "img/sets/fltr.svg"
-    },
-    "fmom": {
-        "code": "fmom",
-        "fullName": "March of the Machine Jumpstart Front Cards",
-        "icon": "img/sets/fmom.svg"
-    },
-    "fmsc": {
-        "code": "fmsc",
-        "fullName": "Marvel Super Heroes Jumpstart Front Cards"
-    },
     "fnm": {
         "code": "fnm",
         "fullName": "Friday Night Magic 2000",
         "block": "Friday Night Magic",
         "icon": "img/sets/fnm.svg"
-    },
-    "fone": {
-        "code": "fone",
-        "fullName": "Phyrexia: All Will Be One Jumpstart Front Cards",
-        "icon": "img/sets/fone.svg"
     },
     "fra": {
         "code": "fra",
@@ -981,16 +932,6 @@
         "fullName": "Fate Reforged",
         "block": "Khans of Tarkir",
         "icon": "img/sets/frf.svg"
-    },
-    "ftla": {
-        "code": "ftla",
-        "fullName": "Avatar: The Last Airbender Beginner Box Front Cards",
-        "icon": "img/sets/ftla.svg"
-    },
-    "ftmc": {
-        "code": "ftmc",
-        "fullName": "Teenage Mutant Ninja Turtles Eternal Front Cards",
-        "icon": "img/sets/ftmc.svg"
     },
     "fut": {
         "code": "fut",
@@ -1364,11 +1305,6 @@
         "code": "jp1",
         "fullName": "Hobby Japan Promos",
         "icon": "img/sets/jp1.svg"
-    },
-    "jtla": {
-        "code": "jtla",
-        "fullName": "Avatar: The Last Airbender Jumpstart Front Cards",
-        "icon": "img/sets/jtla.svg"
     },
     "jud": {
         "code": "jud",
@@ -3886,6 +3822,10 @@
         "fullName": "Tempest",
         "block": "Tempest",
         "icon": "img/sets/tmp.svg"
+    },
+    "tmsc": {
+        "code": "tmsc",
+        "fullName": "Marvel Super Heroes Commander Tokens"
     },
     "tmt": {
         "code": "tmt",

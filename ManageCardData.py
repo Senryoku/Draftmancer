@@ -140,51 +140,54 @@ DraftEffects = {
 LangCodes = ["enUS", "frFR", "deDE", "itIT", "esES", "ptBR", "jaJP", "koKR"]
 MTGALocalization = {key: {} for key in LangCodes}
 for path in MTGACardDBFiles:
-    MTGACardDB = sqlite3.connect(path)
-    MTGACardDB.row_factory = sqlite3.Row
-    for lang in LangCodes:
-        for row in MTGACardDB.execute(f"SELECT LocId, Loc FROM Localizations_{lang}").fetchall():
-            MTGALocalization[lang][row["LocId"]] = row["Loc"]
-    for o in MTGACardDB.execute(f"SELECT * FROM Cards").fetchall():
-        # Ignore... Wildcards?! (TitleId 0)
-        if o["TitleId"] not in MTGALocalization["enUS"]:
-            continue
-        fixed_name = MTGALocalization["enUS"][o["TitleId"]].replace(" /// ", " // ")
-        fixed_name = re.sub(r"<[^>]*>", "", fixed_name)
-        setCode = o["ExpansionCode"].lower()
-        if o["IsPrimaryCard"] == 1:
-            if setCode == "conf":
-                setCode = "con"
-            if setCode == "dar":
-                setCode = "dom"
-            collectorNumber = o["CollectorNumber"] if "CollectorNumber" in o else o["CollectorNumber"]
-            # Process AKR cards separately (except basics)
-            if setCode == "akr":
-                if o["Rarity"] != 1:
-                    AKRCards[fixed_name] = (o["GrpId"], collectorNumber, ArenaRarity[o["Rarity"]])
-            if setCode == "klr":
-                if o["Rarity"] != 1:
-                    KLRCards[fixed_name] = (o["GrpId"], collectorNumber, ArenaRarity[o["Rarity"]])
-            else:
-                # Jumpstart introduced duplicate (CollectorNumbet, Set), thanks Wizard! :D
-                # Adding name to disambiguate.
-                CardsCollectorNumberAndSet[(fixed_name, collectorNumber, setCode)] = o["GrpId"]
+    try:
+        MTGACardDB = sqlite3.connect(path)
+        MTGACardDB.row_factory = sqlite3.Row
+        for lang in LangCodes:
+            for row in MTGACardDB.execute(f"SELECT LocId, Loc FROM Localizations_{lang}").fetchall():
+                MTGALocalization[lang][row["LocId"]] = row["Loc"]
+        for o in MTGACardDB.execute(f"SELECT * FROM Cards").fetchall():
+            # Ignore... Wildcards?! (TitleId 0)
+            if o["TitleId"] not in MTGALocalization["enUS"]:
+                continue
+            fixed_name = MTGALocalization["enUS"][o["TitleId"]].replace(" /// ", " // ")
+            fixed_name = re.sub(r"<[^>]*>", "", fixed_name)
+            setCode = o["ExpansionCode"].lower()
+            if o["IsPrimaryCard"] == 1:
+                if setCode == "conf":
+                    setCode = "con"
+                if setCode == "dar":
+                    setCode = "dom"
+                collectorNumber = o["CollectorNumber"] if "CollectorNumber" in o else o["CollectorNumber"]
+                # Process AKR cards separately (except basics)
+                if setCode == "akr":
+                    if o["Rarity"] != 1:
+                        AKRCards[fixed_name] = (o["GrpId"], collectorNumber, ArenaRarity[o["Rarity"]])
+                if setCode == "klr":
+                    if o["Rarity"] != 1:
+                        KLRCards[fixed_name] = (o["GrpId"], collectorNumber, ArenaRarity[o["Rarity"]])
+                else:
+                    # Jumpstart introduced duplicate (CollectorNumbet, Set), thanks Wizard! :D
+                    # Adding name to disambiguate.
+                    CardsCollectorNumberAndSet[(fixed_name, collectorNumber, setCode)] = o["GrpId"]
 
-            # Also look of the Arena only version (ajmp) of the card on Scryfall
-            if setCode == "jmp":
-                CardsCollectorNumberAndSet[(fixed_name, collectorNumber, "ajmp")] = o["GrpId"]
+                # Also look of the Arena only version (ajmp) of the card on Scryfall
+                if setCode == "jmp":
+                    CardsCollectorNumberAndSet[(fixed_name, collectorNumber, "ajmp")] = o["GrpId"]
 
-            # From Jumpstart: Prioritizing cards from JMP and M21
-            if fixed_name not in CardNameToArenaIDForJumpstart or setCode in ["jmp", "m21"]:
-                CardNameToArenaIDForJumpstart[fixed_name] = o["GrpId"]
+                # From Jumpstart: Prioritizing cards from JMP and M21
+                if fixed_name not in CardNameToArenaIDForJumpstart or setCode in ["jmp", "m21"]:
+                    CardNameToArenaIDForJumpstart[fixed_name] = o["GrpId"]
 
-            if "IsRebalanced" in o and o["IsRebalanced"]:
-                CardsCollectorNumberAndSet[("A-" + fixed_name, "A-" + collectorNumber, setCode)] = o["GrpId"]
-                CardNameToArenaIDForJumpstart["A-" + fixed_name] = o["GrpId"]
-            # FIXME: J21 collector number differs between Scryfall and MTGA, record them to translate when exporting
-            #        (Also for secondary cards as there's some created cards in this set.)
-            if setCode == "j21":
-                J21MTGACollectorNumbers[fixed_name] = collectorNumber
+                if "IsRebalanced" in o and o["IsRebalanced"]:
+                    CardsCollectorNumberAndSet[("A-" + fixed_name, "A-" + collectorNumber, setCode)] = o["GrpId"]
+                    CardNameToArenaIDForJumpstart["A-" + fixed_name] = o["GrpId"]
+                # FIXME: J21 collector number differs between Scryfall and MTGA, record them to translate when exporting
+                #        (Also for secondary cards as there's some created cards in this set.)
+                if setCode == "j21":
+                    J21MTGACollectorNumbers[fixed_name] = collectorNumber
+    except Exception as e:
+        print(f"Error '{e}' while reading MTGA card database '{path}'")
 
 print("AKRCards length: {}".format(len(AKRCards.keys())))
 print("KLRCards length: {}".format(len(KLRCards.keys())))
