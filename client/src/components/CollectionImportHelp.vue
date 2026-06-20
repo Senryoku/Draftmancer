@@ -32,12 +32,16 @@
 			<li>.txt card list in the MTGA format</li>
 			<li>
 				.csv file following the
-				<a href="https://www.mtggoldfish.com/help/import_formats#mtggoldfish" target="_blank"
-					>MTGGoldFish CSV format</a
-				>
+				<a href="https://www.mtggoldfish.com/help/import_formats#mtggoldfish" target="_blank">
+					MTGGoldFish CSV format
+				</a>
 				(the
 				<a href="https://mtgarena.pro/mtga-pro-tracker/" target="_blank">MTGA Pro Tracker</a> website exports to
 				this format)
+			</li>
+			<li>
+				.csv file following the
+				<a href="https://untapped.gg/" target="_blank"> Untapped.gg </a> format
 			</li>
 		</ul>
 		<h3>

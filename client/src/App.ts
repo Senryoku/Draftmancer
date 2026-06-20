@@ -2512,16 +2512,22 @@ export default defineComponent({
 				// Convert MTGGoldFish CSV format (https://www.mtggoldfish.com/help/import_formats#mtggoldfish) to our format
 				if (file.name.endsWith(".csv")) {
 					const lines = parseCSV(contents);
-					const cardIndex = lines[0].indexOf("Card");
-					const setIDIndex = lines[0].indexOf("Set ID");
-					const quantityIndex = lines[0].indexOf("Quantity");
-					// Check header
+					let cardIndex = lines[0].indexOf("Card");
+					let setIDIndex = lines[0].indexOf("Set ID");
+					let quantityIndex = lines[0].indexOf("Quantity");
+					// Check MTGGoldFish header
+					if (cardIndex < 0 || setIDIndex < 0 || quantityIndex < 0) {
+						// Fallback to Untapped.gg header
+						cardIndex = lines[0].indexOf("Name");
+						setIDIndex = lines[0].indexOf("Set");
+						quantityIndex = lines[0].indexOf("Count");
+					}
 					if (cardIndex < 0 || setIDIndex < 0 || quantityIndex < 0) {
 						Alert.fire({
 							icon: "error",
 							title: "Invalid file",
-							text: `The uploaded file is not a valid MTGGoldFish CSV file (Invalid header).`,
-							footer: `Expected 'Card', 'Set ID' and 'Quantity', got '${escapeHTML(
+							text: `The uploaded file is not a valid MTGGoldFish CSV or Untapped.gg CSV file (Invalid header).`,
+							footer: `Expected 'Card', 'Set ID' and 'Quantity' or 'Name', 'Set' and 'Count', got '${escapeHTML(
 								lines[0].join(",")
 							)}'.`,
 							showCancelButton: false,
