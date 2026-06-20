@@ -115,12 +115,14 @@ async function singleRequest(body: PredictBody): Promise<Prediction[]> {
 	return response.data.prediction;
 }
 
+let requestTimeout: NodeJS.Timeout | null = null;
+
 async function requestScores(body: PredictBody): Promise<Prediction[]> {
 	if (EnableBatchRequests && CubeCobraBots.batchEndpoint) {
 		// First request this tick: schedule their processing "soonish".
 		if (requestQueue.length === 0) {
 			if (BatchWindow > 0) {
-				setTimeout(processQueue, BatchWindow);
+				requestTimeout = setTimeout(processQueue, BatchWindow);
 			} else {
 				//   Using setImmediate to allow some more requests to come in. nextTick works fine too, but
 				//   would limit batching to a single session basically (all calls from a draft start for example).
@@ -131,6 +133,10 @@ async function requestScores(body: PredictBody): Promise<Prediction[]> {
 		const promise = new Promise<Prediction[]>((resolve, reject) => requestQueue.push({ body, resolve, reject }));
 		if (requestQueue.length == BatchSizeLimit && BatchWindow > 0) {
 			// This request will lets us fill a full batch: Send it now.
+			if (requestTimeout) {
+				clearTimeout(requestTimeout);
+				requestTimeout = null;
+			}
 			processQueue();
 		}
 		return promise;
