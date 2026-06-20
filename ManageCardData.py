@@ -153,7 +153,7 @@ for path in MTGACardDBFiles:
             fixed_name = MTGALocalization["enUS"][o["TitleId"]].replace(" /// ", " // ")
             fixed_name = re.sub(r"<[^>]*>", "", fixed_name)
             setCode = o["ExpansionCode"].lower()
-            if o["IsPrimaryCard"] == 1:
+            if o["IsToken"] == 0:
                 if setCode == "conf":
                     setCode = "con"
                 if setCode == "dar":
