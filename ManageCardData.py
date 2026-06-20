@@ -171,6 +171,12 @@ for path in MTGACardDBFiles:
                     # Adding name to disambiguate.
                     CardsCollectorNumberAndSet[(fixed_name, collectorNumber, setCode)] = o["GrpId"]
 
+                # Also add the digital only version if it exists
+                if o["DigitalReleaseSet"] != None and o["DigitalReleaseSet"] != "":
+                    digitalSet = o["DigitalReleaseSet"].lower()
+                    digitalSet = re.sub(r'y\d\d-(...)', r'y\1', digitalSet) # Convert alchemy set code (y26-sos -> ysos)
+                    CardsCollectorNumberAndSet[(fixed_name, "Digital", digitalSet)] = o["GrpId"]
+
                 # Also look of the Arena only version (ajmp) of the card on Scryfall
                 if setCode == "jmp":
                     CardsCollectorNumberAndSet[(fixed_name, collectorNumber, "ajmp")] = o["GrpId"]
@@ -186,6 +192,7 @@ for path in MTGACardDBFiles:
                 #        (Also for secondary cards as there's some created cards in this set.)
                 if setCode == "j21":
                     J21MTGACollectorNumbers[fixed_name] = collectorNumber
+                    
     except Exception as e:
         print(f"Error '{e}' while reading MTGA card database '{path}'")
 
@@ -451,6 +458,11 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
                 c["arena_id"] = CardsCollectorNumberAndSet[(c["name"], c["collector_number"], mtga_set)]
             elif (frontName, c["collector_number"], mtga_set) in CardsCollectorNumberAndSet:
                 c["arena_id"] = CardsCollectorNumberAndSet[(frontName, c["collector_number"], mtga_set)]
+            # Check digital only versions (AA1, AA2...)
+            elif (c["name"], "Digital", mtga_set) in CardsCollectorNumberAndSet:
+                c["arena_id"] = CardsCollectorNumberAndSet[(c["name"], "Digital", mtga_set)]
+            elif (frontName, "Digital", mtga_set) in CardsCollectorNumberAndSet:
+                c["arena_id"] = CardsCollectorNumberAndSet[(frontName, "Digital", mtga_set)]
             elif mtga_set in MTGASetConversions:
                 mtga_set = MTGASetConversions[mtga_set]
                 if (c["name"], c["collector_number"], mtga_set) in CardsCollectorNumberAndSet:
