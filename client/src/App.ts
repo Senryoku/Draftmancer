@@ -2550,19 +2550,21 @@ export default defineComponent({
 						}
 						if (["Plains", "Island", "Swamp", "Mountain", "Forest"].includes(line[cardIndex])) continue;
 
-						// Workaround for some divergent set codes.
-						const setCodeTranslation: { [code: SetCode]: string } = {
-							ANA: "OANA",
-						};
-						if (line[setIDIndex] in setCodeTranslation)
-							line[setIDIndex] = setCodeTranslation[line[setIDIndex]];
-						// Generic solution for alchemy sets, hoping the trend will continue (Y-2X -> Y).
-						if (setWorkaroundRegex.test(line[setIDIndex]))
-							line[setIDIndex] = line[setIDIndex].replace(setWorkaroundRegex, "Y");
+						if (parseInt(line[quantityIndex]) > 0) {
+							// Workaround for some divergent set codes.
+							const setCodeTranslation: { [code: SetCode]: string } = {
+								ANA: "OANA",
+							};
+							if (line[setIDIndex] in setCodeTranslation)
+								line[setIDIndex] = setCodeTranslation[line[setIDIndex]];
+							// Generic solution for alchemy sets, hoping the trend will continue (Y-2X -> Y).
+							if (setWorkaroundRegex.test(line[setIDIndex]))
+								line[setIDIndex] = line[setIDIndex].replace(setWorkaroundRegex, "Y");
 
-						contents += `${line[quantityIndex].trim()} ${line[cardIndex].trim()} (${line[
-							setIDIndex
-						].trim()})\n`;
+							contents += `${line[quantityIndex].trim()} ${line[cardIndex].trim()} (${line[
+								setIDIndex
+							].trim()})\n`;
+						}
 					}
 				}
 
