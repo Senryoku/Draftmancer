@@ -57,6 +57,7 @@ export function getSetFoilRate(set: string | null) {
 			"dmr",
 			"one",
 			"mom",
+			"ltr",
 			"woe",
 			"lci",
 			"rvr",
