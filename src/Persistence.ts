@@ -307,6 +307,12 @@ function dumpToDisk(exitOnCompletion = false) {
 		// Keep inactive Rotisserie sessions alive, as they can be ran asynchronously over a longer period
 		for (const sessionID in InactiveSessions) {
 			if (InactiveSessions[sessionID].draftState?.type === "rotisserie") {
+				// Skip if it is older than ~6 months
+				if (
+					InactiveSessions[sessionID].draftLog.time &&
+					InactiveSessions[sessionID].draftLog.time < Date.now() - 1000 * 60 * 60 * 24 * 30 * 6
+				)
+					continue;
 				if (!firstSession) fs.writeSync(sessionsFile, ",\n");
 				else firstSession = false;
 				fs.writeSync(sessionsFile, JSON.stringify(InactiveSessions[sessionID]));
