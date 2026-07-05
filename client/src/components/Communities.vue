@@ -315,6 +315,7 @@ const explain = () => {
 .carousel-controls {
 	position: relative;
 	display: flex;
+	align-items: center;
 	gap: 1em;
 	margin: 0.2em auto;
 	width: fit-content;
@@ -324,6 +325,7 @@ const explain = () => {
 .bubbles {
 	display: flex;
 	gap: 1em;
+	align-items: center;
 }
 
 .bubble {
