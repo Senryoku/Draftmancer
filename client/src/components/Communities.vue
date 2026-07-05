@@ -25,7 +25,7 @@
 								</span>
 								<span v-if="c.discord_member_count"> ({{ c.discord_member_count }} members)</span>
 							</a>
-							<a v-if="c.links.youtube" :href="c.links.twitter" target="_blank">
+							<a v-if="c.links.twitter" :href="c.links.twitter" target="_blank">
 								<font-awesome-icon :icon="['brands', 'twitter']" /><span class="link-label">
 									Twitter
 								</span>
@@ -457,6 +457,18 @@ h2 {
 
 	.name {
 		text-align: center;
+	}
+
+	.carousel-controls {
+		width: auto;
+		max-width: 100%;
+	}
+
+	.bubbles {
+		flex: 1;
+		flex-wrap: wrap;
+		justify-content: center;
+		min-width: 0;
 	}
 }
 
