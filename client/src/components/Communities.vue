@@ -220,6 +220,17 @@ const communities = ref([
 		},
 	},
 	{
+		name: "Limited Level-Ups",
+		brief: "A community for players looking to improve at Limited Magic.<br />We run weekly pod drafts of the newest set, with draft recaps and standings recorded on our site.",
+		icon: "limited_level_ups.webp",
+		tags: ["Limited", "Pod Draft", "MTGA", "Podcast", "Leaderboard"],
+		links: {
+			discord: "https://discord.gg/XWNVT9mxvU",
+			website: "https://limitedlevelups.com",
+			youtube: "https://www.youtube.com/@limitedlevel-ups",
+		},
+	},
+	{
 		name: "Commander Cube'N",
 		brief: "A community hub for all things limited! We run weekly free-to-play Cube and booster drafts online using Untap.in, TTS, Cockatrice, and Draftmancer. Whether you're a competitive or casual player, all Brushwaggs are welcome!",
 		icon: "cuben.webp",
