@@ -101,10 +101,14 @@ export class DraftState extends IDraftState {
 			settings.picks[Math.min(this.players[userID].pickNumber, settings.picks.length - 1)],
 			this.players[userID].boosters[0]?.length ?? 0
 		);
+		const burnsThisRound =
+			settings.burns.length > 0
+				? settings.burns[Math.min(this.players[userID].pickNumber, settings.burns.length - 1)]
+				: 0;
 		return {
 			picksThisRound,
 			burnsThisRound: Math.min(
-				settings.burns[Math.min(this.players[userID].pickNumber, settings.burns.length - 1)],
+				burnsThisRound,
 				Math.max(0, (this.players[userID].boosters[0]?.length ?? 0) - picksThisRound)
 			),
 		};
