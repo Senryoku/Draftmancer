@@ -3662,7 +3662,7 @@ export class SPMBoosterFactory extends BoosterFactory {
 
 	static readonly CommonDualLands = SPMBoosterFactory.filter(179, 188).filter((c) => getCard(c).rarity === "common");
 	static readonly SpiderWebBasics = SPMBoosterFactory.filter(189, 193);
-	static readonly Basics = SPMBoosterFactory.filter(193, 198);
+	static readonly Basics = SPMBoosterFactory.filter(194, 198);
 
 	static readonly SourceMaterial = filterSetByNumber("mar", 1, 41);
 
@@ -3812,7 +3812,7 @@ export class OM1BoosterFactory extends BoosterFactory {
 	static filter = (min: number, max: number) => filterSetByNumber("om1", min, max);
 
 	static readonly CommonDualLands = OM1BoosterFactory.filter(179, 188).filter((c) => getCard(c).rarity === "common");
-	static readonly Basics = SPMBoosterFactory.filter(193, 198); // FIXME: OM1 doesn't have basics?
+	static readonly Basics = SPMBoosterFactory.filter(194, 198); // FIXME: OM1 doesn't have basics?
 
 	omb: CardPool = new CardPool();
 
@@ -4535,7 +4535,7 @@ export class TMTBoosterFactory extends BoosterFactory {
 				booster.push(pickCard(this.noLegendaryTurtles.scene.uncommon, booster));
 			}
 			//     There are 6 sewer cards that can be found in these slots (7.8%). (NOTE: Guessing scene and sewer won't appear together)
-			if (uncommonSpecialTreatmentRoll < (3.9 + 7.8) / 100.0) {
+			else if (uncommonSpecialTreatmentRoll < (3.9 + 7.8) / 100.0) {
 				updatedTargets.uncommon = Math.max(0, updatedTargets.uncommon - 1);
 				booster.push(pickCard(this.noLegendaryTurtles.sewer.uncommon, booster));
 			}
