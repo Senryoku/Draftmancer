@@ -3284,7 +3284,7 @@ class TDMBoosterFactory extends BoosterFactory {
 				[0.07 + 0.017, 0.035 + 0.009, 0.7 + 0.174], //  FIXME: Doesn't add up to 1
 				[TDMBoosterFactory.Basics, TDMBoosterFactory.FullArtBasics, TDMBoosterFactory.CommonDualLands]
 			);
-			const foil = random.realZeroToOneInclusive() <= 0.4;
+			const foil = random.realZeroToOneInclusive() <= 0.2;
 			rest.push(getUnique(getRandom(pool), { foil }));
 		}
 
@@ -4550,7 +4550,7 @@ export class TMTBoosterFactory extends BoosterFactory {
 				[0.6, 0.4],
 				[TMTBoosterFactory.CommonDualLands, TMTBoosterFactory.RooftopBasics]
 			);
-			const foil = random.realZeroToOneInclusive() <= 1 / 4;
+			const foil = random.realZeroToOneInclusive() <= 1 / 5;
 			rest.push(getUnique(getRandom(pool), { foil }));
 		}
 
