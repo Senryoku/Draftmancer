@@ -3459,7 +3459,7 @@ export class FINBoosterFactory extends BoosterFactory {
 		//		Common two-color land (55%) or basic land (45%)
 		//		This card is traditional foil 20% of the time.
 		{
-			const pool = chooseWeighted([0.55, 0.45], [FINBoosterFactory.Basics, FINBoosterFactory.CommonDualLands]);
+			const pool = chooseWeighted([0.55, 0.45], [FINBoosterFactory.CommonDualLands, FINBoosterFactory.Basics]);
 			const foil = random.realZeroToOneInclusive() <= 0.2;
 			rest.push(getUnique(getRandom(pool), { foil }));
 		}
