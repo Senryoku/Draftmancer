@@ -847,7 +847,7 @@ class DBLBoosterFactory extends BoosterFactory {
 			mythicPromotion,
 			mythicRate,
 		});
-		booster.push(pickCard(pickedPool[pickedRarity], [])); // Allow duplicates here
+		booster.push(pickCard(pickedPool[pickedRarity], [], { foil: true })); // Allow duplicates here
 
 		for (const rarity in updatedTargets) {
 			const pickedCards: Array<UniqueCard> = [];
@@ -2610,7 +2610,7 @@ class MB2BoosterFactory extends BoosterFactory {
 
 		const futureSightRoll = random.realZeroToOneInclusive();
 		if (futureSightRoll < 0.01) {
-			booster.push(pickCard(this.alchemy, booster));
+			booster.push(pickCard(this.alchemy, booster, { foil: true }));
 		} else if (futureSightRoll < 0.05) {
 			booster.push(pickCard(this.futureSight, booster, { foil: true }));
 		} else {
@@ -3096,7 +3096,8 @@ class DFTBoosterFactory extends BoosterFactory {
 				[0.5, 0.375, 0.125],
 				[DFTBoosterFactory.CommonDualLands, DFTBoosterFactory.Basics, DFTBoosterFactory.FullArtBasics]
 			);
-			rest.push(getUnique(getRandom(pool)));
+			const foil = random.realZeroToOneInclusive() <= 0.2;
+			rest.push(getUnique(getRandom(pool), { foil }));
 		}
 
 		return rest;
@@ -3848,7 +3849,7 @@ export class OM1BoosterFactory extends BoosterFactory {
 				[65.8, 24.1, 7.8, 1.1].map((w) => w / 100.0),
 				[this.cardPool.common, this.cardPool.uncommon, this.cardPool.rare, this.cardPool.mythic]
 			);
-			booster.push(pickCard(pool, booster));
+			booster.push(pickCard(pool, booster, { foil: true }));
 		}
 
 		// 1 Rare or mythic rare
@@ -3883,7 +3884,8 @@ export class OM1BoosterFactory extends BoosterFactory {
 		//   This card is traditional foil 20% of the time.
 		{
 			const pool = chooseWeighted([0.5, 0.5], [OM1BoosterFactory.CommonDualLands, OM1BoosterFactory.Basics]);
-			rest.push(getUnique(getRandom(pool)));
+			const foil = random.realZeroToOneInclusive() <= 0.2;
+			rest.push(getUnique(getRandom(pool), { foil }));
 		}
 
 		return rest;
