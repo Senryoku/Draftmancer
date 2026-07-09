@@ -3365,7 +3365,7 @@ export class FINBoosterFactory extends BoosterFactory {
 		//   1 of 15 Cid variants (0.25%)
 		{
 			const pool = chooseWeighted(
-				[0.5575, 0.359, 0.055, 0.075, 0.001, 0.005, 0.01, 0.0025, 0.0025],
+				[0.5575, 0.359, 0.055, 0.0075, 0.001, 0.005, 0.01, 0.0025, 0.0025],
 				[
 					this.cardPool.common,
 					this.cardPool.uncommon,
@@ -3413,7 +3413,7 @@ export class FINBoosterFactory extends BoosterFactory {
 		//   FINAL FANTASY artist rare (0.5%) or mythic rare (0.5%)
 		for (let i = 0; i < updatedTargets.rare; ++i) {
 			const pool = chooseWeighted(
-				[0.8, 0.1, 0.08, 0.01, 0.05, 0.05],
+				[0.8, 0.1, 0.08, 0.01, 0.005, 0.005],
 				[
 					this.cardPool.rare,
 					this.options.mythicPromotion ? this.cardPool.mythic : this.cardPool.rare,
