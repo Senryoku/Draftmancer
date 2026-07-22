@@ -714,6 +714,7 @@
     "ecc": {
         "code": "ecc",
         "fullName": "Lorwyn Eclipsed Commander",
+        "block": "Commander",
         "icon": "img/sets/ecc.svg"
     },
     "ecl": {
@@ -926,6 +927,10 @@
         "code": "fra",
         "fullName": "Reality Fracture",
         "icon": "img/sets/fra.svg"
+    },
+    "frc": {
+        "code": "frc",
+        "fullName": "Reality Fracture Commander"
     },
     "frf": {
         "code": "frf",
@@ -1476,6 +1481,10 @@
         "fullName": "Mystery Booster 2",
         "icon": "img/sets/mb2.svg"
     },
+    "mbc": {
+        "code": "mbc",
+        "fullName": "Mystery Booster: Commander Edition"
+    },
     "mbs": {
         "code": "mbs",
         "fullName": "Mirrodin Besieged",
@@ -1629,6 +1638,7 @@
     "msc": {
         "code": "msc",
         "fullName": "Marvel Super Heroes Commander",
+        "block": "Commander",
         "icon": "img/sets/msc.svg"
     },
     "msh": {
@@ -3508,6 +3518,10 @@
         "fullName": "Store Championships",
         "icon": "img/sets/sch.svg"
     },
+    "sds": {
+        "code": "sds",
+        "fullName": "Stardates"
+    },
     "shm": {
         "code": "shm",
         "fullName": "Shadowmoor",
@@ -3593,6 +3607,7 @@
     "soc": {
         "code": "soc",
         "fullName": "Secrets of Strixhaven Commander",
+        "block": "Commander",
         "icon": "img/sets/soc.svg"
     },
     "soi": {
@@ -3815,6 +3830,7 @@
     "tmc": {
         "code": "tmc",
         "fullName": "Teenage Mutant Ninja Turtles Eternal",
+        "block": "Commander",
         "icon": "img/sets/tmc.svg"
     },
     "tmp": {
@@ -3853,7 +3869,12 @@
     "trc": {
         "code": "trc",
         "fullName": "Star Trek Commander",
+        "block": "Commander",
         "icon": "img/sets/trc.svg"
+    },
+    "trk": {
+        "code": "trk",
+        "fullName": "Star Trek"
     },
     "tsb": {
         "code": "tsb",
