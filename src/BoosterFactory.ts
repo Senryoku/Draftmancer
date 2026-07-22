@@ -847,7 +847,7 @@ class DBLBoosterFactory extends BoosterFactory {
 			mythicPromotion,
 			mythicRate,
 		});
-		booster.push(pickCard(pickedPool[pickedRarity], [])); // Allow duplicates here
+		booster.push(pickCard(pickedPool[pickedRarity], [], { foil: true })); // Allow duplicates here
 
 		for (const rarity in updatedTargets) {
 			const pickedCards: Array<UniqueCard> = [];
@@ -2610,7 +2610,7 @@ class MB2BoosterFactory extends BoosterFactory {
 
 		const futureSightRoll = random.realZeroToOneInclusive();
 		if (futureSightRoll < 0.01) {
-			booster.push(pickCard(this.alchemy, booster));
+			booster.push(pickCard(this.alchemy, booster, { foil: true }));
 		} else if (futureSightRoll < 0.05) {
 			booster.push(pickCard(this.futureSight, booster, { foil: true }));
 		} else {
@@ -3096,7 +3096,8 @@ class DFTBoosterFactory extends BoosterFactory {
 				[0.5, 0.375, 0.125],
 				[DFTBoosterFactory.CommonDualLands, DFTBoosterFactory.Basics, DFTBoosterFactory.FullArtBasics]
 			);
-			rest.push(getUnique(getRandom(pool)));
+			const foil = random.realZeroToOneInclusive() <= 0.2;
+			rest.push(getUnique(getRandom(pool), { foil }));
 		}
 
 		return rest;
@@ -3284,7 +3285,7 @@ class TDMBoosterFactory extends BoosterFactory {
 				[0.07 + 0.017, 0.035 + 0.009, 0.7 + 0.174], //  FIXME: Doesn't add up to 1
 				[TDMBoosterFactory.Basics, TDMBoosterFactory.FullArtBasics, TDMBoosterFactory.CommonDualLands]
 			);
-			const foil = random.realZeroToOneInclusive() <= 0.4;
+			const foil = random.realZeroToOneInclusive() <= 0.2;
 			rest.push(getUnique(getRandom(pool), { foil }));
 		}
 
@@ -3661,7 +3662,7 @@ export class SPMBoosterFactory extends BoosterFactory {
 
 	static readonly CommonDualLands = SPMBoosterFactory.filter(179, 188).filter((c) => getCard(c).rarity === "common");
 	static readonly SpiderWebBasics = SPMBoosterFactory.filter(189, 193);
-	static readonly Basics = SPMBoosterFactory.filter(193, 198);
+	static readonly Basics = SPMBoosterFactory.filter(194, 198);
 
 	static readonly SourceMaterial = filterSetByNumber("mar", 1, 41);
 
@@ -3811,7 +3812,7 @@ export class OM1BoosterFactory extends BoosterFactory {
 	static filter = (min: number, max: number) => filterSetByNumber("om1", min, max);
 
 	static readonly CommonDualLands = OM1BoosterFactory.filter(179, 188).filter((c) => getCard(c).rarity === "common");
-	static readonly Basics = SPMBoosterFactory.filter(193, 198); // FIXME: OM1 doesn't have basics?
+	static readonly Basics = SPMBoosterFactory.filter(194, 198); // FIXME: OM1 doesn't have basics?
 
 	omb: CardPool = new CardPool();
 
@@ -3848,7 +3849,7 @@ export class OM1BoosterFactory extends BoosterFactory {
 				[65.8, 24.1, 7.8, 1.1].map((w) => w / 100.0),
 				[this.cardPool.common, this.cardPool.uncommon, this.cardPool.rare, this.cardPool.mythic]
 			);
-			booster.push(pickCard(pool, booster));
+			booster.push(pickCard(pool, booster, { foil: true }));
 		}
 
 		// 1 Rare or mythic rare
@@ -3883,7 +3884,8 @@ export class OM1BoosterFactory extends BoosterFactory {
 		//   This card is traditional foil 20% of the time.
 		{
 			const pool = chooseWeighted([0.5, 0.5], [OM1BoosterFactory.CommonDualLands, OM1BoosterFactory.Basics]);
-			rest.push(getUnique(getRandom(pool)));
+			const foil = random.realZeroToOneInclusive() <= 0.2;
+			rest.push(getUnique(getRandom(pool), { foil }));
 		}
 
 		return rest;
@@ -4533,7 +4535,7 @@ export class TMTBoosterFactory extends BoosterFactory {
 				booster.push(pickCard(this.noLegendaryTurtles.scene.uncommon, booster));
 			}
 			//     There are 6 sewer cards that can be found in these slots (7.8%). (NOTE: Guessing scene and sewer won't appear together)
-			if (uncommonSpecialTreatmentRoll < (3.9 + 7.8) / 100.0) {
+			else if (uncommonSpecialTreatmentRoll < (3.9 + 7.8) / 100.0) {
 				updatedTargets.uncommon = Math.max(0, updatedTargets.uncommon - 1);
 				booster.push(pickCard(this.noLegendaryTurtles.sewer.uncommon, booster));
 			}
@@ -4550,7 +4552,7 @@ export class TMTBoosterFactory extends BoosterFactory {
 				[0.6, 0.4],
 				[TMTBoosterFactory.CommonDualLands, TMTBoosterFactory.RooftopBasics]
 			);
-			const foil = random.realZeroToOneInclusive() <= 1 / 4;
+			const foil = random.realZeroToOneInclusive() <= 1 / 5;
 			rest.push(getUnique(getRandom(pool), { foil }));
 		}
 
