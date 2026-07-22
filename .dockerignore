@@ -1,8 +1,15 @@
+.git
+.vscode
+.husky
+.github
 fly.toml
 Dockerfile
 .dockerignore
 node_modules
-.git
+scripts
+test
 tmp
 
 data/scryfall-all-cards.json
+data/scryfall-sets.json
+data/cubecobra-ratings.json
