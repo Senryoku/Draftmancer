@@ -302,6 +302,7 @@ describe("Sets content", function () {
 		tmt: { common: 67, uncommon: 55, rare: 53, mythic: 15 }, // 56 + 5 legendary turtles + 6 lands as commons; 51 + 4 legendary turtles as uncommons
 		sos: { common: 81 + 5, uncommon: 100, rare: 60, mythic: 20 },
 		msh: { common: 81 + 10, uncommon: 100, rare: 60, mythic: 25 },
+		hob: { common: 60 + 5, uncommon: 55, rare: 53, mythic: 15 },
 	};
 
 	beforeEach(function (done) {
