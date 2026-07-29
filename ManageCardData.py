@@ -1,4 +1,5 @@
 from html import unescape
+import shutil
 import sqlite3
 import mmap
 import json
@@ -29,7 +30,7 @@ class Rarity(OrderedEnum):
 
 
 ScryfallSets = "data/scryfall-sets.json"
-BulkDataPath = "data/scryfall-all-cards.json"
+BulkDataPath = "data/scryfall-all-cards.jsonl.gz"
 BulkDataArenaPath = "data/BulkArena.json"
 FirstFinalDataPath = "data/MTGCards.0.json"
 SetsInfosPath = "src/data/SetsInfos.json"
@@ -265,7 +266,7 @@ if not os.path.isfile(BulkDataPath) or ForceDownload:
             )
             skip = True
     if not skip:
-        allcardURL = allcardObject["download_uri"]
+        allcardURL = allcardObject["jsonl_download_uri"]
         print("Downloading {}...".format(allcardURL))
         urllib.request.urlretrieve(allcardURL, BulkDataPath)
 
@@ -387,11 +388,12 @@ def safeInBoosterCheck(card: dict, max: int) -> bool:
 NonProcessedCards = {}
 if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
     all_cards = []
-    with open(BulkDataPath, "r", encoding="utf8") as file:
-        objects = ijson.items(file, "item")
-        ScryfallCards = (o for o in objects if not (o["layout"] in ["token", "double_faced_token", "art_series"]))
-        # print("Loading Scryfall bulk data... ")
-        # ScryfallCards = json.load(file)
+    with gzip.open(BulkDataPath, "rt", encoding="utf8") as file:
+        objects = (json.loads(line) for line in file if line.strip())
+        ScryfallCards = (
+            o for o in objects 
+            if o.get("layout") not in ["token", "double_faced_token", "art_series"]
+        )
 
         akr_candidates = {}
         klr_candidates = {}
