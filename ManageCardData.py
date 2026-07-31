@@ -317,41 +317,45 @@ if FetchSet:
         print(f"  Expected cards: {req_result['total_cards']}")
         setcards = req_result["data"]
         while req_result["has_more"]:
-            req_result = requests.get(req_result["next_page"]).json()
+            req_result = requests.get(req_result["next_page"], headers=requests_headers).json()
             setcards = setcards + req_result["data"]
         print(f"  Got {len(setcards)} cards from Scryfall for {setCode}.")
         updatedcards = updatedcards + setcards
     print(f"Total cards: {len(updatedcards)}")
 
     tmpFilePath = BulkDataPath + ".tmp"
-    with open(BulkDataPath, "r", encoding="utf-8") as infile, open(tmpFilePath, "w", encoding="utf-8") as outfile:
-        outfile.write("[\n")
-        first = True
+    with gzip.open(BulkDataPath, "rt", encoding="utf8") as infile, gzip.open(tmpFilePath, "wt", encoding="utf-8") as outfile:
+
+        objects = (json.loads(line) for line in infile if line.strip())
 
         setcards_by_ids = {card["id"]: card for card in updatedcards}
+        id_pattern = re.compile(r'"id"\s*:\s*"([^"]+)"')
 
         print(f"Checking {len(setcards_by_ids)} cards...")
-
-        for obj in ijson.items(infile, "item"):
-            if not first:
-                outfile.write(",\n")
-            first = False
-            if obj["id"] in setcards_by_ids:
-                print(f"  Updating {obj['name']}")
-                json.dump(setcards_by_ids.pop(obj["id"]), outfile, cls=DecimalEncoder)
+        for line in infile:
+            if not line.strip():
+                continue
+                
+            match = id_pattern.search(line)
+            if match:
+                card_id = match.group(1)
             else:
-                json.dump(obj, outfile, cls=DecimalEncoder)
+                card_id = json.loads(line).get("id")
+
+            if card_id in setcards_by_ids:
+                card = setcards_by_ids.pop(card_id)
+                print(f"  Updating {card['name']}")
+                json.dump(card, outfile, cls=DecimalEncoder)
+                outfile.write("\n")
+            else:
+                outfile.write(line)
 
         print(f"Writing {len(setcards_by_ids)} new cards...")
 
         for card in setcards_by_ids.values():
-            if not first:
-                outfile.write(",\n")
-            first = False
             print(f"  Adding {card['name']}")
             json.dump(card, outfile, cls=DecimalEncoder)
-
-        outfile.write("]")
+            outfile.write("\n")
 
     if os.path.isfile(BulkDataPath + ".bak"):
         os.remove(BulkDataPath + ".bak")

@@ -4944,9 +4944,15 @@ export class MSHBoosterFactory extends BoosterFactory {
 export class HOBBoosterFactory extends BoosterFactory {
 	static filter = (min: number, max: number) => filterSetByNumber("hob", min, max);
 
-	static readonly Basics = HOBBoosterFactory.filter(189, 193); // TODO
+	static readonly Basics = HOBBoosterFactory.filter(189, 193);
 	static readonly JourneyBasics = HOBBoosterFactory.filter(194, 198);
-	static readonly CommonDualLands = HOBBoosterFactory.filter(193, 193).filter((c) => getCard(c).rarity === "common"); // TODO
+	static readonly CommonDualLands = [
+		"cd477096-41b1-4907-9cb3-852cb22c9ba2",
+		"d76df9d0-56cf-4351-a5e8-e6ae6fc791d1",
+		"78045c43-5cbe-48ff-837d-e7c6baac2937",
+		"2fbd0584-81a7-4c47-8af1-1c8635899a97",
+		"612cf954-f86c-4629-99df-4874d56fded3",
+	];
 	static readonly Scene = HOBBoosterFactory.filter(199, 213);
 	static readonly Dragon = HOBBoosterFactory.filter(214, 238);
 	static readonly Book = HOBBoosterFactory.filter(239, 248);
