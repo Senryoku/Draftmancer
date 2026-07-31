@@ -28,6 +28,7 @@ import {
 	EOEBoosterFactory,
 	FINBoosterFactory,
 	ECLBoosterFactory,
+	HOBBoosterFactory,
 } from "../src/BoosterFactory.js";
 
 const clientStates: {
@@ -466,6 +467,14 @@ describe("Sets content", function () {
 		it("Commander Mythic Borderless Profile", () => {
 			expect(MH3BoosterFactory.CommanderMythics.length).to.equal(8);
 		});
+	});
+
+	it("The Hobbit (HOB) special slots", () => {
+		const filterRarity = (arr: string[], rarity: string) => {
+			return arr.filter((c) => getCard(c).rarity === rarity);
+		};
+		expect(HOBBoosterFactory.Scene).to.have.lengthOf(15);
+		expect(filterRarity(HOBBoosterFactory.Scene, "common")).to.have.lengthOf(2);
 	});
 });
 

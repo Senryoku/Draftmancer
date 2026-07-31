@@ -316,9 +316,13 @@ if FetchSet:
 
         print(f"  Expected cards: {req_result['total_cards']}")
         setcards = req_result["data"]
+        page = 2
         while req_result["has_more"]:
-            req_result = requests.get(req_result["next_page"], headers=requests_headers).json()
+            # FIXME: req_result["next_page"] seems to sometimes return stale data for some reason. Maybe a cache issue somewhere and this will just move it, idk.
+            # req_result = requests.get(req_result["next_page"], headers=requests_headers).json()
+            req_result = requests.get(f"https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&unique=prints&q=e%3A{setCode}&page={page}", headers=requests_headers).json()
             setcards = setcards + req_result["data"]
+            page += 1
         print(f"  Got {len(setcards)} cards from Scryfall for {setCode}.")
         updatedcards = updatedcards + setcards
     print(f"Total cards: {len(updatedcards)}")
@@ -740,7 +744,7 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
             case "msh":
                 selection["in_booster"] = safeInBoosterCheck(c, 276)
             case "hob":
-                selection["in_booster"] = safeInBoosterCheck(c, 193)
+                selection["in_booster"] = safeInBoosterCheck(c, 188)
 
         if c["collector_number"].endswith("†"):
             selection["in_booster"] = False
