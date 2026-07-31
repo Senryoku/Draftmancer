@@ -4942,6 +4942,193 @@ export class MSHBoosterFactory extends BoosterFactory {
 	}
 }
 
+// The Hobbit - https://magic.wizards.com/en/news/feature/collecting-the-hobbit
+export class HOBBoosterFactory extends BoosterFactory {
+	static filter = (min: number, max: number) => filterSetByNumber("hob", min, max);
+
+	static readonly Basics = HOBBoosterFactory.filter(189, 193);
+	static readonly JourneyBasics = HOBBoosterFactory.filter(194, 198);
+	static readonly CommonDualLands = [
+		"cd477096-41b1-4907-9cb3-852cb22c9ba2",
+		"d76df9d0-56cf-4351-a5e8-e6ae6fc791d1",
+		"78045c43-5cbe-48ff-837d-e7c6baac2937",
+		"2fbd0584-81a7-4c47-8af1-1c8635899a97",
+		"612cf954-f86c-4629-99df-4874d56fded3",
+	];
+	static readonly Scene = HOBBoosterFactory.filter(199, 213);
+	static readonly Dragon = HOBBoosterFactory.filter(214, 238);
+	static readonly Book = HOBBoosterFactory.filter(239, 248);
+
+	scene: SlotedCardPool;
+	dragon: SlotedCardPool;
+	book: SlotedCardPool;
+
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
+		const [, filteredCardPool] = filterCardPool(cardPool, (cid: CardID) =>
+			HOBBoosterFactory.CommonDualLands.includes(cid)
+		);
+		super(filteredCardPool, landSlot, options);
+
+		this.scene = cidsToSlotedCardPool(HOBBoosterFactory.Scene, options.maxDuplicates);
+		this.dragon = cidsToSlotedCardPool(HOBBoosterFactory.Dragon, options.maxDuplicates);
+		this.book = cidsToSlotedCardPool(HOBBoosterFactory.Book, options.maxDuplicates);
+	}
+
+	generateBooster(targets: Targets) {
+		const updatedTargets = structuredClone(targets);
+
+		const booster: UniqueCard[] = [];
+
+		// 1 Traditional foil card of any rarity
+		//   A common (59.8%), uncommon (29.3%), rare (7.1%), or mythic rare (1%) card from the main set
+		//   A common (less than 1%), uncommon (less than 1%), or rare (less than 1%) HOB scene card
+		//   An uncommon (less than 1%), rare (less than 1%), or mythic rare (less than 1%) Dragon hoard card
+		//   A rare (less than 1%) or mythic rare (less than 1%) book cover card
+		{
+			const unknown_rates = (100 - (59.8 + 29.3 + 7.1 + 1.0)) / 8;
+			const pool = chooseWeighted(
+				[
+					59.8,
+					29.3,
+					7.1,
+					1.0,
+					unknown_rates,
+					unknown_rates,
+					unknown_rates,
+					unknown_rates,
+					unknown_rates,
+					unknown_rates,
+					unknown_rates,
+					unknown_rates,
+				].map((w) => w / 100.0),
+				[
+					this.cardPool.common,
+					this.cardPool.uncommon,
+					this.cardPool.rare,
+					this.cardPool.mythic,
+					this.scene.common,
+					this.scene.uncommon,
+					this.scene.rare,
+					this.dragon.uncommon,
+					this.dragon.rare,
+					this.dragon.mythic,
+					this.book.rare,
+					this.book.mythic,
+				]
+			);
+			booster.push(pickCard(pool, booster, { foil: true }));
+		}
+
+		// 1 Rare or mythic rare card
+		//   A rare (82.9%) or mythic rare (11.1%) card from the main set
+		//   A rare scene card (1.8%; does not include rare cards from Scene Boxes)
+		//   A rare (2.3%) or mythic rare (less than 1%) Dragon hoard card
+		//   A rare (less than 1%) or mythic rare (less than 1%) book cover card
+		while (updatedTargets.rare > 0) {
+			updatedTargets.rare -= 1;
+			const unknown_rates = (100 - (82.9 + 11.1 + 1.8 + 2.3)) / 8;
+			const pool = chooseWeighted(
+				[82.9, 11.1, 1.8, 2.3, unknown_rates, unknown_rates, unknown_rates].map((w) => w / 100.0),
+				[
+					this.cardPool.rare,
+					this.cardPool.mythic,
+					this.scene.rare,
+					this.dragon.rare,
+					this.dragon.mythic,
+					this.book.rare,
+					this.book.mythic,
+				]
+			);
+			booster.push(pickCard(pool, booster));
+		}
+
+		// 1 Wildcard of any rarity
+		//   A common (74.17%), uncommon (3.9%), rare (17.3%), or mythic rare (2.3%) card from the main set
+		//   A common (less than 1%), uncommon (less than 1%), or rare (less than 1%) HOB scene card
+		//   An uncommon (less than 1%), rare (less than 1%), or mythic rare (less than 1%) Dragon hoard card
+		//   A rare (less than 1%) or mythic rare (less than 1%) book cover card
+		{
+			const unknown_rates = (100 - (74.17 + 3.9 + 17.3 + 2.3)) / 8;
+			const pool = chooseWeighted(
+				[
+					74.17,
+					3.9,
+					17.3,
+					2.3,
+					unknown_rates,
+					unknown_rates,
+					unknown_rates,
+					unknown_rates,
+					unknown_rates,
+					unknown_rates,
+					unknown_rates,
+					unknown_rates,
+				].map((w) => w / 100.0),
+				[
+					this.cardPool.common,
+					this.cardPool.uncommon,
+					this.cardPool.rare,
+					this.cardPool.mythic,
+					this.scene.common,
+					this.scene.uncommon,
+					this.scene.rare,
+					this.dragon.uncommon,
+					this.dragon.rare,
+					this.dragon.mythic,
+					this.book.rare,
+					this.book.mythic,
+				]
+			);
+			booster.push(pickCard(pool, booster));
+		}
+
+		// 3 Uncommons
+		//   There are 55 uncommon cards from the main set that can be found in these slots.
+		//   There are 4 scene cards that can be found in these slots (5.5%).
+		//   There are 6 Dragon hoard cards that can be found in these slots (10.9%).
+		// NOTE: 5.5% ~= 3 / 55 ; 10.9% ~= 6 / 55
+		while (updatedTargets.uncommon > 0) {
+			updatedTargets.uncommon -= 1;
+			const pool = chooseWeighted(
+				[100 - 5.5 - 10.9, 5.5, 10.9].map((w) => w / 100.0),
+				[this.cardPool.uncommon, this.scene.uncommon, this.dragon.uncommon]
+			);
+			booster.push(pickCard(pool, booster));
+		}
+
+		// 7 Commons
+		//   There are 60 common cards from the main set that can be found in these slots.
+		//   There are 2 scene cards that can be found in these slots (7.8%).
+		if (targets === DefaultBoosterTargets) updatedTargets.common = 7;
+		else updatedTargets.common = Math.max(1, updatedTargets.common - 3);
+		// NOTE: Scene cards should be included in the common pool. However, to stay closer to the 7.8% rate and keep
+		//       the coloring balancing mechanism working, I choose to handle them manually here, even if it means
+		//       limiting them to one per pack (no clue yet if they have such a restriction).
+		if (updatedTargets.common > 0 && random.bool(7.8 / 100)) {
+			booster.push(pickCard(this.scene.common, booster));
+			updatedTargets.common -= 1;
+		}
+
+		const rest = super.generateBooster(updatedTargets, booster);
+		if (isMessageError(rest)) return rest;
+
+		// 1 Land card
+		//   A non-foil (26.7%) or traditional foil (6.7%) default frame basic land
+		//   A non-foil (13.3%) or traditional foil (3.3%) Middle-earth journey basic land
+		//   A non-foil (40%) or traditional foil (10%) common dual land
+		{
+			const pool = chooseWeighted(
+				[0.5, 0.166, 0.334],
+				[HOBBoosterFactory.CommonDualLands, HOBBoosterFactory.JourneyBasics, HOBBoosterFactory.Basics]
+			);
+			const foil = random.realZeroToOneInclusive() <= 1 / 5;
+			rest.push(getUnique(getRandom(pool), { foil }));
+		}
+
+		return rest;
+	}
+}
+
 // Set specific rules.
 // Neither DOM, WAR or ZNR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
 export const SetSpecificFactories: {
@@ -5004,6 +5191,7 @@ export const SetSpecificFactories: {
 	tmt: TMTBoosterFactory,
 	sos: SOSBoosterFactory,
 	msh: MSHBoosterFactory,
+	hob: HOBBoosterFactory,
 };
 
 export const getBoosterFactory = function (

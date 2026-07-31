@@ -1,6 +1,7 @@
 import { QueueDescription } from "./QueueDescription";
 
 export const AvailableQueues: readonly QueueDescription[] = [
+	{ id: "hob", name: "The Hobbit", playerCount: 8, setCode: "hob" },
 	{ id: "msh", name: "Marvel Super Heroes", playerCount: 8, setCode: "msh" },
 	{ id: "sos", name: "Secrets of Strixhaven", playerCount: 8, setCode: "sos" },
 	// {
@@ -10,7 +11,7 @@ export const AvailableQueues: readonly QueueDescription[] = [
 	// 	setCode: "tmt",
 	// 	settings: { pickedCardsPerRound: 2 },
 	// },
-	{ id: "ecl", name: "Lorwyn Eclipsed", playerCount: 8, setCode: "ecl" },
+	// { id: "ecl", name: "Lorwyn Eclipsed", playerCount: 8, setCode: "ecl" },
 	// { id: "tla", name: "Avatar: The Last Airbender", playerCount: 8, setCode: "tla" },
 	// { id: "spm", name: "Spider-Man", playerCount: 4, setCode: "spm", settings: { pickedCardsPerRound: 2 } },
 	// { id: "eoe", name: "Edge of Eternities", playerCount: 8, setCode: "eoe" },

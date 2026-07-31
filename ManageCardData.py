@@ -1,4 +1,5 @@
 from html import unescape
+import shutil
 import sqlite3
 import mmap
 import json
@@ -29,7 +30,7 @@ class Rarity(OrderedEnum):
 
 
 ScryfallSets = "data/scryfall-sets.json"
-BulkDataPath = "data/scryfall-all-cards.json"
+BulkDataPath = "data/scryfall-all-cards.jsonl.gz"
 BulkDataArenaPath = "data/BulkArena.json"
 FirstFinalDataPath = "data/MTGCards.0.json"
 SetsInfosPath = "src/data/SetsInfos.json"
@@ -265,7 +266,7 @@ if not os.path.isfile(BulkDataPath) or ForceDownload:
             )
             skip = True
     if not skip:
-        allcardURL = allcardObject["download_uri"]
+        allcardURL = allcardObject["jsonl_download_uri"]
         print("Downloading {}...".format(allcardURL))
         urllib.request.urlretrieve(allcardURL, BulkDataPath)
 
@@ -315,42 +316,50 @@ if FetchSet:
 
         print(f"  Expected cards: {req_result['total_cards']}")
         setcards = req_result["data"]
+        page = 2
         while req_result["has_more"]:
-            req_result = requests.get(req_result["next_page"]).json()
+            # FIXME: req_result["next_page"] seems to sometimes return stale data for some reason. Maybe a cache issue somewhere and this will just move it, idk.
+            # req_result = requests.get(req_result["next_page"], headers=requests_headers).json()
+            req_result = requests.get(f"https://api.scryfall.com/cards/search?include_extras=true&include_variations=true&order=set&unique=prints&q=e%3A{setCode}&page={page}", headers=requests_headers).json()
             setcards = setcards + req_result["data"]
+            page += 1
         print(f"  Got {len(setcards)} cards from Scryfall for {setCode}.")
         updatedcards = updatedcards + setcards
     print(f"Total cards: {len(updatedcards)}")
 
     tmpFilePath = BulkDataPath + ".tmp"
-    with open(BulkDataPath, "r", encoding="utf-8") as infile, open(tmpFilePath, "w", encoding="utf-8") as outfile:
-        outfile.write("[\n")
-        first = True
+    with gzip.open(BulkDataPath, "rt", encoding="utf8") as infile, gzip.open(tmpFilePath, "wt", encoding="utf-8") as outfile:
+
+        objects = (json.loads(line) for line in infile if line.strip())
 
         setcards_by_ids = {card["id"]: card for card in updatedcards}
+        id_pattern = re.compile(r'"id"\s*:\s*"([^"]+)"')
 
         print(f"Checking {len(setcards_by_ids)} cards...")
-
-        for obj in ijson.items(infile, "item"):
-            if not first:
-                outfile.write(",\n")
-            first = False
-            if obj["id"] in setcards_by_ids:
-                print(f"  Updating {obj['name']}")
-                json.dump(setcards_by_ids.pop(obj["id"]), outfile, cls=DecimalEncoder)
+        for line in infile:
+            if not line.strip():
+                continue
+                
+            match = id_pattern.search(line)
+            if match:
+                card_id = match.group(1)
             else:
-                json.dump(obj, outfile, cls=DecimalEncoder)
+                card_id = json.loads(line).get("id")
+
+            if card_id in setcards_by_ids:
+                card = setcards_by_ids.pop(card_id)
+                print(f"  Updating {card['name']}")
+                json.dump(card, outfile, cls=DecimalEncoder)
+                outfile.write("\n")
+            else:
+                outfile.write(line)
 
         print(f"Writing {len(setcards_by_ids)} new cards...")
 
         for card in setcards_by_ids.values():
-            if not first:
-                outfile.write(",\n")
-            first = False
             print(f"  Adding {card['name']}")
             json.dump(card, outfile, cls=DecimalEncoder)
-
-        outfile.write("]")
+            outfile.write("\n")
 
     if os.path.isfile(BulkDataPath + ".bak"):
         os.remove(BulkDataPath + ".bak")
@@ -387,11 +396,12 @@ def safeInBoosterCheck(card: dict, max: int) -> bool:
 NonProcessedCards = {}
 if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
     all_cards = []
-    with open(BulkDataPath, "r", encoding="utf8") as file:
-        objects = ijson.items(file, "item")
-        ScryfallCards = (o for o in objects if not (o["layout"] in ["token", "double_faced_token", "art_series"]))
-        # print("Loading Scryfall bulk data... ")
-        # ScryfallCards = json.load(file)
+    with gzip.open(BulkDataPath, "rt", encoding="utf8") as file:
+        objects = (json.loads(line) for line in file if line.strip())
+        ScryfallCards = (
+            o for o in objects 
+            if o.get("layout") not in ["token", "double_faced_token", "art_series"]
+        )
 
         akr_candidates = {}
         klr_candidates = {}
@@ -733,6 +743,8 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
                 selection["in_booster"] = safeInBoosterCheck(c, 266)
             case "msh":
                 selection["in_booster"] = safeInBoosterCheck(c, 276)
+            case "hob":
+                selection["in_booster"] = safeInBoosterCheck(c, 188)
 
         if c["collector_number"].endswith("†"):
             selection["in_booster"] = False
@@ -1257,7 +1269,8 @@ constants["PrimarySets"] = [
         "mar",
         "omb",
         "fra",
-        "hob",
+        "trk",
+        "mbc",
     ]
 ]  # Exclude some codes that are actually part of larger sets (tsb, fmb1, h1r... see subsets), or aren't out yet
 with open("src/data/constants.json", "w", encoding="utf8") as constantsFile:

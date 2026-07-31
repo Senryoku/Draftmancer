@@ -1,67 +1,66 @@
 <!doctype html>
 <html lang="en-US">
-	<head>
-		<meta charset="UTF-8" />
-		<title><%= htmlWebpackPlugin.options.title %></title>
-		<meta
-			name="description"
-			content="Draft any Magic: the Gathering set or even your own cube with other players - or bots! Multiple gamemodes (Winston, Grid...) and many options are available."
-		/>
-		<meta
-			name="keywords"
-			content="Magic, Magic the Gathering, MTG, MTGA, Draft, Sealed, Limited, Cube, Simulator, Sim, Booster, Arena, Edge of Eternities, Final Fantasy, Tarkir, Dragonstorm, Pod, Winston, Grid, Rochester, Winchester, Housman, Team Sealed, MTGADraft, Custom Cards"
-		/>
-		<meta name="thumbnail" content="https://draftmancer.com/img/logo.webp" />
-		<meta name="color-scheme" content="dark" />
-		<meta property="og:title" content="Draftmancer" />
-		<meta property="og:type" content="website" />
-		<meta property="og:url" content="https://draftmancer.com/" />
-		<meta property="og:image" content="https://draftmancer.com/img/logo.webp" />
-		<meta
-			property="og:description"
-			content="Draft any Magic: the Gathering set or even your own cube with other players - or bots! Multiple gamemodes (Winston, Grid...) and many options are available."
-		/>
-		<meta property="og:site_name" content="Draftmancer" />
 
-		<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=2" />
-		<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=2" />
-		<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=2" />
-		<link rel="manifest" href="/site.webmanifest?v=2" />
-		<link rel="mask-icon" href="/safari-pinned-tab.svg?v=2" color="#666666" />
-		<link rel="shortcut icon" href="/favicon.ico?v=2" />
-		<link rel="canonical" href="https://draftmancer.com/" />
-		<meta name="apple-mobile-web-app-title" content="Draftmancer" />
-		<meta name="application-name" content="Draftmancer" />
-		<meta name="msapplication-TileColor" content="#888888" />
-		<meta name="theme-color" content="#ffffff" />
+<head>
+	<meta charset="UTF-8" />
+	<title>
+		<%= htmlWebpackPlugin.options.title %>
+	</title>
+	<meta name="description"
+		content="Draft any Magic: the Gathering set or even your own cube with other players - or bots! Multiple gamemodes (Winston, Grid...) and many options are available." />
+	<meta name="keywords"
+		content="Magic, Magic the Gathering, MTG, MTGA, Draft, Sealed, Limited, Cube, Simulator, Sim, Booster, Arena, The Hobbit, Marvel Super Heroes, Pod, Winston, Grid, Rochester, Winchester, Housman, Team Sealed, MTGADraft, Custom Cards" />
+	<meta name="thumbnail" content="https://draftmancer.com/img/logo.webp" />
+	<meta name="color-scheme" content="dark" />
+	<meta property="og:title" content="Draftmancer" />
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content="https://draftmancer.com/" />
+	<meta property="og:image" content="https://draftmancer.com/img/logo.webp" />
+	<meta property="og:description"
+		content="Draft any Magic: the Gathering set or even your own cube with other players - or bots! Multiple gamemodes (Winston, Grid...) and many options are available." />
+	<meta property="og:site_name" content="Draftmancer" />
 
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=2" />
+	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=2" />
+	<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=2" />
+	<link rel="manifest" href="/site.webmanifest?v=2" />
+	<link rel="mask-icon" href="/safari-pinned-tab.svg?v=2" color="#666666" />
+	<link rel="shortcut icon" href="/favicon.ico?v=2" />
+	<link rel="canonical" href="https://draftmancer.com/" />
+	<meta name="apple-mobile-web-app-title" content="Draftmancer" />
+	<meta name="application-name" content="Draftmancer" />
+	<meta name="msapplication-TileColor" content="#888888" />
+	<meta name="theme-color" content="#ffffff" />
 
-		<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-		<meta http-equiv="Pragma" content="no-cache" />
-		<meta http-equiv="Expires" content="0" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
 
-		<!-- Matomo -->
-		<script>
-			var _paq = (window._paq = window._paq || []);
-			/* tracker methods like "setCustomDimension" should be called before "trackPageView" */
-			_paq.push(["trackPageView"]);
-			_paq.push(["enableLinkTracking"]);
-			(function () {
-				var u = "//patriciamv.com/piwik/";
-				_paq.push(["setTrackerUrl", u + "piwik.php"]);
-				_paq.push(["setSiteId", "2"]);
-				var d = document,
-					g = d.createElement("script"),
-					s = d.getElementsByTagName("script")[0];
-				g.async = true;
-				g.src = u + "piwik.js";
-				s.parentNode.insertBefore(g, s);
-			})();
-		</script>
-		<!-- End Matomo Code -->
-	</head>
-	<body>
-		<div id="main-vue"></div>
-	</body>
+	<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+
+	<!-- Matomo -->
+	<script>
+		var _paq = (window._paq = window._paq || []);
+		/* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+		_paq.push(["trackPageView"]);
+		_paq.push(["enableLinkTracking"]);
+		(function () {
+			var u = "//patriciamv.com/piwik/";
+			_paq.push(["setTrackerUrl", u + "piwik.php"]);
+			_paq.push(["setSiteId", "2"]);
+			var d = document,
+				g = d.createElement("script"),
+				s = d.getElementsByTagName("script")[0];
+			g.async = true;
+			g.src = u + "piwik.js";
+			s.parentNode.insertBefore(g, s);
+		})();
+	</script>
+	<!-- End Matomo Code -->
+</head>
+
+<body>
+	<div id="main-vue"></div>
+</body>
+
 </html>

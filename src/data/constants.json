@@ -94,7 +94,8 @@
         "ecl",
         "tmt",
         "sos",
-        "msh"
+        "msh",
+        "hob"
     ],
     "AlchemySets": [
         "hbg",
@@ -118,7 +119,8 @@
         "ecl",
         "tmt",
         "sos",
-        "msh"
+        "msh",
+        "hob"
     ],
     "BasicLandNames": {
         "en": {
@@ -332,8 +334,7 @@
         }
     ],
     "PrimarySets": [
-        "trk",
-        "mbc",
+        "hob",
         "msh",
         "sos",
         "tmt",
