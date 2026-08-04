@@ -3906,11 +3906,6 @@ export default defineComponent({
 				Math.min(this.draftState.burnsThisRound, this.draftState.booster.length - this.cardsToPick)
 			);
 		},
-		waitingForDisconnectedUsers(): boolean {
-			//                    Disconnected players do not matter for managed sessions, Team Sealed or Rotisserie Draft.
-			if (!this.drafting || this.managed || this.teamSealedState || this.rotisserieDraftState) return false;
-			return Object.keys(this.disconnectedUsers).length > 0;
-		},
 		disconnectedUserNames(): string {
 			return Object.values(this.disconnectedUsers)
 				.map((u) => u.userName)

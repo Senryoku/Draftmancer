@@ -362,6 +362,7 @@ export class Session implements IIndexable {
 			owner: this.owner,
 			disconnectedUsers: disconnectedUsersData,
 		});
+		this.emitToConnectedUsers("sessionOptions", { virtualPlayersData: this.getSortedVirtualPlayerData() });
 	}
 
 	remUser(userID: UserID) {
@@ -374,10 +375,9 @@ export class Session implements IIndexable {
 		if (this.owner === userID) this.owner = this.users.values().next().value;
 
 		if (this.drafting) {
-			if (this.draftState instanceof DraftState && !this.managed) this.stopCountdowns();
 			if (this.managed) {
-				this.stopCountdown(userID);
-				// If user is still disconnected in 10sec, replace them by a bot.
+				// If user is still disconnected after a timeout, replace them by a bot.
+				const timeoutSeconds = 30;
 				setTimeout(() => {
 					if (
 						!this.managed ||
@@ -388,10 +388,13 @@ export class Session implements IIndexable {
 						return;
 					this.disconnectedUsers[userID].replaced = true;
 					this.startBotPickChain(userID);
-				}, 10000);
+				}, timeoutSeconds * 1000);
 			}
-			this.disconnectedUsers[userID] = this.getDisconnectedUserData(userID);
-			this.broadcastDisconnectedUsers();
+			if (!this.disconnectedUsers[userID]) {
+				this.stopCountdown(userID);
+				this.disconnectedUsers[userID] = this.getDisconnectedUserData(userID);
+				this.broadcastDisconnectedUsers();
+			}
 		} else {
 			this.userOrder.splice(this.userOrder.indexOf(userID), 1);
 		}

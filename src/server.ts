@@ -942,7 +942,7 @@ function removePlayer(userID: UserID, sessionID: SessionID, userToRemove: UserID
 	const sess = Sessions[sessionID];
 	if (!sess || userToRemove === sess.owner) return;
 
-	if (sess.users.has(userToRemove)) {
+	if (sess.users.has(userToRemove) || userToRemove in sess.disconnectedUsers) {
 		removeUserFromSession(sessionID, userToRemove);
 		sess.replaceDisconnectedPlayers();
 		sess.notifyUserChange();
@@ -2045,7 +2045,7 @@ function deleteSession(sessionID: SessionID) {
 function removeUserFromSession(sessionID: SessionID, userID: UserID) {
 	if (sessionID in Sessions) {
 		const sess = Sessions[sessionID];
-		if (sess.users.has(userID)) {
+		if (sess.users.has(userID) || userID in sess.disconnectedUsers) {
 			sess.remUser(userID);
 			if (sess.isPublic) updatePublicSession(sessionID);
 
