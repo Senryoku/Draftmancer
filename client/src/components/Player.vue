@@ -29,7 +29,11 @@
 		<div class="player-name" v-tooltip="user.userName">{{ user.userName }}</div>
 
 		<div class="status-icons">
-			<font-awesome-icon v-if="user.isBot || user.isReplaced" icon="fa-solid fa-robot" />
+			<font-awesome-icon
+				v-if="user.isBot || user.isReplaced"
+				icon="fa-solid fa-robot"
+				v-tooltip="user.isBot ? `${user.userName} is a bot.` : `${user.userName} has been replaced by a bot.`"
+			/>
 			<font-awesome-icon
 				v-if="user.userID === sessionOwner"
 				icon="fa-solid fa-crown"
@@ -165,12 +169,6 @@ const emit = defineEmits<{
 <style scoped>
 .error-icon-enter-active {
 	animation: error-icon 0.8s linear;
-}
-
-.error-icon-leave-active {
-	transition: all 0.2s ease-in;
-	opacity: 0;
-	transform: scale(0.5);
 }
 
 @keyframes error-icon {
