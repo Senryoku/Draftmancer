@@ -3,6 +3,7 @@
 		:class="{
 			bot: user.isBot,
 			'current-player': isCurrentPlayer,
+			disconnected: user.isDisconnected,
 		}"
 		:data-userid="user.userID"
 	>
@@ -74,7 +75,7 @@
 					<font-awesome-icon
 						v-if="user.isDisconnected"
 						icon="fa-solid fa-plug-circle-xmark"
-						class="red"
+						class="bright-red"
 						v-tooltip="`${user.userName} is disconnected.`"
 					/>
 				</Transition>
@@ -164,9 +165,19 @@ const emit = defineEmits<{
 	right: -0.85em;
 	top: 0.6em;
 }
+
+.disconnected {
+	color: #aaa;
+	box-shadow: inset 0 -4px 6px -3px rgba(255, 82, 82, 0.25);
+	background-color: #222;
+}
 </style>
 
 <style scoped>
+.bright-red {
+	color: rgb(190, 13, 13);
+}
+
 .error-icon-enter-active {
 	animation: error-icon 0.8s linear;
 }
