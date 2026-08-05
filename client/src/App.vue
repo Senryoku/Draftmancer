@@ -710,7 +710,7 @@
 							:sessionOwner="sessionOwner"
 							:passingOrder="passingOrder"
 							:isCurrentPlayer="currentPlayer === user.userID"
-							:removable="gameState === GameState.Picking"
+							:removable="draftState !== null"
 							:class="{
 								teama: teamDraft && idx % 2 === 0,
 								teamb: teamDraft && idx % 2 === 1,
