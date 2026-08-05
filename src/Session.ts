@@ -1,6 +1,16 @@
 import { assert } from "console";
 import { UserID, SessionID } from "./IDTypes.js";
-import { shuffleArray, getRandom, arrayIntersect, Options, pickRandom, random, sum, sumValues } from "./utils.js";
+import {
+	shuffleArray,
+	getRandom,
+	arrayIntersect,
+	Options,
+	pickRandom,
+	random,
+	sum,
+	sumValues,
+	clamp,
+} from "./utils.js";
 import { Connections, getPickedCardIds } from "./Connection.js";
 import {
 	CardID,
@@ -3685,9 +3695,9 @@ export class Session implements IIndexable {
 			s.players[userID].timer = TournamentTimer[Math.min(TournamentTimer.length - 1, remainingCards)];
 		} else {
 			const dec = (0.9 * this.maxTimer) / Math.max(1, s.numPicks - 1);
-			// Note: pickNumber can actually be greater or equal to numPicks in some cases (e.g. Lore Seeker)
-			const pickNumber = Math.min(s.players[userID].pickNumber, s.numPicks - 1);
-			s.players[userID].timer = Math.max(1, Math.floor(this.maxTimer - pickNumber * dec));
+			const remainingCards = clamp(s.players[userID].boosters[0].length, 0, s.numPicks);
+			const missingCards = clamp(s.numPicks - remainingCards, 0, s.numPicks - 1);
+			s.players[userID].timer = clamp(Math.floor(this.maxTimer - missingCards * dec), 1, this.maxTimer);
 		}
 
 		// Immediatly share the new value.
