@@ -452,7 +452,6 @@ export interface ClientToServerEvents {
 	setDiscardRemainingCardsAt: (discardRemainingCardsAt: number) => void;
 	setPublic: (isPublic: boolean) => void;
 	setDescription: (description: string) => void;
-	replaceDisconnectedPlayers: () => void;
 	distributeJumpstart: (set: string | string[], ack: (result: SocketAck) => void) => void;
 	generateBracket: (type: BracketType, ack: (result: SocketAck) => void) => void;
 	lockBracket: (bracketLocked: boolean) => void;

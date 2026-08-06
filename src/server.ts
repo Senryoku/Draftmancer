@@ -944,7 +944,7 @@ function removePlayer(userID: UserID, sessionID: SessionID, userToRemove: UserID
 
 	if (sess.users.has(userToRemove) || userToRemove in sess.disconnectedUsers) {
 		removeUserFromSession(sessionID, userToRemove);
-		sess.replaceDisconnectedPlayers();
+		sess.replaceDisconnectedPlayer(userToRemove);
 		sess.notifyUserChange();
 	} else if (sess.spectators.has(userToRemove)) {
 		sess.removeSpectator(userToRemove);
@@ -1378,10 +1378,6 @@ function setDescription(userID: UserID, sessionID: SessionID, description: strin
 	Sessions[sessionID].description = description.substring(0, 70);
 	Sessions[sessionID].emitToConnectedNonOwners("description", Sessions[sessionID].description);
 	updatePublicSession(sessionID);
-}
-
-function replaceDisconnectedPlayers(userID: UserID, sessionID: SessionID) {
-	Sessions[sessionID].replaceDisconnectedPlayers();
 }
 
 function distributeJumpstart(userID: UserID, sessionID: SessionID, set: unknown, ack: (result: SocketAck) => void) {
@@ -1826,7 +1822,6 @@ io.on("connection", async function (socket) {
 		socket.on("setDiscardRemainingCardsAt", prepareSocketCallback(setDiscardRemainingCardsAt, true));
 		socket.on("setPublic", prepareSocketCallback(setPublic, true));
 		socket.on("setDescription", prepareSocketCallback(setDescription, true));
-		socket.on("replaceDisconnectedPlayers", prepareSocketCallback(replaceDisconnectedPlayers, true));
 		socket.on("generateBracket", prepareSocketCallback(generateBracket, true));
 		socket.on("lockBracket", prepareSocketCallback(lockBracket, true));
 		socket.on("syncBracketMTGO", prepareSocketCallback(syncBracketMTGO, true));

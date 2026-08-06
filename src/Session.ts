@@ -338,7 +338,8 @@ export class Session implements IIndexable {
 		const responses = await Promise.all(promises);
 		if (responses.some((r) => r === false))
 			return new SocketError(
-				`Takeover request refused (${responses.reduce((acc, curr) => acc + (curr === false ? 0 : 1), 0)}/${responses.length
+				`Takeover request refused (${responses.reduce((acc, curr) => acc + (curr === false ? 0 : 1), 0)}/${
+					responses.length
 				}).`
 			);
 
@@ -412,9 +413,9 @@ export class Session implements IIndexable {
 					userID === uid // Don't send boostersPerPlayer back to the user who changed the setting, avoiding possible loops
 						? { customBoosters: this.customBoosters }
 						: {
-							boostersPerPlayer: this.boostersPerPlayer,
-							customBoosters: this.customBoosters,
-						}
+								boostersPerPlayer: this.boostersPerPlayer,
+								customBoosters: this.customBoosters,
+							}
 				)
 			);
 		}
@@ -917,10 +918,10 @@ export class Session implements IIndexable {
 		const expectedCardsPerBooster = this.useCustomCardList
 			? this.customCardList.layouts
 				? Math.min(
-					...Object.values(this.customCardList.layouts).map((layout) =>
-						sum(layout.slots.map((s) => s.count))
+						...Object.values(this.customCardList.layouts).map((layout) =>
+							sum(layout.slots.map((s) => s.count))
+						)
 					)
-				)
 				: this.cardsPerBooster
 			: sumValues(this.getBoosterContent());
 
@@ -1233,7 +1234,8 @@ export class Session implements IIndexable {
 		)
 			return new SocketError(
 				"Invalid parameters.",
-				`handIndex (${handIndex}) should be between 0 and ${s.handSize - 1
+				`handIndex (${handIndex}) should be between 0 and ${
+					s.handSize - 1
 				}, revealedCardsIndex (${revealedCardsIndex}) should be between 0 and ${s.revealedCardsCount - 1}`
 			);
 
@@ -1945,16 +1947,16 @@ export class Session implements IIndexable {
 		const boosterSettings =
 			this.useCustomCardList && this.customCardList.settings?.boosterSettings
 				? this.customCardList.settings.boosterSettings.map((s) => ({
-					discardRemainingCardsAt,
-					...s,
-				}))
-				: [
-					{
 						discardRemainingCardsAt,
-						picks: doubleMastersMode ? [pickedCardsPerRound, 1] : [pickedCardsPerRound],
-						burns: [burnedCardsPerRound],
-					},
-				];
+						...s,
+					}))
+				: [
+						{
+							discardRemainingCardsAt,
+							picks: doubleMastersMode ? [pickedCardsPerRound, 1] : [pickedCardsPerRound],
+							burns: [burnedCardsPerRound],
+						},
+					];
 
 		this.draftState = new DraftState(boosters, this.getSortedHumanPlayersIDs(), {
 			boosterSettings,
@@ -2881,7 +2883,7 @@ export class Session implements IIndexable {
 					const remainingTime =
 						((this.draftState.pendingTimeout as unknown as { _idleStart: number })._idleStart +
 							(this.draftState.pendingTimeout as unknown as { _idleTimeout: number })._idleTimeout) /
-						1000 -
+							1000 -
 						process.uptime();
 					this.emitToConnectedUsers("startReviewPhase", remainingTime);
 				}
@@ -3124,8 +3126,8 @@ export class Session implements IIndexable {
 		// Note: this.draftLogRecipients might have changed...
 		const logs =
 			this.draftLogRecipients === "everyone" ||
-				(this.draftLogRecipients === "delayed" && !this.draftLog.delayed) || // Log was unlocked
-				(this.draftLogRecipients !== "none" && uid === this.owner)
+			(this.draftLogRecipients === "delayed" && !this.draftLog.delayed) || // Log was unlocked
+			(this.draftLogRecipients !== "none" && uid === this.owner)
 				? this.draftLog
 				: this.getStrippedLog(this.personalLogs ? uid : undefined);
 		Connections[uid]?.socket.emit("draftLog", logs!);
@@ -3634,15 +3636,13 @@ export class Session implements IIndexable {
 		}
 	}
 
-	replaceDisconnectedPlayers() {
-		if (!this.drafting || !isDraftState(this.draftState)) return;
+	replaceDisconnectedPlayer(userID: UserID) {
+		if (!this.drafting || !isDraftState(this.draftState) || !this.disconnectedUsers[userID]) return;
 
 		console.warn(`Session ${this.id}: Replacing disconnected players with bots!`);
 
-		for (const uid in this.disconnectedUsers) {
-			this.disconnectedUsers[uid].replaced = true;
-			this.startBotPickChain(uid);
-		}
+		this.disconnectedUsers[userID].replaced = true;
+		this.startBotPickChain(userID);
 		const virtualPlayers = this.getSortedVirtualPlayerData();
 		this.emitToConnectedUsers("sessionOptions", { virtualPlayersData: virtualPlayers });
 		this.resumeOnReconnection({
@@ -3879,7 +3879,7 @@ export class Session implements IIndexable {
 						this.bracket.players[m.players[1]]?.userName === e.finalMatchResults[1].userInfo.screenName) ||
 						(this.bracket.players[m.players[1]]?.userName === e.finalMatchResults[0].userInfo.screenName &&
 							this.bracket.players[m.players[0]]?.userName ===
-							e.finalMatchResults[1].userInfo.screenName)) &&
+								e.finalMatchResults[1].userInfo.screenName)) &&
 					m.results[0] === 0 &&
 					m.results[1] === 0
 				) {

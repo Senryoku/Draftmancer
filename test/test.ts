@@ -1062,7 +1062,7 @@ describe("Single Draft (Two Players)", function () {
 
 		it("Non-owner is replaced by a bot.", function (done) {
 			clients[ownerIdx].once("resumeOnReconnection", () => done());
-			clients[ownerIdx].emit("replaceDisconnectedPlayers");
+			clients[ownerIdx].emit("removePlayer", getUID(clients[nonOwnerIdx]));
 		});
 
 		const ownerPick = () => {
@@ -1119,10 +1119,13 @@ describe("Single Draft (Two Players)", function () {
 
 	describe("With Disconnect, 3 players, replacing with bots and no reconnect.", function () {
 		connect();
+
+		const thirdID = "id3";
+
 		it("3 clients with different userIDs should be connected.", function (done) {
 			const idx = clients.push(
 				connectClient({
-					userID: "id3",
+					userID: thirdID,
 					sessionID: sessionID,
 					userName: "Client3",
 				})
@@ -1162,7 +1165,8 @@ describe("Single Draft (Two Players)", function () {
 
 		it("Non-owners are replaced by bots.", function (done) {
 			clients[ownerIdx].once("resumeOnReconnection", () => done());
-			clients[ownerIdx].emit("replaceDisconnectedPlayers");
+			clients[ownerIdx].emit("removePlayer", getUID(clients[nonOwnerIdx]));
+			clients[ownerIdx].emit("removePlayer", thirdID);
 		});
 
 		it("Owner ends the draft alone.", (done) => {
@@ -1310,7 +1314,10 @@ describe("Single Draft (Two Players)", function () {
 		connect();
 		startDraft();
 
+		let replacedID: UserID;
+
 		it("Non-owner disconnects, owner receives a warning.", function (done) {
+			replacedID = getUID(clients[nonOwnerIdx]);
 			clients[ownerIdx].once("userDisconnected", () => {
 				waitForSocket(clients[nonOwnerIdx], () => {
 					clients.splice(nonOwnerIdx, 1);
@@ -1325,7 +1332,7 @@ describe("Single Draft (Two Players)", function () {
 			clients[ownerIdx].once("resumeOnReconnection", function () {
 				done();
 			});
-			clients[ownerIdx].emit("replaceDisconnectedPlayers");
+			clients[ownerIdx].emit("removePlayer", replacedID);
 		});
 
 		endDraft();

@@ -42,13 +42,13 @@
 				v-tooltip="`${user.userName} is the session's owner.`"
 			/>
 			<!-- Owner controls -->
-			<template v-if="userID === sessionOwner && !user.isBot && user.userID !== sessionOwner">
+			<template v-if="userID === sessionOwner && !user.isBot && !user.isReplaced && user.userID !== sessionOwner">
 				<!-- Note: Bots are only supported in standard drafts, kicking player in other modes doesn't make sense. -->
 				<font-awesome-icon
 					v-if="removable"
 					icon="fa-solid fa-user-slash"
 					class="clickable red"
-					v-tooltip="`Remove ${user.userName} from the session`"
+					v-tooltip="`Remove ${user.userName} from the session. A bot will take their place.`"
 					@click="emit('removePlayer', user.userID)"
 				/>
 				<template v-if="!user.isDisconnected">
