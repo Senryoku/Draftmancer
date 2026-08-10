@@ -3116,10 +3116,11 @@ export default defineComponent({
 		removePlayer(userID: UserID) {
 			if (this.userID !== this.sessionOwner) return;
 			const player = this.sessionUsers.find((u) => u.userID === userID);
+			const disconnectedPlayer = this.disconnectedUsers[userID];
 			const spectator = this.sessionSpectators.find((s) => s.userID === userID);
-			const user = player ?? spectator;
+			const user = player ?? disconnectedPlayer ?? spectator;
 			if (!user) return;
-			const role = player ? "player" : "spectator";
+			const role = player || disconnectedPlayer ? "player" : "spectator";
 			Alert.fire({
 				title: "Are you sure?",
 				text: `Do you want to remove ${role} '${user.userName}' from the session? They'll still be able to rejoin if they want.`,
@@ -3905,11 +3906,6 @@ export default defineComponent({
 				0,
 				Math.min(this.draftState.burnsThisRound, this.draftState.booster.length - this.cardsToPick)
 			);
-		},
-		waitingForDisconnectedUsers(): boolean {
-			//                    Disconnected players do not matter for managed sessions, Team Sealed or Rotisserie Draft.
-			if (!this.drafting || this.managed || this.teamSealedState || this.rotisserieDraftState) return false;
-			return Object.keys(this.disconnectedUsers).length > 0;
 		},
 		disconnectedUserNames(): string {
 			return Object.values(this.disconnectedUsers)

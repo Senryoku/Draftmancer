@@ -540,20 +540,10 @@
 						<button class="stop" @click="stopDraft">
 							<font-awesome-icon icon="fa-solid fa-stop" /> Stop
 						</button>
-						<button
-							v-if="maxTimer > 0 && !draftPaused"
-							class="stop"
-							:class="{ 'opaque-disabled': waitingForDisconnectedUsers }"
-							@click="pauseDraft"
-						>
+						<button v-if="maxTimer > 0 && !draftPaused" class="stop" @click="pauseDraft">
 							<font-awesome-icon icon="fa-solid fa-pause" /> Pause
 						</button>
-						<button
-							v-else-if="maxTimer > 0 && draftPaused"
-							class="confirm"
-							:class="{ 'opaque-disabled': waitingForDisconnectedUsers }"
-							@click="resumeDraft"
-						>
+						<button v-else-if="maxTimer > 0 && draftPaused" class="confirm" @click="resumeDraft">
 							<font-awesome-icon icon="fa-solid fa-play" /> Resume
 						</button>
 					</template>
@@ -720,6 +710,7 @@
 							:sessionOwner="sessionOwner"
 							:passingOrder="passingOrder"
 							:isCurrentPlayer="currentPlayer === user.userID"
+							:removable="draftState !== null"
 							:class="{
 								teama: teamDraft && idx % 2 === 0,
 								teamb: teamDraft && idx % 2 === 1,
@@ -794,7 +785,7 @@
 							"
 							:key="`draft-picking-${draftState.boosterNumber}-${draftState.pickNumber}`"
 							class="container"
-							:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
+							:class="{ disabled: draftPaused }"
 						>
 							<div id="booster-controls" class="section-title">
 								<h2>Your Booster ({{ draftState.booster.length }})</h2>
@@ -976,7 +967,7 @@
 						winstonDraftState
 					"
 					class="container"
-					:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
+					:class="{ disabled: draftPaused }"
 					:language="language"
 					:userID="userID"
 					:sessionUsers="userByID"
@@ -990,7 +981,7 @@
 						winchesterDraftState
 					"
 					class="container"
-					:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
+					:class="{ disabled: draftPaused }"
 					:language="language"
 					:userID="userID"
 					:sessionUsers="userByID"
@@ -1000,7 +991,7 @@
 				<housman-draft
 					v-if="gameState === GameState.HousmanDraft && housmanDraftState"
 					class="container"
-					:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
+					:class="{ disabled: draftPaused }"
 					:socket="socket"
 					:language="language"
 					:userID="userID"
@@ -1013,7 +1004,7 @@
 				<solomon-draft
 					v-if="gameState === GameState.SolomonDraft && solomonDraftState"
 					class="container"
-					:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
+					:class="{ disabled: draftPaused }"
 					:socket="socket"
 					:language="language"
 					:userID="userID"
@@ -1026,7 +1017,7 @@
 				<silent-auction-draft
 					v-if="gameState === GameState.SilentAuctionDraft && silentAuctionDraftState"
 					class="container"
-					:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
+					:class="{ disabled: draftPaused }"
 					:socket="socket"
 					:language="language"
 					:userID="userID"
@@ -1037,7 +1028,7 @@
 				/>
 				<!-- Grid Draft -->
 				<div
-					:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
+					:class="{ disabled: draftPaused }"
 					v-if="
 						(gameState === GameState.GridPicking || gameState === GameState.GridWaiting) && gridDraftState
 					"
@@ -1090,7 +1081,7 @@
 				<!-- Rochester Draft -->
 				<div
 					class="rochester-container"
-					:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
+					:class="{ disabled: draftPaused }"
 					v-if="
 						(gameState === GameState.RochesterPicking || gameState === GameState.RochesterWaiting) &&
 						rochesterDraftState
@@ -1171,7 +1162,7 @@
 				</div>
 				<transition name="fade">
 					<div
-						v-if="draftPaused && !waitingForDisconnectedUsers && gameState !== GameState.Watching"
+						v-if="draftPaused && gameState !== GameState.Watching"
 						class="disconnected-user-popup-container"
 					>
 						<div class="disconnected-user-popup">
@@ -1192,7 +1183,7 @@
 				</transition>
 				<!-- Minesweeper Draft -->
 				<minesweeper-draft
-					:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
+					:class="{ disabled: draftPaused }"
 					v-if="
 						(gameState === GameState.MinesweeperPicking || gameState === GameState.MinesweeperWaiting) &&
 						minesweeperDraftState
@@ -1223,46 +1214,6 @@
 					:userID="userID"
 					@pick="rotisserieDraftPick"
 				></rotisserie-draft>
-				<!-- Disconnected User(s) Modal -->
-				<transition name="fade">
-					<div v-if="waitingForDisconnectedUsers" class="disconnected-user-popup-container">
-						<div class="disconnected-user-popup">
-							<div class="swal2-icon swal2-warning swal2-icon-show" style="display: flex">
-								<div class="swal2-icon-content">!</div>
-							</div>
-							<h1>Player(s) disconnected</h1>
-
-							<div
-								v-if="
-									winstonDraftState ||
-									winchesterDraftState ||
-									housmanDraftState ||
-									gridDraftState ||
-									rochesterDraftState ||
-									rotisserieDraftState ||
-									minesweeperDraftState
-								"
-							>
-								{{ `Wait for ${disconnectedUserNames} to come back...` }}
-							</div>
-							<div v-else>
-								<template v-if="userID === sessionOwner">
-									{{ `Wait for ${disconnectedUserNames} to come back, or...` }}
-									<div style="margin-top: 1em">
-										<button @click="socket.emit('replaceDisconnectedPlayers')" class="stop">
-											Replace them by bot(s)
-										</button>
-									</div>
-								</template>
-								<template v-else>
-									{{
-										`Wait for ${disconnectedUserNames} to come back or for the owner to replace them by bot(s).`
-									}}
-								</template>
-							</div>
-						</div>
-					</div>
-				</transition>
 			</div>
 
 			<div v-if="gameState === GameState.Brewing" style="padding: 0.5em 1em 0 1em">

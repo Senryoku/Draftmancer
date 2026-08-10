@@ -107,6 +107,11 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * User display in the session bar before a game starts.
+ * @see Player (equivalent while a game is in progress)
+ */
+
 import { SessionUser } from "@/App.vue";
 import { UserID } from "@/IDTypes";
 import { ReadyState } from "../../../src/Session/SessionTypes";

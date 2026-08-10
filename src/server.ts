@@ -942,9 +942,9 @@ function removePlayer(userID: UserID, sessionID: SessionID, userToRemove: UserID
 	const sess = Sessions[sessionID];
 	if (!sess || userToRemove === sess.owner) return;
 
-	if (sess.users.has(userToRemove)) {
+	if (sess.users.has(userToRemove) || userToRemove in sess.disconnectedUsers) {
 		removeUserFromSession(sessionID, userToRemove);
-		sess.replaceDisconnectedPlayers();
+		sess.replaceDisconnectedPlayer(userToRemove);
 		sess.notifyUserChange();
 	} else if (sess.spectators.has(userToRemove)) {
 		sess.removeSpectator(userToRemove);
@@ -1378,10 +1378,6 @@ function setDescription(userID: UserID, sessionID: SessionID, description: strin
 	Sessions[sessionID].description = description.substring(0, 70);
 	Sessions[sessionID].emitToConnectedNonOwners("description", Sessions[sessionID].description);
 	updatePublicSession(sessionID);
-}
-
-function replaceDisconnectedPlayers(userID: UserID, sessionID: SessionID) {
-	Sessions[sessionID].replaceDisconnectedPlayers();
 }
 
 function distributeJumpstart(userID: UserID, sessionID: SessionID, set: unknown, ack: (result: SocketAck) => void) {
@@ -1826,7 +1822,6 @@ io.on("connection", async function (socket) {
 		socket.on("setDiscardRemainingCardsAt", prepareSocketCallback(setDiscardRemainingCardsAt, true));
 		socket.on("setPublic", prepareSocketCallback(setPublic, true));
 		socket.on("setDescription", prepareSocketCallback(setDescription, true));
-		socket.on("replaceDisconnectedPlayers", prepareSocketCallback(replaceDisconnectedPlayers, true));
 		socket.on("generateBracket", prepareSocketCallback(generateBracket, true));
 		socket.on("lockBracket", prepareSocketCallback(lockBracket, true));
 		socket.on("syncBracketMTGO", prepareSocketCallback(syncBracketMTGO, true));
@@ -2045,7 +2040,7 @@ function deleteSession(sessionID: SessionID) {
 function removeUserFromSession(sessionID: SessionID, userID: UserID) {
 	if (sessionID in Sessions) {
 		const sess = Sessions[sessionID];
-		if (sess.users.has(userID)) {
+		if (sess.users.has(userID) || userID in sess.disconnectedUsers) {
 			sess.remUser(userID);
 			if (sess.isPublic) updatePublicSession(sessionID);
 

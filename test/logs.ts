@@ -321,7 +321,8 @@ describe("Draft Logs", function () {
 			clients[firstDisconnected].disconnect();
 			clients[secondDisconnected].disconnect();
 			clients[ownerIdx].once("resumeOnReconnection", () => done());
-			clients[ownerIdx].emit("replaceDisconnectedPlayers");
+			clients[ownerIdx].emit("removePlayer", getUID(clients[firstDisconnected]));
+			clients[ownerIdx].emit("removePlayer", getUID(clients[secondDisconnected]));
 		});
 
 		it("Draft until the end", (done) => {
