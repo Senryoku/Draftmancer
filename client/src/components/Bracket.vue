@@ -131,145 +131,133 @@
 	<div v-else>No valid bracket.</div>
 </template>
 
-<script lang="ts">
-import { DraftLog } from "@/DraftLog";
-import { Language } from "@/Types";
-import { UserID } from "@/IDTypes";
+<script setup lang="ts">
+import { ref, computed } from "vue";
+import type { DraftLog } from "@/DraftLog";
+import type { Language } from "@/Types";
 
-import { defineComponent, PropType } from "vue";
 import { copyToClipboard } from "../helper";
 import { fireToast } from "../alerts";
 import Decklist from "./Decklist.vue";
-import BracketMatch, { MatchPlayer } from "./BracketMatch.vue";
-import { BracketType, IBracket, isDoubleBracket, Match, PlayerPlaceholder } from "../../../src/Brackets";
+import BracketMatch, { type MatchPlayer } from "./BracketMatch.vue";
+import {
+	BracketType,
+	type IBracket,
+	isDoubleBracket as _isDoubleBracket,
+	type Match,
+	PlayerPlaceholder,
+	DoubleBracket,
+} from "../../../src/Brackets";
 
-function isValid(m: Match) {
-	return m.players[0] >= 0 && m.players[1] >= 0;
-}
-function isPlaceholder(p: number) {
-	return p < 0;
-}
+const isValid = (m: Match) => m.players[0] >= 0 && m.players[1] >= 0;
+const isPlaceholder = (p: number) => p < 0;
 
-export default defineComponent({
-	name: "Bracket",
-	components: { Decklist, BracketMatch },
-	data(inst) {
-		const type: BracketType = !inst.bracket ? BracketType.Single : inst.bracket.type;
-		return {
-			selectedUser: null,
-			typeToGenerate: type,
-		} as { selectedUser: MatchPlayer | null; typeToGenerate: BracketType };
-	},
-	props: {
-		bracket: { type: Object as PropType<IBracket>, required: true },
-		displayControls: { type: Boolean, default: true },
-		editable: { type: Boolean, default: false },
-		locked: { type: Boolean, default: false },
-		fullcontrol: { type: Boolean, default: false },
-		teamDraft: { type: Boolean, default: false }, // Used when fullcontrol is true
-		sessionID: { type: String },
-		draftlog: { type: Object as PropType<DraftLog>, default: null },
-		language: { type: String as PropType<Language>, required: true },
-	},
-	methods: {
-		lock(e: Event) {
-			this.$emit("lock", (e.target as HTMLInputElement).checked);
-		},
-		syncMTGO(e: Event) {
-			this.$emit("syncBracketMTGO", (e.target as HTMLInputElement).checked);
-		},
-		copyLink() {
-			copyToClipboard(
-				`${window.location.protocol}//${window.location.hostname}${
-					window.location.port ? ":" + window.location.port : ""
-				}/bracket?session=${encodeURIComponent(this.sessionID!)}`
-			);
-			fireToast("success", "Bracket Link copied to clipboard!");
-		},
-		hasDeckList(userID: UserID) {
-			return this.draftlog && this.draftlog.users[userID] && this.draftlog.users[userID].decklist;
-		},
+const props = withDefaults(
+	defineProps<{
+		bracket: IBracket;
+		language: Language;
+		displayControls?: boolean;
+		editable?: boolean;
+		locked?: boolean;
+		fullcontrol?: boolean;
+		teamDraft?: boolean;
+		sessionID?: string;
+		draftlog?: DraftLog;
+	}>(),
+	{
+		displayControls: true,
+		editable: false,
+		locked: false,
+		fullcontrol: false,
+		teamDraft: false,
+	}
+);
 
-		getPlayer(m: Match, idx: number): MatchPlayer | PlayerPlaceholder {
-			const playerIdx = m.players[idx];
-			if (playerIdx < 0) return playerIdx;
-			return {
-				userID: this.bracket.players[playerIdx]!.userID,
-				userName: this.bracket.players[playerIdx]!.userName,
-				result: m.results[idx],
-				record: this.records[playerIdx],
-			};
-		},
-		regenerate() {
-			this.$emit("generate", this.teamDraft ? BracketType.Team : this.typeToGenerate);
-		},
+const emit = defineEmits<{
+	(e: "lock", locked: boolean): void;
+	(e: "syncBracketMTGO", sync: boolean): void;
+	(e: "generate", type: BracketType): void;
+	(e: "updated", mID: number, index: number, value: number): void;
+}>();
 
-		realPlayerCount() {
-			return this.bracket.players.filter((u) => u && u.userID !== undefined).length;
-		},
-	},
-	computed: {
-		type() {
-			return this.bracket.type;
-		},
-		lowerBracket() {
-			if (!isDoubleBracket(this.bracket)) return null;
-			return this.bracket.lowerBracket;
-		},
-		final() {
-			if (!isDoubleBracket(this.bracket)) return null;
-			return this.bracket.matches[this.bracket.final];
-		},
-		records() {
-			const r: { wins: number; losses: number }[] = Array(this.bracket.players.length)
-				.fill(null)
-				.map(() => {
-					return { wins: 0, losses: 0 };
-				});
+const selectedUser = ref<MatchPlayer | null>(null);
+const typeToGenerate = ref<BracketType>(props.bracket.type);
 
-			for (let m of this.bracket.matches) {
-				if (isValid(m) && m.results[0] !== m.results[1]) {
-					let winIdx = m.results[0] > m.results[1] ? 0 : 1;
-					r[m.players[winIdx]].wins += 1;
-					r[m.players[(winIdx + 1) % 2]].losses += 1;
-				} else if (m.players[1] === PlayerPlaceholder.Empty && !isPlaceholder(m.players[0])) {
-					r[m.players[0]].wins += 1;
-				} else if (m.players[0] === PlayerPlaceholder.Empty && !isPlaceholder(m.players[1])) {
-					r[m.players[1]].wins += 1;
-				}
-			}
+const lock = (e: Event) => emit("lock", (e.target as HTMLInputElement).checked);
+const syncMTGO = (e: Event) => emit("syncBracketMTGO", (e.target as HTMLInputElement).checked);
+const regenerate = () => emit("generate", props.teamDraft ? BracketType.Team : typeToGenerate.value);
 
-			return r;
-		},
-		teamRecords() {
-			let r = [0, 0];
-			for (let m of this.bracket.matches) {
-				if (isValid(m) && m.results[0] !== m.results[1]) {
-					const teamIdx = m.results[0] > m.results[1] ? 0 : 1;
-					r[teamIdx] += 1;
-				}
-			}
-			return r;
-		},
-		selectedDeckList() {
-			if (this.selectedUser?.userID)
-				return this.draftlog?.users?.[this.selectedUser?.userID].decklist ?? undefined;
-			return undefined;
-		},
-		isSingleBracket() {
-			return this.bracket.type === BracketType.Single;
-		},
-		isSwissBracket() {
-			return this.bracket.type === BracketType.Swiss;
-		},
-		isTeamBracket() {
-			return this.bracket.type === BracketType.Team;
-		},
-		isDoubleBracket() {
-			return isDoubleBracket(this.bracket);
-		},
-	},
+const copyLink = () => {
+	copyToClipboard(
+		`${window.location.protocol}//${window.location.hostname}${
+			window.location.port ? ":" + window.location.port : ""
+		}/bracket?session=${encodeURIComponent(props.sessionID!)}`
+	);
+	fireToast("success", "Bracket Link copied to clipboard!");
+};
+
+const getPlayer = (m: Match, idx: number): MatchPlayer | PlayerPlaceholder => {
+	const playerIdx = m.players[idx];
+	if (playerIdx < 0) return playerIdx;
+	return {
+		userID: props.bracket.players[playerIdx]!.userID,
+		userName: props.bracket.players[playerIdx]!.userName,
+		result: m.results[idx],
+		record: records.value[playerIdx],
+	};
+};
+
+const type = computed(() => props.bracket.type);
+
+const isDoubleBracket = computed(() => _isDoubleBracket(props.bracket));
+const lowerBracket = computed(() => {
+	if (!isDoubleBracket.value) return null;
+	return (props.bracket as DoubleBracket).lowerBracket;
 });
+const final = computed(() => {
+	if (!isDoubleBracket.value) return null;
+	return props.bracket.matches[(props.bracket as DoubleBracket).final];
+});
+
+const records = computed(() => {
+	const r: { wins: number; losses: number }[] = Array(props.bracket.players.length)
+		.fill(null)
+		.map(() => ({ wins: 0, losses: 0 }));
+
+	for (const m of props.bracket.matches) {
+		if (isValid(m) && m.results[0] !== m.results[1]) {
+			const winIdx = m.results[0] > m.results[1] ? 0 : 1;
+			r[m.players[winIdx]].wins += 1;
+			r[m.players[(winIdx + 1) % 2]].losses += 1;
+		} else if (m.players[1] === PlayerPlaceholder.Empty && !isPlaceholder(m.players[0])) {
+			r[m.players[0]].wins += 1;
+		} else if (m.players[0] === PlayerPlaceholder.Empty && !isPlaceholder(m.players[1])) {
+			r[m.players[1]].wins += 1;
+		}
+	}
+
+	return r;
+});
+
+const teamRecords = computed(() => {
+	const r = [0, 0];
+	for (const m of props.bracket.matches) {
+		if (isValid(m) && m.results[0] !== m.results[1]) {
+			const teamIdx = m.results[0] > m.results[1] ? 0 : 1;
+			r[teamIdx] += 1;
+		}
+	}
+	return r;
+});
+
+const selectedDeckList = computed(() => {
+	if (selectedUser.value?.userID) return props.draftlog?.users?.[selectedUser.value.userID]?.decklist ?? undefined;
+	return undefined;
+});
+
+const isSingleBracket = computed(() => props.bracket.type === BracketType.Single);
+const isSwissBracket = computed(() => props.bracket.type === BracketType.Swiss);
+const isTeamBracket = computed(() => props.bracket.type === BracketType.Team);
 </script>
 
 <style scoped>
