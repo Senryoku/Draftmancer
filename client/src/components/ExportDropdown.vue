@@ -36,6 +36,13 @@
 					<font-awesome-icon icon="fa-solid fa-file-download" class="button-icon" />
 				</button>
 			</div>
+			<div class="header">Play online</div>
+			<button
+				@click="exportToMoxgate()"
+				v-tooltip.right="'Open this deck on Moxgate, in your browser. Nothing to install.'"
+			>
+				<font-awesome-icon icon="fa-solid fa-external-link-alt" class="button-icon" />Moxgate
+			</button>
 			<template v-if="hasCustomCards">
 				<div class="header">External services</div>
 				<button
@@ -165,6 +172,18 @@ function exportDeckToFaBrary() {
 	for (const cardID of cardIDs) url += `&cards=${cardID}`;
 
 	window.open(url);
+}
+
+// Moxgate plays real Magic in the browser, so unlike the Cubecana targets below
+// this one sends the full export: the (SET) collector-number tags let it show the
+// printings that were actually drafted. Arena remaps a handful of set codes
+// (DOM -> DAR, the Alchemy Y-sets), which Scryfall does not know; Moxgate falls
+// back to looking those up by name, so the card is still right and only the art
+// defaults. Leaving the ticket off makes this a deck-only link: it imports and
+// saves the deck, and stops there rather than opening a table.
+function exportToMoxgate() {
+	const decklist = exportDeckMTGA(true);
+	window.open(`https://moxgate.com/play?v=1&src=draftmancer&dt=${encodeURIComponent(decklist)}`);
 }
 
 function exportToCubecana(site: "inktable" | "lorcanito" | "tts" | "duelsink") {
