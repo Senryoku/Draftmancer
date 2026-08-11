@@ -66,6 +66,7 @@
 					<BracketMatch
 						v-for="(mID, mIdx) in col"
 						:key="`${colIndex}_${mIdx}`"
+						:userID="userID"
 						:matchID="mID"
 						:players="[getPlayer(bracket.matches[mID], 0), getPlayer(bracket.matches[mID], 1)]"
 						:teamRecords="teamRecords"
@@ -85,6 +86,7 @@
 						:bracketType="bracket.type"
 						@updated="(mID: number, index: number, value: number) => $emit('updated', mID, index, value)"
 						@selectuser="(user: MatchPlayer) => (selectedUser = user)"
+						@join-moxgate-match="(matchID: number) => emit('join-moxgate-match', matchID)"
 					/>
 				</template>
 			</div>
@@ -92,6 +94,7 @@
 				<BracketMatch
 					:key="'final'"
 					:matchID="final!.id"
+					:userID="userID"
 					:players="[getPlayer(final!, 0), getPlayer(final!, 1)]"
 					:bracketType="bracket.type"
 					:draftlog="draftlog"
@@ -99,6 +102,7 @@
 					:editable="editable"
 					@updated="(mID: number, index: number, value: number) => $emit('updated', mID, index, value)"
 					@selectuser="(user: MatchPlayer) => (selectedUser = user)"
+					@join-moxgate-match="(matchID: number) => emit('join-moxgate-match', matchID)"
 				/>
 			</div>
 		</div>
@@ -109,18 +113,20 @@
 					v-for="(mID, mIdx) in col"
 					:key="`${colIndex}_${mIdx}`"
 					:matchID="mID"
+					:userID="userID"
 					:players="[getPlayer(bracket.matches[mID], 0), getPlayer(bracket.matches[mID], 1)]"
 					:bracketType="bracket.type"
 					:draftlog="draftlog"
 					:editable="editable"
 					@updated="(mID: number, index: number, value: number) => $emit('updated', mID, index, value)"
 					@selectuser="(user: MatchPlayer) => (selectedUser = user)"
+					@join-moxgate-match="(matchID: number) => emit('join-moxgate-match', matchID)"
 				/>
 			</div>
 		</div>
 		<div v-if="draftlog && selectedUser">
 			<h1>{{ selectedUser.userName }}'s deck</h1>
-			<decklist
+			<Decklist
 				:list="selectedDeckList"
 				:carddata="draftlog.carddata"
 				:username="selectedUser.userName"
@@ -135,6 +141,7 @@
 import { ref, computed } from "vue";
 import type { DraftLog } from "@/DraftLog";
 import type { Language } from "@/Types";
+import { UserID } from "@/IDTypes";
 
 import { copyToClipboard } from "../helper";
 import { fireToast } from "../alerts";
@@ -156,6 +163,7 @@ const props = withDefaults(
 	defineProps<{
 		bracket: IBracket;
 		language: Language;
+		userID?: UserID;
 		displayControls?: boolean;
 		editable?: boolean;
 		locked?: boolean;
@@ -178,6 +186,7 @@ const emit = defineEmits<{
 	(e: "syncBracketMTGO", sync: boolean): void;
 	(e: "generate", type: BracketType): void;
 	(e: "updated", mID: number, index: number, value: number): void;
+	(e: "join-moxgate-match", matchID: number): void;
 }>();
 
 const selectedUser = ref<MatchPlayer | null>(null);

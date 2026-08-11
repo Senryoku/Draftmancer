@@ -51,6 +51,9 @@
 				</div>
 			</div>
 		</div>
+		<div class="moxgate-button" v-if="playable" v-tooltip="'Play this match on Moxgate'">
+			<font-awesome-icon icon="fa-solid fa-play" @click="emit('join-moxgate-match', matchID)" />
+		</div>
 	</div>
 </template>
 
@@ -71,6 +74,7 @@ export type MatchPlayer = {
 const props = withDefaults(
 	defineProps<{
 		editable: boolean;
+		userID?: UserID;
 		bracketType: BracketType;
 
 		matchID: number;
@@ -91,6 +95,7 @@ const props = withDefaults(
 const emit = defineEmits<{
 	(e: "updated", matchID: number, index: number, value: number): void;
 	(e: "selectuser", p: MatchPlayer): void;
+	(e: "join-moxgate-match", matchID: number): void;
 }>();
 
 function hasDeckList(userID: UserID): boolean {
@@ -139,10 +144,18 @@ const isValid = computed(() => props.players.every((p) => !isPlayerPlaceholder(p
 
 const isTeamBracket = computed(() => props.bracketType === BracketType.Team);
 const isDoubleBracket = computed(() => props.bracketType === BracketType.Double);
+
+const playable = computed(
+	() =>
+		isValid.value &&
+		(props.userID === (props.players[0] as MatchPlayer).userID ||
+			props.userID === (props.players[1] as MatchPlayer).userID)
+);
 </script>
 
 <style scoped>
 .bracket-match {
+	position: relative;
 	display: flex;
 	align-items: center;
 	margin: 0.5em;
@@ -211,5 +224,13 @@ const isDoubleBracket = computed(() => props.bracketType === BracketType.Double)
 
 .result-input {
 	width: 2.2em;
+}
+
+.moxgate-button {
+	cursor: pointer;
+	position: absolute;
+	top: 0;
+	left: 50%;
+	transform: translateX(-50%) translateY(-50%);
 }
 </style>

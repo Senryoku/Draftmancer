@@ -2739,6 +2739,7 @@
 				<bracket-component
 					:bracket="bracket"
 					:teamDraft="teamDraft"
+					:userID="userID"
 					:editable="userID === sessionOwner || !bracketLocked"
 					:locked="bracketLocked"
 					:fullcontrol="userID === sessionOwner"
@@ -2749,7 +2750,8 @@
 					@generate="generateBracket"
 					@lock="lockBracket"
 					@syncBracketMTGO="syncBracketMTGO"
-				></bracket-component>
+					@join-moxgate-match="joinMoxgateMatch"
+				/>
 			</template>
 		</modal>
 		<modal :displayed="displayedModal === 'sampleHand'" @close="displayedModal = ''">

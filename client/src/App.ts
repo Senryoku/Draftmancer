@@ -98,6 +98,7 @@ const SealedPresentation = defineAsyncComponent(() => import("./components/Seale
 import CardBack from /* webpackPrefetch: true */ "./assets/img/cardback.webp";
 import { Tiebreaker } from "../../src/SilentAuctionDraftTiebreakers";
 import { DraftEffect } from "./components/DraftEffectDropdown.vue";
+import { exportToMTGA } from "./exportToMTGA";
 const img = new Image();
 img.src = CardBack;
 
@@ -3342,6 +3343,16 @@ export default defineComponent({
 		syncBracketMTGO(val: boolean) {
 			if (this.userID !== this.sessionOwner) return;
 			this.socket.emit("syncBracketMTGO", val);
+		},
+		joinMoxgateMatch(matchID: number) {
+			const decklist = exportToMTGA(this.deck, this.sideboard, this.language, this.lands, {
+				preferredBasics: this.preferredBasics,
+				sideboardBasics: this.sideboardBasics,
+				full: true,
+			});
+			window.open(
+				`https://moxgate.com/play?v=1&src=draftmancer&dt=${encodeURIComponent(decklist)}&t=${encodeURIComponent(this.sessionID!)}-${matchID}&n=${encodeURIComponent(this.userName)}`
+			);
 		},
 		// Deck/Sideboard management
 		addToDeck(card: UniqueCard | UniqueCard[], options: { event?: MouseEvent } | undefined = undefined) {
