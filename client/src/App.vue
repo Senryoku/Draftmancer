@@ -775,7 +775,8 @@
 									:language="language"
 									:key="draftLogLive.time"
 									ref="draftloglive"
-								></DraftLogLiveComponent>
+								>
+								</DraftLogLiveComponent>
 							</div>
 						</div>
 						<div
