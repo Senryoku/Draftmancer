@@ -235,7 +235,7 @@ const playable = computed(
 	cursor: pointer;
 	position: absolute;
 	top: 0;
-	left: 50%;
+	right: 14%;
 	transform: translateX(-50%) translateY(-50%);
 	/* The button straddles the top edge of the match box, so it needs its own
 	   ground: without it the icon sits half on #333 and half on the page. */
