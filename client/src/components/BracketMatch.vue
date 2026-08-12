@@ -51,6 +51,14 @@
 				</div>
 			</div>
 		</div>
+		<div
+			class="moxgate-button"
+			v-if="playable"
+			v-tooltip="'Play this match on Moxgate'"
+			@click="emit('join-moxgate-match', matchID)"
+		>
+			<img src="../assets/img/moxgate-icon.png" alt="Moxgate" />
+		</div>
 	</div>
 </template>
 
@@ -71,6 +79,7 @@ export type MatchPlayer = {
 const props = withDefaults(
 	defineProps<{
 		editable: boolean;
+		userID?: UserID;
 		bracketType: BracketType;
 
 		matchID: number;
@@ -91,6 +100,7 @@ const props = withDefaults(
 const emit = defineEmits<{
 	(e: "updated", matchID: number, index: number, value: number): void;
 	(e: "selectuser", p: MatchPlayer): void;
+	(e: "join-moxgate-match", matchID: number): void;
 }>();
 
 function hasDeckList(userID: UserID): boolean {
@@ -139,10 +149,18 @@ const isValid = computed(() => props.players.every((p) => !isPlayerPlaceholder(p
 
 const isTeamBracket = computed(() => props.bracketType === BracketType.Team);
 const isDoubleBracket = computed(() => props.bracketType === BracketType.Double);
+
+const playable = computed(
+	() =>
+		isValid.value &&
+		(props.userID === (props.players[0] as MatchPlayer).userID ||
+			props.userID === (props.players[1] as MatchPlayer).userID)
+);
 </script>
 
 <style scoped>
 .bracket-match {
+	position: relative;
 	display: flex;
 	align-items: center;
 	margin: 0.5em;
@@ -211,5 +229,26 @@ const isDoubleBracket = computed(() => props.bracketType === BracketType.Double)
 
 .result-input {
 	width: 2.2em;
+}
+
+.moxgate-button {
+	cursor: pointer;
+	position: absolute;
+	top: 0;
+	right: 14%;
+	transform: translateX(-50%) translateY(-50%);
+	/* The button straddles the top edge of the match box, so it needs its own
+	   ground: without it the icon sits half on #333 and half on the page. */
+	background: #333;
+	border-radius: 50%;
+	padding: 4px;
+	display: flex;
+	line-height: 0;
+}
+
+.moxgate-button img {
+	display: block;
+	width: 22px;
+	height: 22px;
 }
 </style>
