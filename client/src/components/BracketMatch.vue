@@ -51,8 +51,13 @@
 				</div>
 			</div>
 		</div>
-		<div class="moxgate-button" v-if="playable" v-tooltip="'Play this match on Moxgate'">
-			<font-awesome-icon icon="fa-solid fa-play" @click="emit('join-moxgate-match', matchID)" />
+		<div
+			class="moxgate-button"
+			v-if="playable"
+			v-tooltip="'Play this match on Moxgate'"
+			@click="emit('join-moxgate-match', matchID)"
+		>
+			<img src="../assets/img/moxgate-icon.png" alt="Moxgate" />
 		</div>
 	</div>
 </template>
@@ -232,5 +237,18 @@ const playable = computed(
 	top: 0;
 	left: 50%;
 	transform: translateX(-50%) translateY(-50%);
+	/* The button straddles the top edge of the match box, so it needs its own
+	   ground: without it the icon sits half on #333 and half on the page. */
+	background: #333;
+	border-radius: 50%;
+	padding: 4px;
+	display: flex;
+	line-height: 0;
+}
+
+.moxgate-button img {
+	display: block;
+	width: 22px;
+	height: 22px;
 }
 </style>
