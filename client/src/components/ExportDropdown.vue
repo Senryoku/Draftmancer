@@ -36,13 +36,15 @@
 					<font-awesome-icon icon="fa-solid fa-file-download" class="button-icon" />
 				</button>
 			</div>
-			<div class="header">Play online</div>
-			<button
-				@click="exportToMoxgate()"
-				v-tooltip.right="'Open this deck on Moxgate, in your browser. Nothing to install.'"
-			>
-				<font-awesome-icon icon="fa-solid fa-external-link-alt" class="button-icon" />Moxgate
-			</button>
+			<template v-if="!hasCustomCards">
+				<div class="header">Play online</div>
+				<button
+					@click="exportToMoxgate()"
+					v-tooltip.right="'Open this deck on Moxgate, in your browser. Nothing to install.'"
+				>
+					<font-awesome-icon icon="fa-solid fa-external-link-alt" class="button-icon" />Moxgate
+				</button>
+			</template>
 			<template v-if="hasCustomCards">
 				<div class="header">External services</div>
 				<button
@@ -221,6 +223,7 @@ function downloadCollectorNumber() {
 .row > button:first-child {
 	flex-grow: 1;
 	min-width: 0;
-	padding-left: 28px !important; /* Account for the icon. #main-container messes with the specificity, again. */
+	padding-left: 28px !important;
+	/* Account for the icon. #main-container messes with the specificity, again. */
 }
 </style>
