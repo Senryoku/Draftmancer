@@ -38,10 +38,7 @@
 			</div>
 			<template v-if="!hasCustomCards">
 				<div class="header">Play online</div>
-				<button
-					@click="exportToMoxgate()"
-					v-tooltip.right="'Open this deck on Moxgate, in your browser. Nothing to install.'"
-				>
+				<button @click="exportToMoxgate()" v-tooltip.right="'Export directly to Moxgate.'">
 					<font-awesome-icon icon="fa-solid fa-external-link-alt" class="button-icon" />Moxgate
 				</button>
 			</template>
