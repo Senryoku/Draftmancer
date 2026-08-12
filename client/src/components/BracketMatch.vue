@@ -57,7 +57,7 @@
 			v-tooltip="'Play this match on Moxgate'"
 			@click="emit('join-moxgate-match', matchID)"
 		>
-			<img src="../assets/img/moxgate-icon.svg" alt="Moxgate" />
+			<img src="../assets/img/moxgate-icon.png" alt="Moxgate" />
 		</div>
 	</div>
 </template>
