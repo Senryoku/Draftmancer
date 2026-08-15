@@ -1,6 +1,17 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
+			<em>August 16, 2026</em>
+			<p>
+				Removed the automatic session-wide pause when a player disconnects. Their individual timer is still
+				paused.
+			</p>
+			<p>
+				Added quick export to <a href="https://www.moxgate.com/" target="_blank">Moxgate</a>. The tournament
+				brackets now includes direct links to play your matches in Moxgate.
+			</p>
+		</div>
+		<div class="news">
 			<em>July 31, 2026</em>
 			<p>
 				<img src="img/sets/hob.svg" class="set-icon" style="--invertedness: 100%" alt="HOB" /> The Hobbit (HOB)

@@ -1,5 +1,12 @@
 [
 	{
+		"date": "16/08/2026",
+		"notes": [
+			"Removed the automatic pause when a player disconnects.",
+			"Moxgate integration (export & bracket matches)."
+		]
+	},
+	{
 		"date": "31/07/2026",
 		"notes": [
 			"The Hobbit (HOB) support."
