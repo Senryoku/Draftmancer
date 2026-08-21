@@ -14,7 +14,7 @@ import {
 	OracleID,
 	ParameterizedDraftEffectType,
 } from "./CardTypes.js";
-import { matchCardVersion } from "./parseCardList.js";
+import { ArenaLineRegex, matchCardVersion, XMageToArena } from "./parseCardList.js";
 import { hasOptionalProperty, hasProperty, isArrayOf, isRecord, isString, isUnknown } from "./TypeChecks.js";
 
 const CUBECOBRA_LOG_ENDPOINT = process.env.CUBECOBRA_LOG_ENDPOINT;
@@ -89,21 +89,21 @@ export function sendDraftLogToCubeCobra(session: Session) {
 					}),
 					decklist: user.decklist
 						? {
-								main: user.decklist.main.map((c) => draftLog.carddata[c].oracle_id),
-								side: user.decklist.side.map((c) => draftLog.carddata[c].oracle_id),
-								lands: user.decklist.lands ?? { W: 0, U: 0, B: 0, R: 0, G: 0 },
-							}
+							main: user.decklist.main.map((c) => draftLog.carddata[c].oracle_id),
+							side: user.decklist.side.map((c) => draftLog.carddata[c].oracle_id),
+							lands: user.decklist.lands ?? { W: 0, U: 0, B: 0, R: 0, G: 0 },
+						}
 						: {
-								// Bots don't have a decklist, reconstruct it.
-								main: user.picks
-									.map((pick) => {
-										const p = pick as DraftPick;
-										return p.pick.map((i) => draftLog.carddata[p.booster[i]].oracle_id);
-									})
-									.flat(),
-								side: [],
-								lands: { W: 0, U: 0, B: 0, R: 0, G: 0 },
-							},
+							// Bots don't have a decklist, reconstruct it.
+							main: user.picks
+								.map((pick) => {
+									const p = pick as DraftPick;
+									return p.pick.map((i) => draftLog.carddata[p.booster[i]].oracle_id);
+								})
+								.flat(),
+							side: [],
+							lands: { W: 0, U: 0, B: 0, R: 0, G: 0 },
+						},
 				})),
 			});
 			console.log(util.inspect(payload, false, null, true));
@@ -187,12 +187,12 @@ function convertCustomCard(state: { customCards: Record<string, Card>; customCar
 		subtypes: types.subtypes,
 		back: c.imgBackUrl
 			? {
-					name: customID,
-					printed_names: {},
-					type: "",
-					subtypes: [],
-					image_uris: { en: c.imgBackUrl },
-				}
+				name: customID,
+				printed_names: {},
+				type: "",
+				subtypes: [],
+				image_uris: { en: c.imgBackUrl },
+			}
 			: undefined,
 		rating: 0,
 		in_booster: false,
@@ -397,41 +397,28 @@ export async function importFormat(cardList: CustomCardList, format: DraftFormat
 		for (const slot of pack.slots) {
 			if (!sheets[slot.filter]) {
 				// Request the filtered list from Cube Cobra
+				let boards = "allBoards=1&"
+				if (slot.board) // Not sure if still in use.
+					boards = `boards=${encodeURIComponent(slot.board)}&`
+				// Use the Xmage endpoint to get version (set/collector number) information.
 				const filteredList = await axios.get(
-					`https://cubecobra.com/cube/download/plaintext/${cardList.cubeCobraID}?showother=true&filter=${slot.filter}`,
+					`https://cubecobra.com/cube/download/xmage/${cardList.cubeCobraID}?${boards}showother=true&filter=${encodeURIComponent(slot.filter)}`,
 					{ timeout: 5000 }
 				);
-				const lines: string[] = filteredList.data.split(/\r?\n/);
-				if (slot.board) {
-					// Filter down to the requested board
-					const boardIndex = lines.findIndex((line) => line.startsWith(`# ` + slot.board));
-					if (boardIndex >= 0) {
-						lines.splice(0, boardIndex + 1);
-						const boardEnd = lines.findIndex((line) => line.startsWith("#"));
-						if (boardEnd > 0) lines.splice(boardEnd);
-					}
-				}
 				const sheet: Sheet = { collation: "random", cards: {} };
+				const arena = XMageToArena(filteredList.data);
+				if (!arena) throw new Error(`Failed to parse Cube Cobra filtered list for filter '${slot.filter}'`);
+				const lines: string[] = arena.split(/\r?\n/);
 				for (const line of lines) {
 					if (line === "") continue;
-					if (line.startsWith("#")) {
-						if (line == "# maybeboard") break; // FIXME: Might not be needed anymore?
-						continue;
-					}
-					// Search the cardID corresponding to the card name, first within custom cards,
-					// then within the official cards (cross-referenced with the default sheet to get the correct version)
+					const match = line.trim().match(ArenaLineRegex);
+					if (!match) throw new Error(`Failed to parse line '${line}' in Cube Cobra filtered list for filter '${slot.filter}'`);
+					const [, countStr, name, set, number, foilStr] = match;
+					// Search the cardID corresponding to the card name, first within custom cards, then within the official cards.
 					let cid = null;
-					const customCard = customCards.find((c) => c.name === line);
+					const customCard = customCards.find((c) => c.name === name);
 					if (customCard) cid = customCard.id;
-					else {
-						const candidates = getCardVersionsByName(line);
-						for (const candidate of candidates) {
-							if (candidate in defaultSheet.cards) {
-								cid = candidate;
-								break;
-							}
-						}
-					}
+					else cid = matchCardVersion(name, set, number, true);
 					if (cid) {
 						if (sheet.cards[cid]) sheet.cards[cid] += 1;
 						else sheet.cards[cid] = 1;

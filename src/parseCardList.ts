@@ -21,7 +21,7 @@ import {
 } from "./TypeChecks.js";
 import { DraftmancerAI } from "./bots/DraftmancerAI.js";
 
-const lineRegex =
+export const ArenaLineRegex =
 	/^(?:(?<count>\d+)\s+)?(?<name>[^\v\n]+?)(?:\s+\((?<set>\w+)\)(?:\s+(?<number>[^+\s()]+))?)?(?:\s+\+?(F))?$/;
 
 const CommentDelimiter = "#";
@@ -78,7 +78,7 @@ export function parseLine(
 	} = { fallbackToCardName: false, customCards: undefined }
 ): SocketError | { count: number; cardID: CardID; foil: boolean } {
 	const trimedLine = line.trim();
-	const match = trimedLine.match(lineRegex);
+	const match = trimedLine.match(ArenaLineRegex);
 	if (!match)
 		return ackError({
 			title: `Syntax Error`,
@@ -227,9 +227,8 @@ function extractJSON(
 	if (lines[startIdx][0] !== opening) {
 		return ackError({
 			title: `Unexpected Character`,
-			text: `Expected a JSON ${opening === "[" ? "Array" : "Object"}. Line ${startIdx + 1}: Expected '${opening}', got '${
-				lines[startIdx + 1]
-			}'.`,
+			text: `Expected a JSON ${opening === "[" ? "Array" : "Object"}. Line ${startIdx + 1}: Expected '${opening}', got '${lines[startIdx + 1]
+				}'.`,
 		});
 	}
 	// Search for the section (matching closing bracket)
@@ -637,9 +636,8 @@ function parsePackLayoutsDeprecated(
 		if (!match) {
 			return ackError({
 				title: `Parsing Error`,
-				text: `Expected layout declaration (' - LayoutName (Weight)'), got '${lines[lineIdx]}' (line ${
-					lineIdx + 1
-				}).`,
+				text: `Expected layout declaration (' - LayoutName (Weight)'), got '${lines[lineIdx]}' (line ${lineIdx + 1
+					}).`,
 			});
 		}
 		const layoutName = match[1];
@@ -651,9 +649,8 @@ function parsePackLayoutsDeprecated(
 			if (!slotMatch) {
 				return ackError({
 					title: `Parsing Error`,
-					text: `Expected slot specification (' CardCount SlotName'), got '${lines[lineIdx]}' (line ${
-						lineIdx + 1
-					}).`,
+					text: `Expected slot specification (' CardCount SlotName'), got '${lines[lineIdx]}' (line ${lineIdx + 1
+						}).`,
 				});
 			}
 			layouts[layoutName].slots.push({
