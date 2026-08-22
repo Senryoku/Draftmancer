@@ -1,0 +1,60 @@
+{
+	"name": "smol-string",
+	"version": "1.0.3",
+	"description": "Compression for browser localStorage",
+	"author": "Senryoku <maretverdant@gmail.com>",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Senryoku/smol-string.git"
+	},
+	"license": "MIT",
+	"keywords": [
+		"compression",
+		"browser",
+		"localStorage",
+		"zig",
+		"typescript"
+	],
+	"bugs": {
+		"url": "https://github.com/Senryoku/smol-string/issues"
+	},
+	"homepage": "https://github.com/Senryoku/smol-string",
+	"type": "module",
+	"scripts": {
+		"dev": "vite",
+		"build": "tsc && vite build",
+		"preview": "vite preview",
+		"test": "vitest",
+		"test:chrome": "vitest --browser.instances.0.name=chrome --browser.instances.0.browser=chrome --browser.headless --config browser.vitest.config.ts",
+		"test:firefox": "vitest --browser.instances.0.name=firefox --browser.instances.0.browser=firefox --browser.headless --config browser.vitest.config.ts",
+		"test:edge": "vitest --browser.instances.0.name=edge --browser.instances.0.browser=edge --browser.headless --config browser.vitest.config.ts",
+		"test:safari": "vitest --browser.instances.0.name=safari --browser.instances.0.browser=safari --no-browser.headless --config browser.vitest.config.ts",
+		"bench": "vitest bench",
+		"bench:chrome": "vitest bench --no-watch --browser.instances.0.name=chrome --browser.instances.0.browser=chrome --browser.headless --config browser.vitest.config.ts",
+		"bench:firefox": "vitest bench --no-watch --browser.instances.0.name=firefox --browser.instances.0.browser=firefox --browser.headless --config browser.vitest.config.ts",
+		"bench:edge": "vitest bench --no-watch --browser.instances.0.name=edge --browser.instances.0.browser=edge --browser.headless --config browser.vitest.config.ts",
+		"bench:safari": "vitest bench --no-watch --browser.instances.0.name=safari --browser.instances.0.browser=safari --no-browser.headless --config browser.vitest.config.ts",
+		"wasm-opt": "wasm-opt -O4 --all-features ../zig-out/bin/smol-string.wasm -o ./src/module.wasm"
+	},
+	"main": "./dist/smol-string.js",
+	"exports": {
+		".": {
+			"types": "./dist/smol-string.d.ts",
+			"import": "./dist/smol-string.js"
+		},
+		"./worker": {
+			"types": "./dist/smol-string-worker.d.ts",
+			"import": "./dist/smol-string-worker.js"
+		}
+	},
+	"devDependencies": {
+		"@vitest/browser": "^3.2.4",
+		"binaryen": "^124.0.0",
+		"smol-string": "^1.0.3",
+		"typescript": "^5.2.2",
+		"vite": "^7.1.10",
+		"vite-plugin-dts": "^4.3.0",
+		"vitest": "^3.2.4",
+		"webdriverio": "^9.2.11"
+	}
+}
