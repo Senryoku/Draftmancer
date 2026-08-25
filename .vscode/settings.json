@@ -1,4 +1,11 @@
 {
 	"typescript.tsdk": "node_modules/typescript/lib",
-	"eslint.useFlatConfig": false
+	"eslint.useFlatConfig": false,
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
+	"[vue]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"[typescript]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	}
 }

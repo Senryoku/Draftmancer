@@ -588,7 +588,7 @@
 					style="margin-right: 0.5em"
 					@click="if (userID === sessionOwner) randomizeSeatingOrder = !randomizeSeatingOrder;"
 					v-tooltip="{
-						content: `Randomize Seating Order on draft start: <strong>${
+						content: `Randomize Seating Order of players and bots on draft start: <strong>${
 							randomizeSeatingOrder ? 'Enabled' : 'Disabled'
 						}</strong>`,
 						html: true,

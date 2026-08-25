@@ -1,5 +1,5 @@
 import { v1 as uuidv1 } from "uuid";
-import { negMod } from "./utils.js";
+import { negMod, random } from "./utils.js";
 import { IBot, SimpleBot, Bot } from "./Bot.js";
 import { MTGDraftBotParameters } from "./bots/ExternalBotInterface.js";
 import { UniqueCard } from "./CardTypes.js";
@@ -48,6 +48,7 @@ export class DraftState extends IDraftState {
 			botCount: number;
 			simpleBots: boolean;
 			botParameters?: MTGDraftBotParameters;
+			randomizeBotPlacement: boolean;
 		}
 	) {
 		super("draft");
@@ -62,14 +63,21 @@ export class DraftState extends IDraftState {
 			};
 		});
 
-		// Distribute bots evenly around the table
-		let idx = 0;
-		for (let i = 0; i < options.botCount; ++i) {
-			// Search next human player
-			while (playersToCreate[idx].isBot) idx = (idx + 1) % playersToCreate.length;
-			++idx;
-			// Insert a bot right after
-			playersToCreate.splice(idx, 0, { isBot: true, userID: uuidv1() });
+		if (options.randomizeBotPlacement) {
+			for (let i = 0; i < options.botCount; ++i) {
+				const idx = random.integer(0, playersToCreate.length - 1);
+				playersToCreate.splice(idx, 0, { isBot: true, userID: uuidv1() });
+			}
+		} else {
+			// Distribute bots evenly around the table
+			let idx = 0;
+			for (let i = 0; i < options.botCount; ++i) {
+				// Search next human player
+				while (playersToCreate[idx].isBot) idx = (idx + 1) % playersToCreate.length;
+				++idx;
+				// Insert a bot right after
+				playersToCreate.splice(idx, 0, { isBot: true, userID: uuidv1() });
+			}
 		}
 
 		let botIndex = 0;

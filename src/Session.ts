@@ -1963,6 +1963,7 @@ export class Session implements IIndexable {
 			simpleBots: simpleBots,
 			botCount: this.bots,
 			botParameters,
+			randomizeBotPlacement: this.randomizeSeatingOrder,
 		});
 		this.disconnectedUsers = {};
 		this.drafting = true;

@@ -134,6 +134,7 @@ export function restoreSession(s: any, owner: UserID) {
 					boosterSettings: s.draftState.boosterSettings,
 					botCount: 0,
 					simpleBots: false,
+					randomizeBotPlacement: false,
 				});
 				copyPODProps(s.draftState, draftState);
 				for (const userID in s.draftState.players) {
