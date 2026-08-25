@@ -3641,6 +3641,10 @@
         "fullName": "Universes Within",
         "icon": "img/sets/slx.svg"
     },
+    "slz": {
+        "code": "slz",
+        "fullName": "The Zeta Set"
+    },
     "smh3": {
         "code": "smh3",
         "fullName": "Modern Horizons 3 Substitute Cards",
@@ -4291,7 +4295,7 @@
     },
     "ymkm": {
         "code": "ymkm",
-        "fullName": "Alchemy: Murders at Karlov Manor ",
+        "fullName": "Alchemy: Murders at Karlov Manor",
         "block": "Alchemy 2024",
         "icon": "img/sets/ymkm.svg"
     },
