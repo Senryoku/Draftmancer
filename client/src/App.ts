@@ -596,11 +596,6 @@ export default defineComponent({
 				this.disconnectedUsers = data.disconnectedUsers;
 			});
 
-			this.socket.on("resumeOnReconnection", (msg) => {
-				this.disconnectedUsers = {};
-				fireToast("success", msg.title, msg.text);
-			});
-
 			this.socket.on("updateUser", (data) => {
 				const user = this.userByID[data.userID];
 				if (!user) {

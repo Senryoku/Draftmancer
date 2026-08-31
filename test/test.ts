@@ -558,8 +558,16 @@ describe("Single Player Draft", function () {
 		client.emit("startDraft", ackNoError);
 	});
 
-	it("Reconnects, draft restarts.", function (done) {
-		client.once("resumeOnReconnection", () => done());
+	it("Reconnects.", function (done) {
+		client.on("sessionOptions", (data) => {
+			if (data.virtualPlayersData) {
+				const disconnectedCount = Object.values(data.virtualPlayersData).filter((u) => u.isDisconnected).length;
+				if (disconnectedCount === 0) {
+					client.removeListener("sessionOptions");
+					done();
+				}
+			}
+		});
 		client.connect();
 	});
 
@@ -1003,9 +1011,17 @@ describe("Single Draft (Two Players)", function () {
 			clients[nonOwnerIdx].disconnect();
 		});
 
-		it("Non-owner reconnects, draft restarts.", function (done) {
-			clients[ownerIdx].once("resumeOnReconnection", function () {
-				done();
+		it("Non-owner reconnects.", function (done) {
+			clients[ownerIdx].on("sessionOptions", (data) => {
+				if (data.virtualPlayersData) {
+					const disconnectedCount = Object.values(data.virtualPlayersData).filter(
+						(u) => u.isDisconnected
+					).length;
+					if (disconnectedCount === 0) {
+						clients[ownerIdx].removeListener("sessionOptions");
+						done();
+					}
+				}
 			});
 			clients[nonOwnerIdx].connect();
 		});
@@ -1045,8 +1061,16 @@ describe("Single Draft (Two Players)", function () {
 		});
 
 		it("Non-owner reconnects, draft restarts.", function (done) {
-			clients[ownerIdx].once("resumeOnReconnection", function () {
-				done();
+			clients[ownerIdx].on("sessionOptions", (data) => {
+				if (data.virtualPlayersData) {
+					const disconnectedCount = Object.values(data.virtualPlayersData).filter(
+						(u) => u.isDisconnected
+					).length;
+					if (disconnectedCount === 0) {
+						clients[ownerIdx].removeListener("sessionOptions");
+						done();
+					}
+				}
 			});
 			clients[nonOwnerIdx].connect();
 		});
@@ -1061,7 +1085,15 @@ describe("Single Draft (Two Players)", function () {
 		});
 
 		it("Non-owner is replaced by a bot.", function (done) {
-			clients[ownerIdx].once("resumeOnReconnection", () => done());
+			clients[ownerIdx].on("sessionOptions", (data) => {
+				if (data.virtualPlayersData) {
+					const botCount = Object.values(data.virtualPlayersData).filter((u) => u.isReplaced).length;
+					if (botCount === 1) {
+						clients[ownerIdx].removeListener("sessionOptions");
+						done();
+					}
+				}
+			});
 			clients[ownerIdx].emit("removePlayer", getUID(clients[nonOwnerIdx]));
 		});
 
@@ -1146,7 +1178,17 @@ describe("Single Draft (Two Players)", function () {
 		});
 
 		it("Non-owner reconnects, draft restarts.", function (done) {
-			clients[ownerIdx].once("resumeOnReconnection", () => done());
+			clients[ownerIdx].on("sessionOptions", (data) => {
+				if (data.virtualPlayersData) {
+					const disconnectedCount = Object.values(data.virtualPlayersData).filter(
+						(u) => u.isDisconnected
+					).length;
+					if (disconnectedCount === 0) {
+						clients[ownerIdx].removeListener("sessionOptions");
+						done();
+					}
+				}
+			});
 			clients[nonOwnerIdx].connect();
 		});
 
@@ -1164,7 +1206,15 @@ describe("Single Draft (Two Players)", function () {
 		});
 
 		it("Non-owners are replaced by bots.", function (done) {
-			clients[ownerIdx].once("resumeOnReconnection", () => done());
+			clients[ownerIdx].on("sessionOptions", (data) => {
+				if (data.virtualPlayersData) {
+					const replacedCount = Object.values(data.virtualPlayersData).filter((u) => u.isReplaced).length;
+					if (replacedCount === 2) {
+						clients[ownerIdx].removeListener("sessionOptions");
+						done();
+					}
+				}
+			});
 			clients[ownerIdx].emit("removePlayer", getUID(clients[nonOwnerIdx]));
 			clients[ownerIdx].emit("removePlayer", thirdID);
 		});
@@ -1329,8 +1379,14 @@ describe("Single Draft (Two Players)", function () {
 		});
 
 		it("Owner chooses to replace by bots.", function (done) {
-			clients[ownerIdx].once("resumeOnReconnection", function () {
-				done();
+			clients[ownerIdx].on("sessionOptions", (data) => {
+				if (data.virtualPlayersData) {
+					const replacedCount = Object.values(data.virtualPlayersData).filter((u) => u.isReplaced).length;
+					if (replacedCount === 1) {
+						clients[ownerIdx].removeListener("sessionOptions");
+						done();
+					}
+				}
 			});
 			clients[ownerIdx].emit("removePlayer", replacedID);
 		});
@@ -1370,8 +1426,16 @@ describe("Single Draft (Two Players)", function () {
 		});
 
 		it("Non-owner reconnects, draft restarts.", function (done) {
-			clients[ownerIdx].on("resumeOnReconnection", function () {
-				done();
+			clients[ownerIdx].on("sessionOptions", (data) => {
+				if (data.virtualPlayersData) {
+					const disconnectedCount = Object.values(data.virtualPlayersData).filter(
+						(u) => u.isDisconnected
+					).length;
+					if (disconnectedCount === 0) {
+						clients[ownerIdx].removeListener("sessionOptions");
+						done();
+					}
+				}
 			});
 			clients[nonOwnerIdx].connect();
 		});

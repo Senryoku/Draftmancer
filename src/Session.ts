@@ -227,8 +227,8 @@ export class Session implements IIndexable {
 			clearTimeout(this.stableLogTimeout);
 			this.onStableLog();
 		}
-		if (isDraftState(this.draftState) && this.draftState.pendingTimeout)
-			clearTimeout(this.draftState.pendingTimeout);
+		if (isDraftState(this.draftState) && this.draftState.pendingReviewTimeout)
+			clearTimeout(this.draftState.pendingReviewTimeout);
 		if (this.bracket?.MTGOSynced)
 			this.bracket.players.forEach((p) => {
 				if (p) MatchResults.unsubscribe(p!.userName);
@@ -2811,7 +2811,7 @@ export class Session implements IIndexable {
 		if (s.boosters.length === 0) return this.endDraft();
 
 		const doDistributeBoosters = () => {
-			if (s.pendingTimeout) s.pendingTimeout = null;
+			if (s.pendingReviewTimeout) s.pendingReviewTimeout = null;
 			const boosters = s.boosters.splice(0, Object.keys(s.players).length);
 			s.numPicks = boosters[0].length;
 
@@ -2847,8 +2847,8 @@ export class Session implements IIndexable {
 			);
 			this.emitToConnectedUsers("startReviewPhase", roundReviewTimer);
 			// FIXME: Using this method, if everyone disconnects during the review phase (not impossible, especially with a single player), the draft will be completely stuck.
-			//        This is currently handled by a workaround in resumeOnReconnection, but we can probably do better.
-			s.pendingTimeout = setTimeout(doDistributeBoosters, roundReviewTimer * 1000);
+			//        This is currently handled by a workaround on deserialization, but we can probably do better.
+			s.pendingReviewTimeout = setTimeout(doDistributeBoosters, roundReviewTimer * 1000);
 		} else doDistributeBoosters();
 	}
 
@@ -2863,44 +2863,13 @@ export class Session implements IIndexable {
 		return false;
 	}
 
-	resumeOnReconnection(msg: { title: string; text: string }) {
-		if (!this.drafting) return;
-
-		console.warn(`resumeOnReconnection(): Restarting draft for session ${this.id}.`);
-
-		this.emitToConnectedUsers("sessionOptions", { virtualPlayersData: this.getSortedVirtualPlayerData() });
-
-		if (isDraftState(this.draftState)) {
-			if (!this.draftPaused) this.resumeCountdowns();
-			// Restart bot pick chains
-			for (const uid in this.draftState.players)
-				if (this.draftState.players[uid].isBot) this.startBotPickChain(uid);
-			// Disconnect happened during the review phase
-			if (Object.values(this.draftState.players).every((p) => p.boosters.length === 0)) {
-				// Workaround for a very specific case where everyone disconnects during a review phase, leaving everyone waiting for the next round to start.
-				if (!this.draftState.pendingTimeout) setImmediate(this.distributeBoosters.bind(this));
-				else {
-					// FIXME: This is clearly non-standard, but it should work in Node 18, 20 and 22.
-					const remainingTime =
-						((this.draftState.pendingTimeout as unknown as { _idleStart: number })._idleStart +
-							(this.draftState.pendingTimeout as unknown as { _idleTimeout: number })._idleTimeout) /
-							1000 -
-						process.uptime();
-					this.emitToConnectedUsers("startReviewPhase", remainingTime);
-				}
-			}
-		}
-
-		this.emitToConnectedUsers("resumeOnReconnection", new Message(msg.title, msg.text));
-	}
-
 	endDraft() {
 		const s = this.draftState;
 		if (!isDraftState(s)) return;
 
-		if (s.pendingTimeout) {
-			clearTimeout(s.pendingTimeout);
-			s.pendingTimeout = null;
+		if (s.pendingReviewTimeout) {
+			clearTimeout(s.pendingReviewTimeout);
+			s.pendingReviewTimeout = null;
 		}
 
 		// Allow other callbacks (like distributeBoosters) to finish before proceeding (actually an issue in tests).
@@ -3598,13 +3567,29 @@ export class Session implements IIndexable {
 				botScores: this.draftState.players[userID].botInstance.lastScores,
 				state: this.draftState.syncData(userID),
 			});
+			if (this.draftState.pendingReviewTimeout) {
+				this.resumeReviewTimer(userID);
+			} else {
+				this.resumeCountdown(userID);
+			}
 		}
 		delete this.disconnectedUsers[userID];
 
-		// Resume draft if everyone is here or broacast the new state.
-		if (Object.keys(this.disconnectedUsers).length == 0)
-			this.resumeOnReconnection({ title: "Player reconnected", text: "Resuming draft..." });
-		else this.broadcastDisconnectedUsers();
+		this.broadcastDisconnectedUsers();
+	}
+
+	resumeReviewTimer(userID: UserID) {
+		if (!this.drafting || !isDraftState(this.draftState)) return;
+		if (this.draftState.pendingReviewTimeout) {
+			// FIXME: This is clearly non-standard, but it should work in Node 18, 20 and 22.
+			const remainingTime =
+				((this.draftState.pendingReviewTimeout as unknown as { _idleStart: number })._idleStart +
+					(this.draftState.pendingReviewTimeout as unknown as { _idleTimeout: number })._idleTimeout) /
+					1000 -
+				process.uptime();
+
+			Connections[userID].socket.emit("startReviewPhase", Math.round(remainingTime));
+		}
 	}
 
 	// Non-playing owner (organizer) is trying to reconnect, we just need to send them the current state
@@ -3646,10 +3631,6 @@ export class Session implements IIndexable {
 		this.startBotPickChain(userID);
 		const virtualPlayers = this.getSortedVirtualPlayerData();
 		this.emitToConnectedUsers("sessionOptions", { virtualPlayersData: virtualPlayers });
-		this.resumeOnReconnection({
-			title: "Resuming draft",
-			text: `Disconnected player(s) has been replaced by bot(s).`,
-		});
 	}
 
 	startCountdowns() {

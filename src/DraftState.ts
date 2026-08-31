@@ -38,7 +38,7 @@ export class DraftState extends IDraftState {
 		};
 	} = {};
 
-	pendingTimeout: NodeJS.Timeout | null = null;
+	pendingReviewTimeout: NodeJS.Timeout | null = null;
 
 	constructor(
 		boosters: UniqueCard[][],

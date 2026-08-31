@@ -320,7 +320,15 @@ describe("Draft Logs", function () {
 			secondDisconnected = (ownerIdx + 2) % clients.length;
 			clients[firstDisconnected].disconnect();
 			clients[secondDisconnected].disconnect();
-			clients[ownerIdx].once("resumeOnReconnection", () => done());
+			clients[ownerIdx].on("sessionOptions", (data) => {
+				if (data.virtualPlayersData) {
+					const botCount = Object.values(data.virtualPlayersData).filter((u) => u.isReplaced).length;
+					if (botCount === 2) {
+						clients[ownerIdx].removeListener("sessionOptions");
+						done();
+					}
+				}
+			});
 			clients[ownerIdx].emit("removePlayer", getUID(clients[firstDisconnected]));
 			clients[ownerIdx].emit("removePlayer", getUID(clients[secondDisconnected]));
 		});

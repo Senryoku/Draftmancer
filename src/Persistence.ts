@@ -150,6 +150,10 @@ export function restoreSession(s: any, owner: UserID) {
 					draftState.players[userID].botInstance = bot;
 				}
 				r.draftState = draftState;
+				// Workaround for a very specific case where everyone disconnects during a review phase, leaving everyone waiting for the next round to start.
+				if (Object.values(draftState.players).every((p) => p.boosters.length === 0)) {
+					setImmediate(r.distributeBoosters.bind(r));
+				}
 				return r;
 			}
 			case "housman": {
@@ -252,7 +256,7 @@ export function getPoDSession(s: Session) {
 			copyPODProps(s.draftState, PoDSession.draftState);
 
 			if (s.draftState instanceof DraftState) {
-				PoDSession.draftState.pendingTimeout = null;
+				PoDSession.draftState.pendingReviewTimeout = null;
 				const players = {};
 				copyPODProps(s.draftState.players, players);
 				PoDSession.draftState.players = players;

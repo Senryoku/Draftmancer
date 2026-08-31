@@ -83,7 +83,15 @@ describe("Supreme Draft", function () {
 	});
 
 	it("Reconnects, draft restarts.", function (done) {
-		client.once("resumeOnReconnection", () => done());
+		client.on("sessionOptions", (data) => {
+			if (data.virtualPlayersData) {
+				const disconnectedCount = Object.values(data.virtualPlayersData).filter((u) => u.isDisconnected).length;
+				if (disconnectedCount === 0) {
+					client.removeListener("sessionOptions");
+					done();
+				}
+			}
+		});
 		client.connect();
 	});
 

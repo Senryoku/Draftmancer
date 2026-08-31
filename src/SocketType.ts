@@ -135,8 +135,6 @@ export interface ServerToClientEvents {
 
 	botRecommandations: (data: { pickNumber: number; scores: BotScores }) => void;
 
-	resumeOnReconnection: (msg: Message) => void;
-
 	sealedBoosters: (boosters: UniqueCard[][]) => void;
 	setCardPool: (cards: UniqueCard[]) => void;
 	addCards: (message: string, cards: UniqueCard[]) => void;
