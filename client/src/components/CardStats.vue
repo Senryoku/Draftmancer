@@ -73,8 +73,8 @@
 	</div>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType } from "vue";
+<script setup lang="ts">
+import { computed } from "vue";
 import { Bar, Pie } from "vue-chartjs";
 import { Chart, ArcElement, BarElement, Title, Tooltip, Legend, CategoryScale, LinearScale, Colors } from "chart.js";
 import { Card } from "@/CardTypes";
@@ -82,122 +82,125 @@ import { Card } from "@/CardTypes";
 Chart.defaults.color = "#ddd";
 Chart.register(ArcElement, BarElement, Title, Tooltip, Legend, CategoryScale, LinearScale, Colors);
 
-export default defineComponent({
-	props: {
-		cards: { type: Array as PropType<Card[]>, required: true },
-		addedbasics: { type: Number, required: true },
-	},
-	components: { Bar, Pie },
-	computed: {
-		types(): { [type: string]: number } {
-			let r = this.cards
-				.map((c) => {
-					if (c.type.startsWith("Legendary ")) return c.type.slice(10);
-					return c.type;
-				})
-				.reduce(
-					(acc, t) => {
-						if (!(t in acc)) acc[t] = 1;
-						else ++acc[t];
-						return acc;
-					},
-					{} as { [type: string]: number }
-				);
-			r["Basic Land"] = (r["Basic Land"] || 0) + this.addedbasics;
-			return r;
-		},
-		colors() {
-			const fullNames: { [color: string]: string } = {
-				W: "White",
-				U: "Blue",
-				B: "Black",
-				R: "Red",
-				G: "Green",
-			};
-			return this.cards
-				.map((c) => {
-					let colors = [];
-					for (let s of ["{W}", "{U}", "{B}", "{R}", "{G}"]) {
-						const matches = c.mana_cost.match(new RegExp(s, "g")) || [];
-						const count = matches.length;
-						for (let i = 0; i < count; ++i) colors.push(s[1]);
-					}
-					return colors;
-				})
-				.reduce(
-					(acc, arr) => {
-						for (let t of arr) {
-							if (!(fullNames[t] in acc)) acc[fullNames[t]] = 1;
-							else ++acc[fullNames[t]];
-						}
-						return acc;
-					},
-					{ White: 0, Blue: 0, Black: 0, Red: 0, Green: 0 } as { [color: string]: number }
-				);
-		},
-		nonLands() {
-			return this.cards.filter((c) => !c.type.includes("Land"));
-		},
-		manacurve() {
-			let o: { [mana: number]: { creatures: number; nonCreatures: number } } = {};
-			for (let i = 0; i < 8; ++i) o[i] = { creatures: 0, nonCreatures: 0 };
-			return this.nonLands.reduce((acc, c) => {
-				if (!(c.cmc in acc)) acc[c.cmc] = { creatures: 0, nonCreatures: 0 };
-				if (c.type.includes("Creature")) ++acc[c.cmc].creatures;
-				else ++acc[c.cmc].nonCreatures;
+const props = defineProps<{
+	cards: Card[];
+	addedbasics: number;
+}>();
+
+const types = computed(() => {
+	let r = props.cards
+		.map((c) => {
+			if (c.type.startsWith("Legendary ")) return c.type.slice(10);
+			return c.type;
+		})
+		.reduce(
+			(acc, t) => {
+				if (!(t in acc)) acc[t] = 1;
+				else ++acc[t];
 				return acc;
-			}, o);
-		},
-		manaAverage() {
-			return (this.nonLands.reduce((acc, c) => acc + c.cmc, 0) / this.nonLands.length).toPrecision(3);
-		},
-		cmcChartData() {
-			return {
-				labels: Object.keys(this.manacurve),
-				datasets: [
-					{
-						label: "Creatures",
-						backgroundColor: "#ff9900",
-						data: Object.values(this.manacurve).map((cmc) => cmc.creatures),
-					},
-					{
-						label: "Non-Creatures",
-						backgroundColor: "#7dd6ff",
-						data: Object.values(this.manacurve).map((cmc) => cmc.nonCreatures),
-					},
+			},
+			{} as { [type: string]: number }
+		);
+	r["Basic Land"] = (r["Basic Land"] ?? 0) + props.addedbasics;
+	return r;
+});
+
+const colors = computed(() => {
+	const fullNames: { [color: string]: string } = {
+		W: "White",
+		U: "Blue",
+		B: "Black",
+		R: "Red",
+		G: "Green",
+	};
+	return props.cards
+		.map((c) => {
+			let colors = [];
+			for (let s of ["{W}", "{U}", "{B}", "{R}", "{G}"]) {
+				const matches = c.mana_cost.match(new RegExp(s, "g")) ?? [];
+				const count = matches.length;
+				for (let i = 0; i < count; ++i) colors.push(s[1]);
+			}
+			return colors;
+		})
+		.reduce(
+			(acc, arr) => {
+				for (let t of arr) {
+					if (!(fullNames[t] in acc)) acc[fullNames[t]] = 1;
+					else ++acc[fullNames[t]];
+				}
+				return acc;
+			},
+			{ White: 0, Blue: 0, Black: 0, Red: 0, Green: 0 } as { [color: string]: number }
+		);
+});
+
+const nonLands = computed(() => {
+	return props.cards.filter((c) => !c.type.includes("Land"));
+});
+
+const manacurve = computed(() => {
+	let o: { [mana: number]: { creatures: number; nonCreatures: number } } = {};
+	for (let i = 0; i < 8; ++i) o[i] = { creatures: 0, nonCreatures: 0 };
+	return nonLands.value.reduce((acc, c) => {
+		if (!(c.cmc in acc)) acc[c.cmc] = { creatures: 0, nonCreatures: 0 };
+		if (c.type.includes("Creature")) ++acc[c.cmc].creatures;
+		else ++acc[c.cmc].nonCreatures;
+		return acc;
+	}, o);
+});
+
+const manaAverage = computed(() => {
+	return (nonLands.value.reduce((acc, c) => acc + c.cmc, 0) / nonLands.value.length).toPrecision(3);
+});
+
+const cmcChartData = computed(() => {
+	return {
+		labels: Object.keys(manacurve.value),
+		datasets: [
+			{
+				label: "Creatures",
+				backgroundColor: "#ff9900",
+				data: Object.values(manacurve.value).map((cmc) => cmc.creatures),
+			},
+			{
+				label: "Non-Creatures",
+				backgroundColor: "#7dd6ff",
+				data: Object.values(manacurve.value).map((cmc) => cmc.nonCreatures),
+			},
+		],
+	};
+});
+
+const colorsChartData = computed(() => {
+	return {
+		labels: Object.keys(colors.value),
+		datasets: [
+			{
+				label: "Deck",
+				backgroundColor: [
+					"rgb(249, 250, 244)",
+					"rgb(14, 104, 171)",
+					"rgb(21, 11, 0)",
+					"rgb(211, 32, 42)",
+					"rgb(0, 115, 62)",
 				],
-			};
-		},
-		colorsChartData() {
-			return {
-				labels: Object.keys(this.colors),
-				datasets: [
-					{
-						label: "Deck",
-						backgroundColor: [
-							"rgb(249, 250, 244)",
-							"rgb(14, 104, 171)",
-							"rgb(21, 11, 0)",
-							"rgb(211, 32, 42)",
-							"rgb(0, 115, 62)",
-						],
-						data: Object.values(this.colors),
-					},
-				],
-			};
-		},
-		cardTypeChartData() {
-			return {
-				labels: Object.keys(this.types),
-				datasets: [
-					{
-						label: "Deck",
-						data: Object.values(this.types),
-					},
-				],
-			};
-		},
-	},
+				data: Object.values(colors.value),
+			},
+		],
+	};
+});
+
+const cardTypeChartData = computed(() => {
+	return {
+		labels: Object.keys(types.value),
+		datasets: [
+			{
+				label: "Deck",
+				data: Object.values(types.value),
+			},
+		],
+	};
 });
 </script>
 
