@@ -3404,6 +3404,9 @@
         70302,
         73736
     ],
+    "Forth Eorlingas!": [
+        103663
+    ],
     "Prowling Serpopard": [
         73991
     ],
@@ -5447,7 +5450,8 @@
         75385
     ],
     "Lórien Revealed": [
-        84752
+        84752,
+        107995
     ],
     "Arcane Encyclopedia": [
         68136,
@@ -6216,6 +6220,10 @@
     "Parcel Myr": [
         76006,
         76006
+    ],
+    "Andúril, Flame of the West": [
+        107476,
+        84928
     ],
     "You Find Some Prisoners": [
         77274,
@@ -8607,6 +8615,9 @@
         105116,
         105372
     ],
+    "Kíli the Resourceful": [
+        103385
+    ],
     "Disfigure": [
         69880,
         82575,
@@ -9475,6 +9486,9 @@
     "Spinewoods Paladin": [
         90529
     ],
+    "Storm Crow": [
+        104183
+    ],
     "Darksteel Reactor": [
         20493,
         20493
@@ -9850,6 +9864,9 @@
     "Valley Floodcaller": [
         92676,
         91615
+    ],
+    "Aragorn, King of Gondor": [
+        103612
     ],
     "Strike It Rich": [
         76099,
@@ -16891,6 +16908,9 @@
         93013,
         66775
     ],
+    "Emberwilde Captain": [
+        77780
+    ],
     "Wrenn and Seven": [
         78732,
         78570
@@ -17058,6 +17078,9 @@
     ],
     "Market Gnome": [
         87153
+    ],
+    "Dáin's Company": [
+        103532
     ],
     "Remand": [
         93132
@@ -18529,6 +18552,9 @@
         95474,
         95011
     ],
+    "Gríma, Saruman's Footman": [
+        107470
+    ],
     "Pinnacle Emissary": [
         96797
     ],
@@ -18762,7 +18788,8 @@
         103482
     ],
     "Dúnedain Blade": [
-        84698
+        84698,
+        107979
     ],
     "Release to Memory": [
         98620
@@ -22774,7 +22801,8 @@
         93232
     ],
     "Lothlórien Lookout": [
-        84867
+        84867,
+        108025
     ],
     "Rakdos, the Showstopper": [
         69327
@@ -25016,6 +25044,9 @@
         63081,
         91895
     ],
+    "Glóin the Mighty // Easy Pickings": [
+        103476
+    ],
     "Farideh's Fireball": [
         77247,
         81773
@@ -25688,6 +25719,9 @@
         82711,
         82795
     ],
+    "Brawler's Plate": [
+        90186
+    ],
     "Quarrel's End": [
         84833
     ],
@@ -26115,6 +26149,9 @@
     ],
     "Tentative Connection": [
         71205
+    ],
+    "Andúril, Narsil Reforged": [
+        107477
     ],
     "Marshals' Pathcruiser": [
         95468,
@@ -26705,6 +26742,10 @@
     "Mockingbird": [
         92673,
         91597
+    ],
+    "Troll of Khazad-dûm": [
+        108007,
+        84803
     ],
     "Ulalek, Fused Atrocity": [
         92853,
@@ -29579,6 +29620,9 @@
     "Castle Doom": [
         105159
     ],
+    "Soul of New Phyrexia": [
+        86545
+    ],
     "Druid of the Spade": [
         91706
     ],
@@ -29900,6 +29944,9 @@
     ],
     "Perennial Behemoth": [
         82687
+    ],
+    "Thieving Magpie": [
+        90320
     ],
     "Sinister Sabotage": [
         68515
@@ -30317,7 +30364,8 @@
         92903
     ],
     "Palantír of Orthanc": [
-        84939
+        84939,
+        107482
     ],
     "Kona, Rescue Beastie": [
         92277,
@@ -30797,6 +30845,9 @@
     "Splinter's Technique": [
         101054,
         100537
+    ],
+    "Dáin Ironfoot": [
+        103467
     ],
     "Ormos, Archive Keeper": [
         72116
@@ -32539,6 +32590,9 @@
     "Gorehorn Raider": [
         93802
     ],
+    "Palace Jailer": [
+        106980
+    ],
     "Muse Drake": [
         93113,
         68507
@@ -33022,6 +33076,9 @@
     ],
     "Cryoshatter": [
         96627
+    ],
+    "Rite of Flame": [
+        101418
     ],
     "Colossification": [
         71215,
@@ -33616,9 +33673,6 @@
     ],
     "Invasion of Dominaria // Serra Faithkeeper": [
         84271
-    ],
-    "Andúril, Flame of the West": [
-        84928
     ],
     "Steelfin Whale": [
         76019,
@@ -35928,6 +35982,9 @@
     "Key to the Side-Door": [
         103558
     ],
+    "Flametongue Kavu": [
+        98843
+    ],
     "Zada, Hedron Grinder": [
         85016,
         85543,
@@ -37444,6 +37501,9 @@
     ],
     "Senate Guildmage": [
         69332
+    ],
+    "Blowfly Infestation": [
+        101397
     ],
     "Venomsac Lagac": [
         94987
@@ -39090,6 +39150,9 @@
         62561,
         62561
     ],
+    "Óin the Brave": [
+        103484
+    ],
     "Mornsong Aria": [
         98431
     ],
@@ -39147,6 +39210,9 @@
     "Dueling Rapier": [
         81771,
         77245
+    ],
+    "Dáin, Lord of the Iron Hills": [
+        103376
     ],
     "Tolarian Kraken": [
         93159,
@@ -41404,9 +41470,6 @@
     "Inevitable End": [
         70613
     ],
-    "Troll of Khazad-dûm": [
-        84803
-    ],
     "Zimone's Experiment": [
         102628
     ],
@@ -42696,6 +42759,9 @@
     "Donald Blake, Guise of Thor": [
         105602
     ],
+    "Thrór's Map": [
+        103563
+    ],
     "Attentive Sunscribe": [
         87134
     ],
@@ -43178,6 +43244,9 @@
         69470,
         70092
     ],
+    "Muraganda Petroglyphs": [
+        96414
+    ],
     "Plunder the Trollshaws": [
         103425
     ],
@@ -43253,6 +43322,9 @@
     ],
     "Barony Vampire": [
         69870
+    ],
+    "Fíli the Pathfinder": [
+        103382
     ],
     "Herd Migration": [
         82217
@@ -44963,6 +45035,9 @@
     ],
     "Ghirapur Gearcrafter": [
         94372
+    ],
+    "Bridge from Below": [
+        104185
     ],
     "Woodland Acolyte // Mend the Wilds": [
         86972
@@ -49614,6 +49689,9 @@
     "Rooftop Nuisance": [
         80208
     ],
+    "Court of Garenbrig": [
+        102870
+    ],
     "Driftgloom Coyote": [
         91547
     ],
@@ -50394,6 +50472,9 @@
     "Lightshield Parry": [
         94821
     ],
+    "Court of Bounty": [
+        77825
+    ],
     "Leonin Relic-Warder": [
         39591
     ],
@@ -51083,6 +51164,9 @@
     ],
     "Oviya Pashiri, Sage Lifecrafter": [
         75752
+    ],
+    "Fíli and Kíli, Joyous": [
+        103596
     ],
     "Oracle of Tragedy": [
         84333
@@ -51853,6 +51937,9 @@
     ],
     "Appeal // Authority": [
         74009
+    ],
+    "Fall from Favor": [
+        77673
     ],
     "Murasa Rootgrazer": [
         73441
@@ -54129,6 +54216,9 @@
     ],
     "Dreamshaper Shaman": [
         70641
+    ],
+    "Stonybrook Schoolmaster": [
+        101363
     ],
     "Choice of Fortunes": [
         81942
