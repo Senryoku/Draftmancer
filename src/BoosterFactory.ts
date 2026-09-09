@@ -5261,23 +5261,6 @@ export class FRABoosterFactory extends BoosterFactory {
 			);
 			booster.push(pickCard(pool, booster));
 		}
-
-		// 1 Uncommon card
-		//     There are 43 uncommon cards from Reality Fracture that can appear in this slot.
-		//     Can be an uncommon braintwister series card (3.8%)
-		//     Echoed pairs cards do not appear in this slot.
-		if (targets === DefaultBoosterTargets) updatedTargets.uncommon = 1;
-		else updatedTargets.uncommon = Math.max(0, updatedTargets.uncommon - 2);
-
-		while (updatedTargets.uncommon > 0) {
-			updatedTargets.uncommon -= 1;
-			const pool = chooseWeighted(
-				[100 - 3.8, 3.8].map((w) => w / 100.0),
-				[this.cardPool.uncommon, this.braintwister.uncommon]
-			);
-			booster.push(pickCard(pool, booster));
-		}
-
 		// 3 Echoed pairs cards
 		//     There are 66 uncommon (88.9%), 14 rare (6.7%), and 6 mythic rare (1.4%) echoed pairs cards from Reality Fracture that appear in these slots.
 		//     Can be an uncommon (1.7%), rare (less than 1%), or mythic rare (less than 1%) borderless echoed pairs card
@@ -5307,6 +5290,22 @@ export class FRABoosterFactory extends BoosterFactory {
 		booster.push(pickCard(echoPools[1], booster));
 		// Shuffle the last three cards to avoid the echoed pair being in a predictable position.
 		shuffleArray(booster, booster.length - 3);
+
+		// 1 Uncommon card
+		//     There are 43 uncommon cards from Reality Fracture that can appear in this slot.
+		//     Can be an uncommon braintwister series card (3.8%)
+		//     Echoed pairs cards do not appear in this slot.
+		if (targets === DefaultBoosterTargets) updatedTargets.uncommon = 1;
+		else updatedTargets.uncommon = Math.max(0, updatedTargets.uncommon - 2);
+
+		while (updatedTargets.uncommon > 0) {
+			updatedTargets.uncommon -= 1;
+			const pool = chooseWeighted(
+				[100 - 3.8, 3.8].map((w) => w / 100.0),
+				[this.cardPool.uncommon, this.braintwister.uncommon]
+			);
+			booster.push(pickCard(pool, booster));
+		}
 
 		// 5–6 Common cards
 		//     There are 71 common cards from Reality Fracture that can appear in these slots.
