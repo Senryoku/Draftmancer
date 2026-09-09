@@ -1579,8 +1579,8 @@
 							<a href="/draftqueue">
 								<div class="draft-queue-banner">
 									<img
-										src="./assets/img/draft_queue_banner_hob.webp"
-										alt="Practice The Hobbit with human players right now in the Draft Queue!"
+										src="./assets/img/draft_queue_banner_fra.webp"
+										alt="Practice Reality Fracture with human players right now in the Draft Queue!"
 										width="500"
 										height="260"
 									/>

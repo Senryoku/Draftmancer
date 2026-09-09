@@ -1922,6 +1922,7 @@ export const SpecialGuests = {
 	eoe: filterSetByNumber("spg", 119, 128),
 	ecl: filterSetByNumber("spg", 129, 148), // 20
 	sos: filterSetByNumber("spg", 149, 158),
+	fra: filterSetByNumber("spg", 159, 168),
 };
 
 // NOTE: This mimics the ratios of wildcard set boosters described here: https://magic.wizards.com/en/news/making-magic/set-boosters-2020-07-25
@@ -5129,6 +5130,219 @@ export class HOBBoosterFactory extends BoosterFactory {
 	}
 }
 
+// Reality Fracture - https://magic.wizards.com/en/news/feature/collecting-reality-fracture
+export class FRABoosterFactory extends BoosterFactory {
+	static filter = (min: number, max: number) => filterSetByNumber("fra", min, max);
+
+	static readonly Basics = FRABoosterFactory.filter(189, 193);
+	static readonly TowerBasics = FRABoosterFactory.filter(397, 401);
+	static readonly CommonDualLands = [
+		"cd477096-41b1-4907-9cb3-852cb22c9ba2",
+		// TODO
+	];
+	static readonly EchoedPairs = FRABoosterFactory.filter(195, 290);
+	static readonly BorderlessEchoedPairs = FRABoosterFactory.filter(291, 320);
+	static readonly BorderlessShatteredMirror = FRABoosterFactory.filter(321, 330);
+	static readonly SculptorStronghold = FRABoosterFactory.filter(335, 358);
+	static readonly Braintwister = FRABoosterFactory.filter(363, 381);
+	static readonly PortalViewLand = FRABoosterFactory.filter(397, 401);
+
+	echoedPairs: SlotedCardPool;
+	borderlessEchoedPairs: SlotedCardPool;
+	shaterredMirror: SlotedCardPool;
+	braintwister: SlotedCardPool;
+	sculptorStronghold: SlotedCardPool;
+	portalViewLand: SlotedCardPool;
+	spg: CardPool = new CardPool();
+
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
+		const [, filteredCardPool] = filterCardPool(cardPool, (cid: CardID) =>
+			FRABoosterFactory.CommonDualLands.includes(cid)
+		);
+		const [echoedPairs, noEchoedPairs] = filterCardPool(filteredCardPool, (cid: CardID) =>
+			FRABoosterFactory.CommonDualLands.includes(cid)
+		);
+		super(noEchoedPairs, landSlot, options);
+		this.echoedPairs = echoedPairs;
+
+		this.borderlessEchoedPairs = cidsToSlotedCardPool(
+			FRABoosterFactory.BorderlessEchoedPairs,
+			options.maxDuplicates
+		);
+		this.shaterredMirror = cidsToSlotedCardPool(FRABoosterFactory.BorderlessShatteredMirror, options.maxDuplicates);
+		this.braintwister = cidsToSlotedCardPool(FRABoosterFactory.Braintwister, options.maxDuplicates);
+		this.sculptorStronghold = cidsToSlotedCardPool(FRABoosterFactory.SculptorStronghold, options.maxDuplicates);
+		this.portalViewLand = cidsToSlotedCardPool(FRABoosterFactory.PortalViewLand, options.maxDuplicates);
+		for (const cid of SpecialGuests["fra"]) {
+			const c = getCard(cid);
+			this.spg.set(cid, options.maxDuplicates?.[c.rarity] ?? DefaultMaxDuplicates);
+		}
+	}
+
+	generateBooster(targets: Targets): UniqueCard[] | MessageError {
+		const updatedTargets = structuredClone(targets);
+
+		const booster: UniqueCard[] = [];
+		//
+		// 1 Traditional foil card
+		//     There are 71 common (49.5%), 109 uncommon (40.5%), 64 rare (6%), and 26 mythic rare (1.2%) cards from Reality Fracture that can appear in this slot.
+		//     Can be one of the following:
+		//         An uncommon (less than 1%), rare (less than 1%), or mythic rare (less than 1%) borderless echoed pairs card
+		//         An uncommon (less than 1%), rare (less than 1%), or mythic rare (less than 1%) braintwister series card
+		//         A rare (less than 1%) or mythic rare (less than 1%) sculptor's stronghold card
+		//         A rare portal view land (less than 1%)
+		{
+			const unknown_rates = (100 - (49.5 + 40.5 + 6 + 1.2)) / 9;
+			const pool = chooseWeighted(
+				[
+					49.5,
+					40.5 * (43 / 109),
+					40.5 * (66 / 109),
+					6.0 * (50 / 64),
+					6.0 * (14 / 64),
+					1.2 * (20 / 26),
+					1.2 * (6 / 26),
+					unknown_rates,
+					unknown_rates,
+					unknown_rates,
+					unknown_rates,
+					unknown_rates,
+					unknown_rates,
+					unknown_rates,
+					unknown_rates,
+					unknown_rates,
+				].map((w) => w / 100.0),
+				[
+					this.cardPool.common,
+					this.cardPool.uncommon,
+					this.echoedPairs.uncommon,
+					this.cardPool.rare,
+					this.echoedPairs.rare,
+					this.cardPool.mythic,
+					this.echoedPairs.mythic,
+					this.borderlessEchoedPairs.uncommon,
+					this.borderlessEchoedPairs.rare,
+					this.borderlessEchoedPairs.mythic,
+					this.braintwister.uncommon,
+					this.braintwister.rare,
+					this.braintwister.mythic,
+					this.sculptorStronghold.rare,
+					this.sculptorStronghold.mythic,
+					this.portalViewLand.rare,
+				]
+			);
+			booster.push(pickCard(pool, booster, { foil: true }));
+		}
+
+		// 1 Rare or mythic rare card
+		//     There are 50 rare (74.4%) and 20 mythic rare (14.8%) cards from Reality Fracture that can appear in this slot.
+		//     Can be one of the following:
+		//         A rare (1%) or mythic rare (less than 1%) shattered mirror card
+		//         A rare (3.8%) or mythic rare (1%) sculptor's stronghold card
+		//         A rare (3.1%) or mythic rare (less than 1%) braintwister series card
+		//         A rare portal view land (1%)
+		//     Echoed pairs cards do not appear in this slot.
+		while (updatedTargets.rare > 0) {
+			updatedTargets.rare -= 1;
+			const unknown_rates = (100 - (74.4 + 14.8 + 1 + 3.8 + 3.1 + 1)) / 2;
+			const pool = chooseWeighted(
+				[74.4, 14.8, 1, unknown_rates, 3.8, 1.0, 3.1, unknown_rates, 1.0].map((w) => w / 100.0),
+				[
+					this.cardPool.rare,
+					this.cardPool.mythic,
+					this.shaterredMirror.rare,
+					this.shaterredMirror.mythic,
+					this.sculptorStronghold.rare,
+					this.sculptorStronghold.mythic,
+					this.braintwister.rare,
+					this.braintwister.mythic,
+					this.portalViewLand.rare,
+				]
+			);
+			booster.push(pickCard(pool, booster));
+		}
+
+		// 1 Uncommon card
+		//     There are 43 uncommon cards from Reality Fracture that can appear in this slot.
+		//     Can be an uncommon braintwister series card (3.8%)
+		//     Echoed pairs cards do not appear in this slot.
+		if (targets === DefaultBoosterTargets) updatedTargets.uncommon = 1;
+		else updatedTargets.uncommon = Math.max(0, updatedTargets.uncommon - 2);
+
+		while (updatedTargets.uncommon > 0) {
+			updatedTargets.uncommon -= 1;
+			const pool = chooseWeighted(
+				[100 - 3.8, 3.8].map((w) => w / 100.0),
+				[this.cardPool.uncommon, this.braintwister.uncommon]
+			);
+			booster.push(pickCard(pool, booster));
+		}
+
+		// 3 Echoed pairs cards
+		//     There are 66 uncommon (88.9%), 14 rare (6.7%), and 6 mythic rare (1.4%) echoed pairs cards from Reality Fracture that appear in these slots.
+		//     Can be an uncommon (1.7%), rare (less than 1%), or mythic rare (less than 1%) borderless echoed pairs card
+		//     Includes 2 cards of the same rarity from the same set of echoed pairs cards
+		const echoPools = [];
+		for (let i = 0; i < 2; i++) {
+			echoPools.push(
+				chooseWeighted(
+					[88.9, 6.7, 1.4, 1.7, 0.9, 0.4].map((w) => w / 100.0),
+					[
+						this.echoedPairs.uncommon,
+						this.echoedPairs.rare,
+						this.echoedPairs.mythic,
+						this.borderlessEchoedPairs.uncommon,
+						this.borderlessEchoedPairs.rare,
+						this.borderlessEchoedPairs.mythic,
+					]
+				)
+			);
+		}
+		const firstHalf = pickCard(echoPools[0], booster);
+		booster.push(firstHalf);
+		const echoCID = this.echoPair(firstHalf.id);
+		echoPools[0].removeCard(echoCID);
+		booster.push(getUnique(echoCID));
+		// Add the third one after the echoed card to avoid duplicates.
+		booster.push(pickCard(echoPools[1], booster));
+		// Shuffle the last three cards to avoid the echoed pair being in a predictable position.
+		shuffleArray(booster, booster.length - 3);
+
+		// 5–6 Common cards
+		//     There are 71 common cards from Reality Fracture that can appear in these slots.
+		//     In 1 of 55 Play Boosters, 1 of 10 Special Guests cards will replace a common.
+		if (targets === DefaultBoosterTargets) updatedTargets.common = 6;
+		else updatedTargets.common = Math.max(0, updatedTargets.common - 4);
+		if (updatedTargets.common > 0 && random.bool(1.0 / 55.0)) {
+			updatedTargets.common -= 1;
+			booster.push(pickCard(this.spg, booster));
+		}
+
+		const rest = super.generateBooster(updatedTargets, booster);
+		if (isMessageError(rest)) return rest;
+
+		// 1 Land card
+		//     A non-foil (14.6%) or traditional foil (3.6%) default frame basic land
+		//     A non-foil (21.8%) or traditional foil (5.5%) tower basic land
+		//     A non-foil (43.6%) or traditional foil (10.9%) common dual land
+		{
+			const pool = chooseWeighted(
+				[14.6 + 3.6, 21.8 + 5.5, 43.6 + 10.9].map((w) => w / 100.0),
+				[FRABoosterFactory.Basics, FRABoosterFactory.TowerBasics, FRABoosterFactory.CommonDualLands]
+			);
+			const foil = random.realZeroToOneInclusive() <= 1 / 5;
+			rest.push(getUnique(getRandom(pool), { foil }));
+		}
+
+		return rest;
+	}
+
+	echoPair(cid: CardID): CardID {
+		// TODO. We'll assume borderless pairs always come together.
+		throw new Error("Not implemented yet.");
+	}
+}
+
 // Set specific rules.
 // Neither DOM, WAR or ZNR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
 export const SetSpecificFactories: {
@@ -5192,6 +5406,7 @@ export const SetSpecificFactories: {
 	sos: SOSBoosterFactory,
 	msh: MSHBoosterFactory,
 	hob: HOBBoosterFactory,
+	fra: FRABoosterFactory,
 };
 
 export const getBoosterFactory = function (

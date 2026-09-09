@@ -1,7 +1,8 @@
 import { QueueDescription } from "./QueueDescription";
 
 export const AvailableQueues: readonly QueueDescription[] = [
-	{ id: "hob", name: "The Hobbit", playerCount: 8, setCode: "hob" },
+	{ id: "fra", name: "Reality Fracture", playerCount: 8, setCode: "fra" },
+	// { id: "hob", name: "The Hobbit", playerCount: 8, setCode: "hob" },
 	{ id: "msh", name: "Marvel Super Heroes", playerCount: 8, setCode: "msh" },
 	{ id: "sos", name: "Secrets of Strixhaven", playerCount: 8, setCode: "sos" },
 	// {

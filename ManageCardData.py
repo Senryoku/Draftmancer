@@ -1268,7 +1268,6 @@ constants["PrimarySets"] = [
         "aa2",
         "mar",
         "omb",
-        "fra",
         "trk",
         "mbc",
     ]
