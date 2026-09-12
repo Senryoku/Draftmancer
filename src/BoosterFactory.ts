@@ -5135,7 +5135,7 @@ export class FRABoosterFactory extends BoosterFactory {
 	static filter = (min: number, max: number) => filterSetByNumber("fra", min, max);
 
 	static readonly Basics = FRABoosterFactory.filter(189, 193);
-	static readonly TowerBasics = FRABoosterFactory.filter(397, 401);
+	static readonly TowerBasics = FRABoosterFactory.filter(382, 396);
 	static readonly CommonDualLands = [
 		"cd477096-41b1-4907-9cb3-852cb22c9ba2",
 		// TODO
@@ -5146,6 +5146,52 @@ export class FRABoosterFactory extends BoosterFactory {
 	static readonly SculptorStronghold = FRABoosterFactory.filter(335, 358);
 	static readonly Braintwister = FRABoosterFactory.filter(363, 381);
 	static readonly PortalViewLand = FRABoosterFactory.filter(397, 401);
+
+	static readonly PairNames = [
+		// Mythic Rare
+		["Ajani Resolute", "Ajani Unrelenting"],
+		["Chandra, Torch of Defiance", "Chandra, Chill of Compliance"],
+		["Garruk, Curse Breaker", "Garruk, Veiled Butcher"],
+		// Rare
+		["Karn, Argent Defender", "Karn, Gilded Guardian"],
+		["Gideon's Memorial", "Gideon the Oathless"],
+		["Lyra, Archangel of Dawn", "Lyra, Tolarian Archangel"],
+		["Liliana the Repentant", "Liliana the Faultless"],
+		["Vraska, the Cutting Glare", "Vraska, Soul of Stone"],
+		// Uncommon
+		["Danitha, Sword of Hope", "Danitha, Spear of Agony"],
+		["Thalia, the Survivor", "Geist of Saint Thalia"],
+		["Fblthp, Impossibly Lost", "Fblthp, Knows the Way"],
+		["Proft, Consulting Detective", "Proft, Sinister Mastermind"],
+		["Tetsuko Umezawa, Fugitive", "Tetsuko Umezawa, Pursuer"],
+		["Yuriko, Hope from the Shadows", "Yuriko, Blade of the Mighty"],
+		["Tinybones, Pocket Nuisance", "Titanbones, Towering Heart"],
+		["Way of the Necromancer", "Way of the Healer"],
+		["Winter, Tormented Loner", "Winter, Team Player"],
+		["Yargle, Glutton of Urborg", "Yargle, Goliath of Otaria"],
+		["Gallia, the Merrymaker", "Gallia, Tragic Host"],
+		["Way of the Pyromancer", "Way of the Cryomancer"],
+		["Ghalta the Unstoppable", "Ghalta the Immovable"],
+		["Jiang Yanggu, Never Alone", "Jiang Yanggu, Alone"],
+		["Ruric Thar, Magecrusher", "Ruric Thar, Biomagus"],
+		["Edgar, Ancient Bloodlord", "Edgar, Moonlit Sovereign"],
+		["Kiora of Salt and Sand", "Kiora of Fire and Ashes"],
+	];
+
+	static PairNamesToCIDs = (pool: CardID[]) =>
+		FRABoosterFactory.PairNames.map((names) => [
+			pool.find((cid) => getCard(cid).name === names[0]),
+			pool.find((cid) => getCard(cid).name === names[1]),
+		]).filter(([a, b]) => a !== undefined && b !== undefined);
+	static readonly PairCIDs = Object.fromEntries(
+		[
+			...FRABoosterFactory.PairNamesToCIDs(FRABoosterFactory.EchoedPairs),
+			...FRABoosterFactory.PairNamesToCIDs(FRABoosterFactory.BorderlessEchoedPairs),
+		].flatMap(([a, b]) => [
+			[a, b],
+			[b, a],
+		])
+	);
 
 	echoedPairs: SlotedCardPool;
 	borderlessEchoedPairs: SlotedCardPool;
@@ -5177,6 +5223,8 @@ export class FRABoosterFactory extends BoosterFactory {
 			const c = getCard(cid);
 			this.spg.set(cid, options.maxDuplicates?.[c.rarity] ?? DefaultMaxDuplicates);
 		}
+
+		console.log("PairCIDs:", FRABoosterFactory.PairCIDs);
 	}
 
 	generateBooster(targets: Targets): UniqueCard[] | MessageError {
@@ -5337,8 +5385,8 @@ export class FRABoosterFactory extends BoosterFactory {
 	}
 
 	echoPair(cid: CardID): CardID {
-		// TODO. We'll assume borderless pairs always come together.
-		throw new Error("Not implemented yet.");
+		// We'll assume borderless pairs always come together.
+		return FRABoosterFactory.PairCIDs[cid];
 	}
 }
 
