@@ -5159,23 +5159,28 @@ export class FRABoosterFactory extends BoosterFactory {
 		["Liliana the Repentant", "Liliana the Faultless"],
 		["Vraska, the Cutting Glare", "Vraska, Soul of Stone"],
 		// Uncommon
-		["Danitha, Sword of Hope", "Danitha, Spear of Agony"],
-		["Thalia, the Survivor", "Geist of Saint Thalia"],
-		["Fblthp, Impossibly Lost", "Fblthp, Knows the Way"],
+		["Teyo, Lightshield Expert", "Teyo, Diamondblade Mage"],
 		["Proft, Consulting Detective", "Proft, Sinister Mastermind"],
 		["Tetsuko Umezawa, Fugitive", "Tetsuko Umezawa, Pursuer"],
+		["Fblthp, Impossibly Lost", "Fblthp, Knows the Way"],
 		["Yuriko, Hope from the Shadows", "Yuriko, Blade of the Mighty"],
-		["Tinybones, Pocket Nuisance", "Titanbones, Towering Heart"],
-		["Way of the Necromancer", "Way of the Healer"],
 		["Winter, Tormented Loner", "Winter, Team Player"],
+		["Tinybones, Pocket Nuisance", "Titanbones, Towering Heart"],
 		["Yargle, Glutton of Urborg", "Yargle, Goliath of Otaria"],
+		["Pia, Determined Rebuilder", "Pia, Aether Ascetic"],
+		["Koth, the Geomancer", "Koth of the Homestead"],
 		["Gallia, the Merrymaker", "Gallia, Tragic Host"],
-		["Way of the Pyromancer", "Way of the Cryomancer"],
 		["Ghalta the Unstoppable", "Ghalta the Immovable"],
-		["Jiang Yanggu, Never Alone", "Jiang Yanggu, Alone"],
 		["Ruric Thar, Magecrusher", "Ruric Thar, Biomagus"],
+		["Jiang Yanggu, Never Alone", "Jiang Yanggu, Alone"],
 		["Edgar, Ancient Bloodlord", "Edgar, Moonlit Sovereign"],
+		["Hapatra, the Desert Fang", "Hapatra, the Desert Frost"],
+		["Mabel, Valley Hero", "Mabel, Bitter Recluse"],
 		["Kiora of Salt and Sand", "Kiora of Fire and Ashes"],
+		["Way of the Mentor", "Way of the Warlord"],
+		["Way of the Necromancer", "Way of the Healer"],
+		["Way of the Pyromancer", "Way of the Cryomancer"],
+		["Way of the Wildspeaker", "Way of the Deathbringer"],
 	];
 
 	static PairNamesToCIDs = (pool: CardID[]) =>
@@ -5206,7 +5211,7 @@ export class FRABoosterFactory extends BoosterFactory {
 			FRABoosterFactory.CommonDualLands.includes(cid)
 		);
 		const [echoedPairs, noEchoedPairs] = filterCardPool(filteredCardPool, (cid: CardID) =>
-			FRABoosterFactory.CommonDualLands.includes(cid)
+			FRABoosterFactory.EchoedPairs.includes(cid)
 		);
 		super(noEchoedPairs, landSlot, options);
 		this.echoedPairs = echoedPairs;
@@ -5223,8 +5228,6 @@ export class FRABoosterFactory extends BoosterFactory {
 			const c = getCard(cid);
 			this.spg.set(cid, options.maxDuplicates?.[c.rarity] ?? DefaultMaxDuplicates);
 		}
-
-		console.log("PairCIDs:", FRABoosterFactory.PairCIDs);
 	}
 
 	generateBooster(targets: Targets): UniqueCard[] | MessageError {
