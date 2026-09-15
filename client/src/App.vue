@@ -747,7 +747,11 @@
 		</div>
 		<div class="main-content">
 			<!-- Draft Controls -->
-			<div v-show="drafting || gameState === GameState.Watching" class="generic-container">
+			<div
+				v-show="drafting || gameState === GameState.Watching"
+				class="generic-container"
+				style="overflow-x: hidden"
+			>
 				<template v-if="draftState">
 					<transition
 						:name="
