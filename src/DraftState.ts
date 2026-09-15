@@ -26,7 +26,7 @@ export class DraftState extends IDraftState {
 			botInstance: IBot; // If a human player, this will be used for pick recommendations.
 			boosters: UniqueCard[][];
 			pickNumber: number;
-			countdownInterval: NodeJS.Timer | null;
+			countdownInterval: NodeJS.Timeout | null;
 			timer: number;
 			effect?: {
 				skipNPicks?: number;
