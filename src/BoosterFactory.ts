@@ -5363,22 +5363,6 @@ export class FRABoosterFactory extends BoosterFactory {
 		// Shuffle the last three cards to avoid the echoed pair being in a predictable position.
 		shuffleArray(booster, booster.length - 3);
 
-		// 1 Uncommon card
-		//     There are 43 uncommon cards from Reality Fracture that can appear in this slot.
-		//     Can be an uncommon braintwister series card (3.8%)
-		//     Echoed pairs cards do not appear in this slot.
-		if (targets === DefaultBoosterTargets) updatedTargets.uncommon = 1;
-		else updatedTargets.uncommon = Math.max(0, updatedTargets.uncommon - 2);
-
-		while (updatedTargets.uncommon > 0) {
-			updatedTargets.uncommon -= 1;
-			const pool = chooseWeighted(
-				[100 - 3.8, 3.8].map((w) => w / 100.0),
-				[this.cardPool.uncommon, this.braintwister.uncommon]
-			);
-			booster.push(pickCard(pool, booster));
-		}
-
 		// 5–6 Common cards
 		//     There are 71 common cards from Reality Fracture that can appear in these slots.
 		//     In 1 of 55 Play Boosters, 1 of 10 Special Guests cards will replace a common.
@@ -5387,6 +5371,29 @@ export class FRABoosterFactory extends BoosterFactory {
 		if (updatedTargets.common > 0 && random.bool(1.0 / 55.0)) {
 			updatedTargets.common -= 1;
 			booster.push(pickCard(this.spg, booster));
+		}
+
+		// 1 Uncommon card
+		//     There are 43 uncommon cards from Reality Fracture that can appear in this slot.
+		//     Can be an uncommon braintwister series card (3.8%)
+		//     Echoed pairs cards do not appear in this slot.
+		if (targets === DefaultBoosterTargets) updatedTargets.uncommon = 1;
+		else updatedTargets.uncommon = Math.max(0, updatedTargets.uncommon - 2);
+
+		// 1 Common or uncommon card
+		//     There are 71 common (23%) and 43 uncommon (74%) cards from Reality Fracture that can appear in this slot.
+		//     Can be an uncommon braintwister series card (3%)
+		//     Echoed pairs cards do not appear in this slot.
+		if (random.bool(0.23)) updatedTargets.common += 1;
+		else updatedTargets.uncommon += 1;
+
+		while (updatedTargets.uncommon > 0) {
+			updatedTargets.uncommon -= 1;
+			const pool = chooseWeighted(
+				[100 - 3.8, 3.8].map((w) => w / 100.0),
+				[this.cardPool.uncommon, this.braintwister.uncommon]
+			);
+			booster.push(pickCard(pool, booster));
 		}
 
 		const rest = super.generateBooster(updatedTargets, booster);
