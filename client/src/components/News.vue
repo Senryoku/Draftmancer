@@ -1,6 +1,13 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
+			<em>September 18, 2026</em>
+			<p>
+				<img src="img/sets/fra.svg" class="set-icon" style="--invertedness: 100%" alt="FRA" /> Reality Fracture
+				(FRA) is now available.
+			</p>
+		</div>
+		<div class="news">
 			<em>August 16, 2026</em>
 			<p>
 				Removed the automatic session-wide pause when a player disconnects. Their individual timer is still
@@ -52,11 +59,6 @@
 				<img src="img/sets/ecl.svg" class="set-icon" style="--invertedness: 100%" alt="ECL" /> Lorwyn Eclipsed
 				(ECL) is now available!
 			</p>
-		</div>
-		<div class="news">
-			<em>November 21, 2025</em>
-			<p>Improved Cube Cobra integration to better support Custom Cards.</p>
-			<p>Experimental support for Cube Cobra custom draft formats.</p>
 		</div>
 	</div>
 </template>
