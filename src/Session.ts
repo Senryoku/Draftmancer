@@ -3635,7 +3635,7 @@ export class Session implements IIndexable {
 
 	startCountdowns() {
 		if (!this.drafting || !isDraftState(this.draftState)) return;
-		const s = this.draftState as DraftState;
+		const s = this.draftState;
 		for (const userID in s.players)
 			if (
 				!s.players[userID].isBot &&
@@ -3696,29 +3696,33 @@ export class Session implements IIndexable {
 		}
 
 		this.stopCountdown(userID);
-		const countdownInterval = (this.draftState.players[userID].countdownInterval = setInterval(() => {
-			const s = this.draftState;
-			if (!isDraftState(s) || !s.players?.[userID]) {
-				clearInterval(countdownInterval);
-				return;
-			}
+		if (this.draftState.players[userID].boosters.length > 0) {
+			const countdownInterval = (this.draftState.players[userID].countdownInterval = setInterval(() => {
+				const s = this.draftState;
+				if (!isDraftState(s) || !s.players?.[userID]) {
+					clearInterval(countdownInterval);
+					return;
+				}
 
-			s.players[userID].timer -= 1;
-			this.syncCountdown(userID);
-			// If the client did not respond after 10 more seconds, force a disconnection.
-			if (s.players[userID].timer <= -10) {
-				s.players[userID].timer = 1;
-				Connections[userID]?.socket?.disconnect();
-				this.stopCountdown(userID);
-			}
-		}, 1000));
+				s.players[userID].timer -= 1;
+				this.syncCountdown(userID);
+				// If the client did not respond after 10 more seconds, force a disconnection.
+				if (s.players[userID].timer <= -10) {
+					s.players[userID].timer = 1;
+					Connections[userID]?.socket?.disconnect();
+					this.stopCountdown(userID);
+				}
+			}, 1000));
+		} else {
+			Connections[userID]?.socket.emit("disableTimer");
+		}
 	}
 
 	stopCountdown(userID: UserID) {
 		const s = this.draftState;
 		if (!isDraftState(s)) return;
-		if (s?.players?.[userID]?.countdownInterval) {
-			clearInterval(s.players[userID].countdownInterval as NodeJS.Timeout);
+		if (s.players[userID]?.countdownInterval) {
+			clearInterval(s.players[userID].countdownInterval);
 			s.players[userID].countdownInterval = null;
 		}
 	}

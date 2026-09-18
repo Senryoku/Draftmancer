@@ -747,7 +747,11 @@
 		</div>
 		<div class="main-content">
 			<!-- Draft Controls -->
-			<div v-show="drafting || gameState === GameState.Watching" class="generic-container">
+			<div
+				v-show="drafting || gameState === GameState.Watching"
+				class="generic-container"
+				style="overflow-x: hidden"
+			>
 				<template v-if="draftState">
 					<transition
 						:name="
@@ -789,7 +793,7 @@
 							:class="{ disabled: draftPaused }"
 						>
 							<div id="booster-controls" class="section-title">
-								<h2>Your Booster ({{ draftState.booster.length }})</h2>
+								<h2>Your Pack ({{ draftState.booster.length }})</h2>
 								<div class="controls" style="flex-grow: 2">
 									<span
 										>Pack #{{ draftState.boosterNumber + 1 }}, Pick #{{
@@ -854,7 +858,7 @@
 									</template>
 									<template v-else>
 										<font-awesome-icon icon="fa-solid fa-spinner" spin />
-										Waiting for other players to pick...
+										<span class="remove-below-1000">Waiting for other players to pick...</span>
 									</template>
 								</div>
 								<scale-slider v-model.number="boosterCardScale" />
@@ -872,7 +876,7 @@
 								:duration="
 									draftState.pickNumber === 0
 										? 500 + 500 + 400 + Math.min(20, draftState.booster.length) * 40
-										: 0
+										: undefined
 								"
 								@enter="onEnterBoosterCards"
 								appear
@@ -910,7 +914,7 @@
 										v-show="draftState.booster.length > 0"
 									/>
 								</div>
-								<booster-card
+								<BoosterCard
 									v-for="(card, idx) in draftState.booster"
 									:key="`card-booster-${card.uniqueID}`"
 									:card="card"
@@ -942,7 +946,7 @@
 									"
 									:scale="boosterCardScale"
 									:renderCommonBackside="draftState.pickNumber === 0"
-								></booster-card>
+								/>
 							</transition-group>
 						</div>
 					</transition>
@@ -1579,8 +1583,8 @@
 							<a href="/draftqueue">
 								<div class="draft-queue-banner">
 									<img
-										src="./assets/img/draft_queue_banner_hob.webp"
-										alt="Practice The Hobbit with human players right now in the Draft Queue!"
+										src="./assets/img/draft_queue_banner_fra.webp"
+										alt="Practice Reality Fracture with human players right now in the Draft Queue!"
 										width="500"
 										height="260"
 									/>

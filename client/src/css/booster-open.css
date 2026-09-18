@@ -107,7 +107,6 @@
 	}
 }
 
-/* This won't work on Firefox right now since it doesn't have :has support yet, but that's ok. It's purely for aesthetic. */
 div:has(> .booster-open-enter-active):not(:has(> .booster-open-leave-active))::before {
 	content: "";
 	position: absolute;

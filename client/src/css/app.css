@@ -1078,36 +1078,38 @@ ul.player-list {
 .booster-cards-enter-from.wait {
 	opacity: 0;
 }
+.selected {
+	&.booster-open-leave-active,
+	&.booster-cards-leave-active {
+		transition: all 0.5s;
+		width: calc(var(--booster-card-scale) * 200px);
+		overflow: visible;
 
-.booster-open-leave-active.selected,
-.booster-cards-leave-active.selected {
-	transition: all 0.5s;
-	width: calc(var(--booster-card-scale) * 200px);
-	overflow: visible;
+		.card-image {
+			width: calc(var(--booster-card-scale) * 200px);
+		}
+	}
+
+	&.booster-open-leave-to,
+	&.booster-cards-leave-to {
+		transform: translateY(250px) translateX(calc(var(--booster-card-scale) * -100px)) !important; /* translateX compensates for width change */
+		z-index: 2;
+		opacity: 0;
+		width: 0;
+		margin: 0;
+	}
 }
 
-.booster-open-leave-active.selected .card-image,
-.booster-cards-leave-active.selected .card-image {
-	width: calc(var(--booster-card-scale) * 200px);
-}
+.burned {
+	&.booster-open-leave-active,
+	&.booster-cards-leave-active {
+		animation: card-burn 0.5s;
+	}
 
-.booster-open-leave-to.selected,
-.booster-cards-leave-to.selected {
-	transform: translateY(250px) translateX(calc(var(--booster-card-scale) * -100px)); /* translateX compensates for width change */
-	z-index: 2;
-	opacity: 0;
-	width: 0;
-	margin: 0;
-}
-
-.booster-open-leave-active.burned,
-.booster-cards-leave-active.burned {
-	animation: card-burn 0.5s;
-}
-
-.booster-open-leave-to.burned,
-.booster-cards-leave-to.burned {
-	margin: 0;
+	&.booster-open-leave-to,
+	&.booster-cards-leave-to {
+		margin: 0;
+	}
 }
 
 @keyframes card-burn {
