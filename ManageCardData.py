@@ -746,7 +746,7 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
             case "hob":
                 selection["in_booster"] = safeInBoosterCheck(c, 188)
             case "fra":
-                selection["in_booster"] = safeInBoosterCheck(c, 290)
+                selection["in_booster"] = safeInBoosterCheck(c, 280)
 
         if c["collector_number"].endswith("†"):
             selection["in_booster"] = False
