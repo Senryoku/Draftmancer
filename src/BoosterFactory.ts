@@ -5137,10 +5137,18 @@ export class FRABoosterFactory extends BoosterFactory {
 	static readonly Basics = FRABoosterFactory.filter(189, 193);
 	static readonly TowerBasics = FRABoosterFactory.filter(382, 396);
 	static readonly CommonDualLands = [
-		"cd477096-41b1-4907-9cb3-852cb22c9ba2",
-		// TODO
+		"3223e5db-5cc4-42f9-ae9e-ff58abc7c390",
+		"5140f962-62f3-40fd-a322-44896c7e2613",
+		"e6ca6c3e-f145-42d6-8a17-90770c15afaf",
+		"84ea799a-faa2-4ff1-a933-432d4ee31a3b",
+		"39c805e3-82cd-42a9-80fe-8d81712a94ea",
+		"93ac525e-1919-43dd-aba4-073b7e4c1768",
+		"6ede3143-69ac-4cbe-922a-d25b07c26da7",
+		"97bbbd23-ecb1-4407-ac14-dede08532a1e",
+		"b57d5be7-3157-4b49-aeb8-d7368ca7e9dd",
+		"db8c7bdd-76cd-4be0-ae0d-d430e9a5fe7a",
 	];
-	static readonly EchoedPairs = FRABoosterFactory.filter(195, 290);
+	static readonly EchoedPairs = FRABoosterFactory.filter(195, 280);
 	static readonly BorderlessEchoedPairs = FRABoosterFactory.filter(291, 320);
 	static readonly BorderlessShatteredMirror = FRABoosterFactory.filter(321, 330);
 	static readonly SculptorStronghold = FRABoosterFactory.filter(335, 358);
@@ -5153,31 +5161,44 @@ export class FRABoosterFactory extends BoosterFactory {
 		["Chandra, Torch of Defiance", "Chandra, Chill of Compliance"],
 		["Garruk, Curse Breaker", "Garruk, Veiled Butcher"],
 		// Rare
-		["Karn, Argent Defender", "Karn, Gilded Guardian"],
-		["Gideon's Memorial", "Gideon the Oathless"],
 		["Lyra, Archangel of Dawn", "Lyra, Tolarian Archangel"],
+		["Gideon's Memorial", "Gideon the Oathless"],
+		["Jace, Reality Sculptor", "Tam, the Possibility"],
 		["Liliana the Repentant", "Liliana the Faultless"],
+		["Samut, Hazoret's Champion", "Samut, Tyrant of Naktamun"],
 		["Vraska, the Cutting Glare", "Vraska, Soul of Stone"],
+		["Karn, Argent Defender", "Karn, Gilded Guardian"],
 		// Uncommon
+		["Thalia, the Survivor", "Geist of Saint Thalia"],
+		["Danitha, Sword of Hope", "Danitha, Spear of Agony"],
 		["Teyo, Lightshield Expert", "Teyo, Diamondblade Mage"],
+		["Tomik, Orzhov Lawmage", "Tomik, Izzet Sparkmage"],
+		["Yoshimaru, Beloved Companion", "Yoshimaru, Scrappy Stray"],
 		["Proft, Consulting Detective", "Proft, Sinister Mastermind"],
 		["Tetsuko Umezawa, Fugitive", "Tetsuko Umezawa, Pursuer"],
 		["Fblthp, Impossibly Lost", "Fblthp, Knows the Way"],
 		["Yuriko, Hope from the Shadows", "Yuriko, Blade of the Mighty"],
 		["Winter, Tormented Loner", "Winter, Team Player"],
 		["Tinybones, Pocket Nuisance", "Titanbones, Towering Heart"],
+		["Massacre Girl, Most Wanted", "Rescue Girl, First Responder"],
 		["Yargle, Glutton of Urborg", "Yargle, Goliath of Otaria"],
 		["Pia, Determined Rebuilder", "Pia, Aether Ascetic"],
 		["Koth, the Geomancer", "Koth of the Homestead"],
+		["Arni, Renowned Champion", "Arni, Humble Scribe"],
 		["Gallia, the Merrymaker", "Gallia, Tragic Host"],
 		["Ghalta the Unstoppable", "Ghalta the Immovable"],
 		["Ruric Thar, Magecrusher", "Ruric Thar, Biomagus"],
+		["Loot, the Nexus", "Loot, the Anomaly"],
 		["Jiang Yanggu, Never Alone", "Jiang Yanggu, Alone"],
+		["Marwyn, the Preserver", "Marwyn, the Clearcutter"],
 		["Edgar, Ancient Bloodlord", "Edgar, Moonlit Sovereign"],
+		["Saheeli, Jewel of Avishkar", "Saheeli, Consul of Oversight"],
 		["Hapatra, the Desert Fang", "Hapatra, the Desert Frost"],
 		["Mabel, Valley Hero", "Mabel, Bitter Recluse"],
 		["Kiora of Salt and Sand", "Kiora of Fire and Ashes"],
+		["Traxos, Scourge Eternal", "Traxos, Academy Guardian"],
 		["Way of the Mentor", "Way of the Warlord"],
+		["Way of the Mind Sculptor", "Way of the Paradox"],
 		["Way of the Necromancer", "Way of the Healer"],
 		["Way of the Pyromancer", "Way of the Cryomancer"],
 		["Way of the Wildspeaker", "Way of the Deathbringer"],
