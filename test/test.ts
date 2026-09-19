@@ -40,7 +40,8 @@ const checkColorBalance = function (booster: Card[]) {
 	// Exception for MH3: It cannot always be color balanced as it only has 5 commons in its common slot when an SPG card is present, but still more than 5 overall because of the wildcard slot.
 	// Exception for INR: Only has 5 commons after the double faced common card.
 	// Exception for TLA: 6 commons might not be enough to be color balanced when accounting for multicolored cards.
-	if (commons.length <= 6 || commons.map((c) => c.set).every((s) => ["mh3", "inr", "tla", "sos"].includes(s))) return;
+	if (commons.length <= 6 || commons.map((c) => c.set).every((s) => ["mh3", "inr", "tla", "sos", "fra"].includes(s)))
+		return;
 
 	for (const color of "WUBRG")
 		expect(commons.filter((card) => card.colors.includes(color as CardColor)).length).to.be.at.least(1);
@@ -866,7 +867,8 @@ describe("Single Draft (Two Players)", function () {
 							(set === "tmt" && c.set === "pza") ||
 							(set === "sos" && (c.set === "spg" || c.set === "soa")) ||
 							(set === "msh" && c.set === "mar") ||
-							(set === "fra" && c.set === "spg")
+							(set === "fra" && c.set === "spg") ||
+							set === "mbc" // Lots of sets there.
 					),
 					`All cards in booster should be of the desired set, got [${[...new Set(b.map((c) => c.set))]}].`
 				).to.be.true;

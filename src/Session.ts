@@ -790,17 +790,20 @@ export class Session implements IIndexable {
 					boosterFactoryOptions
 				);
 				// Make sure we have enough cards
-				const defaultFactoryBoosterCount = boosterSpecificRules
-					? customBoosters.filter((s) => s === "").length
-					: boosterQuantity;
-				for (const slot of ["common", "uncommon", "rare"]) {
-					const cardCount = (defaultFactory as BoosterFactory).cardPool[slot].count();
-					const cardTarget = targets[slot] * defaultFactoryBoosterCount;
-					if (cardCount < cardTarget)
-						return new MessageError(
-							"Error generating boosters",
-							`Not enough cards (${cardCount}/${cardTarget} ${slot}s) in collection.`
-						);
+				const bf = defaultFactory as BoosterFactory;
+				if (bf.validCardPool()) {
+					const defaultFactoryBoosterCount = boosterSpecificRules
+						? customBoosters.filter((s) => s === "").length
+						: boosterQuantity;
+					for (const slot of ["common", "uncommon", "rare"]) {
+						const cardCount = bf.cardPool[slot].count();
+						const cardTarget = targets[slot] * defaultFactoryBoosterCount;
+						if (cardCount < cardTarget)
+							return new MessageError(
+								"Error generating boosters",
+								`Not enough cards (${cardCount}/${cardTarget} ${slot}s) in collection.`
+							);
+					}
 				}
 			}
 		}
@@ -862,16 +865,16 @@ export class Session implements IIndexable {
 						boosterFactoryOptions
 					);
 					// Check if we have enough card, considering maxDuplicate is a limiting factor
-					const multiplier = customBoosters.reduce((a, v) => (v === boosterSet ? a + 1 : a), 0); // Note: This won't be accurate in the case of 'random' sets.
-					for (const slot of ["common", "uncommon", "rare"]) {
-						if (
-							(usedSets[boosterSet] as BoosterFactory).cardPool[slot].count() <
-							multiplier * playerCount * targets[slot]
-						)
-							return new MessageError(
-								"Error generating boosters",
-								`Not enough (${slot}) cards in card pool for individual booster restriction '${boosterSet}'. Please check the Max. Duplicates setting.`
-							);
+					const bf = usedSets[boosterSet] as BoosterFactory;
+					if (bf.validCardPool()) {
+						const multiplier = customBoosters.reduce((a, v) => (v === boosterSet ? a + 1 : a), 0); // Note: This won't be accurate in the case of 'random' sets.
+						for (const slot of ["common", "uncommon", "rare"]) {
+							if (bf.cardPool[slot].count() < multiplier * playerCount * targets[slot])
+								return new MessageError(
+									"Error generating boosters",
+									`Not enough (${slot}) cards in card pool for individual booster restriction '${boosterSet}'. Please check the Max. Duplicates setting.`
+								);
+						}
 					}
 				}
 			}

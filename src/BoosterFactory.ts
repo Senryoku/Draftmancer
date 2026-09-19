@@ -333,6 +333,10 @@ export class BoosterFactory implements IBoosterFactory {
 
 		return booster;
 	}
+
+	validCardPool(): boolean {
+		return true;
+	}
 }
 
 function filterCardPool(slotedCardPool: SlotedCardPool, predicate: (cid: CardID) => boolean) {
@@ -2889,6 +2893,15 @@ class PIOBoosterFactoryBonusSheet2 extends PIOBoosterFactory {
 	}
 }
 
+function cidsToCardPool(cids: CardID[], maxDuplicates?: Record<string, number>): CardPool {
+	const r = new CardPool();
+	for (const cid of cids) {
+		const card = getCard(cid);
+		r.set(card.id, maxDuplicates?.[card.rarity] ?? DefaultMaxDuplicates);
+	}
+	return r;
+}
+
 function cidsToSlotedCardPool(cids: CardID[], maxDuplicates?: Record<string, number>): SlotedCardPool {
 	const r: SlotedCardPool = {};
 	for (const cid of cids) {
@@ -5421,6 +5434,105 @@ export class FRABoosterFactory extends BoosterFactory {
 	}
 }
 
+// Mystery Booster Commander Edition
+import MBCCards from "../data/mbc_ids.json" with { type: "json" };
+class MBCBoosterFactory extends BoosterFactory {
+	static readonly Playtest = filterSetByNumber("mb2", 501, 621); // Same as Mystery Booster 2
+	static readonly NewToMagic = filterSetByNumber("mbc", 1, 60);
+	static readonly Alchemy = filterSetByNumber("mbc", 61, 70);
+	static readonly FutureSight = filterSetByNumber("mbc", 71, 80);
+
+	commonsOrUncommons: { W: CardPool; U: CardPool; B: CardPool; R: CardPool; G: CardPool };
+	wildcards: CardPool;
+	reprintedCommanders: CardPool;
+	futureSight = { commonOrUncommon: new CardPool(), rareOrMythic: new CardPool() };
+	newToMagic: CardPool;
+	playtest: CardPool;
+	alchemy: CardPool;
+
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
+		super(cardPool, landSlot, options);
+		this.commonsOrUncommons = {
+			W: cidsToCardPool(MBCCards["White Commons and Uncommons"], options.maxDuplicates),
+			U: cidsToCardPool(MBCCards["Blue Commons and Uncommons"], options.maxDuplicates),
+			B: cidsToCardPool(MBCCards["Black Commons and Uncommons"], options.maxDuplicates),
+			R: cidsToCardPool(MBCCards["Red Commons and Uncommons"], options.maxDuplicates),
+			G: cidsToCardPool(MBCCards["Green Commons and Uncommons"], options.maxDuplicates),
+		};
+		this.wildcards = cidsToCardPool(MBCCards["Wildcards"], options.maxDuplicates);
+		this.reprintedCommanders = cidsToCardPool(MBCCards["Reprinted Commanders"], options.maxDuplicates);
+
+		this.playtest = cidsToCardPool(MBCBoosterFactory.Playtest, options.maxDuplicates);
+		this.newToMagic = cidsToCardPool(MBCBoosterFactory.NewToMagic, options.maxDuplicates);
+		this.alchemy = cidsToCardPool(MBCBoosterFactory.Alchemy, options.maxDuplicates);
+		for (const cid of MBCCards["Future Sight"]) {
+			const card = getCard(cid);
+			if (card.rarity === "rare" || card.rarity === "mythic") {
+				this.futureSight.rareOrMythic.set(
+					card.id,
+					options.maxDuplicates?.[card.rarity] ?? DefaultMaxDuplicates
+				);
+			} else {
+				this.futureSight.commonOrUncommon.set(
+					card.id,
+					options.maxDuplicates?.[card.rarity] ?? DefaultMaxDuplicates
+				);
+			}
+		}
+	}
+
+	override generateBooster(targets: Targets) {
+		const booster: UniqueCard[] = [];
+
+		if (targets !== DefaultBoosterTargets) {
+			return new MessageError(
+				"Unsupported",
+				"Mystery Booster Commander does not support non-default booster content."
+			);
+		}
+		// 1 Playtest card
+		booster.push(pickCard(this.playtest, booster));
+
+		// 1 Non-foil or traditional foil card
+		const futureSightRoll = random.realZeroToOneInclusive();
+		if (futureSightRoll < (43.3 + 2) / 100.0) {
+			// A non-foil (43.3%) or traditional foil (2%) common or uncommon Future Sight frame card
+			booster.push(pickCard(this.futureSight.commonOrUncommon, booster, { foil: random.bool(2 / (43.3 + 2)) }));
+		} else if (futureSightRoll < (43.3 + 2 + 52 + 2.4) / 100.0) {
+			// A non-foil (52%) or traditional foil (2.4%) rare or mythic rare Future Sight frame card
+			booster.push(pickCard(this.futureSight.rareOrMythic, booster, { foil: random.bool(2.4 / (52 + 2.4)) }));
+		} else {
+			// A traditional foil acorn stamp card (less than 1%)
+			booster.push(pickCard(this.alchemy, booster, { foil: true }));
+		}
+
+		// 1 Non-foil (95.25%) or traditional foil (4.75%) new-to-Magic commander
+		booster.push(pickCard(this.newToMagic, booster, { foil: random.bool(0.0475) }));
+
+		// 1 Rare or mythic rare reprinted commander
+		booster.push(pickCard(this.reprintedCommanders, booster));
+
+		// 1 Reprint wildcard of any rarity
+		booster.push(pickCard(this.wildcards, booster));
+
+		// 3 White common or uncommon cards
+		// 3 Blue common or uncommon cards
+		// 3 Black common or uncommon cards
+		// 3 Red common or uncommon cards
+		// 3 Green common or uncommon cards
+		for (const color of Object.keys(this.commonsOrUncommons)) {
+			for (let i = 0; i < 3; ++i)
+				booster.push(pickCard(this.commonsOrUncommons[color as keyof typeof this.commonsOrUncommons], booster));
+		}
+
+		return booster;
+	}
+
+	override validCardPool(): boolean {
+		return false;
+	}
+}
+
 // Set specific rules.
 // Neither DOM, WAR or ZNR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
 export const SetSpecificFactories: {
@@ -5485,6 +5597,7 @@ export const SetSpecificFactories: {
 	msh: MSHBoosterFactory,
 	hob: HOBBoosterFactory,
 	fra: FRABoosterFactory,
+	mbc: MBCBoosterFactory,
 };
 
 export const getBoosterFactory = function (

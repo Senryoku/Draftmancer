@@ -1,0 +1,8873 @@
+{
+	"Future Sight": [
+		{
+			"name": "Dust to Dust"
+		},
+		{
+			"name": "Chaos Warp"
+		},
+		{
+			"name": "Chromatic Lantern"
+		},
+		{
+			"name": "Fellwar Stone"
+		},
+		{
+			"name": "Jeweled Amulet"
+		},
+		{
+			"name": "Mind Stone"
+		},
+		{
+			"name": "Swiftfoot Boots"
+		},
+		{
+			"name": "Thought Vessel"
+		},
+		{
+			"name": "Exotic Orchard"
+		},
+		{
+			"name": "Path of Ancestry"
+		},
+		{
+			"name": "Future Sight"
+		},
+		{
+			"name": "Hoodwink"
+		},
+		{
+			"name": "Contagion"
+		},
+		{
+			"name": "Dakmor Sorceress"
+		},
+		{
+			"name": "Rot Hulk"
+		},
+		{
+			"name": "Ball Lightning"
+		},
+		{
+			"name": "Goblin Settler"
+		},
+		{
+			"name": "Hunting Cheetah"
+		},
+		{
+			"name": "Triumph of Ferocity"
+		},
+		{
+			"name": "Hogaak, Arisen Necropolis"
+		},
+		{
+			"name": "Hostage Taker"
+		},
+		{
+			"name": "O-Kagachi, Vengeful Kami"
+		},
+		{
+			"name": "Black Vise"
+		},
+		{
+			"name": "Proteus Staff"
+		},
+		{
+			"name": "The Rack"
+		},
+		{
+			"name": "Serum Powder"
+		},
+		{
+			"name": "Tsabo's Web"
+		},
+		{
+			"name": "Goblin Gang Leader"
+		},
+		{
+			"name": "Velukan Dragon"
+		},
+		{
+			"name": "Giver of Runes"
+		},
+		{
+			"name": "Kataki, War's Wage"
+		},
+		{
+			"name": "Nomadsen-Kor"
+		},
+		{
+			"name": "Rest in Peace"
+		},
+		{
+			"name": "Scalelord Reckoner"
+		},
+		{
+			"name": "Serenity"
+		},
+		{
+			"name": "Swords to Plowshares"
+		},
+		{
+			"name": "Back to Basics"
+		},
+		{
+			"name": "Brainstorm"
+		},
+		{
+			"name": "Chain of Vapor"
+		},
+		{
+			"name": "Counterbalance"
+		},
+		{
+			"name": "Counterspell"
+		},
+		{
+			"name": "Cunning Wish"
+		},
+		{
+			"name": "Echo of Eons"
+		},
+		{
+			"name": "Energy Flux"
+		},
+		{
+			"name": "Equilibrium"
+		},
+		{
+			"name": "Flusterstorm"
+		},
+		{
+			"name": "Gush"
+		},
+		{
+			"name": "Hydroblast"
+		},
+		{
+			"name": "Mana Short"
+		},
+		{
+			"name": "Merchant Scroll"
+		},
+		{
+			"name": "Mindbreak Trap"
+		},
+		{
+			"name": "Pact of Negation"
+		},
+		{
+			"name": "Reset"
+		},
+		{
+			"name": "Show and Tell"
+		},
+		{
+			"name": "Standstill"
+		},
+		{
+			"name": "Stifle"
+		},
+		{
+			"name": "Temporal Manipulation"
+		},
+		{
+			"name": "Thassa's Oracle"
+		},
+		{
+			"name": "Cabal Ritual"
+		},
+		{
+			"name": "Dark Ritual"
+		},
+		{
+			"name": "Death's Shadow"
+		},
+		{
+			"name": "Demonic Consultation"
+		},
+		{
+			"name": "Doomsday"
+		},
+		{
+			"name": "Eater of the Dead"
+		},
+		{
+			"name": "Mind Twist"
+		},
+		{
+			"name": "Pox"
+		},
+		{
+			"name": "Rain of Daggers"
+		},
+		{
+			"name": "Snuff Out"
+		},
+		{
+			"name": "Zombie Master"
+		},
+		{
+			"name": "Control of the Court"
+		},
+		{
+			"name": "Final Fortune"
+		},
+		{
+			"name": "Goblin King"
+		},
+		{
+			"name": "Goblin Recruiter"
+		},
+		{
+			"name": "Kobolds of Kher Keep"
+		},
+		{
+			"name": "Maddening Hex"
+		},
+		{
+			"name": "Mana Flare"
+		},
+		{
+			"name": "Nalathni Dragon"
+		},
+		{
+			"name": "Pyroblast"
+		},
+		{
+			"name": "Ruination"
+		},
+		{
+			"name": "Underworld Breach"
+		},
+		{
+			"name": "Winds of Change"
+		},
+		{
+			"name": "Ancient Stirrings"
+		},
+		{
+			"name": "Collected Company"
+		},
+		{
+			"name": "Crashing Footfalls"
+		},
+		{
+			"name": "Elvish Reclaimer"
+		},
+		{
+			"name": "Forest Bear"
+		},
+		{
+			"name": "Greater Good"
+		},
+		{
+			"name": "Manabond"
+		},
+		{
+			"name": "Mirri's Guile"
+		},
+		{
+			"name": "Natural Order"
+		},
+		{
+			"name": "Norwood Priestess"
+		},
+		{
+			"name": "Oath of Druids"
+		},
+		{
+			"name": "Seeker of Skybreak"
+		},
+		{
+			"name": "Spike Weaver"
+		},
+		{
+			"name": "Tinder Wall"
+		},
+		{
+			"name": "Aether Vial"
+		},
+		{
+			"name": "Basalt Monolith"
+		},
+		{
+			"name": "Engineered Explosives"
+		},
+		{
+			"name": "Ensnaring Bridge"
+		},
+		{
+			"name": "Goblin Charbelcher"
+		},
+		{
+			"name": "Grafdigger's Cage"
+		},
+		{
+			"name": "Grinding Station"
+		},
+		{
+			"name": "Krark-Clan Ironworks"
+		},
+		{
+			"name": "Lightning Greaves"
+		},
+		{
+			"name": "Lotus Petal"
+		},
+		{
+			"name": "Meekstone"
+		},
+		{
+			"name": "Memnite"
+		},
+		{
+			"name": "Power Matrix"
+		},
+		{
+			"name": "Relic of Progenitus"
+		},
+		{
+			"name": "Sensei's Divining Top"
+		},
+		{
+			"name": "Sol Ring"
+		},
+		{
+			"name": "Tormod's Crypt"
+		},
+		{
+			"name": "Torpor Orb"
+		},
+		{
+			"name": "Urza's Bauble"
+		},
+		{
+			"name": "Walking Ballista"
+		},
+		{
+			"name": "Arena"
+		},
+		{
+			"name": "City of Brass"
+		},
+		{
+			"name": "Rishadan Port"
+		},
+		{
+			"name": "Tower of the Magistrate"
+		},
+		{
+			"name": "Foil"
+		},
+		{
+			"name": "Urza, Lord High Artificer"
+		},
+		{
+			"name": "Gix, Yawgmoth Praetor"
+		},
+		{
+			"name": "Dragon's Approach"
+		},
+		{
+			"name": "Squee, Goblin Nabob"
+		},
+		{
+			"name": "Multani, Yavimaya's Avatar"
+		},
+		{
+			"name": "Titania, Protector of Argoth"
+		},
+		{
+			"name": "Captain Sisay"
+		},
+		{
+			"name": "Gerrard, Weatherlight Hero"
+		},
+		{
+			"name": "Mirri, Weatherlight Duelist"
+		},
+		{
+			"name": "Xantcha, Sleeper Agent"
+		},
+		{
+			"name": "Arcane Signet"
+		},
+		{
+			"name": "Karn, Legacy Reforged"
+		},
+		{
+			"name": "Command Tower"
+		},
+		{
+			"name": "Reflecting Pool"
+		}
+	],
+	"Playtest": [
+		{
+			"name": "Indicate"
+		},
+		{
+			"name": "Kozilek, Compleated"
+		},
+		{
+			"name": "Marchesa's Surprise Party"
+		},
+		{
+			"name": "Omnipresent Impostor"
+		},
+		{
+			"name": "Rule with an Even Hand"
+		},
+		{
+			"name": "Who's That Praetor?"
+		},
+		{
+			"name": "Abbot of the Sacred Meeple"
+		},
+		{
+			"name": "Arcanum Things"
+		},
+		{
+			"name": "Avacyn's Collar, the Symbol of Her Church"
+		},
+		{
+			"name": "Brigid, Who's Seen Some Stuff"
+		},
+		{
+			"name": "Champion of the Hareish"
+		},
+		{
+			"name": "Defender of the Queue"
+		},
+		{
+			"name": "Essence of Ajani"
+		},
+		{
+			"name": "Friarball"
+		},
+		{
+			"name": "A Girl and Her Dogs"
+		},
+		{
+			"name": "Intangible Vibes"
+		},
+		{
+			"name": "Jeskai Baller"
+		},
+		{
+			"name": "Knight of Lost Causes"
+		},
+		{
+			"name": "Muraganda Eldrazi"
+		},
+		{
+			"name": "New Master of Arms"
+		},
+		{
+			"name": "Noble Ox"
+		},
+		{
+			"name": "Plain Walker"
+		},
+		{
+			"name": "Sliver of Hope"
+		},
+		{
+			"name": "Tax Taker"
+		},
+		{
+			"name": "Alberix, the Trade Planet"
+		},
+		{
+			"name": "Blurry Visionary"
+		},
+		{
+			"name": "Can't Quite Recall"
+		},
+		{
+			"name": "Catch of the Day"
+		},
+		{
+			"name": "Duelists' Convocation\n                                    International"
+		},
+		{
+			"name": "Heart of a Duelist"
+		},
+		{
+			"name": "Map to Lorthos's Temple"
+		},
+		{
+			"name": "Night of the Flying Merfolk"
+		},
+		{
+			"name": "No-Regrets Egret"
+		},
+		{
+			"name": "Panglacial Shinobi"
+		},
+		{
+			"name": "Search Elemental"
+		},
+		{
+			"name": "Subgoyf"
+		},
+		{
+			"name": "There // They're // Their"
+		},
+		{
+			"name": "Two by Four"
+		},
+		{
+			"name": "Wisedrafter's Will"
+		},
+		{
+			"name": "Your Wish Is My Command"
+		},
+		{
+			"name": "Call from the Grave"
+		},
+		{
+			"name": "Cleaver Blow"
+		},
+		{
+			"name": "Common Black Removal"
+		},
+		{
+			"name": "Creepy Crawler"
+		},
+		{
+			"name": "Halving Season"
+		},
+		{
+			"name": "Lich's Duel Mastery"
+		},
+		{
+			"name": "Lifening Elemental"
+		},
+		{
+			"name": "Liliana's Other Contract"
+		},
+		{
+			"name": "Magus of the Chains"
+		},
+		{
+			"name": "The Many Deeds of Belzenlok"
+		},
+		{
+			"name": "Oddric, Lunar Marquis"
+		},
+		{
+			"name": "Pinchy McStingbutt"
+		},
+		{
+			"name": "TL;DR"
+		},
+		{
+			"name": "Toofer, Keeper of the Full Grip"
+		},
+		{
+			"name": "Yawgmoth's Day Planner"
+		},
+		{
+			"name": "You Compleat Me"
+		},
+		{
+			"name": "All-Star Kicker"
+		},
+		{
+			"name": "Bolshack Dragon"
+		},
+		{
+			"name": "Boltfire"
+		},
+		{
+			"name": "Boulder Jockey"
+		},
+		{
+			"name": "Dwarven Confluencer"
+		},
+		{
+			"name": "Flanking Licid"
+		},
+		{
+			"name": "Gobland"
+		},
+		{
+			"name": "Immersturm Battlefield"
+		},
+		{
+			"name": "Planeswalkerificate"
+		},
+		{
+			"name": "Pyromancy 101"
+		},
+		{
+			"name": "Snap Judgment"
+		},
+		{
+			"name": "Toddler's Rage"
+		},
+		{
+			"name": "Vuzzle Spaceship"
+		},
+		{
+			"name": "Wormhole Warp"
+		},
+		{
+			"name": "Zone of Flame"
+		},
+		{
+			"name": "Built Bear"
+		},
+		{
+			"name": "The Colossal Dreadmaw"
+		},
+		{
+			"name": "Dairy Cow"
+		},
+		{
+			"name": "Flavor Disaster"
+		},
+		{
+			"name": "Glade of the Pump Spells"
+		},
+		{
+			"name": "Keeper of the Crown"
+		},
+		{
+			"name": "Meandered Towershell"
+		},
+		{
+			"name": "Naturalize 2"
+		},
+		{
+			"name": "Penumbra Umbra"
+		},
+		{
+			"name": "Phyrexian Seedling"
+		},
+		{
+			"name": "Plant a Sapling"
+		},
+		{
+			"name": "Questing Cosplayer"
+		},
+		{
+			"name": "Spuzzem Strategist"
+		},
+		{
+			"name": "Starting Town NPC"
+		},
+		{
+			"name": "Teferi, Druid of Argoth"
+		},
+		{
+			"name": "Werewhat"
+		},
+		{
+			"name": "Wrenn and One"
+		},
+		{
+			"name": "Anax and Cymede & Kynaios and\n                                    Tiro"
+		},
+		{
+			"name": "Chatzuk, Mighty Guitarist"
+		},
+		{
+			"name": "Chea, Friend to Maybe Too Many"
+		},
+		{
+			"name": "Don't Worry About It"
+		},
+		{
+			"name": "Fludge, Gunk Guardian"
+		},
+		{
+			"name": "Glimpse, the Unthinkable"
+		},
+		{
+			"name": "Hish of the Snake Cult"
+		},
+		{
+			"name": "Jund 'Em Out"
+		},
+		{
+			"name": "Lutri, Pauper Otter"
+		},
+		{
+			"name": "Mothers Yamazaki"
+		},
+		{
+			"name": "Narod, the Beige Flower"
+		},
+		{
+			"name": "Pokey, the Scallywagg"
+		},
+		{
+			"name": "Rin and Seri, Inseparabler"
+		},
+		{
+			"name": "Stone Drake"
+		},
+		{
+			"name": "Terry Pin, Turboturtle"
+		},
+		{
+			"name": "Wowzer, the Aspirational"
+		},
+		{
+			"name": "Wrath of Leknif"
+		},
+		{
+			"name": "Luxior, Ignited"
+		},
+		{
+			"name": "Microscope"
+		},
+		{
+			"name": "Mox Poison"
+		},
+		{
+			"name": "Orb of Origin"
+		},
+		{
+			"name": "Runed Terror"
+		},
+		{
+			"name": "Fetching Garden"
+		},
+		{
+			"name": "The Heron Moon"
+		},
+		{
+			"name": "Lazotep Archway"
+		},
+		{
+			"name": "Madlands"
+		},
+		{
+			"name": "Maestros' Totally Safe Hideout"
+		},
+		{
+			"name": "Omenpath to Naya"
+		},
+		{
+			"name": "Processing Plant"
+		},
+		{
+			"name": "Slumbering Waterways"
+		},
+		{
+			"name": "Temur Elevator"
+		},
+		{
+			"name": "Under-Construction Skyscraper"
+		},
+		{
+			"name": "Value Town"
+		}
+	],
+	"White Commons and Uncommons": [
+		{
+			"name": "Abolish",
+			"set": "PCY"
+		},
+		{
+			"name": "Abzan Battle Priest",
+			"set": "KTK"
+		},
+		{
+			"name": "Accorder Paladin",
+			"set": "MBS"
+		},
+		{
+			"name": "Adamant Will",
+			"set": "DOM"
+		},
+		{
+			"name": "Adanto Vanguard",
+			"set": "XLN"
+		},
+		{
+			"name": "Aerial Responder",
+			"set": "E01"
+		},
+		{
+			"name": "Afterlife",
+			"set": "MIR"
+		},
+		{
+			"name": "Afterlife Insurance",
+			"set": "CLU"
+		},
+		{
+			"name": "Against All Odds",
+			"set": "ONE"
+		},
+		{
+			"name": "Ajani's Pridemate",
+			"set": "WAR"
+		},
+		{
+			"name": "Ajani's Welcome",
+			"set": "M19"
+		},
+		{
+			"name": "Akroan Phalanx",
+			"set": "BNG"
+		},
+		{
+			"name": "Alharu, Solemn Ritualist",
+			"set": "CMR"
+		},
+		{
+			"name": "All That Glitters",
+			"set": "ELD"
+		},
+		{
+			"name": "Alseid of Life's Bounty",
+			"set": "THB"
+		},
+		{
+			"name": "Ancestral Blade",
+			"set": "2XM"
+		},
+		{
+			"name": "Angel of Light",
+			"set": "MB2"
+		},
+		{
+			"name": "Angel of Renewal",
+			"set": "BFZ"
+		},
+		{
+			"name": "Angel of the Ruins",
+			"set": "OTC"
+		},
+		{
+			"name": "Angel of Vitality",
+			"set": "M20"
+		},
+		{
+			"name": "Angelic Exaltation",
+			"set": "RNA"
+		},
+		{
+			"name": "Angelic Favor",
+			"set": "NEM"
+		},
+		{
+			"name": "Angelic Gift",
+			"set": "BBD"
+		},
+		{
+			"name": "Angelic Page",
+			"set": "USG"
+		},
+		{
+			"name": "Angelic Protector",
+			"set": "TMP"
+		},
+		{
+			"name": "Archetype of Courage",
+			"set": "BNG"
+		},
+		{
+			"name": "Archon of Absolution",
+			"set": "ELD"
+		},
+		{
+			"name": "Ardenn, Intrepid Archaeologist",
+			"set": "CMR"
+		},
+		{
+			"name": "Armored Ascension",
+			"set": "SHM"
+		},
+		{
+			"name": "Aven Liberator",
+			"set": "SCG"
+		},
+		{
+			"name": "Aven Mindcensor",
+			"set": "TSR"
+		},
+		{
+			"name": "Aven Squire",
+			"set": "CON"
+		},
+		{
+			"name": "Avian Changeling",
+			"set": "LRW"
+		},
+		{
+			"name": "Azorius Herald",
+			"set": "GK2"
+		},
+		{
+			"name": "Baffling End",
+			"set": "RIX"
+		},
+		{
+			"name": "Baird, Steward of Argive",
+			"set": "DOM"
+		},
+		{
+			"name": "Ballynock Cohort",
+			"set": "EMA"
+		},
+		{
+			"name": "Bane's Invoker",
+			"set": "CLB"
+		},
+		{
+			"name": "Banisher Priest",
+			"set": "M14"
+		},
+		{
+			"name": "Banishing Light",
+			"set": "JOU"
+		},
+		{
+			"name": "Banishing Slash",
+			"set": "NEO"
+		},
+		{
+			"name": "Banishing Stroke",
+			"set": "AVR"
+		},
+		{
+			"name": "Barbed Spike",
+			"set": "MH2"
+		},
+		{
+			"name": "Basri's Acolyte",
+			"set": "M21"
+		},
+		{
+			"name": "Basri's Solidarity",
+			"set": "M21"
+		},
+		{
+			"name": "Battle Screech",
+			"set": "JUD"
+		},
+		{
+			"name": "Belfry Spirit",
+			"set": "GK2"
+		},
+		{
+			"name": "Bellowing Aegisaur",
+			"set": "XLN"
+		},
+		{
+			"name": "Beloved Chaplain",
+			"set": "ODY"
+		},
+		{
+			"name": "Benevolent Ancestor",
+			"set": "IMA"
+		},
+		{
+			"name": "Benevolent Blessing",
+			"set": "CMR"
+		},
+		{
+			"name": "Benevolent Bodyguard",
+			"set": "JUD"
+		},
+		{
+			"name": "Blessed Hippogriff",
+			"set": "CLB"
+		},
+		{
+			"name": "Blessed Spirits",
+			"set": "ORI"
+		},
+		{
+			"name": "Bond of Discipline",
+			"set": "WAR"
+		},
+		{
+			"name": "Boonweaver Giant",
+			"set": "M15"
+		},
+		{
+			"name": "Brave the Sands",
+			"set": "CM2"
+		},
+		{
+			"name": "Breath of Life",
+			"set": "POR"
+		},
+		{
+			"name": "Burrenton Forge-Tender",
+			"set": "LRW"
+		},
+		{
+			"name": "Cast Out",
+			"set": "AKH"
+		},
+		{
+			"name": "Cenn's Enlistment",
+			"set": "EVE"
+		},
+		{
+			"name": "Citadel Gate",
+			"set": "CLB"
+		},
+		{
+			"name": "Clarion Spirit",
+			"set": "KHM"
+		},
+		{
+			"name": "Cleric Class",
+			"set": "AFR"
+		},
+		{
+			"name": "Cloudgoat Ranger",
+			"set": "LRW"
+		},
+		{
+			"name": "Cloudshift",
+			"set": "A25"
+		},
+		{
+			"name": "Coalition Honor Guard",
+			"set": "EMA"
+		},
+		{
+			"name": "Condemn",
+			"set": "DIS"
+		},
+		{
+			"name": "Congregate",
+			"set": "M15"
+		},
+		{
+			"name": "Constricting Sliver",
+			"set": "M15"
+		},
+		{
+			"name": "Consul's Lieutenant",
+			"set": "ORI"
+		},
+		{
+			"name": "Contraband Livestock",
+			"set": "CLB"
+		},
+		{
+			"name": "Crossbow Infantry",
+			"set": "MMQ"
+		},
+		{
+			"name": "Crystal Dragon",
+			"set": "CLB"
+		},
+		{
+			"name": "Custodi Squire",
+			"set": "CNS"
+		},
+		{
+			"name": "Cut a Deal",
+			"set": "ONC"
+		},
+		{
+			"name": "Dalkovan Packbeasts",
+			"set": "TDM"
+		},
+		{
+			"name": "Darksteel Mutation",
+			"set": "CMA"
+		},
+		{
+			"name": "Daru Spiritualist",
+			"set": "SCG"
+		},
+		{
+			"name": "Dauntless Bodyguard",
+			"set": "DOM"
+		},
+		{
+			"name": "Dauntless Cathar",
+			"set": "SOI"
+		},
+		{
+			"name": "Dauntless Dismantler",
+			"set": "LCI"
+		},
+		{
+			"name": "Dawn Charm",
+			"set": "UMA"
+		},
+		{
+			"name": "Dawnbringer Cleric",
+			"set": "AFR"
+		},
+		{
+			"name": "Dawnglare Invoker",
+			"set": "C15"
+		},
+		{
+			"name": "Daxos, Blessed by the Sun",
+			"set": "THB"
+		},
+		{
+			"name": "Daydream",
+			"set": "SOS"
+		},
+		{
+			"name": "Decree of Justice",
+			"set": "MH3"
+		},
+		{
+			"name": "Defensive Formation",
+			"set": "USG"
+		},
+		{
+			"name": "Deftblade Elite",
+			"set": "LGN"
+		},
+		{
+			"name": "Desperate Lunge",
+			"set": "WAR"
+		},
+		{
+			"name": "Destroy Evil",
+			"set": "DMU"
+		},
+		{
+			"name": "Devouring Light",
+			"set": "RVR"
+		},
+		{
+			"name": "Devout Witness",
+			"set": "MMQ"
+		},
+		{
+			"name": "Doomed Traveler",
+			"set": "CN2"
+		},
+		{
+			"name": "Dragon Bell Monk",
+			"set": "IMA"
+		},
+		{
+			"name": "Elite Scaleguard",
+			"set": "CM2"
+		},
+		{
+			"name": "Elspeth's Smite",
+			"set": "MOM"
+		},
+		{
+			"name": "Emerge Unscathed",
+			"set": "IMA"
+		},
+		{
+			"name": "Empty-Shrine Kannushi",
+			"set": "BOK"
+		},
+		{
+			"name": "Encampment Keeper",
+			"set": "XLN"
+		},
+		{
+			"name": "Encircling Fissure",
+			"set": "BFZ"
+		},
+		{
+			"name": "Entangler",
+			"set": "PCY"
+		},
+		{
+			"name": "Ethereal Armor",
+			"set": "Q06"
+		},
+		{
+			"name": "Ethereal Haze",
+			"set": "CHK"
+		},
+		{
+			"name": "Evangel of Heliod",
+			"set": "THS"
+		},
+		{
+			"name": "Exile",
+			"set": "VMA"
+		},
+		{
+			"name": "Expedition Raptor",
+			"set": "BBD"
+		},
+		{
+			"name": "Exultant Skymarcher",
+			"set": "RIX"
+		},
+		{
+			"name": "Faerie Guidemother",
+			"set": "ELD"
+		},
+		{
+			"name": "Fairgrounds Warden",
+			"set": "KLD"
+		},
+		{
+			"name": "Faith Unbroken",
+			"set": "EMN"
+		},
+		{
+			"name": "Faithbearer Paladin",
+			"set": "EMN"
+		},
+		{
+			"name": "Fanatical Devotion",
+			"set": "NEM"
+		},
+		{
+			"name": "Fearless Fledgling",
+			"set": "ZNR"
+		},
+		{
+			"name": "Felidar Guardian",
+			"set": "AER"
+		},
+		{
+			"name": "Felidar Umbra",
+			"set": "PC2"
+		},
+		{
+			"name": "Fencing Ace",
+			"set": "A25"
+		},
+		{
+			"name": "Field of Souls",
+			"set": "VOC"
+		},
+		{
+			"name": "Fiend Hunter",
+			"set": "CMA"
+		},
+		{
+			"name": "Fierce Retribution",
+			"set": "VOW"
+		},
+		{
+			"name": "Flickerwisp",
+			"set": "EVE"
+		},
+		{
+			"name": "Flock Impostor",
+			"set": "ECL"
+		},
+		{
+			"name": "Forsake the Worldly",
+			"set": "AKH"
+		},
+		{
+			"name": "Fortify",
+			"set": "MM2"
+		},
+		{
+			"name": "Fragmentize",
+			"set": "KLD"
+		},
+		{
+			"name": "Geist of the Moors",
+			"set": "A25"
+		},
+		{
+			"name": "Generous Gift",
+			"set": "MH1"
+		},
+		{
+			"name": "Genju of the Fields",
+			"set": "BOK"
+		},
+		{
+			"name": "Ghostly Prison",
+			"set": "CHK"
+		},
+		{
+			"name": "Gideon's Lawkeeper",
+			"set": "MM3"
+		},
+		{
+			"name": "Gideon's Sacrifice",
+			"set": "WAR"
+		},
+		{
+			"name": "Gleam of Resistance",
+			"set": "CN2"
+		},
+		{
+			"name": "Glimmerpoint Stag",
+			"set": "SOM"
+		},
+		{
+			"name": "Gods Willing",
+			"set": "UMA"
+		},
+		{
+			"name": "Goldmeadow Harrier",
+			"set": "DDF"
+		},
+		{
+			"name": "Goldnight Commander",
+			"set": "AVR"
+		},
+		{
+			"name": "Grateful Apparition",
+			"set": "WAR"
+		},
+		{
+			"name": "Griffin Guide",
+			"set": "TSR"
+		},
+		{
+			"name": "Guardian Naga",
+			"set": "CLB"
+		},
+		{
+			"name": "Guided Strike",
+			"set": "IMA"
+		},
+		{
+			"name": "Hammers of Moradin",
+			"set": "CLB"
+		},
+		{
+			"name": "Hand of Honor",
+			"set": "SOK"
+		},
+		{
+			"name": "Healer of the Pride",
+			"set": "M13"
+		},
+		{
+			"name": "Healer's Hawk",
+			"set": "GRN"
+		},
+		{
+			"name": "Heliod's Punishment",
+			"set": "THB"
+		},
+		{
+			"name": "Helpful Hunter",
+			"set": "FDN"
+		},
+		{
+			"name": "Herald of the Host",
+			"set": "CM2"
+		},
+		{
+			"name": "Hope and Glory",
+			"set": "ULG"
+		},
+		{
+			"name": "Humble",
+			"set": "EMA"
+		},
+		{
+			"name": "Imperial Oath",
+			"set": "NEO"
+		},
+		{
+			"name": "Imposing Vantasaur",
+			"set": "IKO"
+		},
+		{
+			"name": "Impostor of the Sixth Pride",
+			"set": "MH1"
+		},
+		{
+			"name": "Inspiring Overseer",
+			"set": "SNC"
+		},
+		{
+			"name": "Intangible Virtue",
+			"set": "ISD"
+		},
+		{
+			"name": "Iona's Judgment",
+			"set": "IMA"
+		},
+		{
+			"name": "Irregular Cohort",
+			"set": "MH1"
+		},
+		{
+			"name": "J\u00f6tun Owl Keeper",
+			"set": "CSP"
+		},
+		{
+			"name": "Journey to Nowhere",
+			"set": "ZEN"
+		},
+		{
+			"name": "Jubilant Mascot",
+			"set": "BBD"
+		},
+		{
+			"name": "Kabira Vindicator",
+			"set": "DDP"
+		},
+		{
+			"name": "Kami of False Hope",
+			"set": "BOK"
+		},
+		{
+			"name": "Kangee's Lieutenant",
+			"set": "CMR"
+		},
+		{
+			"name": "Karoo",
+			"set": "VIS"
+		},
+		{
+			"name": "Keleth, Sunmane Familiar",
+			"set": "CMM"
+		},
+		{
+			"name": "Kinsbaile Courier",
+			"set": "CMR"
+		},
+		{
+			"name": "Kitsune Blademaster",
+			"set": "CHK"
+		},
+		{
+			"name": "Knight of Cliffhaven",
+			"set": "DDP"
+		},
+		{
+			"name": "Knight of Meadowgrain",
+			"set": "DDG"
+		},
+		{
+			"name": "Knight of the Holy Nimbus",
+			"set": "TSP"
+		},
+		{
+			"name": "Knight of the Tusk",
+			"set": "M19"
+		},
+		{
+			"name": "Kor Cartographer",
+			"set": "DDI"
+		},
+		{
+			"name": "Kor Celebrant",
+			"set": "ZNR"
+		},
+		{
+			"name": "Kor Firewalker",
+			"set": "A25"
+		},
+		{
+			"name": "Kor Hookmaster",
+			"set": "EMA"
+		},
+		{
+			"name": "Lagonna-Band Trailblazer",
+			"set": "JOU"
+		},
+		{
+			"name": "Lassoed by the Law",
+			"set": "OTJ"
+		},
+		{
+			"name": "Lieutenants of the Guard",
+			"set": "CN2"
+		},
+		{
+			"name": "Lingering Souls",
+			"set": "MM3"
+		},
+		{
+			"name": "Loyal Sentry",
+			"set": "A25"
+		},
+		{
+			"name": "Loyal Unicorn",
+			"set": "C18"
+		},
+		{
+			"name": "Make a Stand",
+			"set": "OGW"
+		},
+		{
+			"name": "Mask of Law and Grace",
+			"set": "UDS"
+		},
+		{
+			"name": "Master Decoy",
+			"set": "TMP"
+		},
+		{
+			"name": "Master of Arms",
+			"set": "WTH"
+		},
+		{
+			"name": "Master Splicer",
+			"set": "NPH"
+		},
+		{
+			"name": "Mentor of the Meek",
+			"set": "2X2"
+		},
+		{
+			"name": "Metastatic Evangel",
+			"set": "MH3"
+		},
+		{
+			"name": "Midnight Guard",
+			"set": "BBD"
+		},
+		{
+			"name": "Militia Bugler",
+			"set": "2X2"
+		},
+		{
+			"name": "Minimus Containment",
+			"set": "CLB"
+		},
+		{
+			"name": "Ministrant of Obligation",
+			"set": "RNA"
+		},
+		{
+			"name": "Miraculous Recovery",
+			"set": "VIS"
+		},
+		{
+			"name": "Mistmeadow Skulk",
+			"set": "SHM"
+		},
+		{
+			"name": "Mistveil Plains",
+			"set": "UMA"
+		},
+		{
+			"name": "Momentary Blink",
+			"set": "MM3"
+		},
+		{
+			"name": "Moon-Blessed Cleric",
+			"set": "AFR"
+		},
+		{
+			"name": "Moonlit Strider",
+			"set": "MM2"
+		},
+		{
+			"name": "Mother of Runes",
+			"set": "ULG"
+		},
+		{
+			"name": "Myth Realized",
+			"set": "2X2"
+		},
+		{
+			"name": "Nahiri's Machinations",
+			"set": "SOI"
+		},
+		{
+			"name": "Nearheath Pilgrim",
+			"set": "AVR"
+		},
+		{
+			"name": "Nightwind Glider",
+			"set": "MMQ"
+		},
+		{
+			"name": "Nikko-Onna",
+			"set": "SOK"
+		},
+		{
+			"name": "Noble Purpose",
+			"set": "MMQ"
+		},
+		{
+			"name": "Nyx-Fleece Ram",
+			"set": "J25"
+		},
+		{
+			"name": "Oathsworn Giant",
+			"set": "RAV"
+		},
+		{
+			"name": "Oblivion Ring",
+			"set": "LRW"
+		},
+		{
+			"name": "Omen of the Sun",
+			"set": "THB"
+		},
+		{
+			"name": "On Serra's Wings",
+			"set": "DOM"
+		},
+		{
+			"name": "Orzhov Advokist",
+			"set": "C16"
+		},
+		{
+			"name": "Ossification",
+			"set": "ONE"
+		},
+		{
+			"name": "Otherworldly Journey",
+			"set": "DDC"
+		},
+		{
+			"name": "Pacifism",
+			"set": "M20"
+		},
+		{
+			"name": "Palace Jailer",
+			"set": "CN2"
+		},
+		{
+			"name": "Palace Sentinels",
+			"set": "CN2"
+		},
+		{
+			"name": "Paladin of the Bloodstained",
+			"set": "XLN"
+		},
+		{
+			"name": "Pegasus Courser",
+			"set": "M19"
+		},
+		{
+			"name": "Pegasus Guardian",
+			"set": "CLB"
+		},
+		{
+			"name": "Pentarch Ward",
+			"set": "IMA"
+		},
+		{
+			"name": "Perimeter Captain",
+			"set": "WWK"
+		},
+		{
+			"name": "Personify",
+			"set": "ECL"
+		},
+		{
+			"name": "Phantom Flock",
+			"set": "JUD"
+		},
+		{
+			"name": "Phyrexian Missionary",
+			"set": "DMU"
+		},
+		{
+			"name": "Pilgrim of the Ages",
+			"set": "GN3"
+		},
+		{
+			"name": "Planar Disruption",
+			"set": "ONE"
+		},
+		{
+			"name": "Plate Armor",
+			"set": "AFR"
+		},
+		{
+			"name": "Porcelain Legionnaire",
+			"set": "NPH"
+		},
+		{
+			"name": "Portal Manipulator",
+			"set": "CLU"
+		},
+		{
+			"name": "Prava of the Steel Legion",
+			"set": "ONC"
+		},
+		{
+			"name": "Pressure Point",
+			"set": "FRF"
+		},
+		{
+			"name": "Prismatic Strands",
+			"set": "JUD"
+		},
+		{
+			"name": "Prison Term",
+			"set": "SHM"
+		},
+		{
+			"name": "Promise of Bunrei",
+			"set": "A25"
+		},
+		{
+			"name": "Radiant's Judgment",
+			"set": "ULG"
+		},
+		{
+			"name": "Raffine's Informant",
+			"set": "SNC"
+		},
+		{
+			"name": "Raise the Alarm",
+			"set": "MD1"
+		},
+		{
+			"name": "Rally the Monastery",
+			"set": "TDM"
+		},
+		{
+			"name": "Rally the Peasants",
+			"set": "EMA"
+		},
+		{
+			"name": "Rambunctious Mutt",
+			"set": "M21"
+		},
+		{
+			"name": "Ramosian Rally",
+			"set": "MMQ"
+		},
+		{
+			"name": "Rebuff the Wicked",
+			"set": "PLC"
+		},
+		{
+			"name": "Reconnaissance",
+			"set": "EXO"
+		},
+		{
+			"name": "Recumbent Bliss",
+			"set": "EVE"
+		},
+		{
+			"name": "Refuse to Yield",
+			"set": "SNC"
+		},
+		{
+			"name": "Release the Dogs",
+			"set": "M21"
+		},
+		{
+			"name": "Renewed Faith",
+			"set": "A25"
+		},
+		{
+			"name": "Reprobation",
+			"set": "MH1"
+		},
+		{
+			"name": "Requisition Raid",
+			"set": "OTJ"
+		},
+		{
+			"name": "Resolute Reinforcements",
+			"set": "DMU"
+		},
+		{
+			"name": "Restoration Specialist",
+			"set": "AER"
+		},
+		{
+			"name": "Retreat to Emeria",
+			"set": "BFZ"
+		},
+		{
+			"name": "Reveille Squad",
+			"set": "PCY"
+		},
+		{
+			"name": "Reverent Hoplite",
+			"set": "THB"
+		},
+		{
+			"name": "Rootborn Defenses",
+			"set": "MM3"
+		},
+		{
+			"name": "Rumor Gatherer",
+			"set": "SNC"
+		},
+		{
+			"name": "Sacred Cat",
+			"set": "AKH"
+		},
+		{
+			"name": "Sage's Reverie",
+			"set": "C18"
+		},
+		{
+			"name": "Samurai of the Pale Curtain",
+			"set": "CHK"
+		},
+		{
+			"name": "Sanctum Gargoyle",
+			"set": "C16"
+		},
+		{
+			"name": "Scars of the Veteran",
+			"set": "ALL"
+		},
+		{
+			"name": "Secret Rendezvous",
+			"set": "STX"
+		},
+		{
+			"name": "Seeker of the Way",
+			"set": "KTK"
+		},
+		{
+			"name": "Sensor Splicer",
+			"set": "MM3"
+		},
+		{
+			"name": "Sentinel of the Eternal Watch",
+			"set": "ORI"
+		},
+		{
+			"name": "Sentinel Sliver",
+			"set": "M14"
+		},
+		{
+			"name": "Seraph of Dawn",
+			"set": "AVR"
+		},
+		{
+			"name": "Seraph of the Suns",
+			"set": "AKH"
+		},
+		{
+			"name": "Settle Beyond Reality",
+			"set": "MH1"
+		},
+		{
+			"name": "Shattered Angel",
+			"set": "NPH"
+		},
+		{
+			"name": "Shelter",
+			"set": "ODY"
+		},
+		{
+			"name": "Sheltered by Ghosts",
+			"set": "DSK"
+		},
+		{
+			"name": "Shepherd of the Flock",
+			"set": "ELD"
+		},
+		{
+			"name": "Shepherd of the Lost",
+			"set": "ZEN"
+		},
+		{
+			"name": "Shieldhide Dragon",
+			"set": "DTK"
+		},
+		{
+			"name": "Shoulder to Shoulder",
+			"set": "BBD"
+		},
+		{
+			"name": "Shrike Force",
+			"set": "BLB"
+		},
+		{
+			"name": "Sigil of the New Dawn",
+			"set": "UMA"
+		},
+		{
+			"name": "Silver Knight",
+			"set": "SCG"
+		},
+		{
+			"name": "Sky Crier",
+			"set": "SNC"
+		},
+		{
+			"name": "Skyhunter Skirmisher",
+			"set": "MM2"
+		},
+		{
+			"name": "Slaughter the Strong",
+			"set": "CMR"
+		},
+		{
+			"name": "Soltari Trooper",
+			"set": "TMP"
+		},
+		{
+			"name": "Soltari Visionary",
+			"set": "EXO"
+		},
+		{
+			"name": "Soul Warden",
+			"set": "MM3"
+		},
+		{
+			"name": "Soul's Attendant",
+			"set": "ROE"
+		},
+		{
+			"name": "Spectral Procession",
+			"set": "SHM"
+		},
+		{
+			"name": "Spiriten-Dal",
+			"set": "FUT"
+		},
+		{
+			"name": "Spirit Link",
+			"set": "10E"
+		},
+		{
+			"name": "Spirit Mantle",
+			"set": "M12"
+		},
+		{
+			"name": "Spirited Companion",
+			"set": "NEO"
+		},
+		{
+			"name": "Splendor Mare",
+			"set": "IKO"
+		},
+		{
+			"name": "Splitskin Doll",
+			"set": "DSK"
+		},
+		{
+			"name": "Standard Bearer",
+			"set": "APC"
+		},
+		{
+			"name": "Starlit Angel",
+			"set": "POR"
+		},
+		{
+			"name": "Stasis Snare",
+			"set": "BFZ"
+		},
+		{
+			"name": "Steadfast Unicorn",
+			"set": "CLB"
+		},
+		{
+			"name": "Stir the Pride",
+			"set": "DST"
+		},
+		{
+			"name": "Stonecloaker",
+			"set": "PLC"
+		},
+		{
+			"name": "Stonehorn Dignitary",
+			"set": "M12"
+		},
+		{
+			"name": "Subjugator Angel",
+			"set": "INR"
+		},
+		{
+			"name": "Sunblade Angel",
+			"set": "CMM"
+		},
+		{
+			"name": "Sunder the Gateway",
+			"set": "MOM"
+		},
+		{
+			"name": "Sunlance",
+			"set": "MM2"
+		},
+		{
+			"name": "Sunscape Familiar",
+			"set": "PLS"
+		},
+		{
+			"name": "Supply Runners",
+			"set": "M21"
+		},
+		{
+			"name": "Surge of Salvation",
+			"set": "MOM"
+		},
+		{
+			"name": "Suture Priest",
+			"set": "NPH"
+		},
+		{
+			"name": "Swell of Courage",
+			"set": "MOR"
+		},
+		{
+			"name": "Swift Justice",
+			"set": "RTR"
+		},
+		{
+			"name": "Syndic of Tithes",
+			"set": "GTC"
+		},
+		{
+			"name": "Syr Alin, the Lion's Claw",
+			"set": "ELD"
+		},
+		{
+			"name": "Tabaxi Toucaneers",
+			"set": "CLB"
+		},
+		{
+			"name": "Take Up the Shield",
+			"set": "J25"
+		},
+		{
+			"name": "Take Vengeance",
+			"set": "M19"
+		},
+		{
+			"name": "Teferi's Honor Guard",
+			"set": "VIS"
+		},
+		{
+			"name": "Temple Acolyte",
+			"set": "P02"
+		},
+		{
+			"name": "Temporal Isolation",
+			"set": "TSP"
+		},
+		{
+			"name": "Tenacity",
+			"set": "SOI"
+		},
+		{
+			"name": "Teyo, the Shieldmage",
+			"set": "WAR"
+		},
+		{
+			"name": "The Birth of Meletis",
+			"set": "THB"
+		},
+		{
+			"name": "Thraben Charm",
+			"set": "MH3"
+		},
+		{
+			"name": "Thraben Watcher",
+			"set": "MH2"
+		},
+		{
+			"name": "Thunderous Orator",
+			"set": "STX"
+		},
+		{
+			"name": "Tireless Tribe",
+			"set": "ODY"
+		},
+		{
+			"name": "To Arms!",
+			"set": "GPT"
+		},
+		{
+			"name": "Tormented Angel",
+			"set": "UDS"
+		},
+		{
+			"name": "Totem-Guide Hartebeest",
+			"set": "ROE"
+		},
+		{
+			"name": "Touch the Spirit Realm",
+			"set": "NEO"
+		},
+		{
+			"name": "Traveling Minister",
+			"set": "VOW"
+		},
+		{
+			"name": "Trostani's Judgment",
+			"set": "RTR"
+		},
+		{
+			"name": "True Love's Kiss",
+			"set": "ELD"
+		},
+		{
+			"name": "Twinblade Paladin",
+			"set": "M20"
+		},
+		{
+			"name": "Twinmaw Stormbrood",
+			"set": "TDM"
+		},
+		{
+			"name": "Unbounded Potential",
+			"set": "MH2"
+		},
+		{
+			"name": "Unquestioned Authority",
+			"set": "JUD"
+		},
+		{
+			"name": "Unwavering Initiate",
+			"set": "AKH"
+		},
+		{
+			"name": "Valor",
+			"set": "JUD"
+		},
+		{
+			"name": "Valorous Stance",
+			"set": "CMR"
+		},
+		{
+			"name": "Valorous Steed",
+			"set": "M21"
+		},
+		{
+			"name": "Vanish into Eternity",
+			"set": "ONE"
+		},
+		{
+			"name": "Veteran Armorer",
+			"set": "RAV"
+		},
+		{
+			"name": "Vizier of Remedies",
+			"set": "AKH"
+		},
+		{
+			"name": "Vow of Duty",
+			"set": "C15"
+		},
+		{
+			"name": "Wakestone Gargoyle",
+			"set": "CNS"
+		},
+		{
+			"name": "Wall of Glare",
+			"set": "UDS"
+		},
+		{
+			"name": "Wall of Omens",
+			"set": "EMA"
+		},
+		{
+			"name": "Wall of Swords",
+			"set": "POR"
+		},
+		{
+			"name": "Wanderer's Strike",
+			"set": "WAR"
+		},
+		{
+			"name": "War Priest of Thune",
+			"set": "M11"
+		},
+		{
+			"name": "Ward Sliver",
+			"set": "LGN"
+		},
+		{
+			"name": "Warrioren-Kor",
+			"set": "STH"
+		},
+		{
+			"name": "Whipcorder",
+			"set": "ONS"
+		},
+		{
+			"name": "Wispweaver Angel",
+			"set": "KLD"
+		},
+		{
+			"name": "You Hear Something on Watch",
+			"set": "AFR"
+		},
+		{
+			"name": "Your Temple Is Under Attack",
+			"set": "CLB"
+		},
+		{
+			"name": "You're Confronted by Robbers",
+			"set": "CLB"
+		},
+		{
+			"name": "Youthful Valkyrie",
+			"set": "KHM"
+		}
+	],
+	"Blue Commons and Uncommons": [
+		{
+			"name": "Academy Journeymage",
+			"set": "DOM"
+		},
+		{
+			"name": "Acquisition Octopus",
+			"set": "NEO"
+		},
+		{
+			"name": "Aether Tradewinds",
+			"set": "KLD"
+		},
+		{
+			"name": "Aetherize",
+			"set": "DDO"
+		},
+		{
+			"name": "Aethersnipe",
+			"set": "MM2"
+		},
+		{
+			"name": "Alchemist's Retrieval",
+			"set": "VOW"
+		},
+		{
+			"name": "Alirios, Enraptured",
+			"set": "THB"
+		},
+		{
+			"name": "Amoeboid Changeling",
+			"set": "J22"
+		},
+		{
+			"name": "Amphin Pathmage",
+			"set": "M15"
+		},
+		{
+			"name": "An Offer You Can't Refuse",
+			"set": "SNC"
+		},
+		{
+			"name": "Annex",
+			"set": "ONS"
+		},
+		{
+			"name": "Aphetto Alchemist",
+			"set": "ONS"
+		},
+		{
+			"name": "Apprentice Sorcerer",
+			"set": "P02"
+		},
+		{
+			"name": "Apprentice Wizard",
+			"set": "DRK"
+		},
+		{
+			"name": "Aqueous Form",
+			"set": "THS"
+		},
+		{
+			"name": "Arcane Denial",
+			"set": "CMA"
+		},
+		{
+			"name": "Archaeomancer",
+			"set": "C17"
+		},
+		{
+			"name": "Archetype of Imagination",
+			"set": "C18"
+		},
+		{
+			"name": "Augur of Bolas",
+			"set": "MM3"
+		},
+		{
+			"name": "Aven Fisher",
+			"set": "ODY"
+		},
+		{
+			"name": "Azure Fleet Admiral",
+			"set": "LCC"
+		},
+		{
+			"name": "Bastion Inventor",
+			"set": "AER"
+		},
+		{
+			"name": "Battlewing Mystic",
+			"set": "DMU"
+		},
+		{
+			"name": "Behold the Multiverse",
+			"set": "KHM"
+		},
+		{
+			"name": "Belltoll Dragon",
+			"set": "DTK"
+		},
+		{
+			"name": "Bewilder",
+			"set": "IMA"
+		},
+		{
+			"name": "Blink of an Eye",
+			"set": "DOM"
+		},
+		{
+			"name": "Blur",
+			"set": "CLB"
+		},
+		{
+			"name": "Body Double",
+			"set": "2X2"
+		},
+		{
+			"name": "Boomerang",
+			"set": "MIR"
+		},
+		{
+			"name": "Borrowing 100,000 Arrows",
+			"set": "A25"
+		},
+		{
+			"name": "Breakthrough",
+			"set": "TOR"
+		},
+		{
+			"name": "Brilliant Plan",
+			"set": "GS1"
+		},
+		{
+			"name": "Brine Elemental",
+			"set": "A25"
+		},
+		{
+			"name": "Brinelin, the Moon Kraken",
+			"set": "CMM"
+		},
+		{
+			"name": "Broodbirth Viper",
+			"set": "C15"
+		},
+		{
+			"name": "Canal Courier",
+			"set": "CN2"
+		},
+		{
+			"name": "Candlekeep Inspiration",
+			"set": "CLB"
+		},
+		{
+			"name": "Careful Study",
+			"set": "ODY"
+		},
+		{
+			"name": "Cartouche of Knowledge",
+			"set": "AKH"
+		},
+		{
+			"name": "Cephalid Broker",
+			"set": "ODY"
+		},
+		{
+			"name": "Cephalid Illusionist",
+			"set": "TOR"
+		},
+		{
+			"name": "Cerulean Wisps",
+			"set": "SHM"
+		},
+		{
+			"name": "Cerulean Wyvern",
+			"set": "MIR"
+		},
+		{
+			"name": "Chakram Retriever",
+			"set": "BBD"
+		},
+		{
+			"name": "Chemister's Insight",
+			"set": "GRN"
+		},
+		{
+			"name": "Choking Tethers",
+			"set": "A25"
+		},
+		{
+			"name": "Citywatch Sphinx",
+			"set": "GRN"
+		},
+		{
+			"name": "Claustrophobia",
+			"set": "DDT"
+		},
+		{
+			"name": "Clinquant Skymage",
+			"set": "FDN"
+		},
+		{
+			"name": "Cloak of Feathers",
+			"set": "POR"
+		},
+		{
+			"name": "Cloud Djinn",
+			"set": "WTH"
+		},
+		{
+			"name": "Cloud Elemental",
+			"set": "MM2"
+		},
+		{
+			"name": "Cloud Spirit",
+			"set": "STH"
+		},
+		{
+			"name": "Cloudreader Sphinx",
+			"set": "DOM"
+		},
+		{
+			"name": "Coastal Piracy",
+			"set": "MMQ"
+		},
+		{
+			"name": "Code of Constraint",
+			"set": "RNA"
+		},
+		{
+			"name": "Codecracker Hound",
+			"set": "EOE"
+		},
+		{
+			"name": "Cold-Water Snapper",
+			"set": "DOM"
+		},
+		{
+			"name": "Combat Research",
+			"set": "DMU"
+		},
+		{
+			"name": "Complicate",
+			"set": "ONS"
+		},
+		{
+			"name": "Compulsion",
+			"set": "TOR"
+		},
+		{
+			"name": "Concentrate",
+			"set": "E02"
+		},
+		{
+			"name": "Cone of Cold",
+			"set": "CLB"
+		},
+		{
+			"name": "Confound",
+			"set": "PLS"
+		},
+		{
+			"name": "Coralhelm Guide",
+			"set": "BBD"
+		},
+		{
+			"name": "Court Hussar",
+			"set": "A25"
+		},
+		{
+			"name": "Cryogen Relic",
+			"set": "EOE"
+		},
+		{
+			"name": "Curiosity",
+			"set": "8ED"
+		},
+		{
+			"name": "Curious Obsession",
+			"set": "RIX"
+		},
+		{
+			"name": "Curse of Verbosity",
+			"set": "C17"
+		},
+		{
+			"name": "Dakra Mystic",
+			"set": "JOU"
+		},
+		{
+			"name": "Daring Saboteur",
+			"set": "NCC"
+		},
+		{
+			"name": "Deceiver Exarch",
+			"set": "NPH"
+		},
+		{
+			"name": "Deep Analysis",
+			"set": "EMA"
+		},
+		{
+			"name": "Deepchannel Mentor",
+			"set": "SHM"
+		},
+		{
+			"name": "Diminish",
+			"set": "IMA"
+		},
+		{
+			"name": "Diplomatic Escort",
+			"set": "MMQ"
+		},
+		{
+			"name": "Disrupt",
+			"set": "WTH"
+		},
+		{
+			"name": "Distortion Strike",
+			"set": "IMA"
+		},
+		{
+			"name": "Dive Down",
+			"set": "XLN"
+		},
+		{
+			"name": "Divide by Zero",
+			"set": "STX"
+		},
+		{
+			"name": "Divination",
+			"set": "M19"
+		},
+		{
+			"name": "Dream Fracture",
+			"set": "CNS"
+		},
+		{
+			"name": "Dream Thrush",
+			"set": "INV"
+		},
+		{
+			"name": "Dreamscape Artist",
+			"set": "PLC"
+		},
+		{
+			"name": "Dreamtail Heron",
+			"set": "IKO"
+		},
+		{
+			"name": "Drift of Phantasms",
+			"set": "RAV"
+		},
+		{
+			"name": "Echo Tracer",
+			"set": "LGN"
+		},
+		{
+			"name": "Echoing Truth",
+			"set": "DMC"
+		},
+		{
+			"name": "Eel Umbra",
+			"set": "C18"
+		},
+		{
+			"name": "Eldrazi Skyspawner",
+			"set": "BFZ"
+		},
+		{
+			"name": "Emrakul's Messenger",
+			"set": "MH3"
+		},
+		{
+			"name": "Enclave Cryptologist",
+			"set": "ROE"
+		},
+		{
+			"name": "Errant Ephemeron",
+			"set": "DD3"
+		},
+		{
+			"name": "Esior, Wardwing Familiar",
+			"set": "CMR"
+		},
+		{
+			"name": "Essence Scatter",
+			"set": "M19"
+		},
+		{
+			"name": "Exclude",
+			"set": "MH1"
+		},
+		{
+			"name": "Exhaustion",
+			"set": "POR"
+		},
+		{
+			"name": "Expel from Orazca",
+			"set": "RIX"
+		},
+		{
+			"name": "Experimental Augury",
+			"set": "ONE"
+		},
+		{
+			"name": "Fact or Fiction",
+			"set": "CM2"
+		},
+		{
+			"name": "Fade Away",
+			"set": "EXO"
+		},
+		{
+			"name": "Faerie Mechanist",
+			"set": "DDU"
+		},
+		{
+			"name": "Faerie Seer",
+			"set": "MH1"
+		},
+		{
+			"name": "Faerie Swarm",
+			"set": "SHM"
+		},
+		{
+			"name": "Fall from Favor",
+			"set": "CMR"
+		},
+		{
+			"name": "Familiar's Ruse",
+			"set": "LRW"
+		},
+		{
+			"name": "Fatestitcher",
+			"set": "ALA"
+		},
+		{
+			"name": "Flash of Insight",
+			"set": "JUD"
+		},
+		{
+			"name": "Flux",
+			"set": "POR"
+		},
+		{
+			"name": "Flux Channeler",
+			"set": "WAR"
+		},
+		{
+			"name": "Fog Bank",
+			"set": "BBD"
+		},
+		{
+			"name": "Forbid",
+			"set": "EXO"
+		},
+		{
+			"name": "Forbidden Alchemy",
+			"set": "MM3"
+		},
+		{
+			"name": "Force Spike",
+			"set": "DDJ"
+		},
+		{
+			"name": "Freed from the Real",
+			"set": "SOK"
+		},
+		{
+			"name": "Frogify",
+			"set": "2XM"
+		},
+		{
+			"name": "Frost Trickster",
+			"set": "STX"
+		},
+		{
+			"name": "Fumble",
+			"set": "BBD"
+		},
+		{
+			"name": "Ghost Ship",
+			"set": "A25"
+		},
+		{
+			"name": "Ghostly Flicker",
+			"set": "KHC"
+		},
+		{
+			"name": "Gigadrowse",
+			"set": "GPT"
+		},
+		{
+			"name": "Glacial Crasher",
+			"set": "M15"
+		},
+		{
+			"name": "Grip of the Roil",
+			"set": "OGW"
+		},
+		{
+			"name": "Gudul Lurker",
+			"set": "DTK"
+		},
+		{
+			"name": "Guildpact Informant",
+			"set": "WAR"
+		},
+		{
+			"name": "Hada Spy Patrol",
+			"set": "CMA"
+		},
+		{
+			"name": "Halimar Depths",
+			"set": "DDM"
+		},
+		{
+			"name": "Halimar Wavewatch",
+			"set": "ROE"
+		},
+		{
+			"name": "Hard Evidence",
+			"set": "MH2"
+		},
+		{
+			"name": "Helm of the Ghastlord",
+			"set": "SHM"
+		},
+		{
+			"name": "Hieroglyphic Illumination",
+			"set": "AKH"
+		},
+		{
+			"name": "Horizon Scholar",
+			"set": "THS"
+		},
+		{
+			"name": "Horseshoe Crab",
+			"set": "A25"
+		},
+		{
+			"name": "Hulking Metamorph",
+			"set": "BRO"
+		},
+		{
+			"name": "Hydrolash",
+			"set": "GNT"
+		},
+		{
+			"name": "Ideas Unbound",
+			"set": "SOK"
+		},
+		{
+			"name": "Illusory Ambusher",
+			"set": "C15"
+		},
+		{
+			"name": "Impulse",
+			"set": "BBD"
+		},
+		{
+			"name": "Invisible Stalker",
+			"set": "ZNR"
+		},
+		{
+			"name": "Irenicus's Vile Duplication",
+			"set": "CLB"
+		},
+		{
+			"name": "Jace's Phantasm",
+			"set": "IMA"
+		},
+		{
+			"name": "Jwar Isle Avenger",
+			"set": "OGW"
+		},
+		{
+			"name": "Kasmina, Enigmatic Mentor",
+			"set": "WAR"
+		},
+		{
+			"name": "Kelpie Guide",
+			"set": "STX"
+		},
+		{
+			"name": "Killer Whale",
+			"set": "EXO"
+		},
+		{
+			"name": "Kitesail Skirmisher",
+			"set": "CMR"
+		},
+		{
+			"name": "Krovikan Sorcerer",
+			"set": "VMA"
+		},
+		{
+			"name": "Laboratory Maniac",
+			"set": "INR"
+		},
+		{
+			"name": "Lay Claim",
+			"set": "AKH"
+		},
+		{
+			"name": "Lazotep Plating",
+			"set": "WAR"
+		},
+		{
+			"name": "Leap",
+			"set": "STH"
+		},
+		{
+			"name": "Legacy's Allure",
+			"set": "TMP"
+		},
+		{
+			"name": "Legerdemain",
+			"set": "TMP"
+		},
+		{
+			"name": "Looteril-Kor",
+			"set": "TSP"
+		},
+		{
+			"name": "Lore Weaver",
+			"set": "BBD"
+		},
+		{
+			"name": "Loyal Drake",
+			"set": "CMM"
+		},
+		{
+			"name": "Majestic Metamorphosis",
+			"set": "SNC"
+		},
+		{
+			"name": "Mana Leak",
+			"set": "DDN"
+		},
+		{
+			"name": "Man-o'-War",
+			"set": "POR"
+		},
+		{
+			"name": "Meeting of Minds",
+			"set": "MOM"
+		},
+		{
+			"name": "Memory Lapse",
+			"set": "EMA"
+		},
+		{
+			"name": "Mental Note",
+			"set": "JUD"
+		},
+		{
+			"name": "Merfolk Looter",
+			"set": "DDT"
+		},
+		{
+			"name": "Merfolk Seastalkers",
+			"set": "ZEN"
+		},
+		{
+			"name": "Merfolk Thaumaturgist",
+			"set": "PLC"
+		},
+		{
+			"name": "Merfolk Trickster",
+			"set": "DOM"
+		},
+		{
+			"name": "Military Intelligence",
+			"set": "M15"
+		},
+		{
+			"name": "Mind Bend",
+			"set": "MIR"
+		},
+		{
+			"name": "Mirror Image",
+			"set": "M19"
+		},
+		{
+			"name": "Mirrorshell Crab",
+			"set": "NEO"
+		},
+		{
+			"name": "Mischievous Mystic",
+			"set": "FDN"
+		},
+		{
+			"name": "Mistblade Shinobi",
+			"set": "PCA"
+		},
+		{
+			"name": "Mistwalker",
+			"set": "KHM"
+		},
+		{
+			"name": "Moon-Circuit Hacker",
+			"set": "NEO"
+		},
+		{
+			"name": "Mothdust Changeling",
+			"set": "MOR"
+		},
+		{
+			"name": "Muddle the Mixture",
+			"set": "RAV"
+		},
+		{
+			"name": "Mulldrifter",
+			"set": "CM2"
+		},
+		{
+			"name": "Murmuring Mystic",
+			"set": "GRN"
+		},
+		{
+			"name": "Mystic of the Hidden Way",
+			"set": "A25"
+		},
+		{
+			"name": "Mystic Retrieval",
+			"set": "INR"
+		},
+		{
+			"name": "Mystic Speculation",
+			"set": "FUT"
+		},
+		{
+			"name": "Mystic Subdual",
+			"set": "IKO"
+		},
+		{
+			"name": "Mystical Teachings",
+			"set": "MM3"
+		},
+		{
+			"name": "Narcolepsy",
+			"set": "ROE"
+		},
+		{
+			"name": "Negate",
+			"set": "RIX"
+		},
+		{
+			"name": "Nephalia Smuggler",
+			"set": "DDQ"
+		},
+		{
+			"name": "Neutralize",
+			"set": "IKO"
+		},
+		{
+			"name": "Nevermaker",
+			"set": "MOR"
+		},
+		{
+			"name": "Ninja of the Deep Hours",
+			"set": "C18"
+		},
+		{
+			"name": "Omen",
+			"set": "POR"
+		},
+		{
+			"name": "Omen of the Sea",
+			"set": "THB"
+		},
+		{
+			"name": "Omenspeaker",
+			"set": "BBD"
+		},
+		{
+			"name": "Omni-Changeling",
+			"set": "ECL"
+		},
+		{
+			"name": "Oneirophage",
+			"set": "MH1"
+		},
+		{
+			"name": "Ophidian",
+			"set": "WTH"
+		},
+		{
+			"name": "Ophidian Eye",
+			"set": "TSP"
+		},
+		{
+			"name": "Opportunity",
+			"set": "C17"
+		},
+		{
+			"name": "Opt",
+			"set": "DOM"
+		},
+		{
+			"name": "Out of Bounds",
+			"set": "BBD"
+		},
+		{
+			"name": "Owl Familiar",
+			"set": "POR"
+		},
+		{
+			"name": "Paradox Haze",
+			"set": "TSP"
+		},
+		{
+			"name": "Pemmin's Aura",
+			"set": "SCG"
+		},
+		{
+			"name": "Pendrell Drake",
+			"set": "USG"
+		},
+		{
+			"name": "Peregrine Drake",
+			"set": "USG"
+		},
+		{
+			"name": "Perilous Research",
+			"set": "MMA"
+		},
+		{
+			"name": "Phyrexian Ingester",
+			"set": "CMM"
+		},
+		{
+			"name": "Piracy Charm",
+			"set": "PLC"
+		},
+		{
+			"name": "Pirate's Prize",
+			"set": "XLN"
+		},
+		{
+			"name": "Pongify",
+			"set": "PLC"
+		},
+		{
+			"name": "Pore Over the Pages",
+			"set": "SOI"
+		},
+		{
+			"name": "Portent",
+			"set": "C18"
+		},
+		{
+			"name": "Preordain",
+			"set": "C15"
+		},
+		{
+			"name": "Prodigal Sorcerer",
+			"set": "EMA"
+		},
+		{
+			"name": "Propaganda",
+			"set": "C16"
+		},
+		{
+			"name": "Prosperous Pirates",
+			"set": "XLN"
+		},
+		{
+			"name": "Psychic Corrosion",
+			"set": "M19"
+		},
+		{
+			"name": "Rapid Hybridization",
+			"set": "C21"
+		},
+		{
+			"name": "Ravenform",
+			"set": "KHM"
+		},
+		{
+			"name": "Reality Shift",
+			"set": "NEO"
+		},
+		{
+			"name": "Reconnaissance Mission",
+			"set": "WOC"
+		},
+		{
+			"name": "Referee Squad",
+			"set": "MOM"
+		},
+		{
+			"name": "Repulse",
+			"set": "CN2"
+		},
+		{
+			"name": "Rescind",
+			"set": "USG"
+		},
+		{
+			"name": "Retraction Helix",
+			"set": "A25"
+		},
+		{
+			"name": "Rewind",
+			"set": "USG"
+		},
+		{
+			"name": "Ringwarden Owl",
+			"set": "ORI"
+		},
+		{
+			"name": "Rise from the Tides",
+			"set": "GN2"
+		},
+		{
+			"name": "Rishadan Cutpurse",
+			"set": "MMQ"
+		},
+		{
+			"name": "River Serpent",
+			"set": "AKH"
+		},
+		{
+			"name": "Riverwheel Aerialists",
+			"set": "IMA"
+		},
+		{
+			"name": "Roiling Dragonstorm",
+			"set": "TDM"
+		},
+		{
+			"name": "Ruin Crab",
+			"set": "ZNR"
+		},
+		{
+			"name": "Run Away Together",
+			"set": "CLB"
+		},
+		{
+			"name": "Rush of Knowledge",
+			"set": "SCG"
+		},
+		{
+			"name": "Rushing River",
+			"set": "PLS"
+		},
+		{
+			"name": "Sapphire Dragon",
+			"set": "CLB"
+		},
+		{
+			"name": "Saprazzan Skerry",
+			"set": "MMQ"
+		},
+		{
+			"name": "Scholar of the Ages",
+			"set": "M20"
+		},
+		{
+			"name": "Scion of Glaciers",
+			"set": "KTK"
+		},
+		{
+			"name": "Sea Gate",
+			"set": "CLB"
+		},
+		{
+			"name": "Sea Gate Oracle",
+			"set": "C17"
+		},
+		{
+			"name": "Sea Scryer",
+			"set": "MIR"
+		},
+		{
+			"name": "Seal of Removal",
+			"set": "NEM"
+		},
+		{
+			"name": "Sealock Monster",
+			"set": "DDO"
+		},
+		{
+			"name": "Secrets of the Golden City",
+			"set": "RIX"
+		},
+		{
+			"name": "Sejiri Merfolk",
+			"set": "WWK"
+		},
+		{
+			"name": "Serpentine Curve",
+			"set": "STX"
+		},
+		{
+			"name": "Serra Sphinx",
+			"set": "2XM"
+		},
+		{
+			"name": "Serum Visions",
+			"set": "C21"
+		},
+		{
+			"name": "Set Adrift",
+			"set": "KTK"
+		},
+		{
+			"name": "Shadow Rift",
+			"set": "TMP"
+		},
+		{
+			"name": "Shaper Parasite",
+			"set": "C14"
+		},
+		{
+			"name": "Shifting Sliver",
+			"set": "LGN"
+		},
+		{
+			"name": "Shimmering Glasskite",
+			"set": "BOK"
+		},
+		{
+			"name": "Shimmerscale Drake",
+			"set": "AKH"
+		},
+		{
+			"name": "Shipwreck Dowser",
+			"set": "M21"
+		},
+		{
+			"name": "Shoreline Looter",
+			"set": "BLB"
+		},
+		{
+			"name": "Shoreline Ranger",
+			"set": "SCG"
+		},
+		{
+			"name": "Sigil of Sleep",
+			"set": "UDS"
+		},
+		{
+			"name": "Sigiled Starfish",
+			"set": "ORI"
+		},
+		{
+			"name": "Silver Myr",
+			"set": "MRD"
+		},
+		{
+			"name": "Siren Stormtamer",
+			"set": "XLN"
+		},
+		{
+			"name": "Skittering Crustacean",
+			"set": "CN2"
+		},
+		{
+			"name": "Slip Out the Back",
+			"set": "MKM"
+		},
+		{
+			"name": "Slip Through Space",
+			"set": "OGW"
+		},
+		{
+			"name": "Snap",
+			"set": "ULG"
+		},
+		{
+			"name": "Sorcerous Sight",
+			"set": "POR"
+		},
+		{
+			"name": "Specimen Collector",
+			"set": "MH2"
+		},
+		{
+			"name": "Spectral Sailor",
+			"set": "M20"
+		},
+		{
+			"name": "Spellstutter Sprite",
+			"set": "LRW"
+		},
+		{
+			"name": "Spiketail Drake",
+			"set": "PCY"
+		},
+		{
+			"name": "Spin into Myth",
+			"set": "ARC"
+		},
+		{
+			"name": "Spined Megalodon",
+			"set": "M21"
+		},
+		{
+			"name": "Spreading Seas",
+			"set": "ZEN"
+		},
+		{
+			"name": "Sprite Noble",
+			"set": "EMA"
+		},
+		{
+			"name": "Spyglass Siren",
+			"set": "LCI"
+		},
+		{
+			"name": "Squelch",
+			"set": "CHK"
+		},
+		{
+			"name": "Startle",
+			"set": "MID"
+		},
+		{
+			"name": "Steady Progress",
+			"set": "MM2"
+		},
+		{
+			"name": "Steal Enchantment",
+			"set": "TMP"
+		},
+		{
+			"name": "Stinging Barrier",
+			"set": "MMQ"
+		},
+		{
+			"name": "Stitched Drake",
+			"set": "DDQ"
+		},
+		{
+			"name": "Stock Up",
+			"set": "DFT"
+		},
+		{
+			"name": "Storm Sculptor",
+			"set": "XLN"
+		},
+		{
+			"name": "Stormbound Geist",
+			"set": "DKA"
+		},
+		{
+			"name": "Strategic Planning",
+			"set": "HOU"
+		},
+		{
+			"name": "Striped Riverwinder",
+			"set": "HOU"
+		},
+		{
+			"name": "Submerge",
+			"set": "NEM"
+		},
+		{
+			"name": "Supreme Will",
+			"set": "HOU"
+		},
+		{
+			"name": "Surgical Skullbomb",
+			"set": "ONE"
+		},
+		{
+			"name": "Sword Coast Serpent",
+			"set": "CLB"
+		},
+		{
+			"name": "Symbol of Unsummoning",
+			"set": "POR"
+		},
+		{
+			"name": "Talrand's Invocation",
+			"set": "M13"
+		},
+		{
+			"name": "Tandem Lookout",
+			"set": "MM3"
+		},
+		{
+			"name": "Telekinetic Sliver",
+			"set": "TSP"
+		},
+		{
+			"name": "Tempest Caller",
+			"set": "XLN"
+		},
+		{
+			"name": "Temporal Fissure",
+			"set": "DDS"
+		},
+		{
+			"name": "Tetsuko Umezawa, Fugitive",
+			"set": "DOM"
+		},
+		{
+			"name": "Tezzeret's Gambit",
+			"set": "NPH"
+		},
+		{
+			"name": "Thassa's Emissary",
+			"set": "THS"
+		},
+		{
+			"name": "Think Twice",
+			"set": "TSP"
+		},
+		{
+			"name": "Thornwind Faeries",
+			"set": "CMA"
+		},
+		{
+			"name": "Thought Courier",
+			"set": "5DN"
+		},
+		{
+			"name": "Thought Scour",
+			"set": "IMA"
+		},
+		{
+			"name": "Thoughtcast",
+			"set": "MM2"
+		},
+		{
+			"name": "Thrummingbird",
+			"set": "CM2"
+		},
+		{
+			"name": "Thwart",
+			"set": "MMQ"
+		},
+		{
+			"name": "Tidal Wave",
+			"set": "EMA"
+		},
+		{
+			"name": "Tide Skimmer",
+			"set": "M21"
+		},
+		{
+			"name": "Time Ebb",
+			"set": "POR"
+		},
+		{
+			"name": "Time of Ice",
+			"set": "DOM"
+		},
+		{
+			"name": "Tolaria West",
+			"set": "FUT"
+		},
+		{
+			"name": "Tolarian Kraken",
+			"set": "M21"
+		},
+		{
+			"name": "Tolarian Terror",
+			"set": "DMU"
+		},
+		{
+			"name": "Tome Raider",
+			"set": "ELD"
+		},
+		{
+			"name": "Totally Lost",
+			"set": "BBD"
+		},
+		{
+			"name": "Treasure Hunt",
+			"set": "C18"
+		},
+		{
+			"name": "Triton Tactics",
+			"set": "DDT"
+		},
+		{
+			"name": "Tromokratis",
+			"set": "CMM"
+		},
+		{
+			"name": "Trove Tracker",
+			"set": "CMR"
+		},
+		{
+			"name": "Turnabout",
+			"set": "VMA"
+		},
+		{
+			"name": "Turtleshell Changeling",
+			"set": "LRW"
+		},
+		{
+			"name": "Twisted Image",
+			"set": "SOM"
+		},
+		{
+			"name": "Undo",
+			"set": "P02"
+		},
+		{
+			"name": "Unsubstantiate",
+			"set": "EMN"
+		},
+		{
+			"name": "Vapor Snag",
+			"set": "MM2"
+		},
+		{
+			"name": "Vedalken Dismisser",
+			"set": "RAV"
+		},
+		{
+			"name": "Vedalken Mastermind",
+			"set": "5DN"
+		},
+		{
+			"name": "View from Above",
+			"set": "CON"
+		},
+		{
+			"name": "Vigean Graftmage",
+			"set": "MM2"
+		},
+		{
+			"name": "Viral Drake",
+			"set": "NPH"
+		},
+		{
+			"name": "Voidmage Husher",
+			"set": "TSP"
+		},
+		{
+			"name": "Voyager Drake",
+			"set": "WWK"
+		},
+		{
+			"name": "Waker of Waves",
+			"set": "M21"
+		},
+		{
+			"name": "Walker of Secret Ways",
+			"set": "PCA"
+		},
+		{
+			"name": "Wall of Tears",
+			"set": "STH"
+		},
+		{
+			"name": "Wash Away",
+			"set": "VOW"
+		},
+		{
+			"name": "Watcher for Tomorrow",
+			"set": "MH1"
+		},
+		{
+			"name": "Wave-Wing Elemental",
+			"set": "BFZ"
+		},
+		{
+			"name": "Weatherseed Faeries",
+			"set": "ULG"
+		},
+		{
+			"name": "Web of Inertia",
+			"set": "JUD"
+		},
+		{
+			"name": "Whiplash Trap",
+			"set": "DDN"
+		},
+		{
+			"name": "Whirler Rogue",
+			"set": "ORI"
+		},
+		{
+			"name": "Whirlpool Drake",
+			"set": "APC"
+		},
+		{
+			"name": "Whirlwind Denial",
+			"set": "THB"
+		},
+		{
+			"name": "Willbender",
+			"set": "DD2"
+		},
+		{
+			"name": "Windfall",
+			"set": "USG"
+		},
+		{
+			"name": "Windrider Eel",
+			"set": "E01"
+		},
+		{
+			"name": "Windstorm Drake",
+			"set": "RNA"
+		},
+		{
+			"name": "Wing Splicer",
+			"set": "NPH"
+		},
+		{
+			"name": "Witching Well",
+			"set": "ELD"
+		},
+		{
+			"name": "Witness Protection",
+			"set": "SNC"
+		},
+		{
+			"name": "Wizard Class",
+			"set": "AFR"
+		},
+		{
+			"name": "Wonder",
+			"set": "JUD"
+		},
+		{
+			"name": "Words of Wisdom",
+			"set": "ODY"
+		},
+		{
+			"name": "Zephid's Embrace",
+			"set": "USG"
+		}
+	],
+	"Black Commons and Uncommons": [
+		{
+			"name": "Absorb Vis",
+			"set": "CN2"
+		},
+		{
+			"name": "Accursed Marauder",
+			"set": "MH3"
+		},
+		{
+			"name": "Accursed Spirit",
+			"set": "M15"
+		},
+		{
+			"name": "Altar's Reap",
+			"set": "DDR"
+		},
+		{
+			"name": "Ambition's Cost",
+			"set": "C15"
+		},
+		{
+			"name": "Ancient Craving",
+			"set": "P02"
+		},
+		{
+			"name": "Animate Dead",
+			"set": "EMA"
+		},
+		{
+			"name": "Aphetto Exterminator",
+			"set": "LGN"
+		},
+		{
+			"name": "Aphotic Wisps",
+			"set": "SHM"
+		},
+		{
+			"name": "Apprentice Necromancer",
+			"set": "UMA"
+		},
+		{
+			"name": "Archetype of Finality",
+			"set": "BNG"
+		},
+		{
+			"name": "Archfiend of Sorrows",
+			"set": "MH2"
+		},
+		{
+			"name": "Armix, Filigree Thrasher",
+			"set": "BRC"
+		},
+		{
+			"name": "Arrogant Vampire",
+			"set": "POR"
+		},
+		{
+			"name": "Attempted Murder",
+			"set": "UNF"
+		},
+		{
+			"name": "Augur of Skulls",
+			"set": "FUT"
+		},
+		{
+			"name": "Bad Deal",
+			"set": "M21"
+		},
+		{
+			"name": "Baleful Ammit",
+			"set": "AKH"
+		},
+		{
+			"name": "Balustrade Spy",
+			"set": "IMA"
+		},
+		{
+			"name": "Banshee of the Dread Choir",
+			"set": "CMA"
+		},
+		{
+			"name": "Barter in Blood",
+			"set": "MRD"
+		},
+		{
+			"name": "Bastion of Remembrance",
+			"set": "IKO"
+		},
+		{
+			"name": "Battle-Rage Blessing",
+			"set": "DMU"
+		},
+		{
+			"name": "Batwing Brume",
+			"set": "ARC"
+		},
+		{
+			"name": "Beseech the Queen",
+			"set": "SHM"
+		},
+		{
+			"name": "Betrayal of Flesh",
+			"set": "MRD"
+		},
+		{
+			"name": "Black Cat",
+			"set": "M15"
+		},
+		{
+			"name": "Black Dragon Gate",
+			"set": "CLB"
+		},
+		{
+			"name": "Bladewing's Thrall",
+			"set": "SCG"
+		},
+		{
+			"name": "Blessing of Belzenlok",
+			"set": "DOM"
+		},
+		{
+			"name": "Blessing of Leeches",
+			"set": "BOK"
+		},
+		{
+			"name": "Blightbeetle",
+			"set": "M20"
+		},
+		{
+			"name": "Blightsoil Druid",
+			"set": "EMA"
+		},
+		{
+			"name": "Blood Artist",
+			"set": "INR"
+		},
+		{
+			"name": "Blood Celebrant",
+			"set": "LGN"
+		},
+		{
+			"name": "Blood Curdle",
+			"set": "IKO"
+		},
+		{
+			"name": "Blood Fountain",
+			"set": "VOW"
+		},
+		{
+			"name": "Blood Pact",
+			"set": "MID"
+		},
+		{
+			"name": "Blood Speaker",
+			"set": "CHK"
+		},
+		{
+			"name": "Bloodchief's Thirst",
+			"set": "ZNR"
+		},
+		{
+			"name": "Bloodrite Invoker",
+			"set": "DDP"
+		},
+		{
+			"name": "Bloodthirsty Aerialist",
+			"set": "M20"
+		},
+		{
+			"name": "Bloodthrone Vampire",
+			"set": "ROE"
+		},
+		{
+			"name": "Blot Out",
+			"set": "MAT"
+		},
+		{
+			"name": "Boggart Harbinger",
+			"set": "LRW"
+		},
+		{
+			"name": "Bone Shards",
+			"set": "MH2"
+		},
+		{
+			"name": "Bone Shredder",
+			"set": "ULG"
+		},
+		{
+			"name": "Briarblade Adept",
+			"set": "CMR"
+		},
+		{
+			"name": "Brood of Cockroaches",
+			"set": "VIS"
+		},
+		{
+			"name": "Bubbling Muck",
+			"set": "UDS"
+		},
+		{
+			"name": "Buried Alive",
+			"set": "WTH"
+		},
+		{
+			"name": "Bushmeat Poacher",
+			"set": "GN3"
+		},
+		{
+			"name": "Butcher Ghoul",
+			"set": "INR"
+		},
+		{
+			"name": "Cabal Pit",
+			"set": "ODY"
+		},
+		{
+			"name": "Caligo Skin-Witch",
+			"set": "DOM"
+		},
+		{
+			"name": "Call the Bloodline",
+			"set": "SOI"
+		},
+		{
+			"name": "Carrier Thrall",
+			"set": "2X2"
+		},
+		{
+			"name": "Carrion Feeder",
+			"set": "MH1"
+		},
+		{
+			"name": "Carrion Imp",
+			"set": "RNA"
+		},
+		{
+			"name": "Cartouche of Ambition",
+			"set": "AKH"
+		},
+		{
+			"name": "Cast Down",
+			"set": "2XM"
+		},
+		{
+			"name": "Catacomb Crocodile",
+			"set": "RNA"
+		},
+		{
+			"name": "Chain of Smog",
+			"set": "ONS"
+		},
+		{
+			"name": "Chainer's Edict",
+			"set": "DMR"
+		},
+		{
+			"name": "Changeling Outcast",
+			"set": "MH1"
+		},
+		{
+			"name": "Charcoal Diamond",
+			"set": "MIR"
+		},
+		{
+			"name": "Cling to Dust",
+			"set": "THB"
+		},
+		{
+			"name": "Cloudkill",
+			"set": "CLB"
+		},
+		{
+			"name": "Corpse Augur",
+			"set": "C15"
+		},
+		{
+			"name": "Corpse Connoisseur",
+			"set": "ALA"
+		},
+		{
+			"name": "Corpse Harvester",
+			"set": "LGN"
+		},
+		{
+			"name": "Corrupt",
+			"set": "USG"
+		},
+		{
+			"name": "Corrupted Conviction",
+			"set": "MOM"
+		},
+		{
+			"name": "Costly Plunder",
+			"set": "XLN"
+		},
+		{
+			"name": "Cower in Fear",
+			"set": "MM3"
+		},
+		{
+			"name": "Crippling Fatigue",
+			"set": "TOR"
+		},
+		{
+			"name": "Crypt Rats",
+			"set": "VIS"
+		},
+		{
+			"name": "Curse of Disturbance",
+			"set": "SCD"
+		},
+		{
+			"name": "Curse of Shallow Graves",
+			"set": "C13"
+		},
+		{
+			"name": "Dakmor Plague",
+			"set": "P02"
+		},
+		{
+			"name": "Daring Demolition",
+			"set": "AER"
+		},
+		{
+			"name": "Dark Triumph",
+			"set": "NEM"
+		},
+		{
+			"name": "Dauthi Embrace",
+			"set": "TMP"
+		},
+		{
+			"name": "Dauthi Horror",
+			"set": "TMP"
+		},
+		{
+			"name": "Dauthi Trapper",
+			"set": "STH"
+		},
+		{
+			"name": "Davriel, Rogue Shadowmage",
+			"set": "WAR"
+		},
+		{
+			"name": "Deadly Dispute",
+			"set": "AFR"
+		},
+		{
+			"name": "Death Denied",
+			"set": "MM2"
+		},
+		{
+			"name": "Death Pulse",
+			"set": "ONS"
+		},
+		{
+			"name": "Deathgreeter",
+			"set": "DDD"
+		},
+		{
+			"name": "Deepwood Legate",
+			"set": "MMQ"
+		},
+		{
+			"name": "Destined /// Lead",
+			"set": "AKH"
+		},
+		{
+			"name": "Diabolic Servitude",
+			"set": "PD3"
+		},
+		{
+			"name": "Diabolic Tutor",
+			"set": "ODY"
+		},
+		{
+			"name": "Dimir House Guard",
+			"set": "RAV"
+		},
+		{
+			"name": "Diregraf Horde",
+			"set": "MID"
+		},
+		{
+			"name": "Dirge of Dread",
+			"set": "A25"
+		},
+		{
+			"name": "Disturbed Burial",
+			"set": "TMP"
+		},
+		{
+			"name": "Dockside Chef",
+			"set": "NEO"
+		},
+		{
+			"name": "Dread Drone",
+			"set": "MM2"
+		},
+		{
+			"name": "Dreadhound",
+			"set": "MID"
+		},
+		{
+			"name": "Dreadmalkin",
+			"set": "RVR"
+		},
+		{
+			"name": "Driver of the Dead",
+			"set": "CN2"
+		},
+		{
+			"name": "Dusk Charger",
+			"set": "RIX"
+		},
+		{
+			"name": "Dusk Legion Zealot",
+			"set": "RIX"
+		},
+		{
+			"name": "Dusk Mangler",
+			"set": "SNC"
+		},
+		{
+			"name": "Elspeth's Nightmare",
+			"set": "THB"
+		},
+		{
+			"name": "Endless Scream",
+			"set": "TMP"
+		},
+		{
+			"name": "Epic Downfall",
+			"set": "ELD"
+		},
+		{
+			"name": "Epicure of Blood",
+			"set": "M19"
+		},
+		{
+			"name": "Essence Extraction",
+			"set": "KLD"
+		},
+		{
+			"name": "Eternal Thirst",
+			"set": "IMA"
+		},
+		{
+			"name": "Evil Eye of Urborg",
+			"set": "TSP"
+		},
+		{
+			"name": "Evincar's Justice",
+			"set": "CMA"
+		},
+		{
+			"name": "Executioner's Capsule",
+			"set": "C16"
+		},
+		{
+			"name": "Exhume",
+			"set": "USG"
+		},
+		{
+			"name": "Expunge",
+			"set": "USG"
+		},
+		{
+			"name": "Exquisite Huntmaster",
+			"set": "CMR"
+		},
+		{
+			"name": "Exsanguinate",
+			"set": "CMM"
+		},
+		{
+			"name": "Extinguish All Hope",
+			"set": "CMM"
+		},
+		{
+			"name": "Eyeblight's Ending",
+			"set": "EMA"
+		},
+		{
+			"name": "Falkenrath Noble",
+			"set": "VOC"
+		},
+		{
+			"name": "Fallen Angel",
+			"set": "A25"
+		},
+		{
+			"name": "Falthis, Shadowcat Familiar",
+			"set": "CMR"
+		},
+		{
+			"name": "Fatal Push",
+			"set": "AER"
+		},
+		{
+			"name": "Feast or Famine",
+			"set": "DDJ"
+		},
+		{
+			"name": "Feed the Swarm",
+			"set": "SCD"
+		},
+		{
+			"name": "Feign Death",
+			"set": "AFR"
+		},
+		{
+			"name": "Fell",
+			"set": "BLB"
+		},
+		{
+			"name": "Fell Gravship",
+			"set": "EOE"
+		},
+		{
+			"name": "Fell Specter",
+			"set": "M19"
+		},
+		{
+			"name": "Fell Stinger",
+			"set": "VOW"
+		},
+		{
+			"name": "Feral Abomination",
+			"set": "DOM"
+		},
+		{
+			"name": "Feral Shadow",
+			"set": "POR"
+		},
+		{
+			"name": "Festercreep",
+			"set": "CM2"
+		},
+		{
+			"name": "Filth",
+			"set": "JUD"
+		},
+		{
+			"name": "Fleshbag Marauder",
+			"set": "CMD"
+		},
+		{
+			"name": "Flesh-Eater Imp",
+			"set": "MBS"
+		},
+		{
+			"name": "Footbottom Feast",
+			"set": "LRW"
+		},
+		{
+			"name": "Footsteps of the Goryo",
+			"set": "SOK"
+		},
+		{
+			"name": "Foulmire Knight",
+			"set": "MOM"
+		},
+		{
+			"name": "Fungal Infection",
+			"set": "DOM"
+		},
+		{
+			"name": "Gatekeeper of Malakir",
+			"set": "ZEN"
+		},
+		{
+			"name": "Ghost Lantern",
+			"set": "CLB"
+		},
+		{
+			"name": "Ghost-Lit Stalker",
+			"set": "SOK"
+		},
+		{
+			"name": "Ghostly Changeling",
+			"set": "MM2"
+		},
+		{
+			"name": "Gifted Aetherborn",
+			"set": "AER"
+		},
+		{
+			"name": "Gilt-Leaf Winnower",
+			"set": "CMR"
+		},
+		{
+			"name": "Gloom Sower",
+			"set": "M21"
+		},
+		{
+			"name": "Gloomfang Mauler",
+			"set": "MOM"
+		},
+		{
+			"name": "Go Blank",
+			"set": "STX"
+		},
+		{
+			"name": "Go for the Throat",
+			"set": "C17"
+		},
+		{
+			"name": "Gonti, Lord of Luxury",
+			"set": "CMM"
+		},
+		{
+			"name": "Gravedigger",
+			"set": "CM2"
+		},
+		{
+			"name": "Graveshifter",
+			"set": "MOC"
+		},
+		{
+			"name": "Gray Merchant of Asphodel",
+			"set": "C14"
+		},
+		{
+			"name": "Grim Affliction",
+			"set": "MM2"
+		},
+		{
+			"name": "Grim Bounty",
+			"set": "AFR"
+		},
+		{
+			"name": "Grimclaw Bats",
+			"set": "DST"
+		},
+		{
+			"name": "Grimdancer",
+			"set": "IKO"
+		},
+		{
+			"name": "Gruesome Encore",
+			"set": "MBS"
+		},
+		{
+			"name": "Gruesome Fate",
+			"set": "RIX"
+		},
+		{
+			"name": "Gurmag Angler",
+			"set": "UMA"
+		},
+		{
+			"name": "Hand of Death",
+			"set": "P02"
+		},
+		{
+			"name": "Havoc Demon",
+			"set": "EMA"
+		},
+		{
+			"name": "Heartless Act",
+			"set": "IKO"
+		},
+		{
+			"name": "Hero's Downfall",
+			"set": "VOW"
+		},
+		{
+			"name": "Hollow Marauder",
+			"set": "OTJ"
+		},
+		{
+			"name": "Hopeless Nightmare",
+			"set": "WOE"
+		},
+		{
+			"name": "Ill-Gotten Inheritance",
+			"set": "RNA"
+		},
+		{
+			"name": "Incremental Blight",
+			"set": "HOP"
+		},
+		{
+			"name": "Indulgent Tormentor",
+			"set": "IMA"
+		},
+		{
+			"name": "Infernal Vessel",
+			"set": "FDN"
+		},
+		{
+			"name": "Injector Crocodile",
+			"set": "MOM"
+		},
+		{
+			"name": "Inner Demon",
+			"set": "BBD"
+		},
+		{
+			"name": "Innocent Blood",
+			"set": "EMA"
+		},
+		{
+			"name": "Kaya's Ghostform",
+			"set": "WAR"
+		},
+		{
+			"name": "Keeper of the Dead",
+			"set": "EXO"
+		},
+		{
+			"name": "Killing Wave",
+			"set": "INR"
+		},
+		{
+			"name": "Lampad of Death's Vigil",
+			"set": "THB"
+		},
+		{
+			"name": "Leech Collector",
+			"set": "SOS"
+		},
+		{
+			"name": "Lethal Sting",
+			"set": "HOU"
+		},
+		{
+			"name": "Liliana's Caress",
+			"set": "M11"
+		},
+		{
+			"name": "Liliana's Devotee",
+			"set": "M21"
+		},
+		{
+			"name": "Liliana's Specter",
+			"set": "M11"
+		},
+		{
+			"name": "Lively Dirge",
+			"set": "OTJ"
+		},
+		{
+			"name": "Lord of the Accursed",
+			"set": "AKH"
+		},
+		{
+			"name": "Loyal Subordinate",
+			"set": "SCD"
+		},
+		{
+			"name": "Mad Auntie",
+			"set": "MMA"
+		},
+		{
+			"name": "Marchesa's Decree",
+			"set": "CN2"
+		},
+		{
+			"name": "Marionette Apprentice",
+			"set": "MH3"
+		},
+		{
+			"name": "Markov Baron",
+			"set": "MAT"
+		},
+		{
+			"name": "Marsh Flitter",
+			"set": "LRW"
+		},
+		{
+			"name": "Massacre",
+			"set": "NEM"
+		},
+		{
+			"name": "Merciless Executioner",
+			"set": "FRF"
+		},
+		{
+			"name": "Mesmeric Fiend",
+			"set": "TOR"
+		},
+		{
+			"name": "Mindwrack Harpy",
+			"set": "THB"
+		},
+		{
+			"name": "Mischievous Poltergeist",
+			"set": "WTH"
+		},
+		{
+			"name": "Moan of the Unhallowed",
+			"set": "UMA"
+		},
+		{
+			"name": "Mogis's Favor",
+			"set": "THB"
+		},
+		{
+			"name": "Moment of Defiance",
+			"set": "BRO"
+		},
+		{
+			"name": "Moonglove Changeling",
+			"set": "MOR"
+		},
+		{
+			"name": "Morbid Opportunist",
+			"set": "MID"
+		},
+		{
+			"name": "Nadier's Nightblade",
+			"set": "BLC"
+		},
+		{
+			"name": "Nameless Inversion",
+			"set": "MM2"
+		},
+		{
+			"name": "Necrologia",
+			"set": "7ED"
+		},
+		{
+			"name": "Nekrataal",
+			"set": "DDM"
+		},
+		{
+			"name": "Nezumi Graverobber",
+			"set": "CHK"
+		},
+		{
+			"name": "Nezumi Prowler",
+			"set": "NEO"
+		},
+		{
+			"name": "Nightfire Giant",
+			"set": "M15"
+		},
+		{
+			"name": "Night's Whisper",
+			"set": "EMA"
+		},
+		{
+			"name": "Nirkana Cutthroat",
+			"set": "ROE"
+		},
+		{
+			"name": "Novice Occultist",
+			"set": "MID"
+		},
+		{
+			"name": "Noxious Dragon",
+			"set": "FRF"
+		},
+		{
+			"name": "Noxious Ghoul",
+			"set": "LGN"
+		},
+		{
+			"name": "Oblivion Strike",
+			"set": "OGW"
+		},
+		{
+			"name": "Okiba-Gang Shinobi",
+			"set": "PCA"
+		},
+		{
+			"name": "Olivia's Bloodsworn",
+			"set": "SOI"
+		},
+		{
+			"name": "Order of Midnight",
+			"set": "ELD"
+		},
+		{
+			"name": "Order of Yawgmoth",
+			"set": "USG"
+		},
+		{
+			"name": "Orzhov Enforcer",
+			"set": "RNA"
+		},
+		{
+			"name": "Osseous Sticktwister",
+			"set": "DSK"
+		},
+		{
+			"name": "Oubliette",
+			"set": "2XM"
+		},
+		{
+			"name": "Painful Lesson",
+			"set": "AKH"
+		},
+		{
+			"name": "Paragon of Open Graves",
+			"set": "M15"
+		},
+		{
+			"name": "Parasitic Impetus",
+			"set": "CLU"
+		},
+		{
+			"name": "Pawn of Ulamog",
+			"set": "ROE"
+		},
+		{
+			"name": "Peat Bog",
+			"set": "MMQ"
+		},
+		{
+			"name": "Phyrexian Gargantua",
+			"set": "APC"
+		},
+		{
+			"name": "Phyrexian Rager",
+			"set": "CMA"
+		},
+		{
+			"name": "Phyrexian Reclamation",
+			"set": "C15"
+		},
+		{
+			"name": "Pit Keeper",
+			"set": "MM3"
+		},
+		{
+			"name": "Plague Spitter",
+			"set": "INV"
+		},
+		{
+			"name": "Plagued Rusalka",
+			"set": "MM2"
+		},
+		{
+			"name": "Power Word Kill",
+			"set": "AFR"
+		},
+		{
+			"name": "Prakhata Pillar-Bug",
+			"set": "KLD"
+		},
+		{
+			"name": "Predatory Nightstalker",
+			"set": "VMA"
+		},
+		{
+			"name": "Price of Fame",
+			"set": "ZNC"
+		},
+		{
+			"name": "Priest of Gix",
+			"set": "DDE"
+		},
+		{
+			"name": "Public Execution",
+			"set": "M13"
+		},
+		{
+			"name": "Puppet Conjurer",
+			"set": "ALA"
+		},
+		{
+			"name": "Queen's Agent",
+			"set": "XLN"
+		},
+		{
+			"name": "Quest for the Gravelord",
+			"set": "BBD"
+		},
+		{
+			"name": "Rabid Bloodsucker",
+			"set": "ORI"
+		},
+		{
+			"name": "Raiders' Wake",
+			"set": "XLN"
+		},
+		{
+			"name": "Rain of Filth",
+			"set": "USG"
+		},
+		{
+			"name": "Ravenous Chupacabra",
+			"set": "RIX"
+		},
+		{
+			"name": "Read the Bones",
+			"set": "MOC"
+		},
+		{
+			"name": "Reanimate",
+			"set": "TMP"
+		},
+		{
+			"name": "Reaper's Talisman",
+			"set": "AFR"
+		},
+		{
+			"name": "Reaping the Graves",
+			"set": "SCG"
+		},
+		{
+			"name": "Reckoner's Bargain",
+			"set": "NEO"
+		},
+		{
+			"name": "Recover",
+			"set": "MM3"
+		},
+		{
+			"name": "Regicide",
+			"set": "CN2"
+		},
+		{
+			"name": "Revenge of Ravens",
+			"set": "ELD"
+		},
+		{
+			"name": "Rite of Consumption",
+			"set": "SHM"
+		},
+		{
+			"name": "Rotfeaster Maggot",
+			"set": "M15"
+		},
+		{
+			"name": "Rush of Vitality",
+			"set": "KLD"
+		},
+		{
+			"name": "Ruthless Knave",
+			"set": "XLN"
+		},
+		{
+			"name": "Sadistic Glee",
+			"set": "TMP"
+		},
+		{
+			"name": "Savage Gorger",
+			"set": "M20"
+		},
+		{
+			"name": "Scrapwork Rager",
+			"set": "BRO"
+		},
+		{
+			"name": "Seal of Doom",
+			"set": "C15"
+		},
+		{
+			"name": "Send in the Pest",
+			"set": "SOS"
+		},
+		{
+			"name": "Sengir Autocrat",
+			"set": "EMA"
+		},
+		{
+			"name": "Sever Soul",
+			"set": "MMQ"
+		},
+		{
+			"name": "Severed Strands",
+			"set": "GRN"
+		},
+		{
+			"name": "Shade's Form",
+			"set": "TOR"
+		},
+		{
+			"name": "Shadow Prophecy",
+			"set": "DMU"
+		},
+		{
+			"name": "Shadowcloak Vampire",
+			"set": "M15"
+		},
+		{
+			"name": "Shambling Ghast",
+			"set": "AFR"
+		},
+		{
+			"name": "Sheoldred's Edict",
+			"set": "ONE"
+		},
+		{
+			"name": "Shepherd of Rot",
+			"set": "ONS"
+		},
+		{
+			"name": "Shimmercreep",
+			"set": "ECL"
+		},
+		{
+			"name": "Shoreline Salvager",
+			"set": "WWK"
+		},
+		{
+			"name": "Sign in Blood",
+			"set": "M10"
+		},
+		{
+			"name": "Skeletal Changeling",
+			"set": "LRW"
+		},
+		{
+			"name": "Skeletal Scrying",
+			"set": "C14"
+		},
+		{
+			"name": "Skeletal Wurm",
+			"set": "ROE"
+		},
+		{
+			"name": "Skinthinner",
+			"set": "LGN"
+		},
+		{
+			"name": "Skirge Familiar",
+			"set": "USG"
+		},
+		{
+			"name": "Skull Snatcher",
+			"set": "BOK"
+		},
+		{
+			"name": "Skullport Merchant",
+			"set": "AFR"
+		},
+		{
+			"name": "Smiting Helix",
+			"set": "MH1"
+		},
+		{
+			"name": "Snarling Gorehound",
+			"set": "MKM"
+		},
+		{
+			"name": "Sneering Shadewriter",
+			"set": "SOS"
+		},
+		{
+			"name": "Songs of the Damned",
+			"set": "UMA"
+		},
+		{
+			"name": "Soul Snuffers",
+			"set": "EVE"
+		},
+		{
+			"name": "Souldrinker",
+			"set": "TMP"
+		},
+		{
+			"name": "Spark Reaper",
+			"set": "WAR"
+		},
+		{
+			"name": "Spectral Sliver",
+			"set": "LGN"
+		},
+		{
+			"name": "Stir the Sands",
+			"set": "AKH"
+		},
+		{
+			"name": "Stitch Together",
+			"set": "CMD"
+		},
+		{
+			"name": "Strands of Night",
+			"set": "WTH"
+		},
+		{
+			"name": "Street Wraith",
+			"set": "A25"
+		},
+		{
+			"name": "Stromgald Crusader",
+			"set": "CSP"
+		},
+		{
+			"name": "Stronghold Rats",
+			"set": "FUT"
+		},
+		{
+			"name": "Suffocating Fumes",
+			"set": "IKO"
+		},
+		{
+			"name": "Summon Undead",
+			"set": "CLB"
+		},
+		{
+			"name": "Supernatural Stamina",
+			"set": "GN3"
+		},
+		{
+			"name": "Syphon Flesh",
+			"set": "CM2"
+		},
+		{
+			"name": "Syphon Mind",
+			"set": "ONS"
+		},
+		{
+			"name": "Syr Konrad, the Grim",
+			"set": "ELD"
+		},
+		{
+			"name": "Tainted Strike",
+			"set": "SOM"
+		},
+		{
+			"name": "Tavern Swindler",
+			"set": "BBD"
+		},
+		{
+			"name": "Tendrils of Corruption",
+			"set": "C14"
+		},
+		{
+			"name": "Terror",
+			"set": "10E"
+		},
+		{
+			"name": "Thirsting Bloodlord",
+			"set": "M20"
+		},
+		{
+			"name": "Thorn of the Black Rose",
+			"set": "CN2"
+		},
+		{
+			"name": "Thrull Parasite",
+			"set": "GTC"
+		},
+		{
+			"name": "Tidy Conclusion",
+			"set": "KLD"
+		},
+		{
+			"name": "Tortured Existence",
+			"set": "STH"
+		},
+		{
+			"name": "Tragic Slip",
+			"set": "C14"
+		},
+		{
+			"name": "Treasure Dredger",
+			"set": "OTJ"
+		},
+		{
+			"name": "Trespasser's Curse",
+			"set": "AKH"
+		},
+		{
+			"name": "Trial of Ambition",
+			"set": "AKH"
+		},
+		{
+			"name": "Twisted Abomination",
+			"set": "SCG"
+		},
+		{
+			"name": "Typhoid Rats",
+			"set": "M15"
+		},
+		{
+			"name": "Ultimate Price",
+			"set": "GK2"
+		},
+		{
+			"name": "Unburial Rites",
+			"set": "ISD"
+		},
+		{
+			"name": "Undead Augur",
+			"set": "MH1"
+		},
+		{
+			"name": "Undercity Informer",
+			"set": "GTC"
+		},
+		{
+			"name": "Underworld Hermit",
+			"set": "MH2"
+		},
+		{
+			"name": "Unexpected Fangs",
+			"set": "IKO"
+		},
+		{
+			"name": "Unseal the Necropolis",
+			"set": "MOM"
+		},
+		{
+			"name": "Unspeakable Symbol",
+			"set": "SCG"
+		},
+		{
+			"name": "Urborg Repossession",
+			"set": "DMU"
+		},
+		{
+			"name": "Urborg Uprising",
+			"set": "EMA"
+		},
+		{
+			"name": "Vampire Gourmand",
+			"set": "FDN"
+		},
+		{
+			"name": "Vampire Hexmage",
+			"set": "C14"
+		},
+		{
+			"name": "Vampire of the Dire Moon",
+			"set": "M20"
+		},
+		{
+			"name": "Vampiric Link",
+			"set": "PLC"
+		},
+		{
+			"name": "Vat of Rebirth",
+			"set": "ONE"
+		},
+		{
+			"name": "Vendetta",
+			"set": "MMQ"
+		},
+		{
+			"name": "Vengeful Reaper",
+			"set": "KHM"
+		},
+		{
+			"name": "Victimize",
+			"set": "MOC"
+		},
+		{
+			"name": "Vile Requiem",
+			"set": "USG"
+		},
+		{
+			"name": "Village Rites",
+			"set": "INR"
+		},
+		{
+			"name": "Vindictive Vampire",
+			"set": "RNA"
+		},
+		{
+			"name": "Virtue's Ruin",
+			"set": "POR"
+		},
+		{
+			"name": "Virus Beetle",
+			"set": "NEO"
+		},
+		{
+			"name": "Void Beckoner",
+			"set": "IKO"
+		},
+		{
+			"name": "Vow of Malice",
+			"set": "CM2"
+		},
+		{
+			"name": "Wake of Vultures",
+			"set": "EMA"
+		},
+		{
+			"name": "Wall of Blood",
+			"set": "MRD"
+		},
+		{
+			"name": "Wall of Corpses",
+			"set": "MIR"
+		},
+		{
+			"name": "Wander in Death",
+			"set": "AKH"
+		},
+		{
+			"name": "Weaponcraft Enthusiast",
+			"set": "KLD"
+		},
+		{
+			"name": "Wicked Pact",
+			"set": "MB2"
+		},
+		{
+			"name": "Wight of Precinct Six",
+			"set": "C16"
+		},
+		{
+			"name": "Will-o'-the-Wisp",
+			"set": "A25"
+		},
+		{
+			"name": "Windgrace Acolyte",
+			"set": "DOM"
+		},
+		{
+			"name": "Withered Wretch",
+			"set": "LGN"
+		},
+		{
+			"name": "You Are Already Dead",
+			"set": "NEO"
+		},
+		{
+			"name": "Young Necromancer",
+			"set": "MH2"
+		},
+		{
+			"name": "Zombie Cutthroat",
+			"set": "SCG"
+		},
+		{
+			"name": "Zulaport Cutthroat",
+			"set": "GNT"
+		},
+		{
+			"name": "Zulaport Enforcer",
+			"set": "ROE"
+		}
+	],
+	"Red Commons and Uncommons": [
+		{
+			"name": "About Face",
+			"set": "ULG"
+		},
+		{
+			"name": "Abrade",
+			"set": "2XM"
+		},
+		{
+			"name": "Acidic Soil",
+			"set": "USG"
+		},
+		{
+			"name": "Act on Impulse",
+			"set": "M15"
+		},
+		{
+			"name": "Aftershock",
+			"set": "TMP"
+		},
+		{
+			"name": "Ainok Tracker",
+			"set": "KTK"
+		},
+		{
+			"name": "Alena, Kessig Trapper",
+			"set": "CMR"
+		},
+		{
+			"name": "Anarchist",
+			"set": "ODY"
+		},
+		{
+			"name": "Anax, Hardened in the Forge",
+			"set": "THB"
+		},
+		{
+			"name": "Ancient Grudge",
+			"set": "MM3"
+		},
+		{
+			"name": "Ancient Hydra",
+			"set": "NEM"
+		},
+		{
+			"name": "Anger",
+			"set": "JUD"
+		},
+		{
+			"name": "Arc Lightning",
+			"set": "USG"
+		},
+		{
+			"name": "Arc Trail",
+			"set": "PCA"
+		},
+		{
+			"name": "Ardent Elementalist",
+			"set": "MID"
+		},
+		{
+			"name": "Armed // Dangerous",
+			"set": "DGM"
+		},
+		{
+			"name": "Arms Dealer",
+			"set": "J22"
+		},
+		{
+			"name": "Arrow Storm",
+			"set": "KTK"
+		},
+		{
+			"name": "Artistic Process",
+			"set": "SOS"
+		},
+		{
+			"name": "Axgard Cavalry",
+			"set": "KHM"
+		},
+		{
+			"name": "Azra Bladeseeker",
+			"set": "BBD"
+		},
+		{
+			"name": "Balduvian Horde",
+			"set": "A25"
+		},
+		{
+			"name": "Balduvian Warlord",
+			"set": "CSP"
+		},
+		{
+			"name": "Barbed Batterfist",
+			"set": "ONE"
+		},
+		{
+			"name": "Barrage of Boulders",
+			"set": "KTK"
+		},
+		{
+			"name": "Battle Cry Goblin",
+			"set": "AFR"
+		},
+		{
+			"name": "Battle Squadron",
+			"set": "EMA"
+		},
+		{
+			"name": "Beetleback Chief",
+			"set": "TDC"
+		},
+		{
+			"name": "Bhaal's Invoker",
+			"set": "CLB"
+		},
+		{
+			"name": "Big Score",
+			"set": "SNC"
+		},
+		{
+			"name": "Bitter Reunion",
+			"set": "BRO"
+		},
+		{
+			"name": "Blade Sliver",
+			"set": "LGN"
+		},
+		{
+			"name": "Blastfire Bolt",
+			"set": "M15"
+		},
+		{
+			"name": "Blaze",
+			"set": "POR"
+		},
+		{
+			"name": "Blazing Crescendo",
+			"set": "ONE"
+		},
+		{
+			"name": "Blazing Volley",
+			"set": "AKH"
+		},
+		{
+			"name": "Blindblast",
+			"set": "WAR"
+		},
+		{
+			"name": "Blood Frenzy",
+			"set": "MB2"
+		},
+		{
+			"name": "Blood Knight",
+			"set": "PLC"
+		},
+		{
+			"name": "Blood Ogre",
+			"set": "E01"
+		},
+		{
+			"name": "Bloodfire Expert",
+			"set": "KTK"
+		},
+		{
+			"name": "Bloodlust Inciter",
+			"set": "AKH"
+		},
+		{
+			"name": "Bloodmark Mentor",
+			"set": "DPA"
+		},
+		{
+			"name": "Boarding Party",
+			"set": "CMR"
+		},
+		{
+			"name": "Boldwyr Intimidator",
+			"set": "MOR"
+		},
+		{
+			"name": "Bolt Bend",
+			"set": "WAR"
+		},
+		{
+			"name": "Bombard",
+			"set": "GNT"
+		},
+		{
+			"name": "Boots of Speed",
+			"set": "AFR"
+		},
+		{
+			"name": "Brazen Wolves",
+			"set": "EMN"
+		},
+		{
+			"name": "Breath of Darigaaz",
+			"set": "INV"
+		},
+		{
+			"name": "Breath Weapon",
+			"set": "CLB"
+		},
+		{
+			"name": "Bronzeplate Boar",
+			"set": "NEO"
+		},
+		{
+			"name": "Brute Force",
+			"set": "PLC"
+		},
+		{
+			"name": "Brute Strength",
+			"set": "DDT"
+		},
+		{
+			"name": "Bulk Up",
+			"set": "FDN"
+		},
+		{
+			"name": "Burning Palm Efreet",
+			"set": "MIR"
+		},
+		{
+			"name": "Burning Prophet",
+			"set": "WAR"
+		},
+		{
+			"name": "Burst Lightning",
+			"set": "MM2"
+		},
+		{
+			"name": "Cathartic Pyre",
+			"set": "MID"
+		},
+		{
+			"name": "Chakram Slinger",
+			"set": "BBD"
+		},
+		{
+			"name": "Chandra, Novice Pyromancer",
+			"set": "M20"
+		},
+		{
+			"name": "Chandra's Pyrohelix",
+			"set": "WAR"
+		},
+		{
+			"name": "Changeling Berserker",
+			"set": "LRW"
+		},
+		{
+			"name": "Chaos Channeler",
+			"set": "AFR"
+		},
+		{
+			"name": "Charging Monstrosaur",
+			"set": "XLN"
+		},
+		{
+			"name": "Charging Tuskodon",
+			"set": "RIX"
+		},
+		{
+			"name": "Cheering Fanatic",
+			"set": "BBD"
+		},
+		{
+			"name": "Cinder Cloud",
+			"set": "MIR"
+		},
+		{
+			"name": "Cliffgate",
+			"set": "CLB"
+		},
+		{
+			"name": "Coastline Marauders",
+			"set": "CMR"
+		},
+		{
+			"name": "Cone of Flame",
+			"set": "WTH"
+		},
+		{
+			"name": "Convulsing Licid",
+			"set": "STH"
+		},
+		{
+			"name": "Coronation of Chaos",
+			"set": "CLB"
+		},
+		{
+			"name": "Coruscation Mage",
+			"set": "BLB"
+		},
+		{
+			"name": "Cragsmasher Yeti",
+			"set": "MOM"
+		},
+		{
+			"name": "Crimson Fleet Commodore",
+			"set": "CMR"
+		},
+		{
+			"name": "Crimson Wisps",
+			"set": "SHM"
+		},
+		{
+			"name": "Crowd's Favor",
+			"set": "M15"
+		},
+		{
+			"name": "Crown-Hunter Hireling",
+			"set": "CN2"
+		},
+		{
+			"name": "Curse of Opulence",
+			"set": "C17"
+		},
+		{
+			"name": "Dark-Dweller Oracle",
+			"set": "2X2"
+		},
+		{
+			"name": "Dead // Gone",
+			"set": "PLC"
+		},
+		{
+			"name": "Demand Answers",
+			"set": "MKM"
+		},
+		{
+			"name": "Desert of the Fervent",
+			"set": "C21"
+		},
+		{
+			"name": "Destructive Tampering",
+			"set": "AER"
+		},
+		{
+			"name": "Diamond Pick-Axe",
+			"set": "LCI"
+		},
+		{
+			"name": "Direct Current",
+			"set": "GRN"
+		},
+		{
+			"name": "Dragon Fodder",
+			"set": "GNT"
+		},
+		{
+			"name": "Dragon Mage",
+			"set": "M20"
+		},
+		{
+			"name": "Dwarven Blastminer",
+			"set": "ONS"
+		},
+		{
+			"name": "Dwarven Hammer",
+			"set": "KHM"
+		},
+		{
+			"name": "Dwarven Miner",
+			"set": "MIR"
+		},
+		{
+			"name": "Dynacharge",
+			"set": "MM3"
+		},
+		{
+			"name": "Electric Revelation",
+			"set": "J22"
+		},
+		{
+			"name": "Electrickery",
+			"set": "GK1"
+		},
+		{
+			"name": "Electrostatic Field",
+			"set": "GRN"
+		},
+		{
+			"name": "Embereth Shieldbreaker",
+			"set": "ELD"
+		},
+		{
+			"name": "Empty the Warrens",
+			"set": "DMR"
+		},
+		{
+			"name": "End the Festivities",
+			"set": "VOW"
+		},
+		{
+			"name": "Expedite",
+			"set": "BBD"
+		},
+		{
+			"name": "Experimental Synthesizer",
+			"set": "NEO"
+		},
+		{
+			"name": "Explosive Welcome",
+			"set": "STX"
+		},
+		{
+			"name": "Exuberant Fuseling",
+			"set": "ONE"
+		},
+		{
+			"name": "Faithless Salvaging",
+			"set": "MH2"
+		},
+		{
+			"name": "Falkenrath Celebrants",
+			"set": "VOW"
+		},
+		{
+			"name": "Falter",
+			"set": "USG"
+		},
+		{
+			"name": "Fanatic of Mogis",
+			"set": "THS"
+		},
+		{
+			"name": "Fanning the Flames",
+			"set": "STH"
+		},
+		{
+			"name": "Fathom Fleet Swordjack",
+			"set": "CMR"
+		},
+		{
+			"name": "Fearless Skald",
+			"set": "MOM"
+		},
+		{
+			"name": "Fiery Impulse",
+			"set": "ORI"
+		},
+		{
+			"name": "Fire Servant",
+			"set": "PD2"
+		},
+		{
+			"name": "Fireball",
+			"set": "IMA"
+		},
+		{
+			"name": "Fire-Belly Changeling",
+			"set": "LRW"
+		},
+		{
+			"name": "Fireblast",
+			"set": "VIS"
+		},
+		{
+			"name": "Firecat Blitz",
+			"set": "JUD"
+		},
+		{
+			"name": "Fireslinger",
+			"set": "TMP"
+		},
+		{
+			"name": "Firewing Phoenix",
+			"set": "UMA"
+		},
+		{
+			"name": "First Day of Class",
+			"set": "STX"
+		},
+		{
+			"name": "Fists of Flame",
+			"set": "CMR"
+		},
+		{
+			"name": "Flame Elemental",
+			"set": "MIR"
+		},
+		{
+			"name": "Flame Jab",
+			"set": "EMA"
+		},
+		{
+			"name": "Flame Javelin",
+			"set": "DD2"
+		},
+		{
+			"name": "Flame Slash",
+			"set": "DDK"
+		},
+		{
+			"name": "Flame Wave",
+			"set": "STH"
+		},
+		{
+			"name": "Flametongue Kavu",
+			"set": "PLS"
+		},
+		{
+			"name": "Flaring Pain",
+			"set": "JUD"
+		},
+		{
+			"name": "Flowstone Hellion",
+			"set": "STH"
+		},
+		{
+			"name": "Footfall Crater",
+			"set": "IKO"
+		},
+		{
+			"name": "Forge Devil",
+			"set": "M15"
+		},
+		{
+			"name": "Forked Lightning",
+			"set": "MB2"
+		},
+		{
+			"name": "Frenzied Fugue",
+			"set": "C16"
+		},
+		{
+			"name": "Frenzied Saddlebrute",
+			"set": "CMR"
+		},
+		{
+			"name": "Furious Rise",
+			"set": "THB"
+		},
+		{
+			"name": "Furnace Punisher",
+			"set": "ONE"
+		},
+		{
+			"name": "Furnace Whelp",
+			"set": "IMA"
+		},
+		{
+			"name": "Fury Sliver",
+			"set": "TSP"
+		},
+		{
+			"name": "Galvanic Blast",
+			"set": "DDU"
+		},
+		{
+			"name": "Ganax, Astral Hunter",
+			"set": "CLB"
+		},
+		{
+			"name": "Gathan Raiders",
+			"set": "FUT"
+		},
+		{
+			"name": "Geistblast",
+			"set": "SOI"
+		},
+		{
+			"name": "Gempalm Incinerator",
+			"set": "DMR"
+		},
+		{
+			"name": "Genasi Enforcers",
+			"set": "CLB"
+		},
+		{
+			"name": "General Kreat, the Boltbringer",
+			"set": "J25"
+		},
+		{
+			"name": "Generator Servant",
+			"set": "M15"
+		},
+		{
+			"name": "Geomancer's Gambit",
+			"set": "MH1"
+		},
+		{
+			"name": "Ghitu Slinger",
+			"set": "ULG"
+		},
+		{
+			"name": "Giant Cindermaw",
+			"set": "BRO"
+		},
+		{
+			"name": "Glarewielder",
+			"set": "LRW"
+		},
+		{
+			"name": "Glimpse the Impossible",
+			"set": "MH3"
+		},
+		{
+			"name": "Gnoll War Band",
+			"set": "CLB"
+		},
+		{
+			"name": "Go for Blood",
+			"set": "J22"
+		},
+		{
+			"name": "Goblin Assault",
+			"set": "MM3"
+		},
+		{
+			"name": "Goblin Bombardment",
+			"set": "DDN"
+		},
+		{
+			"name": "Goblin Taskmaster",
+			"set": "ONS"
+		},
+		{
+			"name": "Goblin War Party",
+			"set": "MH1"
+		},
+		{
+			"name": "Goblin Wardriver",
+			"set": "MBS"
+		},
+		{
+			"name": "Goblin Wizardry",
+			"set": "M21"
+		},
+		{
+			"name": "Goblinslide",
+			"set": "KTK"
+		},
+		{
+			"name": "Gorehorn Minotaurs",
+			"set": "E01"
+		},
+		{
+			"name": "Gorilla Shaman",
+			"set": "MH2"
+		},
+		{
+			"name": "Grab the Reins",
+			"set": "MRD"
+		},
+		{
+			"name": "Granitic Titan",
+			"set": "HOU"
+		},
+		{
+			"name": "Grapeshot",
+			"set": "DDS"
+		},
+		{
+			"name": "Gravitic Punch",
+			"set": "GRN"
+		},
+		{
+			"name": "Ground Rift",
+			"set": "TSP"
+		},
+		{
+			"name": "Guttersnipe",
+			"set": "TDC"
+		},
+		{
+			"name": "Hardened Berserker",
+			"set": "DTK"
+		},
+		{
+			"name": "Hatchet Bully",
+			"set": "EVE"
+		},
+		{
+			"name": "Havoc Jester",
+			"set": "M21"
+		},
+		{
+			"name": "Haze of Rage",
+			"set": "FUT"
+		},
+		{
+			"name": "Hellspark Elemental",
+			"set": "DDK"
+		},
+		{
+			"name": "Hematite Golem",
+			"set": "MRD"
+		},
+		{
+			"name": "Hoarding Dragon",
+			"set": "IMA"
+		},
+		{
+			"name": "Hoarding Ogre",
+			"set": "AFR"
+		},
+		{
+			"name": "Honor the God-Pharaoh",
+			"set": "WAR"
+		},
+		{
+			"name": "Hordeling Outburst",
+			"set": "A25"
+		},
+		{
+			"name": "Humble Defector",
+			"set": "FRF"
+		},
+		{
+			"name": "Immolating Souleater",
+			"set": "NPH"
+		},
+		{
+			"name": "Imodane's Recruiter",
+			"set": "WOE"
+		},
+		{
+			"name": "Impact Tremors",
+			"set": "DTK"
+		},
+		{
+			"name": "Impulsive Pilferer",
+			"set": "OTJ"
+		},
+		{
+			"name": "Incinerate",
+			"set": "MIR"
+		},
+		{
+			"name": "Inferno Fist",
+			"set": "M15"
+		},
+		{
+			"name": "Inferno Jet",
+			"set": "HOU"
+		},
+		{
+			"name": "Ingot Chewer",
+			"set": "CM2"
+		},
+		{
+			"name": "Inspired Tinkering",
+			"set": "CLB"
+		},
+		{
+			"name": "Invigorated Rampage",
+			"set": "AER"
+		},
+		{
+			"name": "Ire Shaman",
+			"set": "A25"
+		},
+		{
+			"name": "Jaya, Venerated Firemage",
+			"set": "WAR"
+		},
+		{
+			"name": "Kediss, Emberclaw Familiar",
+			"set": "CMR"
+		},
+		{
+			"name": "Keldon Halberdier",
+			"set": "IMA"
+		},
+		{
+			"name": "Keldon Strike Team",
+			"set": "DMU"
+		},
+		{
+			"name": "Kessig Flamebreather",
+			"set": "VOW"
+		},
+		{
+			"name": "Kiln Fiend",
+			"set": "IMA"
+		},
+		{
+			"name": "Kyren Negotiations",
+			"set": "MMQ"
+		},
+		{
+			"name": "Lava Dart",
+			"set": "JUD"
+		},
+		{
+			"name": "Lava Hounds",
+			"set": "WTH"
+		},
+		{
+			"name": "Light Up the Stage",
+			"set": "RNA"
+		},
+		{
+			"name": "Lightning Bolt",
+			"set": "CLB"
+		},
+		{
+			"name": "Lightning Mauler",
+			"set": "AVR"
+		},
+		{
+			"name": "Loyal Apprentice",
+			"set": "TDC"
+		},
+		{
+			"name": "Lunar Frenzy",
+			"set": "MID"
+		},
+		{
+			"name": "Mad Ratter",
+			"set": "ELD"
+		},
+		{
+			"name": "Madcap Skills",
+			"set": "MM3"
+		},
+		{
+			"name": "Magmatic Insight",
+			"set": "ORI"
+		},
+		{
+			"name": "Magmaw",
+			"set": "UMA"
+		},
+		{
+			"name": "Mana Geyser",
+			"set": "5DN"
+		},
+		{
+			"name": "Mardu Warshrieker",
+			"set": "KTK"
+		},
+		{
+			"name": "Mercadia's Downfall",
+			"set": "MMQ"
+		},
+		{
+			"name": "Merchant of the Vale",
+			"set": "ELD"
+		},
+		{
+			"name": "Meria's Outrider",
+			"set": "DMU"
+		},
+		{
+			"name": "Mindclaw Shaman",
+			"set": "M13"
+		},
+		{
+			"name": "Miner's Bane",
+			"set": "M15"
+		},
+		{
+			"name": "Mogg Maniac",
+			"set": "STH"
+		},
+		{
+			"name": "Mogg Raider",
+			"set": "TMP"
+		},
+		{
+			"name": "Molten Birth",
+			"set": "M14"
+		},
+		{
+			"name": "Monastery Swiftspear",
+			"set": "IMA"
+		},
+		{
+			"name": "Needle Drop",
+			"set": "LRW"
+		},
+		{
+			"name": "Needletooth Raptor",
+			"set": "RIX"
+		},
+		{
+			"name": "Nimble Birdsticker",
+			"set": "M20"
+		},
+		{
+			"name": "Ogre Arsonist",
+			"set": "P02"
+		},
+		{
+			"name": "Ondu Champion",
+			"set": "BFZ"
+		},
+		{
+			"name": "Onslaught",
+			"set": "EXO"
+		},
+		{
+			"name": "Orcish Lumberjack",
+			"set": "DDL"
+		},
+		{
+			"name": "Orcish Settlers",
+			"set": "WTH"
+		},
+		{
+			"name": "Outmaneuver",
+			"set": "USG"
+		},
+		{
+			"name": "Outnumber",
+			"set": "BFZ"
+		},
+		{
+			"name": "Painter's Studio // Defaced Gallery",
+			"set": "DSK"
+		},
+		{
+			"name": "Pardic Collaborator",
+			"set": "TOR"
+		},
+		{
+			"name": "Pillaging Horde",
+			"set": "POR"
+		},
+		{
+			"name": "Pitchstone Wall",
+			"set": "TOR"
+		},
+		{
+			"name": "Plundering Barbarian",
+			"set": "AFR"
+		},
+		{
+			"name": "Price of Glory",
+			"set": "ODY"
+		},
+		{
+			"name": "Price of Progress",
+			"set": "EXO"
+		},
+		{
+			"name": "Punishing Fire",
+			"set": "DDG"
+		},
+		{
+			"name": "Purifying Dragon",
+			"set": "MID"
+		},
+		{
+			"name": "Pyreheart Wolf",
+			"set": "DKA"
+		},
+		{
+			"name": "Pyrite Spellbomb",
+			"set": "DDU"
+		},
+		{
+			"name": "Pyrohemia",
+			"set": "PLC"
+		},
+		{
+			"name": "Pyrokinesis",
+			"set": "DDL"
+		},
+		{
+			"name": "Pyrotechnics",
+			"set": "FRF"
+		},
+		{
+			"name": "Quakefoot Cyclops",
+			"set": "MH1"
+		},
+		{
+			"name": "Quest for Pure Flame",
+			"set": "ZEN"
+		},
+		{
+			"name": "Rabbit Battery",
+			"set": "NEO"
+		},
+		{
+			"name": "Ramunap Ruins",
+			"set": "HOU"
+		},
+		{
+			"name": "Rapacious Dragon",
+			"set": "2XM"
+		},
+		{
+			"name": "Rapacious One",
+			"set": "ROE"
+		},
+		{
+			"name": "Reckless Abandon",
+			"set": "UDS"
+		},
+		{
+			"name": "Reckless Barbarian",
+			"set": "CLB"
+		},
+		{
+			"name": "Reckless Bushwhacker",
+			"set": "OGW"
+		},
+		{
+			"name": "Reckless Charge",
+			"set": "ODY"
+		},
+		{
+			"name": "Reckless Fireweaver",
+			"set": "KLD"
+		},
+		{
+			"name": "Reckless Impulse",
+			"set": "VOW"
+		},
+		{
+			"name": "Reckless Rage",
+			"set": "RIX"
+		},
+		{
+			"name": "Reckless Wurm",
+			"set": "UMA"
+		},
+		{
+			"name": "Rending Volley",
+			"set": "DTK"
+		},
+		{
+			"name": "Renegade Warlord",
+			"set": "TMP"
+		},
+		{
+			"name": "Return the Favor",
+			"set": "OTJ"
+		},
+		{
+			"name": "Ricochet Trap",
+			"set": "WWK"
+		},
+		{
+			"name": "Rite of the Raging Storm",
+			"set": "CM2"
+		},
+		{
+			"name": "Rites of Initiation",
+			"set": "ODY"
+		},
+		{
+			"name": "Rivals' Duel",
+			"set": "PCA"
+		},
+		{
+			"name": "Rock Slide",
+			"set": "VIS"
+		},
+		{
+			"name": "Rograkh, Son of Rohgahh",
+			"set": "CMR"
+		},
+		{
+			"name": "Ruinous Gremlin",
+			"set": "KLD"
+		},
+		{
+			"name": "Rupture",
+			"set": "NEM"
+		},
+		{
+			"name": "Sabertooth Wyvern",
+			"set": "EXO"
+		},
+		{
+			"name": "Samut's Sprint",
+			"set": "WAR"
+		},
+		{
+			"name": "Sandstone Needle",
+			"set": "MMQ"
+		},
+		{
+			"name": "Sarkhan's Rage",
+			"set": "DTK"
+		},
+		{
+			"name": "Sarkhan's Whelp",
+			"set": "M19"
+		},
+		{
+			"name": "Scoria Cat",
+			"set": "PCY"
+		},
+		{
+			"name": "Scourge Devil",
+			"set": "MM3"
+		},
+		{
+			"name": "Scrapwork Mutt",
+			"set": "BRO"
+		},
+		{
+			"name": "Seal of Fire",
+			"set": "NEM"
+		},
+		{
+			"name": "Searing Blaze",
+			"set": "WWK"
+		},
+		{
+			"name": "Searing Spear",
+			"set": "M13"
+		},
+		{
+			"name": "Seething Anger",
+			"set": "STH"
+		},
+		{
+			"name": "Seize the Spoils",
+			"set": "FDN"
+		},
+		{
+			"name": "Shattering Spree",
+			"set": "GK1"
+		},
+		{
+			"name": "Shenanigans",
+			"set": "MH1"
+		},
+		{
+			"name": "Shiny Impetus",
+			"set": "TDC"
+		},
+		{
+			"name": "Shivan Raptor",
+			"set": "USG"
+		},
+		{
+			"name": "Shiv's Embrace",
+			"set": "USG"
+		},
+		{
+			"name": "Shower of Coals",
+			"set": "ODY"
+		},
+		{
+			"name": "Shredded Sails",
+			"set": "IKO"
+		},
+		{
+			"name": "Skewer the Critics",
+			"set": "RNA"
+		},
+		{
+			"name": "Skyline Despot",
+			"set": "CMM"
+		},
+		{
+			"name": "Slavering Nulls",
+			"set": "DDH"
+		},
+		{
+			"name": "Smash to Dust",
+			"set": "DMU"
+		},
+		{
+			"name": "Solar Blast",
+			"set": "ONS"
+		},
+		{
+			"name": "Sparkmage Apprentice",
+			"set": "DDN"
+		},
+		{
+			"name": "Spellshock",
+			"set": "EXO"
+		},
+		{
+			"name": "Spitebellows",
+			"set": "MOR"
+		},
+		{
+			"name": "Spiteful Prankster",
+			"set": "JMP"
+		},
+		{
+			"name": "Spitting Earth",
+			"set": "P02"
+		},
+		{
+			"name": "Staggershock",
+			"set": "IMA"
+		},
+		{
+			"name": "Sticky Fingers",
+			"set": "SNC"
+		},
+		{
+			"name": "Stingscourger",
+			"set": "PLC"
+		},
+		{
+			"name": "Sting-Slinger",
+			"set": "ECL"
+		},
+		{
+			"name": "Stoke the Flames",
+			"set": "M15"
+		},
+		{
+			"name": "Storm Caller",
+			"set": "M21"
+		},
+		{
+			"name": "Storm-Kiln Artist",
+			"set": "STX"
+		},
+		{
+			"name": "Strafe",
+			"set": "PLS"
+		},
+		{
+			"name": "Strike It Rich",
+			"set": "MH3"
+		},
+		{
+			"name": "Sunset Strikemaster",
+			"set": "TDM"
+		},
+		{
+			"name": "Sunshot Militia",
+			"set": "LCI"
+		},
+		{
+			"name": "Sure Strike",
+			"set": "GRN"
+		},
+		{
+			"name": "Swarming Goblins",
+			"set": "AFR"
+		},
+		{
+			"name": "Swelter",
+			"set": "JUD"
+		},
+		{
+			"name": "Taunting Kobold",
+			"set": "CLB"
+		},
+		{
+			"name": "Tectonic Rift",
+			"set": "M19"
+		},
+		{
+			"name": "Temur Battle Rage",
+			"set": "FRF"
+		},
+		{
+			"name": "Thermo-Alchemist",
+			"set": "EMN"
+		},
+		{
+			"name": "Thermopod",
+			"set": "CSP"
+		},
+		{
+			"name": "Thopter Engineer",
+			"set": "ORI"
+		},
+		{
+			"name": "Thrill of Possibility",
+			"set": "ELD"
+		},
+		{
+			"name": "Thunderclap",
+			"set": "MMQ"
+		},
+		{
+			"name": "Thunderdrum Soloist",
+			"set": "SOS"
+		},
+		{
+			"name": "Thunderwave",
+			"set": "CLB"
+		},
+		{
+			"name": "Tiamat's Fanatics",
+			"set": "CLB"
+		},
+		{
+			"name": "Tibalt, Rakish Instigator",
+			"set": "WAR"
+		},
+		{
+			"name": "Tibalt's Rager",
+			"set": "WAR"
+		},
+		{
+			"name": "Titan's Strength",
+			"set": "THS"
+		},
+		{
+			"name": "Toggo, Goblin Weaponsmith",
+			"set": "CMR"
+		},
+		{
+			"name": "Torch Breath",
+			"set": "SNC"
+		},
+		{
+			"name": "Torrent of Fire",
+			"set": "SCG"
+		},
+		{
+			"name": "Treasonous Ogre",
+			"set": "CNS"
+		},
+		{
+			"name": "Twinferno",
+			"set": "DMU"
+		},
+		{
+			"name": "Two-Handed Axe",
+			"set": "CLB"
+		},
+		{
+			"name": "Unchained Berserker",
+			"set": "M20"
+		},
+		{
+			"name": "Unexpected Windfall",
+			"set": "AFR"
+		},
+		{
+			"name": "Untimely Malfunction",
+			"set": "DSK"
+		},
+		{
+			"name": "Valakut Invoker",
+			"set": "BFZ"
+		},
+		{
+			"name": "Valakut Predator",
+			"set": "BFZ"
+		},
+		{
+			"name": "Vampires' Vengeance",
+			"set": "VOW"
+		},
+		{
+			"name": "Vandalize",
+			"set": "DTK"
+		},
+		{
+			"name": "Volatile Claws",
+			"set": "MH1"
+		},
+		{
+			"name": "Volcanic Dragon",
+			"set": "M19"
+		},
+		{
+			"name": "Volcanic Geyser",
+			"set": "MIR"
+		},
+		{
+			"name": "Volcanic Hammer",
+			"set": "8ED"
+		},
+		{
+			"name": "Volcanic Rush",
+			"set": "DTK"
+		},
+		{
+			"name": "Volcanic Spite",
+			"set": "MOM"
+		},
+		{
+			"name": "Volcanic Torrent",
+			"set": "OTJ"
+		},
+		{
+			"name": "Voldaren Epicure",
+			"set": "VOW"
+		},
+		{
+			"name": "Vow of Lightning",
+			"set": "GN3"
+		},
+		{
+			"name": "Wall of Fire",
+			"set": "M15"
+		},
+		{
+			"name": "Warchief Giant",
+			"set": "CM2"
+		},
+		{
+			"name": "Wayward Giant",
+			"set": "KLD"
+		},
+		{
+			"name": "Wild Magic Surge",
+			"set": "CLB"
+		},
+		{
+			"name": "Witch's Mark",
+			"set": "WOE"
+		},
+		{
+			"name": "Wrenn's Resolve",
+			"set": "MOM"
+		},
+		{
+			"name": "You Find Some Prisoners",
+			"set": "AFR"
+		},
+		{
+			"name": "You See a Pair of Goblins",
+			"set": "AFR"
+		},
+		{
+			"name": "Young Pyromancer",
+			"set": "TDC"
+		},
+		{
+			"name": "Young Red Dragon",
+			"set": "CLB"
+		},
+		{
+			"name": "Zada, Hedron Grinder",
+			"set": "A25"
+		}
+	],
+	"Green Commons and Uncommons": [
+		{
+			"name": "A Killer Among Us",
+			"set": "MKM"
+		},
+		{
+			"name": "Abundant Growth",
+			"set": "EMA"
+		},
+		{
+			"name": "Abzan Beastmaster",
+			"set": "FRF"
+		},
+		{
+			"name": "Acidic Slime",
+			"set": "C18"
+		},
+		{
+			"name": "Adventurous Impulse",
+			"set": "DOM"
+		},
+		{
+			"name": "Aerie Bowmasters",
+			"set": "DTK"
+		},
+		{
+			"name": "Aggressive Urge",
+			"set": "RIX"
+		},
+		{
+			"name": "Ainok Survivalist",
+			"set": "DTK"
+		},
+		{
+			"name": "Ambassador Oak",
+			"set": "A25"
+		},
+		{
+			"name": "Anara, Wolvid Familiar",
+			"set": "CMR"
+		},
+		{
+			"name": "Ancestral Mask",
+			"set": "EMA"
+		},
+		{
+			"name": "Ancient Silverback",
+			"set": "M15"
+		},
+		{
+			"name": "Annoyed Altisaur",
+			"set": "2X2"
+		},
+		{
+			"name": "Arbor Elf",
+			"set": "A25"
+		},
+		{
+			"name": "Argothian Elder",
+			"set": "USG"
+		},
+		{
+			"name": "Argothian Opportunist",
+			"set": "BRO"
+		},
+		{
+			"name": "Armorcraft Judge",
+			"set": "KLD"
+		},
+		{
+			"name": "Arrogant Wurm",
+			"set": "TOR"
+		},
+		{
+			"name": "Assault Formation",
+			"set": "IMA"
+		},
+		{
+			"name": "Atraxa's Fall",
+			"set": "MOM"
+		},
+		{
+			"name": "Aura Gnarlid",
+			"set": "C18"
+		},
+		{
+			"name": "Avacyn's Pilgrim",
+			"set": "MM3"
+		},
+		{
+			"name": "Avenging Druid",
+			"set": "EXO"
+		},
+		{
+			"name": "Axebane Guardian",
+			"set": "RTR"
+		},
+		{
+			"name": "Baloth Gorger",
+			"set": "DOM"
+		},
+		{
+			"name": "Baloth Woodcrasher",
+			"set": "ZEN"
+		},
+		{
+			"name": "Basking Broodscale",
+			"set": "MH3"
+		},
+		{
+			"name": "Bassara Tower Archer",
+			"set": "JOU"
+		},
+		{
+			"name": "Beanstalk Giant",
+			"set": "CLB"
+		},
+		{
+			"name": "Beast Attack",
+			"set": "ODY"
+		},
+		{
+			"name": "Beast Within",
+			"set": "BBD"
+		},
+		{
+			"name": "Bellowing Tanglewurm",
+			"set": "SOM"
+		},
+		{
+			"name": "Beneath the Sands",
+			"set": "HOU"
+		},
+		{
+			"name": "Bestial Menace",
+			"set": "MM2"
+		},
+		{
+			"name": "Biogenic Upgrade",
+			"set": "FDN"
+		},
+		{
+			"name": "Birchlore Rangers",
+			"set": "ONS"
+		},
+		{
+			"name": "Bitterbow Sharpshooters",
+			"set": "HOU"
+		},
+		{
+			"name": "Blanchwood Prowler",
+			"set": "BRO"
+		},
+		{
+			"name": "Blight Mamba",
+			"set": "SOM"
+		},
+		{
+			"name": "Blightwidow",
+			"set": "MBS"
+		},
+		{
+			"name": "Bloom Hulk",
+			"set": "WAR"
+		},
+		{
+			"name": "Blossom Dryad",
+			"set": "XLN"
+		},
+		{
+			"name": "Blossoming Defense",
+			"set": "KLD"
+		},
+		{
+			"name": "Bookwurm",
+			"set": "STX"
+		},
+		{
+			"name": "Borderland Ranger",
+			"set": "E02"
+		},
+		{
+			"name": "Briar Patch",
+			"set": "MMQ"
+		},
+		{
+			"name": "Bristling Boar",
+			"set": "M19"
+		},
+		{
+			"name": "Broken Wings",
+			"set": "KHM"
+		},
+		{
+			"name": "Brood Monitor",
+			"set": "BFZ"
+		},
+		{
+			"name": "Broodhatch Nantuko",
+			"set": "ONS"
+		},
+		{
+			"name": "Bushwhack",
+			"set": "BRO"
+		},
+		{
+			"name": "Call of the Herd",
+			"set": "DMR"
+		},
+		{
+			"name": "Caller of the Pack",
+			"set": "CMA"
+		},
+		{
+			"name": "Cankerbloom",
+			"set": "ONE"
+		},
+		{
+			"name": "Canopy Cover",
+			"set": "WWK"
+		},
+		{
+			"name": "Canopy Surge",
+			"set": "INV"
+		},
+		{
+			"name": "Cartouche of Strength",
+			"set": "AKH"
+		},
+		{
+			"name": "Caustic Caterpillar",
+			"set": "ORI"
+		},
+		{
+			"name": "Chain of Acid",
+			"set": "ONS"
+		},
+		{
+			"name": "Challenger Troll",
+			"set": "WAR"
+		},
+		{
+			"name": "Changeling Titan",
+			"set": "LRW"
+		},
+		{
+			"name": "Changeling Wayfinder",
+			"set": "ECL"
+		},
+		{
+			"name": "Charge Through",
+			"set": "STX"
+		},
+		{
+			"name": "Chomping Changeling",
+			"set": "ECL"
+		},
+		{
+			"name": "Citanul Woodreaders",
+			"set": "DDR"
+		},
+		{
+			"name": "Clip Wings",
+			"set": "SOI"
+		},
+		{
+			"name": "Collective Resistance",
+			"set": "MH3"
+		},
+		{
+			"name": "Colossal Dreadmaw",
+			"set": "XLN"
+		},
+		{
+			"name": "Combo Attack",
+			"set": "BBD"
+		},
+		{
+			"name": "Commune with Nature",
+			"set": "MM2"
+		},
+		{
+			"name": "Commune with the Gods",
+			"set": "EMA"
+		},
+		{
+			"name": "Compost",
+			"set": "UDS"
+		},
+		{
+			"name": "Conifer Strider",
+			"set": "DTK"
+		},
+		{
+			"name": "Contagious Vorrac",
+			"set": "ONE"
+		},
+		{
+			"name": "Crashing Boars",
+			"set": "EXO"
+		},
+		{
+			"name": "Crop Rotation",
+			"set": "DDR"
+		},
+		{
+			"name": "Crowned Ceratok",
+			"set": "IMA"
+		},
+		{
+			"name": "Cudgel Troll",
+			"set": "M10"
+		},
+		{
+			"name": "Cultivate",
+			"set": "C18"
+		},
+		{
+			"name": "Curse of Predation",
+			"set": "C13"
+		},
+		{
+			"name": "Cytoplast Root-Kin",
+			"set": "MM2"
+		},
+		{
+			"name": "Daggerback Basilisk",
+			"set": "M19"
+		},
+		{
+			"name": "Dance of the Tumbleweeds",
+			"set": "OTJ"
+		},
+		{
+			"name": "Dawn's Reflection",
+			"set": "C18"
+		},
+		{
+			"name": "Dawntreader Elk",
+			"set": "DKA"
+		},
+		{
+			"name": "Death-Hood Cobra",
+			"set": "MM3"
+		},
+		{
+			"name": "Deglamer",
+			"set": "MOR"
+		},
+		{
+			"name": "Destiny Spinner",
+			"set": "THB"
+		},
+		{
+			"name": "Devoted Druid",
+			"set": "SHM"
+		},
+		{
+			"name": "Diligent Farmhand",
+			"set": "ODY"
+		},
+		{
+			"name": "Disruptive Stormbrood",
+			"set": "TDM"
+		},
+		{
+			"name": "Dissenter's Deliverance",
+			"set": "AKH"
+		},
+		{
+			"name": "Dragon Sniper",
+			"set": "TDM"
+		},
+		{
+			"name": "Dread Linnorm",
+			"set": "CLB"
+		},
+		{
+			"name": "Dreampod Druid",
+			"set": "PC2"
+		},
+		{
+			"name": "Druid's Familiar",
+			"set": "AVR"
+		},
+		{
+			"name": "Drumhunter",
+			"set": "ALA"
+		},
+		{
+			"name": "Earthen Arms",
+			"set": "BFZ"
+		},
+		{
+			"name": "Elemental Bond",
+			"set": "ORI"
+		},
+		{
+			"name": "Elite Cat Warrior",
+			"set": "POR"
+		},
+		{
+			"name": "Elven Bow",
+			"set": "KHM"
+		},
+		{
+			"name": "Elven Riders",
+			"set": "ONS"
+		},
+		{
+			"name": "Elvish Harbinger",
+			"set": "EVG"
+		},
+		{
+			"name": "Elvish Visionary",
+			"set": "BBD"
+		},
+		{
+			"name": "Ember Weaver",
+			"set": "A25"
+		},
+		{
+			"name": "Enlarge",
+			"set": "M14"
+		},
+		{
+			"name": "Entourage of Trest",
+			"set": "CN2"
+		},
+		{
+			"name": "Epic Confrontation",
+			"set": "DTK"
+		},
+		{
+			"name": "Evolution Charm",
+			"set": "PLC"
+		},
+		{
+			"name": "Evolution Sage",
+			"set": "WAR"
+		},
+		{
+			"name": "Evolutionary Escalation",
+			"set": "C16"
+		},
+		{
+			"name": "Experiment One",
+			"set": "C15"
+		},
+		{
+			"name": "Explore",
+			"set": "DDO"
+		},
+		{
+			"name": "Explosive Vegetation",
+			"set": "C18"
+		},
+		{
+			"name": "Ezuri's Archers",
+			"set": "DDU"
+		},
+		{
+			"name": "Fa'adiyah Seer",
+			"set": "DMR"
+		},
+		{
+			"name": "Fae Offering",
+			"set": "MH2"
+		},
+		{
+			"name": "Fangren Marauder",
+			"set": "MBS"
+		},
+		{
+			"name": "Fangs of Kalonia",
+			"set": "MH3"
+		},
+		{
+			"name": "Far Wanderings",
+			"set": "TOR"
+		},
+		{
+			"name": "Farseek",
+			"set": "C17"
+		},
+		{
+			"name": "Feral Hydra",
+			"set": "BBD"
+		},
+		{
+			"name": "Ferocious Zheng",
+			"set": "GS1"
+		},
+		{
+			"name": "Fertile Ground",
+			"set": "C18"
+		},
+		{
+			"name": "Fin-Clade Fugitives",
+			"set": "CMR"
+		},
+		{
+			"name": "Fog",
+			"set": "EMA"
+		},
+		{
+			"name": "Frog Tongue",
+			"set": "TMP"
+		},
+		{
+			"name": "Fyndhorn Elder",
+			"set": "8ED"
+		},
+		{
+			"name": "Fyndhorn Elves",
+			"set": "CMR"
+		},
+		{
+			"name": "Fynn, the Fangbearer",
+			"set": "KHM"
+		},
+		{
+			"name": "Gaea's Anthem",
+			"set": "MM3"
+		},
+		{
+			"name": "Gaea's Embrace",
+			"set": "USG"
+		},
+		{
+			"name": "Gaea's Gift",
+			"set": "BRO"
+		},
+		{
+			"name": "Gamekeeper",
+			"set": "UDS"
+		},
+		{
+			"name": "Garruk's Packleader",
+			"set": "M11"
+		},
+		{
+			"name": "Garruk's Uprising",
+			"set": "M21"
+		},
+		{
+			"name": "Gelatinous Genesis",
+			"set": "2XM"
+		},
+		{
+			"name": "Gemhide Sliver",
+			"set": "TSP"
+		},
+		{
+			"name": "Giant Ankheg",
+			"set": "CLB"
+		},
+		{
+			"name": "Giant Spider",
+			"set": "AKH"
+		},
+		{
+			"name": "Gift of the Viper",
+			"set": "MH3"
+		},
+		{
+			"name": "Gilanra, Caller of Wirewood",
+			"set": "CMR"
+		},
+		{
+			"name": "Glacier Godmaw",
+			"set": "EOE"
+		},
+		{
+			"name": "Gnarlid Pack",
+			"set": "MM2"
+		},
+		{
+			"name": "Grazing Gladehart",
+			"set": "DDP"
+		},
+		{
+			"name": "Great Oak Guardian",
+			"set": "C19"
+		},
+		{
+			"name": "Grizzly Fate",
+			"set": "JUD"
+		},
+		{
+			"name": "Harmonize",
+			"set": "C17"
+		},
+		{
+			"name": "Harrow",
+			"set": "C18"
+		},
+		{
+			"name": "Harvester Druid",
+			"set": "JUD"
+		},
+		{
+			"name": "Haywire Mite",
+			"set": "BRO"
+		},
+		{
+			"name": "Heart Warden",
+			"set": "UDS"
+		},
+		{
+			"name": "Hedge Troll",
+			"set": "PLC"
+		},
+		{
+			"name": "Heroes' Bane",
+			"set": "IMA"
+		},
+		{
+			"name": "Hickory Woodlot",
+			"set": "MMQ"
+		},
+		{
+			"name": "Horned Sliver",
+			"set": "TMP"
+		},
+		{
+			"name": "Hunger of the Howlpack",
+			"set": "DKA"
+		},
+		{
+			"name": "Hunted Wumpus",
+			"set": "MMQ"
+		},
+		{
+			"name": "Hunter's Ambush",
+			"set": "M15"
+		},
+		{
+			"name": "Hunter's Edge",
+			"set": "M21"
+		},
+		{
+			"name": "Hunter's Mark",
+			"set": "AFR"
+		},
+		{
+			"name": "Hunter's Talent",
+			"set": "BLB"
+		},
+		{
+			"name": "Hunting Pack",
+			"set": "SCG"
+		},
+		{
+			"name": "Hydra's Growth",
+			"set": "THB"
+		},
+		{
+			"name": "Imperious Perfect",
+			"set": "CMA"
+		},
+		{
+			"name": "Incremental Growth",
+			"set": "LRW"
+		},
+		{
+			"name": "Indrik Stomphowler",
+			"set": "DIS"
+		},
+		{
+			"name": "Insidious Fungus",
+			"set": "DSK"
+		},
+		{
+			"name": "Invigorate",
+			"set": "MMQ"
+		},
+		{
+			"name": "Invigorating Surge",
+			"set": "M21"
+		},
+		{
+			"name": "Ivy Lane Denizen",
+			"set": "DDU"
+		},
+		{
+			"name": "Iwamori of the Open Fist",
+			"set": "A25"
+		},
+		{
+			"name": "Jaspera Sentinel",
+			"set": "KHM"
+		},
+		{
+			"name": "Jewel Thief",
+			"set": "SNC"
+		},
+		{
+			"name": "Joraga Treespeaker",
+			"set": "ROE"
+		},
+		{
+			"name": "Kappa Tech-Wrecker",
+			"set": "NEO"
+		},
+		{
+			"name": "Kavu Climber",
+			"set": "A25"
+		},
+		{
+			"name": "Kavu Predator",
+			"set": "PLC"
+		},
+		{
+			"name": "Kavu Primarch",
+			"set": "MM2"
+		},
+		{
+			"name": "Keen Sense",
+			"set": "PLC"
+		},
+		{
+			"name": "Kenrith's Transformation",
+			"set": "AFC"
+		},
+		{
+			"name": "Khalni Garden",
+			"set": "DDR"
+		},
+		{
+			"name": "Kozilek's Predator",
+			"set": "MM2"
+		},
+		{
+			"name": "Kraul Harpooner",
+			"set": "GRN"
+		},
+		{
+			"name": "Krosan Tusker",
+			"set": "DDU"
+		},
+		{
+			"name": "Krosan Vorine",
+			"set": "LGN"
+		},
+		{
+			"name": "Land Grant",
+			"set": "MMQ"
+		},
+		{
+			"name": "Larger than Life",
+			"set": "KLD"
+		},
+		{
+			"name": "Leatherback Baloth",
+			"set": "WWK"
+		},
+		{
+			"name": "Ley Weaver",
+			"set": "BBD"
+		},
+		{
+			"name": "Llanowar Visionary",
+			"set": "M21"
+		},
+		{
+			"name": "Longshot Squad",
+			"set": "KTK"
+		},
+		{
+			"name": "Loyal Guardian",
+			"set": "NEO"
+		},
+		{
+			"name": "Lure",
+			"set": "MMQ"
+		},
+		{
+			"name": "Manglehorn",
+			"set": "AKH"
+		},
+		{
+			"name": "Manor Gate",
+			"set": "CLB"
+		},
+		{
+			"name": "Masked Admirers",
+			"set": "MMA"
+		},
+		{
+			"name": "Masked Vandal",
+			"set": "KHM"
+		},
+		{
+			"name": "Massive Might",
+			"set": "VOW"
+		},
+		{
+			"name": "Master's Rebuke",
+			"set": "NEO"
+		},
+		{
+			"name": "Might of the Masses",
+			"set": "ORI"
+		},
+		{
+			"name": "Mobilize",
+			"set": "POR"
+		},
+		{
+			"name": "Moment's Peace",
+			"set": "MB2"
+		},
+		{
+			"name": "Muscle Burst",
+			"set": "ODY"
+		},
+		{
+			"name": "Muscle Sliver",
+			"set": "TMP"
+		},
+		{
+			"name": "Mutagenic Growth",
+			"set": "NPH"
+		},
+		{
+			"name": "Mwonvuli Acid-Moss",
+			"set": "TSP"
+		},
+		{
+			"name": "Nantuko Elder",
+			"set": "ODY"
+		},
+		{
+			"name": "Nantuko Vigilante",
+			"set": "LGN"
+		},
+		{
+			"name": "Nature's Claim",
+			"set": "IMA"
+		},
+		{
+			"name": "Nature's Way",
+			"set": "KLD"
+		},
+		{
+			"name": "Night Soil",
+			"set": "C13"
+		},
+		{
+			"name": "Nissa's Judgment",
+			"set": "DDU"
+		},
+		{
+			"name": "Noose Constrictor",
+			"set": "EMN"
+		},
+		{
+			"name": "Nylea's Presence",
+			"set": "THS"
+		},
+		{
+			"name": "Nyxborn Hydra",
+			"set": "MH3"
+		},
+		{
+			"name": "Oakgnarl Warrior",
+			"set": "DDR"
+		},
+		{
+			"name": "Oakhame Adversary",
+			"set": "ELD"
+		},
+		{
+			"name": "One with Nature",
+			"set": "SCG"
+		},
+		{
+			"name": "Orochi Eggwatcher",
+			"set": "CHK"
+		},
+		{
+			"name": "Outmuscle",
+			"set": "ELD"
+		},
+		{
+			"name": "Overgrown Battlement",
+			"set": "IMA"
+		},
+		{
+			"name": "Overgrowth",
+			"set": "9ED"
+		},
+		{
+			"name": "Overprotect",
+			"set": "BLB"
+		},
+		{
+			"name": "Overrun",
+			"set": "CMA"
+		},
+		{
+			"name": "Overwhelming Encounter",
+			"set": "CLB"
+		},
+		{
+			"name": "Patagia Viper",
+			"set": "DIS"
+		},
+		{
+			"name": "Path of Annihilation",
+			"set": "MH3"
+		},
+		{
+			"name": "Peema Outrider",
+			"set": "KLD"
+		},
+		{
+			"name": "Peerless Recycling",
+			"set": "BLB"
+		},
+		{
+			"name": "Pelakka Wurm",
+			"set": "MM2"
+		},
+		{
+			"name": "Penumbra Kavu",
+			"set": "APC"
+		},
+		{
+			"name": "Penumbra Wurm",
+			"set": "UMA"
+		},
+		{
+			"name": "Phantom Centaur",
+			"set": "JUD"
+		},
+		{
+			"name": "Phantom Tiger",
+			"set": "JUD"
+		},
+		{
+			"name": "Pick Your Poison",
+			"set": "MKM"
+		},
+		{
+			"name": "Plaguemaw Beast",
+			"set": "TD2"
+		},
+		{
+			"name": "Plated Crusher",
+			"set": "BFZ"
+		},
+		{
+			"name": "Poison Dart Frog",
+			"set": "M3C"
+		},
+		{
+			"name": "Pollenbright Druid",
+			"set": "WAR"
+		},
+		{
+			"name": "Predator's Howl",
+			"set": "CNS"
+		},
+		{
+			"name": "Predator's Strike",
+			"set": "MRD"
+		},
+		{
+			"name": "Presence of Gond",
+			"set": "SHM"
+		},
+		{
+			"name": "Priest of Titania",
+			"set": "C14"
+		},
+		{
+			"name": "Primal Growth",
+			"set": "PLS"
+		},
+		{
+			"name": "Primal Rage",
+			"set": "STH"
+		},
+		{
+			"name": "Prizefight",
+			"set": "SNC"
+		},
+		{
+			"name": "Prosperous Innkeeper",
+			"set": "AFR"
+		},
+		{
+			"name": "Quirion Dryad",
+			"set": "M21"
+		},
+		{
+			"name": "Quirion Elves",
+			"set": "MIR"
+		},
+		{
+			"name": "Quirion Ranger",
+			"set": "VIS"
+		},
+		{
+			"name": "Rain of Thorns",
+			"set": "C17"
+		},
+		{
+			"name": "Ram Through",
+			"set": "IKO"
+		},
+		{
+			"name": "Rampaging Brontodon",
+			"set": "CMM"
+		},
+		{
+			"name": "Rampant Growth",
+			"set": "MIR"
+		},
+		{
+			"name": "Rancor",
+			"set": "A25"
+		},
+		{
+			"name": "Reap",
+			"set": "TMP"
+		},
+		{
+			"name": "Reclamation Sage",
+			"set": "2XM"
+		},
+		{
+			"name": "Recross the Paths",
+			"set": "MOR"
+		},
+		{
+			"name": "Regrowth",
+			"set": "A25"
+		},
+		{
+			"name": "Relic Crush",
+			"set": "CM2"
+		},
+		{
+			"name": "Restock",
+			"set": "M15"
+		},
+		{
+			"name": "Rhonas's Monument",
+			"set": "GNT"
+		},
+		{
+			"name": "Rise of the Ants",
+			"set": "MID"
+		},
+		{
+			"name": "River Bear",
+			"set": "P02"
+		},
+		{
+			"name": "Roar of Challenge",
+			"set": "J22"
+		},
+		{
+			"name": "Roots",
+			"set": "EMA"
+		},
+		{
+			"name": "Rust Goliath",
+			"set": "BRO"
+		},
+		{
+			"name": "Saber Ants",
+			"set": "MMQ"
+		},
+		{
+			"name": "Salvage",
+			"set": "P02"
+		},
+		{
+			"name": "Sarulf's Packmate",
+			"set": "KHM"
+		},
+		{
+			"name": "Scale Up",
+			"set": "MH1"
+		},
+		{
+			"name": "Scatter the Seeds",
+			"set": "GK1"
+		},
+		{
+			"name": "Scragnoth",
+			"set": "TMP"
+		},
+		{
+			"name": "Scurry Oak",
+			"set": "MH2"
+		},
+		{
+			"name": "Season of Growth",
+			"set": "M20"
+		},
+		{
+			"name": "Seedguide Ash",
+			"set": "LRW"
+		},
+		{
+			"name": "Seton's Scout",
+			"set": "TOR"
+		},
+		{
+			"name": "Sheltering Word",
+			"set": "AVR"
+		},
+		{
+			"name": "Shinen of Life's Roar",
+			"set": "ARC"
+		},
+		{
+			"name": "Silverglade Elemental",
+			"set": "MMQ"
+		},
+		{
+			"name": "Silverglade Pathfinder",
+			"set": "MMQ"
+		},
+		{
+			"name": "Skullmulcher",
+			"set": "2XM"
+		},
+		{
+			"name": "Skullwinder",
+			"set": "CLB"
+		},
+		{
+			"name": "Skyshroud Claim",
+			"set": "NEM"
+		},
+		{
+			"name": "Skysnare Spider",
+			"set": "ORI"
+		},
+		{
+			"name": "Slurrk, All-Ingesting",
+			"set": "CMR"
+		},
+		{
+			"name": "Snake Pit",
+			"set": "MMQ"
+		},
+		{
+			"name": "Song of Freyalise",
+			"set": "DOM"
+		},
+		{
+			"name": "Spidersilk Armor",
+			"set": "MMQ"
+		},
+		{
+			"name": "Spike Colony",
+			"set": "STH"
+		},
+		{
+			"name": "Spinewoods Armadillo",
+			"set": "OTJ"
+		},
+		{
+			"name": "Spore Frog",
+			"set": "PCY"
+		},
+		{
+			"name": "Spore Swarm",
+			"set": "DOM"
+		},
+		{
+			"name": "Sporemound",
+			"set": "M14"
+		},
+		{
+			"name": "Squirrel Nest",
+			"set": "ODY"
+		},
+		{
+			"name": "Stand Together",
+			"set": "DST"
+		},
+		{
+			"name": "Stingerfling Spider",
+			"set": "M12"
+		},
+		{
+			"name": "Stinging Shot",
+			"set": "AKH"
+		},
+		{
+			"name": "Storm the Seedcore",
+			"set": "MOM"
+		},
+		{
+			"name": "Stormkeld Vanguard",
+			"set": "WOE"
+		},
+		{
+			"name": "Strangleroot Geist",
+			"set": "DKA"
+		},
+		{
+			"name": "Streetwise Negotiator",
+			"set": "MOM"
+		},
+		{
+			"name": "Struggle for Skemfar",
+			"set": "KHM"
+		},
+		{
+			"name": "Sudden Spinnerets",
+			"set": "IKO"
+		},
+		{
+			"name": "Sumala Rumblers",
+			"set": "CLU"
+		},
+		{
+			"name": "Symbiosis",
+			"set": "USG"
+		},
+		{
+			"name": "Symbiotic Beast",
+			"set": "ONS"
+		},
+		{
+			"name": "Tail Swipe",
+			"set": "DMU"
+		},
+		{
+			"name": "Tajuru Warcaller",
+			"set": "BFZ"
+		},
+		{
+			"name": "Tangle",
+			"set": "INV"
+		},
+		{
+			"name": "Tear Asunder",
+			"set": "DMU"
+		},
+		{
+			"name": "Tempting Licid",
+			"set": "STH"
+		},
+		{
+			"name": "Temur Sabertooth",
+			"set": "FRF"
+		},
+		{
+			"name": "The Crowd Goes Wild",
+			"set": "BBD"
+		},
+		{
+			"name": "Thornscape Battlemage",
+			"set": "MM3"
+		},
+		{
+			"name": "Thrashing Brontodon",
+			"set": "RIX"
+		},
+		{
+			"name": "Timberland Ancient",
+			"set": "MOM"
+		},
+		{
+			"name": "Tireless Provisioner",
+			"set": "MH2"
+		},
+		{
+			"name": "Titanoth Rex",
+			"set": "IKO"
+		},
+		{
+			"name": "Tower Above",
+			"set": "SHM"
+		},
+		{
+			"name": "Travel Preparations",
+			"set": "ISD"
+		},
+		{
+			"name": "Treetop Village",
+			"set": "ULG"
+		},
+		{
+			"name": "Trollbred Guardian",
+			"set": "RNA"
+		},
+		{
+			"name": "Trumpeting Herd",
+			"set": "MH1"
+		},
+		{
+			"name": "Twin-Silk Spider",
+			"set": "MH1"
+		},
+		{
+			"name": "Tyvar's Stand",
+			"set": "ONE"
+		},
+		{
+			"name": "Up the Beanstalk",
+			"set": "WOE"
+		},
+		{
+			"name": "Utopia Sprawl",
+			"set": "DIS"
+		},
+		{
+			"name": "Vastwood Surge",
+			"set": "ZNR"
+		},
+		{
+			"name": "Venom Sliver",
+			"set": "M15"
+		},
+		{
+			"name": "Venomspout Brackus",
+			"set": "ONS"
+		},
+		{
+			"name": "Vine Mare",
+			"set": "M19"
+		},
+		{
+			"name": "Vines of Vastwood",
+			"set": "ZEN"
+		},
+		{
+			"name": "Viridian Joiner",
+			"set": "MRD"
+		},
+		{
+			"name": "Viridian Shaman",
+			"set": "MRD"
+		},
+		{
+			"name": "Vivien's Grizzly",
+			"set": "WAR"
+		},
+		{
+			"name": "Wall of Blossoms",
+			"set": "STH"
+		},
+		{
+			"name": "Wall of Mulch",
+			"set": "ONS"
+		},
+		{
+			"name": "Wall of Roots",
+			"set": "NCC"
+		},
+		{
+			"name": "Warbriar Blessing",
+			"set": "THB"
+		},
+		{
+			"name": "Wasteland Viper",
+			"set": "GK2"
+		},
+		{
+			"name": "Werebear",
+			"set": "ODY"
+		},
+		{
+			"name": "Whip Silk",
+			"set": "INV"
+		},
+		{
+			"name": "Wickerbough Elder",
+			"set": "EVE"
+		},
+		{
+			"name": "Wild Hunger",
+			"set": "DKA"
+		},
+		{
+			"name": "Wildheart Invoker",
+			"set": "DDU"
+		},
+		{
+			"name": "Wilt",
+			"set": "IKO"
+		},
+		{
+			"name": "Winding Way",
+			"set": "MH1"
+		},
+		{
+			"name": "Wirewood Channeler",
+			"set": "LGN"
+		},
+		{
+			"name": "Wirewood Guardian",
+			"set": "SCG"
+		},
+		{
+			"name": "Wood Elves",
+			"set": "EXO"
+		},
+		{
+			"name": "Woodland Changeling",
+			"set": "LRW"
+		},
+		{
+			"name": "Woodland Mystic",
+			"set": "M20"
+		},
+		{
+			"name": "Wrap in Vigor",
+			"set": "FUT"
+		},
+		{
+			"name": "Yavimaya Elder",
+			"set": "UDS"
+		},
+		{
+			"name": "Yavimaya Granger",
+			"set": "ULG"
+		},
+		{
+			"name": "Young Wolf",
+			"set": "DKA"
+		}
+	],
+	"Wildcards": [
+		{
+			"name": "Aboleth Spawn",
+			"set": "CLB"
+		},
+		{
+			"name": "Agate Instigator",
+			"set": "BLC"
+		},
+		{
+			"name": "Akroma's Will",
+			"set": "CMR"
+		},
+		{
+			"name": "Angel of Indemnity",
+			"set": "OTC"
+		},
+		{
+			"name": "Arabella, Abandoned Doll",
+			"set": "DSK"
+		},
+		{
+			"name": "Araumi of the Dead Tide",
+			"set": "CMR"
+		},
+		{
+			"name": "Avatar of Growth",
+			"set": "GNT"
+		},
+		{
+			"name": "Azra Oddsmaker",
+			"set": "BBD"
+		},
+		{
+			"name": "Baleful Strix",
+			"set": "E01"
+		},
+		{
+			"name": "Balmor, Battlemage Captain",
+			"set": "DMU"
+		},
+		{
+			"name": "Barrowgoyf",
+			"set": "M3C"
+		},
+		{
+			"name": "Battle Angels of Tyr",
+			"set": "CLB"
+		},
+		{
+			"name": "Binding the Old Gods",
+			"set": "EOC"
+		},
+		{
+			"name": "Biomechan Engineer",
+			"set": "EOE"
+		},
+		{
+			"name": "Birds of Paradise",
+			"set": "GK2"
+		},
+		{
+			"name": "Blade of Selves",
+			"set": "C15"
+		},
+		{
+			"name": "Blade of the Bloodchief",
+			"set": "C17"
+		},
+		{
+			"name": "Blasting Station",
+			"set": "5DN"
+		},
+		{
+			"name": "Bloodthirsty Blade",
+			"set": "C21"
+		},
+		{
+			"name": "Bothersome Quasit",
+			"set": "CLB"
+		},
+		{
+			"name": "Brainstealer Dragon",
+			"set": "OTC"
+		},
+		{
+			"name": "Breaker of Armies",
+			"set": "BFZ"
+		},
+		{
+			"name": "Buried in the Garden",
+			"set": "MKM"
+		},
+		{
+			"name": "Cadira, Caller of the Small",
+			"set": "CLB"
+		},
+		{
+			"name": "Caltrops",
+			"set": "UDS"
+		},
+		{
+			"name": "Campfire",
+			"set": "CMM"
+		},
+		{
+			"name": "Cave-In",
+			"set": "MMQ"
+		},
+		{
+			"name": "Claws of Gix",
+			"set": "USG"
+		},
+		{
+			"name": "Clown Car",
+			"set": "UNF"
+		},
+		{
+			"name": "Coercive Portal",
+			"set": "CNS"
+		},
+		{
+			"name": "Colossal Skyturtle",
+			"set": "NEO"
+		},
+		{
+			"name": "Commander Liara Portyr",
+			"set": "CLB"
+		},
+		{
+			"name": "Commander's Sphere",
+			"set": "BRC"
+		},
+		{
+			"name": "Component Pouch",
+			"set": "AFC"
+		},
+		{
+			"name": "Conclave Evangelist",
+			"set": "CLU"
+		},
+		{
+			"name": "Court of Ambition",
+			"set": "CMR"
+		},
+		{
+			"name": "Court of Embereth",
+			"set": "WOC"
+		},
+		{
+			"name": "Court of Garenbrig",
+			"set": "WOC"
+		},
+		{
+			"name": "Court of Grace",
+			"set": "ONC"
+		},
+		{
+			"name": "Court of Vantress",
+			"set": "WOC"
+		},
+		{
+			"name": "Crashing Drawbridge",
+			"set": "CMM"
+		},
+		{
+			"name": "Deathreap Ritual",
+			"set": "DSC"
+		},
+		{
+			"name": "Debt to the Deathless",
+			"set": "RVR"
+		},
+		{
+			"name": "Descent into Avernus",
+			"set": "CLB"
+		},
+		{
+			"name": "Earthquake",
+			"set": "P02"
+		},
+		{
+			"name": "Ebony Fly",
+			"set": "AFC"
+		},
+		{
+			"name": "Elasil-Kor, Sadistic Pilgrim",
+			"set": "DMU"
+		},
+		{
+			"name": "Ertha Jo, Frontier Mentor",
+			"set": "OTJ"
+		},
+		{
+			"name": "Escape Tunnel",
+			"set": "EOC"
+		},
+		{
+			"name": "Everflowing Chalice",
+			"set": "WWK"
+		},
+		{
+			"name": "Extract from Darkness",
+			"set": "2X2"
+		},
+		{
+			"name": "General Marhault Elsdragon",
+			"set": "DMC"
+		},
+		{
+			"name": "Geode Golem",
+			"set": "CLB"
+		},
+		{
+			"name": "Ghoulish Impetus",
+			"set": "CMM"
+		},
+		{
+			"name": "Gold-Forged Thopteryx",
+			"set": "MAT"
+		},
+		{
+			"name": "Goldlust Triad",
+			"set": "TDC"
+		},
+		{
+			"name": "Grafted Exoskeleton",
+			"set": "ONC"
+		},
+		{
+			"name": "Green Slime",
+			"set": "CLB"
+		},
+		{
+			"name": "Guardian of Faith",
+			"set": "AFR"
+		},
+		{
+			"name": "Herald of Secret Streams",
+			"set": "XLN"
+		},
+		{
+			"name": "Hero's Blade",
+			"set": "C17"
+		},
+		{
+			"name": "Idol of Oblivion",
+			"set": "M3C"
+		},
+		{
+			"name": "Imoti, Celebrant of Bounty",
+			"set": "CMR"
+		},
+		{
+			"name": "Ink-Treader Nephilim",
+			"set": "GPT"
+		},
+		{
+			"name": "Keeper of Keys",
+			"set": "CN2"
+		},
+		{
+			"name": "Knights of the Black Rose",
+			"set": "MOC"
+		},
+		{
+			"name": "Kutzil, Malamet Exemplar",
+			"set": "LCI"
+		},
+		{
+			"name": "Life of the Party",
+			"set": "NCC"
+		},
+		{
+			"name": "Loxodon Warhammer",
+			"set": "C17"
+		},
+		{
+			"name": "Mage Slayer",
+			"set": "HOP"
+		},
+		{
+			"name": "Manifold Key",
+			"set": "M20"
+		},
+		{
+			"name": "Meteor Golem",
+			"set": "CMM"
+		},
+		{
+			"name": "Mikokoro, Center of the Sea",
+			"set": "SOK"
+		},
+		{
+			"name": "Mindcrank",
+			"set": "CLB"
+		},
+		{
+			"name": "Misleading Signpost",
+			"set": "WOC"
+		},
+		{
+			"name": "Mortuary",
+			"set": "STH"
+		},
+		{
+			"name": "Myriad Landscape",
+			"set": "C14"
+		},
+		{
+			"name": "Nemesis Mask",
+			"set": "DST"
+		},
+		{
+			"name": "New Frontiers",
+			"set": "ODY"
+		},
+		{
+			"name": "Patriar's Seal",
+			"set": "CLB"
+		},
+		{
+			"name": "Perch Protection",
+			"set": "BLC"
+		},
+		{
+			"name": "Phyrexian Triniform",
+			"set": "CMM"
+		},
+		{
+			"name": "Raff, Weatherlight Stalwart",
+			"set": "DMU"
+		},
+		{
+			"name": "Rakdos Charm",
+			"set": "GK2"
+		},
+		{
+			"name": "Ravenous Slime",
+			"set": "C18"
+		},
+		{
+			"name": "Relic of Legends",
+			"set": "DMU"
+		},
+		{
+			"name": "Reverent Mantra",
+			"set": "MMQ"
+		},
+		{
+			"name": "Rogue's Passage",
+			"set": "MIC"
+		},
+		{
+			"name": "Scurry of Squirrels",
+			"set": "BLC"
+		},
+		{
+			"name": "Shadow of the Second Sun",
+			"set": "MH3"
+		},
+		{
+			"name": "Share the Spoils",
+			"set": "AFC"
+		},
+		{
+			"name": "Siege-Gang Lieutenant",
+			"set": "M3C"
+		},
+		{
+			"name": "Sire of Stagnation",
+			"set": "M3C"
+		},
+		{
+			"name": "Spiritmonger",
+			"set": "DMR"
+		},
+		{
+			"name": "Stonespeaker Crystal",
+			"set": "CLB"
+		},
+		{
+			"name": "Stormcatch Mentor",
+			"set": "BLB"
+		},
+		{
+			"name": "Subterranean Tremors",
+			"set": "CN2"
+		},
+		{
+			"name": "Su-Chi Cave Guard",
+			"set": "BRO"
+		},
+		{
+			"name": "Sunscorch Regent",
+			"set": "DTK"
+		},
+		{
+			"name": "Tempt with Bunnies",
+			"set": "BLC"
+		},
+		{
+			"name": "The Eternal Wanderer",
+			"set": "ONE"
+		},
+		{
+			"name": "Third Path Iconoclast",
+			"set": "OTC"
+		},
+		{
+			"name": "Thunderfoot Baloth",
+			"set": "NCC"
+		},
+		{
+			"name": "Tor Wauki the Younger",
+			"set": "DMC"
+		},
+		{
+			"name": "Trailblazer's Boots",
+			"set": "ONC"
+		},
+		{
+			"name": "Tura Kenner\u00fcd, Skyknight",
+			"set": "DMU"
+		},
+		{
+			"name": "Ulamog's Crusher",
+			"set": "UMA"
+		},
+		{
+			"name": "Vile Consumption",
+			"set": "INV"
+		},
+		{
+			"name": "Wheel and Deal",
+			"set": "ONS"
+		},
+		{
+			"name": "Whispersilk Cloak",
+			"set": "DST"
+		},
+		{
+			"name": "Writhing Chrysalis",
+			"set": "MH3"
+		}
+	],
+	"Reprinted Commanders": [
+		{
+			"name": "Adeline, Resplendent Cathar",
+			"set": "MID"
+		},
+		{
+			"name": "Akroma, Vision of Ixidor",
+			"set": "CMR"
+		},
+		{
+			"name": "Anim Pakal, Thousandth Moon",
+			"set": "LCI"
+		},
+		{
+			"name": "Anzrag, the Quake-Mole",
+			"set": "MKM"
+		},
+		{
+			"name": "Ashaya, Soul of the Wild",
+			"set": "DSC"
+		},
+		{
+			"name": "Ashling, Flame Dancer",
+			"set": "MH3"
+		},
+		{
+			"name": "Athreos, God of Passage",
+			"set": "JOU"
+		},
+		{
+			"name": "Baba Lysaga, Night Witch",
+			"set": "CLB"
+		},
+		{
+			"name": "Baeloth Barrityl, Entertainer",
+			"set": "CLB"
+		},
+		{
+			"name": "Baldin, Century Herdmaster",
+			"set": "SLX"
+		},
+		{
+			"name": "Braids, Arisen Nightmare",
+			"set": "DMU"
+		},
+		{
+			"name": "Brallin, Skyshark Rider",
+			"set": "C20"
+		},
+		{
+			"name": "Bria, Riptide Rogue",
+			"set": "BLB"
+		},
+		{
+			"name": "Commander Eesha",
+			"set": "JUD"
+		},
+		{
+			"name": "Cromat",
+			"set": "APC"
+		},
+		{
+			"name": "Deekah, Fractal Theorist",
+			"set": "C21"
+		},
+		{
+			"name": "Delina, Wild Mage",
+			"set": "AFR"
+		},
+		{
+			"name": "Dragonhawk, Fate's Tempest",
+			"set": "BLB"
+		},
+		{
+			"name": "Edric, Spymaster of Trest",
+			"set": "CMD"
+		},
+		{
+			"name": "Elesh Norn, Mother of Machines",
+			"set": "ONE"
+		},
+		{
+			"name": "Emiel the Blessed",
+			"set": "J22"
+		},
+		{
+			"name": "Endrek Sahr, Master Breeder",
+			"set": "CMM"
+		},
+		{
+			"name": "Ezuri, Claw of Progress",
+			"set": "C15"
+		},
+		{
+			"name": "Fain, the Broker",
+			"set": "C21"
+		},
+		{
+			"name": "Ghoulcaller Gisa",
+			"set": "CMM"
+		},
+		{
+			"name": "Gisa, Glorious Resurrector",
+			"set": "MID"
+		},
+		{
+			"name": "Glarb, Calamity's Augur",
+			"set": "BLB"
+		},
+		{
+			"name": "Gluntch, the Bestower",
+			"set": "CLB"
+		},
+		{
+			"name": "God-Eternal Kefnet",
+			"set": "WAR"
+		},
+		{
+			"name": "God-Eternal Oketra",
+			"set": "DRC"
+		},
+		{
+			"name": "Gorm the Great",
+			"set": "BBD"
+		},
+		{
+			"name": "Gornog, the Red Reaper",
+			"set": "J25"
+		},
+		{
+			"name": "Graaz, Unstoppable Juggernaut",
+			"set": "ONE"
+		},
+		{
+			"name": "Grazilaxx, Illithid Scholar",
+			"set": "AFR"
+		},
+		{
+			"name": "Greensleeves, Maro-Sorcerer",
+			"set": "DMU"
+		},
+		{
+			"name": "Greymond, Avacyn's Stalwart",
+			"set": "SLX"
+		},
+		{
+			"name": "Gwenna, Eyes of Gaea",
+			"set": "BRO"
+		},
+		{
+			"name": "Jaheira, Friend of the Forest",
+			"set": "CLB"
+		},
+		{
+			"name": "Jarad, Golgari Lich Lord",
+			"set": "DDJ"
+		},
+		{
+			"name": "Jeska, Warrior Adept",
+			"set": "JUD"
+		},
+		{
+			"name": "Jetmir, Nexus of Revels",
+			"set": "SNC"
+		},
+		{
+			"name": "Jolene, the Plunder Queen",
+			"set": "NCC"
+		},
+		{
+			"name": "Kamahl, Heart of Krosa",
+			"set": "CMR"
+		},
+		{
+			"name": "Kami of the Crescent Moon",
+			"set": "SOK"
+		},
+		{
+			"name": "Karazikar, the Eye Tyrant",
+			"set": "AFC"
+		},
+		{
+			"name": "Karlach, Fury of Avernus",
+			"set": "CLB"
+		},
+		{
+			"name": "Kess, Dissident Mage",
+			"set": "NCC"
+		},
+		{
+			"name": "Kethis, the Hidden Hand",
+			"set": "M20"
+		},
+		{
+			"name": "Kiki-Jiki, Mirror Breaker",
+			"set": "MM2"
+		},
+		{
+			"name": "Kira, Great Glass-Spinner",
+			"set": "M21"
+		},
+		{
+			"name": "Kitsa, Otterball Elite",
+			"set": "BLB"
+		},
+		{
+			"name": "Kokusho, the Evening Star",
+			"set": "DRB"
+		},
+		{
+			"name": "Konda, Lord of Eiganjo",
+			"set": "CHK"
+		},
+		{
+			"name": "Korvold, Fae-Cursed King",
+			"set": "EOC"
+		},
+		{
+			"name": "Krark, the Thumbless",
+			"set": "CMR"
+		},
+		{
+			"name": "Lae'zel, Vlaakith's Champion",
+			"set": "CLB"
+		},
+		{
+			"name": "Lim-D\u00fbl the Necromancer",
+			"set": "TSP"
+		},
+		{
+			"name": "Linvala, the Preserver",
+			"set": "OGW"
+		},
+		{
+			"name": "Loot, Exuberant Explorer",
+			"set": "FDN"
+		},
+		{
+			"name": "Maeve, Insidious Singer",
+			"set": "GN3"
+		},
+		{
+			"name": "Mangara, the Diplomat",
+			"set": "TDC"
+		},
+		{
+			"name": "Mannichi, the Fevered Dream",
+			"set": "BOK"
+		},
+		{
+			"name": "Masako the Humorless",
+			"set": "CHK"
+		},
+		{
+			"name": "Massacre Girl, Known Killer",
+			"set": "MKM"
+		},
+		{
+			"name": "Mikaeus, the Unhallowed",
+			"set": "DKA"
+		},
+		{
+			"name": "Mr. Foxglove",
+			"set": "BLC"
+		},
+		{
+			"name": "Narset, Enlightened Exile",
+			"set": "MAT"
+		},
+		{
+			"name": "Neheb, the Eternal",
+			"set": "CMM"
+		},
+		{
+			"name": "Nezahal, Primal Tide",
+			"set": "RIX"
+		},
+		{
+			"name": "Nils, Discipline Enforcer",
+			"set": "C21"
+		},
+		{
+			"name": "Odric, Lunarch Marshal",
+			"set": "INR"
+		},
+		{
+			"name": "Omnath, Locus of Creation",
+			"set": "ZNR"
+		},
+		{
+			"name": "Orthion, Hero of Lavabrink",
+			"set": "MOM"
+		},
+		{
+			"name": "Orvar, the All-Form",
+			"set": "KHM"
+		},
+		{
+			"name": "Otharri, Suns' Glory",
+			"set": "ONC"
+		},
+		{
+			"name": "Phelia, Exuberant Shepherd",
+			"set": "MH3"
+		},
+		{
+			"name": "Pir, Imaginative Rascal",
+			"set": "BBD"
+		},
+		{
+			"name": "Plagon, Lord of the Beach",
+			"set": "J25"
+		},
+		{
+			"name": "Plargg and Nassari",
+			"set": "MAT"
+		},
+		{
+			"name": "Rakdos, Patron of Chaos",
+			"set": "MKM"
+		},
+		{
+			"name": "Ramos, Dragon Engine",
+			"set": "C17"
+		},
+		{
+			"name": "Rankle, Master of Pranks",
+			"set": "WOC"
+		},
+		{
+			"name": "Ratadrabik of Urborg",
+			"set": "DMU"
+		},
+		{
+			"name": "Rev, Tithe Extractor",
+			"set": "J25"
+		},
+		{
+			"name": "Reya Dawnbringer",
+			"set": "INV"
+		},
+		{
+			"name": "Rionya, Fire Dancer",
+			"set": "C21"
+		},
+		{
+			"name": "Runadi, Behemoth Caller",
+			"set": "J22"
+		},
+		{
+			"name": "Sakashima of a Thousand Faces",
+			"set": "CMR"
+		},
+		{
+			"name": "Saryth, the Viper's Fang",
+			"set": "MKC"
+		},
+		{
+			"name": "Selvala, Heart of the Wilds",
+			"set": "M3C"
+		},
+		{
+			"name": "Shabraz, the Skyshark",
+			"set": "C20"
+		},
+		{
+			"name": "Shanid, Sleepers' Scourge",
+			"set": "DMC"
+		},
+		{
+			"name": "Sheoldred, Whispering One",
+			"set": "JMP"
+		},
+		{
+			"name": "Shroofus Sproutsire",
+			"set": "J25"
+		},
+		{
+			"name": "Six",
+			"set": "MH3"
+		},
+		{
+			"name": "Surrak and Goreclaw",
+			"set": "MOM"
+		},
+		{
+			"name": "Sygg, River Cutthroat",
+			"set": "ZNC"
+		},
+		{
+			"name": "Talrand, Sky Summoner",
+			"set": "DDS"
+		},
+		{
+			"name": "Tevesh Szat, Doom of Fools",
+			"set": "CMR"
+		},
+		{
+			"name": "Thassa, Deep-Dwelling",
+			"set": "THB"
+		},
+		{
+			"name": "The Mindskinner",
+			"set": "DSK"
+		},
+		{
+			"name": "The Reality Chip",
+			"set": "NEO"
+		},
+		{
+			"name": "The Scarab God",
+			"set": "HOU"
+		},
+		{
+			"name": "Tinybones, the Pickpocket",
+			"set": "OTJ"
+		},
+		{
+			"name": "Tivit, Seller of Secrets",
+			"set": "NCC"
+		},
+		{
+			"name": "Toby, Beastie Befriender",
+			"set": "DSK"
+		},
+		{
+			"name": "Toothy, Imaginary Friend",
+			"set": "BBD"
+		},
+		{
+			"name": "Torbran, Thane of Red Fell",
+			"set": "ELD"
+		},
+		{
+			"name": "Toski, Bearer of Secrets",
+			"set": "BLC"
+		},
+		{
+			"name": "Tyvar, the Pummeler",
+			"set": "DSK"
+		},
+		{
+			"name": "Ulamog, the Ceaseless Hunger",
+			"set": "BFZ"
+		},
+		{
+			"name": "Varchild, Betrayer of Kjeldor",
+			"set": "C18"
+		},
+		{
+			"name": "Virtus the Veiled",
+			"set": "BBD"
+		},
+		{
+			"name": "Visara the Dreadful",
+			"set": "ONS"
+		},
+		{
+			"name": "Volo, Itinerant Scholar",
+			"set": "CLB"
+		},
+		{
+			"name": "Xyris, the Writhing Storm",
+			"set": "C20"
+		},
+		{
+			"name": "Yahenni, Undying Partisan",
+			"set": "2X2"
+		},
+		{
+			"name": "Yidris, Maelstrom Wielder",
+			"set": "C16"
+		},
+		{
+			"name": "Zara, Renegade Recruiter",
+			"set": "LCC"
+		},
+		{
+			"name": "Zellix, Sanity Flayer",
+			"set": "CLB"
+		},
+		{
+			"name": "Zopandrel, Hunger Dominus",
+			"set": "ONE"
+		}
+	]
+}

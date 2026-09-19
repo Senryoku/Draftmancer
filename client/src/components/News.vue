@@ -1,6 +1,13 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
+			<em>September 19, 2026</em>
+			<p>
+				<img src="img/sets/mbc.svg" class="set-icon" style="--invertedness: 100%" alt="MBC" /> Mystery Booster
+				Commander Edition (MBC) is now available.
+			</p>
+		</div>
+		<div class="news">
 			<em>September 18, 2026</em>
 			<p>
 				<img src="img/sets/fra.svg" class="set-icon" style="--invertedness: 100%" alt="FRA" /> Reality Fracture

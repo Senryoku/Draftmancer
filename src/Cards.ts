@@ -145,6 +145,7 @@ BoosterCardsBySet["mb1"] = Object.keys(MB1Cards);
 // Mystery boosters convention editions with playtest cards
 BoosterCardsBySet["mb1_convention_2019"] = BoosterCardsBySet["mb1"].concat(CardsBySet["cmb1"]);
 BoosterCardsBySet["mb1_convention_2021"] = BoosterCardsBySet["mb1"].concat(CardsBySet["cmb2"]);
+BoosterCardsBySet["mbc"] = []; // Handled by BoosterFactory
 
 export const MTGACardIDs = [...Cards.keys()].filter((cid) => !!getCard(cid).arena_id);
 
