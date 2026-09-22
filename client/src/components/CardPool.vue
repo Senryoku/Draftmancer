@@ -567,11 +567,7 @@ function saveOptions() {
 // Yet another workaround for #623.
 const poolKey = computed(() => `card-pool-${props.group}-${props.backupKey}-${forceRerender.value}`);
 const columnKeys = computed(() =>
-	rows.value.map((row, rowIdx) =>
-		row.map(
-			(col, colIdx) => `col-${rowIdx}-${colIdx}-${forceRerender.value}-${col.map((c) => c.uniqueID).join(",")}`
-		)
-	)
+	rows.value.map((row, rowIdx) => row.map((_col, colIdx) => `col-${rowIdx}-${colIdx}-${forceRerender.value}`))
 );
 
 const columnNames = computed(() => {
