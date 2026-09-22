@@ -1194,6 +1194,12 @@ setinfos["mb1_convention_2021"] = {
 }
 PrimarySets.append("mb1_convention_2021")
 PrimarySets.append("mb2")
+setinfos["mbc"] = {
+    "code": "mbc",
+    "fullName": "Mystery Booster Commander Edition",
+    "icon": "img/sets/mbc.svg",
+    "isPrimary": True,
+}
 
 # Add Portal sets as draftable (They're not meant to be drafted, but some users want to try anyway!)
 PrimarySets.append("por")

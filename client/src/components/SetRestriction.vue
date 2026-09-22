@@ -198,7 +198,6 @@ function selected(s: SetCode) {
 
 .state .set-icon {
 	--invertedness: 100%;
-	vertical-align: text-bottom;
 	margin: 0 0.25em;
 }
 
@@ -246,7 +245,6 @@ function selected(s: SetCode) {
 
 .set-selection .set-icon {
 	--invertedness: 100%;
-	vertical-align: text-bottom;
 	margin-right: 0.25em;
 }
 

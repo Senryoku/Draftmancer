@@ -1551,7 +1551,8 @@
     },
     "mbc": {
         "code": "mbc",
-        "fullName": "Mystery Booster Commander Edition"
+        "fullName": "Mystery Booster Commander Edition",
+        "icon": "img/sets/mbc.svg"
     },
     "mbs": {
         "code": "mbs",
