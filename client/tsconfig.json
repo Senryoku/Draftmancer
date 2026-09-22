@@ -2,12 +2,10 @@
 	"include": ["**/*", "../src/Types.ts", "../src/Types.ts", "../src/SetInfos.ts", "../src/parseCSV.ts"],
 	"compilerOptions": {
 		"allowJs": false,
-		"baseUrl": ".",
 		"module": "ESNext",
-		"moduleResolution": "node",
 		"lib": ["es2024", "dom", "dom.iterable"],
 		"paths": {
-			"@/*": ["src/*", "../dist/types/src/*"]
+			"@/*": ["./src/*", "../dist/types/src/*"]
 		},
 		"skipLibCheck": false,
 		"sourceMap": true,
