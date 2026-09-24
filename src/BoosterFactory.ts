@@ -5147,7 +5147,7 @@ export class HOBBoosterFactory extends BoosterFactory {
 export class FRABoosterFactory extends BoosterFactory {
 	static filter = (min: number, max: number) => filterSetByNumber("fra", min, max);
 
-	static readonly Basics = FRABoosterFactory.filter(189, 193);
+	static readonly Basics = FRABoosterFactory.filter(281, 290);
 	static readonly TowerBasics = FRABoosterFactory.filter(382, 396);
 	static readonly CommonDualLands = [
 		"3223e5db-5cc4-42f9-ae9e-ff58abc7c390",
