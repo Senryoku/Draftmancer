@@ -5,15 +5,7 @@ import { DraftPick } from "./DraftLog.js";
 import { CCLSettings, CustomCardList, PackLayout, Sheet } from "./CustomCardList.js";
 import { Cards, getCardVersionsByName } from "./Cards.js";
 import { isSocketError, SocketError } from "./Message.js";
-import {
-	Card,
-	CardColor,
-	CardID,
-	OnPickDraftEffect,
-	OptionalOnPickDraftEffect,
-	OracleID,
-	ParameterizedDraftEffectType,
-} from "./CardTypes.js";
+import { Card, CardColor, CardID, OracleID, OnPickDraftEffect, ParameterizedDraftEffectType } from "./CardTypes.js";
 import { ArenaLineRegex, matchCardVersion, XMageToArena } from "./parseCardList.js";
 import { hasOptionalProperty, hasProperty, isArrayOf, isRecord, isString, isUnknown } from "./TypeChecks.js";
 
@@ -89,21 +81,21 @@ export function sendDraftLogToCubeCobra(session: Session) {
 					}),
 					decklist: user.decklist
 						? {
-							main: user.decklist.main.map((c) => draftLog.carddata[c].oracle_id),
-							side: user.decklist.side.map((c) => draftLog.carddata[c].oracle_id),
-							lands: user.decklist.lands ?? { W: 0, U: 0, B: 0, R: 0, G: 0 },
-						}
+								main: user.decklist.main.map((c) => draftLog.carddata[c].oracle_id),
+								side: user.decklist.side.map((c) => draftLog.carddata[c].oracle_id),
+								lands: user.decklist.lands ?? { W: 0, U: 0, B: 0, R: 0, G: 0 },
+							}
 						: {
-							// Bots don't have a decklist, reconstruct it.
-							main: user.picks
-								.map((pick) => {
-									const p = pick as DraftPick;
-									return p.pick.map((i) => draftLog.carddata[p.booster[i]].oracle_id);
-								})
-								.flat(),
-							side: [],
-							lands: { W: 0, U: 0, B: 0, R: 0, G: 0 },
-						},
+								// Bots don't have a decklist, reconstruct it.
+								main: user.picks
+									.map((pick) => {
+										const p = pick as DraftPick;
+										return p.pick.map((i) => draftLog.carddata[p.booster[i]].oracle_id);
+									})
+									.flat(),
+								side: [],
+								lands: { W: 0, U: 0, B: 0, R: 0, G: 0 },
+							},
 				})),
 			});
 			console.log(util.inspect(payload, false, null, true));
@@ -187,12 +179,12 @@ function convertCustomCard(state: { customCards: Record<string, Card>; customCar
 		subtypes: types.subtypes,
 		back: c.imgBackUrl
 			? {
-				name: customID,
-				printed_names: {},
-				type: "",
-				subtypes: [],
-				image_uris: { en: c.imgBackUrl },
-			}
+					name: customID,
+					printed_names: {},
+					type: "",
+					subtypes: [],
+					image_uris: { en: c.imgBackUrl },
+				}
 			: undefined,
 		rating: 0,
 		in_booster: false,
@@ -267,8 +259,11 @@ function handleCard(
 			originalCard = Cards.get(cid)!;
 		}
 
+		let noReveal = false; // Hack: Remove "FaceUp" and "Reveal" draft effect if the card has the tag "No Reveal" by constructing a new custom card.
+		if (card.tags && card.tags.map((s) => s.toLowerCase()).includes("no reveal")) noReveal = true;
+
 		// We'll use the presence of an imgUrl as a sign this is custom card.
-		if (card.imgUrl) {
+		if (card.imgUrl || noReveal) {
 			const cardData: Card = {
 				...structuredClone(originalCard),
 				related_cards: [card.cardID],
@@ -278,7 +273,7 @@ function handleCard(
 			cardData.id = `Custom_${state.customCardID}`;
 			state.customCardID += 1;
 			// Update with custom properties.
-			cardData.image_uris = { en: card.imgUrl };
+			if (card.imgUrl) cardData.image_uris = { en: card.imgUrl };
 			if (card.finish) cardData.foil = card.finish === "Foil";
 			if (card.cmc) cardData.cmc = parseInt(card.cmc);
 			if (card.type_line) {
@@ -302,6 +297,12 @@ function handleCard(
 					};
 				}
 			}
+
+			if (noReveal && cardData.draft_effects)
+				cardData.draft_effects = cardData.draft_effects.filter(
+					(v) => v.type !== OnPickDraftEffect.Reveal && v.type !== OnPickDraftEffect.FaceUp
+				);
+
 			state.customCards[cardData.id] = cardData;
 			return cardData.id;
 		} else {
@@ -397,9 +398,10 @@ export async function importFormat(cardList: CustomCardList, format: DraftFormat
 		for (const slot of pack.slots) {
 			if (!sheets[slot.filter]) {
 				// Request the filtered list from Cube Cobra
-				let boards = "allBoards=1&"
-				if (slot.board) // Not sure if still in use.
-					boards = `boards=${encodeURIComponent(slot.board)}&`
+				let boards = "allBoards=1&";
+				if (slot.board)
+					// Not sure if still in use.
+					boards = `boards=${encodeURIComponent(slot.board)}&`;
 				// Use the Xmage endpoint to get version (set/collector number) information.
 				const filteredList = await axios.get(
 					`https://cubecobra.com/cube/download/xmage/${cardList.cubeCobraID}?${boards}showother=true&filter=${encodeURIComponent(slot.filter)}`,
@@ -412,7 +414,10 @@ export async function importFormat(cardList: CustomCardList, format: DraftFormat
 				for (const line of lines) {
 					if (line === "") continue;
 					const match = line.trim().match(ArenaLineRegex);
-					if (!match) throw new Error(`Failed to parse line '${line}' in Cube Cobra filtered list for filter '${slot.filter}'`);
+					if (!match)
+						throw new Error(
+							`Failed to parse line '${line}' in Cube Cobra filtered list for filter '${slot.filter}'`
+						);
 					const [, countStr, name, set, number, foilStr] = match;
 					// Search the cardID corresponding to the card name, first within custom cards, then within the official cards.
 					let cid = null;
