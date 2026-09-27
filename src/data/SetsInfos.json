@@ -2465,6 +2465,10 @@
         "fullName": "MagicFest 2026",
         "icon": "img/sets/pf26.svg"
     },
+    "pf27": {
+        "code": "pf27",
+        "fullName": "MagicFest 2027"
+    },
     "pfdn": {
         "code": "pfdn",
         "fullName": "Foundations Promos",

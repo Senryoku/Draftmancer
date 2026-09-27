@@ -56,7 +56,7 @@ Blessed Sanctuary
 Divine Visitation
 Elspeth Conquers Death
 Agent of Raffine
-A-Stitched Assistant
+Stitched Assistant
 Clone Crafter
 Fae of Wishes
 Ghostly Pilferer
@@ -77,8 +77,8 @@ Spark Double
 Thassa, Deep-Dwelling
 Vizier of Many Faces
 Whirler Rogue
-A-Alrund, God of the Cosmos
-A-Lier, Disciple of the Drowned
+Alrund, God of the Cosmos
+Lier, Disciple of the Drowned
 Cavalier of Gales
 Djinn of Wishes
 Mulldrifter
@@ -116,7 +116,7 @@ The Mirari Conjecture
 Shark Typhoon
 Cryptbreaker
 Forsworn Paladin
-A-Blood Artist
+Blood Artist
 Brain Maggot
 Jadar, Ghoulcaller of Nephalia
 Kitesail Freebooter
@@ -364,10 +364,10 @@ Niv-Mizzet, Parun
 Magma Opus
 Ravenous Squirrel
 Fiend Artisan
-A-Shessra, Death's Whisper
+Shessra, Death's Whisper
 Chatterfang, Squirrel General
 Leyline Prowler
-A-Tyvar Kell
+Tyvar Kell
 Binding the Old Gods
 Gitrog, Horror of Zhava
 Polukranos, Unchained

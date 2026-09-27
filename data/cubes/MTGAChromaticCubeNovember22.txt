@@ -84,8 +84,8 @@ Spark Double
 Thassa, Deep-Dwelling
 Vizier of Many Faces
 Whirler Rogue
-A-Alrund, God of the Cosmos
-A-Lier, Disciple of the Drowned
+Alrund, God of the Cosmos
+Lier, Disciple of the Drowned
 Cavalier of Gales
 Mulldrifter
 Nightclub Bouncer
@@ -125,7 +125,7 @@ The Mirari Conjecture
 Shark Typhoon
 Evolved Sleeper
 Forsworn Paladin
-A-Blood Artist
+Blood Artist
 Jadar, Ghoulcaller of Nephalia
 Nullpriest of Oblivion
 Reezug, the Bonecobbler
@@ -350,7 +350,7 @@ Invigorating Hot Spring
 Radha, Heart of Keld
 Halana and Alena, Partners
 Neyith of the Dire Hunt
-A-Minsc & Boo, Timeless Heroes
+Minsc & Boo, Timeless Heroes
 Escape to the Wilds
 Ravager Wurm
 Faeburrow Elder
@@ -404,7 +404,7 @@ Brutal Cathar
 Forging the Tyrite Sword
 Mila, Crafty Companion
 Ulder Ravengard, Marshal
-A-Nahiri, Heir of the Ancients
+Nahiri, Heir of the Ancients
 Astor, Bearer of Blades
 Showdown of the Skalds
 Hofri Ghostforge
@@ -475,8 +475,8 @@ Mazemind Tome
 Mind Stone
 Reckoner Bankbuster
 Treasure Map
-A-Lantern of Revealing
-A-Navigation Orb
+Lantern of Revealing
+Navigation Orb
 Chromatic Lantern
 Cultivator's Caravan
 Dragon's Hoard

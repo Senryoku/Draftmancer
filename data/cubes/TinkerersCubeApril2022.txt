@@ -3,7 +3,7 @@ Ajani, Strength of the Pride
 Ancestral Blade
 Angel of Invention
 Anointed Procession
-A-Plate Armor
+Plate Armor
 Archon of Sun's Grace
 Banishing Slash
 Benalish Honor Guard
@@ -77,7 +77,7 @@ Acquisition Octopus
 Divide by Zero
 Arcane Subtraction
 Aven Eternal
-A-Wizard Class
+Wizard Class
 Barrin, Tolarian Archmage
 Behold the Unspeakable
 Blink of an Eye
@@ -149,7 +149,7 @@ Whirler Rogue
 Windcaller Aven
 Wizard's Spellbook
 Yuan-Ti Malison
-A-Precipitous Drop
+Precipitous Drop
 Archfiend of Ifnir
 Archfiend of Sorrows
 Arguel's Blood Fast
@@ -302,7 +302,7 @@ Volcanic Salvo
 Welding Sparks
 You See a Pair of Goblins
 Young Pyromancer
-A-Ellywick Tumblestrum
+Ellywick Tumblestrum
 Ancient Animus
 Ashaya, Soul of the Wild
 Basic Conjuration
@@ -379,10 +379,10 @@ Wilt
 Wolfwillow Haven
 Woodland Champion
 You Find a Cursed Idol
-A-Bruenor Battlehammer
-A-Nahiri, Heir of the Ancients
+Bruenor Battlehammer
+Nahiri, Heir of the Ancients
 Angrath, Captain of Chaos
-A-Vega, the Watcher
+Vega, the Watcher
 Binding the Old Gods
 Blade Historian
 Calix, Destiny's Hand
@@ -434,7 +434,7 @@ Unlicensed Disintegration
 Vona, Butcher of Magan
 Vraska, Swarm's Eminence
 Wavesifter
-A-Cosmos Elixir
+Cosmos Elixir
 Animation Module
 Bag of Holding
 Blackblade Reforged
