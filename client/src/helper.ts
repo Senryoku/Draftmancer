@@ -36,27 +36,14 @@ export function getURLParameters() {
 	return new URLSearchParams(window.location.search);
 }
 
-// https://hackernoon.com/copying-text-to-clipboard-with-javascript-df4d4988697f
-export const copyToClipboard = (str: string) => {
-	const el = document.createElement("textarea"); // Create a <textarea> element
-	el.value = str; // Set its value to the string that you want copied
-	el.setAttribute("readonly", ""); // Make it readonly to be tamper-proof
-	el.style.position = "absolute";
-	el.style.left = "-9999px"; // Move outside the screen to make it invisible
-	document.body.appendChild(el); // Append the <textarea> element to the HTML document
-	const selected =
-		(document.getSelection()?.rangeCount as number) > 0 // Check if there is any content selected previously
-			? document.getSelection()?.getRangeAt(0) // Store selection if found
-			: false; // Mark as false to know no selection existed before
-	el.select(); // Select the <textarea> content
-	document.execCommand("copy"); // Copy - only works as a result of a user action (e.g. click events)
-	document.body.removeChild(el); // Remove the <textarea> element
-	if (selected) {
-		// If a selection existed before copying
-		document.getSelection()?.removeAllRanges(); // Unselect everything on the HTML document
-		document.getSelection()?.addRange(selected); // Restore the original selection
-	}
-};
+export function copyToClipboard(str: string) {
+	navigator.clipboard.writeText(str).then(
+		() => {},
+		(reason: any) => {
+			console.error("Error copying to clipboard: ", reason);
+		}
+	);
+}
 
 // Converts pre-v2.1 draft log DeprecatedDraftPick to v2.1+ DraftPicks
 export function normalizePicks(picks: (DraftPick | DeprecatedDraftPick)[]): DraftPick[] {
