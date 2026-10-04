@@ -141,7 +141,7 @@
 						group: group,
 						animation: 200,
 						ghostClass: 'ghost',
-						multiDrag: !isTouchDevice,
+						multiDrag: false,
 						selectedClass: 'multi-drag-selected',
 						multiDragKey: 'ctrl',
 						delay: 100,

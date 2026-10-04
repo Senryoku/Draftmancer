@@ -1497,7 +1497,7 @@
 										group: 'deck',
 										animation: '200',
 										ghostClass: 'ghost',
-										multiDrag: true,
+										multiDrag: false,
 										selectedClass: 'multi-drag-selected',
 										multiDragKey: 'ctrl',
 									}"
