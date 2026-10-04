@@ -151,7 +151,7 @@ const communities = ref([
 	},
 	{
 		name: "Jank Diver Gaming",
-		brief: "A community dedicated to the Cube format, specifically for Magic: Arena play.",
+		brief: "Jank Diver Gaming is a central hub for Cubing through MTG Arena. There's a mix of Peasant, High-Power, and User-Submitted Cubes, and they cultivate an engaging social atmosphere. Check out The Jank Tank podcast for more from the creators.",
 		icon: "jank_diver_gaming.webp",
 		tags: ["Cube", "MTGA", "Social"],
 		links: {
