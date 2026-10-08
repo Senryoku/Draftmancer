@@ -2479,6 +2479,10 @@
         "fullName": "Final Fantasy Promos",
         "icon": "img/sets/pfin.svg"
     },
+    "pfra": {
+        "code": "pfra",
+        "fullName": "Reality Fracture Promos"
+    },
     "pfrf": {
         "code": "pfrf",
         "fullName": "Fate Reforged Promos",
