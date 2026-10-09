@@ -750,7 +750,7 @@
 			<div
 				v-show="drafting || gameState === GameState.Watching"
 				class="generic-container"
-				style="overflow-x: hidden"
+				style="overflow: hidden; scrollbar-width: none"
 			>
 				<template v-if="draftState">
 					<transition
