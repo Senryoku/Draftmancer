@@ -22,6 +22,7 @@ import {
 	isUnion,
 	isSomeEnum,
 	isInteger,
+	isArray,
 } from "./TypeChecks.js";
 
 export function isDraftEffectType(str: unknown): str is DraftEffectType {
@@ -47,6 +48,7 @@ export function isDraftEffect(obj: unknown): obj is DraftEffect {
 	if (!hasProperty("type", isDraftEffectType)(obj)) return false;
 	if (obj.type === ParameterizedDraftEffectType.AddCards)
 		return hasProperty("count", isInteger)(obj) && hasProperty("cards", isArrayOf(isString))(obj);
+	if (obj.type === ParameterizedDraftEffectType.AddBooster) return hasOptionalProperty("layouts", isArray)(obj);
 	return hasProperty("type", isSimpleDraftEffectType)(obj);
 }
 

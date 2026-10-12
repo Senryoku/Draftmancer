@@ -257,9 +257,7 @@ export function validateCustomCard(inputCard: any): SocketError | Card {
 						`Invalid Property`,
 						`Invalid 'type' entry in 'draft_effects' of custom card. '${entry.type}' is not a valid Draft Effect.`
 					);
-				if (isSimpleDraftEffectType(entry.type)) {
-					card.draft_effects.push({ type: entry.type });
-				} else if (entry.type === ParameterizedDraftEffectType.AddCards) {
+				if (entry.type === ParameterizedDraftEffectType.AddCards) {
 					if (!hasProperty("cards", isArrayOf(isString))(entry)) {
 						return valErr(
 							`Invalid Parameter`,
@@ -319,6 +317,9 @@ export function validateCustomCard(inputCard: any): SocketError | Card {
 						type: entry.type,
 						layouts: layouts,
 					});
+					console.log("Effects: ", card.draft_effects);
+				} else if (isSimpleDraftEffectType(entry.type)) {
+					card.draft_effects.push({ type: entry.type });
 				} else {
 					return valErr(
 						`Invalid Property`,
