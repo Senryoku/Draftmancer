@@ -1277,6 +1277,7 @@ constants["PrimarySets"] = [
         "mar",
         "omb",
         "trk",
+        "mdd"
     ]
 ]  # Exclude some codes that are actually part of larger sets (tsb, fmb1, h1r... see subsets), or aren't out yet
 with open("src/data/constants.json", "w", encoding="utf8") as constantsFile:
