@@ -1565,6 +1565,15 @@
         "fullName": "Modern Event Deck 2014",
         "icon": "img/sets/md1.svg"
     },
+    "mdc": {
+        "code": "mdc",
+        "fullName": "Darkhold Destiny Commander",
+        "block": "Commander"
+    },
+    "mdd": {
+        "code": "mdd",
+        "fullName": "Marvel: Darkhold Destiny"
+    },
     "me1": {
         "code": "me1",
         "fullName": "Masters Edition",
@@ -3914,6 +3923,10 @@
         "block": "Commander",
         "icon": "img/sets/tmc.svg"
     },
+    "tmdd": {
+        "code": "tmdd",
+        "fullName": "Marvel: Darkhold Destiny Tokens"
+    },
     "tmp": {
         "code": "tmp",
         "fullName": "Tempest",
@@ -4289,6 +4302,10 @@
         "code": "yeoe",
         "fullName": "Alchemy: Edge of Eternities",
         "icon": "img/sets/yeoe.svg"
+    },
+    "yfra": {
+        "code": "yfra",
+        "fullName": "Alchemy: Reality Fracture"
     },
     "ylci": {
         "code": "ylci",
