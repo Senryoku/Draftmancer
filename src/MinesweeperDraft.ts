@@ -217,11 +217,16 @@ export class MinesweeperDraftState extends IDraftState implements TurnBased {
 		const gridUpdated = this.grid().pick(row, col);
 		++this.pickNumber;
 
-		this.lastPicks.unshift({
-			userName: userName,
-			round: this.lastPicks.length === 0 ? 0 : this.lastPicks[0].round + 1,
-			cards: [this.grid().get(row, col)!.card],
-		});
+		const card = this.grid().get(row, col)!.card;
+		if (this.lastPicks.length > 0 && this.lastPicks[0].userName === userName) {
+			this.lastPicks[0].cards.push(card);
+		} else {
+			this.lastPicks.unshift({
+				userName: userName,
+				round: this.lastPicks.length === 0 ? 0 : this.lastPicks[0].round + 1,
+				cards: [card],
+			});
+		}
 		if (this.lastPicks.length > 2) this.lastPicks.pop();
 
 		return {
