@@ -199,7 +199,7 @@ export class MinesweeperDraftState extends IDraftState implements TurnBased {
 	currentPlayer() {
 		switch (this.turnOrder) {
 			case "wrap":
-				return this.players[this.pickNumber % this.players.length];
+				return this.players[(this.gridNumber * this.picksPerGrid + this.pickNumber) % this.players.length];
 
 			case "snake":
 				const startingDirection = Math.floor(this.gridNumber / this.players.length) % 2;
