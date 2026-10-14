@@ -72,8 +72,8 @@
 					</div>
 					<label for="turn-order-input">Turn Order</label>
 					<select id="turn-order-input" v-model="turnOrder">
-						<option value="wrap">Wrap</option>
 						<option value="snake">Snake</option>
+						<option value="wrap">Wrap</option>
 					</select>
 					<label for="reveal-center-input">Reveal center</label>
 					<input type="checkbox" id="reveal-center-input" v-model="revealCenter" />

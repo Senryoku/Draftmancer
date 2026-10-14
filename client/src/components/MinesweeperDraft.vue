@@ -25,6 +25,16 @@
 					</template>
 				</span>
 			</div>
+			<div style="position: relative">
+				<font-awesome-icon
+					icon="fa-solid fa-clock-rotate-left"
+					size="xl"
+					class="clickable"
+					@click="displayHistory = !displayHistory"
+					style="margin-right: 1em"
+				/>
+				<pick-summary v-if="displayHistory" :picks="state.lastPicks" class="history" />
+			</div>
 			<scale-slider v-model.number="gridScale" />
 		</div>
 		<div class="minesweeper-draft" :style="`--grid-scale: ${gridScale}`" ref="grid">
@@ -64,13 +74,14 @@ import { MinesweeperSyncData } from "@/MinesweeperDraftTypes";
 
 import Card from "./Card.vue";
 import CardPlaceholder from "./CardPlaceholder.vue";
+import PickSummary from "./PickSummary.vue";
 import ScaleSlider from "./ScaleSlider.vue";
 
 export default /*#__PURE__*/ defineComponent({
 	data() {
-		return { gridScale: 1, gridScrollState: { left: 0, top: 0, x: 0, y: 0, moved: false } };
+		return { gridScale: 1, gridScrollState: { left: 0, top: 0, x: 0, y: 0, moved: false }, displayHistory: false };
 	},
-	components: { Card, CardPlaceholder, ScaleSlider },
+	components: { Card, CardPlaceholder, PickSummary, ScaleSlider },
 	props: {
 		state: { type: Object as PropType<MinesweeperSyncData>, required: true },
 		currentPlayerUsername: { type: String, required: true },
@@ -132,6 +143,31 @@ export default /*#__PURE__*/ defineComponent({
 	overflow: auto;
 
 	max-height: 90vh;
+}
+
+.history {
+	position: absolute;
+	top: calc(100% + 22px);
+	z-index: 99;
+	background-color: #282828;
+	border-radius: 0.75em;
+	padding: 0 0.5em 0.5em 0.5em;
+	filter: drop-shadow(0 0 3px #000);
+
+	&:before {
+		content: "";
+		position: absolute;
+		top: 0;
+		left: 1.5em;
+		width: 0;
+		height: 0;
+		border: 20px solid transparent;
+		border-bottom-color: #282828;
+		border-top: 0;
+		border-left: 0;
+		margin-left: -10px;
+		margin-top: -20px;
+	}
 }
 
 /* Disable vertical scrolling when using the fixed deck feature*/

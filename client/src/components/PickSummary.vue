@@ -1,28 +1,29 @@
 <template>
-	<div class="last-picks" v-if="picks && picks.length > 0">
+	<div class="last-picks">
 		<span class="last-picks-title">Last Picks</span>
-		<transition-group tag="div" name="vertical-queue" class="vertical-queue" mode="">
-			<div v-for="p in picks" class="pick-remainder vertical-queue-item" :key="p.round">
-				{{ p.userName }}
-				<div class="card-column">
-					<card v-for="c in p.cards" :card="c" :key="c.uniqueID"></card>
+		<template v-if="picks && picks.length > 0">
+			<transition-group tag="div" name="vertical-queue" class="vertical-queue" mode="">
+				<div v-for="p in picks" class="pick-remainder vertical-queue-item" :key="p.round">
+					{{ p.userName }}
+					<div class="card-column">
+						<card v-for="c in p.cards" :card="c" :key="c.uniqueID"></card>
+					</div>
 				</div>
-			</div>
-		</transition-group>
+			</transition-group>
+		</template>
+		<template v-else>
+			<span>(No picks yet)</span>
+		</template>
 	</div>
 </template>
 
-<script lang="ts">
-import { PropType, defineComponent } from "vue";
+<script setup lang="ts">
 import { PickSummary } from "@/PickSummary";
 import Card from "./Card.vue";
 
-export default defineComponent({
-	components: { Card },
-	props: {
-		picks: { type: Array as PropType<PickSummary[]>, required: true },
-	},
-});
+const props = defineProps<{
+	picks: PickSummary[];
+}>();
 </script>
 
 <style scoped>
@@ -33,13 +34,6 @@ export default defineComponent({
 	flex-direction: column;
 	justify-content: center;
 	position: relative;
-
-	opacity: 0.25;
-	transition: opacity 0.5s;
-}
-
-.last-picks:hover {
-	opacity: 1;
 }
 
 .last-picks-title {
