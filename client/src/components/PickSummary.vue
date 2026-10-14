@@ -49,6 +49,10 @@ const props = defineProps<{
 	min-height: initial;
 	margin: 0;
 }
+
+.vertical-queue {
+	overflow: hidden;
+}
 </style>
 
 <style src="../css/vertical-queue.css" scoped />

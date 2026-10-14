@@ -1163,7 +1163,10 @@
 							</transition-group>
 						</transition>
 					</div>
-					<pick-summary :picks="rochesterDraftState.lastPicks"></pick-summary>
+					<pick-summary
+						v-if="rochesterDraftState.lastPicks && rochesterDraftState.lastPicks.length > 0"
+						:picks="rochesterDraftState.lastPicks"
+					/>
 				</div>
 				<transition name="fade">
 					<div
