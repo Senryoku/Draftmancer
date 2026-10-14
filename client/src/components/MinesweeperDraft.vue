@@ -10,18 +10,23 @@
 				</span>
 				<span>
 					<template v-if="picking">
-						<font-awesome-icon icon="fa-solid fa-exclamation-circle" /> It's your turn! Pick a card.
+						<font-awesome-icon icon="fa-solid fa-exclamation-circle" />
+						<span class="remove-below-1200"> It's your turn! Pick a card. </span>
 					</template>
 					<template v-else-if="state.currentPlayer === null">
-						<template v-if="state.gridNumber >= state.gridCount">
-							This was the last grid! Let me cleanup this cards off the table...
-						</template>
-						<template v-else>Advancing to the next grid...</template>
+						<span class="remove-below-1200">
+							<template v-if="state.gridNumber >= state.gridCount">
+								This was the last grid! Let me cleanup this cards off the table...
+							</template>
+							<template v-else>Advancing to the next grid...</template>
+						</span>
 					</template>
 					<template v-else>
 						<font-awesome-icon icon="fa-solid fa-spinner" spin />
-						Waiting for
-						{{ currentPlayerUsername !== "" ? currentPlayerUsername : "the next grid" }}...
+						<span class="remove-below-1200">
+							Waiting for
+							{{ currentPlayerUsername !== "" ? currentPlayerUsername : "the next grid" }}...
+						</span>
 					</template>
 				</span>
 			</div>
@@ -68,8 +73,8 @@
 	</div>
 </template>
 
-<script lang="ts">
-import { PropType, defineComponent } from "vue";
+<script setup lang="ts">
+import { ref, onMounted } from "vue";
 import { MinesweeperSyncData } from "@/MinesweeperDraftTypes";
 
 import Card from "./Card.vue";
@@ -77,61 +82,63 @@ import CardPlaceholder from "./CardPlaceholder.vue";
 import PickSummary from "./PickSummary.vue";
 import ScaleSlider from "./ScaleSlider.vue";
 
-export default /*#__PURE__*/ defineComponent({
-	data() {
-		return { gridScale: 1, gridScrollState: { left: 0, top: 0, x: 0, y: 0, moved: false }, displayHistory: false };
-	},
-	components: { Card, CardPlaceholder, PickSummary, ScaleSlider },
-	props: {
-		state: { type: Object as PropType<MinesweeperSyncData>, required: true },
-		currentPlayerUsername: { type: String, required: true },
-		picking: { type: Boolean, required: true },
-	},
-	mounted() {
-		(this.$refs.grid as HTMLElement)?.addEventListener("mousedown", this.gridOnMouseDown);
-	},
-	methods: {
-		pick(row: number, col: number) {
-			if (this.picking && this.state.grid[row][col].state === 1) {
-				this.$emit("pick", row, col);
-			}
-		},
-		gridOnMouseDown(e: MouseEvent) {
-			if (!this.$refs.grid) return;
-			const grid = this.$refs.grid as HTMLElement;
-			this.gridScrollState = {
-				left: grid.scrollLeft,
-				top: grid.scrollTop,
-				x: e.clientX,
-				y: e.clientY,
-				moved: false,
-			};
-			document.addEventListener("mousemove", this.gridOnMouseMove);
-			document.addEventListener("mouseup", this.gridOnMouseUp);
-		},
-		gridOnMouseMove(e: MouseEvent) {
-			if (!this.$refs.grid) return;
-			const grid = this.$refs.grid as HTMLElement;
-			const dx = e.clientX - this.gridScrollState.x;
-			const dy = e.clientY - this.gridScrollState.y;
-			grid.scrollTop = this.gridScrollState.top - dy;
-			grid.scrollLeft = this.gridScrollState.left - dx;
+const props = defineProps<{
+	state: MinesweeperSyncData;
+	currentPlayerUsername: string;
+	picking: boolean;
+}>();
 
-			if (!this.gridScrollState.moved) {
-				grid.classList.add("dragging");
-				this.gridScrollState.moved = true;
-			}
-		},
-		gridOnMouseUp() {
-			document.removeEventListener("mousemove", this.gridOnMouseMove);
-			document.removeEventListener("mouseup", this.gridOnMouseUp);
+const grid = ref<HTMLElement | null>(null);
 
-			if (this.gridScrollState.moved) {
-				(this.$refs.grid as HTMLElement)?.classList.remove("dragging");
-			}
-		},
-	},
+const gridScale = ref(1);
+const gridScrollState = ref({ left: 0, top: 0, x: 0, y: 0, moved: false });
+const displayHistory = ref(false);
+
+const emit = defineEmits<{
+	(event: "pick", row: number, col: number): void;
+}>();
+
+onMounted(() => {
+	grid.value?.addEventListener("mousedown", gridOnMouseDown);
 });
+
+function pick(row: number, col: number) {
+	if (props.picking && props.state.grid[row][col].state === 1) {
+		emit("pick", row, col);
+	}
+}
+
+function gridOnMouseDown(e: MouseEvent) {
+	if (!grid.value) return;
+	gridScrollState.value = {
+		left: grid.value.scrollLeft,
+		top: grid.value.scrollTop,
+		x: e.clientX,
+		y: e.clientY,
+		moved: false,
+	};
+	document.addEventListener("mousemove", gridOnMouseMove);
+	document.addEventListener("mouseup", gridOnMouseUp);
+}
+
+function gridOnMouseMove(e: MouseEvent) {
+	if (!grid.value) return;
+	const dx = e.clientX - gridScrollState.value.x;
+	const dy = e.clientY - gridScrollState.value.y;
+	grid.value.scrollTop = gridScrollState.value.top - dy;
+	grid.value.scrollLeft = gridScrollState.value.left - dx;
+
+	if (!gridScrollState.value.moved) {
+		grid.value.classList.add("dragging");
+		gridScrollState.value.moved = true;
+	}
+}
+
+function gridOnMouseUp() {
+	document.removeEventListener("mousemove", gridOnMouseMove);
+	document.removeEventListener("mouseup", gridOnMouseUp);
+	if (gridScrollState.value.moved) grid.value?.classList.remove("dragging");
+}
 </script>
 
 <style scoped>
