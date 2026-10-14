@@ -15,24 +15,30 @@
 	</span>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
+<script setup lang="ts">
+const props = withDefaults(
+	defineProps<{
+		modelValue: number;
+		min?: number;
+		max?: number;
+	}>(),
+	{
+		min: 0.1,
+		max: 2.0,
+	}
+);
 
-export default defineComponent({
-	props: {
-		modelValue: { type: Number, required: true },
-		min: { type: Number, default: 0.1 },
-		max: { type: Number, default: 2.0 },
-	},
-	methods: {
-		handleEvent(e: Event) {
-			this.$emit("update:modelValue", (e.target as HTMLInputElement).value);
-		},
-		update(value: number) {
-			this.$emit("update:modelValue", value);
-		},
-	},
-});
+const emit = defineEmits<{
+	(e: "update:modelValue", value: number): void;
+}>();
+
+function handleEvent(e: Event) {
+	emit("update:modelValue", parseFloat((e.target as HTMLInputElement).value));
+}
+
+function update(value: number) {
+	emit("update:modelValue", value);
+}
 </script>
 
 <style scoped>
