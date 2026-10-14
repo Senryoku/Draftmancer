@@ -7,7 +7,10 @@ export enum MinesweeperCellState {
 	Picked = 2,
 }
 
+export type MinesweeperTurnOrder = "wrap" | "snake";
+
 export type MinesweeperSyncData = {
+	turnOrder: MinesweeperTurnOrder;
 	gridCount: number;
 	gridNumber: number;
 	picksPerGrid: number;

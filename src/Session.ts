@@ -74,7 +74,7 @@ import {
 	JumpstartBoosters,
 } from "./Jumpstart.js";
 import { IDraftState } from "./IDraftState.js";
-import { MinesweeperCellState } from "./MinesweeperDraftTypes.js";
+import { MinesweeperCellState, MinesweeperTurnOrder } from "./MinesweeperDraftTypes.js";
 import { MinesweeperDraftState, isMinesweeperDraftState } from "./MinesweeperDraft.js";
 import { TeamSealedState, isTeamSealedState } from "./TeamSealed.js";
 import { GridDraftState, isGridDraftState } from "./GridDraft.js";
@@ -1498,7 +1498,7 @@ export class Session implements IIndexable {
 	}
 	///////////////////// Rochester Draft End //////////////////////
 
-	///////////////////// Rotisserie Draft //////////////////////
+	//#region Rotisserie Draft
 	startRotisserieDraft(options: RotisserieDraftStartOptions): SocketAck {
 		if (this.drafting) return new SocketError("Already drafting.");
 		if (this.users.size <= 1)
@@ -1597,13 +1597,15 @@ export class Session implements IIndexable {
 		}
 		return new SocketAck();
 	}
-	///////////////////// Rotisserie Draft End //////////////////////
+	//#endregion
 
+	//#region Minesweeper Draft
 	startMinesweeperDraft(
 		gridCount: number,
 		gridWidth: number,
 		gridHeight: number,
 		picksPerGrid: number,
+		turnOrder: MinesweeperTurnOrder,
 		revealCenter: boolean,
 		revealCorners: boolean,
 		revealBorders: boolean
@@ -1635,6 +1637,7 @@ export class Session implements IIndexable {
 			gridWidth,
 			gridHeight,
 			picksPerGrid,
+			turnOrder,
 			revealCenter,
 			revealCorners,
 			revealBorders
@@ -1699,6 +1702,8 @@ export class Session implements IIndexable {
 		this.sendLogs();
 		this.cleanDraftState();
 	}
+
+	//#endregion
 
 	startSolomonDraft(cardCount: number = 8, roundCount: number = 10, removeBasicLands: boolean = true): SocketAck {
 		if (this.drafting) return new SocketError("Already drafting.");

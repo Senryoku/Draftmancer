@@ -19,7 +19,7 @@ import {
 	CardColor,
 } from "./CardTypes";
 import { RochesterDraftSyncData } from "./RochesterDraft";
-import { MinesweeperSyncData, MinesweeperSyncDataDiff } from "./MinesweeperDraftTypes";
+import { MinesweeperSyncData, MinesweeperSyncDataDiff, MinesweeperTurnOrder } from "./MinesweeperDraftTypes";
 import { DraftState, DraftSyncData } from "./DraftState";
 import { BotScores } from "./Bot";
 import { getPublicSessionData, Hooks } from "./Session";
@@ -372,6 +372,7 @@ export interface ClientToServerEvents {
 		gridWidth: number,
 		gridHeight: number,
 		picksPerGrid: number,
+		turnOrder: MinesweeperTurnOrder,
 		revealCenter: boolean,
 		revealCorners: boolean,
 		revealBorders: boolean,

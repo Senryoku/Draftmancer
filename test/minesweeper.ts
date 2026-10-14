@@ -12,7 +12,12 @@ import {
 	getUID,
 	ackNoError,
 } from "./src/common.js";
-import { minesweeperApplyDiff, MinesweeperCellState, MinesweeperSyncData } from "../src/MinesweeperDraftTypes.js";
+import {
+	minesweeperApplyDiff,
+	MinesweeperCellState,
+	MinesweeperSyncData,
+	MinesweeperTurnOrder,
+} from "../src/MinesweeperDraftTypes.js";
 import { SocketAck } from "../src/Message.js";
 import { simulateRestart } from "../src/Persistence.js";
 
@@ -97,11 +102,12 @@ describe("Minesweeper Draft", function () {
 		gridWidth = 10,
 		gridHeight = 9,
 		picksPerGrid = -1,
+		turnOrder: MinesweeperTurnOrder = "snake",
 		revealCenter = true,
 		revealCorners = true,
 		revealBorders = false
 	) => {
-		it(`Start Minesweeper draft (Parameters: gridCount = ${gridCount}, gridWidth = ${gridWidth}, gridHeight = ${gridHeight}, picksPerGrid = ${picksPerGrid}, revealCenter = ${revealCenter}, revealCorners = ${revealCorners}, revealBorders: ${revealBorders})`, function (done) {
+		it(`Start Minesweeper draft (Parameters: gridCount = ${gridCount}, gridWidth = ${gridWidth}, gridHeight = ${gridHeight}, picksPerGrid = ${picksPerGrid}, turnOrder = ${turnOrder}, revealCenter = ${revealCenter}, revealCorners = ${revealCorners}, revealBorders: ${revealBorders})`, function (done) {
 			let connectedClients = 0;
 			for (const c of clients) {
 				c.once("startMinesweeperDraft", function (state) {
@@ -119,6 +125,7 @@ describe("Minesweeper Draft", function () {
 				gridWidth,
 				gridHeight,
 				picksPerGrid === -1 ? clients.length * 9 : picksPerGrid,
+				turnOrder,
 				revealCenter,
 				revealCorners,
 				revealBorders,
@@ -252,6 +259,7 @@ describe("Minesweeper Draft", function () {
 		gridWidth = 10,
 		gridHeight = 9,
 		picksPerGrid = -1,
+		turnOrder: MinesweeperTurnOrder = "snake",
 		revealCenter = true,
 		revealCorners = true,
 		revealBorders = false
@@ -262,6 +270,7 @@ describe("Minesweeper Draft", function () {
 			gridWidth,
 			gridHeight,
 			picksPerGrid === -1 ? clients.length * 3 + 1 : picksPerGrid,
+			turnOrder,
 			revealCenter,
 			revealCorners,
 			revealBorders,
@@ -291,7 +300,7 @@ describe("Minesweeper Draft", function () {
 			startDraftWithError(done, 3, 10, 9, 10 * 9 + 1);
 		});
 		it("Error when no cards are revealed by default", function (done) {
-			startDraftWithError(done, 3, 10, 9, -1, false, false, false);
+			startDraftWithError(done, 3, 10, 9, -1, "snake", false, false, false);
 		});
 	});
 
@@ -450,41 +459,43 @@ describe("Minesweeper Draft", function () {
 	describe("Parameters matrix", function () {
 		selectCube();
 
-		for (const [gridCount, gridWidth, gridHeight, picksPerGrid] of [
-			[2, 10, 9, -1],
-			[2, 10, 10, -1],
-			[2, 9, 9, -1],
-			[3, 12, 12, -1],
-			[3, 8, 8, -1],
-			[4, 10, 9, 4 * 8],
-			[2, 10, 9, 4 * 2],
-			[2, 10, 9, 4 * 12],
-			[1, 10, 9, -1],
-		]) {
-			startDraft(gridCount, gridWidth, gridHeight, picksPerGrid);
+		for (const turnOrder of ["wrap", "snake"] as const) {
+			for (const [gridCount, gridWidth, gridHeight, picksPerGrid] of [
+				[2, 10, 9, -1],
+				[2, 10, 10, -1],
+				[2, 9, 9, -1],
+				[3, 12, 12, -1],
+				[3, 8, 8, -1],
+				[4, 10, 9, 4 * 8],
+				[2, 10, 9, 4 * 2],
+				[2, 10, 9, 4 * 12],
+				[1, 10, 9, -1],
+			]) {
+				startDraft(gridCount, gridWidth, gridHeight, picksPerGrid, turnOrder);
+				endDraft();
+			}
+
+			for (const [revealCenter, revealCorners, revealBorders] of [
+				[true, false, false],
+				[false, true, false],
+				[true, true, false],
+				[false, false, true],
+				[true, false, true],
+				[false, true, true],
+				[true, true, true],
+			]) {
+				startDraft(3, 10, 9, -1, turnOrder, revealCenter, revealCorners, revealBorders);
+				endDraft();
+			}
+
+			startDraft(3, 10, 9, -1, turnOrder, false);
+			endDraft();
+			startDraft(3, 9, 10, -1, turnOrder, false);
+			endDraft();
+			startDraft(3, 9, 9, -1, turnOrder, false);
+			endDraft();
+			startDraft(3, 10, 10, -1, turnOrder, false);
 			endDraft();
 		}
-
-		for (const [revealCenter, revealCorners, revealBorders] of [
-			[true, false, false],
-			[false, true, false],
-			[true, true, false],
-			[false, false, true],
-			[true, false, true],
-			[false, true, true],
-			[true, true, true],
-		]) {
-			startDraft(3, 10, 9, -1, revealCenter, revealCorners, revealBorders);
-			endDraft();
-		}
-
-		startDraft(3, 10, 9, -1, false);
-		endDraft();
-		startDraft(3, 9, 10, -1, false);
-		endDraft();
-		startDraft(3, 9, 9, -1, false);
-		endDraft();
-		startDraft(3, 10, 10, -1, false);
-		endDraft();
 	});
 });

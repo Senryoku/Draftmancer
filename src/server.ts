@@ -75,6 +75,7 @@ import { isTiebreaker } from "./SilentAuctionDraft.js";
 import { CardPool } from "./CardPool.js";
 import { convertCubeCobraList, DraftFormat, importFormat as convertDraftFormat } from "./cubeCobraIntegration.js";
 import { setBatchWindow } from "./bots/CubeCobraBots.js";
+import { MinesweeperDraftState } from "./MinesweeperDraft.js";
 
 if (process.env.NODE_ENV === "production") MTGOAPIInit();
 
@@ -843,6 +844,7 @@ function startMinesweeperDraft(
 	unsafeGridWidth: unknown,
 	unsafeGridHeight: unknown,
 	unsafePicksPerGrid: unknown,
+	unsafeTurnOrder: unknown,
 	unsafeRevealCenter: unknown,
 	unsafeRevealCorners: unknown,
 	unsafeRevealBorders: unknown,
@@ -853,6 +855,7 @@ function startMinesweeperDraft(
 	const gridWidth = !isNumber(unsafeGridWidth) ? parseInt(unsafeGridWidth as string) : unsafeGridWidth;
 	const gridHeight = !isNumber(unsafeGridHeight) ? parseInt(unsafeGridHeight as string) : unsafeGridHeight;
 	const picksPerGrid = !isNumber(unsafePicksPerGrid) ? parseInt(unsafePicksPerGrid as string) : unsafePicksPerGrid;
+	const turnOrder = !isString(unsafeTurnOrder) ? "snake" : unsafeTurnOrder;
 	const revealCenter = !isBoolean(unsafeRevealCenter) ? false : unsafeRevealCenter;
 	const revealCorners = !isBoolean(unsafeRevealCorners) ? false : unsafeRevealCorners;
 	const revealBorders = !isBoolean(unsafeRevealBorders) ? false : unsafeRevealBorders;
@@ -866,6 +869,7 @@ function startMinesweeperDraft(
 		!isNumber(picksPerGrid) ||
 		picksPerGrid <= 0 ||
 		picksPerGrid > gridWidth * gridHeight ||
+		!(turnOrder === "snake" || turnOrder === "wrap") ||
 		!isBoolean(revealCenter) ||
 		!isBoolean(revealCorners) ||
 		!isBoolean(revealBorders)
@@ -891,6 +895,7 @@ function startMinesweeperDraft(
 		gridWidth,
 		gridHeight,
 		picksPerGrid,
+		turnOrder,
 		revealCenter,
 		revealCorners,
 		revealBorders

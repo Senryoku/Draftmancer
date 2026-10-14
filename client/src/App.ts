@@ -23,7 +23,7 @@ import type { Options } from "@/utils";
 import type { JumpInBooster } from "@/JumpInTypes";
 import type { CustomCardList } from "@/CustomCardList";
 import { IBracket, BracketType } from "../../src/Brackets";
-import { MinesweeperSyncData } from "@/MinesweeperDraftTypes";
+import { MinesweeperSyncData, MinesweeperTurnOrder } from "@/MinesweeperDraftTypes";
 import { HousmanDraftSyncData } from "@/HousmanDraft";
 import { minesweeperApplyDiff } from "../../src/MinesweeperDraftTypes";
 import Constants, { CubeDescription, EnglishBasicLandNames } from "../../src/Constants";
@@ -2342,6 +2342,7 @@ export default defineComponent({
 					gridWidth: number,
 					gridHeight: number,
 					picksPerPlayerPerGrid: number,
+					turnOrder: MinesweeperTurnOrder,
 					revealCenter: boolean,
 					revealCorners: boolean,
 					revealBorders: boolean
@@ -2352,6 +2353,7 @@ export default defineComponent({
 							gridWidth: number,
 							gridHeight: number,
 							picksPerPlayerPerGrid: number,
+							turnOrder: MinesweeperTurnOrder,
 							revealCenter: boolean,
 							revealCorners: boolean,
 							revealBorders: boolean
@@ -2362,6 +2364,7 @@ export default defineComponent({
 								gridWidth,
 								gridHeight,
 								this.sessionUsers.length * picksPerPlayerPerGrid,
+								turnOrder,
 								revealCenter,
 								revealCorners,
 								revealBorders,
@@ -2374,6 +2377,7 @@ export default defineComponent({
 						gridWidth,
 						gridHeight,
 						picksPerPlayerPerGrid,
+						turnOrder,
 						revealCenter,
 						revealCorners,
 						revealBorders
@@ -3961,6 +3965,8 @@ export default defineComponent({
 				];
 			}
 			if (this.minesweeperDraftState || this.rotisserieDraftState || this.rochesterDraftState) {
+				if (this.minesweeperDraftState && this.minesweeperDraftState.turnOrder === "wrap")
+					return PassingOrder.Right;
 				const pickNumber = (this.minesweeperDraftState ??
 					this.rotisserieDraftState ??
 					this.rochesterDraftState)!.pickNumber;
