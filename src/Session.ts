@@ -264,7 +264,17 @@ export class Session implements IIndexable {
 
 				boosterNumber: this.draftState.boosterNumber,
 			});
-			Connections[userID].socket.emit("draftLogLive", { log: this.draftLog });
+			this.sendLiveDraftLog(userID);
+		}
+	}
+
+	sendLiveDraftLog(userID: UserID) {
+		Connections[userID].socket.emit("draftLogLive", { log: this.draftLog });
+		if (!isDraftState(this.draftState)) return;
+		for (const playerID in this.draftState.players) {
+			if (this.draftState.players[playerID].isBot) continue;
+			const pendingPick = this.getPendingPick(playerID);
+			if (pendingPick) Connections[userID].socket.emit("draftLogLive", { userID: playerID, pendingPick });
 		}
 	}
 
@@ -1984,16 +1994,10 @@ export class Session implements IIndexable {
 			Connections[uid].socket.emit("startDraft", virtualPlayerData);
 		}
 
-		if (!this.ownerIsPlayer && this.owner && this.owner in Connections) {
+		if (!this.ownerIsPlayer && this.owner && this.owner in Connections)
 			Connections[this.owner].socket.emit("startDraft", virtualPlayerData);
-			// Update draft log for live display if owner is not playing
-			if (this.shouldSendLiveUpdates())
-				Connections[this.owner].socket.emit("draftLogLive", {
-					log: this.draftLog,
-				});
-		}
 		this.toSpectators("startDraft", virtualPlayerData);
-		this.toSpectators("draftLogLive", { log: this.draftLog });
+		this.toLiveViewers("draftLogLive", { log: this.draftLog });
 
 		this.distributeBoosters();
 		return new SocketAck();
@@ -2345,8 +2349,10 @@ export class Session implements IIndexable {
 								if (this.draftLog) {
 									this.draftLog.boosters.push(additionalBooster[0].map((c) => c.id));
 									const getCard = this.getCustomGetCardFunction();
-									for (const card of additionalBooster[0])
-										this.draftLog.carddata[card.id] = getCard(card.id);
+									const addedCarddata: DraftLog["carddata"] = {};
+									for (const card of additionalBooster[0]) addedCarddata[card.id] = getCard(card.id);
+									Object.assign(this.draftLog.carddata, addedCarddata);
+									this.toLiveViewers("draftLogLive", { carddata: addedCarddata });
 								}
 								s.players[userID].boosters.unshift(additionalBooster[0]);
 								notify(`${Connections[userID].userName} added a booster to the draft.`);
@@ -2439,12 +2445,8 @@ export class Session implements IIndexable {
 				cards: pickedCards.map((idx) => booster[idx]),
 			};
 			this.updateDecklist(userID);
-			if (this.owner && this.shouldSendLiveUpdates()) {
-				Connections[this.owner].socket.emit("draftLogLive", pickUpdate);
-				Connections[this.owner].socket.emit("pickAlert", pickAlert);
-			}
-			this.toSpectators("draftLogLive", pickUpdate);
-			this.toSpectators("pickAlert", pickAlert);
+			this.toLiveViewers("draftLogLive", pickUpdate);
+			this.toLiveViewers("pickAlert", pickAlert);
 		}
 
 		if (s.players[userID].effect?.aetherSearcher) {
@@ -2743,8 +2745,7 @@ export class Session implements IIndexable {
 		};
 		this.draftLog?.users[userID].picks.push(pickData);
 
-		if (this.owner && this.shouldSendLiveUpdates())
-			Connections[this.owner]?.socket.emit("draftLogLive", { userID: userID, pick: pickData });
+		this.toLiveViewers("draftLogLive", { userID: userID, pick: pickData });
 
 		const cardsToRemove = pickedIndices.concat(burnedIndices);
 		cardsToRemove.sort((a, b) => b - a); // Remove last index first to avoid shifting indices
@@ -2770,6 +2771,21 @@ export class Session implements IIndexable {
 		const s = this.draftState;
 		if (!isDraftState(s)) return;
 		Connections[userID]?.socket.emit("draftState", s.syncData(userID));
+		this.toLiveViewers("draftLogLive", { userID, pendingPick: this.getPendingPick(userID) });
+	}
+
+	// The booster this player is about to pick from, as a draft log pick without a selection, for live viewers
+	getPendingPick(userID: UserID): DraftPick | null {
+		const s = this.draftState;
+		if (!isDraftState(s)) return null;
+		const booster = s.players[userID].boosters[0];
+		if (!booster) return null;
+		return {
+			packNum: s.boosterNumber,
+			pickNum: s.players[userID].pickNumber,
+			pick: [],
+			booster: booster.map((c) => c.id),
+		};
 	}
 
 	requestBotRecommendation(userID: UserID) {
@@ -3171,8 +3187,7 @@ export class Session implements IIndexable {
 			decklist: { hashes: this.draftLog.users[userID].decklist?.hashes },
 		};
 
-		if (this.owner && this.shouldSendLiveUpdates()) Connections[this.owner]?.socket.emit("draftLogLive", shareData);
-		this.toSpectators("draftLogLive", shareData);
+		this.toLiveViewers("draftLogLive", shareData);
 
 		if (!this.drafting) {
 			// Note: The session setting draftLogRecipients may have changed since the game ended.
@@ -3619,10 +3634,7 @@ export class Session implements IIndexable {
 				boosterNumber: this.draftState.boosterNumber,
 			});
 			// Update draft log for live display if owner in not playing
-			if (this.shouldSendLiveUpdates())
-				Connections[userID].socket.emit("draftLogLive", {
-					log: this.draftLog,
-				});
+			if (this.shouldSendLiveUpdates()) this.sendLiveDraftLog(userID);
 		} else {
 			Connections[userID].socket.emit("sessionOptions", {
 				virtualPlayersData: this.getSortedVirtualPlayerData(),
@@ -3956,6 +3968,12 @@ export class Session implements IIndexable {
 	// Emit to all connected spectators. The non-playing owner is notified separately at each call site.
 	toSpectators<T extends keyof ServerToClientEvents>(eventKey: T, ...args: Parameters<ServerToClientEvents[T]>) {
 		for (const uid of this.spectators) Connections[uid]?.socket.emit(eventKey, ...args);
+	}
+
+	// Emit to everyone following the live draft log: spectators and the non-playing owner
+	toLiveViewers<T extends keyof ServerToClientEvents>(eventKey: T, ...args: Parameters<ServerToClientEvents[T]>) {
+		if (this.owner && this.shouldSendLiveUpdates()) Connections[this.owner]?.socket.emit(eventKey, ...args);
+		this.toSpectators(eventKey, ...args);
 	}
 
 	emitToConnectedUsers<T extends keyof ServerToClientEvents>(
