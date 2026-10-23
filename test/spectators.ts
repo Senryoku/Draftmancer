@@ -11,9 +11,12 @@ import {
 	disableLogs,
 	waitForClientDisconnects,
 	waitForSocket,
+	waitFor,
 	ackNoError,
 	getUID,
 } from "./src/common.js";
+import { DraftPick } from "../src/DraftLog.js";
+import { DraftState } from "../src/DraftState.js";
 
 describe("Spectators", function () {
 	let clients: ReturnType<typeof makeClients> = [];
@@ -199,7 +202,9 @@ describe("Spectators", function () {
 		const secondSpectatorUserID = "SpectatorID2";
 		let secondSpectator: ReturnType<typeof connectClient>;
 		const clientStates: { [uid: string]: { pickNumber: number; booster: unknown[] } } = {};
+		const pendingPicks: { [uid: string]: DraftPick | null } = {};
 		let spectatedPicks = 0;
+		const spectatedPickers = new Set<string>();
 		let pickAlerts = 0;
 		let playerSawSpectatorChat = false;
 
@@ -230,6 +235,9 @@ describe("Spectators", function () {
 				logReceived = true;
 				checkDone();
 			});
+			spectator.on("draftLogLive", (data) => {
+				if (data.pendingPick !== undefined) pendingPicks[data.userID!] = data.pendingPick;
+			});
 			for (const c of clients)
 				c.once("draftState", (s) => {
 					const state = s as { pickNumber: number; booster: unknown[] };
@@ -238,9 +246,29 @@ describe("Spectators", function () {
 			clients[ownerIdx].emit("startDraft", ackNoError);
 		});
 
+		it("The spectator receives each player's booster before their first pick.", function (done) {
+			waitFor(
+				() => clients.every((c) => pendingPicks[getUID(c)] && clientStates[getUID(c)]),
+				() => {
+					for (const c of clients) {
+						const pendingPick = pendingPicks[getUID(c)]!;
+						const playerBooster = clientStates[getUID(c)].booster as { id: string }[];
+						expect(pendingPick.packNum).to.equal(0);
+						expect(pendingPick.pickNum).to.equal(0);
+						expect(pendingPick.pick).to.be.empty;
+						expect(pendingPick.booster).to.deep.equal(playerBooster.map((card) => card.id));
+					}
+					done();
+				}
+			);
+		});
+
 		it("Picks are streamed to the spectator even with draftLogRecipients set to none.", function (done) {
 			spectator.on("draftLogLive", (data) => {
-				if (data.pick) ++spectatedPicks;
+				if (data.pick) {
+					++spectatedPicks;
+					spectatedPickers.add(data.userID!);
+				}
 			});
 			spectator.on("pickAlert", () => {
 				++pickAlerts;
@@ -252,6 +280,29 @@ describe("Spectators", function () {
 			for (const c of clients) c.emit("pickCard", { pickedCards: [0], burnedCards: [] }, ackNoError);
 		});
 
+		it("Bot picks are streamed to the spectator.", function (done) {
+			const draftState = Sessions[sessionID].draftState as DraftState;
+			const botIDs = Object.keys(draftState.players).filter((uid) => draftState.players[uid].isBot);
+			waitFor(
+				() => botIDs.every((uid) => spectatedPickers.has(uid)),
+				() => done()
+			);
+		});
+
+		it("After a pick, the spectator receives the player's next booster.", function (done) {
+			waitFor(
+				() => clients.every((c) => pendingPicks[getUID(c)]?.pickNum === 1),
+				() => {
+					const firstBoosterSize = (clientStates[getUID(clients[0])].booster as unknown[]).length;
+					for (const c of clients) {
+						expect(pendingPicks[getUID(c)]!.pick).to.be.empty;
+						expect(pendingPicks[getUID(c)]!.booster).to.have.lengthOf(firstBoosterSize - 1);
+					}
+					done();
+				}
+			);
+		});
+
 		it("A spectator joining mid-draft receives the catch-up snapshot.", function (done) {
 			secondSpectator = connectClient({
 				userID: secondSpectatorUserID,
@@ -259,10 +310,19 @@ describe("Spectators", function () {
 				userName: "Spectator2",
 				spectate: spectateKey,
 			});
+			const joinedPendingPicks: { [uid: string]: DraftPick } = {};
 			secondSpectator.once("draftLogLive", (data) => {
 				expect(data.log).to.exist;
 				expect(Sessions[sessionID].spectators.has(secondSpectatorUserID)).to.be.true;
-				done();
+				secondSpectator.on("draftLogLive", (data) => {
+					if (data.pendingPick) joinedPendingPicks[data.userID!] = data.pendingPick;
+					if (clients.every((c) => joinedPendingPicks[getUID(c)])) {
+						secondSpectator.off("draftLogLive");
+						for (const c of clients)
+							expect(joinedPendingPicks[getUID(c)]).to.deep.equal(pendingPicks[getUID(c)]);
+						done();
+					}
+				});
 			});
 		});
 
