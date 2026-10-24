@@ -9,6 +9,7 @@
 							:class="{ disabled: pack <= 0 && pick <= 0 }"
 							icon="fa-solid fa-chevron-left"
 							class="clickable"
+							v-tooltip="'Previous pick'"
 							@click="prevPick"
 						/>
 						<label>Pack #</label>
@@ -30,13 +31,14 @@
 							}"
 							icon="fa-solid fa-chevron-right"
 							class="clickable"
+							v-tooltip="'Next pick'"
 							@click="nextPick"
 						/>
 						<font-awesome-icon
 							:key="`latest-${unseenPicks}`"
 							:class="{ disabled: onLatestPick, 'new-pick': hasUnseenPicks }"
 							icon="fa-solid fa-angle-double-right"
-							class="clickable"
+							class="clickable jump-to-latest"
 							v-tooltip="'Jump to the newest pick'"
 							@click="jumpToLatest"
 						/>
@@ -346,6 +348,10 @@ export default defineComponent({
 
 .draft-log-live-instructions {
 	text-align: center;
+}
+
+.jump-to-latest {
+	margin-left: 0.4em;
 }
 
 .new-pick {
