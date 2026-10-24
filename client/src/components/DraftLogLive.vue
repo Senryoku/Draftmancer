@@ -4,11 +4,12 @@
 			<div v-if="player && player in draftlog.users">
 				<div class="draft-log-live-title">
 					<h2>Live Review: {{ draftlog.users[player].userName }}</h2>
-					<span v-if="player in draftlog.users && draftlog.users[player].picks.length > 0">
+					<span v-if="picksPerPack.length > 0">
 						<font-awesome-icon
 							:class="{ disabled: pack <= 0 && pick <= 0 }"
 							icon="fa-solid fa-chevron-left"
 							class="clickable"
+							v-tooltip="'Previous pick'"
 							@click="prevPick"
 						/>
 						<label>Pack #</label>
@@ -30,13 +31,22 @@
 							}"
 							icon="fa-solid fa-chevron-right"
 							class="clickable"
+							v-tooltip="'Next pick'"
 							@click="nextPick"
+						/>
+						<font-awesome-icon
+							:key="`latest-${unseenPicks}`"
+							:class="{ disabled: onLatestPick, 'new-pick': hasUnseenPicks }"
+							icon="fa-solid fa-angle-double-right"
+							class="clickable jump-to-latest"
+							v-tooltip="'Jump to the newest pick'"
+							@click="jumpToLatest"
 						/>
 						<h2>{{ pickNames }}</h2>
 						<scale-slider v-model.number="cardScale" style="float: right" />
 					</span>
 				</div>
-				<template v-if="draftlog.users[player].picks.length === 0">
+				<template v-if="picksPerPack.length === 0">
 					<p>Waiting for {{ draftlog.users[player].userName }} to make their first pick...</p>
 				</template>
 				<template v-else>
@@ -127,6 +137,7 @@ export default defineComponent({
 	props: {
 		show: { type: Boolean, default: true },
 		draftlog: { type: Object as PropType<DraftLog>, required: true },
+		pendingPicks: { type: Object as PropType<Record<UserID, DraftPick>>, default: () => ({}) },
 		language: { type: String as PropType<Language>, required: true },
 	},
 	data() {
@@ -138,6 +149,7 @@ export default defineComponent({
 			eventListeners: [] as { element: HTMLElement; callback: () => void }[],
 			pickTransition: "right",
 			cardScale: 1,
+			unseenPicks: 0,
 		};
 	},
 	mounted() {
@@ -164,12 +176,14 @@ export default defineComponent({
 
 			this.pack = 0;
 			this.pick = 0;
+			this.unseenPicks = 0;
 			// Get to the last pick once computed values are updated.
-			if (this.picksPerPack.length > 0)
-				this.$nextTick(() => {
-					this.pack = this.picksPerPack.length - 1;
-					this.pick = this.picksPerPack[this.pack].length - 1;
-				});
+			this.$nextTick(this.jumpToLatest);
+		},
+		jumpToLatest() {
+			if (this.picksPerPack.length === 0) return;
+			this.pack = this.picksPerPack.length - 1;
+			this.pick = this.picksPerPack[this.pack].length - 1;
 		},
 		prevPick() {
 			if (this.pick === 0) {
@@ -187,13 +201,6 @@ export default defineComponent({
 				this.pick = 0;
 			} else {
 				++this.pick;
-			}
-		},
-		newPick(data: { userID: string; userName: string; cards: UniqueCard[] }) {
-			// Skip to last pick if we're spectating this player
-			if (data.userID === this.player) {
-				this.pack = this.picksPerPack.length - 1;
-				this.pick = this.picksPerPack[this.pack].length - 1;
 			}
 		},
 		shortcuts(e: KeyboardEvent) {
@@ -230,6 +237,7 @@ export default defineComponent({
 		pickNames() {
 			if (this.picksPerPack.length === 0 || !this.validPick) return "";
 			const pick = this.picksPerPack[this.pack][this.pick];
+			if (pick.pick.length === 0) return "Picking...";
 			return pick.pick
 				.map((idx) => pick.booster[idx])
 				.map(this.getCardName)
@@ -254,13 +262,7 @@ export default defineComponent({
 			return this.draftlog.users[this.player!];
 		},
 		picksPerPack() {
-			if (
-				!this.selectedLog ||
-				!this.selectedLog.picks ||
-				this.selectedLog.picks.length === 0 ||
-				this.draftlog.type !== "Draft"
-			)
-				return [];
+			if (!this.selectedLog || !this.selectedLog.picks || this.draftlog.type !== "Draft") return [];
 			if (this.draftlog.version === "2.0") {
 				// Infer PackNumber & PickNumber
 				let r: DraftPick[][] = [];
@@ -286,13 +288,48 @@ export default defineComponent({
 					++currPick;
 				}
 				return r;
-			} else return groupPicksPerPack(this.selectedLog.picks as DraftPick[]);
+			}
+			const picks = this.selectedLog.picks as DraftPick[];
+			const pendingPick = this.pendingPicks[this.player!];
+			return groupPicksPerPack(pendingPick ? [...picks, pendingPick] : picks);
 		},
 		validPick() {
 			return this.pack < this.picksPerPack.length && this.pick < this.picksPerPack[this.pack].length;
 		},
+		pickIndex() {
+			let index = this.pick;
+			for (let p = 0; p < this.pack && p < this.picksPerPack.length; ++p) index += this.picksPerPack[p].length;
+			return index;
+		},
+		totalPicks() {
+			let total = 0;
+			for (const packPicks of this.picksPerPack) total += packPicks.length;
+			return total;
+		},
+		onLatestPick() {
+			return this.pickIndex === this.totalPicks - 1;
+		},
+		hasUnseenPicks() {
+			return this.unseenPicks > 0 && !this.onLatestPick;
+		},
+		livePosition() {
+			return { player: this.player, totalPicks: this.totalPicks };
+		},
 	},
 	watch: {
+		livePosition(current, previous) {
+			if (current.player !== previous.player || current.totalPicks === previous.totalPicks) return;
+			if (current.totalPicks < previous.totalPicks) {
+				if (!this.validPick) this.jumpToLatest();
+				return;
+			}
+			const wasOnLatestPick = previous.totalPicks === 0 || this.pickIndex === previous.totalPicks - 1;
+			if (wasOnLatestPick) this.jumpToLatest();
+			else ++this.unseenPicks;
+		},
+		onLatestPick(isLatest) {
+			if (isLatest) this.unseenPicks = 0;
+		},
 		pick(n, o) {
 			if (n < o) this.pickTransition = "right";
 			else this.pickTransition = "left";
@@ -314,5 +351,26 @@ export default defineComponent({
 
 .draft-log-live-instructions {
 	text-align: center;
+}
+
+.jump-to-latest {
+	margin-left: 0.4em;
+}
+
+.new-pick {
+	color: #00da0b;
+	animation: new-pick-pulse 1.5s ease-out;
+}
+
+@keyframes new-pick-pulse {
+	0%,
+	40% {
+		transform: scale(1.5);
+		filter: drop-shadow(#00da0b 0px 0px 6px);
+	}
+	100% {
+		transform: scale(1);
+		filter: none;
+	}
 }
 </style>

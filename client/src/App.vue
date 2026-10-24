@@ -775,6 +775,7 @@
 							>
 								<DraftLogLiveComponent
 									:draftlog="draftLogLive"
+									:pendingPicks="draftLogLivePendingPicks"
 									:show="['owner', 'delayed', 'everyone'].includes(draftLogRecipients)"
 									:language="language"
 									:key="draftLogLive.time"

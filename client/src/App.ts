@@ -10,7 +10,7 @@ import {
 	UserData,
 } from "../../src/Session/SessionTypes";
 import { ArenaID, Card, CardID, DeckList, PlainCollection, UniqueCard, UniqueCardID } from "@/CardTypes";
-import type { DraftLog } from "@/DraftLog";
+import type { DraftLog, DraftPick } from "@/DraftLog";
 import type { BotScores } from "@/Bot";
 import type { WinstonDraftSyncData } from "@/WinstonDraft";
 import type { WinchesterDraftSyncData } from "@/WinchesterDraft";
@@ -393,6 +393,7 @@ export default defineComponent({
 			draftLogs: [] as DraftLog[],
 			currentDraftLog: null as DraftLog | null,
 			draftLogLive: null as DraftLog | null,
+			draftLogLivePendingPicks: {} as Record<UserID, DraftPick>,
 			bracket: null as IBracket | null,
 			virtualPlayersData: null as Record<UserID, UserData> | null,
 
@@ -1375,11 +1376,20 @@ export default defineComponent({
 			});
 
 			this.socket.on("draftLogLive", (data) => {
-				if (data.log) this.draftLogLive = data.log;
+				if (data.log) {
+					this.draftLogLive = data.log;
+					this.draftLogLivePendingPicks = {};
+				}
 
 				if (!this.draftLogLive) return;
 
-				if (data.pick) this.draftLogLive.users[data.userID!].picks.push(data.pick);
+				if (data.carddata) Object.assign(this.draftLogLive.carddata, data.carddata);
+				if (data.pick) {
+					this.draftLogLive.users[data.userID!].picks.push(data.pick);
+					delete this.draftLogLivePendingPicks[data.userID!];
+				}
+				if (data.pendingPick) this.draftLogLivePendingPicks[data.userID!] = data.pendingPick;
+				else if (data.pendingPick === null) delete this.draftLogLivePendingPicks[data.userID!];
 				if (data.decklist) {
 					const decklist: Partial<DeckList> = data.decklist;
 					if (!decklist.main) decklist.main = [];
@@ -1395,7 +1405,6 @@ export default defineComponent({
 						.map((s) => (s.printed_names[this.language] ? s.printed_names[this.language] : s.name))
 						.join(", ")}!`
 				);
-				this.draftLogLiveComponentRef?.newPick(data);
 			});
 
 			this.socket.on("selectJumpstartPacks", this.selectJumpstartPacks);
