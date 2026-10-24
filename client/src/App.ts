@@ -1395,7 +1395,6 @@ export default defineComponent({
 						.map((s) => (s.printed_names[this.language] ? s.printed_names[this.language] : s.name))
 						.join(", ")}!`
 				);
-				this.draftLogLiveComponentRef?.newPick(data);
 			});
 
 			this.socket.on("selectJumpstartPacks", this.selectJumpstartPacks);
