@@ -1829,8 +1829,8 @@ export default defineComponent({
 				const state = this.draftState ?? this.rochesterDraftState!;
 				if (!state.booster) return;
 
-				const selectedCards = this.selectedCards;
-				const burningCards = this.burningCards;
+				const selectedCards = [...this.selectedCards];
+				const burningCards = [...this.burningCards];
 				const toSideboard = options?.toSideboard;
 
 				const pickedCardIndices = selectedCards.map((cuid) =>
