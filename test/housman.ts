@@ -276,38 +276,34 @@ for (const settings of Settings)
 			this.timeout(2000);
 			let draftEnded = 0;
 
-			let updatedClients = 0;
+			// Clients can receive messages in any order relative to each other, so neither count depends on it
+			let exchangeEvents = 0;
+			const syncedClients = new Set<string>();
 			for (let c = 0; c < clients.length; ++c) {
 				clients[c].on("housmanDraftExchange", function (index, card, currentPlayer, exchangeNum) {
-					++updatedClients;
+					++exchangeEvents;
 					expect(index).to.exist;
 					expect(card).to.exist;
 					expect(currentPlayer).to.exist;
 					states[getUID(clients[c])].revealedCards[index] = card;
 					states[getUID(clients[c])].currentPlayer = currentPlayer;
 					states[getUID(clients[c])].exchangeNum = exchangeNum;
-					if (updatedClients === clients.length && exchangeNum < settings.exchangeCount * clients.length) {
-						updatedClients = 0;
+					const everyClientReceivedIt = exchangeEvents % clients.length === 0;
+					if (everyClientReceivedIt && exchangeNum < settings.exchangeCount * clients.length)
+						randomPick(getCurrentPlayer(), states[getUID(getCurrentPlayer())]);
+				});
+				clients[c].on("housmanDraftSync", function (state) {
+					states[getUID(clients[c])] = state;
+					syncedClients.add(getUID(clients[c]));
+					if (syncedClients.size === clients.length) {
+						syncedClients.clear();
 						randomPick(getCurrentPlayer(), states[getUID(getCurrentPlayer())]);
 					}
-				});
-				clients[c].on("housmanDraftRoundEnd", () => {
-					updatedClients = 0;
-
-					clients[c].once("housmanDraftSync", function (state) {
-						++updatedClients;
-						states[getUID(clients[c])] = state;
-						if (updatedClients === clients.length) {
-							updatedClients = 0;
-							randomPick(getCurrentPlayer(), states[getUID(getCurrentPlayer())]);
-						}
-					});
 				});
 				clients[c].once("housmanDraftEnd", function () {
 					draftEnded += 1;
 					clients[c].removeListener("housmanDraftExchange");
 					clients[c].removeListener("housmanDraftSync");
-					clients[c].removeListener("housmanDraftRoundEnd");
 					if (draftEnded === clients.length) done();
 				});
 			}
