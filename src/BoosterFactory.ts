@@ -5541,7 +5541,16 @@ export class TRKBoosterFactory extends BoosterFactory {
 	static readonly HolodeckBasics = TRKBoosterFactory.filter(312, 316);
 	static readonly Basics = TRKBoosterFactory.filter(317, 326);
 	static readonly CommonDualLands = [
-		"3223e5db-5cc4-42f9-ae9e-ff58abc7c390", // TODO
+		"0e9e72ef-3e34-4d19-aec0-b5e1ba84d244",
+		"ff5254a6-4961-4604-b65b-2eb0ce9b1c82",
+		"d634424f-9148-46a5-95e3-4965a9226bb4",
+		"5278d354-97c4-4c21-a902-2f9252b151eb",
+		"17fab75f-7ff9-4c50-a6f7-03a85cd275bf",
+		"dec37ff4-d6e9-4b87-865b-125b17162465",
+		"f1558d93-8a8a-45e0-bcdc-e6cd42f716dc",
+		"c89e7680-9868-4fea-9aaf-6af03bfa0692",
+		"1bce111b-b07c-4589-9b6d-f0b5f320808c",
+		"fc3fe0da-8d93-4f1c-9aad-c2fdc9fe34fc",
 	];
 	static readonly BorderlessStationLands = TRKBoosterFactory.filter(332, 337);
 	static readonly Scene = TRKBoosterFactory.filter(338, 362);
@@ -5633,7 +5642,7 @@ export class TRKBoosterFactory extends BoosterFactory {
 					this.lcarsShockLand.rare,
 				]
 			);
-			booster.push(pickCard(pool, booster));
+			booster.push(pickCard(pool, booster, { foil: true }));
 		}
 
 		// 1 Rare or mythic rare card
@@ -5644,7 +5653,8 @@ export class TRKBoosterFactory extends BoosterFactory {
 		//     A rare (1.5%) or mythic rare (less than 1%) classic Enterprise card
 		//     A rare (1%) or mythic rare (less than 1%) borderless land card
 		//     An LCARS shock land (1.4%)
-		{
+		while (updatedTargets.rare > 0) {
+			updatedTargets.rare -= 1;
 			const unknown_rates = (100 - (80.1 + 12.4 + 1 + 1.8 + 1.5 + 1 + 1.4)) / 5;
 			const pool = chooseWeighted(
 				[

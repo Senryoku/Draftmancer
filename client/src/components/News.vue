@@ -1,6 +1,13 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
+			<em>October 30, 2026</em>
+			<p>
+				<img src="img/sets/trk.svg" class="set-icon" style="--invertedness: 100%" alt="TRK" /> Star Trek (TRK)
+				is now available.
+			</p>
+		</div>
+		<div class="news">
 			<em>September 19, 2026</em>
 			<p>
 				<img src="img/sets/mbc.svg" class="set-icon" style="--invertedness: 100%" alt="MBC" /> Mystery Booster
@@ -45,27 +52,6 @@
 					<a href="https://github.com/MNoya" target="_blank">Noya</a> for implementing this feature!
 				</li>
 			</ul>
-		</div>
-		<div class="news">
-			<em>April 10, 2026</em>
-			<p>
-				<img src="img/sets/sos.svg" class="set-icon" style="--invertedness: 100%" alt="SOS" /> Secrets of
-				Strixhaven (SOS) is now available.
-			</p>
-		</div>
-		<div class="news">
-			<em>February 21, 2026</em>
-			<p>
-				<img src="img/sets/tmt.svg" class="set-icon" style="--invertedness: 100%" alt="TMT" /> Teenage Mutant
-				Ninja Turtles (TMT) is now available.
-			</p>
-		</div>
-		<div class="news">
-			<em>January 10, 2026</em>
-			<p>
-				<img src="img/sets/ecl.svg" class="set-icon" style="--invertedness: 100%" alt="ECL" /> Lorwyn Eclipsed
-				(ECL) is now available!
-			</p>
 		</div>
 	</div>
 </template>
