@@ -1565,6 +1565,15 @@
         "fullName": "Modern Event Deck 2014",
         "icon": "img/sets/md1.svg"
     },
+    "mdc": {
+        "code": "mdc",
+        "fullName": "Darkhold Destiny Commander",
+        "block": "Commander"
+    },
+    "mdd": {
+        "code": "mdd",
+        "fullName": "Marvel: Darkhold Destiny"
+    },
     "me1": {
         "code": "me1",
         "fullName": "Masters Edition",
@@ -2465,6 +2474,10 @@
         "fullName": "MagicFest 2026",
         "icon": "img/sets/pf26.svg"
     },
+    "pf27": {
+        "code": "pf27",
+        "fullName": "MagicFest 2027"
+    },
     "pfdn": {
         "code": "pfdn",
         "fullName": "Foundations Promos",
@@ -2474,6 +2487,10 @@
         "code": "pfin",
         "fullName": "Final Fantasy Promos",
         "icon": "img/sets/pfin.svg"
+    },
+    "pfra": {
+        "code": "pfra",
+        "fullName": "Reality Fracture Promos"
     },
     "pfrf": {
         "code": "pfrf",
@@ -3421,6 +3438,10 @@
         "fullName": "Wizards Play Network 2026",
         "icon": "img/sets/pw26.svg"
     },
+    "pw27": {
+        "code": "pw27",
+        "fullName": "Wizards Play Network 2027"
+    },
     "pwar": {
         "code": "pwar",
         "fullName": "War of the Spark Promos",
@@ -3906,6 +3927,10 @@
         "block": "Commander",
         "icon": "img/sets/tmc.svg"
     },
+    "tmdd": {
+        "code": "tmdd",
+        "fullName": "Marvel: Darkhold Destiny Tokens"
+    },
     "tmp": {
         "code": "tmp",
         "fullName": "Tempest",
@@ -4281,6 +4306,10 @@
         "code": "yeoe",
         "fullName": "Alchemy: Edge of Eternities",
         "icon": "img/sets/yeoe.svg"
+    },
+    "yfra": {
+        "code": "yfra",
+        "fullName": "Alchemy: Reality Fracture"
     },
     "ylci": {
         "code": "ylci",

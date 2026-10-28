@@ -306,7 +306,7 @@ describe("Sets content", function () {
 		msh: { common: 81 + 10, uncommon: 100, rare: 60, mythic: 25 },
 		hob: { common: 60 + 5, uncommon: 55, rare: 53, mythic: 15 },
 		fra: { common: 71 + 10, uncommon: 43 + 66, rare: 50 + 14, mythic: 20 + 6 },
-		trk: { common: 81 + 10, uncommon: 110, rare: 60, mythic: 20 }, // FIXME
+		trk: { common: 81 + 10, uncommon: 110, rare: 80, mythic: 25 },
 	};
 
 	beforeEach(function (done) {
