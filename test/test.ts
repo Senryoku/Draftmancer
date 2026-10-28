@@ -306,6 +306,7 @@ describe("Sets content", function () {
 		msh: { common: 81 + 10, uncommon: 100, rare: 60, mythic: 25 },
 		hob: { common: 60 + 5, uncommon: 55, rare: 53, mythic: 15 },
 		fra: { common: 71 + 10, uncommon: 43 + 66, rare: 50 + 14, mythic: 20 + 6 },
+		trk: { common: 81 + 10, uncommon: 110, rare: 60, mythic: 20 }, // FIXME
 	};
 
 	beforeEach(function (done) {
@@ -868,6 +869,7 @@ describe("Single Draft (Two Players)", function () {
 							(set === "sos" && (c.set === "spg" || c.set === "soa")) ||
 							(set === "msh" && c.set === "mar") ||
 							(set === "fra" && c.set === "spg") ||
+							(set === "trk" && c.set === "sds") ||
 							set === "mbc" // Lots of sets there.
 					),
 					`All cards in booster should be of the desired set, got [${[...new Set(b.map((c) => c.set))]}].`
