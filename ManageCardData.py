@@ -201,7 +201,7 @@ print("AKRCards length: {}".format(len(AKRCards.keys())))
 print("KLRCards length: {}".format(len(KLRCards.keys())))
 
 opener = urllib.request.build_opener()
-opener.addheaders = [("User-agent", "Mozilla/5.0"), ("Accept", "*/*")]
+opener.addheaders = [("User-Agent", "DraftmancerDBUpdater/1.0.0"), ("Accept", "*/*")]
 urllib.request.install_opener(opener)
 
 # Get mana symbols info from Scryfall
@@ -747,6 +747,8 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
                 selection["in_booster"] = safeInBoosterCheck(c, 188)
             case "fra":
                 selection["in_booster"] = safeInBoosterCheck(c, 280)
+            case "trk":
+                selection["in_booster"] = safeInBoosterCheck(c, 306)
 
         if c["collector_number"].endswith("†"):
             selection["in_booster"] = False
@@ -1276,7 +1278,6 @@ constants["PrimarySets"] = [
         "aa2",
         "mar",
         "omb",
-        "trk",
         "mdd"
     ]
 ]  # Exclude some codes that are actually part of larger sets (tsb, fmb1, h1r... see subsets), or aren't out yet
