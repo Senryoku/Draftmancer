@@ -100,12 +100,12 @@ const sourceInfo = computed(() => {
 
 <style scoped>
 .card {
-	margin: 0.75em;
+	margin: var(--booster-card-margin, 0.75em);
 	transition: transform 0.08s ease-out;
 	will-change: transform;
 
-	width: calc(200px * var(--booster-card-scale));
-	height: calc(282px * var(--booster-card-scale));
+	width: calc(var(--booster-card-base-width, 200px) * var(--booster-card-scale));
+	height: calc(var(--booster-card-base-width, 200px) * 1.41 * var(--booster-card-scale));
 }
 
 .missing-warning {
