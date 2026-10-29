@@ -221,7 +221,7 @@ const communities = ref([
 	},
 	{
 		name: "Limited Level-Ups",
-		brief: "A community for players looking to improve at Limited Magic.<br />We run weekly pod drafts of the newest set, with draft recaps and standings recorded on our site.",
+		brief: "A community for players looking to improve at Limited Magic.<br />We run daily pod drafts of the newest set, with draft recaps and standings recorded on our site.",
 		icon: "limited_level_ups.webp",
 		tags: ["Limited", "Pod Draft", "MTGA", "Podcast", "Leaderboard"],
 		links: {
