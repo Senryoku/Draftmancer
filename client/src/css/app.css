@@ -49,10 +49,15 @@ footer {
 	background: linear-gradient(to top, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0));
 	display: flex;
 	justify-content: flex-end;
+	gap: 2em;
 }
 
-footer span {
-	margin-left: 2em;
+@media (max-width: 600px) {
+	footer {
+		flex-direction: column;
+		align-items: center;
+		gap: 0.25em;
+	}
 }
 
 .disconnected-icon {
