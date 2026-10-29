@@ -123,6 +123,8 @@ export interface ServerToClientEvents {
 		log?: DraftLog;
 		userID?: UserID;
 		pick?: DraftPick;
+		pendingPick?: DraftPick | null;
+		carddata?: DraftLog["carddata"];
 		decklist?:
 			| DeckList
 			| {

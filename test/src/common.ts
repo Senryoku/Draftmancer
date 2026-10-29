@@ -137,6 +137,11 @@ export const waitForSocket = (socket: Socket, done: Mocha.Done) => {
 		}, 1);
 };
 
+export const waitFor = (condition: () => boolean, then: () => void) => {
+	if (condition()) then();
+	else setTimeout(() => waitFor(condition, then), 1);
+};
+
 // Wait for the sockets to be disconnected, I haven't found another way...
 export const waitForClientDisconnects = (done: Mocha.Done) => {
 	if (Object.keys(Connections).length === 0) {
