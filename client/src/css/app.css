@@ -1444,48 +1444,6 @@ ul.player-list {
 	}
 }
 
-@media (max-width: 600px) {
-	.draft-watching .draft-watching-live-log .draft-log-live-title {
-		h2 {
-			margin: 0 0.25em;
-			font-size: 1.25em;
-		}
-
-		> h2 {
-			display: block;
-			white-space: nowrap;
-			overflow: hidden;
-			text-overflow: ellipsis;
-		}
-
-		/* Selectors and zoom slider share the first row, the picked card name goes below them */
-		> span {
-			display: flex;
-			flex-wrap: wrap;
-			align-items: center;
-			gap: 0.25em;
-
-			> label,
-			> select {
-				margin: 0;
-			}
-
-			> h2 {
-				order: 1;
-				flex-basis: 100%;
-			}
-		}
-
-		.scale-slider {
-			margin-left: auto;
-
-			input {
-				width: 3em;
-			}
-		}
-	}
-}
-
 .session-spectators {
 	position: relative;
 	display: flex;
