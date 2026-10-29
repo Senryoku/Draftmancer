@@ -999,6 +999,15 @@ ul.player-list {
 	}
 }
 
+@media (max-width: 600px) {
+	ul.player-list {
+		gap: 0.25em 0.4em;
+	}
+	.player-list li {
+		padding: 0.25em 0.4em;
+	}
+}
+
 .move-player {
 	color: #555;
 	/*font-size: 0.8em;*/
@@ -1087,17 +1096,18 @@ ul.player-list {
 	&.booster-open-leave-active,
 	&.booster-cards-leave-active {
 		transition: all 0.5s;
-		width: calc(var(--booster-card-scale) * 200px);
+		width: calc(var(--booster-card-scale) * var(--booster-card-base-width, 200px));
 		overflow: visible;
 
 		.card-image {
-			width: calc(var(--booster-card-scale) * 200px);
+			width: calc(var(--booster-card-scale) * var(--booster-card-base-width, 200px));
 		}
 	}
 
 	&.booster-open-leave-to,
 	&.booster-cards-leave-to {
-		transform: translateY(250px) translateX(calc(var(--booster-card-scale) * -100px)) !important; /* translateX compensates for width change */
+		transform: translateY(250px)
+			translateX(calc(var(--booster-card-scale) * var(--booster-card-base-width, 200px) / -2)) !important; /* translateX compensates for width change */
 		z-index: 2;
 		opacity: 0;
 		width: 0;
@@ -1143,7 +1153,16 @@ ul.player-list {
 
 .booster {
 	position: relative;
-	min-height: calc(var(--booster-card-scale) * 282px + 2 * 0.75em);
+	min-height: calc(var(--booster-card-scale) * var(--booster-card-base-width, 200px) * 1.41 + 2 * 0.75em);
+}
+
+/* Fit two cards per row, the zoom slider still scales them */
+@media (max-width: 600px) {
+	.booster,
+	.draft-watching-live-log .card-container {
+		--booster-card-base-width: min(200px, 50vw - 1.75em);
+		--booster-card-margin: 0.25em;
+	}
 }
 
 .booster-waiting .wait {

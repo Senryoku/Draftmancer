@@ -118,7 +118,7 @@ const housmanDraftPick = computed(() => props.pick as HousmanDraftPick);
 .booster-card,
 .grid3x3 .card,
 .housman-pick .card {
-	margin: 0.75em;
+	margin: var(--booster-card-margin, 0.75em);
 }
 
 .grid3x3 {

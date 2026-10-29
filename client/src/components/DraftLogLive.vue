@@ -4,48 +4,50 @@
 			<div v-if="player && player in draftlog.users">
 				<div class="draft-log-live-title">
 					<h2>Live Review: {{ draftlog.users[player].userName }}</h2>
-					<span v-if="picksPerPack.length > 0">
-						<font-awesome-icon
-							:class="{ disabled: pack <= 0 && pick <= 0 }"
-							icon="fa-solid fa-chevron-left"
-							class="clickable"
-							v-tooltip="'Previous pick'"
-							@click="prevPick"
-						/>
-						<label>Pack #</label>
-						<select v-model="pack" style="width: 4em">
-							<option v-for="index in picksPerPack.length" :key="index" :value="index - 1">
-								{{ index }}
-							</option>
-						</select>
-						,
-						<label>Pick #</label>
-						<select v-model="pick" style="width: 4em">
-							<option v-for="index in picksPerPack[pack].length" :key="index" :value="index - 1">
-								{{ index }}
-							</option>
-						</select>
-						<font-awesome-icon
-							:class="{
-								disabled: pack >= picksPerPack.length - 1 && pick >= picksPerPack[pack].length - 1,
-							}"
-							icon="fa-solid fa-chevron-right"
-							class="clickable"
-							v-tooltip="'Next pick'"
-							@click="nextPick"
-						/>
-						<font-awesome-icon
-							:key="`latest-${unseenPicks}`"
-							:class="{ disabled: onLatestPick, 'new-pick': hasUnseenPicks }"
-							icon="fa-solid fa-angle-double-right"
-							class="clickable jump-to-latest"
-							v-tooltip="'Jump to the newest pick'"
-							@click="jumpToLatest"
-						/>
+					<template v-if="picksPerPack.length > 0">
+						<span class="pick-controls">
+							<font-awesome-icon
+								:class="{ disabled: pack <= 0 && pick <= 0 }"
+								icon="fa-solid fa-chevron-left"
+								class="clickable"
+								v-tooltip="'Previous pick'"
+								@click="prevPick"
+							/>
+							<label>Pack #</label>
+							<select v-model="pack" style="width: 4em">
+								<option v-for="index in picksPerPack.length" :key="index" :value="index - 1">
+									{{ index }}
+								</option>
+							</select>
+							,
+							<label>Pick #</label>
+							<select v-model="pick" style="width: 4em">
+								<option v-for="index in picksPerPack[pack].length" :key="index" :value="index - 1">
+									{{ index }}
+								</option>
+							</select>
+							<font-awesome-icon
+								:class="{
+									disabled: pack >= picksPerPack.length - 1 && pick >= picksPerPack[pack].length - 1,
+								}"
+								icon="fa-solid fa-chevron-right"
+								class="clickable"
+								v-tooltip="'Next pick'"
+								@click="nextPick"
+							/>
+							<font-awesome-icon
+								:key="`latest-${unseenPicks}`"
+								:class="{ disabled: onLatestPick, 'new-pick': hasUnseenPicks }"
+								icon="fa-solid fa-angle-double-right"
+								class="clickable jump-to-latest"
+								v-tooltip="'Jump to the newest pick'"
+								@click="jumpToLatest"
+							/>
+						</span>
 						<h2>{{ pickNames }}</h2>
 						<span v-if="previousPickNames">Previous pick: {{ previousPickNames }}</span>
-						<scale-slider v-model.number="cardScale" style="float: right" />
-					</span>
+					</template>
+					<scale-slider v-model.number="cardScale" />
 				</div>
 				<template v-if="picksPerPack.length === 0">
 					<p>Waiting for {{ draftlog.users[player].userName }} to make their first pick...</p>
@@ -361,11 +363,52 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.draft-log-live-title h2 {
-	display: inline-block;
-	margin: 0;
-	margin-left: 1em;
-	margin-right: 1em;
+.draft-log-live-title {
+	display: flex;
+
+	h2 {
+		display: inline-block;
+		margin: 0;
+		margin-left: 1em;
+		margin-right: 1em;
+	}
+
+	.pick-controls {
+		text-wrap: nowrap;
+	}
+
+	:nth-last-child(2) {
+		flex-grow: 2;
+	}
+}
+
+@media (max-width: 1200px) {
+	.draft-log-live-title {
+		flex-wrap: wrap;
+		flex-wrap: balance; /* Not supported in Firefox yet */
+		justify-content: center;
+
+		:nth-last-child(2) {
+			flex-grow: unset;
+		}
+	}
+}
+
+@media (max-width: 700px) {
+	.draft-log-live-title {
+		flex-direction: column;
+		gap: 0.25em;
+		align-items: center;
+
+		> h2 {
+			display: block;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			margin: 0 0.25em;
+			font-size: 1.25em;
+		}
+	}
 }
 
 .draft-log-live-instructions {
