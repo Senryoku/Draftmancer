@@ -1,74 +1,4 @@
 {
-    "3f053af0-9a08-44e5-be57-6d0fabfde31a": {
-        "id": "3f053af0-9a08-44e5-be57-6d0fabfde31a",
-        "oracle_id": "1f0548f8-5dec-44b5-b5a9-e55fa4366e08",
-        "name": "Enchanter's Bane",
-        "mana_cost": "{1}{R}",
-        "set": "dsc",
-        "collector_number": "164",
-        "rarity": "rare",
-        "type": "Enchantment",
-        "subtypes": [],
-        "rating": 0.7882529628975514,
-        "in_booster": false,
-        "cmc": 2,
-        "colors": [
-            "R"
-        ],
-        "printed_names": {
-            "ja": "結界師の破滅",
-            "fr": "Fléau de l'enchanteur",
-            "it": "Flagello dell'Incantatore",
-            "de": "Verhängnis des Verzauberers",
-            "es": "Ruina del encantador"
-        },
-        "image_uris": {
-            "en": "https://cards.scryfall.io/crop/front/3/f/3f053af0-9a08-44e5-be57-6d0fabfde31a.webp?1783909612",
-            "ja": "https://cards.scryfall.io/crop/front/4/e/4e643fa0-4e71-4025-84f0-17ec02fa297b.webp?1782786518",
-            "fr": "https://cards.scryfall.io/crop/front/6/0/60c21933-a798-4de7-bbff-6bc94d38c7a6.webp?1782786516",
-            "it": "https://cards.scryfall.io/crop/front/9/f/9f344619-00a4-4fc1-8cc6-98c6bdd668f9.webp?1782786517",
-            "de": "https://cards.scryfall.io/crop/front/a/0/a01eb819-dee2-45f7-b069-92addb8cbea5.webp?1782786515",
-            "es": "https://cards.scryfall.io/crop/front/e/7/e7e69b06-19f1-4182-91ac-a7342b825b55.webp?1782786516"
-        }
-    },
-    "3f05e478-8712-41de-94af-ecb90432e562": {
-        "id": "3f05e478-8712-41de-94af-ecb90432e562",
-        "oracle_id": "3c9242fd-915b-4f6d-b4ee-830c9d80c9e8",
-        "name": "Desecrated Earth",
-        "mana_cost": "{4}{B}",
-        "set": "zen",
-        "collector_number": "86",
-        "rarity": "common",
-        "type": "Sorcery",
-        "subtypes": [],
-        "rating": 0.8306462649258141,
-        "in_booster": true,
-        "cmc": 5,
-        "colors": [
-            "B"
-        ],
-        "printed_names": {
-            "es": "Tierra profanada",
-            "zhs": "受渎土地",
-            "ja": "冒涜された地",
-            "pt": "Terra Profanada",
-            "de": "Entweihter Boden",
-            "ru": "Поруганная Земля",
-            "fr": "Terre profanée",
-            "it": "Terra Sconsacrata"
-        },
-        "image_uris": {
-            "es": "https://cards.scryfall.io/crop/front/0/2/02e2d7a9-5f49-41b7-8846-2750fed7489b.webp?1783000018",
-            "zhs": "https://cards.scryfall.io/crop/front/0/d/0db8d03d-f62a-4ecc-951c-e13ccf1eaf56.webp?1783000024",
-            "en": "https://cards.scryfall.io/crop/front/3/f/3f05e478-8712-41de-94af-ecb90432e562.webp?1783942155",
-            "ja": "https://cards.scryfall.io/crop/front/4/d/4df42aef-737e-40f2-84d7-cf8ce96ab23b.webp?1783000022",
-            "pt": "https://cards.scryfall.io/crop/front/5/0/50dc751e-1cc7-489f-9c95-70035d1ab08b.webp?1783000023",
-            "de": "https://cards.scryfall.io/crop/front/5/2/52d62ce4-fb7d-4d5e-be9f-7c93220129c8.webp?1783000018",
-            "ru": "https://cards.scryfall.io/crop/front/5/6/56f974c2-98ad-4f59-af15-f34b952a33b8.webp?1783000023",
-            "fr": "https://cards.scryfall.io/crop/front/6/9/69e4cc38-f82b-409c-99de-5fb493cd69c3.webp?1783000019",
-            "it": "https://cards.scryfall.io/crop/front/e/e/eefede47-a211-4537-9f92-565d216cf092.webp?1783000019"
-        }
-    },
     "3f05fde4-a866-459c-9a24-2884116ab647": {
         "id": "3f05fde4-a866-459c-9a24-2884116ab647",
         "oracle_id": "bd5eb181-6a69-4dc2-93a0-fa000291bc3d",
@@ -21328,6 +21258,30 @@
             "en": "https://cards.scryfall.io/crop/front/4/0/40a80610-5d34-4870-bc30-0c8dd3f08ac6.webp?1783940791"
         }
     },
+    "40a91407-3463-4a72-9a5d-497a877e7125": {
+        "id": "40a91407-3463-4a72-9a5d-497a877e7125",
+        "oracle_id": "51780f71-bf60-4208-94ea-76fa84790fb6",
+        "name": "Drivnod, Carnage Dominus",
+        "mana_cost": "{3}{B}{B}",
+        "set": "sds",
+        "collector_number": "10",
+        "rarity": "mythic",
+        "type": "Legendary Creature",
+        "subtypes": [
+            "Phyrexian",
+            "Horror"
+        ],
+        "rating": 1.3900211601084893,
+        "in_booster": false,
+        "cmc": 5,
+        "colors": [
+            "B"
+        ],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/4/0/40a91407-3463-4a72-9a5d-497a877e7125.webp?1793187385"
+        }
+    },
     "40a9270d-c5dd-45b8-863b-3a34f2d4717d": {
         "id": "40a9270d-c5dd-45b8-863b-3a34f2d4717d",
         "oracle_id": "9228f04c-506f-4453-a335-e66876b8ce8d",
@@ -25659,6 +25613,30 @@
             "zhs": "https://cards.scryfall.io/crop/front/e/0/e0b58e2d-9c45-4456-8c00-26d632efb190.webp?1783022084",
             "es": "https://cards.scryfall.io/crop/front/e/c/ec0a7d51-4baa-4dd9-b205-b818ccfb393d.webp?1783022081",
             "ja": "https://cards.scryfall.io/crop/front/f/6/f6969f49-4f68-4742-81e9-18ce7b48268a.webp?1783022083"
+        }
+    },
+    "40f61357-37b2-45b1-8163-69f016f794ec": {
+        "id": "40f61357-37b2-45b1-8163-69f016f794ec",
+        "oracle_id": "05c5f17e-40f9-4259-9b03-03683e1c5ba6",
+        "name": "Tuvok, Chief Tactical Officer",
+        "mana_cost": "{2}{U}",
+        "set": "trc",
+        "collector_number": "267",
+        "rarity": "rare",
+        "type": "Legendary Creature",
+        "subtypes": [
+            "Vulcan",
+            "Officer"
+        ],
+        "rating": 0.8,
+        "in_booster": false,
+        "cmc": 3,
+        "colors": [
+            "U"
+        ],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/4/0/40f61357-37b2-45b1-8163-69f016f794ec.webp?1793187800"
         }
     },
     "40f61de1-4e49-4640-a495-5abefd96babf": {
@@ -44090,6 +44068,27 @@
             "ja": "https://cards.scryfall.io/crop/front/c/2/c260e090-cebd-4abf-a4a3-a1895cfbdf7a.webp?1790693749"
         }
     },
+    "424c8a03-c9f0-4980-9b6e-9c344090ffb6": {
+        "id": "424c8a03-c9f0-4980-9b6e-9c344090ffb6",
+        "oracle_id": "028d6812-55db-40df-9288-89c2e478c76c",
+        "name": "The Destruction of Praxis",
+        "mana_cost": "{3}{B}{B}",
+        "set": "trk",
+        "collector_number": "538",
+        "rarity": "rare",
+        "type": "Sorcery",
+        "subtypes": [],
+        "rating": 0.8,
+        "in_booster": false,
+        "cmc": 5,
+        "colors": [
+            "B"
+        ],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/4/2/424c8a03-c9f0-4980-9b6e-9c344090ffb6.webp?1793188085"
+        }
+    },
     "424d7132-0f7a-48c7-beb6-37fc114113da": {
         "id": "424d7132-0f7a-48c7-beb6-37fc114113da",
         "oracle_id": "f2c19fba-9b06-461f-bb5e-e827ba41204d",
@@ -46241,6 +46240,30 @@
         "printed_names": {},
         "image_uris": {
             "en": "https://cards.scryfall.io/crop/front/4/2/426b896c-24f1-41d5-9aae-070d8e96fd35.webp?1783922601"
+        }
+    },
+    "426bd73c-67d2-4f9a-8fd9-214ccacb1d7d": {
+        "id": "426bd73c-67d2-4f9a-8fd9-214ccacb1d7d",
+        "oracle_id": "274b999f-f193-48fd-9a4a-0fdaf535e6c3",
+        "name": "Bruvac the Grandiloquent",
+        "mana_cost": "{2}{U}",
+        "set": "sds",
+        "collector_number": "8",
+        "rarity": "mythic",
+        "type": "Legendary Creature",
+        "subtypes": [
+            "Human",
+            "Advisor"
+        ],
+        "rating": 1.523505404471199,
+        "in_booster": false,
+        "cmc": 3,
+        "colors": [
+            "U"
+        ],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/4/2/426bd73c-67d2-4f9a-8fd9-214ccacb1d7d.webp?1793187341"
         }
     },
     "426d627e-bb88-4879-8d9f-db1babf22b15": {
@@ -54328,6 +54351,30 @@
         "image_uris": {
             "en": "https://cards.scryfall.io/crop/front/4/3/43085bc6-4d16-4a78-af31-b10cea602fc8.webp?1783907207",
             "ja": "https://cards.scryfall.io/crop/front/b/0/b0fc4a67-bf9b-4ea8-b084-671d5d71de4d.webp?1782774341"
+        }
+    },
+    "43091ed3-a412-48b4-8794-62c0a279e4b2": {
+        "id": "43091ed3-a412-48b4-8794-62c0a279e4b2",
+        "oracle_id": "15885e58-76a9-49fa-ae67-a0482aacd81c",
+        "name": "David and Carol Marcus, Creators",
+        "mana_cost": "{2}{G}",
+        "set": "trk",
+        "collector_number": "420",
+        "rarity": "uncommon",
+        "type": "Legendary Creature",
+        "subtypes": [
+            "Human",
+            "Scientist"
+        ],
+        "rating": 0.7,
+        "in_booster": false,
+        "cmc": 3,
+        "colors": [
+            "G"
+        ],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/4/3/43091ed3-a412-48b4-8794-62c0a279e4b2.webp?1793188053"
         }
     },
     "4309c38b-5e88-4bd2-8b8a-5193e607fecf": {
@@ -72388,7 +72435,7 @@
         ],
         "printed_names": {},
         "image_uris": {
-            "en": "https://cards.scryfall.io/crop/front/4/4/445de44d-8af9-4ea3-b165-9e8eb8939820.webp?1793160135"
+            "en": "https://cards.scryfall.io/crop/front/4/4/445de44d-8af9-4ea3-b165-9e8eb8939820.webp?1793187139"
         }
     },
     "445e3a0a-29a7-4dc0-80fe-569b9e751db3": {
@@ -80913,6 +80960,27 @@
             "it": "https://cards.scryfall.io/crop/front/4/8/48de447f-a9e5-40c9-86b8-d747b7f262c0.webp?1783051872",
             "ko": "https://cards.scryfall.io/crop/front/9/7/97a646ad-0351-45f8-a04b-15cb0513ef34.webp?1783051873",
             "zht": "https://cards.scryfall.io/crop/front/a/d/ad34da15-aa68-481d-b89e-1125eecc2b7d.webp?1783051875"
+        }
+    },
+    "44fc3020-1f50-4e26-a559-19a1784b0563": {
+        "id": "44fc3020-1f50-4e26-a559-19a1784b0563",
+        "oracle_id": "912d6e44-b479-4e07-88a8-9ab5132163f4",
+        "name": "Temporal Tribulation",
+        "mana_cost": "{2}{U}",
+        "set": "trc",
+        "collector_number": "265",
+        "rarity": "rare",
+        "type": "Instant",
+        "subtypes": [],
+        "rating": 0.8,
+        "in_booster": false,
+        "cmc": 3,
+        "colors": [
+            "U"
+        ],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/4/4/44fc3020-1f50-4e26-a559-19a1784b0563.webp?1793187793"
         }
     },
     "44fd0d1d-9422-4941-9491-8a8d64909f8e": {
@@ -89759,6 +89827,28 @@
             "en": "https://cards.scryfall.io/crop/front/4/5/459d175e-2b9c-4f30-be03-4e05cd3c68ef.webp?1783948274",
             "de": "https://cards.scryfall.io/crop/front/8/1/811dbe81-8081-4c04-916e-c3da9ecbaa29.webp?1783063113",
             "fr": "https://cards.scryfall.io/crop/front/d/4/d4bd8c8f-b2f6-4525-b4af-421f053b8f2f.webp?1783063113"
+        }
+    },
+    "459d313b-0c1a-41b7-8b7e-3a7d12b28ab9": {
+        "id": "459d313b-0c1a-41b7-8b7e-3a7d12b28ab9",
+        "oracle_id": "5dd0cc44-4647-4857-ad3b-22494099d08a",
+        "name": "Radiant Summit",
+        "mana_cost": "",
+        "set": "trc",
+        "collector_number": "395",
+        "rarity": "rare",
+        "type": "Land",
+        "subtypes": [
+            "Mountain",
+            "Plains"
+        ],
+        "rating": 1.289856062497377,
+        "in_booster": false,
+        "cmc": 0,
+        "colors": [],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/4/5/459d313b-0c1a-41b7-8b7e-3a7d12b28ab9.webp?1793187958"
         }
     },
     "459d8cb7-cbb8-4e73-9571-44277f1d1be2": {
@@ -184725,6 +184815,33 @@
             "en": "https://cards.scryfall.io/crop/front/4/c/4c866883-025b-43bc-929f-7c34c5c3f849.webp?1783933053"
         }
     },
+    "4c879981-f3a9-4da4-bf49-fb6ccea739b8": {
+        "id": "4c879981-f3a9-4da4-bf49-fb6ccea739b8",
+        "oracle_id": "e4e96682-1130-49cc-b1e5-04a774024f7a",
+        "name": "Q, Your Illustrious Host",
+        "mana_cost": "{W}{U}{B}{R}{G}",
+        "set": "trc",
+        "collector_number": "187",
+        "rarity": "rare",
+        "type": "Legendary Creature",
+        "subtypes": [
+            "Q"
+        ],
+        "rating": 0.8,
+        "in_booster": false,
+        "cmc": 5,
+        "colors": [
+            "W",
+            "U",
+            "B",
+            "R",
+            "G"
+        ],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/4/c/4c879981-f3a9-4da4-bf49-fb6ccea739b8.webp?1793187660"
+        }
+    },
     "4c881938-da5d-4f2c-b62b-0cfbf29ae558": {
         "id": "4c881938-da5d-4f2c-b62b-0cfbf29ae558",
         "oracle_id": "8c8f93d7-d89a-401b-8764-76be71ad16e3",
@@ -213275,6 +213392,31 @@
             "de": "https://cards.scryfall.io/crop/front/a/7/a72be54b-5ef8-4bf6-8510-e05b0c95b588.webp?1782833040",
             "pt": "https://cards.scryfall.io/crop/front/c/5/c5b8c779-1918-429e-b47e-db08b2c067ec.webp?1782833043",
             "es": "https://cards.scryfall.io/crop/front/d/8/d875c1d8-58cf-471a-aa30-47a1b48e3fd6.webp?1782833041"
+        }
+    },
+    "4eb7acc5-ec39-445e-a56f-5b203d7e7a2f": {
+        "id": "4eb7acc5-ec39-445e-a56f-5b203d7e7a2f",
+        "oracle_id": "adcf571f-c465-44c6-8941-48313810e732",
+        "name": "Reg Barclay, Fidgety Fantasist",
+        "mana_cost": "{2}{U}{R}",
+        "set": "trc",
+        "collector_number": "327",
+        "rarity": "rare",
+        "type": "Legendary Creature",
+        "subtypes": [
+            "Human",
+            "Artificer"
+        ],
+        "rating": 0.8,
+        "in_booster": false,
+        "cmc": 4,
+        "colors": [
+            "U",
+            "R"
+        ],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/4/e/4eb7acc5-ec39-445e-a56f-5b203d7e7a2f.webp?1793187846"
         }
     },
     "4eb883b7-da6a-45c3-9dde-61334a0ddcae": {
@@ -249463,7 +249605,7 @@
         ],
         "printed_names": {},
         "image_uris": {
-            "en": "https://cards.scryfall.io/crop/front/5/1/51602acb-62f6-4d38-8a0e-f73497c8f512.webp?1793115729"
+            "en": "https://cards.scryfall.io/crop/front/5/1/51602acb-62f6-4d38-8a0e-f73497c8f512.webp?1793187186"
         }
     },
     "51605471-1198-4296-a9b5-3bee14ac2091": {
@@ -258884,6 +259026,27 @@
             ]
         }
     },
+    "52176604-d2c4-40a1-98fc-3a75d48d7eb5": {
+        "id": "52176604-d2c4-40a1-98fc-3a75d48d7eb5",
+        "oracle_id": "fd4236e5-6a2c-45ec-afb3-cd4fc516fbf1",
+        "name": "Concerted Effort",
+        "mana_cost": "{2}{W}{W}",
+        "set": "trc",
+        "collector_number": "420",
+        "rarity": "rare",
+        "type": "Enchantment",
+        "subtypes": [],
+        "rating": 0.9988430901449815,
+        "in_booster": false,
+        "cmc": 4,
+        "colors": [
+            "W"
+        ],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/5/2/52176604-d2c4-40a1-98fc-3a75d48d7eb5.webp?1793197450"
+        }
+    },
     "5218dc75-da9e-497f-a797-a11457cdbf48": {
         "id": "5218dc75-da9e-497f-a797-a11457cdbf48",
         "oracle_id": "e3afc704-220f-498f-9eaa-0821b17dc24c",
@@ -264970,6 +265133,32 @@
             "de": "https://cards.scryfall.io/crop/front/a/f/afa95377-d525-46ce-be26-cbc84dfdbcc2.webp?1782850139",
             "fr": "https://cards.scryfall.io/crop/front/b/9/b9a5f108-a434-40a9-9d91-3b8032dcf752.webp?1782850140",
             "ja": "https://cards.scryfall.io/crop/front/d/e/de387b66-87cc-4931-89ae-ce94c05633a9.webp?1782850141"
+        }
+    },
+    "528f2bfb-c09f-4bb9-a92f-6fcf23525046": {
+        "id": "528f2bfb-c09f-4bb9-a92f-6fcf23525046",
+        "oracle_id": "3d038f7c-95fa-4b71-8f74-b9b4dd45cde0",
+        "name": "Ertai Resurrected",
+        "mana_cost": "{2}{U}{B}",
+        "set": "sds",
+        "collector_number": "20",
+        "rarity": "mythic",
+        "type": "Legendary Creature",
+        "subtypes": [
+            "Phyrexian",
+            "Human",
+            "Wizard"
+        ],
+        "rating": 1.268948586422106,
+        "in_booster": false,
+        "cmc": 4,
+        "colors": [
+            "U",
+            "B"
+        ],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/5/2/528f2bfb-c09f-4bb9-a92f-6fcf23525046.webp?1793187451"
         }
     },
     "528f9922-b0c3-410e-86ca-87495a4fbd3d": {
@@ -275871,6 +276060,30 @@
             "en": "https://cards.scryfall.io/crop/front/5/3/535461bd-f763-408b-816f-64b7bfb9210d.webp?1783904078",
             "fr": "https://cards.scryfall.io/crop/front/d/3/d39a1a1c-db74-4b44-bbca-c11e9ba1731f.webp?1782760718",
             "it": "https://cards.scryfall.io/crop/front/e/a/eae71073-6324-471f-933e-cccf1e6dd982.webp?1782760719"
+        }
+    },
+    "5354636f-a324-401b-bece-85b1c4760c07": {
+        "id": "5354636f-a324-401b-bece-85b1c4760c07",
+        "oracle_id": "ef919269-043f-45ab-a5da-403cdaa4da23",
+        "name": "Rok-Tahk, Budding Scientist",
+        "mana_cost": "{4}{G}{G}",
+        "set": "trk",
+        "collector_number": "472",
+        "rarity": "mythic",
+        "type": "Legendary Creature",
+        "subtypes": [
+            "Brikar",
+            "Scientist"
+        ],
+        "rating": 1.0,
+        "in_booster": false,
+        "cmc": 6,
+        "colors": [
+            "G"
+        ],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/5/3/5354636f-a324-401b-bece-85b1c4760c07.webp?1793240448"
         }
     },
     "5354868b-c96b-4765-b0c8-8895093e4019": {
@@ -293118,6 +293331,31 @@
             "en": "https://cards.scryfall.io/crop/front/5/4/5481c670-fc1d-4cd2-8934-90b0b063e57d.webp?1783925144"
         }
     },
+    "54820d80-f32e-4e2f-a0e2-4db781444217": {
+        "id": "54820d80-f32e-4e2f-a0e2-4db781444217",
+        "oracle_id": "8d0da2f9-0e05-4a94-8d42-fd57d06b09ba",
+        "name": "Stella Lee, Wild Card",
+        "mana_cost": "{1}{U}{R}",
+        "set": "sds",
+        "collector_number": "25",
+        "rarity": "mythic",
+        "type": "Legendary Creature",
+        "subtypes": [
+            "Human",
+            "Rogue"
+        ],
+        "rating": 1.3968537446927123,
+        "in_booster": false,
+        "cmc": 3,
+        "colors": [
+            "U",
+            "R"
+        ],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/5/4/54820d80-f32e-4e2f-a0e2-4db781444217.webp?1793187478"
+        }
+    },
     "54866603-c80c-4dc8-9655-eaf54ed2c5ab": {
         "id": "54866603-c80c-4dc8-9655-eaf54ed2c5ab",
         "oracle_id": "ad3d6003-66d3-486d-aa54-ddce1adb5ff1",
@@ -298537,6 +298775,31 @@
         "printed_names": {},
         "image_uris": {
             "en": "https://cards.scryfall.io/crop/front/5/4/54e7e11a-6a2e-40b1-9409-e0797dd87d8e.webp?1783936278"
+        }
+    },
+    "54e9ffed-d541-4760-b9ae-8e62a4364da3": {
+        "id": "54e9ffed-d541-4760-b9ae-8e62a4364da3",
+        "oracle_id": "6f10f6bf-f889-4c3d-a6cf-04cf74f1b4bd",
+        "name": "Ro Laren, Double Agent",
+        "mana_cost": "{2}{R}",
+        "set": "trc",
+        "collector_number": "293",
+        "rarity": "rare",
+        "type": "Legendary Creature",
+        "subtypes": [
+            "Bajoran",
+            "Rogue",
+            "Officer"
+        ],
+        "rating": 0.8,
+        "in_booster": false,
+        "cmc": 3,
+        "colors": [
+            "R"
+        ],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/5/4/54e9ffed-d541-4760-b9ae-8e62a4364da3.webp?1793187811"
         }
     },
     "54eb659a-f087-41b3-8e66-a895b70a9060": {
@@ -307593,6 +307856,27 @@
             "en": "https://cards.scryfall.io/crop/front/5/5/558d3997-3cea-4c8a-8876-a22ebc25de1e.webp?1783941500"
         }
     },
+    "558edfb8-eaf1-4d8e-927c-85a43d2a01d7": {
+        "id": "558edfb8-eaf1-4d8e-927c-85a43d2a01d7",
+        "oracle_id": "4a9bfeb2-b4b3-4c69-9739-a878c2704f46",
+        "name": "Own the Day",
+        "mana_cost": "{4}{R}{R}",
+        "set": "trc",
+        "collector_number": "73",
+        "rarity": "rare",
+        "type": "Sorcery",
+        "subtypes": [],
+        "rating": 0.8,
+        "in_booster": false,
+        "cmc": 6,
+        "colors": [
+            "R"
+        ],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/5/5/558edfb8-eaf1-4d8e-927c-85a43d2a01d7.webp?1793197389"
+        }
+    },
     "558edff1-c156-4c0e-9991-ae5c8b5062ae": {
         "id": "558edff1-c156-4c0e-9991-ae5c8b5062ae",
         "oracle_id": "e7425964-0028-4156-9037-b303b00e7e11",
@@ -309177,6 +309461,29 @@
             "it": "https://cards.scryfall.io/crop/front/b/b/bbc0a9f4-5bd0-4f20-9fda-e502f4090145.webp?1783016916",
             "ja": "https://cards.scryfall.io/crop/front/d/3/d34cfd29-9df3-4852-b293-02fb1fec2324.webp?1783016917",
             "fr": "https://cards.scryfall.io/crop/front/f/4/f4b64717-29c8-4738-8471-0d4fc71d3d79.webp?1783016916"
+        }
+    },
+    "55a72b9d-a37f-4909-9366-0d070d7780d6": {
+        "id": "55a72b9d-a37f-4909-9366-0d070d7780d6",
+        "oracle_id": "fa667031-25cf-45c4-97ff-19a73cb30018",
+        "name": "U.S.S. Enterprise-E, Sovereign",
+        "mana_cost": "{3}{W}{W}",
+        "set": "trc",
+        "collector_number": "244",
+        "rarity": "rare",
+        "type": "Legendary Artifact",
+        "subtypes": [
+            "Spacecraft"
+        ],
+        "rating": 0.8,
+        "in_booster": false,
+        "cmc": 5,
+        "colors": [
+            "W"
+        ],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/5/5/55a72b9d-a37f-4909-9366-0d070d7780d6.webp?1793187762"
         }
     },
     "55a7f877-dc7c-4c1b-b233-900958c9e8f5": {
@@ -311402,6 +311709,30 @@
             "fr": "https://cards.scryfall.io/crop/front/9/6/96d3bedf-f641-47bb-b2f1-f93676df5d14.webp?1782973218",
             "de": "https://cards.scryfall.io/crop/front/e/b/eb973ca5-f81b-4015-b9bf-4b2007fe6934.webp?1782973215",
             "es": "https://cards.scryfall.io/crop/front/f/9/f9cedf3b-3d54-4a3a-a695-00730a65ddc5.webp?1782973215"
+        }
+    },
+    "55d21155-647e-4892-b349-86b8d4e6d9b9": {
+        "id": "55d21155-647e-4892-b349-86b8d4e6d9b9",
+        "oracle_id": "15885e58-76a9-49fa-ae67-a0482aacd81c",
+        "name": "David and Carol Marcus, Creators",
+        "mana_cost": "{2}{G}",
+        "set": "trk",
+        "collector_number": "193",
+        "rarity": "uncommon",
+        "type": "Legendary Creature",
+        "subtypes": [
+            "Human",
+            "Scientist"
+        ],
+        "rating": 0.7,
+        "in_booster": true,
+        "cmc": 3,
+        "colors": [
+            "G"
+        ],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/5/5/55d21155-647e-4892-b349-86b8d4e6d9b9.webp?1793188281"
         }
     },
     "55d212c5-1642-456f-829f-57f68a2116b6": {
@@ -315678,6 +316009,27 @@
             "ja": "https://cards.scryfall.io/crop/front/a/6/a63c78db-030f-42dd-8316-d53a022a1151.webp?1791699489",
             "it": "https://cards.scryfall.io/crop/front/b/9/b9c3f50b-3c38-471c-ac41-96f36001e0ae.webp?1791699504",
             "fr": "https://cards.scryfall.io/crop/front/b/c/bc747f89-de7a-42a1-bf5d-02c8087648a6.webp?1791699463"
+        }
+    },
+    "5626c58f-9245-437a-9844-b023320cf709": {
+        "id": "5626c58f-9245-437a-9844-b023320cf709",
+        "oracle_id": "4450d4e0-2825-4536-bb0f-f3a36f1f682c",
+        "name": "Federation Resupply",
+        "mana_cost": "{1}{W}",
+        "set": "trk",
+        "collector_number": "18",
+        "rarity": "rare",
+        "type": "Sorcery",
+        "subtypes": [],
+        "rating": 0.8,
+        "in_booster": true,
+        "cmc": 2,
+        "colors": [
+            "W"
+        ],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/5/6/5626c58f-9245-437a-9844-b023320cf709.webp?1793169921"
         }
     },
     "56271daf-f5d1-4256-852a-5b746c83e666": {
@@ -332098,6 +332450,28 @@
             "en": "https://cards.scryfall.io/crop/front/5/7/57522c97-9c70-4a56-835e-0fb63157dfff.webp?1783933289"
         }
     },
+    "575290f8-c861-4ef5-8cfb-fe89de12d8e1": {
+        "id": "575290f8-c861-4ef5-8cfb-fe89de12d8e1",
+        "oracle_id": "0e25faa2-efb0-4ca5-b280-18c38faa860c",
+        "name": "Coastal Peak",
+        "mana_cost": "",
+        "set": "trc",
+        "collector_number": "372",
+        "rarity": "rare",
+        "type": "Land",
+        "subtypes": [
+            "Island",
+            "Mountain"
+        ],
+        "rating": 1.395075768877338,
+        "in_booster": false,
+        "cmc": 0,
+        "colors": [],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/5/7/575290f8-c861-4ef5-8cfb-fe89de12d8e1.webp?1793187920"
+        }
+    },
     "5753e654-f02c-46eb-b5f5-cba1a99a0253": {
         "id": "5753e654-f02c-46eb-b5f5-cba1a99a0253",
         "oracle_id": "af27761d-88df-4d4f-a366-d55ed62d1d33",
@@ -340566,6 +340940,28 @@
             "es": "https://cards.scryfall.io/crop/front/b/e/bec797e8-2faf-43f4-806e-204da4bb3420.webp?1782980081"
         }
     },
+    "57f51bab-9cd4-4cfe-8fde-36a2c9ecf230": {
+        "id": "57f51bab-9cd4-4cfe-8fde-36a2c9ecf230",
+        "oracle_id": "f808b510-907a-4c3c-aea1-efb825c8e13e",
+        "name": "Scorched Geyser",
+        "mana_cost": "",
+        "set": "trc",
+        "collector_number": "398",
+        "rarity": "rare",
+        "type": "Land",
+        "subtypes": [
+            "Island",
+            "Mountain"
+        ],
+        "rating": 1.186670642912854,
+        "in_booster": false,
+        "cmc": 0,
+        "colors": [],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/5/7/57f51bab-9cd4-4cfe-8fde-36a2c9ecf230.webp?1793187966"
+        }
+    },
     "57f5bd8a-338f-48eb-857f-25f644ff84af": {
         "id": "57f5bd8a-338f-48eb-857f-25f644ff84af",
         "oracle_id": "705509e9-a034-4a5a-9c65-66f58748b8a2",
@@ -347691,6 +348087,28 @@
             "fr": "https://cards.scryfall.io/crop/front/5/8/5878bba1-f3aa-4198-b272-de7fc15749c5.webp?1783947341",
             "de": "https://cards.scryfall.io/crop/front/9/d/9d7cf27c-c241-4c16-a84d-30e1774723c8.webp?1783059114",
             "en": "https://cards.scryfall.io/crop/front/5/8/5878bba1-f3aa-4198-b272-de7fc15749c5.webp?1783947341"
+        }
+    },
+    "5879b2da-c783-4f87-b4ec-d13eefda30a7": {
+        "id": "5879b2da-c783-4f87-b4ec-d13eefda30a7",
+        "oracle_id": "2031b17c-0536-446f-a9aa-b46fe79b7ea7",
+        "name": "Canyon Slough",
+        "mana_cost": "",
+        "set": "trc",
+        "collector_number": "516",
+        "rarity": "rare",
+        "type": "Land",
+        "subtypes": [
+            "Swamp",
+            "Mountain"
+        ],
+        "rating": 1.1806368245068837,
+        "in_booster": false,
+        "cmc": 0,
+        "colors": [],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/5/8/5879b2da-c783-4f87-b4ec-d13eefda30a7.webp?1793197586"
         }
     },
     "587a881f-cec1-4d36-9db1-614bec439167": {
@@ -368103,6 +368521,30 @@
             "pt": "https://cards.scryfall.io/crop/front/d/e/de634641-ac46-410f-b4b9-16297c2d2a8c.webp?1782920659"
         }
     },
+    "59eedf7b-0738-4a42-88d0-4ba7c7b73480": {
+        "id": "59eedf7b-0738-4a42-88d0-4ba7c7b73480",
+        "oracle_id": "25ecd09e-d8bf-4929-96e2-e5132ea4f718",
+        "name": "Data, Professor of Humanities",
+        "mana_cost": "{3}{U}",
+        "set": "trc",
+        "collector_number": "189",
+        "rarity": "rare",
+        "type": "Legendary Artifact Creature",
+        "subtypes": [
+            "Android",
+            "Scientist"
+        ],
+        "rating": 0.8,
+        "in_booster": false,
+        "cmc": 4,
+        "colors": [
+            "U"
+        ],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/5/9/59eedf7b-0738-4a42-88d0-4ba7c7b73480.webp?1793187676"
+        }
+    },
     "59ef0d68-d9bb-4a46-a063-332d4bd4cf73": {
         "id": "59ef0d68-d9bb-4a46-a063-332d4bd4cf73",
         "oracle_id": "9f5277e8-1cbe-478c-a8bc-ac028f13305e",
@@ -385548,6 +385990,25 @@
             "ja": "https://cards.scryfall.io/crop/front/f/4/f44743c0-a42e-4b0c-8f71-0d85046d1162.webp?1782771000"
         }
     },
+    "5b2047ac-1e87-4b25-b0ff-c8ef51a7d06f": {
+        "id": "5b2047ac-1e87-4b25-b0ff-c8ef51a7d06f",
+        "oracle_id": "5c87e2fa-77f1-4978-b25f-f14d227301d1",
+        "name": "Foreboding Ruins",
+        "mana_cost": "",
+        "set": "trc",
+        "collector_number": "531",
+        "rarity": "rare",
+        "type": "Land",
+        "subtypes": [],
+        "rating": 1.2752426276935263,
+        "in_booster": false,
+        "cmc": 0,
+        "colors": [],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/5/b/5b2047ac-1e87-4b25-b0ff-c8ef51a7d06f.webp?1793197597"
+        }
+    },
     "5b204e6f-4fe7-4326-b8a2-7369455ceaa6": {
         "id": "5b204e6f-4fe7-4326-b8a2-7369455ceaa6",
         "oracle_id": "1162c7ff-c0cb-469a-ad3c-322b0981ae1d",
@@ -388604,6 +389065,30 @@
         "printed_names": {},
         "image_uris": {
             "en": "https://cards.scryfall.io/crop/front/5/b/5b573ef7-4fce-44d6-91ec-48a62be8d21c.webp?1783940311"
+        }
+    },
+    "5b585418-57c6-4319-8ab5-28de8e7f2d88": {
+        "id": "5b585418-57c6-4319-8ab5-28de8e7f2d88",
+        "oracle_id": "15885e58-76a9-49fa-ae67-a0482aacd81c",
+        "name": "David and Carol Marcus, Creators",
+        "mana_cost": "{2}{G}",
+        "set": "trk",
+        "collector_number": "544",
+        "rarity": "uncommon",
+        "type": "Legendary Creature",
+        "subtypes": [
+            "Human",
+            "Scientist"
+        ],
+        "rating": 0.7,
+        "in_booster": false,
+        "cmc": 3,
+        "colors": [
+            "G"
+        ],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/5/b/5b585418-57c6-4319-8ab5-28de8e7f2d88.webp?1793188093"
         }
     },
     "5b59f320-ab75-4c32-bae5-223f975b7013": {
@@ -405439,6 +405924,27 @@
             "ja": "https://cards.scryfall.io/crop/front/e/1/e1138b42-f7e7-4f75-896a-2bb759810854.webp?1782840152"
         }
     },
+    "5c8c9efe-8a52-4323-a139-e9f722c2a2ad": {
+        "id": "5c8c9efe-8a52-4323-a139-e9f722c2a2ad",
+        "oracle_id": "78c423ad-1f8b-4262-b64f-a98899da9372",
+        "name": "Encounter the Unknown",
+        "mana_cost": "{1}{R}{R}",
+        "set": "pf26",
+        "collector_number": "18",
+        "rarity": "rare",
+        "type": "Instant",
+        "subtypes": [],
+        "rating": 0.8,
+        "in_booster": false,
+        "cmc": 3,
+        "colors": [
+            "R"
+        ],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/5/c/5c8c9efe-8a52-4323-a139-e9f722c2a2ad.webp?1793186657"
+        }
+    },
     "5c8cdf65-0113-47c3-a0d5-e0b74c333c81": {
         "id": "5c8cdf65-0113-47c3-a0d5-e0b74c333c81",
         "oracle_id": "56719f6a-1a6c-4c0a-8d21-18f7d7350b68",
@@ -411652,6 +412158,27 @@
         "printed_names": {},
         "image_uris": {
             "en": "https://cards.scryfall.io/crop/front/5/d/5d03872a-42df-47e3-ace4-dce13a69f916.webp?1783914119"
+        }
+    },
+    "5d041b08-0021-438a-80fd-ca54839ffe5e": {
+        "id": "5d041b08-0021-438a-80fd-ca54839ffe5e",
+        "oracle_id": "932668fa-d6e3-41c0-ad0c-8e0a00e68d11",
+        "name": "Decree of Pain",
+        "mana_cost": "{6}{B}{B}",
+        "set": "sds",
+        "collector_number": "9",
+        "rarity": "mythic",
+        "type": "Sorcery",
+        "subtypes": [],
+        "rating": 1.152085082343375,
+        "in_booster": false,
+        "cmc": 8,
+        "colors": [
+            "B"
+        ],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/5/d/5d041b08-0021-438a-80fd-ca54839ffe5e.webp?1793187345"
         }
     },
     "5d041e47-fdc3-4e64-970d-d757a9330194": {
@@ -433329,6 +433856,30 @@
         "printed_names": {},
         "image_uris": {
             "en": "https://cards.scryfall.io/crop/front/5/e/5e87c71b-6596-4cb1-9e53-c5325aa80770.webp?1783944595"
+        }
+    },
+    "5e89c267-84af-415c-b255-7ef16102ea35": {
+        "id": "5e89c267-84af-415c-b255-7ef16102ea35",
+        "oracle_id": "5d5c4a17-fa04-4889-819e-408fc2ff112e",
+        "name": "Uhura, Xenolinguist",
+        "mana_cost": "{4}{U}",
+        "set": "trc",
+        "collector_number": "182",
+        "rarity": "rare",
+        "type": "Legendary Creature",
+        "subtypes": [
+            "Human",
+            "Officer"
+        ],
+        "rating": 0.8,
+        "in_booster": false,
+        "cmc": 5,
+        "colors": [
+            "U"
+        ],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/5/e/5e89c267-84af-415c-b255-7ef16102ea35.webp?1793187635"
         }
     },
     "5e8a7e5c-f252-4de8-94d7-e7327210bf26": {
@@ -455594,6 +456145,25 @@
             "it": "https://cards.scryfall.io/crop/front/e/7/e73d2ada-fe19-4267-9717-15ca344e7ed8.webp?1782991608"
         }
     },
+    "602ae667-563f-43ce-8370-ca79652d84a7": {
+        "id": "602ae667-563f-43ce-8370-ca79652d84a7",
+        "oracle_id": "aa6dbdf2-2379-4ff5-8a6c-70258784dc35",
+        "name": "Desolate Lighthouse",
+        "mana_cost": "",
+        "set": "trc",
+        "collector_number": "374",
+        "rarity": "rare",
+        "type": "Land",
+        "subtypes": [],
+        "rating": 0.7071660435459101,
+        "in_booster": false,
+        "cmc": 0,
+        "colors": [],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/6/0/602ae667-563f-43ce-8370-ca79652d84a7.webp?1793187933"
+        }
+    },
     "602bd27a-7ae1-4081-8d68-bb2539cd5965": {
         "id": "602bd27a-7ae1-4081-8d68-bb2539cd5965",
         "oracle_id": "795b096a-2bce-4588-a2c9-abc5ea40dc0c",
@@ -458458,6 +459028,27 @@
         "printed_names": {},
         "image_uris": {
             "en": "https://cards.scryfall.io/crop/front/6/0/6062d62f-2d5d-4082-98d8-e7f967ef25ab.webp?1783913515"
+        }
+    },
+    "6062ec17-98bb-4cf7-853e-0b43c2ce4b26": {
+        "id": "6062ec17-98bb-4cf7-853e-0b43c2ce4b26",
+        "oracle_id": "87b8fef3-f40e-44a9-afd5-31d3917b1d59",
+        "name": "U.S.S. Defiant, Tough Little Ship",
+        "mana_cost": "{6}",
+        "set": "trc",
+        "collector_number": "361",
+        "rarity": "rare",
+        "type": "Legendary Artifact",
+        "subtypes": [
+            "Spacecraft"
+        ],
+        "rating": 0.8,
+        "in_booster": false,
+        "cmc": 6,
+        "colors": [],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/6/0/6062ec17-98bb-4cf7-853e-0b43c2ce4b26.webp?1793187879"
         }
     },
     "6062f91d-7ef0-4417-b5af-f4ee2105e559": {
@@ -505353,6 +505944,30 @@
             "en": "https://cards.scryfall.io/crop/front/6/3/63d2f943-8abc-4042-9d86-80182084ce29.webp?1783932023"
         }
     },
+    "63d3add3-be3f-4ced-85c5-a7d4891b11f5": {
+        "id": "63d3add3-be3f-4ced-85c5-a7d4891b11f5",
+        "oracle_id": "d8366080-dd0c-40cf-84e9-f628dfe8f45c",
+        "name": "Grilka, Widowed Warrior",
+        "mana_cost": "{5}{R}",
+        "set": "trc",
+        "collector_number": "70",
+        "rarity": "rare",
+        "type": "Legendary Creature",
+        "subtypes": [
+            "Klingon",
+            "Warrior"
+        ],
+        "rating": 0.8,
+        "in_booster": false,
+        "cmc": 6,
+        "colors": [
+            "R"
+        ],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/6/3/63d3add3-be3f-4ced-85c5-a7d4891b11f5.webp?1793197377"
+        }
+    },
     "63d45c39-e102-4182-a652-8261e489b749": {
         "id": "63d45c39-e102-4182-a652-8261e489b749",
         "oracle_id": "37a18736-5fe2-4897-809b-013497bdd890",
@@ -509978,6 +510593,30 @@
             "en": "https://cards.scryfall.io/crop/front/6/4/6429e625-1f18-413a-b7d7-6eb2814ee5a2.webp?1783911401",
             "fr": "https://cards.scryfall.io/crop/front/8/8/88066d2c-778d-4857-8207-c7c173b4c215.webp?1782794938",
             "ja": "https://cards.scryfall.io/crop/front/b/8/b868ae8b-4bfa-4d63-941c-a55315ca9292.webp?1782794939"
+        }
+    },
+    "642ac210-8933-40bc-b8e0-c7461fdbe05b": {
+        "id": "642ac210-8933-40bc-b8e0-c7461fdbe05b",
+        "oracle_id": "e5912d21-e188-4b9e-8e92-a6e8196353c6",
+        "name": "Mogis, God of Slaughter",
+        "mana_cost": "{2}{B}{R}",
+        "set": "sds",
+        "collector_number": "26",
+        "rarity": "mythic",
+        "type": "Legendary Enchantment Creature",
+        "subtypes": [
+            "God"
+        ],
+        "rating": 1.1563734890344441,
+        "in_booster": false,
+        "cmc": 4,
+        "colors": [
+            "B",
+            "R"
+        ],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/6/4/642ac210-8933-40bc-b8e0-c7461fdbe05b.webp?1793187483"
         }
     },
     "642ae139-aed2-4200-ade7-3054a1c72edd": {
@@ -530692,6 +531331,27 @@
             "en": "https://cards.scryfall.io/crop/front/6/5/659eeb25-b79b-4229-9d84-e28f6a636958.webp?1783934813"
         }
     },
+    "659ef698-96ea-4fa9-b63c-0da93a2d1e78": {
+        "id": "659ef698-96ea-4fa9-b63c-0da93a2d1e78",
+        "oracle_id": "ca204b66-8d0c-431a-8d34-282f7c2d17da",
+        "name": "Lightning Greaves",
+        "mana_cost": "{2}",
+        "set": "trc",
+        "collector_number": "496",
+        "rarity": "uncommon",
+        "type": "Artifact",
+        "subtypes": [
+            "Equipment"
+        ],
+        "rating": 1.7266633059031997,
+        "in_booster": false,
+        "cmc": 2,
+        "colors": [],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/6/5/659ef698-96ea-4fa9-b63c-0da93a2d1e78.webp?1793197566"
+        }
+    },
     "65a07be7-1967-4db6-8868-94e2dde10ad5": {
         "id": "65a07be7-1967-4db6-8868-94e2dde10ad5",
         "oracle_id": "1d45f248-5b83-4377-a3ba-4eae48e63ca1",
@@ -535992,6 +536652,30 @@
             "en": "https://cards.scryfall.io/crop/front/6/6/660ce219-1223-4eb4-8fb6-27d083ce8be1.webp?1783929110"
         }
     },
+    "660cee6d-a942-4595-b6cc-7c2053108944": {
+        "id": "660cee6d-a942-4595-b6cc-7c2053108944",
+        "oracle_id": "9d08cc9b-2b26-49de-80aa-962a358bfc1a",
+        "name": "Blood-Sport Champion",
+        "mana_cost": "{1}{B}",
+        "set": "trc",
+        "collector_number": "58",
+        "rarity": "rare",
+        "type": "Creature",
+        "subtypes": [
+            "Klingon",
+            "Warrior"
+        ],
+        "rating": 0.8,
+        "in_booster": false,
+        "cmc": 2,
+        "colors": [
+            "B"
+        ],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/6/6/660cee6d-a942-4595-b6cc-7c2053108944.webp?1793196895"
+        }
+    },
     "660cf964-ae3d-46c1-932f-b65d91643776": {
         "id": "660cf964-ae3d-46c1-932f-b65d91643776",
         "oracle_id": "32116127-cf96-4a1b-8896-a1ebc087b597",
@@ -536149,6 +536833,30 @@
             "ko": "https://cards.scryfall.io/crop/front/9/f/9fbcdc6b-1556-468e-8bcb-106d6741577f.webp?1782905312",
             "zht": "https://cards.scryfall.io/crop/front/c/0/c0cdfb61-945a-476f-ba8e-7fb710ca1404.webp?1782905314",
             "zhs": "https://cards.scryfall.io/crop/front/e/9/e9e4661c-d2a2-435d-b253-9db43de80f84.webp?1782905314"
+        }
+    },
+    "660ec8bc-dc03-4b42-84f3-091c19e2a853": {
+        "id": "660ec8bc-dc03-4b42-84f3-091c19e2a853",
+        "oracle_id": "8802b7f0-1ed1-4872-9939-182afb8441ca",
+        "name": "Academy Instructor",
+        "mana_cost": "{2}{R}",
+        "set": "trk",
+        "collector_number": "137",
+        "rarity": "uncommon",
+        "type": "Creature",
+        "subtypes": [
+            "Bolian",
+            "Officer"
+        ],
+        "rating": 0.7,
+        "in_booster": true,
+        "cmc": 3,
+        "colors": [
+            "R"
+        ],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/6/6/660ec8bc-dc03-4b42-84f3-091c19e2a853.webp?1793188005"
         }
     },
     "660ee846-668e-4b3a-b5d3-0dd0d3afd175": {
@@ -538546,6 +539254,27 @@
             "it": "https://cards.scryfall.io/crop/front/9/a/9a9d40b2-1e9a-420c-bdb5-81943eb9f9bf.webp?1783026520",
             "es": "https://cards.scryfall.io/crop/front/d/4/d481a328-3014-4c8a-8745-7cbd54982eac.webp?1783026518",
             "zhs": "https://cards.scryfall.io/crop/front/e/3/e356ec86-6880-42c2-88df-412661370daa.webp?1783026521"
+        }
+    },
+    "66376402-2b5b-4568-a507-e2f1dc367a54": {
+        "id": "66376402-2b5b-4568-a507-e2f1dc367a54",
+        "oracle_id": "58a2d15f-1b4b-4303-b524-8cc0d1b3e7d2",
+        "name": "Painful Truths",
+        "mana_cost": "{2}{B}",
+        "set": "trc",
+        "collector_number": "447",
+        "rarity": "rare",
+        "type": "Sorcery",
+        "subtypes": [],
+        "rating": 1.4047253486454032,
+        "in_booster": false,
+        "cmc": 3,
+        "colors": [
+            "B"
+        ],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/6/6/66376402-2b5b-4568-a507-e2f1dc367a54.webp?1793197488"
         }
     },
     "66377ecf-30f2-44a4-a10e-1a6b7cf6e541": {
@@ -546270,7 +546999,7 @@
         ],
         "printed_names": {},
         "image_uris": {
-            "en": "https://cards.scryfall.io/crop/front/6/6/66d618ab-1be6-4049-a384-d50c4bb39c33.webp?1793160485"
+            "en": "https://cards.scryfall.io/crop/front/6/6/66d618ab-1be6-4049-a384-d50c4bb39c33.webp?1793187158"
         }
     },
     "66d618f4-443c-4a6c-8cbd-5d4ea96b2cd4": {
@@ -546616,6 +547345,30 @@
             "ja": "https://cards.scryfall.io/crop/front/7/1/7114a782-c536-45ca-89d6-94646896a5a3.webp?1782985841",
             "de": "https://cards.scryfall.io/crop/front/9/0/90ab7e15-3f46-4749-9e42-dc3f6ac7db52.webp?1782985837",
             "it": "https://cards.scryfall.io/crop/front/9/2/9231d54f-d874-463b-9a15-32ca86c5db30.webp?1782985840"
+        }
+    },
+    "66daae4f-8024-4d87-b42f-e5271d29e646": {
+        "id": "66daae4f-8024-4d87-b42f-e5271d29e646",
+        "oracle_id": "bca4d45d-cae4-46f3-b5ac-22fbac59fe56",
+        "name": "Tal Shiar Analyst",
+        "mana_cost": "{2}{R}",
+        "set": "trk",
+        "collector_number": "174",
+        "rarity": "common",
+        "type": "Creature",
+        "subtypes": [
+            "Romulan",
+            "Scientist"
+        ],
+        "rating": 0.5,
+        "in_booster": true,
+        "cmc": 3,
+        "colors": [
+            "R"
+        ],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/6/6/66daae4f-8024-4d87-b42f-e5271d29e646.webp?1793191276"
         }
     },
     "66dac1f1-451b-4137-9c2e-b43b937c2edc": {
@@ -550826,6 +551579,30 @@
             "de": "https://cards.scryfall.io/crop/front/6/8/68042279-3e3b-4cfd-b8dc-8eff2da3f858.webp?1782778255",
             "es": "https://cards.scryfall.io/crop/front/9/4/94fab082-f3f8-4d93-b35f-2267a79a9a0d.webp?1782778255",
             "it": "https://cards.scryfall.io/crop/front/d/1/d1274416-9a9a-40c7-a37e-f56c656c64fa.webp?1782778258"
+        }
+    },
+    "6727d111-d99b-4027-ad5d-81568e366b6e": {
+        "id": "6727d111-d99b-4027-ad5d-81568e366b6e",
+        "oracle_id": "d974fee0-7d20-465c-a7e3-bc361e241cd4",
+        "name": "Galvanizing Tenor",
+        "mana_cost": "{3}{R}",
+        "set": "trc",
+        "collector_number": "67",
+        "rarity": "rare",
+        "type": "Creature",
+        "subtypes": [
+            "Klingon",
+            "Performer"
+        ],
+        "rating": 0.8,
+        "in_booster": false,
+        "cmc": 4,
+        "colors": [
+            "R"
+        ],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/6/7/6727d111-d99b-4027-ad5d-81568e366b6e.webp?1793197009"
         }
     },
     "67280eed-e4ed-4bbe-9829-24785ebe2ad0": {
@@ -555345,6 +556122,25 @@
             "ja": "https://cards.scryfall.io/crop/front/d/6/d6b209b0-0159-43cd-959f-c223bc88104c.webp?1782918944",
             "es": "https://cards.scryfall.io/crop/front/d/f/df987b47-16c4-463a-b8aa-8f897692d990.webp?1782918941",
             "zhs": "https://cards.scryfall.io/crop/front/e/0/e0b0d994-f538-463d-ad2a-357ec2bb993e.webp?1782918946"
+        }
+    },
+    "6771b26f-3b2c-4007-b2a9-e111278e538f": {
+        "id": "6771b26f-3b2c-4007-b2a9-e111278e538f",
+        "oracle_id": "7137aae6-260d-41de-8b4e-42a8cf752697",
+        "name": "Frostboil Snarl",
+        "mana_cost": "",
+        "set": "trc",
+        "collector_number": "383",
+        "rarity": "rare",
+        "type": "Land",
+        "subtypes": [],
+        "rating": 1.3105226575913798,
+        "in_booster": false,
+        "cmc": 0,
+        "colors": [],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/6/7/6771b26f-3b2c-4007-b2a9-e111278e538f.webp?1793187946"
         }
     },
     "6772d2a4-5a90-44c7-afec-514d5c398c9d": {
@@ -581508,6 +582304,27 @@
             "ja": "https://cards.scryfall.io/crop/front/f/4/f4a0bc1f-98e3-421b-87fd-d13d046fade5.webp?1782821812"
         }
     },
+    "695c6c58-0301-4c79-a1a2-75b130ad7527": {
+        "id": "695c6c58-0301-4c79-a1a2-75b130ad7527",
+        "oracle_id": "7e019f06-7e87-419e-b51d-e2cb86a6c7f1",
+        "name": "Right of Vengeance",
+        "mana_cost": "{3}{W}",
+        "set": "trc",
+        "collector_number": "27",
+        "rarity": "rare",
+        "type": "Instant",
+        "subtypes": [],
+        "rating": 0.8,
+        "in_booster": false,
+        "cmc": 4,
+        "colors": [
+            "W"
+        ],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/6/9/695c6c58-0301-4c79-a1a2-75b130ad7527.webp?1793197505"
+        }
+    },
     "695caaa5-f060-48e2-a430-a21704635aa4": {
         "id": "695caaa5-f060-48e2-a430-a21704635aa4",
         "oracle_id": "6789a170-f2c5-4fc0-8a45-2b2361e67410",
@@ -587824,6 +588641,25 @@
         "printed_names": {},
         "image_uris": {
             "en": "https://cards.scryfall.io/crop/front/6/9/69cac525-c48d-4fc3-8a11-5e992e73d140.webp?1783916682"
+        }
+    },
+    "69cb108d-0ab0-46a4-b4f2-a86988b820d3": {
+        "id": "69cb108d-0ab0-46a4-b4f2-a86988b820d3",
+        "oracle_id": "4619de7e-3d6e-4c6b-8e6e-e24db324839d",
+        "name": "Nomad Outpost",
+        "mana_cost": "",
+        "set": "trc",
+        "collector_number": "544",
+        "rarity": "uncommon",
+        "type": "Land",
+        "subtypes": [],
+        "rating": 1.4995456528492583,
+        "in_booster": false,
+        "cmc": 0,
+        "colors": [],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/6/9/69cb108d-0ab0-46a4-b4f2-a86988b820d3.webp?1793197601"
         }
     },
     "69cbbeba-d236-4635-8f07-df2500c0ef68": {
@@ -594921,6 +595757,27 @@
         "printed_names": {},
         "image_uris": {
             "en": "https://cards.scryfall.io/crop/front/6/a/6a5b3a64-3664-45c1-b6ba-47d16f71a333.webp?1783910365"
+        }
+    },
+    "6a5b94ba-ac1f-478e-981f-7dfc31ad02f9": {
+        "id": "6a5b94ba-ac1f-478e-981f-7dfc31ad02f9",
+        "oracle_id": "bb86849c-fdec-4ca5-a8c0-ed682d921759",
+        "name": "Genesis Device",
+        "mana_cost": "{2}{G}",
+        "set": "trk",
+        "collector_number": "200",
+        "rarity": "rare",
+        "type": "Legendary Artifact",
+        "subtypes": [],
+        "rating": 0.8,
+        "in_booster": true,
+        "cmc": 3,
+        "colors": [
+            "G"
+        ],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/6/a/6a5b94ba-ac1f-478e-981f-7dfc31ad02f9.webp?1793188016"
         }
     },
     "6a5bd8cd-8f5c-4a92-bdfc-9798c1731c2d": {
@@ -664230,6 +665087,25 @@
             "fr": "https://cards.scryfall.io/crop/front/f/9/f95a1bfa-d5d6-4f70-99fa-84bcbfaf6136.webp?1783027586"
         }
     },
+    "6f995764-3fd8-40f6-8102-fb9e4679b04f": {
+        "id": "6f995764-3fd8-40f6-8102-fb9e4679b04f",
+        "oracle_id": "d5c4d36c-54b3-4149-906b-a57a670260fc",
+        "name": "Alhammarret's Archive",
+        "mana_cost": "{5}",
+        "set": "trc",
+        "collector_number": "337",
+        "rarity": "mythic",
+        "type": "Legendary Artifact",
+        "subtypes": [],
+        "rating": 1.1420248521257048,
+        "in_booster": false,
+        "cmc": 5,
+        "colors": [],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/6/f/6f995764-3fd8-40f6-8102-fb9e4679b04f.webp?1793187867"
+        }
+    },
     "6f99714f-43bc-4048-b650-97dfef4c10fe": {
         "id": "6f99714f-43bc-4048-b650-97dfef4c10fe",
         "oracle_id": "e9f5feb2-2c1a-46ce-885a-4f378d7d10af",
@@ -669005,6 +669881,30 @@
             "en": "https://cards.scryfall.io/crop/front/7/0/70019956-fca1-4090-b3b6-6a963528e05b.webp?1783909462",
             "de": "https://cards.scryfall.io/crop/front/e/3/e36a7e82-a8ae-4350-a7b2-d59b41e955cf.webp?1782784930",
             "it": "https://cards.scryfall.io/crop/front/f/2/f2a21633-4110-4985-88fd-b93fdf4d7cfe.webp?1782784932"
+        }
+    },
+    "7002530b-41cf-4b2e-9ccd-4fd305364c6b": {
+        "id": "7002530b-41cf-4b2e-9ccd-4fd305364c6b",
+        "oracle_id": "fb777610-7562-4d9d-8497-62c562e6d7cb",
+        "name": "Sisay, Weatherlight Captain",
+        "mana_cost": "{2}{W}",
+        "set": "sds",
+        "collector_number": "4",
+        "rarity": "mythic",
+        "type": "Legendary Creature",
+        "subtypes": [
+            "Human",
+            "Soldier"
+        ],
+        "rating": 1.00488106772171,
+        "in_booster": false,
+        "cmc": 3,
+        "colors": [
+            "W"
+        ],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/7/0/7002530b-41cf-4b2e-9ccd-4fd305364c6b.webp?1793187362"
         }
     },
     "700294fc-7c16-4f7d-bce0-7452d8e9c401": {
@@ -678125,6 +679025,31 @@
             "ja": "https://cards.scryfall.io/crop/front/8/c/8ccc4197-4b0e-4e67-89eb-8b6252c97c06.webp?1782801486",
             "pt": "https://cards.scryfall.io/crop/front/9/3/9362648d-37d9-4295-aba0-7487fb1bdcd4.webp?1782801487",
             "fr": "https://cards.scryfall.io/crop/front/a/1/a18c0b30-5cb8-4acb-8076-d2675bcc9bc3.webp?1782801486"
+        }
+    },
+    "70a62c18-ccce-4c6a-8a72-9300c03b2c83": {
+        "id": "70a62c18-ccce-4c6a-8a72-9300c03b2c83",
+        "oracle_id": "0715e860-3b3b-4331-9718-207973e94fee",
+        "name": "Tatyova, Benthic Druid",
+        "mana_cost": "{3}{G}{U}",
+        "set": "sds",
+        "collector_number": "17",
+        "rarity": "mythic",
+        "type": "Legendary Creature",
+        "subtypes": [
+            "Merfolk",
+            "Druid"
+        ],
+        "rating": 1.3700366464985074,
+        "in_booster": false,
+        "cmc": 5,
+        "colors": [
+            "U",
+            "G"
+        ],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/7/0/70a62c18-ccce-4c6a-8a72-9300c03b2c83.webp?1793187425"
         }
     },
     "70a68d3f-fd2a-475f-8d17-6a62e773a312": {
@@ -700206,6 +701131,27 @@
             "en": "https://cards.scryfall.io/crop/front/7/2/72341b76-c3bb-4c39-80d9-f4747d139375.webp?1783905273"
         }
     },
+    "72352edf-72b8-4054-a8d1-d35b304b0db6": {
+        "id": "72352edf-72b8-4054-a8d1-d35b304b0db6",
+        "oracle_id": "9b084cd4-cc21-4f3a-9ac5-1e1160a31aa6",
+        "name": "Disrupt Decorum",
+        "mana_cost": "{2}{R}{R}",
+        "set": "trc",
+        "collector_number": "452",
+        "rarity": "rare",
+        "type": "Sorcery",
+        "subtypes": [],
+        "rating": 1.5066623294033183,
+        "in_booster": false,
+        "cmc": 4,
+        "colors": [
+            "R"
+        ],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/7/2/72352edf-72b8-4054-a8d1-d35b304b0db6.webp?1793197501"
+        }
+    },
     "72366a8d-d97b-41aa-8453-6e073a30db54": {
         "id": "72366a8d-d97b-41aa-8453-6e073a30db54",
         "oracle_id": "b34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6",
@@ -720019,6 +720965,30 @@
         "printed_names": {},
         "image_uris": {
             "en": "https://cards.scryfall.io/crop/front/7/3/73aaacaa-0890-4948-81f3-0de5ee325377.webp?1783935653"
+        }
+    },
+    "73aadcd2-3fda-4c18-a319-e2ce9648a461": {
+        "id": "73aadcd2-3fda-4c18-a319-e2ce9648a461",
+        "oracle_id": "93bfb762-e69e-4d8e-a5b7-e13dd12cd42a",
+        "name": "Data, Exploring Humanity",
+        "mana_cost": "{4}{U}",
+        "set": "trc",
+        "collector_number": "202",
+        "rarity": "rare",
+        "type": "Legendary Artifact Creature",
+        "subtypes": [
+            "Android",
+            "Scientist"
+        ],
+        "rating": 0.8,
+        "in_booster": false,
+        "cmc": 5,
+        "colors": [
+            "U"
+        ],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/7/3/73aadcd2-3fda-4c18-a319-e2ce9648a461.webp?1793187696"
         }
     },
     "73ab23e2-457d-4726-89fa-5112109c2204": {
@@ -766807,6 +767777,30 @@
             "zhs": "https://cards.scryfall.io/crop/front/e/5/e598ccf5-696b-4560-8be4-74b7c133cdb9.webp?1783045065"
         }
     },
+    "77199b8d-9f0a-4e12-8123-f795c1bc6740": {
+        "id": "77199b8d-9f0a-4e12-8123-f795c1bc6740",
+        "oracle_id": "d9bc0f83-c522-44c9-baa6-fffdeb02a0f5",
+        "name": "Ensign Harry Kim, Operations",
+        "mana_cost": "{1}{W}",
+        "set": "trc",
+        "collector_number": "220",
+        "rarity": "rare",
+        "type": "Legendary Creature",
+        "subtypes": [
+            "Human",
+            "Officer"
+        ],
+        "rating": 0.8,
+        "in_booster": false,
+        "cmc": 2,
+        "colors": [
+            "W"
+        ],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/7/7/77199b8d-9f0a-4e12-8123-f795c1bc6740.webp?1793187728"
+        }
+    },
     "7719d043-5827-4479-825b-23d9e979ead7": {
         "id": "7719d043-5827-4479-825b-23d9e979ead7",
         "oracle_id": "54748cb1-d92a-4212-ad76-417ee79b5ef1",
@@ -784750,6 +785744,30 @@
         "image_uris": {
             "ja": "https://cards.scryfall.io/crop/front/2/1/2158eba6-e91d-43a7-be52-4506d36b91bb.webp?1782972007",
             "en": "https://cards.scryfall.io/crop/front/7/8/787b6916-3fce-41dd-ab52-f17546fd04ed.webp?1783939502"
+        }
+    },
+    "787bd19b-586e-4451-850b-60e0857bada0": {
+        "id": "787bd19b-586e-4451-850b-60e0857bada0",
+        "oracle_id": "ef919269-043f-45ab-a5da-403cdaa4da23",
+        "name": "Rok-Tahk, Budding Scientist",
+        "mana_cost": "{4}{G}{G}",
+        "set": "trk",
+        "collector_number": "211",
+        "rarity": "mythic",
+        "type": "Legendary Creature",
+        "subtypes": [
+            "Brikar",
+            "Scientist"
+        ],
+        "rating": 1.0,
+        "in_booster": true,
+        "cmc": 6,
+        "colors": [
+            "G"
+        ],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/7/8/787bd19b-586e-4451-850b-60e0857bada0.webp?1793240431"
         }
     },
     "787c5c8e-7274-4d74-8a8d-728b28ec0b71": {
@@ -803422,6 +804440,31 @@
             "zhs": "https://cards.scryfall.io/crop/front/5/0/5037bb66-e352-4df8-939f-280d6e74684d.webp?1782970699",
             "en": "https://cards.scryfall.io/crop/front/7/a/7a006dd2-8a7f-4eef-a6aa-b6bcc0b56ed6.webp?1783939336",
             "ja": "https://cards.scryfall.io/crop/front/d/f/dfc21207-295e-4bd1-920c-59d80423eed2.webp?1782970699"
+        }
+    },
+    "7a021b9d-9500-48a0-8d38-92f175340eb6": {
+        "id": "7a021b9d-9500-48a0-8d38-92f175340eb6",
+        "oracle_id": "24d194d3-f83a-496b-921a-77c09c68b0e1",
+        "name": "Chancellor Gorkon",
+        "mana_cost": "{3}{W}{B}",
+        "set": "trc",
+        "collector_number": "86",
+        "rarity": "rare",
+        "type": "Legendary Creature",
+        "subtypes": [
+            "Klingon",
+            "Noble"
+        ],
+        "rating": 0.8,
+        "in_booster": false,
+        "cmc": 5,
+        "colors": [
+            "W",
+            "B"
+        ],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/7/a/7a021b9d-9500-48a0-8d38-92f175340eb6.webp?1793197402"
         }
     },
     "7a03463f-1acb-40d1-85dd-b7993c40e940": {
@@ -838259,6 +839302,31 @@
             "ru": "https://cards.scryfall.io/crop/front/f/f/ff4e40c5-e564-4a80-a621-f53645edac4f.webp?1782993064"
         }
     },
+    "7c7d8bbd-7ee3-4e02-9978-403a84c29fe5": {
+        "id": "7c7d8bbd-7ee3-4e02-9978-403a84c29fe5",
+        "oracle_id": "d629311f-a7fc-4af5-91ce-5bf506a3cdb3",
+        "name": "Alexander, Ship's Fool",
+        "mana_cost": "{3}{R}{W}",
+        "set": "trc",
+        "collector_number": "81",
+        "rarity": "rare",
+        "type": "Legendary Creature",
+        "subtypes": [
+            "Klingon",
+            "Human"
+        ],
+        "rating": 0.8,
+        "in_booster": false,
+        "cmc": 5,
+        "colors": [
+            "W",
+            "R"
+        ],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/7/c/7c7d8bbd-7ee3-4e02-9978-403a84c29fe5.webp?1793197401"
+        }
+    },
     "7c7dc9b7-e2a5-4e1e-95ab-a1f373f78441": {
         "id": "7c7dc9b7-e2a5-4e1e-95ab-a1f373f78441",
         "oracle_id": "6c2c8bf3-9bf8-4a86-89d3-3bb36260dc51",
@@ -839379,6 +840447,30 @@
         "printed_names": {},
         "image_uris": {
             "en": "https://cards.scryfall.io/crop/front/7/c/7c97bdec-d085-4929-927b-ba0d81a2987d.webp?1783920532"
+        }
+    },
+    "7c989529-2aec-4635-b4aa-667bd22ef1f1": {
+        "id": "7c989529-2aec-4635-b4aa-667bd22ef1f1",
+        "oracle_id": "d89f34e4-8628-4faf-89e6-c9c16023ae8b",
+        "name": "Nyota Uhura, Communications",
+        "mana_cost": "{2}{U}",
+        "set": "pf26",
+        "collector_number": "19",
+        "rarity": "rare",
+        "type": "Legendary Creature",
+        "subtypes": [
+            "Human",
+            "Officer"
+        ],
+        "rating": 0.8,
+        "in_booster": false,
+        "cmc": 3,
+        "colors": [
+            "U"
+        ],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/7/c/7c989529-2aec-4635-b4aa-667bd22ef1f1.webp?1793186933"
         }
     },
     "7c990878-50e6-4443-91b6-99c31f85be98": {
@@ -842935,6 +844027,28 @@
             "zhs": "https://cards.scryfall.io/crop/front/d/3/d35f570a-0d19-4132-943a-00777b31f29f.webp?1783023722",
             "pt": "https://cards.scryfall.io/crop/front/f/6/f6659ec7-c547-4413-a997-8439c5b9e79f.webp?1783023721",
             "es": "https://cards.scryfall.io/crop/front/f/7/f720818d-f006-46fa-8036-0908b5e867e8.webp?1783023719"
+        }
+    },
+    "7cd53946-ce88-4620-9648-b9170375485b": {
+        "id": "7cd53946-ce88-4620-9648-b9170375485b",
+        "oracle_id": "23732d20-aba6-46cc-89d0-0542629bc6b5",
+        "name": "Glittering Massif",
+        "mana_cost": "",
+        "set": "trc",
+        "collector_number": "386",
+        "rarity": "rare",
+        "type": "Land",
+        "subtypes": [
+            "Mountain",
+            "Plains"
+        ],
+        "rating": 1.274632189940255,
+        "in_booster": false,
+        "cmc": 0,
+        "colors": [],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/7/c/7cd53946-ce88-4620-9648-b9170375485b.webp?1793187956"
         }
     },
     "7cd58bb6-dba2-4ab6-a03e-150aa7f5c216": {
@@ -857391,6 +858505,25 @@
             "it": "https://cards.scryfall.io/crop/front/e/1/e11a91bc-eef6-4152-918d-64945192dbe4.webp?1783018402"
         }
     },
+    "7dfead74-0625-4f6a-b66b-6d5d363a387c": {
+        "id": "7dfead74-0625-4f6a-b66b-6d5d363a387c",
+        "oracle_id": "7e550295-eaf4-4962-bc52-261d7c2d71ae",
+        "name": "Artificial Anomaly",
+        "mana_cost": "",
+        "set": "trk",
+        "collector_number": "276",
+        "rarity": "uncommon",
+        "type": "Land",
+        "subtypes": [],
+        "rating": 0.7,
+        "in_booster": true,
+        "cmc": 0,
+        "colors": [],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/7/d/7dfead74-0625-4f6a-b66b-6d5d363a387c.webp?1793240155"
+        }
+    },
     "7dfeb1d1-7b2d-4235-902f-22a62af5dc0f": {
         "id": "7dfeb1d1-7b2d-4235-902f-22a62af5dc0f",
         "oracle_id": "21f45043-5419-4019-8b6c-e5294bd5f549",
@@ -865165,6 +866298,25 @@
             "ru": "https://cards.scryfall.io/crop/front/b/b/bb336a92-b963-44d6-a083-d6c34b2d38f5.webp?1782860261"
         }
     },
+    "7e8c867f-172f-4c17-9ca6-6b4aa853f525": {
+        "id": "7e8c867f-172f-4c17-9ca6-6b4aa853f525",
+        "oracle_id": "1d9aeaaa-66f6-41cb-9bac-162d6fd8662c",
+        "name": "Talisman of Indulgence",
+        "mana_cost": "{2}",
+        "set": "trc",
+        "collector_number": "507",
+        "rarity": "uncommon",
+        "type": "Artifact",
+        "subtypes": [],
+        "rating": 1.357343014201503,
+        "in_booster": false,
+        "cmc": 2,
+        "colors": [],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/7/e/7e8c867f-172f-4c17-9ca6-6b4aa853f525.webp?1793197578"
+        }
+    },
     "7e8c87a8-b527-4d76-8516-d1147e21773f": {
         "id": "7e8c87a8-b527-4d76-8516-d1147e21773f",
         "oracle_id": "463fc961-d34e-4f40-b383-5b78a0fcb5c8",
@@ -866564,6 +867716,25 @@
             "ja": "https://cards.scryfall.io/crop/front/d/2/d22b98da-7628-4b12-b0d6-67322ba371a4.webp?1782864114",
             "fr": "https://cards.scryfall.io/crop/front/d/f/dfe3d983-9037-4a4c-a8bb-6a9a51838f14.webp?1782864111",
             "zhs": "https://cards.scryfall.io/crop/front/f/b/fb783499-994f-45b1-80f7-404dce4fe95b.webp?1782864114"
+        }
+    },
+    "7ea812d3-af71-4667-ab70-4814a54246f7": {
+        "id": "7ea812d3-af71-4667-ab70-4814a54246f7",
+        "oracle_id": "651dea9c-2375-4e44-8e65-ba8e40f0c0ef",
+        "name": "Furycalm Snarl",
+        "mana_cost": "",
+        "set": "trc",
+        "collector_number": "384",
+        "rarity": "rare",
+        "type": "Land",
+        "subtypes": [],
+        "rating": 1.1800446512854552,
+        "in_booster": false,
+        "cmc": 0,
+        "colors": [],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/7/e/7ea812d3-af71-4667-ab70-4814a54246f7.webp?1793187946"
         }
     },
     "7ea89d3c-8d47-4bbb-9271-8cdfd9296e2f": {
@@ -868159,6 +869330,27 @@
         "printed_names": {},
         "image_uris": {
             "en": "https://cards.scryfall.io/crop/front/7/e/7ecabb2b-61ac-45e2-9b07-5c0f2104464c.webp?1783905563"
+        }
+    },
+    "7ecb0e63-d2cc-4657-a85b-ca6c95e3234c": {
+        "id": "7ecb0e63-d2cc-4657-a85b-ca6c95e3234c",
+        "oracle_id": "a3e51a35-09df-4189-b131-08a21e6a557d",
+        "name": "Cryptic Command",
+        "mana_cost": "{1}{U}{U}{U}",
+        "set": "trc",
+        "collector_number": "252",
+        "rarity": "rare",
+        "type": "Instant",
+        "subtypes": [],
+        "rating": 1.7655824466423877,
+        "in_booster": false,
+        "cmc": 4,
+        "colors": [
+            "U"
+        ],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/7/e/7ecb0e63-d2cc-4657-a85b-ca6c95e3234c.webp?1793187772"
         }
     },
     "7ecc1962-f4ad-4d76-a00a-f363e102018e": {
@@ -870906,6 +872098,29 @@
             "en": "https://cards.scryfall.io/crop/front/7/e/7efe00f9-bf42-4d6f-9a22-b357b1c1e092.webp?1783945341",
             "zht": "https://cards.scryfall.io/crop/front/8/0/806534e6-494a-4eee-9d72-a2f167493a92.webp?1783035927",
             "fr": "https://cards.scryfall.io/crop/front/a/6/a6a91741-45b1-4ac2-b8c9-9c1d1032fd0a.webp?1783035924"
+        }
+    },
+    "7efe3788-ecf7-4b56-8970-bc324092941c": {
+        "id": "7efe3788-ecf7-4b56-8970-bc324092941c",
+        "oracle_id": "fb5e53cf-e12e-469b-b9ea-9debc967e77e",
+        "name": "Oberth-Class Starship",
+        "mana_cost": "{1}{W}",
+        "set": "trk",
+        "collector_number": "26",
+        "rarity": "common",
+        "type": "Artifact",
+        "subtypes": [
+            "Spacecraft"
+        ],
+        "rating": 0.5,
+        "in_booster": true,
+        "cmc": 2,
+        "colors": [
+            "W"
+        ],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/7/e/7efe3788-ecf7-4b56-8970-bc324092941c.webp?1793191089"
         }
     },
     "7efe6417-9445-40e5-8c37-0973d8645c79": {
@@ -873799,253 +875014,6 @@
         "image_uris": {
             "ja": "https://cards.scryfall.io/crop/front/3/e/3e1f830a-3f91-438a-95be-9548a32d8a65.webp?1782943975",
             "en": "https://cards.scryfall.io/crop/front/7/f/7f2d2a20-3196-4bb2-9574-0c643e0b6f3d.webp?1783936573"
-        }
-    },
-    "7f2db9b8-648f-4c7f-bd58-1069a1417a22": {
-        "id": "7f2db9b8-648f-4c7f-bd58-1069a1417a22",
-        "oracle_id": "bc71ebf6-2056-41f7-be35-b2e5c34afa99",
-        "name": "Plains",
-        "mana_cost": "",
-        "set": "10e",
-        "collector_number": "366",
-        "rarity": "common",
-        "type": "Basic Land",
-        "subtypes": [
-            "Plains"
-        ],
-        "rating": 0,
-        "in_booster": false,
-        "cmc": 0,
-        "colors": [],
-        "printed_names": {
-            "ru": "Равнина",
-            "ja": "平地",
-            "es": "Llanura",
-            "it": "Pianura",
-            "fr": "Plaine",
-            "zhs": "平原",
-            "de": "Ebene",
-            "pt": "Planície"
-        },
-        "image_uris": {
-            "ru": "https://cards.scryfall.io/crop/front/2/5/25dad6f9-f90c-4545-a2f6-b0984985c56e.webp?1783009792",
-            "ja": "https://cards.scryfall.io/crop/front/4/9/49a5695f-9681-42f4-b8d6-d11f87b29139.webp?1783009792",
-            "es": "https://cards.scryfall.io/crop/front/5/1/518713eb-e3e1-46b5-9580-3f5ae38ff7c5.webp?1783009789",
-            "it": "https://cards.scryfall.io/crop/front/5/d/5dc65244-3840-45f4-9505-7e740ddcf0db.webp?1783009790",
-            "fr": "https://cards.scryfall.io/crop/front/6/8/68aeebd8-ffc2-4497-9894-f80f6ba2724c.webp?1783009790",
-            "en": "https://cards.scryfall.io/crop/front/7/f/7f2db9b8-648f-4c7f-bd58-1069a1417a22.webp?1783942972",
-            "zhs": "https://cards.scryfall.io/crop/front/8/c/8c8a65db-5dbb-40ce-95df-fd1765d75939.webp?1783009792",
-            "de": "https://cards.scryfall.io/crop/front/9/3/9388535c-64e3-4186-9fd5-bc05d73cf6f2.webp?1783009789",
-            "pt": "https://cards.scryfall.io/crop/front/b/1/b1a5cc0e-196f-4f64-8893-19cd639c72cc.webp?1783009792"
-        }
-    },
-    "7f2dc1a7-4b70-4643-90a8-fdc7877c01ca": {
-        "id": "7f2dc1a7-4b70-4643-90a8-fdc7877c01ca",
-        "oracle_id": "745a2815-8487-4b78-93b7-d1d4ef6adc8f",
-        "name": "Pyric Salamander",
-        "mana_cost": "{1}{R}",
-        "set": "mir",
-        "collector_number": "187",
-        "rarity": "common",
-        "type": "Creature",
-        "subtypes": [
-            "Salamander"
-        ],
-        "rating": 0.8303699622365152,
-        "in_booster": true,
-        "cmc": 2,
-        "colors": [
-            "R"
-        ],
-        "printed_names": {
-            "it": "Salamandra di Fuoco",
-            "de": "Feuersalamander",
-            "ja": "紅蓮のサラマンダー",
-            "fr": "Salamandre pyrrique",
-            "pt": "Salamandra Pirética",
-            "es": "Salamandra de fuego"
-        },
-        "image_uris": {
-            "it": "https://cards.scryfall.io/crop/front/2/4/240bf719-3bc0-4362-8698-602352d7c4a4.webp?1783057372",
-            "de": "https://cards.scryfall.io/crop/front/4/9/49437570-a939-4393-bc45-5704e71b21d1.webp?1783057370",
-            "ja": "https://cards.scryfall.io/crop/front/7/7/770dd401-97f8-49d2-a6b7-f8620518ce99.webp?1783057374",
-            "fr": "https://cards.scryfall.io/crop/front/7/a/7a16c4c9-2c8f-4dff-80a7-f3d62a1a384c.webp?1783057371",
-            "en": "https://cards.scryfall.io/crop/front/7/f/7f2dc1a7-4b70-4643-90a8-fdc7877c01ca.webp?1783947074",
-            "pt": "https://cards.scryfall.io/crop/front/e/5/e5ee4a21-36cb-41d8-9a23-f5de0e264b2c.webp?1783057375",
-            "es": "https://cards.scryfall.io/crop/front/f/1/f1dae219-ee2f-4b3d-89b3-5e36e7744441.webp?1783057371"
-        }
-    },
-    "7f2f493d-34d1-4fea-b5d0-b4a965aaf32e": {
-        "id": "7f2f493d-34d1-4fea-b5d0-b4a965aaf32e",
-        "oracle_id": "cfb1b64b-bf78-4015-ac29-cdcdf2adaa02",
-        "name": "Curtains' Call",
-        "mana_cost": "{5}{B}",
-        "set": "clb",
-        "collector_number": "746",
-        "rarity": "rare",
-        "type": "Instant",
-        "subtypes": [],
-        "rating": 1.5903816702838438,
-        "in_booster": false,
-        "cmc": 6,
-        "colors": [
-            "B"
-        ],
-        "printed_names": {
-            "es": "Ovación final",
-            "ja": "幕切れ",
-            "zht": "謝幕演出",
-            "pt": "Cai o Pano",
-            "de": "Schlussakt",
-            "zhs": "谢幕演出",
-            "fr": "Grand numéro",
-            "it": "Cala il Sipario",
-            "ru": "Вызов на Сцену"
-        },
-        "image_uris": {
-            "es": "https://cards.scryfall.io/crop/front/0/7/07159814-70bc-4c1c-aa49-c95b485fd427.webp?1782849341",
-            "ja": "https://cards.scryfall.io/crop/front/1/1/11dff238-bbb6-4707-aa2a-dca597129510.webp?1782849346",
-            "zht": "https://cards.scryfall.io/crop/front/3/3/33aed70e-2c78-47ab-9f78-4c8d0864b12a.webp?1782849347",
-            "pt": "https://cards.scryfall.io/crop/front/6/b/6bd5add2-d2cd-4991-a474-92e289eb318f.webp?1782849346",
-            "en": "https://cards.scryfall.io/crop/front/7/f/7f2f493d-34d1-4fea-b5d0-b4a965aaf32e.webp?1783922453",
-            "de": "https://cards.scryfall.io/crop/front/9/e/9e1e9610-8c8c-403d-958d-c8ae65dd8f89.webp?1782849340",
-            "zhs": "https://cards.scryfall.io/crop/front/a/6/a6481b34-50ff-423b-a9d2-f82aa5b68896.webp?1782849347",
-            "fr": "https://cards.scryfall.io/crop/front/b/c/bc4db455-7c25-483b-b812-96b247236ba2.webp?1782849342",
-            "it": "https://cards.scryfall.io/crop/front/c/a/cadeb457-5042-422e-afe3-3c2d77427eb9.webp?1782849345",
-            "ru": "https://cards.scryfall.io/crop/front/e/0/e00d86fb-2837-40fb-b0d6-e66e06c17220.webp?1782849347"
-        }
-    },
-    "7f30adfa-2581-47ca-946f-d1a193523be3": {
-        "id": "7f30adfa-2581-47ca-946f-d1a193523be3",
-        "oracle_id": "cde26d69-f3e7-4dd0-a53b-cd0ec812d717",
-        "name": "Leonin Scimitar",
-        "mana_cost": "{1}",
-        "set": "j22",
-        "collector_number": "782",
-        "rarity": "common",
-        "type": "Artifact",
-        "subtypes": [
-            "Equipment"
-        ],
-        "rating": 0.9902205778807067,
-        "in_booster": true,
-        "cmc": 1,
-        "colors": [],
-        "printed_names": {
-            "ja": "レオニンの円月刀",
-            "es": "Cimitarra leonina",
-            "fr": "Cimeterre léonin",
-            "zhs": "狮族弯刀",
-            "it": "Scimitarra Leonid",
-            "de": "Leonidenkrummsäbel"
-        },
-        "image_uris": {
-            "ja": "https://cards.scryfall.io/crop/front/2/6/26ea1f0c-d701-4b6b-965f-bfacf38fbff4.webp?1782833666",
-            "es": "https://cards.scryfall.io/crop/front/3/0/30eabbdf-fb58-4a18-8613-70a79d77ca46.webp?1782833665",
-            "en": "https://cards.scryfall.io/crop/front/7/f/7f30adfa-2581-47ca-946f-d1a193523be3.webp?1783918803",
-            "fr": "https://cards.scryfall.io/crop/front/8/1/816aa0f5-b16f-46f4-af37-e608b5744c4f.webp?1782833665",
-            "zhs": "https://cards.scryfall.io/crop/front/8/3/8391bfa8-ac2d-4c66-ba7d-1368595c534c.webp?1782833666",
-            "it": "https://cards.scryfall.io/crop/front/8/9/89f74da1-ea82-45bf-b208-72ab7f6901f3.webp?1782833665",
-            "de": "https://cards.scryfall.io/crop/front/e/f/ef3be128-efbc-436b-b8e4-4b71a047d1fd.webp?1782833665"
-        }
-    },
-    "7f30b7cb-b93a-450b-96f4-de2e132e65db": {
-        "id": "7f30b7cb-b93a-450b-96f4-de2e132e65db",
-        "oracle_id": "231f8edb-4ea1-44be-8794-b76a31462dfc",
-        "name": "Divine Offering",
-        "mana_cost": "{1}{W}",
-        "set": "ptc",
-        "collector_number": "et6sb",
-        "rarity": "common",
-        "type": "Instant",
-        "subtypes": [],
-        "rating": 0.8807141706600744,
-        "in_booster": false,
-        "cmc": 2,
-        "colors": [
-            "W"
-        ],
-        "printed_names": {},
-        "image_uris": {
-            "en": "https://cards.scryfall.io/crop/front/7/f/7f30b7cb-b93a-450b-96f4-de2e132e65db.webp?1783947270"
-        }
-    },
-    "7f31721a-8fd4-46ca-bef9-d24ad4663a58": {
-        "id": "7f31721a-8fd4-46ca-bef9-d24ad4663a58",
-        "oracle_id": "70113003-be5e-406a-9aec-cb480468c36d",
-        "name": "Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel",
-        "set": "pfin",
-        "collector_number": "115s",
-        "rarity": "mythic",
-        "mana_cost": "{2}{B}",
-        "type": "Legendary Creature",
-        "subtypes": [
-            "Human",
-            "Avatar",
-            "Soldier"
-        ],
-        "rating": 1.895403507050346,
-        "in_booster": false,
-        "cmc": 3,
-        "colors": [
-            "B"
-        ],
-        "printed_names": {},
-        "image_uris": {
-            "en": "https://cards.scryfall.io/crop/front/7/f/7f31721a-8fd4-46ca-bef9-d24ad4663a58.webp?1783906186"
-        },
-        "back": {
-            "name": "Sephiroth, One-Winged Angel",
-            "printed_names": {
-                "en": "Sephiroth, One-Winged Angel"
-            },
-            "image_uris": {
-                "en": "https://cards.scryfall.io/crop/back/7/f/7f31721a-8fd4-46ca-bef9-d24ad4663a58.webp?1783906186"
-            },
-            "type": "Legendary Creature",
-            "subtypes": [
-                "Angel",
-                "Nightmare",
-                "Avatar"
-            ]
-        }
-    },
-    "7f3215ba-e492-4cfd-aa16-0da4818eed1b": {
-        "id": "7f3215ba-e492-4cfd-aa16-0da4818eed1b",
-        "oracle_id": "248dcf69-b99e-4a71-b9b3-7fd865f873ab",
-        "name": "Angel of Retribution",
-        "mana_cost": "{6}{W}",
-        "set": "tor",
-        "collector_number": "1",
-        "rarity": "rare",
-        "type": "Creature",
-        "subtypes": [
-            "Angel"
-        ],
-        "rating": 1.0103934456673382,
-        "in_booster": true,
-        "cmc": 7,
-        "colors": [
-            "W"
-        ],
-        "printed_names": {
-            "fr": "Ange du châtiment",
-            "de": "Engel der Vergeltung",
-            "it": "Angelo del Castigo",
-            "ja": "天罰の天使",
-            "es": "Ángel de castigo",
-            "pt": "Anjo da Retribuição"
-        },
-        "image_uris": {
-            "zhs": "https://cards.scryfall.io/crop/front/1/f/1fc39131-fa52-487b-a88f-3f5160c97329.webp?1783033846",
-            "fr": "https://cards.scryfall.io/crop/front/2/b/2b417724-9adf-4cb4-982c-bbb6afbc41ca.webp?1783033845",
-            "de": "https://cards.scryfall.io/crop/front/3/6/36990c21-7878-4013-b34b-dd6ec7d9d445.webp?1783033842",
-            "it": "https://cards.scryfall.io/crop/front/4/a/4a9f7249-3258-4bd1-9f20-b87c595dd4f8.webp?1783033845",
-            "en": "https://cards.scryfall.io/crop/front/7/f/7f3215ba-e492-4cfd-aa16-0da4818eed1b.webp?1783945171",
-            "ja": "https://cards.scryfall.io/crop/front/a/0/a02fe247-a516-4a7c-8218-862cf51fa092.webp?1783033845",
-            "es": "https://cards.scryfall.io/crop/front/b/0/b03372d5-6340-4382-ae24-064aba4bc682.webp?1783033843",
-            "pt": "https://cards.scryfall.io/crop/front/c/c/cc855952-b4a3-4eb9-a88a-333c5f527391.webp?1783033846",
-            "zht": "https://cards.scryfall.io/crop/front/e/a/eafc4e59-47fd-44eb-aeb4-e5edbd25ee89.webp?1783033846"
         }
     }
 }
