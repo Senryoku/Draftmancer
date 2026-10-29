@@ -43,6 +43,7 @@
 							@click="jumpToLatest"
 						/>
 						<h2>{{ pickNames }}</h2>
+						<span v-if="previousPickNames">Previous pick: {{ previousPickNames }}</span>
 						<scale-slider v-model.number="cardScale" style="float: right" />
 					</span>
 				</div>
@@ -306,28 +307,46 @@ export default defineComponent({
 			for (const packPicks of this.picksPerPack) total += packPicks.length;
 			return total;
 		},
+		madePicks() {
+			return this.selectedLog?.picks?.length ?? 0;
+		},
+		previousPickNames() {
+			if (!this.validPick) return "";
+			const onPendingPick = this.picksPerPack[this.pack][this.pick].pick.length === 0;
+			if (!onPendingPick) return "";
+			return this.lastMadePickCardIDs.map(this.getCardName).join(", ");
+		},
+		lastMadePickCardIDs() {
+			const picks = (this.selectedLog?.picks ?? []) as DraftPick[];
+			const lastPick = picks[picks.length - 1];
+			if (!lastPick) return [];
+			return lastPick.pick.map((idx) => lastPick.booster[idx]);
+		},
 		onLatestPick() {
 			return this.pickIndex === this.totalPicks - 1;
 		},
+		onLatestMadePick() {
+			return this.pickIndex >= this.madePicks - 1;
+		},
 		hasUnseenPicks() {
-			return this.unseenPicks > 0 && !this.onLatestPick;
+			return this.unseenPicks > 0 && !this.onLatestMadePick;
 		},
 		livePosition() {
-			return { player: this.player, totalPicks: this.totalPicks };
+			return { player: this.player, totalPicks: this.totalPicks, madePicks: this.madePicks };
 		},
 	},
 	watch: {
+		// A following viewer moves to the booster being picked from, the header shows what was just picked
 		livePosition(current, previous) {
-			if (current.player !== previous.player || current.totalPicks === previous.totalPicks) return;
-			if (current.totalPicks < previous.totalPicks) {
-				if (!this.validPick) this.jumpToLatest();
-				return;
-			}
-			const wasOnLatestPick = previous.totalPicks === 0 || this.pickIndex === previous.totalPicks - 1;
-			if (wasOnLatestPick) this.jumpToLatest();
-			else ++this.unseenPicks;
+			if (current.player !== previous.player) return;
+			if (current.totalPicks < previous.totalPicks && !this.validPick) return this.jumpToLatest();
+			const pickLanded = current.madePicks > previous.madePicks;
+			if (!pickLanded && current.totalPicks <= previous.totalPicks) return;
+			const wasFollowing = previous.totalPicks === 0 || this.pickIndex === previous.totalPicks - 1;
+			if (wasFollowing) this.jumpToLatest();
+			else if (pickLanded) ++this.unseenPicks;
 		},
-		onLatestPick(isLatest) {
+		onLatestMadePick(isLatest) {
 			if (isLatest) this.unseenPicks = 0;
 		},
 		pick(n, o) {
