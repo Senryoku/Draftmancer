@@ -4,7 +4,7 @@ import { getDefaultPrint } from "./vueCardCache";
 
 type ImageURIs = Card["image_uris"];
 
-export const altArtDisplayed = ref(false);
+export const replaceAltArts = ref(false);
 
 export const displayedFrontImageURIs = (card: Card): ImageURIs => {
 	const defaultPrint = defaultPrintToDisplay(card);
@@ -23,7 +23,7 @@ export const displayedBackImageURIs = (card: Card): ImageURIs | undefined => {
 };
 
 const defaultPrintToDisplay = (card: Card) => {
-	if (altArtDisplayed.value || card.is_custom) {
+	if (!replaceAltArts.value || card.is_custom) {
 		return undefined;
 	}
 	const defaultPrint = getDefaultPrint(card);

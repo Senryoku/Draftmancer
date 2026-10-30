@@ -63,7 +63,7 @@ import {
 } from "./helper";
 import { eraseCookie, getCookie, setCookie } from "./cookies";
 import { ButtonColor, Alert, fireToast } from "./alerts";
-import { altArtDisplayed } from "./altArtDisplay";
+import { replaceAltArts } from "./altArtDisplay";
 import parseCSV from "../../src/parseCSV";
 
 import type CardPool from "./components/CardPool.vue";
@@ -152,7 +152,7 @@ const defaultSettings = {
 	displayBotScores: false,
 	fixedDeck: false,
 	foilEffect: true,
-	altArtDisplayed: false,
+	replaceAltArts: false,
 	pickOnDblclick: true,
 	enableSound: true,
 	enableNotifications: false,
@@ -164,7 +164,7 @@ const defaultSettings = {
 };
 const storedSettings = JSON.parse(localStorage.getItem(localStorageSettingsKey) ?? "{}");
 const initialSettings: typeof defaultSettings = Object.assign({ ...defaultSettings }, storedSettings);
-altArtDisplayed.value = initialSettings.altArtDisplayed;
+replaceAltArts.value = initialSettings.replaceAltArts;
 
 export type SessionUser = {
 	userID: string;
@@ -441,7 +441,7 @@ export default defineComponent({
 			displayBotScores: initialSettings.displayBotScores,
 			fixedDeck: initialSettings.fixedDeck,
 			foilEffect: initialSettings.foilEffect,
-			altArtDisplayed: initialSettings.altArtDisplayed,
+			replaceAltArts: initialSettings.replaceAltArts,
 
 			fixedDeckState: {
 				ht: 400,
@@ -4289,8 +4289,8 @@ export default defineComponent({
 		foilEffect() {
 			this.storeSettings();
 		},
-		altArtDisplayed() {
-			altArtDisplayed.value = this.altArtDisplayed;
+		replaceAltArts() {
+			replaceAltArts.value = this.replaceAltArts;
 			this.storeSettings();
 		},
 		fixedDeck() {

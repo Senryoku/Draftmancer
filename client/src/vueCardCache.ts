@@ -246,8 +246,7 @@ export type DefaultPrint = { id: CardID; image: string; backImage?: string } | n
 
 type DefaultPrintIdentifier = { name: string; set: string };
 
-const defaultPrintsStorageKey = "defaultPrints";
-const defaultPrints = ref(loadStoredDefaultPrints());
+const defaultPrints = ref<Record<string, DefaultPrint>>({});
 const queuedDefaultPrints = new Map<string, DefaultPrintIdentifier>();
 const requestedDefaultPrintKeys = new Set<string>();
 let defaultPrintsFlushScheduled = false;
@@ -287,7 +286,6 @@ async function flushQueuedDefaultPrints() {
 		}
 	}
 	defaultPrintsFlushScheduled = false;
-	storeDefaultPrints();
 }
 
 async function requestDefaultPrints(identifiers: DefaultPrintIdentifier[]) {
@@ -323,20 +321,4 @@ function defaultPrintKey(identifier: DefaultPrintIdentifier) {
 
 function frontFaceName(name: string) {
 	return name.split(" //")[0];
-}
-
-function loadStoredDefaultPrints(): Record<string, DefaultPrint> {
-	try {
-		return JSON.parse(localStorage.getItem(defaultPrintsStorageKey) ?? "{}");
-	} catch {
-		return {};
-	}
-}
-
-function storeDefaultPrints() {
-	try {
-		localStorage.setItem(defaultPrintsStorageKey, JSON.stringify(defaultPrints.value));
-	} catch (error) {
-		console.error("Error storing default prints:", error);
-	}
 }

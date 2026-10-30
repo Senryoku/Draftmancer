@@ -120,10 +120,12 @@
 			<span class="personal-settings">
 				<div
 					class="clickable personal-settings-icon"
-					:class="{ faded: !altArtDisplayed, crossed: !altArtDisplayed }"
-					@click="altArtDisplayed = !altArtDisplayed"
+					:class="{ faded: !replaceAltArts, crossed: !replaceAltArts }"
+					@click="replaceAltArts = !replaceAltArts"
 					v-tooltip="{
-						content: `Alt arts: <strong>${altArtDisplayed ? 'Enabled' : 'Disabled'}</strong>`,
+						content: `Replace Alt. Arts: <strong>${replaceAltArts ? 'Enabled' : 'Disabled'}</strong><br />
+							<small>Use the default art for showcase and borderless cards.</small><br />
+							<small>Only changes what you see, other players are not affected.</small>`,
 						html: true,
 					}"
 					tabindex="0"
