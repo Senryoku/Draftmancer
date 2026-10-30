@@ -96,7 +96,8 @@
         "sos",
         "msh",
         "hob",
-        "fra"
+        "fra",
+        "trk"
     ],
     "AlchemySets": [
         "hbg",
@@ -336,6 +337,7 @@
         }
     ],
     "PrimarySets": [
+        "trk",
         "mbc",
         "fra",
         "hob",

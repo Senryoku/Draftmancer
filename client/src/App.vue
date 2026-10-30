@@ -1587,8 +1587,8 @@
 							<a href="/draftqueue">
 								<div class="draft-queue-banner">
 									<img
-										src="./assets/img/draft_queue_banner_fra.webp"
-										alt="Practice Reality Fracture with human players right now in the Draft Queue!"
+										src="./assets/img/draft_queue_banner_trk.webp"
+										alt="Practice Star Trek with human players right now in the Draft Queue!"
 										width="500"
 										height="260"
 									/>

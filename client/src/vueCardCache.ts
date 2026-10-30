@@ -17,6 +17,22 @@ export function isScryfallRelatedCard(obj: unknown): obj is ScryfallRelatedCard 
 	);
 }
 
+export type ImageURIs = {
+	thumb?: string;
+	grid?: string;
+	display?: string;
+	art?: string;
+	crop?: string;
+	// Deprecated
+	small?: string;
+	normal?: string;
+	large?: string;
+	png?: string;
+	art_crop?: string;
+	border_crop?: string;
+	jpeg?: string;
+};
+
 export type ScryfallCardFace = {
 	artist?: string;
 	cmc?: number;
@@ -24,14 +40,7 @@ export type ScryfallCardFace = {
 	colors?: CardColor[];
 	flavor_text?: string;
 	illustration_id?: string;
-	image_uris?: {
-		small?: string;
-		normal?: string;
-		large?: string;
-		png?: string;
-		art_crop?: string;
-		border_crop?: string;
-	};
+	image_uris?: ImageURIs;
 	layout?: string;
 	loyalty?: string;
 	mana_cost: string;
@@ -113,14 +122,7 @@ export type ScryfallCard = {
 	highres_image: boolean;
 	illustration_id?: string;
 	image_status: string;
-	image_uris?: {
-		small?: string;
-		normal?: string;
-		large?: string;
-		png?: string;
-		art_crop?: string;
-		border_crop?: string;
-	};
+	image_uris?: ImageURIs;
 	prices: { [currency: string]: string };
 	printed_name?: string;
 	printed_text?: string;

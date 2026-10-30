@@ -242,9 +242,9 @@ function relatedCardImage(index: number) {
 	if (card.status === "custom") return card.image_uris["en"]!;
 	if (!isReady(card)) return undefined;
 	return card.image_uris
-		? card.image_uris.border_crop
+		? card.image_uris.crop
 		: card.card_faces && card.card_faces[0] && card.card_faces[0].image_uris
-			? card.card_faces[0].image_uris.border_crop
+			? card.card_faces[0].image_uris.crop
 			: undefined;
 }
 

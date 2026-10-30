@@ -3972,7 +3972,8 @@
     },
     "trk": {
         "code": "trk",
-        "fullName": "Star Trek"
+        "fullName": "Star Trek",
+        "icon": "img/sets/trk.svg"
     },
     "tsb": {
         "code": "tsb",

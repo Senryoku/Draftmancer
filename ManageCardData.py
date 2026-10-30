@@ -201,7 +201,7 @@ print("AKRCards length: {}".format(len(AKRCards.keys())))
 print("KLRCards length: {}".format(len(KLRCards.keys())))
 
 opener = urllib.request.build_opener()
-opener.addheaders = [("User-agent", "Mozilla/5.0"), ("Accept", "*/*")]
+opener.addheaders = [("User-Agent", "DraftmancerDBUpdater/1.0.0"), ("Accept", "*/*")]
 urllib.request.install_opener(opener)
 
 # Get mana symbols info from Scryfall
@@ -552,9 +552,9 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
 
         for c in all_cards:
             if c["set"] == "akr" and c["name"] in akr_candidates and c["lang"] in akr_candidates[c["name"]]:
-                c["image_uris"]["border_crop"] = akr_candidates[c["name"]][c["lang"]]["image_uris"]["border_crop"]
+                c["image_uris"]["crop"] = akr_candidates[c["name"]][c["lang"]]["image_uris"]["crop"]
             if c["set"] == "klr" and c["name"] in klr_candidates and c["lang"] in klr_candidates[c["name"]]:
-                c["image_uris"]["border_crop"] = klr_candidates[c["name"]][c["lang"]]["image_uris"]["border_crop"]
+                c["image_uris"]["crop"] = klr_candidates[c["name"]][c["lang"]]["image_uris"]["crop"]
 
         print(" Done!\n")
     cards = {}
@@ -747,6 +747,8 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
                 selection["in_booster"] = safeInBoosterCheck(c, 188)
             case "fra":
                 selection["in_booster"] = safeInBoosterCheck(c, 280)
+            case "trk":
+                selection["in_booster"] = safeInBoosterCheck(c, 306)
 
         if c["collector_number"].endswith("†"):
             selection["in_booster"] = False
@@ -805,14 +807,14 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
         elif "card_faces" in c and "printed_name" in c["card_faces"][0]:
             Translations[key]["printed_names"][c["lang"]] = c["card_faces"][0]["printed_name"]
 
-        if "image_uris" in c and "border_crop" in c["image_uris"]:
-            Translations[key]["image_uris"][c["lang"]] = c["image_uris"]["border_crop"]
+        if "image_uris" in c and "crop" in c["image_uris"]:
+            Translations[key]["image_uris"][c["lang"]] = c["image_uris"]["crop"]
         elif (
             "card_faces" in c
             and "image_uris" in c["card_faces"][0]
-            and "border_crop" in c["card_faces"][0]["image_uris"]
+            and "crop" in c["card_faces"][0]["image_uris"]
         ):
-            Translations[key]["image_uris"][c["lang"]] = c["card_faces"][0]["image_uris"]["border_crop"]
+            Translations[key]["image_uris"][c["lang"]] = c["card_faces"][0]["image_uris"]["crop"]
 
         # Handle back side of double sided cards
         if c["layout"] == "transform" or c["layout"] == "modal_dfc" or c["layout"] == "reversible_card":
@@ -839,7 +841,7 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
                 if "image_uris" not in c["card_faces"][1]:  # Temp workaround while STX data is still incomplete
                     print(f"/!\\ {c['name']}: Missing back side image.")
                 else:
-                    Translations[key]["back"]["image_uris"][c["lang"]] = c["card_faces"][1]["image_uris"]["border_crop"]
+                    Translations[key]["back"]["image_uris"][c["lang"]] = c["card_faces"][1]["image_uris"]["crop"]
 
         if c["lang"] == "en":
             if key in NonProcessedCards:
@@ -1276,7 +1278,6 @@ constants["PrimarySets"] = [
         "aa2",
         "mar",
         "omb",
-        "trk",
         "mdd"
     ]
 ]  # Exclude some codes that are actually part of larger sets (tsb, fmb1, h1r... see subsets), or aren't out yet

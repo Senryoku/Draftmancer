@@ -5533,6 +5533,278 @@ class MBCBoosterFactory extends BoosterFactory {
 	}
 }
 
+// Star Trek - https://magic.wizards.com/en/news/feature/collecting-star-trek
+export class TRKBoosterFactory extends BoosterFactory {
+	static filter = (min: number, max: number) => filterSetByNumber("trk", min, max);
+
+	static readonly AwayTeamBasics = TRKBoosterFactory.filter(307, 311);
+	static readonly HolodeckBasics = TRKBoosterFactory.filter(312, 316);
+	static readonly Basics = TRKBoosterFactory.filter(317, 326);
+	static readonly CommonDualLands = [
+		"0e9e72ef-3e34-4d19-aec0-b5e1ba84d244",
+		"ff5254a6-4961-4604-b65b-2eb0ce9b1c82",
+		"d634424f-9148-46a5-95e3-4965a9226bb4",
+		"5278d354-97c4-4c21-a902-2f9252b151eb",
+		"17fab75f-7ff9-4c50-a6f7-03a85cd275bf",
+		"dec37ff4-d6e9-4b87-865b-125b17162465",
+		"f1558d93-8a8a-45e0-bcdc-e6cd42f716dc",
+		"c89e7680-9868-4fea-9aaf-6af03bfa0692",
+		"1bce111b-b07c-4589-9b6d-f0b5f320808c",
+		"fc3fe0da-8d93-4f1c-9aad-c2fdc9fe34fc",
+	];
+	static readonly BorderlessStationLands = TRKBoosterFactory.filter(332, 337);
+	static readonly Scene = TRKBoosterFactory.filter(338, 362);
+	static readonly LCARS = TRKBoosterFactory.filter(363, 391);
+	static readonly LCARSShocks = TRKBoosterFactory.filter(392, 401);
+	static readonly ClassicEnterprise = TRKBoosterFactory.filter(402, 425);
+	static readonly Klingon = TRKBoosterFactory.filter(426, 435);
+
+	borderlessLand: SlotedCardPool;
+	scene: SlotedCardPool;
+	lcars: SlotedCardPool;
+	lcarsShockLand: SlotedCardPool;
+	classicEnterprise: SlotedCardPool;
+	klingon: SlotedCardPool;
+	stardates: CardPool = new CardPool();
+
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: BoosterFactoryOptions) {
+		const [, filteredCardPool] = filterCardPool(cardPool, (cid: CardID) =>
+			TRKBoosterFactory.CommonDualLands.includes(cid)
+		);
+		super(filteredCardPool, landSlot, options);
+
+		this.borderlessLand = cidsToSlotedCardPool(TRKBoosterFactory.BorderlessStationLands, options.maxDuplicates);
+		this.scene = cidsToSlotedCardPool(TRKBoosterFactory.Scene, options.maxDuplicates);
+		this.lcars = cidsToSlotedCardPool(TRKBoosterFactory.LCARS, options.maxDuplicates);
+		this.lcarsShockLand = cidsToSlotedCardPool(TRKBoosterFactory.LCARSShocks, options.maxDuplicates);
+		this.classicEnterprise = cidsToSlotedCardPool(TRKBoosterFactory.ClassicEnterprise, options.maxDuplicates);
+		this.klingon = cidsToSlotedCardPool(TRKBoosterFactory.Klingon, options.maxDuplicates);
+		for (const cid of CardsBySet["sds"]) {
+			const c = getCard(cid);
+			this.stardates.set(cid, options.maxDuplicates?.[c.rarity] ?? DefaultMaxDuplicates);
+		}
+	}
+
+	generateBooster(targets: Targets): UniqueCard[] | MessageError {
+		const updatedTargets = structuredClone(targets);
+
+		const booster: UniqueCard[] = [];
+
+		// 1 Traditional foil card of any rarity
+		//     A common (51.2%), uncommon (34.7%), rare (6.3%), or mythic rare (1%) card from the main set
+		//     A common (less than 1%), uncommon (1%), or rare (less than 1%) Klingon frame card
+		//     An uncommon (1.6%), rare (less than 1%), or mythic rare (less than 1%) TRK scene card
+		//     An uncommon (1.1%), rare (less than 1%), or mythic rare (less than 1%) LCARS frame card
+		//     A rare (less than 1%) or mythic rare (less than 1%) classic Enterprise card
+		//     A rare (less than 1%) or mythic rare (less than 1%) borderless land card
+		//     An LCARS shock land (less than 1%)
+		{
+			const unknown_rates = (100 - (51.2 + 34.7 + 6.3 + 1 + 1 + 1.6 + 1.1)) / 11;
+			const pool = chooseWeighted(
+				[
+					51.2,
+					34.7,
+					6.3,
+					1.0,
+					unknown_rates,
+					1.0,
+					unknown_rates,
+					1.6,
+					unknown_rates,
+					unknown_rates,
+					1.1,
+					unknown_rates,
+					unknown_rates,
+					unknown_rates,
+					unknown_rates,
+					unknown_rates,
+					unknown_rates,
+					unknown_rates,
+				].map((w) => w / 100.0),
+				[
+					this.cardPool.common,
+					this.cardPool.uncommon,
+					this.cardPool.rare,
+					this.cardPool.mythic,
+					this.klingon.common,
+					this.klingon.uncommon,
+					this.klingon.rare,
+					this.scene.uncommon,
+					this.scene.rare,
+					this.scene.mythic,
+					this.lcars.uncommon,
+					this.lcars.rare,
+					this.lcars.mythic,
+					this.classicEnterprise.rare,
+					this.classicEnterprise.mythic,
+					this.borderlessLand.rare,
+					this.borderlessLand.mythic,
+					this.lcarsShockLand.rare,
+				]
+			);
+			booster.push(pickCard(pool, booster, { foil: true }));
+		}
+
+		// 1 Rare or mythic rare card
+		//     A rare (80.1%) or mythic rare (12.4%) card from the main set
+		//     A rare Klingon frame card (less than 1%)
+		//     A rare (1%) or mythic rare (less than 1%) TRK scene card
+		//     A rare (1.8%) or mythic rare (less than 1%) LCARS frame card
+		//     A rare (1.5%) or mythic rare (less than 1%) classic Enterprise card
+		//     A rare (1%) or mythic rare (less than 1%) borderless land card
+		//     An LCARS shock land (1.4%)
+		while (updatedTargets.rare > 0) {
+			updatedTargets.rare -= 1;
+			const unknown_rates = (100 - (80.1 + 12.4 + 1 + 1.8 + 1.5 + 1 + 1.4)) / 5;
+			const pool = chooseWeighted(
+				[
+					80.1,
+					12.4,
+					unknown_rates,
+					1,
+					unknown_rates,
+					1.8,
+					unknown_rates,
+					1.5,
+					unknown_rates,
+					1,
+					unknown_rates,
+					1.4,
+				].map((w) => w / 100.0),
+				[
+					this.cardPool.rare,
+					this.cardPool.mythic,
+					this.klingon.rare,
+					this.scene.rare,
+					this.scene.mythic,
+					this.lcars.rare,
+					this.lcars.mythic,
+					this.classicEnterprise.rare,
+					this.classicEnterprise.mythic,
+					this.borderlessLand.rare,
+					this.borderlessLand.mythic,
+					this.lcarsShockLand.rare,
+				]
+			);
+			booster.push(pickCard(pool, booster));
+		}
+		// 1 Wildcard of any rarity
+		//     A common (20.8%), uncommon (54.1%), rare (16.7%), or mythic rare (2.6%) card from the main set
+		//     A common (less than 1%), uncommon (1%), or rare (less than 1%) Klingon frame card
+		//     An uncommon (1.5%), rare (less than 1%), or mythic rare (less than 1%) TRK scene card
+		//     An uncommon (1%), rare (less than 1%), or mythic rare (less than 1%) LCARS frame card
+		//     A rare (less than 1%) or mythic rare (less than 1%) classic Enterprise card
+		//     A rare (less than 1%) or mythic rare (less than 1%) borderless land card
+		//     An LCARS shock land (less than 1%)
+		{
+			const unknown_rates = (100 - (20.8 + 54.1 + 16.7 + 2.6 + 1 + 1.5 + 1)) / 11;
+			const pool = chooseWeighted(
+				[
+					20.8,
+					54.1,
+					16.7,
+					2.6,
+					unknown_rates,
+					1.0,
+					unknown_rates,
+					1.5,
+					unknown_rates,
+					unknown_rates,
+					1,
+					unknown_rates,
+					unknown_rates,
+					unknown_rates,
+					unknown_rates,
+					unknown_rates,
+					unknown_rates,
+					unknown_rates,
+				].map((w) => w / 100.0),
+				[
+					this.cardPool.common,
+					this.cardPool.uncommon,
+					this.cardPool.rare,
+					this.cardPool.mythic,
+					this.klingon.common,
+					this.klingon.uncommon,
+					this.klingon.rare,
+					this.scene.uncommon,
+					this.scene.rare,
+					this.scene.mythic,
+					this.lcars.uncommon,
+					this.lcars.rare,
+					this.lcars.mythic,
+					this.classicEnterprise.rare,
+					this.classicEnterprise.mythic,
+					this.borderlessLand.rare,
+					this.borderlessLand.mythic,
+					this.lcarsShockLand.rare,
+				]
+			);
+			booster.push(pickCard(pool, booster));
+		}
+
+		// 3 Uncommon cards
+		//     There are 110 uncommon cards from Magic: The Gathering | Star Trek that can appear in these slots.
+		//     There are 10 scene cards that can appear in these slots (7.7%).
+		//     There are 7 LCARS frame cards that can appear in these slots (4.6%).
+		//     There are 5 classic Enterprise cards that can appear in these slots (4.6%).
+		//     There are 6 Klingon frame cards that can appear in these slots (5%).
+		while (updatedTargets.uncommon > 0) {
+			updatedTargets.uncommon -= 1;
+			const pool = chooseWeighted(
+				[100 - 7.7 - 4.6 - 4.6 - 5, 7.7, 4.6, 4.6, 5].map((w) => w / 100.0),
+				[
+					this.cardPool.uncommon,
+					this.scene.uncommon,
+					this.lcars.uncommon,
+					this.classicEnterprise.uncommon,
+					this.klingon.uncommon,
+				]
+			);
+			booster.push(pickCard(pool, booster));
+		}
+
+		// 6-7 Common cards
+		//     There are 81 common cards from Magic: The Gathering | Star Trek that can appear in these slots.
+		//     There is 1 common Klingon frame card that can appear in these slots (2.9%).
+		//     In 1 out of 25 Play Boosters, a stardates card will replace a common.
+		if (targets === DefaultBoosterTargets) updatedTargets.common = 7;
+		else updatedTargets.common = Math.max(0, updatedTargets.common - 3);
+		if (updatedTargets.common > 0 && random.bool(0.029)) {
+			updatedTargets.common -= 1;
+			booster.push(pickCard(this.klingon.common, booster));
+		}
+		if (updatedTargets.common > 0 && random.bool(1 / 25)) {
+			updatedTargets.common -= 1;
+			booster.push(pickCard(this.stardates, booster));
+		}
+
+		const rest = super.generateBooster(updatedTargets, booster);
+		if (isMessageError(rest)) return rest;
+
+		// 1 Land card
+		//     A non-foil (40%) or traditional foil (10%) common dual land
+		//     A non-foil (26.7%) or traditional foil (6.7%) default frame basic land
+		//     A non-foil (6.7%) or traditional foil (1.7%) holodeck basic land
+		//     A non-foil (6.7%) or traditional foil (1.7%) away team basic land
+		{
+			const pool = chooseWeighted(
+				[40 + 10, 26.7 + 6.7, 6.7 + 1.7, 6.7 + 1.7].map((w) => w / 100.0),
+				[
+					TRKBoosterFactory.CommonDualLands,
+					TRKBoosterFactory.Basics,
+					TRKBoosterFactory.HolodeckBasics,
+					TRKBoosterFactory.AwayTeamBasics,
+				]
+			);
+			const foil = random.realZeroToOneInclusive() <= 1 / 5;
+			rest.push(getUnique(getRandom(pool), { foil }));
+		}
+
+		return rest;
+	}
+}
+
 // Set specific rules.
 // Neither DOM, WAR or ZNR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
 export const SetSpecificFactories: {
@@ -5598,6 +5870,7 @@ export const SetSpecificFactories: {
 	hob: HOBBoosterFactory,
 	fra: FRABoosterFactory,
 	mbc: MBCBoosterFactory,
+	trk: TRKBoosterFactory,
 };
 
 export const getBoosterFactory = function (
