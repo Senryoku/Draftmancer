@@ -308,11 +308,11 @@ async function requestDefaultPrints(identifiers: DefaultPrintIdentifier[]) {
 }
 
 function toDefaultPrint(card: ScryfallCard): DefaultPrint {
-	const image = card.image_uris?.border_crop ?? card.card_faces?.[0]?.image_uris?.border_crop;
+	const image = card.image_uris?.crop ?? card.card_faces?.[0]?.image_uris?.crop;
 	if (!image) {
 		return null;
 	}
-	return { id: card.id, image, backImage: card.card_faces?.[1]?.image_uris?.border_crop };
+	return { id: card.id, image, backImage: card.card_faces?.[1]?.image_uris?.crop };
 }
 
 function defaultPrintKey(identifier: DefaultPrintIdentifier) {
