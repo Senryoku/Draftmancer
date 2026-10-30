@@ -1,78 +1,4 @@
 {
-    "3f0768ee-aa58-48ca-91e8-64332af5dcfe": {
-        "id": "3f0768ee-aa58-48ca-91e8-64332af5dcfe",
-        "oracle_id": "a842cc2b-52eb-4dc5-86c6-6575c2ed913d",
-        "name": "Zendikar's Roil",
-        "mana_cost": "{3}{G}{G}",
-        "set": "j22",
-        "collector_number": "747",
-        "rarity": "uncommon",
-        "type": "Enchantment",
-        "subtypes": [],
-        "rating": 1.1111113593833994,
-        "in_booster": true,
-        "cmc": 5,
-        "colors": [
-            "G"
-        ],
-        "printed_names": {
-            "de": "Zendikars Turbulenz",
-            "fr": "Roulis de Zendikar",
-            "es": "La Turbulencia de Zendikar",
-            "zhs": "赞迪卡的狂搅",
-            "ja": "ゼンディカーの乱動",
-            "it": "Torbido di Zendikar"
-        },
-        "image_uris": {
-            "de": "https://cards.scryfall.io/crop/front/1/7/17eeb380-1949-4da1-af50-5278a0dced5d.webp?1782833822",
-            "en": "https://cards.scryfall.io/crop/front/3/f/3f0768ee-aa58-48ca-91e8-64332af5dcfe.webp?1783918823",
-            "fr": "https://cards.scryfall.io/crop/front/6/6/66862887-ec62-455c-b86e-6e2a6b9d2d7d.webp?1782833823",
-            "es": "https://cards.scryfall.io/crop/front/7/5/750e067b-dfcf-4e33-9377-c449577c24c7.webp?1782833822",
-            "zhs": "https://cards.scryfall.io/crop/front/8/a/8a50bdec-0605-444d-9563-c42123066a05.webp?1782833825",
-            "ja": "https://cards.scryfall.io/crop/front/9/0/90600338-2348-4031-a27e-b12ececa3e79.webp?1782833824",
-            "it": "https://cards.scryfall.io/crop/front/d/3/d30afe9d-8672-492e-a4cb-855a9b4a5b47.webp?1782833824"
-        }
-    },
-    "3f07e5c7-02fe-4e11-b923-318ce043567b": {
-        "id": "3f07e5c7-02fe-4e11-b923-318ce043567b",
-        "oracle_id": "c11d2241-078f-4f1a-a7c5-d974316f1901",
-        "name": "Domesticated Watercourse",
-        "mana_cost": "",
-        "set": "cmb2",
-        "collector_number": "114",
-        "rarity": "rare",
-        "type": "Land",
-        "subtypes": [],
-        "rating": 1.1712208489405984,
-        "in_booster": false,
-        "cmc": 0,
-        "colors": [],
-        "printed_names": {},
-        "image_uris": {
-            "en": "https://cards.scryfall.io/crop/front/3/f/3f07e5c7-02fe-4e11-b923-318ce043567b.webp?1783925912"
-        }
-    },
-    "3f09e393-7318-43eb-95f8-0f2797a771d7": {
-        "id": "3f09e393-7318-43eb-95f8-0f2797a771d7",
-        "oracle_id": "f525cf10-e24c-4c46-9a13-6f8579d09d50",
-        "name": "Winds of Change",
-        "mana_cost": "{R}",
-        "set": "me1",
-        "collector_number": "111",
-        "rarity": "uncommon",
-        "type": "Sorcery",
-        "subtypes": [],
-        "rating": 1.1611188314761793,
-        "in_booster": true,
-        "cmc": 1,
-        "colors": [
-            "R"
-        ],
-        "printed_names": {},
-        "image_uris": {
-            "en": "https://cards.scryfall.io/crop/front/3/f/3f09e393-7318-43eb-95f8-0f2797a771d7.webp?1783942941"
-        }
-    },
     "3f0b511e-3f36-479d-818a-83420e7080b4": {
         "id": "3f0b511e-3f36-479d-818a-83420e7080b4",
         "oracle_id": "6121d856-2dc9-4a43-b2b3-16af889eaa1f",
@@ -114653,7 +114579,7 @@
         ],
         "printed_names": {},
         "image_uris": {
-            "en": "https://cards.scryfall.io/crop/front/4/7/477a6a46-7fda-4666-87d9-a35c953dd94d.webp?1792672463"
+            "en": "https://cards.scryfall.io/crop/front/4/7/477a6a46-7fda-4666-87d9-a35c953dd94d.webp?1793361200"
         }
     },
     "477bc3e7-2f0b-4cd9-9f72-6c1ceba99f4e": {
@@ -170980,7 +170906,7 @@
         ],
         "printed_names": {},
         "image_uris": {
-            "en": "https://cards.scryfall.io/crop/front/4/b/4b7d505f-2a6b-4525-87c7-19e06d49c9df.webp?1792672545"
+            "en": "https://cards.scryfall.io/crop/front/4/b/4b7d505f-2a6b-4525-87c7-19e06d49c9df.webp?1793361241"
         }
     },
     "4b7e33a8-765b-4909-a5c6-5fe8f8774a51": {
@@ -547726,7 +547652,7 @@
         ],
         "printed_names": {},
         "image_uris": {
-            "en": "https://cards.scryfall.io/crop/front/6/6/66daae4f-8024-4d87-b42f-e5271d29e646.webp?1793191276"
+            "en": "https://cards.scryfall.io/crop/front/6/6/66daae4f-8024-4d87-b42f-e5271d29e646.webp?1793361345"
         }
     },
     "66dac1f1-451b-4137-9c2e-b43b937c2edc": {
@@ -661452,7 +661378,7 @@
         ],
         "printed_names": {},
         "image_uris": {
-            "en": "https://cards.scryfall.io/crop/front/6/f/6f4b2476-8f93-4d4e-b664-233e82fcf212.webp?1792591213"
+            "en": "https://cards.scryfall.io/crop/front/6/f/6f4b2476-8f93-4d4e-b664-233e82fcf212.webp?1793361221"
         }
     },
     "6f4b3f12-ed9e-4802-9446-9aeb5cdbe11f": {
@@ -753218,7 +753144,7 @@
         ],
         "printed_names": {},
         "image_uris": {
-            "en": "https://cards.scryfall.io/crop/front/7/6/7608943e-329e-41f9-b098-a0a94b01e6a1.webp?1792739758"
+            "en": "https://cards.scryfall.io/crop/front/7/6/7608943e-329e-41f9-b098-a0a94b01e6a1.webp?1793361260"
         }
     },
     "76090539-f42a-4895-954f-47ed12834154": {
@@ -872771,7 +872697,7 @@
         ],
         "printed_names": {},
         "image_uris": {
-            "en": "https://cards.scryfall.io/crop/front/7/e/7efe3788-ecf7-4b56-8970-bc324092941c.webp?1793191089"
+            "en": "https://cards.scryfall.io/crop/front/7/e/7efe3788-ecf7-4b56-8970-bc324092941c.webp?1793361187"
         }
     },
     "7efe6417-9445-40e5-8c37-0973d8645c79": {
@@ -875912,6 +875838,206 @@
             "es": "https://cards.scryfall.io/crop/front/b/0/b03372d5-6340-4382-ae24-064aba4bc682.webp?1783033843",
             "pt": "https://cards.scryfall.io/crop/front/c/c/cc855952-b4a3-4eb9-a88a-333c5f527391.webp?1783033846",
             "zht": "https://cards.scryfall.io/crop/front/e/a/eafc4e59-47fd-44eb-aeb4-e5edbd25ee89.webp?1783033846"
+        }
+    },
+    "7f334767-4353-4379-a934-fa67075db439": {
+        "id": "7f334767-4353-4379-a934-fa67075db439",
+        "oracle_id": "5f0c8c60-96f1-4b26-a9f6-386e1cec517d",
+        "arena_id": 73190,
+        "name": "Cliffhaven Sell-Sword",
+        "mana_cost": "{1}{W}",
+        "set": "znr",
+        "collector_number": "8",
+        "rarity": "common",
+        "type": "Creature",
+        "subtypes": [
+            "Kor",
+            "Warrior"
+        ],
+        "rating": 0.9310064345920472,
+        "in_booster": true,
+        "cmc": 2,
+        "colors": [
+            "W"
+        ],
+        "printed_names": {
+            "es": "Sicario de Refugio Cornisa",
+            "pt": "Mercenário do Porto Altivo",
+            "ko": "절벽피난처 용병꾼",
+            "ja": "岸壁安息所の売剣",
+            "it": "Prezzolato di Rifugio Scosceso",
+            "zhs": "崖屋贷剑客",
+            "fr": "Épée à louer d'Havrefalaise",
+            "ru": "Наемник из Клифхейвена",
+            "de": "Söldner aus Klippenhafen",
+            "zht": "崖屋貸劍客"
+        },
+        "image_uris": {
+            "es": "https://cards.scryfall.io/crop/front/4/7/470459ab-c0fa-4fe8-990a-3f22a5645909.webp?1782901497",
+            "pt": "https://cards.scryfall.io/crop/front/7/7/7752c540-ca01-4890-99eb-4f9456d41296.webp?1782901499",
+            "en": "https://cards.scryfall.io/crop/front/7/f/7f334767-4353-4379-a934-fa67075db439.webp?1783929421",
+            "ko": "https://cards.scryfall.io/crop/front/9/0/9018ff6c-0988-480f-8e69-0ced5df3ec01.webp?1782901498",
+            "ja": "https://cards.scryfall.io/crop/front/c/2/c2b444b9-1a04-48ed-b1b3-2437809f3a94.webp?1782901498",
+            "it": "https://cards.scryfall.io/crop/front/c/6/c65859df-21d1-48c0-a0ae-fff6d428e87c.webp?1782901498",
+            "zhs": "https://cards.scryfall.io/crop/front/c/f/cf0636b2-9763-47b2-9135-b9d95815edf4.webp?1782901500",
+            "fr": "https://cards.scryfall.io/crop/front/d/1/d1607f7c-fefc-44bf-9533-2124e9a6850b.webp?1782901497",
+            "ru": "https://cards.scryfall.io/crop/front/e/a/eac7250d-7c83-4747-ba7d-b94cee65ef87.webp?1782901500",
+            "de": "https://cards.scryfall.io/crop/front/f/b/fb6005e5-f71a-47d2-af6c-b507dec6034c.webp?1782901495",
+            "zht": "https://cards.scryfall.io/crop/front/f/c/fc85fe73-70ef-4776-9aad-033fe1c5759a.webp?1782901500"
+        }
+    },
+    "7f338af2-f173-45a0-bbea-02517d41bef2": {
+        "id": "7f338af2-f173-45a0-bbea-02517d41bef2",
+        "oracle_id": "7903666e-7803-4cfc-9ed9-482a6b577c96",
+        "name": "Salvation Engine",
+        "mana_cost": "{4}{W}",
+        "set": "dft",
+        "collector_number": "431",
+        "rarity": "mythic",
+        "type": "Artifact",
+        "subtypes": [
+            "Vehicle"
+        ],
+        "rating": 1.339311711053021,
+        "in_booster": false,
+        "cmc": 5,
+        "colors": [
+            "W"
+        ],
+        "printed_names": {
+            "it": "Macchina della Salvezza",
+            "es": "Nave de recuperación",
+            "de": "Rettende Bergungsmaschine",
+            "fr": "Moteur de salut",
+            "ja": "救出エンジン"
+        },
+        "image_uris": {
+            "it": "https://cards.scryfall.io/crop/front/0/9/09981cdf-1712-41db-b7ee-543273880d95.webp?1782776947",
+            "en": "https://cards.scryfall.io/crop/front/7/f/7f338af2-f173-45a0-bbea-02517d41bef2.webp?1783907788",
+            "es": "https://cards.scryfall.io/crop/front/8/5/851de334-45f9-4ea5-bb03-d6c7f6b1b5ed.webp?1782776945",
+            "de": "https://cards.scryfall.io/crop/front/8/a/8aecd49b-8488-4229-b476-363e3e23fbe7.webp?1782776945",
+            "fr": "https://cards.scryfall.io/crop/front/8/e/8e668447-a34a-464f-86c5-ba2634288b31.webp?1782776947",
+            "ja": "https://cards.scryfall.io/crop/front/b/3/b38bff17-3423-4823-8ce0-cb300560eb83.webp?1782776948"
+        }
+    },
+    "7f33c690-cf24-436e-b632-2d7b538c6170": {
+        "id": "7f33c690-cf24-436e-b632-2d7b538c6170",
+        "oracle_id": "29263d48-cb28-478b-a99e-5a18dbc924f0",
+        "name": "Dawnbringer Charioteers",
+        "mana_cost": "{2}{W}{W}",
+        "set": "prm",
+        "collector_number": "52332",
+        "rarity": "rare",
+        "type": "Creature",
+        "subtypes": [
+            "Human",
+            "Soldier"
+        ],
+        "rating": 1.0241872850609746,
+        "in_booster": false,
+        "cmc": 4,
+        "colors": [
+            "W"
+        ],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/7/f/7f33c690-cf24-436e-b632-2d7b538c6170.webp?1783937958"
+        }
+    },
+    "7f33cce1-1484-43da-a825-b090eb5403a4": {
+        "id": "7f33cce1-1484-43da-a825-b090eb5403a4",
+        "oracle_id": "5004b84a-33b7-4f6f-b2c2-7086b9087535",
+        "name": "Graven Cairns",
+        "mana_cost": "",
+        "set": "fic",
+        "collector_number": "401",
+        "rarity": "rare",
+        "type": "Land",
+        "subtypes": [],
+        "rating": 1.4174914459707904,
+        "in_booster": false,
+        "cmc": 0,
+        "colors": [],
+        "printed_names": {
+            "fr": "Cairns sculptés",
+            "it": "Tumuli Scolpiti",
+            "de": "Behauene Steinpyramiden",
+            "es": "Hitos esculpidos",
+            "ja": "偶像の石塚"
+        },
+        "image_uris": {
+            "fr": "https://cards.scryfall.io/crop/front/4/b/4bd02ee9-0f91-482d-b874-cb870363cb3d.webp?1782768985",
+            "it": "https://cards.scryfall.io/crop/front/5/8/58361bab-54fb-4cc6-b481-ee621ca3060d.webp?1782768987",
+            "de": "https://cards.scryfall.io/crop/front/5/d/5d8fa315-f999-4496-b9d7-01f519978ffb.webp?1782768981",
+            "es": "https://cards.scryfall.io/crop/front/7/4/74e8a6c5-89dc-4b57-9808-d46373767929.webp?1782768984",
+            "en": "https://cards.scryfall.io/crop/front/7/f/7f33cce1-1484-43da-a825-b090eb5403a4.webp?1783906217",
+            "ja": "https://cards.scryfall.io/crop/front/9/0/9093b8a2-0ccd-400c-a6b8-f5f95f87c8e7.webp?1782768987"
+        }
+    },
+    "7f3423d7-cb81-47bf-b9a6-a279ba6cedf4": {
+        "id": "7f3423d7-cb81-47bf-b9a6-a279ba6cedf4",
+        "oracle_id": "11173ad3-c007-478f-bce0-d756eac07ccb",
+        "arena_id": 67304,
+        "name": "Phyrexian Scriptures",
+        "mana_cost": "{2}{B}{B}",
+        "set": "dom",
+        "collector_number": "100",
+        "rarity": "mythic",
+        "type": "Enchantment",
+        "subtypes": [
+            "Saga"
+        ],
+        "rating": 1.5626760093946015,
+        "in_booster": true,
+        "cmc": 4,
+        "colors": [
+            "B"
+        ],
+        "printed_names": {
+            "it": "Sacre Scritture di Phyrexia",
+            "es": "Las Escrituras pirexianas",
+            "pt": "Escrituras Phyrexianas",
+            "zhs": "非瑞克西亚经文",
+            "ja": "ファイレクシア教典",
+            "zht": "非瑞克西亞經文",
+            "fr": "Les Saintes Écritures phyrexianes",
+            "ru": "Фирексийские Писания",
+            "ko": "피렉시아의 성서",
+            "de": "Phyrexias Heilige Schrift"
+        },
+        "image_uris": {
+            "it": "https://cards.scryfall.io/crop/front/1/3/1364b21d-a176-44df-bb2a-6d8fca4b8174.webp?1782933297",
+            "es": "https://cards.scryfall.io/crop/front/4/8/48ae0878-5c43-4acb-8e86-56b37f0726eb.webp?1782933295",
+            "pt": "https://cards.scryfall.io/crop/front/5/5/5516d213-f6aa-4e70-9c76-8719c4b5bf78.webp?1782933301",
+            "zhs": "https://cards.scryfall.io/crop/front/5/9/59557702-d6ad-49b2-b50a-3d5d00051e19.webp?1782933302",
+            "en": "https://cards.scryfall.io/crop/front/7/f/7f3423d7-cb81-47bf-b9a6-a279ba6cedf4.webp?1783935006",
+            "ja": "https://cards.scryfall.io/crop/front/8/6/86a5e468-cf99-4559-8e60-2cfac1c789d0.webp?1782933297",
+            "zht": "https://cards.scryfall.io/crop/front/9/d/9d7670f5-0fcf-4973-952e-b1fb588e92d7.webp?1782933303",
+            "fr": "https://cards.scryfall.io/crop/front/c/1/c1cbd458-f9d6-42fd-9fa0-73594f123b99.webp?1782933297",
+            "ru": "https://cards.scryfall.io/crop/front/e/b/eb1efc8f-987d-4842-bdda-688682766e58.webp?1782933302",
+            "ko": "https://cards.scryfall.io/crop/front/f/4/f4b69e25-5277-4b24-9d09-2c2b594f8f4f.webp?1782933298",
+            "de": "https://cards.scryfall.io/crop/front/f/4/f4f2ac7e-1609-412a-a9a1-4c0869c259d5.webp?1782933295"
+        }
+    },
+    "7f35db42-8484-40ad-b8a4-8511414b1793": {
+        "id": "7f35db42-8484-40ad-b8a4-8511414b1793",
+        "oracle_id": "2950a304-0c2d-4dcd-b8c7-d77a00f9e091",
+        "name": "Phyrexian Ornithopter",
+        "mana_cost": "{1}",
+        "set": "unk",
+        "collector_number": "CA01",
+        "rarity": "common",
+        "type": "Artifact Creature",
+        "subtypes": [
+            "Thopter"
+        ],
+        "rating": 1.0283355676459793,
+        "in_booster": false,
+        "cmc": 1,
+        "colors": [],
+        "printed_names": {},
+        "image_uris": {
+            "en": "https://cards.scryfall.io/crop/front/7/f/7f35db42-8484-40ad-b8a4-8511414b1793.webp?1783917769"
         }
     }
 }
