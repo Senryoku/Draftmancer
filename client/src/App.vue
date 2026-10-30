@@ -120,6 +120,18 @@
 			<span class="personal-settings">
 				<div
 					class="clickable personal-settings-icon"
+					:class="{ faded: !altArtDisplayed, crossed: !altArtDisplayed }"
+					@click="altArtDisplayed = !altArtDisplayed"
+					v-tooltip="{
+						content: `Alt arts: <strong>${altArtDisplayed ? 'Enabled' : 'Disabled'}</strong>`,
+						html: true,
+					}"
+					tabindex="0"
+				>
+					<font-awesome-icon icon="fa-solid fa-palette" style="font-size: 1.2em; vertical-align: -20%" />
+				</div>
+				<div
+					class="clickable personal-settings-icon"
 					:class="{ faded: !foilEffect, crossed: !foilEffect }"
 					@click="foilEffect = !foilEffect"
 					v-tooltip="{

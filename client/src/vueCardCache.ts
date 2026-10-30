@@ -1,5 +1,5 @@
 import axios from "axios";
-import { CardID, CardColor, OracleID } from "@/CardTypes";
+import { Card, CardID, CardColor, OracleID } from "@/CardTypes";
 import { ref, App } from "vue";
 
 export type ScryfallRelatedCard = {
@@ -241,3 +241,102 @@ declare module "vue" {
 }
 
 export default cardCachePlugin;
+
+export type DefaultPrint = { id: CardID; image: string; backImage?: string } | null;
+
+type DefaultPrintIdentifier = { name: string; set: string };
+
+const defaultPrintsStorageKey = "defaultPrints";
+const defaultPrints = ref(loadStoredDefaultPrints());
+const queuedDefaultPrints = new Map<string, DefaultPrintIdentifier>();
+const requestedDefaultPrintKeys = new Set<string>();
+let defaultPrintsFlushScheduled = false;
+
+export const getDefaultPrint = (card: Card): DefaultPrint | undefined => {
+	const identifier = { name: frontFaceName(card.name), set: card.set };
+	const key = defaultPrintKey(identifier);
+	if (!(key in defaultPrints.value)) {
+		queueDefaultPrint(key, identifier);
+	}
+	return defaultPrints.value[key];
+};
+
+function queueDefaultPrint(key: string, identifier: DefaultPrintIdentifier) {
+	if (requestedDefaultPrintKeys.has(key)) {
+		return;
+	}
+	requestedDefaultPrintKeys.add(key);
+	queuedDefaultPrints.set(key, identifier);
+	if (!defaultPrintsFlushScheduled) {
+		defaultPrintsFlushScheduled = true;
+		setTimeout(flushQueuedDefaultPrints, 50);
+	}
+}
+
+async function flushQueuedDefaultPrints() {
+	const maxCards = 75;
+	const delayBetweenRequests = 500;
+	while (queuedDefaultPrints.size > 0) {
+		const batch = [...queuedDefaultPrints.values()].slice(0, maxCards);
+		for (const identifier of batch) {
+			queuedDefaultPrints.delete(defaultPrintKey(identifier));
+		}
+		await requestDefaultPrints(batch);
+		if (queuedDefaultPrints.size > 0) {
+			await new Promise((resolve) => setTimeout(resolve, delayBetweenRequests));
+		}
+	}
+	defaultPrintsFlushScheduled = false;
+	storeDefaultPrints();
+}
+
+async function requestDefaultPrints(identifiers: DefaultPrintIdentifier[]) {
+	try {
+		const response = await axios.post(
+			`https://api.scryfall.com/cards/collection`,
+			{ identifiers },
+			{ timeout: 10000 }
+		);
+		for (const card of response.data.data as ScryfallCard[]) {
+			const key = defaultPrintKey({ name: frontFaceName(card.name), set: card.set });
+			defaultPrints.value[key] = toDefaultPrint(card);
+		}
+		for (const identifier of response.data.not_found as DefaultPrintIdentifier[]) {
+			defaultPrints.value[defaultPrintKey(identifier)] = null;
+		}
+	} catch (error) {
+		console.error("Error fetching default prints:", error);
+	}
+}
+
+function toDefaultPrint(card: ScryfallCard): DefaultPrint {
+	const image = card.image_uris?.border_crop ?? card.card_faces?.[0]?.image_uris?.border_crop;
+	if (!image) {
+		return null;
+	}
+	return { id: card.id, image, backImage: card.card_faces?.[1]?.image_uris?.border_crop };
+}
+
+function defaultPrintKey(identifier: DefaultPrintIdentifier) {
+	return `${identifier.set}:${identifier.name}`.toLowerCase();
+}
+
+function frontFaceName(name: string) {
+	return name.split(" //")[0];
+}
+
+function loadStoredDefaultPrints(): Record<string, DefaultPrint> {
+	try {
+		return JSON.parse(localStorage.getItem(defaultPrintsStorageKey) ?? "{}");
+	} catch {
+		return {};
+	}
+}
+
+function storeDefaultPrints() {
+	try {
+		localStorage.setItem(defaultPrintsStorageKey, JSON.stringify(defaultPrints.value));
+	} catch (error) {
+		console.error("Error storing default prints:", error);
+	}
+}

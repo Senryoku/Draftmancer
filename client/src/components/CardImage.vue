@@ -153,6 +153,7 @@ import { computed } from "vue";
 import { Language } from "@/Types";
 import { Card, CardFace } from "@/CardTypes";
 import { useCardCache, ScryfallCard, isReady, ScryfallCardFace, CardCacheEntry } from "../vueCardCache";
+import { displayedBackImageURIs, displayedFrontImageURIs } from "../altArtDisplay";
 
 const { cardCache } = useCardCache();
 
@@ -173,17 +174,17 @@ const props = withDefaults(
 	}
 );
 const imageURI = computed(() => {
-	if (props.language in props.card.image_uris) return props.card.image_uris[props.language];
-	return props.card.image_uris["en"];
+	const imageURIs = displayedFrontImageURIs(props.card);
+	if (props.language in imageURIs) return imageURIs[props.language];
+	return imageURIs["en"];
 });
 const hasBack = computed(() => {
 	return props.card.back !== null && props.card.back !== undefined;
 });
 const backImageURI = computed(() => {
 	if (!hasBack.value) return undefined;
-	return props.language in props.card.back!.image_uris
-		? props.card.back?.image_uris[props.language]
-		: props.card.back?.image_uris["en"];
+	const imageURIs = displayedBackImageURIs(props.card)!;
+	return props.language in imageURIs ? imageURIs[props.language] : imageURIs["en"];
 });
 const cardAdditionalData = computed(() => {
 	if (!props.displayCardText) return false; // Don't send the requests automatically

@@ -15,7 +15,7 @@
 						v-tooltip.left="{
 							html: true,
 							content: `<img src='${
-								card.image_uris[language] ?? card.image_uris['en']
+								displayedFrontImageURIs(card)[language] ?? displayedFrontImageURIs(card)['en']
 							}' style='max-height: 40vh; max-width: 40vw'/>`,
 						}"
 						@contextmenu="toggleZoom($event, card)"
@@ -34,6 +34,7 @@
 <script setup lang="ts">
 import { Card, CardID } from "@/CardTypes";
 import { replaceManaSymbols } from "../ManaSymbols";
+import { displayedFrontImageURIs } from "../altArtDisplay";
 import { useEmitter } from "../appCommon";
 const { emitter } = useEmitter();
 
