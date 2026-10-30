@@ -14,9 +14,7 @@
 						:key="`${cardIdx}_${pickIdx}`"
 						v-tooltip.left="{
 							html: true,
-							content: `<img src='${
-								displayedFrontImageURIs(card)[language] ?? displayedFrontImageURIs(card)['en']
-							}' style='max-height: 40vh; max-width: 40vw'/>`,
+							content: `<img src='${tooltipImageURI(card)}' style='max-height: 40vh; max-width: 40vw'/>`,
 						}"
 						@contextmenu="toggleZoom($event, card)"
 						@mouseleave="mouseLeave"
@@ -53,6 +51,10 @@ function getPicks(packIdx: number, pickIdx: number) {
 	const pick = props.picks[packIdx][pickIdx];
 	return pick.pick.map((card_idx) => props.carddata[pick.booster[card_idx]]);
 }
+const tooltipImageURI = (card: Card) => {
+	const imageURIs = displayedFrontImageURIs(card);
+	return imageURIs[props.language] ?? imageURIs.en;
+};
 function toggleZoom(e: Event, card: Card) {
 	e.preventDefault();
 	emitter.emit("togglecardpopup", e, card);

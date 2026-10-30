@@ -260,7 +260,7 @@ export const getDefaultPrint = (card: Card): DefaultPrint | undefined => {
 	return defaultPrints.value[key];
 };
 
-function queueDefaultPrint(key: string, identifier: DefaultPrintIdentifier) {
+const queueDefaultPrint = (key: string, identifier: DefaultPrintIdentifier) => {
 	if (requestedDefaultPrintKeys.has(key)) {
 		return;
 	}
@@ -270,9 +270,9 @@ function queueDefaultPrint(key: string, identifier: DefaultPrintIdentifier) {
 		defaultPrintsFlushScheduled = true;
 		setTimeout(flushQueuedDefaultPrints, 50);
 	}
-}
+};
 
-async function flushQueuedDefaultPrints() {
+const flushQueuedDefaultPrints = async () => {
 	const maxCards = 75;
 	const delayBetweenRequests = 500;
 	while (queuedDefaultPrints.size > 0) {
@@ -286,9 +286,9 @@ async function flushQueuedDefaultPrints() {
 		}
 	}
 	defaultPrintsFlushScheduled = false;
-}
+};
 
-async function requestDefaultPrints(identifiers: DefaultPrintIdentifier[]) {
+const requestDefaultPrints = async (identifiers: DefaultPrintIdentifier[]) => {
 	try {
 		const response = await axios.post(
 			`https://api.scryfall.com/cards/collection`,
@@ -304,21 +304,20 @@ async function requestDefaultPrints(identifiers: DefaultPrintIdentifier[]) {
 		}
 	} catch (error) {
 		console.error("Error fetching default prints:", error);
+		for (const identifier of identifiers) {
+			requestedDefaultPrintKeys.delete(defaultPrintKey(identifier));
+		}
 	}
-}
+};
 
-function toDefaultPrint(card: ScryfallCard): DefaultPrint {
+const toDefaultPrint = (card: ScryfallCard): DefaultPrint => {
 	const image = card.image_uris?.crop ?? card.card_faces?.[0]?.image_uris?.crop;
 	if (!image) {
 		return null;
 	}
 	return { id: card.id, image, backImage: card.card_faces?.[1]?.image_uris?.crop };
-}
+};
 
-function defaultPrintKey(identifier: DefaultPrintIdentifier) {
-	return `${identifier.set}:${identifier.name}`.toLowerCase();
-}
+const defaultPrintKey = (identifier: DefaultPrintIdentifier) => `${identifier.set}:${identifier.name}`.toLowerCase();
 
-function frontFaceName(name: string) {
-	return name.split(" //")[0];
-}
+const frontFaceName = (name: string) => name.split(" //")[0];
