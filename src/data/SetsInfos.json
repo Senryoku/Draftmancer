@@ -3927,10 +3927,6 @@
         "block": "Commander",
         "icon": "img/sets/tmc.svg"
     },
-    "tmdd": {
-        "code": "tmdd",
-        "fullName": "Marvel: Darkhold Destiny Tokens"
-    },
     "tmp": {
         "code": "tmp",
         "fullName": "Tempest",
@@ -4002,6 +3998,11 @@
         "code": "ttdc",
         "fullName": "Tarkir: Dragonstorm Commander Tokens",
         "icon": "img/sets/ttdc.svg"
+    },
+    "ttrc": {
+        "code": "ttrc",
+        "fullName": "Star Trek Commander Tokens",
+        "block": "Commander"
     },
     "tund": {
         "code": "tund",
