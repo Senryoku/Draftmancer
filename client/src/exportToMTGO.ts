@@ -1,8 +1,9 @@
 import axios from "axios";
-import vueCardCache, { isReady, ScryfallCard } from "./vueCardCache";
+import type { ScryfallCard } from "./Scryfall";
+import vueCardCache, { isReady } from "./vueCardCache";
 import Constants from "../../src/Constants";
 import { Alert, fireToast, loadingToast } from "./alerts";
-import { download, escapeHTML } from "./helper";
+import { download, escapeHTML, wait } from "./helper";
 import { Card, CardColor } from "@/CardTypes.js";
 
 async function requestMTGOIDs(cards: Card[]): Promise<boolean> {
@@ -10,7 +11,7 @@ async function requestMTGOIDs(cards: Card[]): Promise<boolean> {
 	const cardIDs = [...new Set(cards.filter((card) => !card.is_custom).map((card) => card.id))];
 	for (let i = 0; i < maxRetries; i++) {
 		if (await vueCardCache.requestBulk(cardIDs)) return true;
-		else await new Promise((resolve) => setTimeout(resolve, 1000));
+		else await wait(1000);
 	}
 	return false;
 }

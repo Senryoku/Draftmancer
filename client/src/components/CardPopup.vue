@@ -92,7 +92,8 @@ import CardText from "./CardText.vue";
 import CardImage from "./CardImage.vue";
 import { isString } from "../../../src/TypeChecks";
 import { Card, CardFace, CardID } from "@/CardTypes";
-import { useCardCache, ScryfallCard, isReady, CardCacheEntry } from "../vueCardCache";
+import type { ScryfallCard } from "../Scryfall";
+import { useCardCache, isReady, CardCacheEntry } from "../vueCardCache";
 const { cardCache } = useCardCache();
 
 import { useEmitter } from "../appCommon";

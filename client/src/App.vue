@@ -120,6 +120,20 @@
 			<span class="personal-settings">
 				<div
 					class="clickable personal-settings-icon"
+					:class="{ faded: !replaceAltArts, crossed: !replaceAltArts }"
+					@click="replaceAltArts = !replaceAltArts"
+					v-tooltip="{
+						content: `Replace Alt. Arts: <strong>${replaceAltArts ? 'Enabled' : 'Disabled'}</strong><br />
+							<small>Use the default art for showcase and borderless cards.</small><br />
+							<small>Only changes what you see, other players are not affected.</small>`,
+						html: true,
+					}"
+					tabindex="0"
+				>
+					<font-awesome-icon icon="fa-solid fa-palette" style="font-size: 1.2em; vertical-align: -20%" />
+				</div>
+				<div
+					class="clickable personal-settings-icon"
 					:class="{ faded: !foilEffect, crossed: !foilEffect }"
 					@click="foilEffect = !foilEffect"
 					v-tooltip="{

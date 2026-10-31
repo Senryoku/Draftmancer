@@ -63,6 +63,7 @@ import {
 } from "./helper";
 import { eraseCookie, getCookie, setCookie } from "./cookies";
 import { ButtonColor, Alert, fireToast } from "./alerts";
+import { replaceAltArts } from "./altArtDisplay";
 import parseCSV from "../../src/parseCSV";
 
 import type CardPool from "./components/CardPool.vue";
@@ -151,6 +152,7 @@ const defaultSettings = {
 	displayBotScores: false,
 	fixedDeck: false,
 	foilEffect: true,
+	replaceAltArts: false,
 	pickOnDblclick: true,
 	enableSound: true,
 	enableNotifications: false,
@@ -162,6 +164,7 @@ const defaultSettings = {
 };
 const storedSettings = JSON.parse(localStorage.getItem(localStorageSettingsKey) ?? "{}");
 const initialSettings: typeof defaultSettings = Object.assign({ ...defaultSettings }, storedSettings);
+replaceAltArts.value = initialSettings.replaceAltArts;
 
 export type SessionUser = {
 	userID: string;
@@ -438,6 +441,7 @@ export default defineComponent({
 			displayBotScores: initialSettings.displayBotScores,
 			fixedDeck: initialSettings.fixedDeck,
 			foilEffect: initialSettings.foilEffect,
+			replaceAltArts: initialSettings.replaceAltArts,
 
 			fixedDeckState: {
 				ht: 400,
@@ -4283,6 +4287,10 @@ export default defineComponent({
 			this.storeSettings();
 		},
 		foilEffect() {
+			this.storeSettings();
+		},
+		replaceAltArts() {
+			replaceAltArts.value = this.replaceAltArts;
 			this.storeSettings();
 		},
 		fixedDeck() {
