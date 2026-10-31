@@ -3,49 +3,44 @@ import { MaxCardsPerRequest, ScryfallCard } from "./Scryfall";
 import { ref } from "vue";
 import { Card, CardID } from "@/CardTypes";
 
-export type DefaultPrint = { id: CardID; image: string; backImage?: string } | null;
+export type DefaultPrint = { id: CardID; image: string; backImage?: string } | null; // Here `null` means it was requested but Scryfall returned 'not found'.
 
 type DefaultPrintIdentifier = { name: string; set: string };
 
-const defaultPrints = ref<Record<string, DefaultPrint>>({});
+const defaultPrints = ref<Map<string, DefaultPrint>>(new Map<string, DefaultPrint>());
 const queuedDefaultPrints = new Map<string, DefaultPrintIdentifier>();
-const requestedDefaultPrintKeys = new Set<string>();
-let defaultPrintsFlushScheduled = false;
+let defaultPrintsFlushTimeout: ReturnType<typeof setTimeout> | null = null;
 
 export const getDefaultPrint = (card: Card): DefaultPrint | undefined => {
 	const identifier = { name: frontFaceName(card.name), set: card.set };
-	const key = defaultPrintKey(identifier);
-	if (!(key in defaultPrints.value)) {
-		queueDefaultPrint(key, identifier);
-	}
-	return defaultPrints.value[key];
+	queueDefaultPrint(identifier);
+	return defaultPrints.value.get(defaultPrintKey(identifier));
 };
 
-const queueDefaultPrint = (key: string, identifier: DefaultPrintIdentifier) => {
-	if (requestedDefaultPrintKeys.has(key)) {
+const queueDefaultPrint = (identifier: DefaultPrintIdentifier) => {
+	const key = defaultPrintKey(identifier);
+	if (defaultPrints.value.has(key) || queuedDefaultPrints.has(key)) {
 		return;
 	}
-	requestedDefaultPrintKeys.add(key);
 	queuedDefaultPrints.set(key, identifier);
-	if (!defaultPrintsFlushScheduled) {
-		defaultPrintsFlushScheduled = true;
-		setTimeout(flushQueuedDefaultPrints, 50);
+	if (!defaultPrintsFlushTimeout) {
+		defaultPrintsFlushTimeout = setTimeout(flushQueuedDefaultPrints, 100);
 	}
 };
 
 const flushQueuedDefaultPrints = async () => {
 	const delayBetweenRequests = 500;
 	while (queuedDefaultPrints.size > 0) {
-		const batch = [...queuedDefaultPrints.values()].slice(0, MaxCardsPerRequest);
-		for (const identifier of batch) {
-			queuedDefaultPrints.delete(defaultPrintKey(identifier));
+		const batch = [...queuedDefaultPrints.entries()].slice(0, MaxCardsPerRequest);
+		for (const key of batch.map((e) => e[0])) {
+			queuedDefaultPrints.delete(key);
 		}
-		await requestDefaultPrints(batch);
+		await requestDefaultPrints(batch.map((e) => e[1]));
 		if (queuedDefaultPrints.size > 0) {
 			await new Promise((resolve) => setTimeout(resolve, delayBetweenRequests));
 		}
 	}
-	defaultPrintsFlushScheduled = false;
+	defaultPrintsFlushTimeout = null;
 };
 
 const requestDefaultPrints = async (identifiers: DefaultPrintIdentifier[]) => {
@@ -56,17 +51,16 @@ const requestDefaultPrints = async (identifiers: DefaultPrintIdentifier[]) => {
 			{ timeout: 10000 }
 		);
 		for (const card of response.data.data as ScryfallCard[]) {
-			const key = defaultPrintKey({ name: frontFaceName(card.name), set: card.set });
-			defaultPrints.value[key] = toDefaultPrint(card);
+			defaultPrints.value.set(
+				defaultPrintKey({ name: frontFaceName(card.name), set: card.set }),
+				toDefaultPrint(card)
+			);
 		}
 		for (const identifier of response.data.not_found as DefaultPrintIdentifier[]) {
-			defaultPrints.value[defaultPrintKey(identifier)] = null;
+			defaultPrints.value.set(defaultPrintKey(identifier), null);
 		}
 	} catch (error) {
 		console.error("Error fetching default prints:", error);
-		for (const identifier of identifiers) {
-			requestedDefaultPrintKeys.delete(defaultPrintKey(identifier));
-		}
 	}
 };
 
