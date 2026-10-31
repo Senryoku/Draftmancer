@@ -1,6 +1,6 @@
 import { ref } from "vue";
 import { Card } from "@/CardTypes";
-import { getDefaultPrint } from "./vueCardCache";
+import { getDefaultPrint } from "./defaultPrintCache";
 
 type ImageURIs = Card["image_uris"];
 

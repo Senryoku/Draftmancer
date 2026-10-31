@@ -152,7 +152,8 @@ import ClazyLoad from "./../vue-clazy-load.vue";
 import { computed } from "vue";
 import { Language } from "@/Types";
 import { Card, CardFace } from "@/CardTypes";
-import { useCardCache, ScryfallCard, isReady, ScryfallCardFace, CardCacheEntry } from "../vueCardCache";
+import type { ScryfallCard, ScryfallCardFace } from "../Scryfall";
+import { useCardCache, isReady, CardCacheEntry } from "../vueCardCache";
 import { displayedBackImageURIs, displayedFrontImageURIs } from "../altArtDisplay";
 
 const { cardCache } = useCardCache();

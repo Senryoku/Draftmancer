@@ -32,7 +32,8 @@
 </template>
 
 <script setup lang="ts">
-import { ScryfallCard, isScryfallCard, ScryfallCardFace, CardCacheEntry, isScryfallCardFace } from "../vueCardCache";
+import { ScryfallCard, isScryfallCard, ScryfallCardFace, isScryfallCardFace } from "../Scryfall";
+import { CardCacheEntry } from "../vueCardCache";
 import { ref, computed, watch, onMounted, nextTick, onUnmounted } from "vue";
 import { replaceManaSymbols, parseManaSymbols } from "../ManaSymbols";
 import { Card, CardFace } from "@/CardTypes";

@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import { ScryfallCard, ScryfallCardFace } from "../vueCardCache";
+import type { ScryfallCard, ScryfallCardFace } from "../Scryfall";
 import CardText from "./CardText.vue";
 import { Card, CardFace } from "@/CardTypes";
 
