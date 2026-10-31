@@ -243,3 +243,7 @@ export function shuffleArray<T>(array: Array<T>, start = 0, end = array.length) 
 		[array[i], array[j]] = [array[j], array[i]];
 	}
 }
+
+export async function wait(ms: number): Promise<void> {
+	return new Promise((resolve) => setTimeout(resolve, ms));
+}

@@ -2,6 +2,7 @@ import axios from "axios";
 import { MaxCardsPerRequest, ScryfallCard } from "./Scryfall";
 import { ref } from "vue";
 import { Card, CardID } from "@/CardTypes";
+import { wait } from "./helper";
 
 export type DefaultPrint = { id: CardID; image: string; backImage?: string } | null; // Here `null` means it was requested but Scryfall returned 'not found'.
 
@@ -29,7 +30,7 @@ const queueDefaultPrint = (identifier: DefaultPrintIdentifier) => {
 };
 
 const flushQueuedDefaultPrints = async () => {
-	const delayBetweenRequests = 500;
+	const DelayBetweenRequests = 500;
 	while (queuedDefaultPrints.size > 0) {
 		const batch = [...queuedDefaultPrints.entries()].slice(0, MaxCardsPerRequest);
 		for (const key of batch.map((e) => e[0])) {
@@ -37,7 +38,7 @@ const flushQueuedDefaultPrints = async () => {
 		}
 		await requestDefaultPrints(batch.map((e) => e[1]));
 		if (queuedDefaultPrints.size > 0) {
-			await new Promise((resolve) => setTimeout(resolve, delayBetweenRequests));
+			await wait(DelayBetweenRequests);
 		}
 	}
 	defaultPrintsFlushTimeout = null;
