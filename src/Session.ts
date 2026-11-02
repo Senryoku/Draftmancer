@@ -3335,8 +3335,6 @@ export class Session implements IIndexable {
 	startTeamSealed(boostersPerTeam: number, customBoosters: Array<string>, rawTeams: UserID[][]): SocketAck {
 		if (this.drafting) return new SocketError("Game already in progress.");
 
-		this.drafting = true;
-
 		// Filter out empty teams (we don't have to generate boosters for them).
 		const teams = rawTeams.filter((t) => t.length > 0);
 
@@ -3344,7 +3342,8 @@ export class Session implements IIndexable {
 		const seenIds: UserID[] = []; // Reject duplicates UserIDs
 		for (const team of teams)
 			for (const uid of team) {
-				if (seenIds.includes(uid)) new SocketError("Invalid team parameter.", `Duplicate UserID '${uid}'.`);
+				if (seenIds.includes(uid))
+					return new SocketError("Invalid team parameter.", `Duplicate UserID '${uid}'.`);
 				seenIds.push(uid);
 				if (!this.users.has(uid))
 					return new SocketError("Invalid team parameter.", `UserID '${uid}' not in session.`);
@@ -3352,19 +3351,17 @@ export class Session implements IIndexable {
 			}
 
 		const useCustomBoosters = customBoosters && customBoosters.some((s) => s !== "");
-		if (useCustomBoosters && customBoosters.length !== boostersPerTeam) {
-			this.drafting = false;
+		if (useCustomBoosters && customBoosters.length !== boostersPerTeam)
 			return new SocketError("Error", "Invalid 'customBoosters' parameter.");
-		}
+
 		const boosters = this.generateBoosters(teams.length * boostersPerTeam, {
 			playerCount: teams.length, // Ignore bots when using customBoosters (FIXME)
 			useCustomBoosters: useCustomBoosters,
 			customBoosters: useCustomBoosters ? customBoosters : undefined,
 		});
-		if (isMessageError(boosters)) {
-			this.drafting = false;
-			return new SocketAck(boosters);
-		}
+		if (isMessageError(boosters)) return new SocketAck(boosters);
+
+		this.drafting = true;
 
 		const log = this.initLogs("TeamSealed", boosters);
 		log.customBoosters = customBoosters; // Override the session setting by the boosters provided to this function.
