@@ -118,8 +118,8 @@
 	</div>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType } from "vue";
+<script setup lang="ts">
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch, withDefaults } from "vue";
 import DraftLogPick from "./DraftLogPick.vue";
 import CardPool from "./CardPool.vue";
 import CardComponent from "./Card.vue";
@@ -131,234 +131,218 @@ import { CardID, Card, UniqueCard } from "@/CardTypes";
 import { UserID } from "@/IDTypes";
 import { sortableUpdate, groupPicksPerPack } from "../helper";
 
+const props = withDefaults(
+	defineProps<{
+		show?: boolean;
+		draftlog: DraftLog;
+		pendingPicks?: Record<UserID, DraftPick>;
+		language: Language;
+	}>(),
+	{
+		show: true,
+		pendingPicks: () => ({}),
+	}
+);
+
 let uniqueID = 0;
 const genUniqueCard = (card: Card): UniqueCard => Object.assign({ uniqueID: ++uniqueID }, card);
 
-export default defineComponent({
-	name: "DraftLogLive",
-	components: { DraftLogPick, CardComponent, CardPool, ScaleSlider, Sortable },
-	props: {
-		show: { type: Boolean, default: true },
-		draftlog: { type: Object as PropType<DraftLog>, required: true },
-		pendingPicks: { type: Object as PropType<Record<UserID, DraftPick>>, default: () => ({}) },
-		language: { type: String as PropType<Language>, required: true },
-	},
-	data() {
-		return {
-			sortableUpdate,
-			player: undefined as UserID | undefined,
-			pack: 0,
-			pick: 0,
-			eventListeners: [] as { element: HTMLElement; callback: () => void }[],
-			pickTransition: "right",
-			cardScale: 1,
-			unseenPicks: 0,
+const player = ref<UserID | undefined>(undefined);
+const pack = ref(0);
+const pick = ref(0);
+const eventListeners = ref<{ element: HTMLElement; callback: () => void }[]>([]);
+const pickTransition = ref("right");
+const cardScale = ref(1);
+const unseenPicks = ref(0);
+
+const getCard = (cid: CardID) => props.draftlog.carddata[cid];
+const getCardName = (cid: CardID) => {
+	const c = getCard(cid);
+	return props.language in c.printed_names ? c.printed_names[props.language] : c.name;
+};
+const setPlayer = (userID: UserID) => {
+	if (!(userID in props.draftlog.users)) return;
+	player.value = userID;
+
+	pack.value = 0;
+	pick.value = 0;
+	unseenPicks.value = 0;
+	// Get to the last pick once computed values are updated.
+	nextTick(jumpToLatest);
+};
+const jumpToLatest = () => {
+	if (picksPerPack.value.length === 0) return;
+	pack.value = picksPerPack.value.length - 1;
+	pick.value = picksPerPack.value[pack.value].length - 1;
+};
+const prevPick = () => {
+	if (pick.value === 0) {
+		if (pack.value === 0) return;
+		--pack.value;
+		pick.value = picksPerPack.value[pack.value].length - 1;
+	} else {
+		--pick.value;
+	}
+};
+const nextPick = () => {
+	if (pick.value === picksPerPack.value[pack.value].length - 1) {
+		if (pack.value === picksPerPack.value.length - 1) return;
+		++pack.value;
+		pick.value = 0;
+	} else {
+		++pick.value;
+	}
+};
+const shortcuts = (e: KeyboardEvent) => {
+	if (e.key === "ArrowLeft") {
+		prevPick();
+		e.preventDefault();
+	} else if (e.key === "ArrowRight") {
+		nextPick();
+		e.preventDefault();
+	}
+};
+const registerPlayerSelectEvents = () => {
+	clearPlayerSelectEvents();
+	const playerEls = document.querySelectorAll<HTMLElement>("ul.player-list li");
+	for (const el of playerEls) {
+		const callback = () => {
+			const id = el.dataset.userid;
+			if (id) setPlayer(id as UserID);
 		};
-	},
-	mounted() {
-		this.registerPlayerSelectEvents();
+		eventListeners.value.push({ element: el, callback });
+		el.classList.add("clickable");
+		el.addEventListener("click", callback);
+	}
+};
+const clearPlayerSelectEvents = () => {
+	for (const tuple of eventListeners.value) {
+		tuple.element.removeEventListener("click", tuple.callback);
+		tuple.element.classList.remove("clickable");
+	}
+	eventListeners.value = [];
+};
 
-		document.addEventListener("keydown", this.shortcuts);
-	},
-	beforeUnmount() {
-		this.clearPlayerSelectEvents();
+const pickNames = computed(() => {
+	if (picksPerPack.value.length === 0 || !validPick.value) return "";
+	const currentPick = picksPerPack.value[pack.value][pick.value];
+	if (currentPick.pick.length === 0) return "Picking...";
+	return currentPick.pick
+		.map((idx) => currentPick.booster[idx])
+		.map(getCardName)
+		.join(", ");
+});
+const selectedPlayerCards = computed(() => {
+	const selected = props.draftlog.users?.[player.value!];
+	const decklist = selected?.decklist;
+	if (decklist?.main)
+		return {
+			main: decklist.main.map(getCard).map(genUniqueCard),
+			side: decklist.side.map(getCard).map(genUniqueCard),
+		};
+	if (!selected?.picks) return { main: [], side: [] };
+	return {
+		main: (selected.picks as DraftPick[])
+			.flatMap((p: DraftPick) => p.pick.map((idx) => p.booster[idx]))
+			.map(getCard)
+			.map(genUniqueCard),
+		side: [],
+	};
+});
+const selectedLog = computed(() => props.draftlog.users[player.value!]);
+const picksPerPack = computed(() => {
+	if (!selectedLog.value || !selectedLog.value.picks || props.draftlog.type !== "Draft") return [] as DraftPick[][];
+	if (props.draftlog.version === "2.0") {
+		// Infer PackNumber & PickNumber
+		const groups: DraftPick[][] = [];
+		let currPick = 0;
+		let currBooster = -1;
+		let lastSize = 0;
+		let currPickNumber = 0;
+		while (currPick < selectedLog.value.picks.length) {
+			const p = selectedLog.value.picks[currPick] as DeprecatedDraftPick;
+			if (p.booster.length > lastSize) {
+				++currBooster;
+				currPickNumber = 0;
+				groups.push([]);
+			} else ++currPickNumber;
+			groups[currBooster].push({
+				packNum: currBooster,
+				pickNum: currPickNumber,
+				pick: p.pick,
+				burn: p.burn,
+				booster: p.booster,
+			});
+			lastSize = p.booster.length;
+			++currPick;
+		}
+		return groups;
+	}
+	const picks = selectedLog.value.picks as DraftPick[];
+	const pendingPick = props.pendingPicks[player.value!];
+	return groupPicksPerPack(pendingPick ? [...picks, pendingPick] : picks);
+});
+const validPick = computed(
+	() => pack.value < picksPerPack.value.length && pick.value < picksPerPack.value[pack.value]?.length
+);
+const pickIndex = computed(() => {
+	let index = pick.value;
+	for (let p = 0; p < pack.value && p < picksPerPack.value.length; ++p) index += picksPerPack.value[p].length;
+	return index;
+});
+const totalPicks = computed(() => picksPerPack.value.reduce((acc, packPicks) => acc + packPicks.length, 0));
+const madePicks = computed(() => selectedLog.value?.picks?.length ?? 0);
+const previousPickNames = computed(() => {
+	if (!validPick.value) return "";
+	const onPendingPick = picksPerPack.value[pack.value][pick.value].pick.length === 0;
+	if (!onPendingPick) return "";
+	return lastMadePickCardIDs.value.map(getCardName).join(", ");
+});
+const lastMadePickCardIDs = computed(() => {
+	const picks = (selectedLog.value?.picks ?? []) as DraftPick[];
+	const lastPick = picks[picks.length - 1];
+	if (!lastPick) return [] as CardID[];
+	return lastPick.pick.map((idx) => lastPick.booster[idx]) as CardID[];
+});
+const onLatestPick = computed(() => pickIndex.value === totalPicks.value - 1);
+const onLatestMadePick = computed(() => pickIndex.value >= madePicks.value - 1);
+const hasUnseenPicks = computed(() => unseenPicks.value > 0 && !onLatestMadePick.value);
+const livePosition = computed(() => ({
+	player: player.value,
+	totalPicks: totalPicks.value,
+	madePicks: madePicks.value,
+}));
 
-		document.removeEventListener("keydown", this.shortcuts);
-	},
-	methods: {
-		getCard(cid: CardID) {
-			return this.draftlog.carddata[cid];
-		},
-		getCardName(cid: CardID) {
-			const c = this.getCard(cid);
-			return this.language in c.printed_names ? c.printed_names[this.language] : c.name;
-		},
-		setPlayer(userID: UserID) {
-			if (!(userID in this.draftlog.users)) return;
-			this.player = userID;
+// A following viewer moves to the booster being picked from, the header shows what was just picked
+watch(livePosition, (current, previous) => {
+	if (!previous || current.player !== previous.player) return;
+	if (current.totalPicks < previous.totalPicks && !validPick.value) return jumpToLatest();
+	const pickLanded = current.madePicks > previous.madePicks;
+	if (!pickLanded && current.totalPicks <= previous.totalPicks) return;
+	const wasFollowing = previous.totalPicks === 0 || pickIndex.value === previous.totalPicks - 1;
+	if (wasFollowing) jumpToLatest();
+	else if (pickLanded) ++unseenPicks.value;
+});
+watch(onLatestMadePick, (isLatest) => {
+	if (isLatest) unseenPicks.value = 0;
+});
+watch(pick, (n, o) => {
+	if (n < o) pickTransition.value = "right";
+	else pickTransition.value = "left";
+});
+watch(pack, (newVal) => {
+	if (newVal >= 0 && picksPerPack.value[newVal]) {
+		pick.value = Math.min(pick.value, picksPerPack.value[newVal].length - 1); // Make sure pick is still valid.
+	}
+});
 
-			this.pack = 0;
-			this.pick = 0;
-			this.unseenPicks = 0;
-			// Get to the last pick once computed values are updated.
-			this.$nextTick(this.jumpToLatest);
-		},
-		jumpToLatest() {
-			if (this.picksPerPack.length === 0) return;
-			this.pack = this.picksPerPack.length - 1;
-			this.pick = this.picksPerPack[this.pack].length - 1;
-		},
-		prevPick() {
-			if (this.pick === 0) {
-				if (this.pack === 0) return;
-				--this.pack;
-				this.pick = this.picksPerPack[this.pack].length - 1;
-			} else {
-				--this.pick;
-			}
-		},
-		nextPick() {
-			if (this.pick === this.picksPerPack[this.pack].length - 1) {
-				if (this.pack === this.picksPerPack.length - 1) return;
-				++this.pack;
-				this.pick = 0;
-			} else {
-				++this.pick;
-			}
-		},
-		shortcuts(e: KeyboardEvent) {
-			if (e.key === "ArrowLeft") {
-				this.prevPick();
-				e.preventDefault();
-			} else if (e.key === "ArrowRight") {
-				this.nextPick();
-				e.preventDefault();
-			}
-		},
-		registerPlayerSelectEvents() {
-			this.clearPlayerSelectEvents();
-			const playerEls = document.querySelectorAll<HTMLElement>("ul.player-list li");
-			for (let el of playerEls) {
-				const callback = () => {
-					const id = el.dataset.userid;
-					this.setPlayer(id!);
-				};
-				this.eventListeners.push({ element: el, callback: callback });
-				el.classList.add("clickable");
-				el.addEventListener("click", callback);
-			}
-		},
-		clearPlayerSelectEvents() {
-			for (let tuple of this.eventListeners) {
-				tuple.element.removeEventListener("click", tuple.callback);
-				tuple.element.classList.remove("clickable");
-			}
-			this.eventListeners = [];
-		},
-	},
-	computed: {
-		pickNames() {
-			if (this.picksPerPack.length === 0 || !this.validPick) return "";
-			const pick = this.picksPerPack[this.pack][this.pick];
-			if (pick.pick.length === 0) return "Picking...";
-			return pick.pick
-				.map((idx) => pick.booster[idx])
-				.map(this.getCardName)
-				.join(", ");
-		},
-		selectedPlayerCards() {
-			if (this.draftlog.users?.[this.player!]?.decklist?.main)
-				return {
-					main: this.draftlog.users[this.player!].decklist!.main.map(this.getCard).map(genUniqueCard),
-					side: this.draftlog.users[this.player!].decklist!.side.map(this.getCard).map(genUniqueCard),
-				};
-			return {
-				main: (this.draftlog.users[this.player!].picks as DraftPick[])
-					.map((p: DraftPick) => p.pick.map((idx) => p.booster[idx]))
-					.flat()
-					.map(this.getCard)
-					.map(genUniqueCard),
-				side: [],
-			};
-		},
-		selectedLog() {
-			return this.draftlog.users[this.player!];
-		},
-		picksPerPack() {
-			if (!this.selectedLog || !this.selectedLog.picks || this.draftlog.type !== "Draft") return [];
-			if (this.draftlog.version === "2.0") {
-				// Infer PackNumber & PickNumber
-				let r: DraftPick[][] = [];
-				let currPick = 0;
-				let currBooster = -1;
-				let lastSize = 0;
-				let currPickNumber = 0;
-				while (currPick < this.selectedLog.picks.length) {
-					const p = this.selectedLog.picks[currPick] as DeprecatedDraftPick;
-					if (p.booster.length > lastSize) {
-						++currBooster;
-						currPickNumber = 0;
-						r.push([]);
-					} else ++currPickNumber;
-					r[currBooster].push({
-						packNum: currBooster,
-						pickNum: currPickNumber,
-						pick: p.pick,
-						burn: p.burn,
-						booster: p.booster,
-					});
-					lastSize = p.booster.length;
-					++currPick;
-				}
-				return r;
-			}
-			const picks = this.selectedLog.picks as DraftPick[];
-			const pendingPick = this.pendingPicks[this.player!];
-			return groupPicksPerPack(pendingPick ? [...picks, pendingPick] : picks);
-		},
-		validPick() {
-			return this.pack < this.picksPerPack.length && this.pick < this.picksPerPack[this.pack].length;
-		},
-		pickIndex() {
-			let index = this.pick;
-			for (let p = 0; p < this.pack && p < this.picksPerPack.length; ++p) index += this.picksPerPack[p].length;
-			return index;
-		},
-		totalPicks() {
-			let total = 0;
-			for (const packPicks of this.picksPerPack) total += packPicks.length;
-			return total;
-		},
-		madePicks() {
-			return this.selectedLog?.picks?.length ?? 0;
-		},
-		previousPickNames() {
-			if (!this.validPick) return "";
-			const onPendingPick = this.picksPerPack[this.pack][this.pick].pick.length === 0;
-			if (!onPendingPick) return "";
-			return this.lastMadePickCardIDs.map(this.getCardName).join(", ");
-		},
-		lastMadePickCardIDs() {
-			const picks = (this.selectedLog?.picks ?? []) as DraftPick[];
-			const lastPick = picks[picks.length - 1];
-			if (!lastPick) return [];
-			return lastPick.pick.map((idx) => lastPick.booster[idx]);
-		},
-		onLatestPick() {
-			return this.pickIndex === this.totalPicks - 1;
-		},
-		onLatestMadePick() {
-			return this.pickIndex >= this.madePicks - 1;
-		},
-		hasUnseenPicks() {
-			return this.unseenPicks > 0 && !this.onLatestMadePick;
-		},
-		livePosition() {
-			return { player: this.player, totalPicks: this.totalPicks, madePicks: this.madePicks };
-		},
-	},
-	watch: {
-		// A following viewer moves to the booster being picked from, the header shows what was just picked
-		livePosition(current, previous) {
-			if (current.player !== previous.player) return;
-			if (current.totalPicks < previous.totalPicks && !this.validPick) return this.jumpToLatest();
-			const pickLanded = current.madePicks > previous.madePicks;
-			if (!pickLanded && current.totalPicks <= previous.totalPicks) return;
-			const wasFollowing = previous.totalPicks === 0 || this.pickIndex === previous.totalPicks - 1;
-			if (wasFollowing) this.jumpToLatest();
-			else if (pickLanded) ++this.unseenPicks;
-		},
-		onLatestMadePick(isLatest) {
-			if (isLatest) this.unseenPicks = 0;
-		},
-		pick(n, o) {
-			if (n < o) this.pickTransition = "right";
-			else this.pickTransition = "left";
-		},
-		pack(newVal) {
-			this.pick = Math.min(this.pick, this.picksPerPack[newVal].length - 1); // Make sure pick is still valid.
-		},
-	},
+onMounted(() => {
+	registerPlayerSelectEvents();
+	document.addEventListener("keydown", shortcuts);
+});
+onBeforeUnmount(() => {
+	clearPlayerSelectEvents();
+	document.removeEventListener("keydown", shortcuts);
 });
 </script>
 
