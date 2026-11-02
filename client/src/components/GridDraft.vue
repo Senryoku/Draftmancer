@@ -1,5 +1,5 @@
 <template>
-	<div class="grid-draft">
+	<div class="grid-draft" ref="root">
 		<div class="card-grid">
 			<div style="grid-area: empty"></div>
 
@@ -14,7 +14,7 @@
 						icon="fa-solid fa-chevron-circle-down"
 						size="3x"
 						v-show="picking && isValidChoice(idx)"
-						@click="$emit('pick', idx)"
+						@click="emit('pick', idx)"
 						@mouseenter="highlight($event, 'col', idx)"
 						@mouseleave="highlight($event, 'col', idx)"
 					/>
@@ -31,7 +31,7 @@
 						icon="fa-solid fa-chevron-circle-right"
 						size="3x"
 						v-show="picking && isValidChoice(3 + idx)"
-						@click="$emit('pick', 3 + idx)"
+						@click="emit('pick', 3 + idx)"
 						@mouseenter="highlight($event, 'row', idx)"
 						@mouseleave="highlight($event, 'row', idx)"
 					/>
@@ -56,47 +56,44 @@
 	</div>
 </template>
 
-<script lang="ts">
-import { PropType, defineComponent } from "vue";
+<script setup lang="ts">
+import { computed, useTemplateRef } from "vue";
 import { GridDraftSyncData } from "@/GridDraft";
-import { UniqueCard } from "@/CardTypes";
 
 import Card from "./Card.vue";
 import PickSummary from "./PickSummary.vue";
 
-export default defineComponent({
-	components: { Card, PickSummary },
-	props: {
-		state: { type: Object as PropType<GridDraftSyncData>, required: true },
-		picking: { type: Boolean, required: true },
-	},
-	methods: {
-		isValidChoice(choice: number) {
-			let validCards = 0;
-			for (let i = 0; i < 3; ++i) {
-				//                     Column           Row
-				let idx = choice < 3 ? 3 * i + choice : 3 * (choice - 3) + i;
-				if (this.state.booster[idx]) ++validCards;
-			}
-			return validCards > 0;
-		},
-		highlight(event: Event, type: string, index: number) {
-			this.$el.querySelectorAll(`.${type}-${index}`).forEach((el: Element) => {
-				if (event.type === "mouseenter") el.classList.add("highlight");
-				else if (event.type === "mouseleave") el.classList.remove("highlight");
-			});
-		},
-	},
-	computed: {
-		cardTransition() {
-			// Use special card transition on pick and a simple fading between boosters.
-			return this.state.booster.some((c: UniqueCard | null) => c === null) ? "card-select" : "fade";
-		},
-		arrowTransition() {
-			return this.state.booster.some((c: UniqueCard | null) => c === null) ? "fade-delayed" : "fade";
-		},
-	},
-});
+const props = defineProps<{
+	state: GridDraftSyncData;
+	picking: boolean;
+}>();
+
+const emit = defineEmits<{
+	(event: "pick", choice: number): void;
+}>();
+
+const element = useTemplateRef("root");
+
+function isValidChoice(choice: number) {
+	let validCards = 0;
+	for (let i = 0; i < 3; ++i) {
+		//                     Column           Row
+		let idx = choice < 3 ? 3 * i + choice : 3 * (choice - 3) + i;
+		if (props.state.booster[idx]) ++validCards;
+	}
+	return validCards > 0;
+}
+
+function highlight(event: Event, type: string, index: number) {
+	element.value?.querySelectorAll(`.${type}-${index}`).forEach((el: Element) => {
+		if (event.type === "mouseenter") el.classList.add("highlight");
+		else if (event.type === "mouseleave") el.classList.remove("highlight");
+	});
+}
+
+// Use special card transition on pick and a simple fading between boosters.
+const cardTransition = computed(() => (props.state.booster.some((c) => c === null) ? "card-select" : "fade"));
+const arrowTransition = computed(() => (props.state.booster.some((c) => c === null) ? "fade-delayed" : "fade"));
 </script>
 
 <style scoped>
