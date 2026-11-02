@@ -37,7 +37,7 @@
 							/>
 							<font-awesome-icon
 								:key="`latest-${unseenPicks}`"
-								:class="{ disabled: onLatestPick, 'new-pick': hasUnseenPicks }"
+								:class="{ disabled: onLatestPick, 'unseen-pick': hasUnseenPicks }"
 								icon="fa-solid fa-angle-double-right"
 								class="clickable jump-to-latest"
 								v-tooltip="'Jump to the newest pick'"
@@ -57,6 +57,7 @@
 						<transition :name="'slide-fade-' + pickTransition" mode="out-in">
 							<draft-log-pick
 								:key="`${player}-${pick}`"
+								ref="pickElement"
 								:pick="picksPerPack[pack][pick]"
 								:carddata="draftlog.carddata"
 								:language="language"
@@ -119,7 +120,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch, withDefaults } from "vue";
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch, withDefaults, useTemplateRef } from "vue";
 import DraftLogPick from "./DraftLogPick.vue";
 import CardPool from "./CardPool.vue";
 import CardComponent from "./Card.vue";
@@ -154,6 +155,7 @@ const eventListeners = ref<{ element: HTMLElement; callback: () => void }[]>([])
 const pickTransition = ref("right");
 const cardScale = ref(1);
 const unseenPicks = ref(0);
+const pickElement = useTemplateRef("pickElement");
 
 const getCard = (cid: CardID) => props.draftlog.carddata[cid];
 const getCardName = (cid: CardID) => {
@@ -321,6 +323,7 @@ watch(livePosition, (current, previous) => {
 	if (!pickLanded && current.totalPicks <= previous.totalPicks) return;
 	const wasFollowing = previous.totalPicks === 0 || pickIndex.value === previous.totalPicks - 1;
 	if (wasFollowing) {
+		pickElement.value?.$el.classList.add("new-pick");
 		// Delay auto follow to give some time to see the new pick.
 		setTimeout(() => {
 			if (onLatestMadePick.value) jumpToLatest(); // Cancel if we moved.
@@ -409,12 +412,12 @@ onBeforeUnmount(() => {
 	margin-left: 0.4em;
 }
 
-.new-pick {
+.unseen-pick {
 	color: #00da0b;
-	animation: new-pick-pulse 1.5s ease-out;
+	animation: new-pick-icon-pulse 1.5s ease-out;
 }
 
-@keyframes new-pick-pulse {
+@keyframes new-pick-icon-pulse {
 	0%,
 	40% {
 		transform: scale(1.5);
@@ -423,6 +426,23 @@ onBeforeUnmount(() => {
 	100% {
 		transform: scale(1);
 		filter: none;
+	}
+}
+
+.new-pick :deep(.selected-high) {
+	animation: new-pick-pulse 0.32s ease-out;
+	transform-origin: center center;
+}
+
+@keyframes new-pick-pulse {
+	0% {
+		transform: scale(0.85);
+	}
+	45% {
+		transform: scale(1.08);
+	}
+	100% {
+		transform: scale(1);
 	}
 }
 </style>
