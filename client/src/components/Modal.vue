@@ -30,27 +30,37 @@
 	</transition>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
+<script setup lang="ts">
+import { onBeforeUnmount, onMounted } from "vue";
 
-export default defineComponent({
-	name: "Modal",
-	props: { displayed: { type: Boolean, default: true } },
-	methods: {
-		close(e: Event) {
-			if (e.target == e.currentTarget) this.$emit("close");
-		},
-		shortcuts(e: KeyboardEvent) {
-			if (e.key === "Escape") this.$emit("close");
-		},
-	},
-	mounted() {
-		(document.activeElement as HTMLElement).blur();
-		document.addEventListener("keydown", this.shortcuts);
-	},
-	beforeUnmount() {
-		document.removeEventListener("keydown", this.shortcuts);
-	},
+const props = withDefaults(
+	defineProps<{
+		displayed: boolean;
+	}>(),
+	{
+		displayed: true,
+	}
+);
+
+const emit = defineEmits<{
+	(event: "close"): void;
+}>();
+
+function close(e: Event) {
+	if (e.target === e.currentTarget) emit("close");
+}
+
+function shortcuts(e: KeyboardEvent) {
+	if (e.key === "Escape") emit("close");
+}
+
+onMounted(() => {
+	(document.activeElement as HTMLElement).blur();
+	document.addEventListener("keydown", shortcuts);
+});
+
+onBeforeUnmount(() => {
+	document.removeEventListener("keydown", shortcuts);
 });
 </script>
 
