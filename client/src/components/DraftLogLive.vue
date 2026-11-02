@@ -320,8 +320,13 @@ watch(livePosition, (current, previous) => {
 	const pickLanded = current.madePicks > previous.madePicks;
 	if (!pickLanded && current.totalPicks <= previous.totalPicks) return;
 	const wasFollowing = previous.totalPicks === 0 || pickIndex.value === previous.totalPicks - 1;
-	if (wasFollowing) jumpToLatest();
-	else if (pickLanded) ++unseenPicks.value;
+	if (wasFollowing) {
+		// Delay auto follow to give some time to see the new pick.
+		setTimeout(() => {
+			if (onLatestMadePick.value) jumpToLatest(); // Cancel if we moved.
+		}, 2000);
+	}
+	if (pickLanded) ++unseenPicks.value;
 });
 watch(onLatestMadePick, (isLatest) => {
 	if (isLatest) unseenPicks.value = 0;
@@ -349,6 +354,7 @@ onBeforeUnmount(() => {
 <style scoped>
 .draft-log-live-title {
 	display: flex;
+	align-items: center;
 
 	h2 {
 		display: inline-block;
